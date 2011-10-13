@@ -1,0 +1,1 @@
+Here is the description of files and folders organisation in the task's directory.
