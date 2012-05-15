@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:context="http://www.springframework.org/schema/context"
+
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+    http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+			
+	<amq:connectionFactory brokerURL="tcp://localhost:61616"
+		id="jmsFactory">
+		<amq:properties>
+			<amq:redeliveryPolicy maximumRedeliveries="6"
+				initialRedeliveryDelay="15000" useExponentialBackOff="true"
+				backOffMultiplier="5" />
+		</amq:properties>
+	</amq:connectionFactory>
+	
+	<!-- JMS Template -->
+
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<property name="defaultDestination" ref="defaultQueue" />
+	</bean>
+
+	<amq:queue id="defaultQueue" physicalName="default.queue" />
+
+    <bean id="resourceComponent" class="com.mango.mif.core.impl.DefaultResourceComponent">
+    	<property name="workspaceManager" ref="workspaceManager"/>
+    </bean>
+    
+    <bean id="workspaceManager" class="com.mango.mif.core.impl.DefaultWorkspaceManager">
+    	<constructor-arg>
+    		<bean class="com.mango.mif.utils.ExecutionHelper" factory-method="createTmpDirectory">
+    			<constructor-arg value="TmpResourceDirectory"></constructor-arg>
+    		</bean>
+    	</constructor-arg>
+    </bean>
+    
+    <bean id="jobService" class="com.mango.mif.client.impl.JobServiceImpl">
+    	<property name="baseServerUrl" value="http://localhost:8080/MIFServer"/>
+    </bean>
+    
+    <bean id="taskExecutionManager" class="com.mango.mif.client.impl.TaskExecutionManagerImpl">
+		<property name="jmsTemplate" ref="jmsTemplate" />
+		<property name="connectorRegistry">
+			<map>
+				<entry key="R" value="R.JOB.REQUEST" />
+				<entry key="PSN" value="PSN.JOB.REQUEST" />
+			</map>
+		</property>
+	</bean>
+    
+	<jms:listener-container container-type="default"
+		connection-factory="jmsFactory" acknowledge="auto" >
+	<jms:listener destination="R.JOB.RESPONSE" ref="rJobResponseListener"
+			method="onMessage" />
+	</jms:listener-container>
+	
+	<bean id="rJobResponseListener" class="com.mango.mif.client.impl.TaskExecutionResultsListener">
+		<property name="taskExecutionManager" ref="taskExecutionManager"/>
+	</bean>
+</beans>

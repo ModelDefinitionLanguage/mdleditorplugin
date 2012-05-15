@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>MangoInteroperabilityFramework</artifactId>
+		<groupId>com.mango</groupId>
+		<version>0.0.5-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<groupId>com.mango</groupId>
+	<artifactId>MIFClient</artifactId>
+	<version>${project.parent.version}</version>
+	<name>MIFClient</name>
+
+	<build>
+		<finalName>MIFClient</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<links>
+						<link>http://docs.oracle.com/javase/6/docs/api/</link>
+					</links>
+					<source>1.6</source>
+					<show>public</show>
+					<doctitle>MIF Client API</doctitle>
+					<title>MIF Client API</title>
+					<bottom><![CDATA[Copyright notice]]></bottom>
+					<sourcepath>${basedir}/src/main/java/com/mango/mif</sourcepath>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
