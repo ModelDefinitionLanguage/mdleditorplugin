@@ -4,17 +4,6 @@ MangoInteroperabilityFramework(MIF)
 The project has been divided into maven multi-module structure
 
 
-==============================================================
-Prerequisites
-==============================================================
-Mango Parent Pom needs to be installed
-1.	Checkout the parent pom project from repository:
-svn co http://svn.mango.local/svn/MangoRepository/MangoParentPom/
-
-2.	Then install it into your local repository using this command 
-“mvn install:install-file -DgroupId=com.mango.build -DartifactId=mango-parent-pom -Dpackaging=pom -Dversion=1.0 -Dfile=pom.xml”
-
-
 ===============================================================
 Building
 ===============================================================
@@ -29,23 +18,18 @@ you need to run the following command:
 mvn install -P custom -DrHome="[R_HOME]" -DrScriptLocation="[Rscript executable location]"
 
 
-===============================================================
-Building on Jenkins
-===============================================================
-mvn install -P jenkins
-
-
 
 ================================================================
 Setting up for Eclipse
 ================================================================
+0. DO NOT CHECK THE CODE OUT INTO AN EXISTING ECLIPSE WORKSPACE.
 1. go to MangoInteroperabilityFramework directory
 2. Run:
 mvn install
 3. Run:
 mvn eclipse:eclipse
 
-It will install the eclipse project for all sub modules, You then include the projects in Eclipse. 
+It will install the eclipse project for all sub modules, You then import the projects in Eclipse. 
 
 
 ===============================================================
