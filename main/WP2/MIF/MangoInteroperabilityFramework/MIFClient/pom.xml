@@ -10,7 +10,6 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<groupId>com.mango</groupId>
 	<artifactId>MIFClient</artifactId>
 	<version>${project.parent.version}</version>
 	<name>MIFClient</name>

@@ -80,8 +80,8 @@ public class RScriptExecTest {
         LOG.info("Standard output: " + stdOutput);
         LOG.info("Error output: " + errOutput);
         assertTrue("Result file does not exist.", new File(workingDirectory,"result-test.csv").exists());
-        assertNotNull("Standard ouput not read.", stdOutput);
-        assertNotNull("Error ouput not read.", errOutput);
+        assertNotNull("Standard output not read.", stdOutput);
+        assertNotNull("Error output not read.", errOutput);
         
     }
     /**

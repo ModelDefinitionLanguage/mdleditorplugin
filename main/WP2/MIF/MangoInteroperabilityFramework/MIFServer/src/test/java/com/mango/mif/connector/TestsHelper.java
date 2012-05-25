@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -60,8 +61,14 @@ public class TestsHelper {
      * @return test script to invoke depending on operating system
      */
     public static File getRExecutable() {
+    	
+    	Map<String, String> env = System.getenv();
+        String Rhome = env.get("R_HOME");
+        if (Rhome.startsWith("~/"))
+        	Rhome = System.getProperty("user.home") + Rhome.substring(1);
+        System.setProperty("rHome", Rhome);
         Preconditions.checkNotNull(System.getProperty("rHome"), "R_HOME property not set");
-        File binDir = new File(System.getProperty("rHome"));
+        File binDir = new File(System.getProperty("rHome") + "/bin");
         Preconditions.checkArgument(binDir.exists(), "'bin' directory in R_HOME does not exist, please ensure that you are running correct version of R 2.13.1 or above.");
         String os = System.getProperty("os.name");
         LOG.info("System OS is: " + os);
