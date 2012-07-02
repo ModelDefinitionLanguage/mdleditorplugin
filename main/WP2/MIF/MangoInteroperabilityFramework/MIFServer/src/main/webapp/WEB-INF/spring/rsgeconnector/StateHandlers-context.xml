@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+    xmlns:jms="http://www.springframework.org/schema/jms" xmlns:oxm="http://www.springframework.org/schema/oxm"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <bean id="defaultStateHandler" abstract="true">
+            <property name="executionJobRepository" ref="executionJobRepository"/>
+            <property name="jobRepository" ref="jobRepository"/>
+            <property name="sharedLocationManager" ref="sharedLocationManager"/>
+			<property name="encrypter" ref="encrypter"/>
+    </bean>
+
+    <!-- Runner state handlers -->
+    <bean id="rSGEStateHandlers" class="java.util.ArrayList" scope="prototype">
+        <constructor-arg>
+        <list>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.RSGEStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="pending"/>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.RSGEStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="running"/>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.RSGEStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="task-pending"/>
+                    <constructor-arg  index="1" value="task.prepare"/>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.PreparingStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="task-preparing"/>
+                    <constructor-arg  index="1" value="task.submit"/>
+                    <property name="sgeSharedLocation"  value="${rSGEConnector.sgeSharedLocation}"/>
+                    <property name="port"  value="${rSGEConnector.port}"/>
+                    <property name="submitCommandBuilder">
+                        <bean class="com.mango.mif.rsgeconnector.internal.SGESubmitCommandBuilderSimpleTemplate">
+                            <property name="submitCommandTemplate" value="${rSGEConnector.submitCommandTemplate}"/>
+                        </bean>
+                    </property>
+                    <property name="rCommandBuilder">
+                        <bean class="com.mango.mif.rsgeconnector.internal.SGEExecRScriptCommandBuilder">
+                            <property name="commandTemplate" value="${rSGEConnector.execRScriptCommandTemplate}"/>
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.SubmittingStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="task-submitting"/>
+                    <constructor-arg  index="1" value="task.process"/>
+                    <property name="submitCommandBuilder">
+                        <bean class="com.mango.mif.rsgeconnector.internal.SGESubmitCommandBuilderSimpleTemplate">
+                            <property name="submitCommandTemplate" value="${rSGEConnector.submitCommandTemplate}"/>
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.ProcessingStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="task-processing"/>
+                    <constructor-arg  index="1" value="task.retrieve"/>
+                    <property name="statusCommandBuilder">
+                        <bean class="com.mango.mif.rsgeconnector.internal.SGEStatusCommandBuilderSimpleTemplate">
+                            <property name="pollCommandTemplate" value="${rSGEConnector.pollCommandTemplate}"/>
+                        </bean>
+                    </property>
+                    <property name="accountCommandBuilder">
+                        <bean class="com.mango.mif.rsgeconnector.internal.SGEAccountCommandBuilderSimpleTemplate">
+                            <property name="accountCommandTemplate" value="${rSGEConnector.accountCommandTemplate}"/>
+                        </bean>
+                    </property>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.RetrievingStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="task-retrieving"/>
+                    <constructor-arg  index="1" value="task.postprocess"/>
+                    <property name="port"  value="${rSGEConnector.port}"/>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.PostprocessingStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="task-postprocessing"/>
+                    <constructor-arg  index="1" value="task.finished"/>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.RSGEStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="task-finished"/>
+                    <constructor-arg  index="1" value="done.state.running"/>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.RSGEStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="finished"/>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.RSGEStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="failed"/>
+                </bean>
+                <bean class="com.mango.mif.rsgeconnector.runner.impl.CanceledStateHandler" scope="prototype" parent="defaultStateHandler">
+                    <constructor-arg  index="0" value="cancelled"/>
+                    <property name="cancelCommandBuilder">
+                        <bean class="com.mango.mif.rsgeconnector.internal.SGECancelCommandBuilderSimpleTemplate">
+                            <property name="cancelCommandTemplate" value="${rSGEConnector.cancelCommandTemplate}"/>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+</beans>

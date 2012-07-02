@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+  			http://www.springframework.org/schema/beans 
+	   		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   		http://www.springframework.org/schema/context
+	   		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+			http://www.springframework.org/schema/mvc 
+			http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+	<!--  Configuring property Files -->
+	<util:properties id="mainProperties" location="classpath:mif-default.properties"/>
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="systemPropertiesModeName"><value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value></property>
+		<property name="locations">
+			<list>
+				<value>classpath:mif-default.properties</value>
+				<value>file:#{mainProperties['mif.configuration.dir']}/mif.properties</value>
+			</list>
+		</property>
+	</bean>		
+	
+    <bean id="encrypter" class="com.mango.mif.utils.encrypt.DesEncrypter">
+    	<constructor-arg value="${mif.encryption.key}"/>
+    </bean>
+    
+    <bean id="sharedLocationManager" class="com.mango.mif.core.resource.UserSharedLocationManager">
+    	<property name="workspaceManager" ref="workspaceManager"/>
+    </bean>
+    
+    <bean id="workspaceManager" class="com.mango.mif.core.impl.DefaultWorkspaceManager">
+    	<constructor-arg>
+    		<bean class="java.io.File">
+    			<constructor-arg value="${mif.shared.location}"></constructor-arg>
+    		</bean>
+    	</constructor-arg>
+    </bean>
+		
+	<import resource="/spring/JMS-context.xml" />
+	<import resource="/spring/REST-context.xml" />
+	<import resource="/spring/hibernate-context.xml"/>
+
+	<!-- R SGE Connector -->
+	<import resource="/spring/rsgeconnector/Connector-context.xml" /> 
+	<import resource="/spring/rsgeconnector/Dispatcher-context.xml"/>
+	<import resource="/spring/rsgeconnector/JobRunner-context.xml"/>
+	<import resource="/spring/rsgeconnector/StateHandlers-context.xml"/>
+	
+	<!-- FIXME: why is this here? -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="false"/>
+	</bean>
+			
+</beans>

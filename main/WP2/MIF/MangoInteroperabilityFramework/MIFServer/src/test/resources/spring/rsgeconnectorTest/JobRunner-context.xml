@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+    xmlns:jms="http://www.springframework.org/schema/jms" xmlns:oxm="http://www.springframework.org/schema/oxm"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <!-- Job Runner -->
+    <bean id="rSGEJobRunner" class="com.mango.mif.rsgeconnector.runner.impl.RSGEJobRunner" scope="prototype">
+        <property name="resultDestination" value="${rSGEConnector.jobResultQueue}"/>
+        <property name="jmsTemplate" ref="rSGEJmsTemplate"/>
+        <property name="sgeExec" ref="rSGEExec"/>
+		<property name="encrypter" ref="encrypter"/>
+    </bean>
+
+    <!-- SGE Output Searcher -->
+    <bean id="rSGEOutputSearcher" class="com.mango.mif.rsgeconnector.internal.SGEOutputSearcher">
+        <property name="jobAccountingNotFoundRegexp" value="${rSGEConnector.regexp.queue-accounting-command.job-not-found}"/>
+        <property name="jobStatusNotFoundRegexp" value="${rSGEConnector.regexp.queue-status-command.job-not-found}"/>
+        <property name="jobDeleteNotFoundRegexp" value="${rSGEConnector.regexp.queue-delete-command.job-not-found}"/>
+        <property name="jobSubmittedExtractJobIdRegexp" value="${rSGEConnector.regexp.queue-submit-command.extract-job-id}"/>
+        <property name="jobStatusRegexp" value="${rSGEConnector.regexp.queue-status-command.extract-info}"/>
+        <property name="jobAccountingRegexp" value="${rSGEConnector.regexp.queue-accounting-command.extract-info}"/>
+        <property name="jobDeletionRegexp" value="${rSGEConnector.regexp.queue-delete-command.extract-info}"/>
+    </bean>
+
+    <!-- SGE Output Parser -->
+    <bean id="rSGEOutputParser" class="com.mango.mif.rsgeconnector.internal.SGEOutputParser">
+        <property name="searcher" ref="rSGEOutputSearcher"/>
+    </bean>
+
+    <!-- SGE Exec -->
+    <bean id="rSGEExec" class="com.mango.mif.rsgeconnector.internal.SGEExec" scope="prototype">
+        <property name="pollingRate" value="${rSGEConnector.pollingRate}"/>
+        <property name="port" value="${rSGEConnector.port}"/>
+        <property name="sgeOutputParser" ref="rSGEOutputParser"/>
+    </bean>
+
+    <!-- Mock Job Runner -->
+    <bean id="rSGEDriver" class="com.mango.mif.connector.runner.impl.SCXMLDriverImpl" scope="prototype">
+        <property name="stateHandlersExecutor" ref="rSGEStateHandlersTaskExecutor"/>
+    </bean>
+
+    <!-- Job Runner Factory -->
+    <bean id="rSGEJobRunnerFactory" class="com.mango.mif.rsgeconnector.runner.impl.RSGEJobRunnerFactory">
+        <lookup-method name="createJobRunner" bean="rSGEJobRunner"/>
+        <lookup-method name="createDriver" bean="rSGEDriver"/>
+        <lookup-method name="getStateHandlers" bean="rSGEStateHandlers"/>
+    </bean>
+
+    <!-- Task Executor that is used by Job Runner to invoke status handlers -->
+    <bean id="rSGEStateHandlersTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" scope="prototype">
+          <property name="corePoolSize" value="${rSGEConnector.JobRunnerStateHandlersTaskExecutor.corePoolSize}" />
+          <property name="maxPoolSize" value="${rSGEConnector.JobRunnerStateHandlersTaskExecutor.maxPoolSize}" />
+          <property name="queueCapacity" value="${rSGEConnector.JobRunnerStateHandlersTaskExecutor.queueCapacity}" />
+    </bean>
+</beans>

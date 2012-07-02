@@ -1,0 +1,1 @@
+PING -n 10 127.0.0.1 > run-result.txt

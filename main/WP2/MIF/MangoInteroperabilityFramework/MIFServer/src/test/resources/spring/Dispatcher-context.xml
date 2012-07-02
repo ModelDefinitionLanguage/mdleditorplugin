@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<import resource="test-hibernate-context.xml"/>
+
+	<jms:listener-container container-type="default"
+		connection-factory="jmsFactory" acknowledge="auto" >
+		<jms:listener destination="R.JOB.REQUEST" ref="rDispatcher"
+			method="onMessage" />
+		<jms:listener destination="R.JOB.RESULT" ref="jobRunnerResultListner"
+			method="onMessage" />
+		<jms:listener destination="R.JOB.RESPONSE" ref="mockRExecutionIntegTest"
+			method="onMessage" />
+	</jms:listener-container>
+
+	
+	<bean id="dispatcher" class="com.mango.mif.connector.dispatcher.impl.Dispatcher">
+		<property name="jobRunnerFactory" ref="mockRJobRunnerFactory"/>
+		<property name="taskExecutor" ref="jobRunnersTaskExecutor"/>
+		<property name="jmsTemplate" ref="jmsTemplate"/>
+		<property name="workingDirectory" ref="dispatcherWorkingDirectory"/>
+		<property name="jobRepository" ref="jobRepository"/>	
+		<property name="destination" value="R.JOB.RESPONSE"></property>
+	</bean>
+	
+	<bean name="dispatcherWorkingDirectory" class="com.mango.mif.utils.ExecutionHelper" factory-method="createTmpDirectory"/>
+	
+	<bean id="rDispatcher" class="com.mango.mif.rconnector.dispatcher.impl.RDispatcher" parent="dispatcher">
+
+	</bean>
+	
+	<bean id="jobRunnerResultListner" class="com.mango.mif.connector.dispatcher.impl.JobRunnerResultListener">
+		<property name="dispatcher" ref="rDispatcher"/>
+	</bean>
+	
+	<bean id="mockRExecutionIntegTest" class="com.mango.mif.rconnector.MockRExecutionIntegrationTest">
+	</bean>
+	
+    <!-- Task Executor that is used to invoke job runners -->
+    <bean id="jobRunnersTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+  		<property name="corePoolSize" value="1" />
+  		<property name="maxPoolSize" value="5" />
+  		<property name="queueCapacity" value="25" />
+	</bean>
+	
+	<bean id="jobRepository" class="com.mango.mif.connector.dispatcher.dao.JobRepository">
+
+	</bean>
+	
+</beans>
