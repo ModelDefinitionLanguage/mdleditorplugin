@@ -8,12 +8,6 @@
     <version>0.0.13-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <parent>
-        <groupId>com.mango.build</groupId>
-        <artifactId>mango-parent-pom</artifactId>
-        <version>1.0</version>
-    </parent>
-
     <url>http://www.mango-solutions.com</url>
     <name>MangoInteroperabilityFramework</name>
 
