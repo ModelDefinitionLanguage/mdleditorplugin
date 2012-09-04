@@ -1,0 +1,114 @@
+%------------------------------------------------------------------------------
+%Description       : DDMoRe WP7.2.1 First Technical Specification for the Model
+%                                   Repository Infrastructure 
+%Author            : Mihai Glonț <mglont@ebi.ac.uk>
+%Organization      : EMBL-EBI
+%                    Wellcome Trust Genome Campus
+%                    Hinxton
+%                    Cambridge
+%                    United Kingdom
+%------------------------------------------------------------------------------
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{array}
+\usepackage[romanian,english]{babel}
+%% For Romanian characters that have a comma below them
+\usepackage{combelow}
+%% For timestamps
+\usepackage{datetime}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+%% Custom headers/footers
+\usepackage{fancyhdr}
+%% "Clickable" entries. Load before Glossaries
+\usepackage[allcolors=blue, colorlinks]{hyperref}
+\usepackage[nonumberlist,toc]{glossaries}
+\usepackage{graphicx}
+%% enable Unicode support
+\usepackage[utf8]{inputenc}
+%% Landscape layout
+\usepackage{lscape}
+%% Don't use the default ComputerModern font
+%\usepackage{mathptmx}
+%% Better typography
+\usepackage[protrusion=true,expansion=true]{microtype}
+\usepackage{paralist}
+\usepackage[parfill]{parskip}
+%% Rotate floats and captions when in landscape layout
+\usepackage{rotating}
+%% variable width columns
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{xspace}
+
+\setlength{\headheight}{25pt}
+\pagestyle{fancy}
+\fancyhead[L]{\textsf{Draft version 0.1 \ddmmyyyydate{\today} \currenttime}}
+\fancyhead[R]{\includegraphics[scale=0.5]{img/ddmore_logo}}
+%% Page numbering at center of footer
+\fancyfoot[C]{\thepage}
+
+%% Display time in HH:MM format
+\settimeformat{xxivtime}
+
+\DeclareGraphicsExtensions{.pdf,.png}
+%% Remove header underlines
+\renewcommand{\headrulewidth}{0pt}
+%% Remove footer underlines
+\renewcommand{\footrulewidth}{0pt}
+
+%% Adjust section heading spacing
+\titlespacing\subsubsection{-10pt}{*4}{*0.25}
+
+%% Add glossary entries
+\input{first-technical-specification.glx}
+
+%% Change the style of the glossary terms
+\renewcommand{\glsnamefont}[1]{\textit{#1}}
+
+\newcommand{\ddmore}{DDMoRe\xspace}
+
+\newcommand{\idea}[1]{\fbox{\parbox{\linewidth}{\emph{#1}}}}
+\makeglossaries
+
+\begin{document}
+\input{title}
+\section*{Document Revision History}
+\begin{tabularx}{\linewidth}{| c c X |}\hline
+\textit{Date} & \textit{Author} & \textit{Comments} \\ \hline
+1 August & Mihai Glon\cb{t} & First draft \\ \hline
+\end{tabularx}
+
+\section*{Copyright Notice}
+Copies of this document may be distributed to any person within the Drug Disease Model Resources(\ddmore) project either in print or electronically, provided that they contain this Copyright Notice. 
+
+\input{abstract}
+
+\section*{Note on Requirement Levels}
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119\cite{RFC2119}.
+
+\section*{Convention}
+Note that, for clarity, throughout this document the term \emph{Model Repository} is preferred over \emph{Model Library} and is used to denote the technical infrastructure required to store model descriptions along with code, data, algorithms, metadata, assumptions, Bayesian priors and links to references.
+\clearpage
+\setcounter{page}{1}
+\tableofcontents
+\listoffigures
+\clearpage
+
+\printglossaries
+\clearpage
+
+%% Each file contains a separate section to aid collaboration.
+\input{introduction}
+
+\input{requirementsSurvey}
+
+\input{proposedDesign}
+
+%\input{appendices}
+\clearpage
+%% Display the full name of authors and sort by author
+\bibliographystyle{plain} 
+\bibliography{first-technical-specification}
+\end{document}

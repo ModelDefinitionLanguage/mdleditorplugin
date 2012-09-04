@@ -1,0 +1,16 @@
+*.aux
+*.bak
+*.bbl
+*.blg
+*.glg
+*.glo
+*.gls
+*.ist
+*.lof
+*.log
+*.lot
+*.out
+*.pdf
+*.toc
+**~
+**.autosave

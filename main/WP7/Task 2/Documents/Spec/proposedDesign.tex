@@ -1,0 +1,52 @@
+%------------------------------------------------------------------------------
+%Description       : DDMoRe WP7.2.1 First Technical Specification for the Model
+%                                   Repository Infrastructure - Proposed Design 
+%Author            : Mihai Glonț <mglont@ebi.ac.uk>
+%Organization      : EMBL-EBI
+%                    Wellcome Trust Genome Campus
+%                    Hinxton
+%                    Cambridge
+%                    United Kingdom
+%------------------------------------------------------------------------------
+\section{Proposed Design}
+\label{proposedDesign}
+\idea{Add general description of the topics covered in this section.}
+
+\subsection{Stakeholders}
+\label{stakeholders}
+This section classifies the users of the \ddmore Model Repository into categories. With the exception of Administrators, whose permissions are granted at global level, over the entire instance of the Repository, all other roles that require authentication are defined at the level of a specific revision. This means that the owner of one model can also be the editor of a revision for another model. 
+
+%\idea{Description of the types of users that will use the Repository.}
+
+\subsection{Use Cases}
+\label{useCases}
+The aim of this section is to describe how each of the aforementioned stakeholders interact with the system. Each such interaction is called a \emph{use case}, while the user performing it is known as an \emph{actor}. The use cases listed in Figure~\ref{fig:useCases} only consider the main actors that are involved, hence Administrators are not mentioned in any model-related use cases, in spite of the fact that they do have the authority required to perform any action. 
+
+\begin{figure}[htb]
+\centering
+\includegraphics[scale=0.33]{img/UseCases}
+\caption{Diagrammatic representation of the system's scope.}
+\label{fig:useCases}
+\end{figure}
+
+\subsection{Proposed Work flows}
+\label{workFlows}
+\idea{UML Activity and Sequence diagrams should go in the appendix, should there be many of them. This section should only discuss them.} 
+
+\subsection{Software Infrastructure}
+\label{softwareInfrastructure}
+\idea{Add UML Deployment diagram showing the link between a DB server, a Web server (possibly a servlet container behind an HTTP server) and a folder under version control.}
+
+\subsection{Mock-ups}
+\label{mockUps}
+\idea{General UXD comments behind the look and feel of the pages. Actual mock-ups should be in the appendix. Landscape page format might be required for this part.}
+
+\input{webServices}
+
+\subsection{Security Considerations}
+\label{securityConsiderations}
+\idea{Exclude data centre, hardware and network security aspects from the scope of this document. Recommend running the HTTP server and the servlet container as different users with limited privileges. Beware that the user running the servlet container needs write access to the folder storing models. Discuss the need to protect the metadata directory within the folder where the models are stored (e.g. .git, .hg, .svn), as access to them outside the designated protocol - i.e. the web interface - should be prohibited.}
+
+\subsection{Licence}
+\label{licence}
+The code for the \ddmore Model Repository will be hosted on SourceForge and released under a GPL-compatible licence. This licence does not apply to the models stored in either the public Repository or any private instance of it. 

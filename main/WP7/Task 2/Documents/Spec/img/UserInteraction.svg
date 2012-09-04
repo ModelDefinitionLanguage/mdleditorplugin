@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="39cm" height="25cm" viewBox="-1 -3491 768 484" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <ellipse style="fill: #ffffff" cx="409.489" cy="-3098.63" rx="6" ry="6"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="409.489" cy="-3098.63" rx="6" ry="6"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="385.489" y1="-3086.63" x2="433.489" y2="-3086.63"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="409.489" y1="-3092.63" x2="409.489" y2="-3062.63"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="409.489" y1="-3062.63" x2="385.489" y2="-3036.63"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="409.489" y1="-3062.63" x2="433.489" y2="-3036.63"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="409.489" y="-3012.73">
+      <tspan x="409.489" y="-3012.73">DDMoRe User</tspan>
+    </text>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="475.912,-3480 485.912,-3490 765.912,-3490 765.912,-3210 755.912,-3200 475.912,-3200 475.912,-3480 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="475.912,-3480 485.912,-3490 765.912,-3490 765.912,-3210 755.912,-3200 475.912,-3200 475.912,-3480 "/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="475.912" y1="-3480" x2="755.912" y2="-3480"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="755.912" y1="-3480" x2="765.912" y2="-3490"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="755.912" y1="-3480" x2="755.912" y2="-3200"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="485.912" y="-3458.1">
+      <tspan x="485.912" y="-3458.1"></tspan>
+    </text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="485.912" y1="-3455.1" x2="485.912" y2="-3455.1"/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="575.912" y="-3460" width="103.8" height="70"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="575.912" y="-3460" width="103.8" height="70"/>
+    <rect style="fill: #ffffff" x="555.912" y="-3446" width="40" height="14"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="555.912" y="-3446" width="40" height="14"/>
+    <rect style="fill: #ffffff" x="555.912" y="-3418" width="40" height="14"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="555.912" y="-3418" width="40" height="14"/>
+    <text font-size="12.4178" style="fill: #000000;text-anchor:start;font-family:serif;font-style:normal;font-weight:normal" x="603.912" y="-3434.5">
+      <tspan x="603.912" y="-3434.5">DDMoRe</tspan>
+      <tspan x="603.912" y="-3418.98">Model </tspan>
+      <tspan x="603.912" y="-3403.46">Repository</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="536.925" y="-3340" width="182.75" height="110.9"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 4; stroke: #000000" x="536.925" y="-3340" width="182.75" height="110.9"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="628.3" y="-3297.1">
+      <tspan x="628.3" y="-3297.1">DDMoRe Model</tspan>
+      <tspan x="628.3" y="-3281.1">Repository User Interface</tspan>
+    </text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="628.3" y="-3314">&lt;&lt;artifact&gt;&gt;</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x1="579.6" y1="-3294.1" x2="677" y2="-3294.1"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x1="546.925" y1="-3278.1" x2="709.675" y2="-3278.1"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 4; stroke: #000000" x1="536.925" y1="-3267" x2="719.675" y2="-3267"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="546.925" y="-3245.1">
+      <tspan x="546.925" y="-3245.1"></tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="628.3" y1="-3340" x2="627.914" y2="-3379.5"/>
+    <polygon style="fill: #000000" points="632.914,-3379.55 627.817,-3389.5 622.915,-3379.45 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="632.914,-3379.55 627.817,-3389.5 622.915,-3379.45 "/>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="0,-3480 10,-3490 370,-3490 370,-3210 360,-3200 0,-3200 0,-3480 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="0,-3480 10,-3490 370,-3490 370,-3210 360,-3200 0,-3200 0,-3480 "/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="0" y1="-3480" x2="360" y2="-3480"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="360" y1="-3480" x2="370" y2="-3490"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="360" y1="-3480" x2="360" y2="-3200"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="10" y="-3458.1">
+      <tspan x="10" y="-3458.1"></tspan>
+    </text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="10" y1="-3455.1" x2="10" y2="-3455.1"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="529.807" y1="-3218.25" x2="440" y2="-3113.43"/>
+    <polygon style="fill: #000000" points="533.604,-3215 540.217,-3230.4 526.01,-3221.5 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="533.604,-3215 540.217,-3230.4 526.01,-3221.5 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="180" y="-3340">
+    <tspan x="180" y="-3340"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="40" y="-3465.26">
+    <tspan x="40" y="-3465.26">Interoperability Framework</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="220" y="-3324.23" width="109.05" height="94.9"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 4; stroke: #000000" x="220" y="-3324.23" width="109.05" height="94.9"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="274.525" y="-3281.33">
+      <tspan x="274.525" y="-3281.33">MDL Editor</tspan>
+    </text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="274.525" y="-3298.23">&lt;&lt;artifact&gt;&gt;</text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x1="239.525" y1="-3278.33" x2="309.525" y2="-3278.33"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 4; stroke: #000000" x1="220" y1="-3267.23" x2="329.05" y2="-3267.23"/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="230" y="-3245.33">
+      <tspan x="230" y="-3245.33"></tspan>
+    </text>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="274.525" y="-3276.78">
+    <tspan x="274.525" y="-3276.78"></tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="240" y="-3474.42" width="95.8" height="70"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="240" y="-3474.42" width="95.8" height="70"/>
+    <rect style="fill: #ffffff" x="220" y="-3460.42" width="40" height="14"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="220" y="-3460.42" width="40" height="14"/>
+    <rect style="fill: #ffffff" x="220" y="-3432.42" width="40" height="14"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="220" y="-3432.42" width="40" height="14"/>
+    <text font-size="12.4178" style="fill: #000000;text-anchor:start;font-family:serif;font-style:normal;font-weight:normal" x="268" y="-3448.92">
+      <tspan x="268" y="-3448.92">MML API</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="40" y="-3380" width="122.25" height="70"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="-3380" width="122.25" height="70"/>
+    <rect style="fill: #ffffff" x="20" y="-3366" width="40" height="14"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="20" y="-3366" width="40" height="14"/>
+    <rect style="fill: #ffffff" x="20" y="-3338" width="40" height="14"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="20" y="-3338" width="40" height="14"/>
+    <text font-size="12.4178" style="fill: #000000;text-anchor:start;font-family:serif;font-style:normal;font-weight:normal" x="68" y="-3354.5">
+      <tspan x="68" y="-3354.5">TEL Executor</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="285.222" y1="-3216.12" x2="365.459" y2="-3117.01"/>
+    <polygon style="fill: #000000" points="289.108,-3219.27 275.154,-3228.56 281.336,-3212.97 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="289.108,-3219.27 275.154,-3228.56 281.336,-3212.97 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="615.912" y="-3340">
+    <tspan x="615.912" y="-3340"></tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="335.8" y1="-3439.42" x2="545.412" y2="-3439.02"/>
+    <polygon style="fill: #000000" points="545.402,-3434.02 555.412,-3439 545.421,-3444.02 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="545.402,-3434.02 555.412,-3439 545.421,-3444.02 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="101.125,-3380 101.125,-3439.42 229.5,-3439.42 "/>
+    <polygon style="fill: #000000" points="229.5,-3434.42 239.5,-3439.42 229.5,-3444.42 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="229.5,-3434.42 239.5,-3439.42 229.5,-3444.42 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="162.25,-3345 420,-3345 420,-3411 545.412,-3411 "/>
+    <polygon style="fill: #000000" points="545.412,-3406 555.412,-3411 545.412,-3416 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="545.412,-3406 555.412,-3411 545.412,-3416 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="220,-3276.78 101.125,-3276.78 101.125,-3299.5 "/>
+    <polygon style="fill: #000000" points="106.125,-3299.5 101.125,-3309.5 96.125,-3299.5 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="106.125,-3299.5 101.125,-3309.5 96.125,-3299.5 "/>
+  </g>
+</svg>

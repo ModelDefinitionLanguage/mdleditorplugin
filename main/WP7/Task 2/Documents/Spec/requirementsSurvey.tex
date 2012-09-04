@@ -1,0 +1,121 @@
+%------------------------------------------------------------------------------
+%Description       : DDMoRe WP7.2.1 First Technical Specification for the Model
+%                                   Repository Infrastructure - Requirements Survey 
+%Author            : Mihai Glonț <mglont@ebi.ac.uk>
+%Organization      : EMBL-EBI
+%                    Wellcome Trust Genome Campus
+%                    Hinxton
+%                    Cambridge
+%                    United Kingdom
+%------------------------------------------------------------------------------
+\section{Requirements Survey}
+\label{requirementsSurvey}
+This section reviews the needs, goals and constraints of the \ddmore Model Repository. These requirements are divided in two categories: \textit{functional} - that is, relating to what the \gls{system} does, and \textit{non-functional}, describing the quality criteria that will be used to assess the system. The former are presented in Section~\ref{functionalRequirements}, while the latter are the subject of Section~\ref{nonFunctionalRequirements}.
+
+\subsection{Functional Requirements}
+\label{functionalRequirements}
+%% Create a row counter so that we don't have to keep track of the ID of the functional requirement http://tex.stackexchange.com/questions/21243/automatic-table-row-numbers/21244#21244
+%\newcounter{frCounter}
+%\newcommand\frIndex{\stepcounter{frCounter}\arabic{frCounter}}
+
+\begin{enumerate}[1]
+\subsubsection{Model Management}
+\item The system is REQUIRED to store models encoded in MML. 
+
+\item The system MUST allow appropriate users to revise models encoded in MML. 
+
+\item The system MUST allow specific revisions to be deleted by their owners, but no revision SHALL be lost from the Repository. Consequently, users that had access to a model revision before its deletion SHALL continue to do so. The system SHOULD inform the user about the removal and MAY supply a link to a model revision which replaces it, if this information has been specified by the user that performed the deletion. 
+
+\item The system MUST enable the creation of new MML models based on either an existing one, or a template. The system SHALL record for the new model a reference  to the representation from which it derives.
+
+\item The system is REQUIRED to ensure that model representations are faithful to the MML specification either on-demand -- upon request, or autonomously -- whenever the need arises, such as before accepting a new revision for a model. 
+
+\item Functionality equivalent to a software version control system is REQUIRED. All changes to the MML MUST be preserved and be accessible. In particular, the system SHALL ensure that concurrent modifications of models are dealt with appropriately.
+
+\item Programmatic access to and manipulation of models within the Repository MUST be provided to other software systems including, but not limited to those within \ddmore. 
+
+\item Users MAY be able to inspect differences between different versions of the same model.
+
+\item The system MAY enable MML model representations contained within it to be developed via an integrated text editor.
+
+\subsubsection{Model Browsing, Searching and Retrieving}
+\item The system MUST be able to search the latest revision of model descriptions based on a textual term such as name, author, date of creation, date of modification, or any other textual field in MML. The results SHOULD only include models to which the user has access to.
+
+\item The system MUST allow a selection of search results, bundled as an archive, to be downloaded.
+
+\item Models MUST be displayed in an organised and user-friendly manner.
+
+\item Users SHALL be able to retrieve and download any revision of any model they can access.
+
+\item Model annotation data SHOULD be included in the model search.
+
+\item The system SHOULD be able to search for models based on complex queries, with ranked results.
+
+\subsubsection{Authentication and Authorisation}
+\item The system MUST authenticate users and ensure that they can only perform the role assigned to them for a given model (cf. section~\ref{stakeholders}).
+
+\item In order to allow the creation of an audit trail, each revision MUST be stored with metadata such as the identity of the user performing the action and a timestamp. The granularity of the audit trail SHOULD be configurable at the level of the instance by an Administrator. Users MAY add a comment describing the changes.
+
+\item A model owner MUST be allowed to grant read and write access to a model using one of the following options:
+\begin{inparaenum}
+\item a single revision 
+\item all existing revisions 
+\item all revisions including the ones in the future. 
+\end{inparaenum} 
+
+\item Once granted, read rights to a revision for a particular user SHALL NOT revoked, the reason being that once a user has gained read access to a model, they might have already collected all relevant information.
+
+\item The system MUST enable users to revoke write access to future revisions of a model for a single user or multiple users simultaneously.
+
+\item The system MUST enable model owners to publish a single version of a model. This action SHALL not impact the status of previous model revisions. 
+
+\item The Owner SHOULD be able to grant write access to a model to a single user, or to a group of users. This would allow collaborators to upload new model revisions. The system is then REQUIRED to automatically grant read and write access to a revision for the collaborator that uploads it.
+
+\item A model owner SHOULD be allowed to transfer the complete ownership of a model to another user of the system.
+
+\item The owner SHOULD be able to control the access rights of other users to read or write the model, according to the roles defined in section~\ref{stakeholders}.
+
+\item The level of visibility of the audit information associated with a published model SHOULD be configurable at the level of the instance by an Administrator.
+
+\item Unauthenticated access to the published models in the system SHOULD be permitted as a configuration option. If this option is disabled, users MUST be authenticated before they can access any models within the system.
+
+\item The system MUST be protected against SQL injection, cross-site scripting as well as cross-site request forgery attacks. 
+
+\subsubsection{Technology}
+\item The system SHALL store models represented in MML format.
+
+\item The server side of the system is REQUIRED to work on a Linux platform with Kernel version~$\ge 2.6$. 
+
+\item The client side SHALL work with the following operating systems: Mac OS X (All platforms down to Leopard, Version 10.5.x), Windows (All platforms down to Windows XP), Linux (Kernel version~$\ge 2.6$).
+
+\item The client side MUST work with the following web browsers: Safari Version 5.x and above, Internet Explorer 8 and above, Firefox Version 6.x and above. The front end MAY work in other browsers, but full compliance is only required for the internet browsers listed above.
+
+\item An established software version control system such as Subversion, Mercurial or Git MAY be used by the system internally, however, it MUST NOT be exposed to users directly.
+
+%% user management requirements are missing from the original document
+\subsubsection{ User Management}
+\item An administrator MUST be able to manage accounts. This covers creation, suspension, deletion, blocking or unblocking.
+
+\item The system MUST allow an authenticated user or administrator to update certain details of an account including but not limited to password, or real name of the user. Due care MUST be taken to ensure that the user confirms their identity before editing this information.
+\end{enumerate}
+
+\subsection{Non-functional Requirements}
+\label{nonFunctionalRequirements}
+\begin{enumerate}[1]
+\setcounter{enumi}{50}
+\item The system MUST be responsive, completing 80\% of requests in under 10 seconds and 95\% of requests in under 30 seconds on a computer with 2GB RAM, dual-core processor and 1Mb/s Internet connection.
+
+\item The user interface of the system  SHALL be designed with usability in mind, displaying information in a meaningful and user-friendly manner to its stakeholders, without overloading them.
+
+\item The system MUST NOT crash.
+
+\item The look and feel of the Repository MUST be configurable by means of instance settings.
+
+\item The system SHALL notify users when a request cannot be processed immediately and indicate the progress.
+
+\item The system SHALL be implemented using modern presentation and accessibility standards in order to aid maintainability.
+
+\item The system SHOULD be installable and configurable as a software distribution.
+
+\item The system SHOULD be modular and permit extension.
+\end{enumerate}

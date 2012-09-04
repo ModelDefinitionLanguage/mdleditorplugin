@@ -1,0 +1,59 @@
+\newglossaryentry{system}
+{
+  name={system},
+  description={A group, set, or aggregate of things, natural or artificial, forming a connected or complex whole \cite{oed:system}. In the context of this document, this is typically a software application. In software engineering, a system is characterised by having a set of defined interface through which it interacts with its external environment} 
+}
+
+\newglossaryentry{model}
+{ 
+  name={model},
+  description = {By \textit{model} we mean a mathematical description that is used to simulate a \gls{system} and its associated data, metadata and annotations. In \ddmore{}, such models are typically used in drug development}
+}
+
+\newglossaryentry{published model}
+{
+  name={published model},
+  description = {Models which have been released and are available publicly} 
+}
+
+\newglossaryentry{unpublished model}
+{
+  name={unpublished model},
+  description = {Models which are under development and are not publicly-available} 
+}
+
+\newglossaryentry{actor}
+{ 
+  name=actor,
+  description = {In the context of software requirements analysis this is the role adopted by a person or system when interacting with a software system}
+}
+
+\newglossaryentry{process}
+{
+  name=process,
+  description = {A continuous and regular action or succession of actions occurring or performed in a definite manner, and having a particular result or outcome.\cite{oed:process}} 
+}
+
+\newglossaryentry{feature}
+{
+  name=feature,
+  description = {A description of some functionality that will be part of the implemented system}
+}
+
+\newglossaryentry{usecase}
+{
+  name={use case},
+  description = {A set of scenarios describing how the System will respond its environments; typically user interaction or interactions with other software systems} 
+}
+
+\newglossaryentry{subsystem}
+{
+  name=subsystem,
+  description = {A component of a larger system. A susbsystem is characterised by having a defined interface through which it interacts with the larger System and its external environment generally}
+}
+
+\newglossaryentry{MML}
+{
+  name=MML,
+  description = {Is the acronym used within \ddmore{} for the Modelling Markup Language (MML). This is the data representation and associated standard specification that enables the exchange of models between software applications within \ddmore{}. The MML aims to ensure fidelity between applications writing and reading MML. The MML is to be specified in detail and may actually consist of a family of related model exchange standards (e.g.\, SBML~\cite{sbml}, CellML~\cite{cellml} or SedML~\cite{sedml}) and \ddmore{} specific standard} 
+}
