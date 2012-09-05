@@ -21,11 +21,11 @@
             <param name = "cmdArgument" value = "${mainTexFile}"/>
         </antcall>
         <antcall target = "run">
-            <param name = "cmd" value = "pdflatex"/>
+            <param name = "cmd" value = "makeglossaries"/>
             <param name = "cmdArgument" value = "${mainTexFile}"/>
         </antcall>
         <antcall target = "run">
-            <param name = "cmd" value = "bibtex"/>
+            <param name = "cmd" value = "pdflatex"/>
             <param name = "cmdArgument" value = "${mainTexFile}"/>
         </antcall>
         <antcall target = "run">
@@ -37,8 +37,16 @@
             <param name = "cmdArgument" value = "${mainTexFile}"/>
         </antcall>
         <antcall target = "run">
+            <param name = "cmd" value = "bibtex"/>
+            <param name = "cmdArgument" value = "${mainTexFile}"/>
+        </antcall>
+        <antcall target = "run">
             <param name = "cmd" value = "pdflatex"/>
             <param name = "cmdArgument" value = "${mainTexFile}"/>
+        </antcall>
+        <antcall target = "run">
+        <param name = "cmd" value = "pdflatex"/>
+        <param name = "cmdArgument" value = "${mainTexFile}"/>
         </antcall>
     </target>
 

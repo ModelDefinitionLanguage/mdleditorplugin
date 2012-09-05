@@ -22,9 +22,11 @@ the specification.
 
 Alternatively, one can run the following sequence of commands in the root folder:
     pdflatex first-technical-specification
+    makeglossaries first-technical-specification
+    pdflatex first-technical-specification
+    makeglossaries first-technical-specification
     pdflatex first-technical-specification
     bibtex first-technical-specification
-    makeglossaries first-technical-specification
     pdflatex first-technical-specification
     pdflatex first-technical-specification
 
