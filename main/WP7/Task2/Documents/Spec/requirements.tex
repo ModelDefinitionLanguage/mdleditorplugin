@@ -1,47 +1,50 @@
 %------------------------------------------------------------------------------
 %Description       : DDMoRe WP7.2.1 First Technical Specification for the Model
 %                                   Repository Infrastructure - Requirements Survey 
-%Author            : Mihai Glonț <mglont@ebi.ac.uk>
+%Authors           : Mihai Glonț <mglont@ebi.ac.uk>
+%                    Camille Laibe <laibe@ebi.ac.uk>
 %Organization      : EMBL-EBI
 %                    Wellcome Trust Genome Campus
 %                    Hinxton
 %                    Cambridge
 %                    United Kingdom
 %------------------------------------------------------------------------------
-\section{Requirements Survey}
+\section{Requirements}
 \label{requirementsSurvey}
-This section reviews the needs, goals and constraints of the \ddmore Model Repository. These requirements are divided in two categories: \textit{functional} - that is, relating to what the \gls{system} does, and \textit{non-functional}, describing the quality criteria that will be used to assess the system. The former are presented in Section~\ref{functionalRequirements}, while the latter are the subject of Section~\ref{nonFunctionalRequirements}.
+This section presents the needs, goals and constraints of the \ddmore Model Repository. These requirements are divided in two categories: \textit{functional} - that is, relating to what the \gls{system} does (which features are provided), and \textit{non-functional}, describing the quality criteria that will be used to assess the system. The former are presented in Section~\ref{functionalRequirements}, while the latter are the subject of Section~\ref{nonFunctionalRequirements}.
 
-\subsection{Functional Requirements}
+\subsection{Functional requirements}
 \label{functionalRequirements}
 %% Create a row counter so that we don't have to keep track of the ID of the functional requirement http://tex.stackexchange.com/questions/21243/automatic-table-row-numbers/21244#21244
 %\newcounter{frCounter}
 %\newcommand\frIndex{\stepcounter{frCounter}\arabic{frCounter}}
 
 \begin{enumerate}[1]
-\subsubsection{Model Management}
-\item The system is REQUIRED to store models encoded in MML. 
+\subsubsection{Model management}
+\item The system is REQUIRED to store models encoded in MML.
 
-\item The system MUST allow appropriate users to revise models encoded in MML. 
+\item The system MUST allow appropriate users to store updated versions of models encoded in MML.
 
-\item The system MUST allow specific revisions to be deleted by their owners, but no revision SHALL be lost from the Repository. Consequently, users that had access to a model revision before its deletion SHALL continue to do so. The system SHOULD inform the user about the removal and MAY supply a link to a model revision which replaces it, if this information has been specified by the user that performed the deletion. 
+\item The system MAY allow specific revisions to be deleted by their owners, but no revision SHALL be lost from the Repository. In this case, users that had access to a model revision before its deletion SHALL continue to do so. The system SHOULD inform the user about the removal and MAY supply a link to a model revision which replaces it, if this information has been specified by the user that performed the deletion. 
 
 \item The system MUST enable the creation of new MML models based on either an existing one, or a template. The system SHALL record for the new model a reference  to the representation from which it derives.
 
-\item The system is REQUIRED to ensure that model representations are faithful to the MML specification either on-demand -- upon request, or autonomously -- whenever the need arises, such as before accepting a new revision for a model. 
+\item The system is REQUIRED to check that model representations are faithful to the MML specification either on-demand -- upon request, or autonomously -- whenever the need arises, such as before accepting a new revision for a model. 
 
-\item Functionality equivalent to a software version control system is REQUIRED. All changes to the MML MUST be preserved and be accessible. In particular, the system SHALL ensure that concurrent modifications of models are dealt with appropriately.
+\item All versions of a given model MUST be preserved and be accessible.
+
+\item The system SHALL ensure that concurrent modifications of models are dealt with appropriately.
 
 \item Programmatic access to and manipulation of models within the Repository MUST be provided to other software systems including, but not limited to those within \ddmore. 
 
 \item Users MAY be able to inspect differences between different versions of the same model.
 
-\item The system MAY enable MML model representations contained within it to be developed via an integrated text editor.
+\item The system MAY enable models to be modified via an integrated editor.
 
-\subsubsection{Model Browsing, Searching and Retrieving}
+\subsubsection{Model browsing, searching and retrieving}
 \item The system MUST be able to search the latest revision of model descriptions based on a textual term such as name, author, date of creation, date of modification, or any other textual field in MML. The results SHOULD only include models to which the user has access to.
 
-\item The system MUST allow a selection of search results, bundled as an archive, to be downloaded.
+\item The system MAY allow a selection of search results, bundled as an archive, to be downloaded.
 
 \item Models MUST be displayed in an organised and user-friendly manner.
 
@@ -51,7 +54,7 @@ This section reviews the needs, goals and constraints of the \ddmore Model Repos
 
 \item The system SHOULD be able to search for models based on complex queries, with ranked results.
 
-\subsubsection{Authentication and Authorisation}
+\subsubsection{Authentication and authorisation}
 \item The system MUST authenticate users and ensure that they can only perform the role assigned to them for a given model (cf. section~\ref{stakeholders}).
 
 \item In order to allow the creation of an audit trail, each revision MUST be stored with metadata such as the identity of the user performing the action and a timestamp. The granularity of the audit trail SHOULD be configurable at the level of the instance by an Administrator. Users MAY add a comment describing the changes.
@@ -93,13 +96,13 @@ This section reviews the needs, goals and constraints of the \ddmore Model Repos
 \item An established software version control system such as Subversion, Mercurial or Git MAY be used by the system internally, however, it MUST NOT be exposed to users directly.
 
 %% user management requirements are missing from the original document
-\subsubsection{ User Management}
+\subsubsection{User management}
 \item An administrator MUST be able to manage accounts. This covers creation, suspension, deletion, blocking or unblocking.
 
 \item The system MUST allow an authenticated user or administrator to update certain details of an account including but not limited to password, or real name of the user. Due care MUST be taken to ensure that the user confirms their identity before editing this information.
 \end{enumerate}
 
-\subsection{Non-functional Requirements}
+\subsection{Non-functional requirements}
 \label{nonFunctionalRequirements}
 \begin{enumerate}[1]
 \setcounter{enumi}{50}

@@ -1,7 +1,8 @@
 %------------------------------------------------------------------------------
 %Description       : DDMoRe WP7.2.1 First Technical Specification for the Model
-%                                   Repository Infrastructure 
-%Author            : Mihai Glonț <mglont@ebi.ac.uk>
+%                                   Repository Infrastructure
+%Authors           : Mihai Glonț <mglont@ebi.ac.uk>
+%                    Camille Laibe <laibe@ebi.ac.uk>
 %Organization      : EMBL-EBI
 %                    Wellcome Trust Genome Campus
 %                    Hinxton
@@ -44,7 +45,7 @@
 
 \setlength{\headheight}{25pt}
 \pagestyle{fancy}
-\fancyhead[L]{\textsf{Draft version 0.1 \ddmmyyyydate{\today} \currenttime}}
+\fancyhead[L]{\textsf{Draft version 0.2 \ddmmyyyydate{\today} \currenttime}}
 \fancyhead[R]{\includegraphics[scale=0.5]{img/ddmore_logo}}
 %% Page numbering at center of footer
 \fancyfoot[C]{\thepage}
@@ -74,22 +75,26 @@
 
 \begin{document}
 \input{title}
-\section*{Document Revision History}
+
+\section*{Document revision history}
 \begin{tabularx}{\linewidth}{| c c X |}\hline
 \textit{Date} & \textit{Author} & \textit{Comments} \\ \hline
 1 August & Mihai Glon\cb{t} & First draft \\ \hline
+5 September & Camille Laibe & first set of corrections and additions \\ \hline
 \end{tabularx}
 
-\section*{Copyright Notice}
-Copies of this document may be distributed to any person within the Drug Disease Model Resources(\ddmore) project either in print or electronically, provided that they contain this Copyright Notice. 
 
+\section*{Terms of use}
+This document is distributed under the Creative Commons Attribution-ShareAlike (CC BY-SA) License (http://creativecommons.org/licenses/by-sa/3.0/).
+
+\textbf{This might need to be checked with the ddmore policies.}
 \input{abstract}
 
-\section*{Note on Requirement Levels}
+
+\section*{Conventions}
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119\cite{RFC2119}.
 
-\section*{Convention}
-Note that, for clarity, throughout this document the term \emph{Model Repository} is preferred over \emph{Model Library} and is used to denote the technical infrastructure required to store model descriptions along with code, data, algorithms, metadata, assumptions, Bayesian priors and links to references.
+Throughout this document the term \emph{Model Repository} has been preferred over \emph{Model Library} (used in the Description of Work) for better clarity and to avoid misunderstandings. It denotes the technical infrastructure required to store model descriptions, along with data, metadata and annotations.
 \clearpage
 \setcounter{page}{1}
 \tableofcontents
@@ -102,13 +107,13 @@ Note that, for clarity, throughout this document the term \emph{Model Repository
 %% Each file contains a separate section to aid collaboration.
 \input{introduction}
 
-\input{requirementsSurvey}
+\input{requirements}
 
-\input{proposedDesign}
+\input{design}
 
 %\input{appendices}
 \clearpage
 %% Display the full name of authors and sort by author
-\bibliographystyle{plain} 
+\bibliographystyle{plain}
 \bibliography{technical-specification}
 \end{document}
