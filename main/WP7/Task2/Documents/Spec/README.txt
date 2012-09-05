@@ -8,10 +8,10 @@ The project is organised as follows:
     build.xml                           - Apache Ant script that automates the build process
     ant.out.log                         - LaTeX log of the last build
     ant.err.log                         - Ant error log of the last build
-    first-technical-specification.glx   - Glossary entries
-    first-technical-specification.bib   - Bibliography
+    technical-specification.glx         - Glossary entries
+    technical-specification.bib         - Bibliography
     img/                                - images/diagrams folder
-    first-technical-specification.tex   - main source file
+    technical-specification.tex         - main source file
     *.tex                               - Relevant section of the document
 
 ===== Compiling the Document
