@@ -7,26 +7,6 @@
 	month          = {Mar}
 }
 
-@ARTICLE{LeNovere2006,
-	author  = "Le Nov{\`e}re, N and B. Bornstein and A. Broicher and M. Courtot and M. Donizelli and H. Dharuri and L. Li and H. Sauro and M. Schilstra and B. Shapiro and J. L. Snoep and M. Hucka",
-	title   = "{BioModels Database}: a free, centralized database of curated, published, quantitative kinetic models of biochemical and cellular systems",
-	journal = "Nucleic Acids Research",
-	year    = 2006,
-	month   = "January",
-	volume  = 34,
-	pages   = "D689--D691",
-	number  = "Database issue",
-	pmid    = 16381960,
-	doi     = "10.1093/nar/gkj092",
-}
-@ARTICLE{Li2009,
-	author  = "Li, C and Courtot, M and Le Nov\`{e}re, N and Laibe, C",
-	title   = "{BioModels.net Web Services, a free and integrated toolkit for computational modelling software}",
-	journal = "Briefings in Bioinformatics",
-	year    = 2009,
-	month   = "November",
-	pmid    = 19939940,
-}
 @ARTICLE{Li2010,
 	author  = "Li, Chen and Donizelli, Marco and Rodriguez, Nicolas and Dharuri, Harish and Endler, Lukas and Chelliah, Vijayalakshmi and Li, Lu and He, Enuo and Henry, Arnaud and Stefan, Melanie I. and Snoep, Jacky L. and Hucka, Michael and Le Nov{\`e}re, Nicolas and Laibe, Camille",
 	title   = "{BioModels Database: An enhanced, curated and annotated resource for published quantitative kinetic models.}",
@@ -37,6 +17,7 @@
 	pages   = "92",
 	pmid    = 20587024
 }
+
 @TECHREPORT{ddmore:dow,
 	author 		= "Lutz Harnisch",
 	title 		= "Drug Disease Model Resources: Description of Work",
@@ -44,15 +25,61 @@
 	year 		= 2010,
 	month 		= "November",
 }
+
 @MISC{oed:process,
 	title			= "process, n.",
 	author			= "Oxford English Dictionary",
 	institution		= "Oxford University Press",
 	howpublished	= "\url{http://www.oed.com/view/Entry/151794}"
 }
+
 @MISC{oed:system,
 	author			= "Oxford English Dictionary",
 	title			= "system, n.",
 	institution		= "Oxford University Press",
 	howpublished	= "\url{http://www.oed.com/view/Entry/196665}",
+}
+
+@INCOLLECTION{sedml,
+   author = {Köhn, Dagmar and Le Novère, Nicolas},
+   affiliation = {University of Rostock Research Training School dIEM oSiRiS Germany},
+   title = {SED-ML – An XML Format for the Implementation of the MIASE Guidelines},
+   booktitle = {Computational Methods in Systems Biology},
+   series = {Lecture Notes in Computer Science},
+   editor = {Heiner, Monika and Uhrmacher, Adelinde},
+   publisher = {Springer Berlin / Heidelberg},
+   isbn = {978-3-540-88561-0},
+   keyword = {Computer Science},
+   pages = {176-190},
+   volume = {5307},
+   url = {http://dx.doi.org/10.1007/978-3-540-88562-7\_15},
+   year = {2008}
+}
+
+@ARTICLE{sbml,
+	author = {Hucka, M. and Finney, A. and Sauro, H. M. and Bolouri, H. and Doyle, J. C. and Kitano, H. and and the rest of the SBML Forum: and Arkin, A. P. and Bornstein, B. J. and Bray, D. and Cornish-Bowden, A. and Cuellar, A. A. and Dronov, S. and Gilles, E. D. and Ginkel, M. and Gor, V. and Goryanin, I. I. and Hedley, W. J. and Hodgman, T. C. and Hofmeyr, J.-H. and Hunter, P. J. and Juty, N. S. and Kasberger, J. L. and Kremling, A. and Kummer, U. and Le Novère, N. and Loew, L. M. and Lucio, D. and Mendes, P. and Minch, E. and Mjolsness, E. D. and Nakayama, Y. and Nelson, M. R. and Nielsen, P. F. and Sakurada, T. and Schaff, J. C. and Shapiro, B. E. and Shimizu, T. S. and Spence, H. D. and Stelling, J. and Takahashi, K. and Tomita, M. and Wagner, J. and Wang, J.}, 
+	title = {The systems biology markup language (SBML): a medium for representation and exchange of biochemical network models}, 
+	volume = {19}, 
+	number = {4}, 
+	pages = {524-531}, 
+	year = {2003}, 
+	doi = {10.1093/bioinformatics/btg015}, 
+	abstract ={Motivation: Molecular biotechnology now makes it possible to build elaborate systems models, but the systems biology community needs information standards if models are to be shared, evaluated and developed cooperatively.Results: We summarize the Systems Biology Markup Language (SBML) Level 1, a free, open, XML-based format for representing biochemical reaction networks.  SBML is a software-independent language for describing models common to research in many areas of computational biology, including cell signaling pathways, metabolic pathways, gene regulation, and others.Availability: The specification of SBML Level 1 is freely available from http://www.sbml.org/Contact: sysbio-team@caltech.edu}, 
+	URL = {http://bioinformatics.oxfordjournals.org/content/19/4/524.abstract}, 
+	eprint = {http://bioinformatics.oxfordjournals.org/content/19/4/524.full.pdf+html}, 
+	journal = {Bioinformatics} 
+}
+
+@ARTICLE{cellml,
+	author = {Cuellar, Autumn A. and Lloyd, Catherine M. and Nielsen, Poul F. and Bullivant, David P. and Nickerson, David P. and Hunter, Peter J.}, 
+	title = {An Overview of CellML 1.1, a Biological Model Description Language}, 
+	volume = {79}, 
+	number = {12}, 
+	pages = {740-747}, 
+	year = {2003}, 
+	doi = {10.1177/0037549703040939}, 
+	abstract ={CellML is an XML-based exchange format developed by the University of Auckland in collaboration with Physiome Sciences, Inc. CellML 1.1 has a component-based architecture allowing a modeller to build complex systems of models that expand and reuse previously published models. CellML Metadata is a format for encoding contextual information for a model. CellML 1.1 can be used in conjunction with CellML Metadata to provide a complete description of the structure and underlying mathematics of biological models. A repository of over 200 electrophysiological,                mechanical, signal transduction, and metabolic pathway models is available at www.cellml.org.}, 
+	URL = {http://sim.sagepub.com/content/79/12/740.abstract}, 
+	eprint = {http://sim.sagepub.com/content/79/12/740.full.pdf+html}, 
+	journal = {SIMULATION} 
 }
