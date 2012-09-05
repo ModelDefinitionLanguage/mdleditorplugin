@@ -10,8 +10,15 @@
 %                    United Kingdom
 %------------------------------------------------------------------------------
 \section{Requirements}
-\label{requirementsSurvey}
+\label{requirements}
 This section presents the needs, goals and constraints of the \ddmore Model Repository. These requirements are divided in two categories: \textit{functional} - that is, relating to what the \gls{system} does (which features are provided), and \textit{non-functional}, describing the quality criteria that will be used to assess the system. The former are presented in Section~\ref{functionalRequirements}, while the latter are the subject of Section~\ref{nonFunctionalRequirements}.
+
+
+
+
+\textbf{TODO: define 'revision', 'published/unpublished model', 'audit trail', 'metadata', 'MML', ... here or before}
+
+
 
 \subsection{Functional requirements}
 \label{functionalRequirements}
@@ -66,17 +73,17 @@ This section presents the needs, goals and constraints of the \ddmore Model Repo
 \item all revisions including the ones in the future. 
 \end{inparaenum} 
 
-\item Once granted, read rights to a revision for a particular user SHALL NOT revoked, the reason being that once a user has gained read access to a model, they might have already collected all relevant information.
+\item Once granted, read rights to a revision for a particular user SHALL NOT be revoked: once users have gained read access to a model, they might have already collected all relevant information.
 
-\item The system MUST enable users to revoke write access to future revisions of a model for a single user or multiple users simultaneously.
+\item The system MUST enable users to revoke write access to future revisions of a model for a single user or group of users simultaneously.
 
 \item The system MUST enable model owners to publish a single version of a model. This action SHALL not impact the status of previous model revisions. 
 
-\item The Owner SHOULD be able to grant write access to a model to a single user, or to a group of users. This would allow collaborators to upload new model revisions. The system is then REQUIRED to automatically grant read and write access to a revision for the collaborator that uploads it.
+\item The Owner SHOULD be able to grant write access to a model to a single user, or to a group of users. This would allow Editors to upload new model revisions. The system is then REQUIRED to automatically grant read and write access to a revision for the Editor who uploaded it.
 
-\item A model owner SHOULD be allowed to transfer the complete ownership of a model to another user of the system.
+\item A model owner SHOULD be allowed to transfer the complete ownership of a model to another existing user.
 
-\item The owner SHOULD be able to control the access rights of other users to read or write the model, according to the roles defined in section~\ref{stakeholders}.
+\item The owner SHOULD be able to control the access rights of other users to read or write the model.
 
 \item The level of visibility of the audit information associated with a published model SHOULD be configurable at the level of the instance by an Administrator.
 
@@ -89,36 +96,38 @@ This section presents the needs, goals and constraints of the \ddmore Model Repo
 
 \item The server side of the system is REQUIRED to work on a Linux platform with Kernel version~$\ge 2.6$. 
 
-\item The client side SHALL work with the following operating systems: Mac OS X (All platforms down to Leopard, Version 10.5.x), Windows (All platforms down to Windows XP), Linux (Kernel version~$\ge 2.6$).
+\item The client side SHALL work with the following operating systems: Mac OS X (Leopard, Version 10.5.x and newer versions), Windows (Windows XP and newer version), GNU-Linux (kernel version~$\ge 2.6$).
 
-\item The client side MUST work with the following web browsers: Safari Version 5.x and above, Internet Explorer 8 and above, Firefox Version 6.x and above. The front end MAY work in other browsers, but full compliance is only required for the internet browsers listed above.
+\item The client side MUST work with the following web browsers: Safari Version 5.x and above, Internet Explorer 8 and above, Firefox Version 10.x and above. The front end MAY work in other browsers.
 
 \item An established software version control system such as Subversion, Mercurial or Git MAY be used by the system internally, however, it MUST NOT be exposed to users directly.
 
 %% user management requirements are missing from the original document
 \subsubsection{User management}
-\item An administrator MUST be able to manage accounts. This covers creation, suspension, deletion, blocking or unblocking.
+\item An administrator MUST be able to manage user accounts. This covers creation, suspension, deletion, blocking or unblocking.
 
-\item The system MUST allow an authenticated user or administrator to update certain details of an account including but not limited to password, or real name of the user. Due care MUST be taken to ensure that the user confirms their identity before editing this information.
+\item The system MUST allow an authenticated user or administrator to update certain details of an account including but not limited to password, name, contact details. Due care MUST be taken to ensure that the user confirms their identity before editing this information.
 \end{enumerate}
 
 \subsection{Non-functional requirements}
 \label{nonFunctionalRequirements}
 \begin{enumerate}[1]
 \setcounter{enumi}{50}
-\item The system MUST be responsive, completing 80\% of requests in under 10 seconds and 95\% of requests in under 30 seconds on a computer with 2GB RAM, dual-core processor and 1Mb/s Internet connection.
+% TODO: should we actually put that?
+%\item The system MUST be responsive, completing 80\% of requests in under 10 seconds and 95\% of requests in under 30 seconds on a computer with 2GB RAM, dual-core processor and 1Mb/s Internet connection.
 
-\item The user interface of the system  SHALL be designed with usability in mind, displaying information in a meaningful and user-friendly manner to its stakeholders, without overloading them.
+\item The user interface of the system SHALL be designed with usability in mind, displaying information in a meaningful and user-friendly manner to its stakeholders, without overloading them.
 
-\item The system MUST NOT crash.
+\item The system MUST provide meaningful user information in case an error happens. If the error is caused by the system (rather than the user), the system MUST log of necessary information in order to allow for a fix to be developed.
 
 \item The look and feel of the Repository MUST be configurable by means of instance settings.
 
-\item The system SHALL notify users when a request cannot be processed immediately and indicate the progress.
+\item The system SHALL notify users when a request cannot be processed immediately, either by indicating the progress or by notifying the user when the process has been completed.
 
 \item The system SHALL be implemented using modern presentation and accessibility standards in order to aid maintainability.
 
 \item The system SHOULD be installable and configurable as a software distribution.
 
-\item The system SHOULD be modular and permit extension.
+\item The system SHOULD be modular and allow extension.
 \end{enumerate}
+
