@@ -10,16 +10,34 @@
   description = {A mathematical description that is used to simulate a \gls{system} and its associated data, metadata and annotations. In \ddmore{}, such models are typically used in drug development}
 }
 
+\newglossaryentry{revision}
+{
+	name = {revision},
+	description = {A snapshot of a model at a given point in time}
+}
+
 \newglossaryentry{published model}
 {
   name = {published model},
-  description = {Model which has been released and is available publicly} 
+  description = {A model which has been released and is available publicly} 
 }
 
 \newglossaryentry{unpublished model}
 {
   name = {unpublished model},
-  description = {Model which is under development and is not publicly-available} 
+  description = {A model which is under development and is not publicly-available} 
+}
+
+\newglossaryentry{audit trail}
+{
+	name = {audit trail},
+	description = {A chronological list of entries describing security-related events which influenced the operation of the Repository. Entries log the action that was performed, along with the user that initiated it and the time of the event}
+}
+
+\newglossaryentry{metadata}
+{
+	name = {metadata},
+	description = {Relevant information coming from third party data resources, the literature or annotations with controlled vocabulary terms, describing the context or the meaning of a resource}
 }
 
 \newglossaryentry{actor}

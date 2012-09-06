@@ -13,13 +13,6 @@
 \label{requirements}
 This section lists the needs, goals and constraints of the \ddmore Model Repository, grouped into two main categories: the former is dedicated to \glspl{functionalRequirement}, while the latter contains \glspl{nonFunctionalRequirement}. 
 
-
-
-
-\textbf{TODO: define 'revision', 'published/unpublished model', 'audit trail', 'metadata', \dots here or before}
-
-
-
 \subsection{Functional requirements}
 \label{functionalRequirements}
 %% Create a row counter so that we don't have to keep track of the ID of the functional requirement http://tex.stackexchange.com/questions/21243/automatic-table-row-numbers/21244#21244
@@ -32,7 +25,7 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 
 \item The system MUST allow appropriate users to store updated versions of models encoded in MML.
 
-\item The system MAY allow specific revisions to be deleted by their owners, but no revision SHALL be lost from the Repository. In this case, users that had access to a model revision before its deletion SHALL continue to do so. The system SHOULD inform the user about the removal and MAY supply a link to a model revision which replaces it, if this information has been specified by the user that performed the deletion. 
+\item The system MAY allow specific \glspl{revision} to be deleted by their owners, but no revision SHALL be lost from the Repository. In this case, users that had access to a model revision before its deletion SHALL continue to do so. The system SHOULD inform the user about the removal and MAY supply a link to a model revision which replaces it, if this information has been specified by the user that performed the deletion. 
 
 \item The system MUST enable the creation of new MML models based on either an existing one, or a template. The system SHALL record for the new model a reference  to the representation from which it derives.
 
@@ -57,14 +50,14 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 
 \item Users SHALL be able to retrieve and download any revision of any model they can access.
 
-\item Model annotation data SHOULD be included in the model search.
+\item Model metadata such as annotations SHOULD be included in the model search.
 
 \item The system SHOULD be able to search for models based on complex queries, with ranked results.
 
 \subsubsection{Authentication and authorisation}
-\item The system MUST authenticate users and ensure that they can only perform the role assigned to them for a given model (cf. section~\ref{stakeholders}).
+\item The system MUST authenticate users and ensure that they can only perform the role assigned to them for a given model (cf. section~\ref{users}).
 
-\item In order to allow the creation of an audit trail, each revision MUST be stored with metadata such as the identity of the user performing the action and a timestamp. The granularity of the audit trail SHOULD be configurable at the level of the instance by an Administrator. Users MAY add a comment describing the changes.
+\item In order to allow the creation of an \gls{audit trail}, each revision MUST be stored with additional information such as the identity of the user performing the action and a timestamp. The granularity of the audit trail SHOULD be configurable at the level of the instance by an Administrator. Users MAY add a comment describing the changes.
 
 \item A model owner MUST be allowed to grant read and write access to a model using one of the following options:
 \begin{inparaenum}
@@ -79,7 +72,7 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 
 \item The system MUST enable model owners to publish a single version of a model. This action SHALL not impact the status of previous model revisions. 
 
-\item The Owner SHOULD be able to grant write access to a model to a single user, or to a group of users. This would allow Editors to upload new model revisions. The system is then REQUIRED to automatically grant read and write access to a revision for the Editor who uploaded it.
+\item The Owner SHOULD be able to grant write access to an unpublished model to a single user, or to a group of users. This would allow Editors to upload new model revisions. The system is then REQUIRED to automatically grant read and write access to a revision for the Editor who uploaded it.
 
 \item A model owner SHOULD be allowed to transfer the complete ownership of a model to another existing user.
 
@@ -130,4 +123,3 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 
 \item The system SHOULD be modular and allow extension.
 \end{enumerate}
-
