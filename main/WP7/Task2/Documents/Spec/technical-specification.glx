@@ -31,7 +31,7 @@
 \newglossaryentry{audit trail}
 {
 	name = {audit trail},
-	description = {A chronological list of entries describing security-related events which influenced the operation of the Repository. Entries log the action that was performed, along with the user that initiated it and the time of the event}
+	description = {A chronological list of entries describing security-related events which influenced the operation of the Repository. Entries contain the action that was performed, along with the user that initiated it and the time of the event}
 }
 
 \newglossaryentry{metadata}

@@ -8,7 +8,19 @@
 %                    Cambridge
 %                    United Kingdom
 %------------------------------------------------------------------------------
-\subsection{Programmatic interaction with the \ddmore Model Repository}
+\section{Programmatic interaction with the \ddmore Model Repository}
+\label{remoteAccess}
+
+\idea{The following API should be exposed: read/write revisions of a model; publish a model; create revisions; submit model; }
+
+\subsection{Web Services}
 \label{webServices}
-\idea{This section is dedicated to programmatic access to and manipulation of models. It should provide a diagrammatic representation of the envisaged architecture along with the considerations behind it. A discussion on the integration with other software systems within \ddmore should also be included.}
+\idea{This section is dedicated to programmatic access to and manipulation of models. It should provide a diagrammatic representation of the envisaged architecture along with the considerations behind it. A discussion on the integration with 
+other software systems within \ddmore should also be included.}
+
+\subsection{Messaging Queues}
+\label{messagingQueues}
+\idea{This section provides the same functionality that is exposed via web services, using a messaging queue. }
+
+\idea{Developers should have freedom of choice over the software stack they use to implement an instance of the Repository, therefore we should use an MQ that has many language bindings such as RabbitMQ.}
 

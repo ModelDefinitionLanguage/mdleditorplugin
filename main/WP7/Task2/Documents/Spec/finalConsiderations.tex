@@ -1,0 +1,13 @@
+\section{Final Considerations} 
+
+\subsection{Software Infrastructure}
+\label{softwareInfrastructure}
+The \ddmore Model Repository stores models under version control on the file system, while the metadata associated with them is maintained in a relational database. Consequently, an instance of the Repository may be deployed along with a database server and a web server communicating over LAN. The models within the Repository should be contained in a centralised location which should be accessible from the web server.
+
+\subsection{Security Considerations}
+\label{securityConsiderations}
+\idea{Exclude data centre, hardware and network security aspects from the scope of this document. Recommend running the HTTP server and the servlet container as different users with limited privileges. Beware that the user running the servlet container needs write access to the folder storing models. Discuss the need to protect the metadata directory within the folder where the models are stored (e.g. .git, .hg, .svn), as access to them outside the designated protocol - i.e. the web interface - should be prohibited.}
+
+\subsection{Licence}
+\label{licence}
+The code for the \ddmore Model Repository will be hosted on SourceForge and released under a GPL-compatible licence. This licence does not apply to the models stored in either the public Repository or any private instance of it. 
