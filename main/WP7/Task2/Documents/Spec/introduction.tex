@@ -11,13 +11,13 @@
 %------------------------------------------------------------------------------
 \section{Introduction}
 \label{introduction}
-This document describes the technical infrastructure required by the \ddmore Model Repository. The guidelines herein apply not only to the public Repository, but also to any private instances of it.
+This document provides a detailed description of the functionality that will be provided by the \ddmore Model Repository. The guidelines herein apply not only to the public Repository, but also to any private instances of it.
 
 \subsection{Scope}
-\label{scope}
-This document reviews the high-level architecture of the Repository in relation to the wider context of the project, outlining along the way design recommendations, flow of control, wire-frame mock-ups as well as potential software dependencies of the Repository.
+This document reviews the characteristics of the Repository in relation to the wider context of the project, outlining along the way envisaged workflows, interactions with both users and third party software, as well as potential software dependencies of the Repository. The intended audience for this specification are the EFPIA and academic partners that wish to use the Repository in an optimal manner, or are merely interested in its capabilities.
 
-The intended audience for this technical specification are the EFPIA and academic partners that are interested in the implementation of an instance of the Repository, as well as stakeholders that wish to interact, at a software level, with the Repository in an optimal manner.
+\subsection{Non-Goals}
+Although this task should deliver a technical specification at this stage according to the Description of Work, it is paramount that the behaviour of the Repository work meets the needs of its end-users. Therefore, this document aims to offer a mental picture of the features that have been incorporated into the design of the Repository, allowing the interested stakeholders to flag up any shortcommings. Implementation-specific details about the inner-workings of the Repository are outside of the scope of this document, but will be discussed in the second technical specification which is due in month 42 of the project. 
 
 \subsection{Context}
 \label{context}
@@ -36,7 +36,7 @@ The main objectives of the Repository are to provide:
   \item various means to access the stored \glspl{model}, making available the information encoded in MML to both users and tools. 
 \end{itemize}
 
-The interactions between users, the Model Repository and other components of the project (such as the interoperability framework) are depicted in Figure~\ref{fig:userInteraction}. As such, one may access the Repository directly -- through the web-based user interface -- or indirectly, via the Modelling Interoperability Framework, that uses the Task Execution Language (TEL) and the software library created in WP2.3 to access and store models in the \ddmore Model Repository.
+The interactions between users, the Model Repository and other components of the project (such as the Interoperability Framework) are depicted in Figure~\ref{fig:userInteraction}. As such, one may access the Repository directly -- through the web-based user interface -- or indirectly, via the Modelling Interoperability Framework, that uses the Task Execution Language (TEL) and the software library created in WP2.3 to access and store models in the \ddmore Model Repository.
 
 \subsection{Type of users}
 \label{users}
@@ -52,7 +52,7 @@ when it is published.
   \item[Administrator] a user who is responsible for the security, management and maintenance of the system.
 \end{description}
 
-\begin{figure}[hb]
+\begin{figure}[htb]
 \centering
 \includegraphics{img/UserInteraction}
 \caption{Interactions between users, the interoperability framework and the Model Repository.}
