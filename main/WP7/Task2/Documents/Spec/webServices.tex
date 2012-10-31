@@ -9,20 +9,54 @@
 %                    United Kingdom
 %------------------------------------------------------------------------------
 \section{Programmatic interaction with the \ddmore Model Repository}
-\label{remoteAccess}
-This section is dedicated to programmatic access to models within the Repository. 
-%It should provide a diagrammatic representation of the envisaged architecture along with the considerations behind it. 
-A discussion on the integration with other software systems within \ddmore should also be included.
+\label{indirectInteraction}
+This section features the envisaged means that third-party software systems will have available to access and publish the content stored within the \ddmore Model Repository.
+
+The \ddmore Model Repository supports collaborative model development by allowing private models to be stored securely, making them accessible only to their creators. This policy of restricted availability must be enforced not only when stakeholders log in and use the Repository directly, but also when they use other software systems that rely on it. Consequently, a tool that wishes to obtain private models for searching or updating purposes, must provide some sort of authentication, so that the instance of the Model Repository knows it is safe to disclose them. 
+
+Software systems interacting with the Repository cannot simply ask users to give away their username and password as that would represent a major security threat. Instead, the \ddmore Model Repository will use version 2 of OAuth (\url{http://oauth.net/}) -- a standardised protocol that enables users to access their content securely over the Web. This is showcased in Section~\ref{remoteAuth}.
+
+Since this document describes the Repository from a high-level perspective, the best way to showcase the interaction with third-party tools is by means of examples. This discussion involves the Work flow manager (WP2.4) and the MDL Editor(WP2.5). The examples below assume that these software systems make full use of the features that the Model Repository makes available for them. The public instance of the Modelling Framework(WP7.1), including the Drupal-powered website and the web-based instance of the framework, is outside the scope of this discussion, as its mandate is limited to published models. 
+
+The \ddmore Model Repository will enable third-party tools to:
+\begin{itemize}
+\item load a version of a given model from an instance of the Repository.
+\item submit an updated version of a model to an instance of the Repository; this includes updates to models, data and metadata. 
+\item publish a model.
+\item search across public and private models from an instance of the Repository.
+\end{itemize}
+
+\begin{techNote}
+This functionality may be provided in two different ways: via a RESTful API providing XML representations of the data, and through the Java Message Service. 
+\end{techNote}
+
+%\begin{itemize}
+%    \item MDL Editor -- load, save models.
+%    \item Prototype/Workflow -- search, retrieve, synchronise(pull any changes from the Repository and also send outstanding changes back), publish models.
+%\end{itemize}
+
+\subsection{Accessing models from other applications}
+\label{remoteAuth}
+Remember Dominic (Section~\ref{userProfiles})? He has just started using BestModels. He was asked to make some improvements to a non-published model on diabetes that has been shared with him. The first goal is to load it into the MDL Editor. He provides the URL of the model version he is after to the Editor on his computer. The MDL Editor attempts to retrieve it, but fails because of lack of permissions. It consequently opens a web browser and accesses a secure authentication area of BestModels. This displays a login page informing Dominic that the MDL Editor wants access to his private resources and advises that by logging in, he approves this request. Once Dominic is authenticated, BestModels knows it is safe for that copy of the MDL Editor to access Dominic's content and makes the diabetes model in question available for download. 
+
+Therefore, in subsequent episodes BestModels will no longer ask Dominic for his username and password when that copy of the MDL Editor interacts with the Repository on his behalf. Note that if Dominic tries to achieve the same thing from a different computer or a different copy of the MDL Editor, he will need to go through the authentication process again. Finally, Dominic can manage the access rights of third party tools by accessing his BestModels account page. 
+
+\begin{techNote}
+The first question to ask is whether the model is private or public? To assert this, the MDL Editor attempts to download the diabetes model without any form of authentication. If it has been published, BestMeds provides access straight away. If this is not the case, the Model Repository returns HTTP status 403. This is the standard response for requests which are valid, but are unsuccessful due to permission issues. 
+
+The MDL Editor must then treat the model as private and go through the OAuth authorisation process which is described next. But first, let us explain a bit of terminology: in OAuth terms, third party tools represent \emph{clients} that wish to interact with the protected data stored by \emph{servers} on behalf of \emph{resource owners}. 
+
+A \emph{client} wishing to use protected resources starts by registering with BestMeds. This establishes a \emph{clientID} and a \emph{clientSecret} which are known to both parties. Then, the process of interacting with protected content entails three steps:
+
+\begin{itemize}
+\item the MDL Editor sends an access token request to the BestMeds OAuth Authentication Server; this could be an HTTPS request containing the registration details described above. Plain HTTP connections cannot be accepted for security reasons.
+\item BestMeds responds by bringing up an authentication page, describing to the user why login is required.
+\item Dominic chooses whether to grant access or not. Should he decline it, BestMeds will issue an error to the MDL Editor. Otherwise, BestMeds will return an \emph{authentication code}. The MDL Editor validates it, and then uses it to interact with Dominic's private content. On this particular occasion, the MDL Editor uses the URL that Dominic has provided and the newly-obtained \emph{authentication code} to form the HTTP request to retrieve the diabetes model.
+\end{itemize}
+\end{techNote}
 
 
-\subsection{Web Services}
-\label{webServices}
-\idea{The following API should be exposed: read/write revisions of a model; publish a model; create revisions; submit model; }
-
-
-\subsection{Messaging Queues}
-\label{messagingQueues}
-\idea{This section provides the same functionality that is exposed via web services, using a messaging queue. }
-
-\idea{Developers should have freedom of choice over the software stack they use to implement an instance of the Repository, therefore we should use an MQ that has many language bindings such as RabbitMQ.}
-
+%\subsection{Web Services}
+%
+%\subsubsection{Collaborative model development}
+%\idea{what would be a good use case of this? maybe having two people introducing changes. simply describe the work flow.}
