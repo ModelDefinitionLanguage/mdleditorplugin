@@ -21,6 +21,7 @@ Since this document describes the Repository from a high-level perspective, the 
 The \ddmore Model Repository will enable third-party tools to:
 \begin{itemize}
 \item load a version of a given model from an instance of the Repository.
+\item retrieve all versions of a model from the Model Repository.
 \item submit an updated version of a model to an instance of the Repository; this includes updates to models, data and metadata. 
 \item publish a model.
 \item search across public and private models from an instance of the Repository.
@@ -55,6 +56,15 @@ A \emph{client} wishing to use protected resources starts by registering with Be
 \end{itemize}
 \end{techNote}
 
+\subsection{Programmatic model search}
+\idea{
+The same functionality that will be provided to users accessing the \ddmore Model Repository directly will also be available to software tools. \\
+We differentiate between searching public models only and searching both published and non-published content. This is due to the fact that the latter option requires authorisation up-front. 
+}
+
+\begin{techNote}
+The query along with the search options will be passed to the Model Repository. For tools that communicate via JMS, we produce a Queue with the results that they can consume freely. For web services, we will present the results using XML. 
+\end{techNote}
 
 %\subsection{Web Services}
 %
