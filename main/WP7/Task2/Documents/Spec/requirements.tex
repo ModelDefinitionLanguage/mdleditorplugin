@@ -44,7 +44,7 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 \item Models MAY be modified via an integrated editor.
 
 \subsubsection{Model browsing, searching and retrieving}
-\item The system MUST be able to search for the latest revision of model descriptions based on a textual term such as name, author, date of creation, date of modification, or any other textual field in MML. The results MUST only include models to which the user has access to. The system SHOULD also provide a configuration option that allows every version of every model to be included in the model search.
+\item The system MUST be able to search for the latest revision of model descriptions based on a textual term such as name, author, date of creation, date of modification, or any other textual field in MML. The results MUST only include models to which the user has access to. The system SHOULD also provide a configuration option that allows every version of every accessible model to be included in the model search.
 
 % Topics are expressed using metadata. We already have requirements for including annotations in the search and for downloading a selection of models.
 %\item The system MUST allow the retrieval of all models dealing with a certain topic. 
@@ -73,7 +73,7 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 \item The system MAY indicate whether a model runs successfully or not on. If this feature is implemented, the system SHOULD NOT allow a model to be reviewed or published unless it can be simulated locally. 
 
 \subsubsection{Authentication and authorisation}
-\item The system MUST authenticate users and ensure that they can only perform the role assigned to them for a given model (cf. section~\ref{users}).
+\item The system MUST authenticate users and ensure that they can only perform the role assigned to them for a given model (cf. Section~\ref{users}).
 
 \item The Repository MUST maintain a model \gls{audit trail}, storing each revision with additional information about its content including, but not limited to the identity of the user performing the action and a timestamp. Users MAY add a comment describing the changes they introduce. The level of detail of this information SHOULD be configurable at the level of the instance by an Administrator. 
 
@@ -112,9 +112,9 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 \subsubsection{Technology}
 \item The system SHALL store models represented in MML format.
 
-\item The server side of the system is REQUIRED to work on a Linux platform with Kernel version~$\ge 2.6$. 
+\item The server side of the system is REQUIRED to work on a GNU Linux platform with kernel version~$\ge 2.6$. 
 
-\item The client side SHALL work with the following operating systems: Mac OS X (Leopard, Version 10.5.x and newer versions), Windows (Windows XP and newer versions), GNU-Linux (kernel version~$\ge 2.6$).
+\item The client side SHALL work with the following operating systems: Mac OS X (Leopard, Version 10.5.x and newer versions), Windows (Windows XP and newer versions), GNU Linux (kernel version~$\ge 2.6$).
 
 \item The client side MUST work with the following web browsers: Safari Version 5.x and above, Internet Explorer 8 and above, Firefox Version 10.x and above. The front end MAY work in other browsers.
 
