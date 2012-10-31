@@ -13,6 +13,8 @@
 \usepackage{amsmath, amsfonts, amssymb}
 \usepackage{array}
 \usepackage[romanian,english]{babel}
+%% Access to over 500 pre-defined colours
+\usepackage[usenames,dvipsnames,svgnames,x11names]{xcolor}
 %% For Romanian characters that have a comma below them
 \usepackage{combelow}
 %% For timestamps
@@ -29,11 +31,14 @@
 %% Landscape layout
 \usepackage{lscape}
 %% Don't use the default ComputerModern font
-%\usepackage{mathptmx}
+%\usepackage[T1]{fontenc}
+\usepackage{charter}
 %% Better typography
 \usepackage[protrusion=true,expansion=true]{microtype}
 \usepackage{paralist}
 \usepackage[parfill]{parskip}
+%% Needed for "warning" boxes
+\usepackage{pifont,mdframed}
 %% Rotate floats and captions when in landscape layout
 \usepackage{rotating}
 %% variable width columns
@@ -71,6 +76,21 @@
 \newcommand{\ddmore}{DDMoRe\xspace}
 
 \newcommand{\idea}[1]{\fbox{\parbox{\linewidth}{\emph{#1}}}}
+
+%\newcommand{\techNote}[1]{\vspace{1em} \fbox{\parbox{\linewidth}{{\Large \color{techNoteTitle} \textit{Technical Note}}\\ \textrm{\color{techNoteText} #1}}} \vspace{1em}} 
+
+\definecolor{tnTitle}{HTML}{BF0069}
+\definecolor{tnBox}{HTML}{EDE800}
+\definecolor{tnBody}{HTML}{065B98}
+
+\newenvironment{techNote}
+  {\vspace{1em}\par\begin{mdframed}[linewidth=2pt,linecolor=tnBox]%
+  	{\textcolor{tnTitle}{\Large \emph{Technical Note}}}%
+    \begin{list}{}{\leftmargin=1em
+                   \labelwidth=\leftmargin \color{tnBody}}\item[\Large\ding{43}]} 
+  {\end{list}\end{mdframed}\par \vspace{1em}}
+
+
 \makeglossaries
 
 \begin{document}
@@ -78,11 +98,11 @@
 
 
 \section*{Document revision history}
-\begin{tabularx}{\linewidth}{| c c X |}\hline
+\begin{tabularx}{\linewidth}{c c X}\hline
 \textit{Date} & \textit{Author} & \textit{Comments} \\ \hline
-1 August & Mihai Glon\cb{t} & First draft \\ \hline
-5 September & Camille Laibe & First set of corrections and additions \\ \hline
-7 September & Mihai Glon\cb{t} & Incorporated comments from Jonathan Chard \\ \hline
+1 August & Mihai Glon\cb{t} & First draft \\ 
+5 September & Camille Laibe & First set of corrections and additions \\ 
+7 September & Mihai Glon\cb{t} & Incorporated comments from Jonathan Chard \\ 
 20 September & Mihai Glon\cb{t} & Incorporated comments from Lutz Harnisch, Alain Munafo and Paolo Magni \\ \hline
 \end{tabularx}
 
