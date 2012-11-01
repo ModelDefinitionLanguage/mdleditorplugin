@@ -26,7 +26,7 @@ illustrate how each of the stakeholders from Section~\ref{users} interacts with 
 \label{userProfiles}
 The scenarios listed below are illustrated from the perspective of the following users:
 \begin{description}
-    \item[Joe] -- scientist interested in preclinical models of prostate cancer.
+    \item[Joe] -- a scientist interested in preclinical models of prostate cancer.
     \item[Sam] -- an Administrator of BestModels, a private instance of the \ddmore Model Repository used internally at BestMeds PLC, a large pharmaceutical company.
     \item[Hannah] -- a highly experienced PKPD modeller working at BestMeds PLC that has contributed to the development of many models which are deposited in BestModels.
     \item[Julia, Dominic, and Sue] -- young, but very promising modellers that have recently joined BestMeds PLC.
@@ -42,7 +42,7 @@ At the time of this writing, the specification of MML is under development. Give
 \idea{for public instance, this is the same as publishing. no authentication will be required. \textbf{ToDo: Write story about Joe that is studying the role of a particular type of flavonoid called Quercitin in inhibiting carcinogenesis.}}
 
 \idea{
-from homepage, click on \textsc{Submit a new model}; then the process depends very much on the structure of the MML, and the kind of model that you want to submit. however, we should start by collecting information about its creators. Then, we should validate the model and report any issues back to the submitter as grounds for rejecting the model. Once the model is deemed fit, we should extract any cross-references so that we can enhance the understanding of the model's context. Then, we store it and assign it a perennial identifier. we should also display a confirmation page right before we start processing the new model so that the submitter is offered a chance to correct incorrect details.
+from homepage, click on \textsc{Submit a new model}; then the process depends very much on the structure of the MML, and the kind of model that you want to submit. however, we should start by collecting information about its creators. Then, we should validate the model and report any issues back to the submitter as grounds for rejecting the model. Once the model is deemed fit, we should extract any cross-references so that we can enhance the understanding of the model's context. Then, we store it and assign it a perennial identifier. we should also display a confirmation page right before we start processing the new model so that the submitter is offered a chance to address incorrect details.
 }
 
 \idea{
@@ -55,7 +55,7 @@ A Strategy pattern should be used, whereby each kind of model that is handled by
 \end{techNote}
 
 \subsubsection{Model Templates}
-\emph{depends on the structure of the MML}
+\emph{depend on the structure of the MML}
 
 \subsubsection{Deleting models}
 \idea{the revision owner (not the model owner) can delete a version, and then the Repository asks if there is a replacement version. The user has to be able to give a link to it, if it exists. Also, the user must be able to specify replacements for his(her) deleted versions at a later stage, so we need the concept of a Bin or Archive. As far as other users are concerned, when they access this model they should still see its contents, but there should be a clearly-visible message that stands out and informs them that this version is obsolete.
@@ -99,8 +99,8 @@ Each \texttt{Model}, \texttt{Revision} and \texttt{Comment} therefore need to ex
 
 The user interface to show models will consist of the following blocks:
 \begin{itemize}
-\item model --
-\item meta-data -- includes development history, creation/modification dates, authorship etcetera on the one hand, and clerical data on the other.
+\item model
+\item metadata -- includes development history, creation/modification dates, authorship etcetera on the one hand, and clerical data on the other.
 \item actions -- lists all actions that are available to the user, for instance parameter estimation, simulation, or download.
 \end{itemize}
 
@@ -114,7 +114,7 @@ The display will depend on the model type and may vary from one instance of the 
 %\subsubsection{Advanced search criteria}
 
 \begin{techNote}
-we need to switch between searching the latest version of each model and every single accessible version. the easiest way to implement this would be to maintain two separate indexes, one for each type of search, but this will impact the time to generate them. 
+we need to switch between searching the latest version of each model and every single accessible version. the easiest way to implement this would be to maintain two separate indexes, one for each type of search, but this will impact the time to generate and maintain them. 
 \end{techNote}
 
 \idea{include a scenario where private models are included in the search as well.}
@@ -122,8 +122,8 @@ we need to switch between searching the latest version of each model and every s
 \subsection{Model quality assurance}
 
 \subsubsection{Model review}
-\idea{as model owner: \textsc{Login} $\rightarrow$ navigate to the "My Models" section of their homepage $\rightarrow$ user selects the model for review $\rightarrow$ user clicks \textsc{Submit for review} button next to the version that should be reviewed $\rightarrow$ user selects reviewer and clicks \textsc{Finish} button $\rightarrow$ The model appears in the "Models under review" section of his homepage.\\%[1em]
-for reviewer: \textsc{Login} $\rightarrow$ user navigates to the "Models I review" part of their homepage $\rightarrow$ reviewer clicks \textsc{Select Model} $\rightarrow$ the Repository displays the model $\Rightarrow$ reviewer selects the only action that is available: \textsc{Review} $\Rightarrow$ reviewer rates model quality using one of the scores below $\rightarrow$ user offers suggestions to the model developers in the form of textual comments $\rightarrow$ reviewer clicks \textsc{Submit review}.
+\idea{as model owner: \textsc{Login} $\Rightarrow$ navigate to the "My Models" section of their homepage $\Rightarrow$ user selects the model for review $\Rightarrow$ user clicks \textsc{Submit for review} button next to the version that should be reviewed $\Rightarrow$ user selects reviewer and clicks \textsc{Finish} button $\Rightarrow$ The model appears in the "Models under review" section of his homepage.\\%[1em]
+for reviewer: \textsc{Login} $\Rightarrow$ user navigates to the "Models I review" part of their homepage $\Rightarrow$ reviewer clicks \textsc{Select Model} $\Rightarrow$ the Repository displays the model $\Rightarrow$ reviewer selects the only action that is available: \textsc{Review} $\Rightarrow$ reviewer rates model quality using one of the scores below and [optionally] offers suggestions to the model developers in the form of textual comments $\Rightarrow$ reviewer clicks \textsc{Submit review} $\Rightarrow$ model developers are able to see that feedback is available for their model.
 \\%[1em]
 Once the model enters the review process, it cannot be published until it is deemed fit by the reviewer.
 }
@@ -141,11 +141,11 @@ If the model gets published, reviews should not be displayed.
 
 
 \subsubsection{Model validation}
-This will be performed automatically by the repository whenever a new model or version of a model is submitted. Users will also be able to do so by clicking on the \textsc{Validate} button next to each revision. A model will not be accepted in the Repository if it does not pass validation. 
+This will be performed automatically by the Repository whenever a new model or version of a model is submitted. Users will also be able to do so by clicking on the \textsc{Validate} button next to each revision. A model will not be accepted in the Repository if it does not pass validation. 
 
 
 \begin{techNote}
-As simple as loading the model into the API developed by WP2.3, then calling its \texttt{validate} method; if validation failed, we rely on the API to provide the cause. We will then display those error messages back to the user.
+The implementation for this feature is as simple as loading the model into the API developed by WP2.3, then calling its \texttt{validate} method; if validation failed, we rely on the API to provide the cause. We will then display those error messages back to the user.
 \end{techNote}
 
 \subsection{Repository management} 
@@ -179,7 +179,7 @@ Consequently, he logs in to BestModels and navigates to the Team Management sect
 \subsubsection{Deleting user lists}
 \idea{this action will cause users to lose access to certain models. discuss whether this is problematic.}
 
-Sam logs in, goes to Team Management. Clicks on the \textsc{Delete} button next to the team he wishes to delete. He is advised that this will prevent members to access the models shared with the list and asked to confirm that he wishes to delete the list in question, being given the choice to \textsc{Confirm} or \textsc{Cancel}. Clicking on the latter leaves the list as it is. By choosing the former, the list is removed and every user that gained access to models through the team 
+Sam logs in, goes to Team Management. Clicks on the \textsc{Delete} button next to the team he wishes to delete. He is advised that this will prevent members to access the models shared with the list and asked to confirm that he wishes to delete the list in question, being given the choice to \textsc{Confirm} or \textsc{Cancel}. Clicking on the latter leaves the list as it is. By choosing the former, the list is removed and every user that gained access to models through the team will no longer be able to view them.
 
 \subsubsection{Adding a user to a list}
 As before, Sam visits the Team Management section of BestMeds and selects the PKPD-Modelling team to view its roster. Since it is empty, the only action that is available is to \textsc{Add new members}, which brings a page where Sam can select the users he is interested in --- in this case, Julia, Hannah and Dominic. He then clicks the \textsc{Add} button. The Repository ensures that the user accounts in question exist and only then associates them to the designated team.
