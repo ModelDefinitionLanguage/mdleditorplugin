@@ -1,5 +1,5 @@
 %------------------------------------------------------------------------------
-%Description       : DDMoRe WP7.2.1 First Technical Specification for the Model
+%Description       : DDMoRe WP7.2.1 Functional Specification for the Model
 %                                   Repository Infrastructure - Web Services
 %Author            : Mihai Glonț <mglont@ebi.ac.uk>
 %Organization      : EMBL-EBI
@@ -57,10 +57,8 @@ A \emph{client} wishing to use protected resources starts by registering with Be
 \end{techNote}
 
 \subsection{Programmatic model search}
-\idea{
 The same functionality that will be provided to users accessing the \ddmore Model Repository directly will also be available to software tools. \\
 We differentiate between searching public models only and searching both published and non-published content. This is due to the fact that the latter option requires authorisation up-front. 
-}
 
 \begin{techNote}
 The query along with the search options will be passed to the Model Repository. For tools that communicate via JMS, we produce a Queue with the results that they can consume freely. For web services, we will present the results using XML. 
