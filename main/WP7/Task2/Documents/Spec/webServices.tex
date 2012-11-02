@@ -47,12 +47,13 @@ The first question to ask is whether the model is private or public? To assert t
 
 The MDL Editor must then treat the model as private and go through the OAuth authorisation process which is described next. But first, let us explain a bit of terminology: in OAuth terms, third party tools represent \emph{clients} that wish to interact with the protected data stored by \emph{servers} on behalf of \emph{resource owners}. 
 
-A \emph{client} wishing to use protected resources starts by registering with BestMeds. This establishes a \emph{clientID} and a \emph{clientSecret} which are known to both parties. Then, the process of interacting with protected content entails three steps:
+A \emph{client} wishing to use protected resources starts by registering with BestMeds. This establishes a \emph{clientID} and a \emph{clientSecret} which are known to both parties. Then, the process of interacting with protected content entails four steps:
 
 \begin{itemize}
 \item the MDL Editor sends an access token request to the BestMeds OAuth Authentication Server; this could be an HTTPS request containing the registration details described above. Plain HTTP connections cannot be accepted for security reasons.
 \item BestMeds responds by bringing up an authentication page, describing to the user why login is required.
-\item Dominic chooses whether to grant access or not. Should he decline it, BestMeds will issue an error to the MDL Editor. Otherwise, BestMeds will return an \emph{authentication code}. The MDL Editor validates it, and then uses it to interact with Dominic's private content. On this particular occasion, the MDL Editor uses the URL that Dominic has provided and the newly-obtained \emph{authentication code} to form the HTTP request to retrieve the diabetes model.
+\item Dominic chooses whether to grant access or not. Should he decline it, BestMeds will issue an error to the MDL Editor. Otherwise, BestMeds will return an \emph{authentication code}. 
+\item The MDL Editor validates the \emph{authentication code}, and then uses it to interact with Dominic's private content. On this particular occasion, the MDL Editor uses the URL that Dominic has provided and the newly-obtained \emph{authentication code} to form the HTTP request to retrieve the diabetes model. If Dominic did not have access to the model he attempted to load in the MDL Editor, the Model Repository would flag this up by returning an error. 
 \end{itemize}
 \end{techNote}
 
