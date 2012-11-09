@@ -38,7 +38,7 @@ This functionality may be provided in two different ways: via a RESTful API prov
 
 \subsection{Accessing models from other applications}
 \label{remoteAuth}
-Remember Dominic (Section~\ref{userProfiles})? He has just started using BestModels. He was asked to make some improvements to a non-published model on diabetes that has been shared with him. The first goal is to load it into the MDL Editor. He provides the URL of the model version he is after to the Editor on his computer. The MDL Editor attempts to retrieve it, but fails because of lack of permissions. It consequently opens a web browser and accesses a secure authentication area of BestModels. This displays a login page informing Dominic that the MDL Editor wants access to his private resources and advises that by logging in, he approves this request. Once Dominic is authenticated, BestModels knows it is safe for that copy of the MDL Editor to access Dominic's content and makes the diabetes model in question available for download. 
+Remember Dominic? (Section~\nameref{userProfiles}) He has just started using BestModels. He was asked to make some improvements to a non-published model on diabetes that has been shared with him. The first goal is to load it into the MDL Editor. He provides the URL of the model version he is after to the Editor on his computer. The MDL Editor attempts to retrieve it, but fails because of lack of permissions. It consequently opens a web browser and accesses a secure authentication area of BestModels. This displays a login page informing Dominic that the MDL Editor wants access to his private resources and advises that by logging in, he approves this request. Once Dominic is authenticated, BestModels knows it is safe for that copy of the MDL Editor to access Dominic's content and makes the diabetes model in question available for download. 
 
 Therefore, in subsequent episodes BestModels will no longer ask Dominic for his username and password when that copy of the MDL Editor interacts with the Repository on his behalf. Note that if Dominic tries to achieve the same thing from a different computer or a different copy of the MDL Editor, he will need to go through the authentication process again. Finally, Dominic can manage the access rights of third party tools by accessing his BestModels account page. 
 
@@ -65,7 +65,3 @@ We differentiate between searching public models only and searching both publish
 The query along with the search options will be passed to the Model Repository. For tools that communicate via JMS, we produce a Queue with the results that they can consume freely. For web services, we will present the results using XML. 
 \end{techNote}
 
-%\subsection{Web Services}
-%
-%\subsubsection{Collaborative model development}
-%\idea{what would be a good use case of this? maybe having two people introducing changes. simply describe the work flow.}

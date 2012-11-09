@@ -36,17 +36,12 @@ At the time of this writing, the specification of MML is under development. Give
 \subsection{Model development}
 
 \subsubsection{Submitting a model}
+%\idea{public instance: no authentication will be required. \textbf{ToDo: Write story about Joe that is studying the role of a particular type of flavonoid called Quercitin in inhibiting carcinogenesis.}}
+Submitting a model to the public instance of the \ddmore Model Repository will not require the submitter to create an account or log-in, and will make the modelpublicly-available. The process depends very much on the structure of the MML, and the kind of model that is being submitted. However, we should start by collecting information about its creators. Then, the Repository should validate the model and report any issues back to the submitter as grounds for rejecting the model. Once the model is deemed fit, any cross-references contained within the model should be digested, so that we can enhance the understanding of the model's context. Then, the Repository will store the model and assign it a perennial identifier. We should also display a confirmation page right before we start processing the new model so that the submitter is offered a chance to address incorrect details.
 
-\idea{for public instance, this is the same as publishing. no authentication will be required. \textbf{ToDo: Write story about Joe that is studying the role of a particular type of flavonoid called Quercitin in inhibiting carcinogenesis.}}
+Let us imagine Julie wants to submit her latest work to BestModels. She logs in by typing her username and password and clicking on the \textsc{Login} button. She is then shown her user homepage, containing a list of models which she has developed. If the model she has been developing is not already in BestMeds, Julie selects the \textsc{Submit new model} action which is displayed above her list of models. Alternatively, she simply selects the model that she has been working on. This brings a new page that describes that model in more detail, including its versions.  
 
-\idea{
-from homepage, click on \textsc{Submit a new model}; then the process depends very much on the structure of the MML, and the kind of model that you want to submit. however, we should start by collecting information about its creators. Then, we should validate the model and report any issues back to the submitter as grounds for rejecting the model. Once the model is deemed fit, we should extract any cross-references so that we can enhance the understanding of the model's context. Then, we store it and assign it a perennial identifier. we should also display a confirmation page right before we start processing the new model so that the submitter is offered a chance to address incorrect details.
-}
-
-\idea{
-for a private instance: User Login $\Rightarrow$ Display user homepage containing a list of models which (s)he has developed  $\Rightarrow$ User selects model  $\Rightarrow$ user chooses \textsc{Submit new version} from the list of actions that are available to them (action only appears when the user has write-access rights) $\Rightarrow$  pre-populate fields with information about the model $\Rightarrow$ user uploads the new version of the model $\Rightarrow$ display the list of collaborators that will have access to this revision based on the previous version $\Rightarrow$ user confirms access rights for this version $\Rightarrow$ display a summary of the model version that is about to be submitted $\Rightarrow$ user clicks \textsc{Finish} $\Rightarrow$ the new model version is processed.
-}
-
+Since Julie has write-access rights to this model, she is able to click the \textsc{Submit new version} button from the list of actions that are available to her. Had this not been the case, Julie would have not been able to update the model. The Model Repository pre-populates fields such as model name, model identifier or model authors. Then, Julie uploads the new version of the model which is processed by BestModels. Next, we display the list of collaborators that will have access to this version based on the previous one, giving Julie the chance to update it. Once she confirms who will be able to access this version, BestModels displays a summary of the model version that is about to be submitted, giving Julie the choice to \textsc{Finish}, or to go \textsc{Back} and make any amendments. Julie clicks \textsc{Finish} causing the new model version to be processed. Upon completion, BestModels reports whether the submission was successful or not.
 
 \begin{techNote}
 A Strategy pattern should be used, whereby each kind of model that is handled by that instance of the Repository corresponds to a class in charge of the submission algorithm; there needs to be a \texttt{SubmissionStrategy} interface containing a \texttt{submit} method. The Repository will have a plugin dedicated to each kind of model it supports. These plugins will implement the \texttt{SubmissionStrategy}. In addition, a \texttt{SubmissionManager} maintains a reference to a \texttt{SubmissionStrategy} object and is in charge of forwarding the submission responsibility to the correct plugin.
@@ -58,8 +53,10 @@ A Strategy pattern should be used, whereby each kind of model that is handled by
 The typical work flow starts with a user viewing a model revision stored in the \ddmore Model Repository. The user selects the components of the model that they wish to include in the new model. What constitutes a model component is MML-dependent, but it might include, for instance, the structural model or any subset of its elements, simulation results, final parameters or clinical data. The Repository will assemble the selected components into a valid MML encoding, and will allow the user to download it. 
 
 \subsubsection{Deleting models}
-\idea{the revision owner (not the model owner) can delete a version, and then the Repository asks if there is a replacement version. The user has to be able to give a link to it, if it exists. Also, the user must be able to specify replacements for his(her) deleted versions at a later stage, so we need the concept of a Bin or Archive. As far as other users are concerned, when they access this model they should still see its contents, but there should be a clearly-visible message that stands out and informs them that this version is obsolete.
-}
+The user that has write-access rights to a model may delete a version of it.  This is achieved by logging in, clicking on the model they are interested in, in order to view it in more detail, then choosing the \textsc{Delete} button next to the version in question. The Repository then asks if there is a replacement. The user has the choice to provide a link to a new version that (s)he can access, or not provide a replacement. The Repository will trigger an error message if the user cannot access the replacing version. The user clicks on the \textsc{Confirm deletion} button and receives a visual confirmation of status of the removal. 
+
+%Also, the user must be able to specify replacements for his(her) deleted versions at a later stage, so we need the concept of a Bin or Archive. 
+As far as other users are concerned, when they access the deleted version they will still see its contents, but a clearly-visible message will inform them that it is obsolete.
 
 \subsubsection{Subscribing to model changes}
 
@@ -76,12 +73,13 @@ Each \texttt{Model}, \texttt{Revision} and \texttt{Comment} therefore need to ex
 %We will have one queue per user that has subscribed to notifications about model updates. \textbf{translate into "english" that binding keys govern the routing process and that when a user clicks on "subscribe", we create a queue that captures all messages that start with modelID, regardless of what follows it.} The structure of the message needs to be agreed upon. We could use \texttt{source.action}
 \end{techNote}
 
-
 \subsubsection{Publishing a model}
-\emph{for public instance - the same thing as submitting}
+\label{publish}
+This feature only applies to private instances of the \ddmore Model Repository. 
 
-\emph{for private instances: user logs in $\Rightarrow$ user sees homepage containing his/her models $\Rightarrow$ user navigates to the display page for a model they own $\Rightarrow$ user views the section dedicated to model versions $\Rightarrow$ user clicks on the \textsc{Publish} button next to the version that needs to be published $\Rightarrow$ the version becomes available to all users. 
-}
+Let us assume that Sue has been working hard on a model and she is very pleased with it, especially since it underwent a quality-control check, and the reviewer asked Sue to share it with everyone else, so that all modellers can learn from it. 
+
+To achieve this, Sue logs in to BestModels and sees the homepage containing her models. As before she navigates to the display page for her model, and clicks on the \textsc{Publish} button next to the version that she wishes to publish. She would not be able to publish the model if she was not its owner. Sue confirms that she wishes to make this version available to all users. Since BestModels is configured to authenticate users before displaying a model, regardless of whether it is private or public, Sue has effectively shared the model with every person that has an account on BestModels. If BestMeds provided free access to its public models, then the visibility of Sue's model would have been much larger.
 
 %for private instances, as a model owner, you go to "My Models", which is on the homepage of every authenticated modeller. 
 %Click on the model you're interested in, which renders it in detail. You go to the \textsc{Revisions} section and select 
@@ -94,10 +92,9 @@ Each \texttt{Model}, \texttt{Revision} and \texttt{Comment} therefore need to ex
 \subsection{Model browsing, searching and retrieving}
 
 \subsubsection{Browsing models}
-\idea{user-friendly means of listing a potentially long list of models}
+The \ddmore Model Repository will need to present a potentially-long list of models of various types in a user-friendly manner. Pagination and facets should be considered. A more detailed discussion of this topic will be provided once the structure and the scope of MML becomes clear.
 
 \subsubsection{Model display}
-
 The user interface to show models will consist of the following blocks:
 \begin{itemize}
 \item model
@@ -108,7 +105,9 @@ The user interface to show models will consist of the following blocks:
 The display will depend on the model type and may vary from one instance of the Model Repository to another.
 
 \subsubsection{Model search}
-\idea{story about Joe, the Visitor of the public instance that surveys PK models of flavonoids and their influence on the human body. He performs a search using the term flavonoids.}
+The \ddmore Model Repository supports the field of drug development by allowing stakeholders to find models that are relevant for their research. The search mechanism will include all models that are available to the user performing the search: this means that in private instances, the results will contain not just publicly-available models, but also private models that the user has access to.
+
+%\idea{story about Joe, the Visitor of the public instance that surveys PK models of flavonoids and their influence on the human body. He performs a search using the term flavonoids.}
 
 % As such, Joe, a Visitor of the DDMoRe Model Repository would have free access to the published models that are stored in that instance without needing to register or sign in. Joe would also be able to 
 %\subsubsection{Advanced search criteria}
@@ -120,17 +119,19 @@ The display will depend on the model type and may vary from one instance of the 
 %\begin{techNote}
 %we need to switch between searching the latest version of each model and every single accessible version. the easiest way to implement this would be to maintain two separate indexes, one for each type of search, but this will impact the time to generate and maintain them. 
 %\end{techNote}
-\idea{include a scenario where private models are included in the search as well.}
+
+%\idea{include a scenario where private models are included in the search as well.}
 
 
 \subsection{Model quality assurance}
 
 \subsubsection{Model review}
-{as model owner: \textsc{Login} $\Rightarrow$ navigate to the "My Models" section of their homepage $\Rightarrow$ user selects the model for review $\Rightarrow$ user clicks \textsc{Submit for review} button next to the version that should be reviewed $\Rightarrow$ user selects reviewer and clicks \textsc{Finish} button $\Rightarrow$ The model appears in the "Models under review" section of his homepage.%\\[1em]
+When we discussed \nameref{publish}, we mentioned that Sue's model underwent a review process. In this section we describe what this entails.
+For Sue, the model owner, she got her version of the model in a state she is reasonably happy with, that contains valid MML and that has been executed successfully. In order to request a review, Sue logs in, navigates to the page displaying her model in detail, as described previously and  she clicks the \textsc{Submit for review} button next to the version in question. Then, Sue selects Hannah as her reviewer and clicks the  \textsc{Finish} button. Now, the model appears in the "Models under review" section of her homepage.
 
-for reviewer: \textsc{Login} $\Rightarrow$ user navigates to the "Models I review" part of their homepage $\Rightarrow$ reviewer clicks \textsc{Select Model} $\Rightarrow$ the Repository displays the model $\Rightarrow$ reviewer selects the only action that is available: \textsc{Review} $\Rightarrow$ reviewer rates model quality using one of the scores below and [optionally] offers suggestions to the model developers in the form of textual comments $\Rightarrow$ reviewer clicks \textsc{Submit review} $\Rightarrow$ model developers are able to see that feedback is available for their model.  %\\[1em]
+Hannah is now able to see Sue's model on her homepage, in the "Models I review" section. Hannah selects the model, so that she can see it in detail, and clicks on the only action that is available: \textsc{Review}. After evaluating the model in question, Hannah rates its quality using one of the scores below and [optionally] offers suggestions to Sue in the form of textual comments. Being impressed, Hannah adds a note asking Sue to publish the model, then clicks \textsc{Submit review}. Sue is now able to see that feedback is available for her model. 
 
-Once the model enters the review process, it cannot be published until it is deemed fit by the reviewer.
+It is important to mention that once a model version enters the review process, it cannot be published until it is deemed fit by the reviewer.
 
 \begin{techNote}
 The quality of the model will be evaluated using one of the following grades, listed in descending order:
@@ -143,10 +144,12 @@ The quality of the model will be evaluated using one of the following grades, li
 If the model gets published, reviews should not be displayed. 
 \end{techNote}
 
+\begin{techNote}
+Developers should decide, based on user feedback, the means to select users. One idea is to provide a text box with auto-completion functionality. Another one would be to use the jQuery UI Selectable widget in conjunction with an unordered list HTML element. Either way, check boxes should be avoided. Within an instance of the Model Repository, there will be a single method to select users, in order to aid consistency.
+\end{techNote}
 
 \subsubsection{Model validation}
 This will be performed automatically by the Repository whenever a new model or version of a model is submitted. Users will also be able to do so by clicking on the \textsc{Validate} button next to each revision. A model will not be accepted in the Repository if it does not pass validation. 
-
 
 \begin{techNote}
 The implementation for this feature is as simple as loading the model into the API developed by WP2.3, then calling its \texttt{validate} method; if validation failed, we rely on the API to provide the cause. We will then display those error messages back to the user.
@@ -179,6 +182,22 @@ To achieve this, Sam logs in and navigates to the User Management section. Here 
 BestMeds PLC  wants to enhance the collaboration between the teams of modellers within the organisation. As such, Sam has been tasked to facilitate sharing a model with multiple people.
 
 Consequently, he logs in to BestModels and navigates to the Team Management section. This contains a list of the names of all existing teams along with \textsc{Delete} and \textsc{View} buttons. Above and below this list there is a \textsc{Create team} button. By clicking on this button, Sam is taken to the page to create a new team. He types the name of the team --- \emph{PKPD-Modelling} --- and clicks \textsc{Confirm}. The system ensures that the team name only contains letters, digits, dashes (--) and underscores (\_) and then creates the new team. If Sam had named the team \emph{PKPD-Modelling-Rockstars!}, the Repository would have informed Sam about the problematic exclamation mark.
+\begin{techNote}
+Since there is a many-to-many relationship between users and teams/lists, we need three tables: 
+\begin{itemize}
+\item users - has userID
+\item teams - has teamID
+\item teamRosters - links userID with TeamID. 
+\end{itemize}
+
+When a new member is added to a team, we create a new row in TeamRosters. 
+
+When we delete a team member, we remove the corresponding association from TeamRosters.
+
+It must be possible to share a model with a whole team - think Composite pattern for users and teams.
+
+When we work out whether a model is accessible or not to a user, we need to go through the lists that he has access to.
+\end{techNote}
 
 \subsubsection{Deleting user lists}
 \idea{this action will cause users to lose access to certain models. discuss whether this is problematic.}
@@ -186,14 +205,13 @@ Consequently, he logs in to BestModels and navigates to the Team Management sect
 Sam logs in, goes to Team Management. Clicks on the \textsc{Delete} button next to the team he wishes to delete. He is advised that this will prevent members to access the models shared with the list and asked to confirm that he wishes to delete the list in question, being given the choice to \textsc{Confirm} or \textsc{Cancel}. Clicking on the latter leaves the list as it is. By choosing the former, the list is removed and every user that gained access to models through the team will no longer be able to view them.
 
 \subsubsection{Adding a user to a list}
-As before, Sam visits the Team Management section of BestMeds and selects the PKPD-Modelling team to view its roster. Since it is empty, the only action that is available is to \textsc{Add new members}, which brings a page where Sam can select the users he is interested in --- in this case, Julia, Hannah and Dominic. He then clicks the \textsc{Add} button. The Repository ensures that the user accounts in question exist and only then associates them to the designated team.
+As before, Sam visits the Team Management section of BestModels and selects the PKPD-Modelling team to view its roster. Since it is empty, the only action that is available is to \textsc{Add new members}, which brings a page where Sam can select the users he is interested in, as described in the technical note from the \nameref{review} section --- in this case, Julia, Hannah and Dominic. He then clicks the \textsc{Add} button. The Repository ensures that the user accounts in question exist and only then associates them to the designated team. Users can be part of multiple lists.
 
-\begin{techNote}
-Developers should decide, based on user feedback, the means to select users belonging to a certain team. One idea is to provide a text box with auto-completion functionality. Another one would be to use the jQuery UI Selectable widget in conjunction with an unordered list HTML element. Either way, check boxes should be avoided.
-\end{techNote}
 
 \subsubsection{Removing a user from a list}
-\idea{this action will cause users to lose access to certain models. discuss whether this is problematic.}
+\idea{discuss whether this is problematic.}
+
+Today Sam received an email informing him that, for productivity reasons, Dominic has been assigned to a new project and that he should be removed from the team he is on. Sam therefore navigates to the User Management section of the Model Repository and selects the \textsc{View Teams} button from the list of actions that are available for Dominic's account. This brings up a page that displays all the lists that Dominic is part of and, alongside their name, there is a \textsc{Delete} button which eliminates Dominic from that list. Sam is asked, through a dialog box, to acknowledge that this action may cause Dominic to lose access to certain models by clicking on the \textsc{Confirm} button. Sam also has the option to \textsc{Cancel} this action, but since he performed it intentionally on this particular occasion, he chooses \textsc{Confirm}.
 
 \subsubsection{Managing model ownership}
 Given Hannah's departure, Sam wishes to re-assign her models to one of her close collaborators, Julia. From the same list of actions that are displayed along each user, Sam chooses \textsc{view models}, which brings up a table of every model, public or private, to which Hannah has contributed, excluding those that have been deleted. From there, Sam can quickly select the all the models developed by Hannah and clicks on the \textsc{Change role} button. This pops up a dialogue box with two buttons - \textsc{Confirm} and \textsc{Cancel}, where Sam types Julia's username and clicks \textsc{Confirm}. The system employs auto-completion using the names and usernames of the people registered in the Repository, and it will only enable the confirmation button once it has verified that Julia's account is active. If no suitable user account is found, then a meaningful error message is displayed below the text box, describing the reason why no account matched Sam's input. 
