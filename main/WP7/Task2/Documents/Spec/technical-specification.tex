@@ -15,8 +15,6 @@
 \usepackage[romanian,english]{babel}
 %% Access to over 500 pre-defined colours
 \usepackage[usenames,dvipsnames,svgnames,x11names]{xcolor}
-%% For Romanian characters that have a comma below them
-\usepackage{combelow}
 %% For timestamps
 \usepackage{datetime}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
@@ -26,8 +24,8 @@
 \usepackage[allcolors=blue, colorlinks]{hyperref}
 \usepackage[nonumberlist,toc]{glossaries}
 \usepackage{graphicx}
-%% enable Unicode support
-\usepackage[utf8]{inputenc}
+%% Use latin10 instead of utf8, so that we do not need the combelow package
+\usepackage[latin10]{inputenc}
 %% Landscape layout
 \usepackage{lscape}
 %% Don't use the default ComputerModern font
@@ -100,11 +98,11 @@
 \section*{Document revision history}
 \begin{tabularx}{\linewidth}{c c X}\hline
 \textit{Date} & \textit{Author} & \textit{Comments} \\ \hline
-1 August & Mihai Glon\cb{t} & First draft \\ 
+1 August & Mihai Glon\textcommabelow{t} & First draft \\ 
 5 September & Camille Laibe & First set of corrections and additions \\ 
-7 September & Mihai Glon\cb{t} & Incorporated comments from Jonathan Chard \\ 
-20 September & Mihai Glon\cb{t} & Incorporated comments from Lutz Harnisch, Alain Munafo and Paolo Magni \\ 
-31 October & Mihai Glon\cb{t} & Extensively revised the structure and the language employed to aid understanding. \\ \hline
+7 September & Mihai Glon\textcommabelow{t} & Incorporated comments from Jonathan Chard \\ 
+20 September & Mihai Glon\textcommabelow{t} & Incorporated comments from Lutz Harnisch, Alain Munafo and Paolo Magni \\ 
+31 October & Mihai Glon\textcommabelow{t} & Extensively revised the structure and the language employed to aid understanding. \\ \hline
 \end{tabularx}
 
 
