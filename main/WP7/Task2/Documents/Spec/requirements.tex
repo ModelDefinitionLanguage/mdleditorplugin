@@ -21,9 +21,9 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 
 \begin{enumerate}[1]
 \subsubsection{Model management}
-\item The system is REQUIRED to store models encoded in \gls{MML}. Supplementary data files, processing scripts, textual and graphical representations of results, as well as reports SHOULD also be kept in the system. In addition, the concept of a project SHOULD be provided, grouping together related models. 
+\item The system is REQUIRED to store models encoded in \gls{MML}. Supplementary data files, processing scripts, textual and graphical representations of results, as well as reports SHOULD also be kept in the system. In addition, the system SHOULD provide a way to group related models together (e.g. concept of a project).
 
-\item The system MUST allow appropriate users to store updated versions of models encoded in MML.
+\item The system MUST allow authorised users to store updated versions of models encoded in MML.
 
 \item The system SHOULD maintain a record of the submissions of a given model to regulatory bodies including, but not limited to FDA, EMA, MHRA. The Repository SHOULD provide open access to the model's public assessment report or summary basis for approval if such reports exist. 
 
@@ -31,20 +31,20 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 
 \item The system MAY allow specific \glspl{revision} to be deleted by their owners, but no revision SHALL be lost from the Repository. In this case, users that had access to a model revision before its deletion SHALL continue to do so. The system SHOULD inform the user about the removal and MAY supply a link to a model revision which replaces it, if this information has been specified by the user that performed the deletion. 
 
-\item Authenticated users SHOULD be able to subscribe to notifications about a model they have access to when it is updated.
+\item Authenticated users SHOULD be able to subscribe to notifications about a model (for example, when it is updated) they have access to.
 
-\item The system MUST enable the creation of new models encoded in MML based on either an existing one, or a template. The system SHALL record for the new model a reference  to the representation from which it derives.
+\item The system MUST enable the creation of a new model (encoded in MML) based on either an existing one, or a template. The system SHALL record for the new model a reference  to the representation from which it derives.
 
 \item Models SHOULD be classified using descriptive and categorical tags, such as the ones done as part of WP4.
 
 \item All versions of a given model MUST be preserved and be accessible.
 
-\item The system SHALL ensure that in the event of concurrent modifications of the same model(s), neither set of changes is lost.
+\item The system SHALL prevent concurrent modifications of the same model(s).
 
 \item Models MAY be modified via an integrated editor.
 
 \subsubsection{Model browsing, searching and retrieving}
-\item The system MUST be able to search for the latest revision of model descriptions based on a textual term such as name, author, date of creation, date of modification, or any other textual field in MML. The results MUST only include models to which the user has access to. The system SHOULD also provide a configuration option that allows every version of every accessible model to be included in the model search.
+\item The system MUST be able to search for the latest revision of model descriptions based on a textual term such as name, author, date of creation, date of modification, or any other textual field in the MML. The results MUST only include models to which the user has access to. The system SHOULD also provide a configuration option that allows every version of every accessible model to be included in the search.
 
 % Topics are expressed using metadata. We already have requirements for including annotations in the search and for downloading a selection of models.
 %\item The system MUST allow the retrieval of all models dealing with a certain topic. 
@@ -57,55 +57,57 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 
 \item Models and associated graphical representations stored as PNG or JPEG files MUST be displayed in an organised and user-friendly manner. This SHOULD include an export from the graphical viewer for MDL developed within Task 2.5.1, if such an export has been provided.
 
-\item The inputs and outputs accompanying a model (included in the MML representation) MUST also be displayed along with an explanation. 
+\item The inputs and outputs accompanying a model (included in the MML representation) MUST also be displayed along with an provided explanation.
 
 \item Users SHALL be able to retrieve and download any revision of any model they can access.
 
-\item Model search SHOULD include model metadata such as annotations and tags.
+\item Model search SHOULD make use of model metadata, such as annotations and tags.
 
-\item The system SHOULD be able to search for models based on complex queries. Results SHOULD be ranked, for instance by using a combination of text retrieval, ontologies as well as model metadata as described in \cite{Henkel2010} and \cite{Schulz2011}. 
+\item The system SHOULD be able to search for models based on complex queries. Results SHOULD be ranked, for instance by using a combination of text retrieval techniques, ontologies as well as model metadata, as described in \cite{Henkel2010} and \cite{Schulz2011}. 
 
 \subsubsection{Model quality}
-\item The system is REQUIRED to check that model representations are faithful to the MML specification either on-demand -- upon request, or autonomously -- whenever the need arises, such as before accepting a new revision for a model. 
+\item The system is REQUIRED to ensure that model representations are faithful to the MML specification either on-demand -- upon request, or autonomously -- whenever the need arises, such as before accepting a new revision for a model. The actual check MUST rely on the appropriate feature of the MML Application Programming Interface (developed within Task 2.3).
 
 \item The system MUST accommodate a system of reviews and more informal comments. The presence of reviews could be used as a criterion for comparing models.
 
-\item The system MAY indicate whether a model runs successfully or not on. If this feature is implemented, the system SHOULD NOT allow a model to be reviewed or published unless it can be simulated locally. 
+\item The system MAY indicate whether a model runs successfully or not on the Workflow Environment (developed within Task 2.4) or the Prototype Framework (developed within Task 2.6). If this feature is implemented, the system SHOULD NOT allow a model to be reviewed or published unless it can be simulated locally. 
 
 \subsubsection{Authentication and authorisation}
 \item The system MUST authenticate users and ensure that they can only perform the role assigned to them for a given model (cf. Section~\ref{users}).
 
-\item The Repository MUST maintain a model \gls{audit trail}, storing each revision with additional information about its content including, but not limited to the identity of the user performing the action and a timestamp. Users MAY add a comment describing the changes they introduce. The level of detail of this information SHOULD be configurable at the level of the instance by an Administrator. 
+\item The Repository MUST maintain a model \gls{audit trail}, storing each revision with additional information about its content including, but not limited to, the identity of the user performing the action and a timestamp. Users MAY add a comment describing the changes they introduce. The level of detail of this information SHOULD be configurable at the level of the instance by an Administrator. 
 
 \item The level of visibility of the audit information associated with a published model SHOULD be configurable at the level of the instance by an Administrator.
 
 \item For the safety and integrity of the Repository, a system-wide audit trail, that MUST only be available to Administrators, MUST record security-relevant events including but not limited to changes to model data, metadata, ownership, or access rights. 
 
-\item A model owner MUST be allowed to grant read and write access to a model using one of the following options:
+\item A model owner MUST be allowed to grant read and write access to his or her model using one of the following options:
 \begin{inparaenum}
 \item a single revision 
 \item all existing revisions 
 \item all revisions including the ones in the future. 
 \end{inparaenum} 
 
-\item Once granted, read rights to a revision for a particular user SHALL NOT be revoked: once users have gained read access to a model, they might have already collected all relevant information.
+\item Once granted, read rights to a revision for a particular user SHALL NOT be revoked; as once users have gained read access to a model, they might have already collected all relevant information.
 
 \item The system MUST enable model owners to revoke write access to future revisions of a model for a single user or group of users simultaneously.
 
 \item The system MUST enable model owners to publish a single version of a model. This action SHALL not impact the status of previous model revisions. 
 
-\item The Owner SHOULD be able to grant write access to an unpublished model to a single user, or to a group of users. This would allow Editors to upload new model revisions. The system is then REQUIRED to automatically grant read and write access to a revision for the Editor who uploaded it.
+\item A model owner SHOULD be able to grant write access to an unpublished model to a single user, or to a group of users. This would allow Editors to upload new model revisions. The system is then REQUIRED to automatically grant read and write access to a revision for the Editor who uploaded it.
 
 \item A model owner SHOULD be allowed to transfer the complete ownership of a model to another existing user.
 
-\item The owner SHOULD be able to control the access rights of other users to read or write the model.
+\item A model owner SHOULD be able to control the access rights of other users to read or write the model.
 
 \item Unauthenticated access to the published models in the system SHOULD be permitted as a configuration option. If this option is disabled, users MUST be authenticated before they can access any models within the system.
 
-\item The system MUST be protected against SQL injection, cross-site scripting as well as cross-site request forgery attacks. 
+\item The system MUST be protected against SQL injection, cross-site scripting as well as cross-site request forgery attacks.
+
+\item Administrator(s) MUST be able to perform all possible actions on all stored models and user accounts.
 
 \subsubsection{Interaction with the Interoperability Framework}
-\item Programmatic access to models within the Repository MUST be provided to other software systems including, but not limited to those within \ddmore. In particular, the interoperability platform developed within WP2 MUST be able to load models from the system. This SHOULD be accomplished by means of web services and/or messaging queues. 
+\item Programmatic access to models within the Repository MUST be provided to other software systems including, but not limited to, those within \ddmore. In particular, the interoperability platform developed within WP2 MUST be able to load models from the system. This SHOULD be accomplished by means of web services and/or messaging queues. 
 
 \item The system MAY enable a user to launch the simulation of a model with their own data sets using their local Infrastructure. 
 
@@ -124,7 +126,7 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 \subsubsection{User management}
 \item An administrator MUST be able to manage user accounts. This covers creation, suspension, deletion, blocking or unblocking.
 
-\item The system MUST allow an authenticated user or administrator to update certain details of an account including but not limited to password, name, contact details. Due care MUST be taken to ensure that the user confirms their identity before editing this information.
+\item The system MUST allow an authenticated user to update certain details of his or her account, including but not limited to, password, name, contact details. Due care MUST be taken to ensure that the user confirms their identity before editing this information.
 \end{enumerate}
 
 \subsection{Non-functional requirements}
@@ -138,9 +140,9 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 
 \item The system MUST provide meaningful user information in case of an error. If the error is caused by the system (rather than the user), the system MUST log all necessary information in order to allow a fix to be developed.
 
-\item The look and feel of the Repository MUST be configurable by means of skins.
+\item The look and feel of the Repository MUST be configurable.
 
-\item The system SHALL notify users when a request cannot be processed immediately, either by indicating the progress or by notifying the user when the process has been completed.
+\item The system SHALL notify users when a request cannot be processed immediately, either by indicating the progress or by notifying the user when the \gls{process} has been completed.
 
 \item The system SHALL be implemented using modern presentation and accessibility standards in order to aid maintainability.
 
@@ -148,3 +150,4 @@ This section lists the needs, goals and constraints of the \ddmore Model Reposit
 
 \item The system SHOULD be modular and allow extension.
 \end{enumerate}
+

@@ -52,7 +52,7 @@
 
     <target name = "clean">
         <delete>
-            <fileset dir = "." includes = "**/*.aux,**/*.bbl,**/*.blg,**/*.glg,**/*.glo,**/*.ist,**/*.log,**/*.lot,**/*.out,**/*.lof **/*.toc"/>
+            <fileset dir = "." includes = "**/*.aux,**/*.bbl,**/*.blg,**/*.glg,**/*.glo,**/*.ist,**/*.log,**/*.lot,**/*.out,**/*.lof **/*.toc,**/*.gls"/>
         </delete>
     </target>
 
