@@ -1,0 +1,23 @@
+<assembly>
+	<id>binary</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>target/MIFCLIclient</directory>
+			<outputDirectory></outputDirectory>
+			<includes>
+				<include>**/**/*</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>target</directory>
+			<outputDirectory></outputDirectory>
+			<includes>
+				<include>MIFClient*.jar</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>

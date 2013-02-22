@@ -1,0 +1,9 @@
+Reading data file: simu_rich_2.csv
+|.........................................| ... done
+Calculating continuous covariate statistics
+|....................................| ... done
+Calculating categorical covariate statistics
+|........................................| ... done
+Starting scm backward search
+Estimating base model with included_relations to get base ofv
+Starting 1 NONMEM executions. 1 in parallel.

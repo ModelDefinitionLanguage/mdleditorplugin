@@ -1,0 +1,1 @@
+/usr/bin/scm -config_file=scm_linear.config -dir=linear

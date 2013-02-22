@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+    xmlns:cxf="http://cxf.apache.org/core"
+
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+    http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+    http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+			
+	<amq:connectionFactory brokerURL="${mif.transportconnector.url}"
+		id="jmsFactory">
+		<amq:properties>
+			<amq:redeliveryPolicy maximumRedeliveries="6"
+				initialRedeliveryDelay="15000" useExponentialBackOff="true"
+				backOffMultiplier="5" />
+		</amq:properties>
+	</amq:connectionFactory>
+	
+	<context:property-placeholder/>
+	<!-- JMS Template -->
+
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<property name="defaultDestination" ref="defaultQueue" />
+	</bean>
+
+	<amq:queue id="defaultQueue" physicalName="default.queue" />
+
+	<bean id="sharedLocationManager" class="com.mango.mif.core.resource.UserSharedLocationManager">
+		<property name="workspaceManager" ref="workspaceManager" />
+	</bean>
+    
+    <bean id="workspaceManager" class="com.mango.mif.core.impl.DefaultWorkspaceManager">
+    	<constructor-arg>
+    		<bean class="java.io.File">
+    			<constructor-arg value="${mif.shared.location}"></constructor-arg>
+    		</bean>
+    	</constructor-arg>
+    </bean>
+    
+    <bean id="taskExecutionManager" class="com.mango.mif.client.impl.TaskExecutionManagerImpl">
+		<property name="jmsTemplate" ref="jmsTemplate" />
+		<property name="connectorRegistry">
+			<map>
+				<entry key="JOB.REQUEST" value="JOB.REQUEST" />
+				<entry key="JOB.CANCEL" value="JOB.CANCEL" />
+				<entry key="JOB.RESPONSE" value="JOB.RESPONSE" />
+			</map>
+		</property>
+	</bean>
+    
+	<jms:listener-container container-type="default"
+		connection-factory="jmsFactory" acknowledge="auto" >
+	<jms:listener destination="JOB.RESPONSE" ref="jobResponseListener"
+			method="onMessage" />
+	</jms:listener-container>
+	
+	<bean id="jobResponseListener" class="com.mango.mif.client.impl.TaskExecutionResultsListener">
+		<property name="taskExecutionManager" ref="taskExecutionManager"/>
+	</bean>
+    
+    <bean id="jaxbAnnotationInspector"
+        class="org.codehaus.jackson.xc.JaxbAnnotationIntrospector"/>
+
+    <bean id="jacksonMapper" class="org.codehaus.jackson.map.ObjectMapper">
+        <!-- configure Jackson to work with JAXB -->
+        <property name="deserializationConfig.annotationIntrospector" ref="jaxbAnnotationInspector"/>
+        <property name="serializationConfig.annotationIntrospector" ref="jaxbAnnotationInspector"/>
+    
+        <!--        configure the date format to be JavaScript default -->
+        <property name="serializationConfig.dateFormat">
+            <bean class="java.text.SimpleDateFormat">
+                <constructor-arg value="yyyy-MM-dd'T'HH:mm:ss.SZ"/>
+            </bean>
+        </property>
+    </bean>  
+
+    <bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" p:mapper-ref="jacksonMapper"/> 
+    
+
+    <jaxrs:client id="jobService" address="${mif.job.service.location}"    
+        serviceClass="com.mango.mif.client.api.rest.JobService" 
+        inheritHeaders="true">
+        
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+            <entry key="Accept" value="text/xml"/>
+        </jaxrs:headers>        
+        
+        <jaxrs:providers>            
+            <ref bean="jobServiceExceptionMapper" />
+            <ref bean="jobServiceResponseExceptionMapper" />
+            <ref bean="mifExceptionMapper" />           
+            <ref bean="mifExceptionResponseMapper" />           
+        </jaxrs:providers> 
+                
+        <jaxrs:features>
+            <cxf:logging />
+        </jaxrs:features>         
+    </jaxrs:client>
+
+    <bean id="jobServiceExceptionMapper" class="com.mango.mif.client.api.rest.JobServiceExceptionMapper"/>
+    <bean id="jobServiceResponseExceptionMapper" class="com.mango.mif.client.api.rest.JobServiceResponseExceptionMapper"/>
+    <bean id="mifExceptionMapper" class="com.mango.mif.client.api.rest.MIFExceptionMapper"/>
+    <bean id="mifExceptionResponseMapper" class="com.mango.mif.client.api.rest.MIFExceptionResponseMapper"/>
+    
+    
+    <bean id="templateLocator" class="com.mango.mif.core.exec.template.DirectoryTemplateLocator">
+         <property name="commandTemplateDirectory" value="${mif.runtime.dir}/templates/"/>
+    </bean>
+    
+    <bean id="commandBuilder" abstract="true">
+        <property name="templateLocator" ref="templateLocator"/>
+        <!-- This needs to be replaced to a proper path configured via property-->
+        <property name="utilPath" value="${mif.runtime.dir}/scripts/common/"/>
+        <property name="connectorPath" value="${mif.runtime.dir}/scripts/generic/"/>
+    </bean>
+    
+    
+    <bean id="resourceCopierCommandBuilder" class="com.mango.mif.core.exec.template.FreemarkerTemplateCommandBuilder"
+          scope="prototype" parent="commandBuilder">
+        <property name="template" value="common/resourceCopier.ftl"/>
+    </bean>
+    
+    <bean id="resourcePublisherCommandBuilder" class="com.mango.mif.core.exec.template.FreemarkerTemplateCommandBuilder"
+          scope="prototype" parent="commandBuilder">
+        <property name="template" value="generic/publishHandler.ftl"/>
+    </bean>
+    
+    <bean id="resourceCopierFactory" class="com.mango.mif.core.resource.ResourceCopierFactoryImpl"/>
+</beans>

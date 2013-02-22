@@ -1,0 +1,114 @@
+Starting scm forward search
+Reading data file: simu_rich_2.csv
+|.........................................| ... done
+Calculating continuous covariate statistics
+|....................................| ... done
+Calculating categorical covariate statistics
+|........................................| ... done
+Estimating base model
+Starting 1 NONMEM executions. 1 in parallel.
+S:1 ..  done
+F:1 .. Starting 16 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 .. S:11 .. S:12 .. S:13 .. S:14 .. S:15 .. S:16 ..  done
+Waiting for all NONMEM runs to finish:
+F:11 .. F:15 .. F:9 .. F:16 ..  done
+Adding BMI on V2 state 2
+Taking a step forward
+Starting 15 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 .. S:11 .. S:12 .. S:13 .. S:14 .. S:15 ..  done
+Waiting for all NONMEM runs to finish:
+F:13 .. F:11 .. F:15 ..  done
+Adding RACE on CL state 2
+Taking a step forward
+Starting 14 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 .. S:11 .. S:12 .. S:13 .. S:14 ..  done
+Waiting for all NONMEM runs to finish:
+F:1 .. F:13 .. F:14 ..  done
+Adding BMI on CL state 2
+Taking a step forward
+Starting 13 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 .. S:11 .. S:12 .. S:13 ..  done
+Waiting for all NONMEM runs to finish:
+F:13 .. F:11 ..  done
+Adding RACE on V2 state 2
+Taking a step forward
+Starting 12 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 .. S:11 .. S:12 ..  done
+Waiting for all NONMEM runs to finish:
+F:11 .. F:12 ..  done
+Adding SEXF on V2 state 2
+Taking a step forward
+Starting 11 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 .. S:11 ..  done
+Waiting for all NONMEM runs to finish:
+F:3 .. F:11 .. F:9 .. F:1 ..  done
+Adding WT on V2 state 2
+Taking a step forward
+Starting 10 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 ..  done
+Waiting for all NONMEM runs to finish:
+F:7 .. F:9 .. F:10 .. F:6 .. F:4 ..  done
+Adding AGE on CL state 2
+Taking a step forward
+Starting 9 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 ..  done
+Waiting for all NONMEM runs to finish:
+F:7 .. F:8 .. F:2 .. F:6 .. F:9 ..  done
+Adding HT on CL state 2
+Taking a step forward
+Starting 8 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 ..  done
+Waiting for all NONMEM runs to finish:
+F:2 .. F:8 .. F:3 .. F:7 .. F:6 ..  done
+Adding CRCL on CL state 2
+Taking a step forward
+Starting 7 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 ..  done
+Waiting for all NONMEM runs to finish:
+F:6 .. F:4 .. F:5 .. F:7 .. F:1 ..  done
+Adding AGE on V2 state 2
+Taking a step forward
+Starting 6 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 ..  done
+Waiting for all NONMEM runs to finish:
+F:2 .. F:1 .. F:5 .. F:3 .. F:6 ..  done
+Adding HT on V2 state 2
+Taking a step forward
+Starting 5 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 ..  done
+Waiting for all NONMEM runs to finish:
+F:5 .. F:2 .. F:1 .. F:3 .. F:4 ..  done
+Adding SEXF on CL state 2
+Taking a step forward
+Starting 4 NONMEM executions. 4 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 ..  done
+Waiting for all NONMEM runs to finish:
+F:2 .. F:3 .. F:4 .. F:1 ..  done
+Adding CRCL on V2 state 2
+Taking a step forward
+Starting 3 NONMEM executions. 3 in parallel.
+S:1 .. S:2 .. S:3 ..  done
+Waiting for all NONMEM runs to finish:
+F:2 .. F:3 .. F:1 ..  done
+Adding BSA on V2 state 2
+Taking a step forward
+Starting 2 NONMEM executions. 2 in parallel.
+S:1 .. S:2 ..  done
+Waiting for all NONMEM runs to finish:
+F:2 .. F:1 ..  done
+Writing final models from the forward search.
+forward search done.
+Starting scm backward search inside forward top level directory
+Starting 14 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 .. S:11 .. S:12 .. S:13 .. S:14 ..  done
+Waiting for all NONMEM runs to finish:
+F:9 .. F:13 .. F:14 ..  done
+Removing BSA on V2 state 1
+Taking a step backward
+Starting 13 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 .. S:11 .. S:12 .. S:13 ..  done
+Waiting for all NONMEM runs to finish:
+F:13 .. F:7 .. F:9 ..  done
+Removing BMI on V2 state 1
+Taking a step backward
+Starting 12 NONMEM executions. 5 in parallel.

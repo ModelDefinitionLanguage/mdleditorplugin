@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+    xmlns:jms="http://www.springframework.org/schema/jms" xmlns:oxm="http://www.springframework.org/schema/oxm"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+    <import resource="test-hibernate-context.xml"/>
+
+    <bean id="sharedLocationManager" class="com.mango.mif.core.resource.UserSharedLocationManager"/>
+    <bean id="encrypter" class="com.mango.mif.utils.encrypt.DesEncrypter">
+        <constructor-arg value="classpath:/com/mango/mif/utils/encrypt/defaultDesKey.key"/>
+    </bean>
+
+    <bean id="jobRepository" class="com.mango.mif.connector.dao.JobRepository" />
+
+    <bean id="templateLocator"
+        class="com.mango.mif.core.exec.template.ClasspathFreemarkerTemplateLocator" />
+
+    <bean id="commandBuilder"
+        class="com.mango.mif.core.exec.template.JobAwareFreemarkerTemplateCommandBuilder"
+        scope="prototype">
+        <property name="templateLocator" ref="templateLocator" />
+        <property name="template" value="TEST-COMMAND.FTL"/>
+    </bean>
+
+    <bean id="defaultStateHandler" abstract="true">
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="sharedLocationManager" ref="sharedLocationManager" />
+        <property name="encrypter" ref="encrypter" />
+    </bean>
+
+    <bean
+        class="com.mango.mif.connector.runner.impl.GenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="test-state" />
+        <property name="commandBuilder" ref="commandBuilder"/>
+    </bean>
+
+</beans>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+    xmlns:jms="http://www.springframework.org/schema/jms" xmlns:oxm="http://www.springframework.org/schema/oxm"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.1.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+    <!-- Additional components of the connector -->
+    
+    <!-- A handler injected into JobService, it is responsible for cancellation of Bootstrap child jobs -->
+    <bean id="sgeJobCancellationRequestHandler" class="com.mango.mif.sge.SGEJobCancellationRequestHandler">
+        <property name="commandBuilder">
+            <bean parent="PsNBootstrapSgeCommandBuilder">
+                <property name="template" value="${psnbootstrapsgeconnector.qdelChildJobsCommandTemplate}"/>
+            </bean>
+        </property>
+        <property name="invokerFactory" ref="invokerFactory"></property>
+    </bean>
+
+    <!-- PsN Bootstrap SGE Connector beans -->
+    <jms:listener-container connection-factory="jmsFactory" acknowledge="auto" error-handler="jmsErrorHandler" >
+        <jms:listener destination="${psnbootstrapsgeconnector.requestQueue}" ref="PsNBootstrapSgeConnector"
+            method="onMessage" />
+        <jms:listener destination="${psnbootstrapsgeconnector.jobResultQueue}" ref="PsNBootstrapSgeJobRunnerResultListner"
+            method="onMessage" />
+        <jms:listener destination="${psnbootstrapsgeconnector.jobCancelQueue}" ref="PsNBootstrapSgeCancellationResultListner"
+            method="onMessage" />
+    </jms:listener-container>
+
+    <!-- Job Runner Result Listener -->
+    <bean id="PsNBootstrapSgeJobRunnerResultListner" class="com.mango.mif.connector.JobRunnerResultListener">
+        <property name="connector" ref="PsNBootstrapSgeConnector"/>
+    </bean>
+
+    <!-- Job Runner Cancellation Listener -->
+    <bean id="PsNBootstrapSgeCancellationResultListner" class="com.mango.mif.connector.CancellationRequestListener">
+        <property name="connector" ref="PsNBootstrapSgeConnector"/>
+    </bean>
+
+    <!-- Connector -->
+    <bean id="PsNBootstrapSgeConnector" class="com.mango.mif.connector.Connector" parent="sgeConnector" scope="singleton">
+        <property name="taskExecutor" ref="PsNBootstrapSgeJobRunnersTaskExecutor" />
+        <property name="jobRunnerFactory" ref="PsNBootstrapSgeJobRunnerFactory"/>
+        <property name="responseQueue" value="${psnbootstrapsgeconnector.responseQueue}"/>
+        <property name="requestQueue" value="${psnbootstrapsgeconnector.requestQueue}"/>
+        <property name="cancellationQueue" value="${psnbootstrapsgeconnector.jobCancelQueue}"/>
+        <property name="connectorId" value="${psnbootstrapsgeconnector.connectorId}"/>
+    </bean>
+
+    <!-- Task Executor that is used to invoke job runners -->
+    <bean id="PsNBootstrapSgeJobRunnersTaskExecutor"
+        class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"
+        scope="prototype">
+        <property name="corePoolSize"
+            value="${psnbootstrapsgeconnector.jobRunnersTaskExecutor.corePoolSize}" />
+        <property name="maxPoolSize"
+            value="${psnbootstrapsgeconnector.jobRunnersTaskExecutor.maxPoolSize}" />
+        <property name="queueCapacity"
+            value="${psnbootstrapsgeconnector.jobRunnersTaskExecutor.queueCapacity}" />
+    </bean>
+    <!-- Job Runner -->
+    <bean id="PsNBootstrapSgeJobRunner" class="com.mango.mif.connector.runner.impl.GenericShellBasedJobRunner" scope="prototype" parent="sgeJobRunner">
+        <property name="resultDestination" value="${psnbootstrapsgeconnector.jobResultQueue}"/>
+    </bean>
+
+
+    <!-- Job Runner Factory -->
+    <bean id="PsNBootstrapSgeJobRunnerFactory" class="com.mango.mif.connector.runner.impl.GenericShellBasedJobRunnerFactory" parent="sgeJobRunnerFactory">
+        <lookup-method name="createJobRunner" bean="PsNBootstrapSgeJobRunner"/>
+        <lookup-method name="getStateHandlers" bean="PsNBootstrapSgeStateHandlers"/>
+    </bean>
+
+
+    <!-- Command builders -->
+
+    <bean id="PsNBootstrapSgeCommandBuilder"
+        class="com.mango.mif.core.exec.template.JobAwareFreemarkerTemplateCommandBuilder"
+        abstract="true" parent="sgeCommandBuilder">
+        <constructor-arg index="0">
+            <map merge="true">
+                <entry>
+                    <key><value>scriptExecutablePath</value></key>
+                    <value>${psnbootstrapsgeconnector.scriptExecutablePath}</value>
+                </entry>
+                <entry>
+                    <key><value>NONMEMSGE_CONNECTOR_UTILS</value></key>
+                    <value>${nonmemsgeconnector.connectorScriptsDirectory}</value>
+                </entry>
+                <entry>
+                    <key><value>PSN_SGECONNECTOR_UTILS</value></key>
+                    <value>${psnsgeconnector.connectorScriptsDirectory}</value>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    
+    <bean id="PsNBootstrapSgetask-finishedStateHandler"
+        class="com.mango.mif.connector.runner.impl.GenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-finished" />
+        <constructor-arg index="1" value="done.state.running" />
+        <property name="commandBuilder">
+            <bean parent="PsNBootstrapSgeCommandBuilder">
+                <property name="template" value="${psnbootstrapsgeconnector.task-finishedStateHandler.validateResultsTemplate}" />
+            </bean>
+        </property>
+        <property name="invokerResultHandler">
+            <bean class="com.mango.mif.connector.runner.impl.GenericShellCommandInvokerResultHandler">
+                <constructor-arg value="done.state.running" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="PsNBootstrapSgetask-monitoringStateHandler" parent="task-monitoringStateHandler">
+        <property name="detailedStatusBuilder">
+            <bean
+                class="com.mango.mif.psnsgeconnector.PsNBootstrapRunningDetailedStatusBuilder">
+                <property name="jobInfoBuilder">
+                            <bean parent="PsNBootstrapSgeCommandBuilder">
+                                <property name="template"
+                                    value="${psnbootstrapsgeconnector.runningJobInfoBuilderTemplate}" />
+                             </bean>
+                </property>
+                <property name="summaryCommandBuilder">
+                            <bean parent="PsNBootstrapSgeCommandBuilder">
+                            	<property name="template"
+                                    value="${psnbootstrapsgeconnector.runningSummaryBuilderTemplate}" />
+                            </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="PsNBootstrapSgefinishedStateHandler" parent="finishedStateHandler">
+       <property name="detailedStatusBuilder">
+            <bean class="com.mango.mif.psnsgeconnector.PsNBootstrapCompletedDetailedStatusBuilder">
+                <property name="summaryCommandBuilder">
+                    <bean parent="PsNBootstrapSgeCommandBuilder">
+                        <property name="template" value="${psnbootstrapsgeconnector.completedSummaryBuilderTemplate}"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    <!--
+        State Handlers
+     -->
+    <bean id="PsNBootstrapSgeStateHandlers" class="java.util.ArrayList" scope="prototype">
+        <constructor-arg>
+        <list>
+                <ref bean="pendingStateHandler"/>
+                <ref bean="runningStateHandler"/>
+                <ref bean="task-pendingStateHandler"/>
+
+                <bean class="com.mango.mif.connector.runner.impl.ShellBasedPrepareHandler" scope="prototype" parent="task-prepareStateHandler">
+                    <property name="gridSubmitScriptBuilder">
+                        <bean parent="PsNBootstrapSgeCommandBuilder">
+                            <property name="template" value="${psnbootstrapsgeconnector.submitScriptTemplate}"/>
+                        </bean>
+                    </property>
+                </bean>
+
+                <ref bean="task-submittingStateHandler"/>
+                
+                <ref bean="task-processingStateHandler"/>
+                <ref bean="PsNBootstrapSgetask-monitoringStateHandler"/>
+                <ref bean="task-post-monitoringStateHandler"/>
+                <ref bean="task-monitoring-finishedStateHandler"/>
+                
+                <ref bean="task-retrievingStateHandler"/>
+                
+                <ref bean="task-postprocessingStateHandler"/>
+                <ref bean="PsNBootstrapSgetask-finishedStateHandler"/>
+                <ref bean="PsNBootstrapSgefinishedStateHandler"/>
+                <ref bean="failedStateHandler"/>
+                <ref bean="NONMEMSgeCancelledStateHandler"/>
+            </list>
+        </constructor-arg>
+    </bean>
+</beans>

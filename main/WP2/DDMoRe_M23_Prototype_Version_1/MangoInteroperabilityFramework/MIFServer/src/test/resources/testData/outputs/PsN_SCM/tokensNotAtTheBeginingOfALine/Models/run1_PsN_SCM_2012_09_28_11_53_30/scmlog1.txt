@@ -1,0 +1,35 @@
+Model directory /net/navtst-nonmem/usr/global/navtst64/sgejobs/MIF-bf8fbe40-1635-4c30-aeef-3aca2be54586/Models/run1_PsN_SCM_2012_09_28_11_53_30/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLAPGR-2         PVAL    725.60170   725.10466              0.49705  >   3.84150    1              0.480800 
+CLWT-2           PVAL    725.60170   672.98298             52.61872  >   3.84150    1        YES!  4.05e-13 
+
+Parameter-covariate relation chosen in this forward step: CL-WT-2
+CRITERION              PVAL < 0.05
+BASE_MODEL_OFV         725.60170
+CHOSEN_MODEL_OFV       672.98298
+Relations included after this step:
+CL      WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/navtst64/sgejobs/MIF-bf8fbe40-1635-4c30-aeef-3aca2be54586/Models/run1_PsN_SCM_2012_09_28_11_53_30/forward_scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLAPGR-2         PVAL    672.98298   670.94451              2.03847  >   3.84150    1              0.153360 
+
+Parameter-covariate relation chosen in this forward step: --
+CRITERION              PVAL < 0.05
+--------------------
+
+
+--------------------
+Forward search done. Starting backward search inside forward top level directory
+Model directory /net/navtst-nonmem/usr/global/navtst64/sgejobs/MIF-bf8fbe40-1635-4c30-aeef-3aca2be54586/Models/run1_PsN_SCM_2012_09_28_11_53_30/backward_scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF  INSIGNIFICANT PVAL
+CLWT-1           PVAL    672.98298   725.60170            -52.61872  >  -6.63490   -1              4.05e-13 
+
+Parameter-covariate relation chosen in this backward step: --
+CRITERION              PVAL > 0.01
+--------------------
+

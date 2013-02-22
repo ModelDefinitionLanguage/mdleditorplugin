@@ -1,0 +1,15 @@
+[1]
+covariance_step_successful=5,1
+covariance_step_warnings=6,1
+estimate_near_boundary=7,1
+line_numbers=1
+minimization_successful=4,1
+ofv=15,1
+omega=20,4
+rounding_errors=8,1
+s_matrix_singular=12,1
+seomega=30,4
+sesigma=34,2
+setheta=26,4
+sigma=24,2
+theta=16,4

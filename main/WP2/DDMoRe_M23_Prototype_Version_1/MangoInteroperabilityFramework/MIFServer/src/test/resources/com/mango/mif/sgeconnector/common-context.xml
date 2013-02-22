@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.1.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+        	
+	<bean id="properties" class="com.mango.mif.utils.MIFPropertyPlaceholderConfigurer">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+  
+        <!-- Ignore validation of properties set in the tests -->
+        <property name="validatePropertiesOnStart" value="false"/>
+        
+		<property name="systemPropertiesModeName"><value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value></property>  
+		<property name="locations">
+			<list>
+				<value>classpath:com/mango/mif/sgeconnector/connector.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+    <import resource="test-hibernate-context.xml"/>
+	
+    <bean id="templateLocator" class="com.mango.mif.core.exec.template.DirectoryTemplateLocator">
+        <property name="commandTemplateDirectory" value="${mif.templatesDirectory}"/>
+    </bean>
+
+	<bean id="sharedLocationManager" class="com.mango.mif.core.resource.UserSharedLocationManager">
+	</bean>
+	
+    <bean id="jobManagementService" class="com.mango.mif.managers.JobManagementServiceImpl">
+        <property name="sharedLocationManager" ref="sharedLocationManager" />
+        <property name="mifServiceAccountUserName" value="${mif.serviceAccount.userName}" />
+        <property name="mifServiceAcccountPassword" value="${mif.serviceAccount.userPassword}" />
+        <property name="jobInvokerProvider" ref="jobInvokerProvider" />
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="runInRequestDirectory" value="${mif.runInRequestDir}"/> 
+    </bean>
+    
+    <bean id="jobRepository" class="com.mango.mif.connector.dao.JobRepository"/>
+    
+    <bean id="jobInvokerProvider" class="com.mango.mif.connector.runner.impl.BasicJobInvokerProvider">
+        <property name="invokerFactory" ref="invokerFactory"/>
+    </bean>
+	
+	<bean id="encrypter" class="com.mango.mif.utils.encrypt.DesEncrypter">
+    	<constructor-arg value="classpath:/com/mango/mif/utils/encrypt/defaultDesKey.key"/>
+    </bean>
+    
+	<jms:listener-container container-type="default"
+		connection-factory="jmsFactory" acknowledge="auto" error-handler="jmsErrorHandler">
+		
+		<jms:listener destination="${mif.responseQueue}" ref="responseListener"
+			method="onMessage" />
+			
+	</jms:listener-container>
+
+
+    <bean id="jmsErrorHandler" class="com.mango.mif.utils.JMSErrorHandler"/>
+
+
+	<!-- message routing -->
+
+       
+    <bean id="connectorsRegistry"  class="com.mango.mif.core.impl.MapBasedConnectorsRegistry">
+        <constructor-arg>
+            <map>
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).R_Script.name()}</value></key>
+                    <ref bean="RSgeConnector"/>
+                </entry>
+                    
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).NMFE.name()}</value></key>
+                    <ref bean="NONMEMSgeConnector"/>
+                </entry>
+                    
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).PsN_EXEC.name()}</value></key>
+                    <ref bean="NONMEMSgeConnector"/>
+                </entry>
+                
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).COMMAND_LINE.name()}</value></key>
+                    <ref bean="CMDSgeConnector"/>
+                </entry>
+                    
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).PsN_VPC.name()}</value></key>
+                    <ref bean="PsNVPCSgeConnector"/>
+                </entry>
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).PsN_SCM.name()}</value></key>
+                    <ref bean="PsNSCMSgeConnector"/>
+                </entry>
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).PsN_Bootstrap.name()}</value></key>
+                    <ref bean="PsNBootstrapSgeConnector"/>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean> 
+
+	<bean id="requestRouter" class="com.mango.mif.core.impl.MessageRouter">
+		<property name="queueResolver">
+			<bean class="com.mango.mif.core.impl.RequestQueueResolver">
+                <property name="connectorsRegistry" ref="connectorsRegistry" />
+			</bean>
+		</property>
+		
+        <property name="routingErrorHandler">
+            <bean class="com.mango.mif.core.impl.RequestRoutingErrorHandler">
+                <constructor-arg value="${mif.responseQueue}"/>
+                <constructor-arg>
+                <ref bean="jmsTemplate"/>
+                </constructor-arg>
+            </bean>
+        </property>
+		<property name="jmsTemplate" ref="mifJmsTemplate"/>	    
+	</bean>
+
+    <bean id="cancellationRouter" class="com.mango.mif.core.impl.MessageRouter">
+        <property name="queueResolver">
+            <bean class="com.mango.mif.core.impl.CancellationQueueResolver">
+                <property name="jobManagementService" ref="jobManagementService" />
+                <property name="connectorsRegistry" ref="connectorsRegistry" />
+            </bean>
+        </property>
+        
+        <property name="routingErrorHandler">
+            <bean class="com.mango.mif.core.impl.CancellationRequestRoutingErrorHandler">
+                <constructor-arg value="${mif.responseQueue}"/>
+                <constructor-arg>
+                <ref bean="jmsTemplate"/>
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="jmsTemplate" ref="mifJmsTemplate"/>             
+    </bean>
+	
+	<bean id="mifJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<property name="defaultDestination" ref="defaultQueue" />
+	</bean>
+	
+	<jms:listener-container	connection-factory="jmsFactory" acknowledge="auto" >
+		<jms:listener destination="${mif.requestQueue}" ref="requestRouter"
+			method="onMessage" />
+		<jms:listener destination="${mif.cancelQueue}" ref="cancellationRouter"
+			method="onMessage" />
+	</jms:listener-container>
+</beans>

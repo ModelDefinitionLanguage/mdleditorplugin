@@ -1,0 +1,312 @@
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLAGE-2          PVAL   3762.92816  3761.98901              0.93914  >   0.01579    1        YES!  0.332500 
+CLBMI-2          PVAL   3762.92816  3762.92396              0.00420  >   0.01579    1              0.948330 
+CLBSA-2          PVAL   3762.92816  3759.68191              3.24625  >   0.01579    1        YES!  0.071587 
+CLCRCL-2         PVAL   3762.92816  3761.44672              1.48143  >   0.01579    1        YES!  0.223550 
+CLHT-2           PVAL   3762.92816  3760.84157              2.08659  >   0.01579    1        YES!  0.148600 
+CLSEXF-2         PVAL   3762.92816  3760.53953              2.38862  >   0.01579    1        YES!  0.122220 
+CLWT-2           PVAL   3762.92816  3760.14158              2.78657  >   0.01579    1        YES!  0.095057 
+V2AGE-2          PVAL   3762.92816  3760.12688              2.80127  >   0.01579    1        YES!  0.094189 
+V2BMI-2          PVAL   3762.92816  3758.57381              4.35435  >   0.01579    1        YES!  0.036915 
+V2BSA-2          PVAL   3762.92816  3762.80500              0.12316  >   0.01579    1        YES!  0.725630 
+V2CRCL-2         PVAL   3762.92816  3762.28826              0.63989  >   0.01579    1        YES!  0.423750 
+V2HT-2           PVAL   3762.92816  3762.12042              0.80773  >   0.01579    1        YES!  0.368790 
+V2SEXF-2         PVAL   3762.92816  3760.29596              2.63220  >   0.01579    1        YES!  0.104720 
+V2WT-2           PVAL   3762.92816  3761.46994              1.45822  >   0.01579    1        YES!  0.227210 
+
+Parameter-covariate relation chosen in this forward step: V2-BMI-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3762.92816
+CHOSEN_MODEL_OFV      3758.57381
+Relations included after this step:
+CL      
+V2      BMI-2   
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLAGE-2          PVAL   3758.57381  3757.63693              0.93688  >   0.01579    1        YES!  0.333080 
+CLBMI-2          PVAL   3758.57381  3758.57333              0.00048  >   0.01579    1              0.982520 
+CLBSA-2          PVAL   3758.57381  3755.44789              3.12592  >   0.01579    1        YES!  0.077057 
+CLCRCL-2         PVAL   3758.57381  3757.12756              1.44624  >   0.01579    1        YES!  0.229130 
+CLHT-2           PVAL   3758.57381  3756.50747              2.06634  >   0.01579    1        YES!  0.150580 
+CLSEXF-2         PVAL   3758.57381  3756.21331              2.36050  >   0.01579    1        YES!  0.124440 
+CLWT-2           PVAL   3758.57381  3755.93711              2.63670  >   0.01579    1        YES!  0.104420 
+V2AGE-2          PVAL   3758.57381  3757.93375              0.64005  >   0.01579    1        YES!  0.423690 
+V2BSA-2          PVAL   3758.57381  3758.57275              0.00106  >   0.01579    1              0.974040 
+V2CRCL-2         PVAL   3758.57381  3758.14637              0.42743  >   0.01579    1        YES!  0.513250 
+V2HT-2           PVAL   3758.57381  3758.53120              0.04261  >   0.01579    1        YES!  0.836470 
+V2SEXF-2         PVAL   3758.57381  3757.32420              1.24961  >   0.01579    1        YES!  0.263630 
+V2WT-2           PVAL   3758.57381  3758.56484              0.00897  >   0.01579    1              0.924540 
+
+Parameter-covariate relation chosen in this forward step: CL-BSA-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3758.57381
+CHOSEN_MODEL_OFV      3755.44789
+Relations included after this step:
+CL      BSA-2   
+V2      BMI-2   
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLAGE-2          PVAL   3755.44789  3755.39655              0.05134  >   0.01579    1        YES!  0.820750 
+CLBMI-2          PVAL   3755.44789  3755.44483              0.00306  >   0.01579    1              0.955900 
+CLCRCL-2         PVAL   3755.44789  3755.06937              0.37851  >   0.01579    1        YES!  0.538400 
+CLHT-2           PVAL   3755.44789  3755.43323              0.01466  >   0.01579    1              0.903640 
+CLSEXF-2         PVAL   3755.44789  3755.31011              0.13778  >   0.01579    1        YES!  0.710500 
+CLWT-2           PVAL   3755.44789  3755.35691              0.09097  >   0.01579    1        YES!  0.762940 
+V2AGE-2          PVAL   3755.44789  3754.71187              0.73601  >   0.01579    1        YES!  0.390940 
+V2BSA-2          PVAL   3755.44789  3755.44246              0.00543  >   0.01579    1              0.941250 
+V2CRCL-2         PVAL   3755.44789  3754.95687              0.49102  >   0.01579    1        YES!  0.483470 
+V2HT-2           PVAL   3755.44789  3755.38491              0.06297  >   0.01579    1        YES!  0.801850 
+V2SEXF-2         PVAL   3755.44789  3754.10698              1.34091  >   0.01579    1        YES!  0.246870 
+V2WT-2           PVAL   3755.44789  3755.44530              0.00259  >   0.01579    1              0.959420 
+
+Parameter-covariate relation chosen in this forward step: V2-SEXF-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3755.44789
+CHOSEN_MODEL_OFV      3754.10698
+Relations included after this step:
+CL      BSA-2   
+V2      BMI-2   SEXF-2  
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLAGE-2          PVAL   3754.10698  3754.06200              0.04498  >   0.01579    1        YES!  0.832040 
+CLBMI-2          PVAL   3754.10698  3754.10389              0.00310  >   0.01579    1              0.955630 
+CLCRCL-2         PVAL   3754.10698  3753.73850              0.36849  >   0.01579    1        YES!  0.543830 
+CLHT-2           PVAL   3754.10698  3754.09324              0.01374  >   0.01579    1              0.906700 
+CLSEXF-2         PVAL   3754.10698  3753.96160              0.14538  >   0.01579    1        YES!  0.702990 
+CLWT-2           PVAL   3754.10698  3754.01702              0.08997  >   0.01579    1        YES!  0.764220 
+V2AGE-2          PVAL   3754.10698  3754.00002              0.10696  >   0.01579    1        YES!  0.743630 
+V2BSA-2          PVAL   3754.10698  3748.44923              5.65775  >   0.01579    1        YES!  0.017378 
+V2CRCL-2         PVAL   3754.10698  3752.70704              1.39995  >   0.01579    1        YES!  0.236730 
+V2HT-2           PVAL   3754.10698  3751.05590              3.05108  >   0.01579    1        YES!  0.080684 
+V2WT-2           PVAL   3754.10698  3748.16861              5.93837  >   0.01579    1        YES!  0.014815 
+
+Parameter-covariate relation chosen in this forward step: V2-WT-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3754.10698
+CHOSEN_MODEL_OFV      3748.16861
+Relations included after this step:
+CL      BSA-2   
+V2      BMI-2   SEXF-2  WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLAGE-2          PVAL   3748.16861  3748.13067              0.03794  >   0.01579    1        YES!  0.845570 
+CLBMI-2          PVAL   3748.16861  3748.16533              0.00328  >   0.01579    1              0.954340 
+CLCRCL-2         PVAL   3748.16861  3747.82361              0.34501  >   0.01579    1        YES!  0.556950 
+CLHT-2           PVAL   3748.16861  3748.15551              0.01310  >   0.01579    1              0.908880 
+CLSEXF-2         PVAL   3748.16861  3748.00660              0.16202  >   0.01579    1        YES!  0.687310 
+CLWT-2           PVAL   3748.16861  3748.07736              0.09126  >   0.01579    1        YES!  0.762590 
+V2AGE-2          PVAL   3748.16861  3747.89169              0.27692  >   0.01579    1        YES!  0.598720 
+V2BSA-2          PVAL   3748.16861  3748.04779              0.12083  >   0.01579    1        YES!  0.728140 
+V2CRCL-2         PVAL   3748.16861  3748.13580              0.03281  >   0.01579    1        YES!  0.856250 
+V2HT-2           PVAL   3748.16861  3748.11037              0.05824  >   0.01579    1        YES!  0.809300 
+
+Parameter-covariate relation chosen in this forward step: CL-CRCL-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3748.16861
+CHOSEN_MODEL_OFV      3747.82361
+Relations included after this step:
+CL      BSA-2   CRCL-2  
+V2      BMI-2   SEXF-2  WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLAGE-2          PVAL   3747.82361  3747.72679              0.09682  >   0.01579    1        YES!  0.755680 
+CLBMI-2          PVAL   3747.82361  3747.69744              0.12617  >   0.01579    1        YES!  0.722440 
+CLHT-2           PVAL   3747.82361  3747.59611              0.22750  >   0.01579    1        YES!  0.633380 
+CLSEXF-2         PVAL   3747.82361  3746.15960              1.66400  >   0.01579    1        YES!  0.197060 
+CLWT-2           PVAL   3747.82361  3747.81257              0.01104  >   0.01579    1              0.916320 
+V2AGE-2          PVAL   3747.82361  3747.55369              0.26992  >   0.01579    1        YES!  0.603390 
+V2BSA-2          PVAL   3747.82361  3747.71185              0.11176  >   0.01579    1        YES!  0.738150 
+V2CRCL-2         PVAL   3747.82361  3747.78990              0.03371  >   0.01579    1        YES!  0.854320 
+V2HT-2           PVAL   3747.82361  3747.76968              0.05393  >   0.01579    1        YES!  0.816360 
+
+Parameter-covariate relation chosen in this forward step: CL-SEXF-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3747.82361
+CHOSEN_MODEL_OFV      3746.15960
+Relations included after this step:
+CL      BSA-2   CRCL-2  SEXF-2  
+V2      BMI-2   SEXF-2  WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLAGE-2          PVAL   3746.15960  3745.33630              0.82330  >   0.01579    1        YES!  0.364220 
+CLBMI-2          PVAL   3746.15960  3745.96632              0.19329  >   0.01579    1        YES!  0.660200 
+CLHT-2           PVAL   3746.15960  3745.97669              0.18291  >   0.01579    1        YES!  0.668880 
+CLWT-2           PVAL   3746.15960  3745.68228              0.47732  >   0.01579    1        YES!  0.489640 
+V2AGE-2          PVAL   3746.15960  3745.88470              0.27491  >   0.01579    1        YES!  0.600060 
+V2BSA-2          PVAL   3746.15960  3746.02926              0.13034  >   0.01579    1        YES!  0.718080 
+V2CRCL-2         PVAL   3746.15960  3746.13621              0.02339  >   0.01579    1        YES!  0.878440 
+V2HT-2           PVAL   3746.15960  3746.09474              0.06487  >   0.01579    1        YES!  0.798960 
+
+Parameter-covariate relation chosen in this forward step: CL-AGE-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3746.15960
+CHOSEN_MODEL_OFV      3745.33630
+Relations included after this step:
+CL      AGE-2   BSA-2   CRCL-2  SEXF-2  
+V2      BMI-2   SEXF-2  WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLBMI-2          PVAL   3745.33630  3745.33513              0.00117  >   0.01579    1              0.972700 
+CLHT-2           PVAL   3745.33630  3745.32737              0.00893  >   0.01579    1              0.924700 
+CLWT-2           PVAL   3745.33630  3745.22596              0.11034  >   0.01579    1        YES!  0.739760 
+V2AGE-2          PVAL   3745.33630  3745.04054              0.29576  >   0.01579    1        YES!  0.586550 
+V2BSA-2          PVAL   3745.33630  3745.19619              0.14011  >   0.01579    1        YES!  0.708170 
+V2CRCL-2         PVAL   3745.33630  3745.31586              0.02044  >   0.01579    1        YES!  0.886310 
+V2HT-2           PVAL   3745.33630  3745.26425              0.07205  >   0.01579    1        YES!  0.788370 
+
+Parameter-covariate relation chosen in this forward step: V2-AGE-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3745.33630
+CHOSEN_MODEL_OFV      3745.04054
+Relations included after this step:
+CL      AGE-2   BSA-2   CRCL-2  SEXF-2  
+V2      AGE-2   BMI-2   SEXF-2  WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLBMI-2          PVAL   3745.04054  3745.03805              0.00250  >   0.01579    1              0.960160 
+CLHT-2           PVAL   3745.04054  3745.03127              0.00928  >   0.01579    1              0.923280 
+CLWT-2           PVAL   3745.04054  3744.93545              0.10510  >   0.01579    1        YES!  0.745800 
+V2BSA-2          PVAL   3745.04054  3745.02194              0.01860  >   0.01579    1        YES!  0.891520 
+V2CRCL-2         PVAL   3745.04054  3744.88594              0.15460  >   0.01579    1        YES!  0.694180 
+V2HT-2           PVAL   3745.04054  3745.03872              0.00182  >   0.01579    1              0.965990 
+
+Parameter-covariate relation chosen in this forward step: V2-CRCL-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3745.04054
+CHOSEN_MODEL_OFV      3744.88594
+Relations included after this step:
+CL      AGE-2   BSA-2   CRCL-2  SEXF-2  
+V2      AGE-2   BMI-2   CRCL-2  SEXF-2  WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLBMI-2          PVAL   3744.88594  3744.88290              0.00304  >   0.01579    1              0.956050 
+CLHT-2           PVAL   3744.88594  3744.87562              0.01032  >   0.01579    1              0.919100 
+CLWT-2           PVAL   3744.88594  3744.78300              0.10294  >   0.01579    1        YES!  0.748330 
+V2BSA-2          PVAL   3744.88594  3743.43264              1.45330  >   0.01579    1        YES!  0.228000 
+V2HT-2           PVAL   3744.88594  3744.01578              0.87016  >   0.01579    1        YES!  0.350910 
+
+Parameter-covariate relation chosen in this forward step: V2-BSA-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3744.88594
+CHOSEN_MODEL_OFV      3743.43264
+Relations included after this step:
+CL      AGE-2   BSA-2   CRCL-2  SEXF-2  
+V2      AGE-2   BMI-2   BSA-2   CRCL-2  SEXF-2  WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLBMI-2          PVAL   3743.43264  3743.43137              0.00127  >   0.01579    1              0.971570 
+CLHT-2           PVAL   3743.43264  3743.42781              0.00483  >   0.01579    1              0.944590 
+CLWT-2           PVAL   3743.43264  3743.32285              0.10979  >   0.01579    1        YES!  0.740390 
+V2HT-2           PVAL   3743.43264  3743.36539              0.06725  >   0.01579    1        YES!  0.795380 
+
+Parameter-covariate relation chosen in this forward step: CL-WT-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3743.43264
+CHOSEN_MODEL_OFV      3743.32285
+Relations included after this step:
+CL      AGE-2   BSA-2   CRCL-2  SEXF-2  WT-2    
+V2      AGE-2   BMI-2   BSA-2   CRCL-2  SEXF-2  WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLBMI-2          PVAL   3743.32285  3743.14133              0.18152  >   0.01579    1        YES!  0.670070 
+CLHT-2           PVAL   3743.32285  3743.19421              0.12864  >   0.01579    1        YES!  0.719840 
+V2HT-2           PVAL   3743.32285  3743.25967              0.06319  >   0.01579    1        YES!  0.801530 
+
+Parameter-covariate relation chosen in this forward step: CL-BMI-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3743.32285
+CHOSEN_MODEL_OFV      3743.14133
+Relations included after this step:
+CL      AGE-2   BMI-2   BSA-2   CRCL-2  SEXF-2  WT-2    
+V2      AGE-2   BMI-2   BSA-2   CRCL-2  SEXF-2  WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+CLHT-2           PVAL   3743.14133  3742.61361              0.52772  >   0.01579    1        YES!  0.467570 
+V2HT-2           PVAL   3743.14133  3743.07140              0.06993  >   0.01579    1        YES!  0.791440 
+
+Parameter-covariate relation chosen in this forward step: CL-HT-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3743.14133
+CHOSEN_MODEL_OFV      3742.61361
+Relations included after this step:
+CL      AGE-2   BMI-2   BSA-2   CRCL-2  HT-2    SEXF-2  WT-2    
+V2      AGE-2   BMI-2   BSA-2   CRCL-2  SEXF-2  WT-2    
+--------------------
+
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/forward_scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF    SIGNIFICANT PVAL
+V2HT-2           PVAL   3742.61361  3742.54782              0.06578  >   0.01579    1        YES!  0.797580 
+
+Parameter-covariate relation chosen in this forward step: V2-HT-2
+CRITERION              PVAL < 0.9
+BASE_MODEL_OFV        3742.61361
+CHOSEN_MODEL_OFV      3742.54782
+Relations included after this step:
+CL      AGE-2   BMI-2   BSA-2   CRCL-2  HT-2    SEXF-2  WT-2    
+V2      AGE-2   BMI-2   BSA-2   CRCL-2  HT-2    SEXF-2  WT-2    
+--------------------
+
+
+--------------------
+Forward search done. Starting backward search inside forward top level directory
+Model directory /net/navtst-nonmem/usr/global/mrogalski/other/scm-linear/scm-linear/linear/backward_scm_dir1/m1
+
+MODEL            TEST     BASE OFV     NEW OFV         TEST OFV (DROP)    GOAL     dDF  INSIGNIFICANT PVAL
+CLAGE-1          PVAL   3742.54782  3743.67365             -1.12583  >  -0.14847   -1              0.288670 
+CLBMI-1          PVAL   3742.54782  3743.12530             -0.57747  >  -0.14847   -1              0.447310 
+CLBSA-1          PVAL   3742.54782  3743.08830             -0.54047  >  -0.14847   -1              0.462240 
+CLCRCL-1         PVAL   3742.54782  3743.07983             -0.53200  >  -0.14847   -1              0.465770 
+CLHT-1           PVAL   3742.54782  3743.07155             -0.52373  >  -0.14847   -1              0.469260 
+CLSEXF-1         PVAL   3742.54782  3744.94033             -2.39251  >  -0.14847   -1              0.121920 
+CLWT-1           PVAL   3742.54782  3743.02306             -0.47524  >  -0.14847   -1              0.490590 
+V2AGE-1          PVAL   3742.54782  3743.89866             -1.35083  >  -0.14847   -1              0.245130 
+V2BMI-1          PVAL   3742.54782  3743.47358             -0.92576  >  -0.14847   -1              0.335970 
+V2BSA-1          PVAL   3742.54782  3743.65399             -1.10616  >  -0.14847   -1              0.292920 
+V2CRCL-1         PVAL   3742.54782  3744.34958             -1.80175  >  -0.14847   -1              0.179500 
+V2HT-1           PVAL   3742.54782  3743.09082             -0.54300  >  -0.14847   -1              0.461190 
+V2SEXF-1         PVAL   3742.54782  3744.83910             -2.29128  >  -0.14847   -1              0.130100 
+V2WT-1           PVAL   3742.54782  3743.79772             -1.24990  >  -0.14847   -1              0.263570 
+
+Parameter-covariate relation chosen in this backward step: --
+CRITERION              PVAL > 0.7
+--------------------
+

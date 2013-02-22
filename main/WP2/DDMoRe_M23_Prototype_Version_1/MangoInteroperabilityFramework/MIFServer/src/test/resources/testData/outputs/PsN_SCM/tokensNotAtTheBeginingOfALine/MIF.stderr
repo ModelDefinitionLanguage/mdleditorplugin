@@ -1,0 +1,22 @@
+Starting scm forward search
+Reading data file: PHENO.dta
+|..........................................| ... done
+Calculating continuous covariate statistics
+|........................................| ... done
+Estimating base model
+Starting 1 NONMEM executions. 1 in parallel.
+S:1 ..  done
+F:1 .. Starting 2 NONMEM executions. 2 in parallel.
+S:1 .. S:2 ..  done
+Waiting for all NONMEM runs to finish:
+F:1 .. F:2 ..  done
+Adding WT on CL state 2
+Taking a step forward
+Starting 1 NONMEM executions. 1 in parallel.
+S:1 ..  done
+F:1 .. forward search done.
+Writing final models from the forward search.
+Starting scm backward search inside forward top level directory
+Starting 1 NONMEM executions. 1 in parallel.
+S:1 ..  done
+F:1 .. scm done

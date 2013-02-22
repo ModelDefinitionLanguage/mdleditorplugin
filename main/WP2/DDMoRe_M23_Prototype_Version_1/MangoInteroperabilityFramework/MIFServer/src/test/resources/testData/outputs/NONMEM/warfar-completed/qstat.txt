@@ -1,0 +1,26 @@
+==============================================================
+job_number:                 120078
+exec_file:                  job_scripts/120078
+submission_time:            Fri Aug 31 12:41:19 2012
+owner:                      tbamford
+uid:                        10109
+group:                      Domain
+gid:                        10000
+sge_o_home:                 /home/tbamford
+sge_o_log_name:             tbamford
+sge_o_path:                 /home/tbamford/bin:/usr/global/sge/bin/lx24-amd64:/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/java/default:/usr/share/eclipse:/usr/share/apache-ant-1.8.3/bin:/usr/share/apache-maven-3.0.4/bin
+sge_o_shell:                /bin/bash
+sge_o_workdir:              /usr/local/mangodev/tbamford/MIF/trunk/MangoInteroperabilityFramework/MIFServer/src/test/resources/testData/outputs/NONMEM
+sge_o_host:                 navws-tb
+account:                    sge
+cwd:                        /home/tbamford
+stderr_path_list:           NONE:NONE:/home/tbamford/grid.stderr
+mail_list:                  tbamford@navws-tb.mango.local
+notify:                     FALSE
+job_name:                   mygridjob.sh
+stdout_path_list:           NONE:NONE:/home/tbamford/grid.stdout
+jobshare:                   0
+env_list:                   
+script_file:                /home/tbamford/mygridjob.sh
+usage    1:                 cpu=00:00:00, mem=0.00000 GBs, io=0.00000, vmem=N/A, maxvmem=N/A
+scheduling info:            (Collecting of scheduler job information is turned off)

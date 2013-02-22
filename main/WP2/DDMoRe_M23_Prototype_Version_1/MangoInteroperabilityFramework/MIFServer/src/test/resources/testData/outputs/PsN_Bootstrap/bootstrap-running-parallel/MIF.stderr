@@ -1,0 +1,7 @@
+Executing base model.
+Starting 1 NONMEM executions. 1 in parallel.
+S:1 ..  done
+F:1 .. Resampling from simu_rich_2.csv
+|........................................| ... done
+Starting 10 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. 

@@ -1,0 +1,23 @@
+==============================================================
+job_number:                 6608
+exec_file:                  job_scripts/6608
+submission_time:            Sat May 12 20:07:00 2012
+owner:                      mrogalski
+uid:                        10032
+group:                      Domain
+gid:                        10000
+sge_o_home:                 /home/mrogalski
+sge_o_log_name:             mrogalski
+sge_o_path:                 /usr/global/sge/bin/lx24-amd64:/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/share/apache-maven-3.0.4/bin
+sge_o_shell:                /bin/bash
+sge_o_workdir:              /net/navtst-nonmem/usr/global/mrogalski
+sge_o_host:                 navws-mr
+account:                    sge
+mail_list:                  mrogalski@navws-mr.mango.local
+notify:                     FALSE
+job_name:                   test.sh
+jobshare:                   0
+env_list:
+job_args:                   -cwd
+script_file:                test.sh
+scheduling info:            (Collecting of scheduler job information is turned off)

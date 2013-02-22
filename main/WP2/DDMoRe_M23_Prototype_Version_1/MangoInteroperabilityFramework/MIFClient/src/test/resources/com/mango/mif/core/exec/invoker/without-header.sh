@@ -1,0 +1,3 @@
+set -e
+
+ls -la

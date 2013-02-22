@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+    	http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+    	http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+    	
+    <context:annotation-config />
+
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+
+
+	<bean id="jaxbAnnotationInspector"
+	    class="org.codehaus.jackson.xc.JaxbAnnotationIntrospector"/>
+
+	<bean id="jacksonMapper" class="org.codehaus.jackson.map.ObjectMapper">
+		<!-- configure Jackson to work with JAXB -->
+    	<property name="deserializationConfig.annotationIntrospector" ref="jaxbAnnotationInspector"/>
+    	<property name="serializationConfig.annotationIntrospector" ref="jaxbAnnotationInspector"/>
+	
+	<!-- 		configure the date format to be JavaScript default -->
+		<property name="serializationConfig.dateFormat">
+			<bean class="java.text.SimpleDateFormat">
+				<constructor-arg value="yyyy-MM-dd'T'HH:mm:ss.SZ"/>
+			</bean>
+		</property>
+	</bean>  
+
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" p:mapper-ref="jacksonMapper"/> 
+
+	<jaxrs:server id="jobService" address="/services">
+	     <jaxrs:inInterceptors>
+             <ref bean="authorizationInterceptor"/>
+         </jaxrs:inInterceptors>
+        <jaxrs:serviceBeans>
+            <ref bean="jobServiceImpl" />
+            <ref bean="jobSubmissionServiceImpl" />
+            <ref bean="jobConnectorRegistryServiceImpl" />
+            <ref bean="statisticsServiceImpl" />
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref bean="jsonProvider"/>					
+			<ref bean="jobServiceExceptionMapper" />
+			<ref bean="jobServiceResponseExceptionMapper" /> 
+            <ref bean="mifExceptionMapper" />           
+            <ref bean="mifExceptionResponseMapper" />     	
+		</jaxrs:providers>
+		<!-- <jaxrs:properties>
+			
+			Tell CXF to use a different Content-Type for the JSON endpoint
+			This should probably be application/json, but text/plain allows
+			us to view easily in a web browser.
+			<entry key="Content-Type" value="text/plain" />
+		</jaxrs:properties> -->
+        <jaxrs:features>
+            <cxf:logging />
+        </jaxrs:features>
+    </jaxrs:server>
+
+    <bean id="authorizationInterceptor" class="com.mango.mif.rest.authentication.AuthorizationInterceptor">
+     <property name="authEnabled" value="${mif.authorization.enabled}"/>     
+     <property name="userCredentials" >
+           <map>
+               <entry key="${mif.username}" value="${mif.password}"/>
+           </map>
+        </property>       
+    </bean>
+
+    <bean id="jobServiceImpl" class="com.mango.mif.rest.service.JobServiceImpl">
+    	  <property name="jobManagementService" ref="jobManagementService"/>  
+          <property name="sgeJobCancellationRequestHandler" ref="sgeJobCancellationRequestHandler" />
+    </bean>
+    
+    <bean id="jobSubmissionServiceImpl" class="com.mango.mif.rest.service.JobSubmissionServiceImpl">
+          <property name="connectorsRegistry" ref="connectorsRegistry"/>
+          <property name="sharedLocationManager" ref="sharedLocationManager"/>
+          <property name="invokerFactory" ref="invokerFactory"/>
+    </bean>
+    
+    <bean id="jobConnectorRegistryServiceImpl" class="com.mango.mif.rest.service.JobConnectorRegistryServiceImpl">
+        <property name="connectorsRegistry" ref="connectorsRegistry"/>
+    </bean>
+    
+    <bean id="statisticsServiceImpl" class="com.mango.mif.rest.service.StatisticsServiceImpl">
+        <property name="connectorsRegistry" ref="connectorsRegistry"/>
+        <property name="jobManagementService" ref="jobManagementService"/>
+        <property name="sessionPool" ref="sessionPool"/>          
+    </bean>
+    
+	<bean id="jobServiceExceptionMapper" class="com.mango.mif.client.api.rest.JobServiceExceptionMapper"/>
+	<bean id="jobServiceResponseExceptionMapper" class="com.mango.mif.client.api.rest.JobServiceResponseExceptionMapper"/>
+    <bean id="mifExceptionMapper" class="com.mango.mif.client.api.rest.MIFExceptionMapper"/>
+    <bean id="mifExceptionResponseMapper" class="com.mango.mif.client.api.rest.MIFExceptionResponseMapper"/>
+	
+</beans>

@@ -1,0 +1,26 @@
+Model directory /usr/global/navtst64/sgejobs/MIF-207cce6c-97be-4630-9162-98e749f261c6/Models/JTT1ST37_PsN_SCM_2012_09_26_15_49_50/m1
+
+MODEL TEST BASE OFV NEW OFV TEST OFV (DROP) GOAL dDF SIGNIFICANT PVAL
+V2SEX-2 PVAL -4474.54096 -4474.96741 0.42645 > 3.84150 1 0.513740
+V2WGT-2 PVAL -4474.54096 -4475.18241 0.64145 > 3.84150 1 0.423190
+V3WGT-2 PVAL -4474.54096 -4474.72123 0.18026 > 3.84150 1 0.671150
+
+Parameter-covariate relation chosen in this forward step: --
+CRITERION PVAL < 0.05
+--------------------
+
+
+--------------------
+Forward search done. Starting backward search inside forward top level directory
+
+
+No models to test, there are no included relations to remove.
+
+
+Model directory /usr/global/navtst64/sgejobs/MIF-207cce6c-97be-4630-9162-98e749f261c6/Models/JTT1ST37_PsN_SCM_2012_09_26_15_49_50/backward_scm_dir1/m1
+
+MODEL TEST BASE OFV NEW OFV TEST OFV (DROP) GOAL dDF INSIGNIFICANT PVAL
+
+Parameter-covariate relation chosen in this backward step: --
+CRITERION PVAL > 0.01
+--------------------

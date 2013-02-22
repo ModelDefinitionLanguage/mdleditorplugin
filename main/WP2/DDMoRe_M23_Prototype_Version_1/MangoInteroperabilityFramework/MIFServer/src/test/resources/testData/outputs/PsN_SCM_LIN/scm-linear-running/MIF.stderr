@@ -1,0 +1,19 @@
+Starting scm forward search
+Reading data file: simu_rich_2.csv
+|.........................................| ... done
+Calculating continuous covariate statistics
+|....................................| ... done
+Calculating categorical covariate statistics
+|........................................| ... done
+Estimating base model
+Starting 1 NONMEM executions. 1 in parallel.
+S:1 ..  done
+F:1 .. Starting 14 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 .. S:11 .. S:12 .. S:13 .. S:14 ..  done
+Waiting for all NONMEM runs to finish:
+F:11 .. F:13 .. F:14 ..  done
+Adding BMI on V2 state 2
+Taking a step forward
+Starting 13 NONMEM executions. 5 in parallel.
+S:1 .. S:2 .. S:3 .. S:4 .. S:5 .. S:6 .. S:7 .. S:8 .. S:9 .. S:10 .. S:11 .. S:12 .. S:13 ..  done
+Waiting for all NONMEM runs to finish:

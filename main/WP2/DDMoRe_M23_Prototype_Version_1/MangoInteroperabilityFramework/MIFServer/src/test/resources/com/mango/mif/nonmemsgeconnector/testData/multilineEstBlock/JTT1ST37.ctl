@@ -1,0 +1,110 @@
+;;Based on:JTT1ST36.ctl
+$PROB Final model developed by Candice on whole data
+; Ref Candice run is Roche_PKall_044
+;Reference Run: JTT1ST36
+$INPUT ID AMT TIME ODV=DROP DV TAD DAY DOSE RATE CMT
+       EVID MDV=DROP PSNO=DROP PSCH WEEK=DROP OCC AGE=DROP 
+       SEX RACE=DROP WGT CLCR BMI PER=DROP PDAY=DROP SEQ STUD
+ ; dv=LNDV
+$DATA CETP_PKPH1_roche.prn IGNORE=#
+
+;Dans ce cas DV=LNDV et SDV=DV et seq=peri (period)
+$SUBROUTINE ADVAN4 TRANS4
+
+$PK
+;-----------------PK parameters--------------------------
+;SEQ=1 when RO+statins, SEQ=0 when RO alone
+
+;ASSO stands for effect "Statin"
+;ASSO=1 for Ro + statins
+   ASSO=0
+   IF (STUD.EQ.549.AND.SEQ.EQ.1) ASSO=1
+   IF (STUD.EQ.550.AND.SEQ.EQ.1) ASSO=1
+
+;DDI stands for effect "Study"
+;DDI=1 for Ro alone
+   DDI=0
+   IF (STUD.EQ.549) DDI=1
+   IF (STUD.EQ.550) DDI=1
+
+; INTRAOCCASION VARIABILITY
+AA=0
+IF(OCC.EQ.1) AA=1
+BB=0
+IF(OCC.EQ.2) BB=1
+CC=0
+IF(OCC.EQ.3) CC=1
+
+TVV2=THETA(2)
+TVV3=THETA(4)
+IICL=EXP(AA*ETA(2)+BB*ETA(3)+CC*ETA(4))
+   CL=(THETA(1)*EXP(ETA(1)))*IICL
+   V2=TVV2*EXP(ETA(5))     
+   Q=THETA(3)*EXP(ETA(6))
+   V3=TVV3*EXP(ETA(7))
+
+IIKA=EXP(AA*ETA(9)+BB*ETA(10)+CC*ETA(11))
+   KA=(THETA(5)*EXP(ETA(8)))*IIKA
+   D1=THETA(6)*EXP(ETA(12))
+
+IIVF=EXP(ETA(13)+AA*ETA(14)+BB*ETA(15)+CC*ETA(16))
+F1=(1+THETA(7)*DDI+THETA(8)*ASSO)*IIVF
+
+
+S2  = V2/1000
+
+$ERROR
+   IPRED = 0
+   IF (F.GT.0) IPRED=LOG(F)
+   DEL=0
+   IF (IPRED.EQ.0) DEL=1
+   W=1
+   IRES=DV-IPRED
+   IWRES=IRES/W
+   Y = IPRED+EPS(1)
+ 
+;----------------- INITIAL ESTIMATES -------------------------
+
+$THETA  (0,45,100)     ;1~CL/F
+$THETA  (0,140,500)    ;2~V2/F
+$THETA  (0,40,100)     ;3~Q/F
+$THETA  (0,600,1000)   ;4~V3/F
+$THETA  (0.6,2,10)      ;5~KA 
+$THETA  (0,2.55,10)    ;6~D1 
+$THETA  (-1,-0.32,1)   ;7~F1_ALONE
+$THETA  (-1,-0.53,1)   ;8~F1_ASSO
+
+$OMEGA  0.08           ;1~IIV_CL 
+$OMEGA  BLOCK(1) 0.02  ;2~IOV_CL1
+$OMEGA  BLOCK(1) SAME  ;3~IOV_CL2
+$OMEGA  BLOCK(1) SAME  ;4~IOV_CL3
+$OMEGA  0 FIX          ;5~IIV_V2
+$OMEGA  0.15           ;6~IIV_Q
+$OMEGA  0 FIX          ;7~IIV_V3
+
+$OMEGA  0 FIX        ;8~IIV_KA
+$OMEGA  BLOCK(1) 0.02; 9~IOV_KA1
+$OMEGA  BLOCK(1) SAME; 10~IOV_KA2
+$OMEGA  BLOCK(1) SAME; 11~IOV_KA3
+
+$OMEGA  0.15    ;12~IIV_D1
+
+$OMEGA  0.2    ;13~IIV_F1
+
+$OMEGA  BLOCK(1) 0.02; 14~IOV_F1
+$OMEGA  BLOCK(1) SAME; 15~IOV_F2
+$OMEGA  BLOCK(1) SAME; 16~IOV_F3
+
+$SIGMA  0.02    ;~RES_MULTI
+
+$EST MAXEVALS=9000 SIG=3 PRINT=5 NOABORT
+     POSTHOC METHOD=1 INTER 
+
+;$COV
+
+$TABLE 
+     ID TAD IPRED IWRES DOSE EVID TIME PSCH 
+     SEQ STUD OCC DAY
+     ONEHEADER NOPRINT FILE=JTT1ST37.FIT
+
+

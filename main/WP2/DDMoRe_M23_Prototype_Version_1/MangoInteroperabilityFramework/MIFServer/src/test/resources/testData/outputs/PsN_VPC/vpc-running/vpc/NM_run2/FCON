@@ -1,0 +1,40 @@
+FILE    FSTREAM                                                                 
+PROB    RUN# base_run1                                                          
+DATA       1   0 856  20   0                                                    
+ITEM       1   6   8  11   1   0   0   0   0   0   0   0   0   0   0            
+INDX       7   4   5   0   0  10   0   0   0   0   9                            
+LABL                   ID,                PERD,                PROT             
+                     TIME,                 AMT,                  DV             
+                     EVID,                 MDV,                ADDL             
+                       II,                 FED,                 AGE             
+                     SEXF,                  WT,                  HT             
+                     RACE,                 BMI,                 BSA             
+                     CRCL,                DOSE                                  
+LBW1 NPRED,NRES,NWRES                                                           
+     CPRED,CRES,CWRES                                                           
+     PREDI,RESI,WRESI                                                           
+     CPREDI,CRESI,CWRESI                                                        
+     EPRED,ERES,EWRES                                                           
+     NPDE,ECWRES                                                                
+FORM                                                                            
+(1(10E7.0/),10E7.0)                                                             
+STRC       6   5   1   0   0   0   5   1   0                                    
+STRC       1   1   1   1   1   1   1   1   1   1                                
+THCN       1   0   0   0                                                        
+THTA     6.500000000000000E+00, 9.000000000000000E+00, 5.000000000000000E-01    
+         1.000000000000000E+00, 6.500000000000000E+00, 1.000000000000000E+01    
+LOWR    -1000000              ,-1000000              , 0.000000000000000E+00    
+         1.000000000000000E+00,-1000000              ,-1000000                  
+UPPR     1000000              , 1000000              , 1000000                  
+         1.000000000000000E+00, 1000000              , 1000000                  
+BLST     6.000000000000000E-02                                                  
+BLST     6.000000000000000E-02                                                  
+BLST     6.000000000000000E-02                                                  
+BLST   1 0.000000000000000E+00                                                  
+BLST   1 0.000000000000000E+00                                                  
+DIAG     4.000000000000000E-02                                                  
+SIML       0   1   01000   1   0   0   0                                        
+SORC      1722475071               0                                            
+TABL       1   1                                                                
+TABL   1   3   1   0   8   0   4   0                                            
+           0   1   1   0   0           0           0                            

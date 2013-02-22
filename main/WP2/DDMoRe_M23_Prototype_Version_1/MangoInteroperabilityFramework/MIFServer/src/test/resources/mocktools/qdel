@@ -1,0 +1,3 @@
+#!/usr/bin/env python
+
+print '''mockuser has deleted job 9527'''

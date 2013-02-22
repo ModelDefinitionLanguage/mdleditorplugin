@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ <modelVersion>4.0.0</modelVersion>
+
+ <groupId>com.mango</groupId>
+ <artifactId>MIFPerformanceTestHarness</artifactId>
+ <version>${project.parent.version}</version>
+ <packaging>jar</packaging>
+
+ <name>MIFPerformanceTestHarness</name>
+ <url>http://maven.apache.org</url>
+
+	 <parent>
+	        <artifactId>MangoInteroperabilityFramework</artifactId>
+	        <groupId>com.mango</groupId>
+	        <version>2.0.4-SNAPSHOT</version>
+	        <relativePath>../pom.xml</relativePath>
+	 </parent>
+
+    <reporting>
+        <outputDirectory>${project.build.directory}/site</outputDirectory>
+    </reporting>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+ <dependencies>
+
+  <!-- Production -->
+
+  <dependency>
+   <groupId>com.mango</groupId>
+   <artifactId>MIFClient</artifactId>
+   <version>${project.parent.version}</version>
+  </dependency>
+
+  <!-- Test -->
+  <dependency>
+   <groupId>junit</groupId>
+   <artifactId>junit</artifactId>
+   <version>4.10</version>
+   <scope>test</scope>
+  </dependency>
+
+  <dependency>
+   <groupId>commons-httpclient</groupId>
+   <artifactId>commons-httpclient</artifactId>
+   <version>3.1</version>
+  </dependency>
+  
+  <dependency>
+   <groupId>args4j</groupId>
+   <artifactId>args4j</artifactId>
+   <version>2.0.16</version>
+  </dependency>
+  
+ </dependencies>
+ 
+  <build>
+	  <plugins>
+	 		<plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-jar-plugin</artifactId>
+	            <version>2.3.2</version>
+	            <configuration>
+	                <archive>
+	                    <manifest>
+	                        <addClasspath>true</addClasspath>
+	                        <mainClass>com.mango.mif.refclient.PerfClientCLI</mainClass>
+	                    </manifest>	                                      
+	                </archive>	                
+	            </configuration>
+	        </plugin>
+	  </plugins>
+  </build>
+ 
+</project>
