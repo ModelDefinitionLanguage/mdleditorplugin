@@ -1,1 +1,0 @@
-/usr/global/grid/bin/scm.sh -config_file=scm_both1.config -model=run1.mod -directory=run1_PsN_SCM_2012_09_28_11_53_30 run1.mod

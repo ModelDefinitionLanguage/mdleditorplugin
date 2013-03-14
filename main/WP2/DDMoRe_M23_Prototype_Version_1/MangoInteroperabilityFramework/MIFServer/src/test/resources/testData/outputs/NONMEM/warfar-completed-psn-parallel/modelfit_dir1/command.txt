@@ -1,1 +1,0 @@
-/usr/bin/execute -sge_prepend_flags=-V -cwd -sge_queue=all.q -sge_queue=all.q@navtst-nonmem.mango.local -run_on_sge warf_wt_on_V_est.ctl

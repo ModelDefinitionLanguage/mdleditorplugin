@@ -1,1 +1,0 @@
--bash: qwadf: command not found

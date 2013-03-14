@@ -1,1 +1,0 @@
-/usr/bin/bootstrap -run_on_sge -samples=10 -threads=5 -directory=bs -crash_restarts=0 scm_test.mod

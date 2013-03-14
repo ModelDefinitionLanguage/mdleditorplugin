@@ -1,3 +1,0 @@
-CLBMI2.mod                              NM_run1
-CLHT2.mod                               NM_run2
-V2HT2.mod                               NM_run3

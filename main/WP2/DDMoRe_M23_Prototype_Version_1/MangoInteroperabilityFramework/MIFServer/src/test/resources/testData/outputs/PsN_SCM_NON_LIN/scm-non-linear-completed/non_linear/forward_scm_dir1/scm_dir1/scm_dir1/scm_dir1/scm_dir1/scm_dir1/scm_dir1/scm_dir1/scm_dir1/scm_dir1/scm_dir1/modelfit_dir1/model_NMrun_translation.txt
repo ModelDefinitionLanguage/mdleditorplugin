@@ -1,5 +1,0 @@
-CLBSA2.mod                              NM_run1
-CLSEXF2.mod                             NM_run2
-CLWT2.mod                               NM_run3
-V2BSA2.mod                              NM_run4
-V2CRCL2.mod                             NM_run5

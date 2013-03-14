@@ -1,1 +1,0 @@
-See ReadMe.txt file in MangoInteroperabilityFramework directory.

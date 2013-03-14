@@ -1,9 +1,0 @@
-70,77d69
-< TMP_DIR=/tmp/${job.getJobId()}
-< mkdir $TMP_DIR
-< cp -R -f "${mifOutputDirectory}"/* "$TMP_DIR"
-< find "$TMP_DIR" -type f | grep -E -v ".MIF" | while read file; do sed -i 's/$/\r/' "$file"; done
-< cp -R -f "${job.getRequestInputDirectory()}"/* "$TMP_DIR"
-< cp -r "$TMP_DIR" "${mifOutputDirectory}/dos"
-< 
-< rm -r "$TMP_DIR"
