@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<executionRequest xsi:schemaLocation="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <commandDefinition>
+        <commandDefinitionName>executeRScript</commandDefinitionName>
+        <ParameterDefinitions>
+            <ParameterDefinition>
+                <paramType>File</paramType>
+                <paramName>script</paramName>
+                <paramDirection>IN</paramDirection>
+            </ParameterDefinition>
+        </ParameterDefinitions>
+    </commandDefinition>
+    <parameters>
+        <entry>
+            <key xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">script</key>
+            <value xsi:type="parameter">
+                <name>script</name>
+                <value>testData.R</value>
+                <resourceUuid>3bcdd8e7-a524-44f0-b5e1-b996f5d55906/request/testData.R</resourceUuid>
+                <paramType>File</paramType>
+            </value>
+        </entry>
+    </parameters>
+    <requestId>3bcdd8e7-a524-44f0-b5e1-b996f5d55906</requestId>
+    <type>R_SGE</type>
+</executionRequest>

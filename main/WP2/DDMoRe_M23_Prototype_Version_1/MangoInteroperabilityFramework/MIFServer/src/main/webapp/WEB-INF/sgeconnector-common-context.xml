@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+    xmlns:jms="http://www.springframework.org/schema/jms" xmlns:oxm="http://www.springframework.org/schema/oxm"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <!-- Generic beans -->
+    <bean id="defaultStateHandler" abstract="true">
+        <property name="jobManagementService" ref="jobManagementService" />
+        <property name="sharedLocationManager" ref="sharedLocationManager" />
+        <property name="encrypter" ref="encrypter" />
+        <property name="sgeSharedLocation" value="${sgeconnector.sgeSharedLocation}"/>
+    </bean>
+
+    <bean id="gridJobDirectoryResolver" class="com.mango.mif.sge.GridJobDirectoryResolver">
+        <property name="prefix" value="${sgeconnector.sgeRequestDirectoryPrefix}"/>
+        <property name="sgeSharedLocation" value="${sgeconnector.sgeSharedLocation}"/>
+    </bean>
+
+    <!-- First set up the parameters with which we will initialise the session pool when it is created -->
+    <bean id="sessionPoolParameters" class="com.mango.mif.core.exec.jsch.JschSessionPoolParameters">
+        <property name="maxActive" value="${mif.sessionpool.maxActive}"/>
+        <property name="maxIdle" value="${mif.sessionpool.maxIdle}"/>
+        <property name="minIdle" value="${mif.sessionpool.minIdle}"/>
+        <property name="maxTotal" value="${mif.sessionpool.maxTotal}"/>
+        <property name="whenExhaustedAction" value="${mif.sessionpool.whenExhaustedAction}"/>
+        <property name="timeBetweenEvictionRunsMillis" value="${mif.sessionpool.timeBetweenEvictionRunsMillis}"/>
+        <property name="minEvictableIdleTimeMillis" value="${mif.sessionpool.minEvictableIdleTimeMillis}"/>
+        <property name="numTestsPerEvictionRun" value="${mif.sessionpool.numTestsPerEvictionRun}"/>
+        <property name="testOnReturn" value="${mif.sessionpool.testOnReturn}"/>
+        <property name="testWhileIdle" value="${mif.sessionpool.testWhileIdle}"/>
+        <property name="lifo" value="${mif.sessionpool.lifo}"/>
+    </bean>
+
+    <!-- inject the parameters into the session pool, so when the session pool actually creates the pool
+         (which is a static member), it knows what values to initialise with 
+    -->
+    <bean id="sessionPool" class="com.mango.mif.core.exec.jsch.JschSessionPool">
+        <property name="jschSessionPoolParameters" ref="sessionPoolParameters"/>
+    </bean>
+
+    <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+        <property name="beans">
+            <map>
+                <entry key="bean:name=MIF-JSCH-sessions" value-ref="objectPool"/>
+                <entry key="bean:name=MIF-CredentialsEncrypter" value-ref="configEncrypter"/>
+           </map>
+        </property>
+        <property name="registrationBehaviorName" value="REGISTRATION_REPLACE_EXISTING"/>
+    </bean> 
+    
+    <bean id="objectPool" factory-bean="sessionPool" factory-method="getPool" />
+    
+    <bean id="configEncrypter" class="com.mango.mif.utils.encrypt.ConfigCredentialsEncrypter"/>   
+
+    <bean id="invokerFactory" class="com.mango.mif.core.exec.invoker.InvokerFactory">
+        <property name="host" value="${connector.jschInvoker.host}" />
+        <property name="port" value="${connector.jschInvoker.port}" />
+        <property name="protocols" value="${connector.jschInvoker.protocols}" />
+    </bean>
+
+    <bean id="connectorJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="jmsFactory" />
+        <property name="defaultDestination" ref="defaultQueue" />
+    </bean>
+
+    <!-- SCXML Driver -->
+    <bean id="driver" class="com.mango.mif.connector.runner.impl.SCXMLDriverImpl"
+        scope="prototype">
+        <property name="stateHandlersExecutor" ref="stateHandlersTaskExecutor" />
+    </bean>
+
+    <!-- 
+    	 State Handlers Task Executor.  
+         This is deprecated and should not be used.
+         Do not increase the core pool size here, it will cause jobs to fail. 
+    -->
+    <bean id="stateHandlersTaskExecutor"
+        class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"
+        scope="prototype">
+        <property name="corePoolSize"
+            value="${connector.jobRunnerStateHandlersTaskExecutor.corePoolSize}" />
+        <property name="maxPoolSize"
+            value="${connector.jobRunnerStateHandlersTaskExecutor.maxPoolSize}" />
+        <property name="queueCapacity"
+            value="${connector.jobRunnerStateHandlersTaskExecutor.queueCapacity}" />
+    </bean>
+
+    <bean id="sgeConnector" class="com.mango.mif.connector.Connector"
+        scope="prototype" abstract="true">
+        <property name="jmsTemplate" ref="connectorJmsTemplate" />
+        <property name="jobManagementService" ref="jobManagementService" />
+    </bean>
+
+    <!-- Job Runner Factory -->
+    <bean id="sgeJobRunnerFactory"
+        class="com.mango.mif.connector.runner.impl.GenericShellBasedJobRunnerFactory"
+        scope="prototype" abstract="true">
+        <lookup-method name="createDriver" bean="driver" />
+        <property name="invokerFactory" ref="invokerFactory" />
+        <property name="encrypter" ref="encrypter" />
+        <property name="scxmlDefinition" value="${connector.driver.scxml}" />
+    </bean>
+
+    <!-- Job Runner -->
+    <bean id="sgeJobRunner"
+        class="com.mango.mif.connector.runner.impl.GenericShellBasedJobRunner"
+        abstract="true" scope="prototype">
+        <property name="jmsTemplate" ref="connectorJmsTemplate" />
+        <property name="encrypter" ref="encrypter" />
+    </bean>
+
+    <!-- SGE Output Searcher -->
+    <bean id="sgeOutputSearcher" class="com.mango.mif.sge.SGEOutputSearcher">
+        <property name="jobAccountingNotFoundRegexp"
+            value="${sgeconnector.regexp.queue-accounting-command.job-not-found}" />
+        <property name="jobStatusNotFoundRegexp"
+            value="${sgeconnector.regexp.queue-status-command.job-not-found}" />
+        <property name="jobDeleteNotFoundRegexp"
+            value="${sgeconnector.regexp.queue-delete-command.job-not-found}" />
+        <property name="jobSubmittedExtractJobIdRegexp"
+            value="${sgeconnector.regexp.queue-submit-command.extract-job-id}" />
+        <property name="jobStatusRegexp"
+            value="${sgeconnector.regexp.queue-status-command.extract-info}" />
+        <property name="jobAccountingRegexp"
+            value="${sgeconnector.regexp.queue-accounting-command.extract-info}" />
+        <property name="jobDeletionRegexp"
+            value="${sgeconnector.regexp.queue-delete-command.extract-info}" />
+        <property name="commandNotFoundRegexp" value="${sgeconnector.regexp.commandNotFound}" />
+        <property name="invalidUsageRegexp" value="${sgeconnector.regexp.invalidUsage}" />
+    </bean>
+
+    <!-- SGE Output Parser -->
+    <bean id="sgeOutputParser" class="com.mango.mif.sge.SGEOutputParser">
+        <property name="searcher" ref="sgeOutputSearcher" />
+    </bean>
+    
+    <bean id="sgeCommandBuilder"
+        class="com.mango.mif.core.exec.template.JobAwareFreemarkerTemplateCommandBuilder"
+        scope="prototype">
+        <constructor-arg index="0">
+            <map>
+                <entry>
+                    <key>
+                        <value>hiddenMifDirectoryName</value>
+                    </key>
+                    <value>${sgeconnector.sgeHiddenMifDirectoryName}</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>sgeJobFinalStatusFileName</value>
+                    </key>
+                    <value>${sgeconnector.sgeJobFinalStatusFileName}</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>submitScriptName</value>
+                    </key>
+                    <value>${sgeconnector.submitScriptName}</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>sgeJobStdErrFileName</value>
+                    </key>
+                    <value>${sgeconnector.sgeJobStdErrFileName}</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>sgeJobStdOutFileName</value>
+                    </key>
+                    <value>${sgeconnector.sgeJobStdOutFileName}</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>SCRIPT_PREAMBLE</value>
+                    </key>
+                    <value>${connector.scriptPreamble}</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>CONNECTOR_UTILS</value>
+                    </key>
+                    <value>${mif.genericScriptsDirectory}</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>MANGO_UTILS</value>
+                    </key>
+                    <value>${mif.commonScriptsDirectory}</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>SGE_INITIALISATION_SCRIPT_PATH</value>
+                    </key>
+                    <value>${mif.sgeInitialisationScriptFullPath}</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>sgeSharedLocation</value>
+                    </key>
+                    <value>${sgeconnector.sgeSharedLocation}</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>sharedLocationManager</value>
+                    </key>
+                    <ref bean="sharedLocationManager" />
+                </entry>
+            </map>
+        </constructor-arg>
+        <property name="templateLocator" ref="templateLocator" />
+    </bean>
+    <!-- State handlers -->
+
+    <bean id="pendingStateHandler"
+        class="com.mango.mif.connector.runner.impl.DefaultStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="pending" />
+    </bean>
+
+    <bean id="runningStateHandler"
+        class="com.mango.mif.connector.runner.impl.DefaultStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="running" />
+    </bean>
+
+    <bean id="task-pendingStateHandler"
+        class="com.mango.mif.sgeconnector.PendingStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-pending" />
+        <constructor-arg index="1" value="task.prepare" />
+    </bean>
+
+    <bean id="task-prepareStateHandler"
+        class="com.mango.mif.connector.runner.impl.ShellBasedPrepareHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-preparing" />
+        <constructor-arg index="1" value="task.submit" />
+        <property name="gridJobDirectoryResolver" ref="gridJobDirectoryResolver" />
+        <property name="commandBuilder">
+            <bean parent="sgeCommandBuilder">
+                <property name="template"
+                    value="${sgeconnector.prepareHandlerTemplate}" />
+            </bean>
+        </property>
+        <property name="invokerResultHandler">
+            <bean
+                class="com.mango.mif.connector.runner.impl.GenericShellCommandInvokerResultHandler">
+                <constructor-arg value="task.submit" />
+            </bean>
+        </property>
+        <property name="submitScriptName" value="${sgeconnector.submitScriptName}" />
+    </bean>
+                    
+    <bean id="task-postprocessingStateHandler"
+        class="com.mango.mif.connector.runner.impl.GenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-postprocessing" />
+        <constructor-arg index="1" value="task.finished" />
+        <property name="commandBuilder">
+            <bean parent="sgeCommandBuilder">
+                <property name="template" value="${sgeconnector.task-postprocessingStateHandler.qacctScriptTemplate}" />
+            </bean>
+        </property>
+        <property name="invokerResultHandler">
+            <bean class="com.mango.mif.sgeconnector.QacctCommandResultHandler">
+                <constructor-arg value="task.finished" />
+                <property name="outputParser" ref="sgeOutputParser" />
+                <property name="mifHiddenDirectory" value="${sgeconnector.sgeHiddenMifDirectoryName}"/>
+                <property name="sgeJobStdErrFileName" value="${sgeconnector.sgeJobStdErrFileName}"/>
+                <property name="sgeJobStdOutFileName" value="${sgeconnector.sgeJobStdOutFileName}"/>
+            </bean>
+        </property>
+    </bean>
+    <bean id="task-finishedStateHandler-empty"
+        class="com.mango.mif.connector.runner.impl.BaseGenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-finished" />
+        <constructor-arg index="1" value="done.state.running" />
+    </bean>
+
+    <bean id="finishedStateHandler"
+        class="com.mango.mif.connector.runner.impl.BaseGenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="finished" />
+        <property name="detailedStatusBuilder">
+            <bean class="com.mango.mif.connector.runner.status.GenericJobDetailedStatusBuilderWithTemplatedSummaryMessage">
+                <property name="summaryMessageBuilder">
+                    <bean parent="sgeCommandBuilder">
+                        <property name="template" value="${sgeconnector.completedSummaryMessageTemplate}"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+
+    <bean id="failedStateHandler"
+        class="com.mango.mif.connector.runner.impl.BaseGenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="failed" />
+        <property name="detailedStatusBuilder">
+            <bean class="com.mango.mif.connector.runner.status.GenericJobDetailedStatusBuilderWithTemplatedSummaryMessage">
+                <property name="summaryMessageBuilder">
+                    <bean parent="sgeCommandBuilder">
+                        <property name="template" value="${sgeconnector.failedSummaryMessageTemplate}"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+
+    <bean id="task-submittingStateHandler"
+        class="com.mango.mif.connector.runner.impl.GenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-submitting" />
+        <constructor-arg index="1" value="task.process" />
+        <property name="commandBuilder">
+            <bean parent="sgeCommandBuilder">
+                <property name="template" value="${sgeconnector.qsubScriptTemplate}" />
+            </bean>
+        </property>
+        <property name="invokerResultHandler">
+            <bean class="com.mango.mif.sgeconnector.SubmitCommandResultHandler">
+                <constructor-arg value="task.process" />
+                <property name="outputParser" ref="sgeOutputParser" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="task-processingStateHandler" class="com.mango.mif.connector.runner.impl.BaseGenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-processing" />
+    </bean>
+
+    <bean id="task-monitoringStateHandler" class="com.mango.mif.connector.runner.impl.GenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-monitoring" />
+        <constructor-arg index="1" value="task.post.monitor" />
+        <property name="commandBuilder">
+            <bean parent="sgeCommandBuilder">
+                <property name="template" value="${sgeconnector.qstatScriptTemplate}" />
+            </bean>
+        </property>
+        <property name="invokerResultHandler">
+            <bean class="com.mango.mif.sgeconnector.QstatCommandResultHandler">
+                <constructor-arg index="0" value="task.post.monitor" />
+                <constructor-arg index="1" value="task.monitor" />
+                <property name="outputParser" ref="sgeOutputParser" />
+                <property name="pollingRate" value="${sgeconnector.sgePollingRate}"/>
+                <property name="errorPropertyKeyPattern" value="${sgeconnector.regexp.queue-status-command.error}" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="task-post-monitoringStateHandler" class="com.mango.mif.connector.runner.impl.GenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-post-monitoring" />
+        <constructor-arg index="1" value="task.monitor.finished" />
+        <property name="commandBuilder">
+            <bean parent="sgeCommandBuilder">
+                <property name="template" value="${sgeconnector.qacctScriptTemplate}" />
+            </bean>
+        </property>
+        <property name="invokerResultHandler">
+            <bean class="com.mango.mif.sgeconnector.FlowControlQacctCommandResultHandler">
+                <constructor-arg index="0" value="task.monitor.finished" />
+                <constructor-arg index="1" value="task.post.monitor" />
+                <property name="outputParser" ref="sgeOutputParser" />
+                <property name="pollingRate" value="${sgeconnector.sgePollingRate}"/>
+                
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="task-monitoring-finishedStateHandler" class="com.mango.mif.connector.runner.impl.BaseGenericShellBasedStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-monitoring-finished" />
+        <constructor-arg index="1" value="done.state.task-processing" />
+    </bean>
+
+    <bean id="Sgetask-monitoringStateHandler" parent="task-monitoringStateHandler">
+        <property name="detailedStatusBuilder">
+            <bean class="com.mango.mif.connector.runner.status.GenericJobDetailedStatusBuilderWithTemplatedSummaryMessage">
+                <property name="summaryMessageBuilder">
+                    <bean parent="sgeCommandBuilder">
+                        <property name="template" value="${sgeconnector.runningSummaryMessageTemplate}"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="task-retrievingStateHandler"
+        class="com.mango.mif.connector.runner.impl.ShellBasedRetrieveHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="task-retrieving" />
+        <constructor-arg index="1" value="task.postprocess" />
+        <property name="commandBuilder">
+            <bean parent="sgeCommandBuilder">
+                <property name="template" value="${sgeconnector.retrieveHandlerTemplate}" />
+            </bean>
+        </property>
+        <property name="invokerResultHandler">
+            <bean
+                class="com.mango.mif.connector.runner.impl.GenericShellCommandInvokerResultHandler">
+                <constructor-arg value="task.postprocess" />
+            </bean>
+        </property>
+        <property name="gridJobErrorFileName" value="${sgeconnector.sgeJobStdErrFileName}" />
+        <property name="gridJobOutputFileName" value="${sgeconnector.sgeJobStdOutFileName}" />
+        <property name="gridJobFinalStatusFileName" value="${sgeconnector.sgeJobFinalStatusFileName}" />
+        <property name="gridModifiedFileListOuptutFileName" value="${sgeconnector.sgeJobModifiedFilesListFileName}" />
+        <property name="hiddenMifOutputDirectoryName" value="${sgeconnector.sgeHiddenMifDirectoryName}" />
+    </bean>
+
+    <bean id="cancelledStateHandler" class="com.mango.mif.sgeconnector.CancelledStateHandler"
+        scope="prototype" parent="defaultStateHandler">
+        <constructor-arg index="0" value="cancelled" />
+        <property name="qdelCommandBuilder">
+            <bean parent="sgeCommandBuilder">
+                <property name="template" value="${sgeconnector.qdelScriptTemplate}"/>
+            </bean>
+        </property>
+        <property name="sgeOutputParser" ref="sgeOutputParser" />
+        <property name="detailedStatusBuilder">
+            <bean class="com.mango.mif.connector.runner.status.GenericJobDetailedStatusBuilderWithTemplatedSummaryMessage">
+                <property name="summaryMessageBuilder">
+                    <bean parent="sgeCommandBuilder">
+                        <property name="template" value="${sgeconnector.cancelledSummaryMessageTemplate}"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>

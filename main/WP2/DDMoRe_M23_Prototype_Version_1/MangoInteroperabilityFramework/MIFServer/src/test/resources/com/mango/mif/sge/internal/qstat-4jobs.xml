@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+<job_info  xmlns:xsd="http://gridengine.sunsource.net/source/browse/*checkout*/gridengine/source/dist/util/resources/schemas/qstat/qstat.xsd?revision=1.11">
+  <queue_info>
+    <Queue-List>
+      <name>all.q@navtst-nonmem.mango.local</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>10</slots_total>
+      <arch>lx24-x86</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@navtst-nonmemb.mango.local</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>10</slots_total>
+      <arch>lx24-x86</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@navtst-nonmemc.mango.local</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>10</slots_total>
+      <arch>lx24-x86</arch>
+    </Queue-List>
+  </queue_info>
+  <job_info>
+    <job_list state="pending">
+      <JB_job_number>115996</JB_job_number>
+      <JAT_prio>0.00000</JAT_prio>
+      <JB_name>script.sh</JB_name>
+      <JB_owner>mrogalski</JB_owner>
+      <state>qw</state>
+      <JB_submission_time>2012-07-23T13:07:18</JB_submission_time>
+      <slots>1</slots>
+    </job_list>
+    <job_list state="pending">
+      <JB_job_number>115997</JB_job_number>
+      <JAT_prio>0.00000</JAT_prio>
+      <JB_name>script.sh</JB_name>
+      <JB_owner>mrogalski</JB_owner>
+      <state>qw</state>
+      <JB_submission_time>2012-07-23T13:07:18</JB_submission_time>
+      <slots>1</slots>
+    </job_list>
+    <job_list state="pending">
+      <JB_job_number>115998</JB_job_number>
+      <JAT_prio>0.00000</JAT_prio>
+      <JB_name>script.sh</JB_name>
+      <JB_owner>mrogalski</JB_owner>
+      <state>qw</state>
+      <JB_submission_time>2012-07-23T13:07:18</JB_submission_time>
+      <slots>1</slots>
+    </job_list>
+    <job_list state="pending">
+      <JB_job_number>115999</JB_job_number>
+      <JAT_prio>0.00000</JAT_prio>
+      <JB_name>script.sh</JB_name>
+      <JB_owner>mrogalski</JB_owner>
+      <state>qw</state>
+      <JB_submission_time>2012-07-23T13:07:18</JB_submission_time>
+      <slots>1</slots>
+    </job_list>
+  </job_info>
+</job_info>

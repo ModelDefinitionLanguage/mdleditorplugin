@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>MangoInteroperabilityFramework</artifactId>
+        <groupId>com.mango</groupId>
+        <version>2.0.4-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+ 
+    <groupId>com.mango</groupId>
+    <artifactId>MIFClient</artifactId>
+    <version>${project.parent.version}</version>
+    <name>MIFClient</name>
+    <profiles>
+        <profile>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.8</version>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/JSCH*.java</exclude>
+                                <exclude>**/ShellBased*.java</exclude>
+                                <exclude>**/Jsch*.java</exclude>
+                                <exclude>**/InvokerHelper*.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <properties>
+        <mvn.mif.runtime.dir>${basedir}/../runtime</mvn.mif.runtime.dir>
+    </properties>
+  <dependencies>
+  <dependency>
+   <groupId>args4j</groupId>
+   <artifactId>args4j</artifactId>
+   <version>2.0.16</version>
+  </dependency>
+ </dependencies>
+ 
+    <build>
+        <finalName>MIFClient</finalName>
+        <plugins>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>src/test/resources/tests.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <mif.alter.client.userName>${mif.alter.client.userName}</mif.alter.client.userName>
+                        <mif.other.client.userName>${mif.other.client.userName}</mif.other.client.userName>
+                        <mif.alter.client.password>${mif.alter.client.password}</mif.alter.client.password>
+                        <mif.other.client.password>${mif.other.client.password}</mif.other.client.password>
+                        <mif.jsch.port>${mif.jsch.port}</mif.jsch.port>
+                        <mif.runtime.dir>${mvn.mif.runtime.dir}</mif.runtime.dir>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <links>
+                        <link>http://docs.oracle.com/javase/6/docs/api/</link>
+                    </links>
+                    <source>1.6</source>
+                    <show>public</show>
+                    <doctitle>MIF Client API</doctitle>
+                    <title>MIF Client API</title>
+                    <bottom><![CDATA[Copyright notice]]></bottom>
+                    <sourcepath>${basedir}/src/main/java/com/mango/mif</sourcepath>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/MIFCLIclient/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.3</version>
+
+                <executions>
+
+                    <execution>
+                        <id>copy-log4j-cli-client</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/MIFCLIclient/lib</outputDirectory>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/test/resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>log4j.*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <!-- specify UTF-8, ISO-8859-1 or any other file encoding -->
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>copy-desEncrypter-sh</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/MIFCLIclient</outputDirectory>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/test/resources/exampleScript</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/DesEncrypter.sh</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <!-- specify UTF-8, ISO-8859-1 or any other file encoding -->
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+             <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <configuration>
+                      <archive>
+                         <manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+						<manifestEntries>
+							<Application-Name>${pom.build.finalName}</Application-Name>
+							<Application-Version>${pom.version}</Application-Version>
+							<Build-Time>${buildNumber}</Build-Time>
+							<HudsonBuildNumber>${BUILD_NUMBER}</HudsonBuildNumber>
+							<HudsonBuildId>${BUILD_ID}</HudsonBuildId>
+							<HudsonJobName>${JOB_NAME}</HudsonJobName>
+							<HudsonBuildTag>${BUILD_TAG}</HudsonBuildTag>
+							<HudsonJavaHome>${JAVA_HOME}</HudsonJavaHome>
+							<HudsonWorkspace>${WORKSPACE}</HudsonWorkspace>
+							<HudsonUrl>${HUDSON_URL}</HudsonUrl>
+							<HudsonSvnRevision>${SVN_REVISION}</HudsonSvnRevision>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin> 
+            
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>${basedir}/src/main/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+    </build>
+</project>

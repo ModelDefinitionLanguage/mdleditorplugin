@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+    http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd
+    http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+    http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+    
+
+
+	<amq:connectionFactory brokerURL="${mif.broker.url}"
+		id="jmsFactory">
+		<amq:properties>
+			<amq:redeliveryPolicy maximumRedeliveries="6"
+				initialRedeliveryDelay="15000" useExponentialBackOff="true"
+				backOffMultiplier="5" />
+		</amq:properties>
+	</amq:connectionFactory>
+	
+	<context:property-placeholder/>
+
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<property name="defaultDestination" ref="defaultQueue" />
+	</bean>
+
+	<amq:queue id="defaultQueue" physicalName="default.queue" />
+
+	<bean id="sharedLocationManager" class="com.mango.mif.core.resource.UserSharedLocationManager">
+		<property name="workspaceManager" ref="workspaceManager" />
+	</bean>
+    
+    <bean id="main" class="com.mango.mif.client.cli.MIFInvoker">
+    	<property name="taskExecutionManager" ref="taskExecutionManager"/>
+    	<property name="sharedLocationManager" ref="sharedLocationManager"/>
+    </bean>
+    
+    <bean id="workspaceManager" class="com.mango.mif.core.impl.DefaultWorkspaceManager">
+    	<constructor-arg>
+    		<bean class="java.io.File">
+    			<constructor-arg value="${mif.shared.location}"></constructor-arg>
+    		</bean>
+    	</constructor-arg>
+    </bean>
+
+    
+    <bean id="taskExecutionManager" class="com.mango.mif.client.impl.TaskExecutionManagerImpl">
+		<property name="jmsTemplate" ref="jmsTemplate" />
+		<property name="connectorRegistry">
+			<map>
+				<entry key="JOB.REQUEST" value="JOB.REQUEST" />
+				<entry key="JOB.RESPONSE" value="JOB.RESPONSE" />
+				<entry key="JOB.CANCEL" value="JOB.CANCEL" />
+			</map>
+		</property>
+	</bean>
+    
+	<jms:listener-container container-type="default"
+		connection-factory="jmsFactory" acknowledge="auto" >
+	<jms:listener destination="JOB.RESPONSE" ref="jobResponseListener"
+			method="onMessage" />
+	</jms:listener-container>
+	
+	
+	<bean id="jobResponseListener" class="com.mango.mif.client.impl.TaskExecutionResultsListener">
+		<property name="taskExecutionManager" ref="taskExecutionManager"/>
+	</bean>
+	
+	<bean id="jaxbAnnotationInspector"
+	    class="org.codehaus.jackson.xc.JaxbAnnotationIntrospector"/>
+
+	<bean id="jacksonMapper" class="org.codehaus.jackson.map.ObjectMapper">
+		<!-- configure Jackson to work with JAXB -->
+    	<property name="deserializationConfig.annotationIntrospector" ref="jaxbAnnotationInspector"/>
+    	<property name="serializationConfig.annotationIntrospector" ref="jaxbAnnotationInspector"/>
+	
+		<!-- 		configure the date format to be JavaScript default -->
+		<property name="serializationConfig.dateFormat">
+			<bean class="java.text.SimpleDateFormat">
+				<constructor-arg value="yyyy-MM-dd'T'HH:mm:ss.SZ"/>
+			</bean>
+		</property>
+	</bean>  
+
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" p:mapper-ref="jacksonMapper"/> 
+	
+	<!-- jaxrs:client id="jobService" address="${job.service.location}"  -->
+	<jaxrs:client id="jobService" address="/services" 
+	
+		serviceClass="com.mango.mif.client.api.rest.JobService" 
+		inheritHeaders="true">
+		<jaxrs:headers>
+			<entry key="Accept" value="application/json"/>
+			<entry key="Accept" value="text/xml"/>
+		</jaxrs:headers>
+		
+		<jaxrs:providers>
+            <ref bean="jsonProvider"/>					
+			<ref bean="jobServiceExceptionMapper" />
+			<ref bean="jobServiceResponseExceptionMapper" /> 			
+		</jaxrs:providers>
+		
+		<jaxrs:properties>
+			<!-- 
+			Tell CXF to use a different Content-Type for the JSON endpoint
+			This should probably be application/json, but text/plain allows
+			us to view easily in a web browser.-->
+			<entry key="Content-Type" value="text/plain" />
+		</jaxrs:properties>
+		
+		<jaxrs:features>
+			<cxf:logging />
+		</jaxrs:features>         
+	</jaxrs:client>
+	
+	<bean id="jobServiceExceptionMapper" class="com.mango.mif.client.api.rest.JobServiceExceptionMapper"/>
+	<bean id="jobServiceResponseExceptionMapper" class="com.mango.mif.client.api.rest.JobServiceResponseExceptionMapper"/>
+
+</beans>

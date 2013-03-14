@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="
+  			http://www.springframework.org/schema/beans 
+	   		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   		http://www.springframework.org/schema/context
+	   		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+    		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.1.xsd
+			http://www.springframework.org/schema/mvc 
+			http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+			http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+			http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+
+			
+	<!--  Configuring property Files -->
+	<util:properties id="mainProperties" location="classpath:mif-default.properties"/>
+	
+	<bean class="com.mango.mif.utils.MIFPropertyPlaceholderConfigurer">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="systemPropertiesModeName"><value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value></property>
+		<property name="locations">
+			<list>
+				<value>classpath:mif-default.properties</value>
+				<value>file:#{mainProperties['mif.configuration.dir']}/mif.properties</value>
+			</list>
+		</property>
+	</bean>		
+    
+     <bean id="encrypter" class="com.mango.mif.utils.encrypt.DesEncrypter">
+    	<constructor-arg value="${mif.encryption.key}"/>
+    </bean> 
+    
+    <bean id="sharedLocationManager" class="com.mango.mif.core.resource.UserSharedLocationManager">
+    	<property name="workspaceManager" ref="workspaceManager"/>
+        <property name="runInRequestDirectory" value="${mif.runInRequestDir}"/>
+    </bean>
+    
+    <!-- Managers -->
+    <bean id="jobManagementService" class="com.mango.mif.managers.JobManagementServiceImpl" scope="prototype">
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="sharedLocationManager" ref="sharedLocationManager" />
+        <property name="mifServiceAccountUserName" value="${mif.serviceAccount.userName}" />
+        <property name="mifServiceAcccountPassword" value="${mif.serviceAccount.userPassword}" />
+        <property name="jobInvokerProvider" ref="NONMEMSgeJobRunnerFactory" />
+        <property name="runInRequestDirectory" value="${mif.runInRequestDir}"/>
+    </bean>       
+    
+    <!-- Data Acess Objects (DAOs) -->
+    <bean id="jobRepository" class="com.mango.mif.connector.dao.JobRepository"/>       
+    
+    <bean id="workspaceManager" class="com.mango.mif.core.impl.DefaultWorkspaceManager">
+    	<constructor-arg>
+    		<bean class="java.io.File">
+    			<constructor-arg value="${mif.shared.location}"></constructor-arg>
+    		</bean>
+    	</constructor-arg>
+    </bean>
+
+	<import resource="/spring/JMS-context.xml" />
+	<import resource="/spring/REST-context.xml" />
+	<import resource="/spring/hibernate-context.xml"/>
+
+	<!-- Template locator used to resolve template locations -->
+	<bean id="templateLocator"
+		class="com.mango.mif.core.exec.template.DirectoryTemplateLocator">
+			<property name="commandTemplateDirectory">
+				<bean class="java.io.File">
+					<constructor-arg value="${mif.templatesDirectory}" />
+				</bean>
+			</property>
+		</bean>
+		
+    <!-- common beans definitions referenced by SGE connectors -->
+	<import resource="sgeconnector-common-context.xml" /> 
+    <!-- R SGE connector beans -->
+	<import resource="rsgeconnector-context.xml" />
+    <!-- NONMEM SGE connector beans --> 
+	<import resource="nonmemsgeconnector-context.xml" />
+    <!-- CMD SGE connector beans --> 
+    <import resource="cmd-sgeconnector-context.xml" />
+    <!-- PsN Bootstrap SGE connector beans --> 
+    <import resource="psnbootstrap-sgeconnector-context.xml" />
+    <!-- PsN SCM SGE connector beans --> 
+    <import resource="psnscm-sgeconnector-context.xml" />
+    <!-- PsN VPC SGE connector beans --> 
+    <import resource="psnvpc-sgeconnector-context.xml" /> 
+    <!-- CXF JobService beans-->
+    <import resource="/spring/CXF-context.xml"/>
+    
+
+	<!-- message routing -->
+       
+    <bean id="connectorsRegistry"  class="com.mango.mif.core.impl.MapBasedConnectorsRegistry">
+        <constructor-arg>
+            <map>
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).R_Script.name()}</value></key>
+                    <ref bean="RSgeConnector"/>
+                </entry>
+                    
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).NMFE.name()}</value></key>
+                    <ref bean="NONMEMSgeConnector"/>
+                </entry>
+                    
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).PsN_EXEC.name()}</value></key>
+                    <ref bean="NONMEMSgeConnector"/>
+                </entry>
+                
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).COMMAND_LINE.name()}</value></key>
+                    <ref bean="CMDSgeConnector"/>
+                </entry>
+                    
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).PsN_VPC.name()}</value></key>
+                    <ref bean="PsNVPCSgeConnector"/>
+                </entry>
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).PsN_SCM.name()}</value></key>
+                    <ref bean="PsNSCMSgeConnector"/>
+                </entry>
+                <entry>
+                    <key><value>#{T(com.mango.mif.domain.ExecutionType).PsN_Bootstrap.name()}</value></key>
+                    <ref bean="PsNBootstrapSgeConnector"/>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean> 
+
+    <bean id="requestRouter" class="com.mango.mif.core.impl.MessageRouter">
+        <property name="queueResolver">
+            <bean class="com.mango.mif.core.impl.RequestQueueResolver">
+                <property name="connectorsRegistry" ref="connectorsRegistry" />
+            </bean>
+        </property>
+        
+        <property name="routingErrorHandler">
+            <bean class="com.mango.mif.core.impl.RequestRoutingErrorHandler">
+                <constructor-arg value="${mif.responseQueue}"/>
+                <constructor-arg>
+                <ref bean="jmsTemplate"/>
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="jmsTemplate" ref="mifJmsTemplate"/>     
+    </bean>
+
+    <bean id="cancellationRouter" class="com.mango.mif.core.impl.MessageRouter">
+        <property name="queueResolver">
+            <bean class="com.mango.mif.core.impl.CancellationQueueResolver">
+                <property name="jobManagementService" ref="jobManagementService" />
+                <property name="connectorsRegistry" ref="connectorsRegistry" />
+            </bean>
+        </property>
+        
+        <property name="routingErrorHandler">
+            <bean class="com.mango.mif.core.impl.CancellationRequestRoutingErrorHandler">
+                <constructor-arg value="${mif.responseQueue}"/>
+                <constructor-arg>
+                <ref bean="jmsTemplate"/>
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="jmsTemplate" ref="mifJmsTemplate"/>             
+    </bean>
+	
+	<bean id="mifJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<property name="defaultDestination" ref="defaultQueue" />
+	</bean>
+	
+	<jms:listener-container	connection-factory="jmsFactory" acknowledge="auto" error-handler="jmsErrorHandler" >
+		<jms:listener destination="${mif.requestQueue}" ref="requestRouter"
+			method="onMessage" />
+		<jms:listener destination="${mif.cancelQueue}" ref="cancellationRouter"
+			method="onMessage" />
+	</jms:listener-container>    
+ 
+    <!-- Failure Recovery listener -->
+    <bean name="mifApplicationListener" class="com.mango.mif.utils.MIFApplicationContextListener"/>     	
+			
+</beans>

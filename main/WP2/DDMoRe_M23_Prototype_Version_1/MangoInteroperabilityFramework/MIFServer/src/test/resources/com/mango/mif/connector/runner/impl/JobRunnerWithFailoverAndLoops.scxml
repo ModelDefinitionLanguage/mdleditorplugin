@@ -1,0 +1,49 @@
+<scxml initial="pending" version="0.9" xmlns="http://www.w3.org/2005/07/scxml"><!--   node-size-and-position x=0.0 y=0.0 w=543.1589797674137 h=959.0  -->
+ <state id="pending"><!--   node-size-and-position x=172.1221943692525 y=43.0 w=50.0 h=20.0  -->
+  <transition event="runner.cancel" target="cancelled"><!--   edge-path [cancelled]  x=79.12219436925248 y=491.0 pointx=0.0 pointy=0.0 offsetx=-16.0 offsety=0.0  --></transition>
+  <transition event="runner.start" target="running"></transition>
+ </state>
+ <state id="running" initial="task-pending"><!--   node-size-and-position x=109.08540897109127 y=113.0 w=414.07357079632243 h=756.0  -->
+  <transition event="runner.pause" target="paused"></transition>
+  <transition event="runner.cancel" target="cancelled"></transition>
+  <transition event="task.failed" target="failed"></transition>
+  <transition event="done.state.running" target="finished"></transition>
+  <state id="task-pending"><!--   node-size-and-position x=160.52374842599806 y=43.0 w=80.0 h=20.0  -->
+   <transition event="task.prepare" target="task-preparing"></transition>
+   <transition event="task.submit" target="task-submitting"><!--   edge-path [task-submitting]  x=315.52374842599806 y=123.0 pointx=0.0 pointy=0.0 offsetx=11.0 offsety=-9.0  --></transition>
+   <transition event="task.process" target="task-processing"><!--   edge-path [task-processing]  x=345.52374842599806 y=123.0 x=333.52374842599806 y=193.0 pointx=0.0 pointy=0.0 offsetx=0.0 offsety=-14.0  --></transition>
+   <transition event="task.retrieve" target="task-retrieving"><!--   edge-path [task-retrieving]  x=162.52374842599806 y=123.0 x=142.52374842599806 y=193.0 x=122.52374842599808 y=389.5 pointx=0.0 pointy=0.0 offsetx=-11.0 offsety=11.0  --></transition>
+   <transition event="task.postprocess" target="task-postprocessing"><!--   edge-path [task-postprocessing]  x=132.52374842599806 y=123.0 x=112.52374842599808 y=193.0 x=92.52374842599808 y=389.5 x=165.52374842599806 y=586.0 pointx=0.0 pointy=0.0 offsetx=0.0 offsety=-3.0  --></transition>
+   <transition event="task.finished" target="task-finished"><!--   edge-path [task-finished]  x=102.52374842599808 y=123.0 x=82.52374842599808 y=193.0 x=62.52374842599808 y=389.5 x=104.52374842599808 y=586.0 x=146.52374842599806 y=656.0  --></transition>
+  </state>
+  <state id="task-preparing"><!--   node-size-and-position x=193.52374842599806 y=113.0 w=90.0 h=20.0  -->
+   <transition event="task.submit" target="task-submitting"></transition>
+  </state>
+  <state id="task-submitting"><!--   node-size-and-position x=203.52374842599806 y=183.0 w=100.0 h=20.0  -->
+   <transition event="task.process" target="task-processing"></transition>
+  </state>
+  <state id="task-processing" initial="task-monitoring"><!--   node-size-and-position x=160.9739260556737 y=253.0 w=233.09964474064878 h=273.0  -->
+   <transition event="done.state.task-processing" target="task-retrieving"></transition>
+   <state id="task-monitoring"><!--   node-size-and-position x=37.599644740648785 y=43.0 w=100.0 h=40.0  -->
+    <transition event="task.monitor" target="task-monitoring"></transition>
+    <transition event="task.post.monitor" target="task-post-monitoring"></transition>
+   </state>
+   <state id="task-post-monitoring"><!--   node-size-and-position x=37.599644740648785 y=133.0 w=100.0 h=30.0  -->
+    <transition event="task.post.monitor" target="task-post-monitoring"></transition>
+    <transition event="task.monitor.finished" target="task-monitoring-finished"></transition>
+   </state>
+   <final id="task-monitoring-finished"><!--   node-size-and-position x=27.599644740648785 y=213.0 w=120.0 h=40.0  --></final>
+  </state>
+  <state id="task-retrieving"><!--   node-size-and-position x=195.52374842599806 y=576.0 w=100.0 h=20.0  -->
+   <transition event="task.postprocess" target="task-postprocessing"></transition>
+  </state>
+  <state id="task-postprocessing"><!--   node-size-and-position x=178.52374842599806 y=646.0 w=120.0 h=20.0  -->
+   <transition event="task.finished" target="task-finished"></transition>
+  </state>
+  <final id="task-finished"><!--   node-size-and-position x=147.52374842599806 y=716.0 w=90.0 h=20.0  --></final>
+ </state>
+ <final id="cancelled"><!--   node-size-and-position x=155.1221943692525 y=919.0 w=60.0 h=20.0  --></final>
+ <final id="paused"><!--   node-size-and-position x=248.1221943692525 y=919.0 w=40.0 h=20.0  --></final>
+ <final id="failed"><!--   node-size-and-position x=406.1221943692525 y=919.0 w=40.0 h=20.0  --></final>
+ <final id="finished"><!--   node-size-and-position x=322.1221943692525 y=919.0 w=50.0 h=20.0  --></final>
+</scxml>

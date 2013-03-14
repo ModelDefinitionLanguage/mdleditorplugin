@@ -1,0 +1,15 @@
+Launch profile for PerfClientCLI should contain the following at a minimum:
+
+-psn "1 1" -mifshare /usr/global/jholloway/mifserver/sharedfiles -user jholloway -password <PASSWORD>
+
+To run one job of each:
+
+-psn "1 1" -bs "1 1" -mifshare /usr/global/jholloway/mifserver/sharedfiles -user jholloway -password <PASSWORD>
+
+
+Supported execution types:
+nm
+psn
+bs
+scm
+vpc
