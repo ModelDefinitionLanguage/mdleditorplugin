@@ -1,0 +1,312 @@
+/**
+ */
+package org.ddmore.pml.pharmaML.impl;
+
+import java.util.Collection;
+
+import org.ddmore.pml.pharmaML.PharmaMLPackage;
+import org.ddmore.pml.pharmaML.ct_ColumnType;
+import org.ddmore.pml.pharmaML.ct_Int_Value;
+import org.ddmore.pml.pharmaML.ct_xmlns;
+
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
+
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
+
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
+
+/**
+ * <!-- begin-user-doc -->
+ * An implementation of the model object '<em><b>ct Column Type</b></em>'.
+ * <!-- end-user-doc -->
+ * <p>
+ * The following features are implemented:
+ * <ul>
+ *   <li>{@link org.ddmore.pml.pharmaML.impl.ct_ColumnTypeImpl#getColumnNum <em>Column Num</em>}</li>
+ *   <li>{@link org.ddmore.pml.pharmaML.impl.ct_ColumnTypeImpl#getColumnVar <em>Column Var</em>}</li>
+ *   <li>{@link org.ddmore.pml.pharmaML.impl.ct_ColumnTypeImpl#getXmlns <em>Xmlns</em>}</li>
+ * </ul>
+ * </p>
+ *
+ * @generated
+ */
+public class ct_ColumnTypeImpl extends MinimalEObjectImpl.Container implements ct_ColumnType
+{
+  /**
+   * The cached value of the '{@link #getColumnNum() <em>Column Num</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getColumnNum()
+   * @generated
+   * @ordered
+   */
+  protected ct_Int_Value columnNum;
+
+  /**
+   * The default value of the '{@link #getColumnVar() <em>Column Var</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getColumnVar()
+   * @generated
+   * @ordered
+   */
+  protected static final String COLUMN_VAR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getColumnVar() <em>Column Var</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getColumnVar()
+   * @generated
+   * @ordered
+   */
+  protected String columnVar = COLUMN_VAR_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getXmlns() <em>Xmlns</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getXmlns()
+   * @generated
+   * @ordered
+   */
+  protected EList<ct_xmlns> xmlns;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected ct_ColumnTypeImpl()
+  {
+    super();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  protected EClass eStaticClass()
+  {
+    return PharmaMLPackage.eINSTANCE.getct_ColumnType();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ct_Int_Value getColumnNum()
+  {
+    return columnNum;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetColumnNum(ct_Int_Value newColumnNum, NotificationChain msgs)
+  {
+    ct_Int_Value oldColumnNum = columnNum;
+    columnNum = newColumnNum;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_NUM, oldColumnNum, newColumnNum);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setColumnNum(ct_Int_Value newColumnNum)
+  {
+    if (newColumnNum != columnNum)
+    {
+      NotificationChain msgs = null;
+      if (columnNum != null)
+        msgs = ((InternalEObject)columnNum).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_NUM, null, msgs);
+      if (newColumnNum != null)
+        msgs = ((InternalEObject)newColumnNum).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_NUM, null, msgs);
+      msgs = basicSetColumnNum(newColumnNum, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_NUM, newColumnNum, newColumnNum));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getColumnVar()
+  {
+    return columnVar;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setColumnVar(String newColumnVar)
+  {
+    String oldColumnVar = columnVar;
+    columnVar = newColumnVar;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_VAR, oldColumnVar, columnVar));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<ct_xmlns> getXmlns()
+  {
+    if (xmlns == null)
+    {
+      xmlns = new EObjectContainmentEList<ct_xmlns>(ct_xmlns.class, this, PharmaMLPackage.CT_COLUMN_TYPE__XMLNS);
+    }
+    return xmlns;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
+    switch (featureID)
+    {
+      case PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_NUM:
+        return basicSetColumnNum(null, msgs);
+      case PharmaMLPackage.CT_COLUMN_TYPE__XMLNS:
+        return ((InternalEList<?>)getXmlns()).basicRemove(otherEnd, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
+    switch (featureID)
+    {
+      case PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_NUM:
+        return getColumnNum();
+      case PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_VAR:
+        return getColumnVar();
+      case PharmaMLPackage.CT_COLUMN_TYPE__XMLNS:
+        return getXmlns();
+    }
+    return super.eGet(featureID, resolve, coreType);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
+    switch (featureID)
+    {
+      case PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_NUM:
+        setColumnNum((ct_Int_Value)newValue);
+        return;
+      case PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_VAR:
+        setColumnVar((String)newValue);
+        return;
+      case PharmaMLPackage.CT_COLUMN_TYPE__XMLNS:
+        getXmlns().clear();
+        getXmlns().addAll((Collection<? extends ct_xmlns>)newValue);
+        return;
+    }
+    super.eSet(featureID, newValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void eUnset(int featureID)
+  {
+    switch (featureID)
+    {
+      case PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_NUM:
+        setColumnNum((ct_Int_Value)null);
+        return;
+      case PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_VAR:
+        setColumnVar(COLUMN_VAR_EDEFAULT);
+        return;
+      case PharmaMLPackage.CT_COLUMN_TYPE__XMLNS:
+        getXmlns().clear();
+        return;
+    }
+    super.eUnset(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean eIsSet(int featureID)
+  {
+    switch (featureID)
+    {
+      case PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_NUM:
+        return columnNum != null;
+      case PharmaMLPackage.CT_COLUMN_TYPE__COLUMN_VAR:
+        return COLUMN_VAR_EDEFAULT == null ? columnVar != null : !COLUMN_VAR_EDEFAULT.equals(columnVar);
+      case PharmaMLPackage.CT_COLUMN_TYPE__XMLNS:
+        return xmlns != null && !xmlns.isEmpty();
+    }
+    return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (columnVar: ");
+    result.append(columnVar);
+    result.append(')');
+    return result.toString();
+  }
+
+} //ct_ColumnTypeImpl

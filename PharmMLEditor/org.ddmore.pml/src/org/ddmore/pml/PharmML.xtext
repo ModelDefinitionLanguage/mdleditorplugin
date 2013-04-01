@@ -1,0 +1,1568 @@
+grammar org.ddmore.pml.PharmaML with org.eclipse.xtext.common.Terminals
+
+generate pharmaML "http://www.ddmore.org/pml/PharmaML"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//***PharmaML***//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Mml_PharmaML hidden(WS, ML_COMMENT, XML_ANNOTATION):
+	TAG_OPEN
+		'PharmML' 
+		xmlns += ct_xmlns*
+		Name = ct_Name
+		IndependentVar = ct_independentVar 
+		writtenVersion = ct_writtenVersion 
+	TAG_CLOSE
+	 	SymbolDefinition += Mml_SymbolDefinitionType* 
+	 	StructuralModel +=  mdef_StructuralModelType* 
+	 	ModelDefinition += mdef_ModelDefinitionType*	
+		Design = design_TrialDesignType?
+	 	ModelingSteps = msteps_ModelingSteps?	
+	TAG_OPEN2 'PharmML' TAG_CLOSE
+;
+ 
+Mml_SymbolDefinitionType:
+	TAG_OPEN
+		'SymbolDefinition'  
+		symbId = ct_symbId 
+		symbolType = ct_symbolType
+		Name = ct_Name? 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Description = ct_AnnotationType? 
+		FunctionDefinition = Mml_FunctionDefinitionType
+	TAG_OPEN2 'SymbolDefinition' TAG_CLOSE		
+;	
+
+Mml_FunctionDefinitionType: 
+   TAG_OPEN
+   	  'FunctionDefinition' 
+   	  xmlns += ct_xmlns*
+   TAG_CLOSE 
+	  FunctionArguments += Mml_FuncParameterDefinitionType*
+	  Definition = ct_DefinitionRhsType
+  TAG_OPEN2 'FunctionDefinition' TAG_CLOSE;
+
+Mml_FuncParameterDefinitionType:
+   TAG_OPEN
+   		'FunctionArgument' 
+		sumbId = ct_symbId 	
+		symbolType = ct_symbolType? 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE 
+   		Decsription = ct_AnnotationType? 
+    TAG_OPEN2 'FunctionArgument' TAG_CLOSE))
+ ;
+  
+
+//***************************************************************************************************
+//***End of PharmaML***
+//***Math***
+//***************************************************************************************************
+
+Math_EquationType: 
+	TAG_OPEN
+		'Equation' 
+   		xmlns += ct_xmlns*
+   		writtenVersion = ct_writtenVersion 
+    TAG_CLOSE
+		Expr = Math_EquationTypeContent
+	TAG_OPEN2 'Equation' TAG_CLOSE
+;
+
+Math_EquationTypeContent:
+	Scalar = Math_ScalarType | 
+	Var = Math_VarType | 
+	Binop = Math_BinopType | 
+	Uniop = Math_UniopType | 
+	Piecewise = Math_PiecewiseType
+;
+
+Math_ScalarType: 
+	TAG_OPEN
+		'Scalar' 
+		value = ct_Decimal_Value 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'Scalar' TAG_CLOSE))
+;
+
+Math_VarType: 
+	TAG_OPEN
+		'Var' 
+		block = Math_block? 
+		symbId = Math_symbId 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'Var' TAG_CLOSE))
+;
+
+Math_BinopType: 
+	TAG_OPEN
+		'Binop' 
+		'op' '=' op = Math_BinopName 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		LeftExpr = Math_ExprType 
+		RightExpr = Math_ExprType
+	TAG_OPEN2 'Binop' TAG_CLOSE
+; 
+
+Math_UniopType: 
+	TAG_OPEN
+		'Uniop' 
+		'op' '=' op = Math_UniopName 
+		 xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Expr = Math_ExprType 
+	TAG_OPEN2 'Uniop' TAG_CLOSE
+; 
+
+Math_ExprType: 
+	Scalar = Math_ScalarType | 
+	Var = Math_VarType | 
+	Uniop = Math_UniopType | 
+	Binop = Math_BinopType | 
+	Constant = Math_ConstantType |
+	FunctionCall = Math_FunctionCallType
+;
+
+Math_ConstantType:
+	TAG_OPEN
+		'Constant'
+		'op' '=' op = Math_ConstantName
+		 xmlns += ct_xmlns*
+	(TAG_CLOSE2 |(TAG_CLOSE TAG_OPEN2 'Constant' TAG_CLOSE))
+;
+
+Math_FunctionCallType: 
+	TAG_OPEN
+		'FunctionCall' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		FunctionName = Math_VarType 
+		FunctionArguments += Math_FunctionArgumentType* 
+	TAG_OPEN2 'FunctionCall' TAG_CLOSE
+;
+
+Math_FunctionArgumentType: 
+	TAG_OPEN
+		'FunctionArgument' 
+		symbId = Math_symbId 
+		 xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Expr = Math_FuncExprType 
+	TAG_OPEN2 'FunctionArgument' TAG_CLOSE;
+
+Math_FuncExprType: 
+	Equation = Math_EquationType | 
+	Scalar = Math_ScalarType |
+	Constant = Math_ConstantType |
+	Var = Math_VarType 
+;
+
+Math_PiecewiseType: {Math_PiecewiseType} 
+	TAG_OPEN
+		'Piecewise' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Piecewise += Math_PieceType*
+	TAG_OPEN2 'Piecewise' TAG_CLOSE
+;
+
+Math_PieceType: 
+	TAG_OPEN
+		'Piece' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Content = Math_ExprType 
+		Condition = Math_ConditionType
+	TAG_OPEN2 'Piece' TAG_CLOSE
+;
+
+Math_ConditionType: 
+	TAG_OPEN
+		'Condition' 
+   		 writtenVersion =  ct_writtenVersion 
+   		 xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Expr = Math_LogicBaseType
+	TAG_OPEN2 'Condition' TAG_CLOSE
+;
+
+Math_LogicBaseType:
+	LogicBinopType = Math_LogicBinopType | 
+	LogicUniopType = Math_LogicUniopType | 
+	True = Math_TRUE | 
+	False = Math_FALSE 
+	//Otherwise = Otherwise
+;
+
+Math_LogicExprType:
+	Math_LogicBaseType
+	Scalar = Math_ScalarType | 
+	Constant = Math_ConstantType |
+	Var = Math_VarType | 
+	Uniop = Math_UniopType | 
+	Binop = Math_BinopType | 
+	FunctionCall = Math_FunctionCallType |
+	String = Math_StringType	
+;
+
+Math_StringType:
+	TAG_OPEN
+		'String' 
+   		value = ct_String_Value 
+   		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'String' TAG_CLOSE))
+;
+
+
+Math_TRUE:
+	true = ('"True"' | '"true"' | '"TRUE"')
+;
+
+Math_FALSE:
+	false = ('"False"' | '"false"' | '"FALSE"')
+;
+
+Math_LogicBinopType:
+	TAG_OPEN
+	'LogicBinop' 
+		'op' '=' op = Math_LogicBinopName 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		LeftExpr = Math_LogicExprType
+		RightExpr = Math_LogicExprType
+	TAG_OPEN2 'LogicBinop' TAG_CLOSE	
+;
+
+Math_LogicUniopType:
+	TAG_OPEN
+		'LogicUniop' 
+		'op' '=' op = Math_LogicUniopName 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Expr = Math_LogicExprType
+	TAG_OPEN2 'LogicUniop' TAG_CLOSE
+;
+
+//Add symbols
+Math_BinopName: 
+	binopName = '"plus"' |
+	minus = '"minus"'    |
+	times = '"times"'    |
+	divide= '"divide"'   |
+	power = '"power"'    |
+	log   = '"log"'      |
+	root  = '"root"'
+	
+;
+
+
+Math_UniopName: 
+	exp         =  '"exp"'         |
+	ln          =  '"ln"'          |
+	minus       =  '"minus"'       |
+	factorial   =  '"factorial"'   |
+	sin         =  '"sin"'         |
+	cos         =  '"cos"'         |
+	tan         =  '"tan"'         |
+	sec         =  '"sec"'         |
+	csc         =  '"csc"'         |
+	cot         =  '"cot"'         |
+	sinh        =  '"sinh"'        |
+	csch        =  '"csch"'        |
+	coth        =  '"coth"'        |
+	arcsin      =  '"arcsin"'      |
+	arccos      =  '"arccos"'      |
+	arctan      =  '"arctan"'      |
+	arcsec      =  '"arcsec"'      |
+	arccsc      =  '"arccsc"'      |
+	arccot      =  '"arccot"'      |
+	arcsinh     =  '"arcsinh"'     |
+	arccosh     =  '"arccosh"'     |
+	arctanh     =  '"arctanh"'     |
+	arcsech     =  '"arcsech"'     |
+	arccsch     =  '"arccsch"'     |
+	arccoth     =  '"arccoth"'     |
+	floor       =  '"floor"'       |
+	abs         =  '"abs"'         |
+	ceiling     =  '"ceiling"'     |
+	logit       =  '"logit"' 
+;
+
+Math_LogicUniopName :
+	isDefined = "isDefined" | not = "not"
+;
+
+Math_LogicBinopName: '"'
+	lt  =  "lt"   |
+	leq =  "leq"  |
+	gt  =  "gt"   |
+	geq =  "geq"  |
+	eq  =  "eq"   |
+	neq =  "neq"  |
+	and =  "and"  |
+	or  =  "or"   |
+	xor =  "xor"  
+	'"'
+;
+
+Math_ConstantName: 
+	'"'
+	notanumber = "notanumber" |
+	pi = "pi" |
+	exponentiale = "exponentiale" |
+	infinity = "infinity"
+	'"'
+;
+
+Math_symbId:
+	'symbId' '=' symbId = Math_SymbolNameType
+;
+
+Math_id:
+	'id' '=' id = Math_BlockNameType
+;
+
+Math_block:
+	'block' '=' block = Math_BlockNameType
+;
+
+ct_independentVar:
+	'independentVar' '=' independentVar = ct_SymbolNameType
+;
+
+Math_SymbolNameType: STR
+;
+
+Math_EstimationOperationType:
+	estPop = '"estPop"' | estFIM = '"estFIM"' | estIndiv = '"estIndiv"'	
+;
+
+mdef_ParameterTypeName:
+	log = '"log"' |
+	logit = '"logit"' |
+	none = '"none"'
+; 
+
+Math_BlockNameType: STR;
+
+//***************************************************************************************************
+//***ModelDefinition***
+//***************************************************************************************************
+mdef_ModelDefinitionType: {mdef_ModelDefinitionType}
+	TAG_OPEN
+		'ModelDefinition' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		VariabilityLevel += mdef_VariabilityLevelDefnType* 
+		CovariateModel = mdef_CovariateModelType? 
+		ParameterModel = mdef_ParameterModelType?
+		StructuraModel += mdef_StructuralModelType*
+		ObservationModel = mdef_ObservationModelType? 
+	TAG_OPEN2 'ModelDefinition' TAG_CLOSE
+;
+
+mdef_StructuralModelType:
+	TAG_OPEN
+		'StructuralModel' 
+		id = ct_id 
+		xmlns += ct_xmlns*
+	 TAG_CLOSE
+		Description = ct_AnnotationType 
+		Parameter += mdef_ParameterType* 
+		Variable += ct_VariableDefinitionType* 
+		Import += mdef_ImportType*
+		InitiaCondition += mdef_InitialConditionType*
+	TAG_OPEN2 'StructuralModel' TAG_CLOSE
+;
+
+mdef_ObservationModelType:
+	TAG_OPEN
+		'ObservationModel' 
+		id = ct_id
+		Name = ct_Name? 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Parameter += mdef_ParameterType* 
+		Continuous += mdef_ContinuousType*
+	TAG_OPEN2 'ObservationModel' TAG_CLOSE			
+;
+
+mdef_ParameterModelType:
+	TAG_OPEN
+		'ParameterModel' 
+		id = ct_id 
+		Name = ct_Name? 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Parameter += mdef_ParameterType+ 
+		Correlation += mdef_CorrelationType*
+	TAG_OPEN2 'ParameterModel' TAG_CLOSE		
+;
+
+mdef_CorrelationType:
+	TAG_OPEN
+	'ParameterModel' 
+		levelId = ct_levelId 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		ParamVar1 = Math_VarType 
+		ParamVar2 = Math_VarType 
+		CorrelationCoefficient = mdef_CorrelationCoefficientType?
+		Covariance = mdefCovarianceType?
+	TAG_OPEN2 'ParameterModel' TAG_CLOSE		
+;
+
+mdefCovarianceType:
+	TAG_OPEN
+		'Covariance' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_ScalarRhs
+	TAG_OPEN2 'Covariance' TAG_CLOSE		
+;
+
+mdef_CorrelationCoefficientType:
+	TAG_OPEN
+		'CorrelationCoefficient'
+		xmlns += ct_xmlns* 
+	TAG_CLOSE
+		Expr = ct_ScalarRhs
+	TAG_OPEN2 'CorrelationCoefficient' TAG_CLOSE	
+;
+
+
+mdef_CovariateModelType:
+	TAG_OPEN
+	'CovariateModel' 
+		id = ct_id
+		Name = ct_Name? 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Parameter += mdef_ParameterType* 
+		Covariate += mdef_CovariateVariabilityType+
+	TAG_OPEN2 'CovariateModel' TAG_CLOSE	
+;
+
+mdef_ParameterType:
+	TAG_OPEN
+	'Parameter' 
+		Name = ct_Name? 
+		symbId = Math_symbId 
+		transformation= mdef_transformation? 
+		xmlns += ct_xmlns*
+	 (TAG_CLOSE2 | (TAG_CLOSE
+		Var = Math_VarType? 
+		Scalar = Math_ScalarType?
+		Equation = Math_EquationType? 
+		RandomEffect += mdef_RandomEffectType*
+		Covariate +=  mdef_CovariateType* 
+	TAG_OPEN2 'Parameter' TAG_CLOSE))
+;
+
+mdef_CovariateVariabilityType:
+	TAG_OPEN
+	'Covariate' 
+		Name = ct_Name? 
+		symbId = ct_symbId 
+		transformation = mdef_transformation? 
+		xmlns += ct_xmlns*
+	  (TAG_CLOSE2 | (TAG_CLOSE
+		Continuous = mdef_ContinuousType?
+		Categorical = mdef_CategoricalType?
+	TAG_OPEN2 'Covariate' TAG_CLOSE))
+;
+
+mdef_transformation:
+	'transformation' '=' transformation= mdef_ParameterTypeName
+;
+
+mdef_CategoricalType: {mdef_CategoricalType}
+	TAG_OPEN
+		'Categorical' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Category += mdef_CategoryType*
+	TAG_OPEN2 'Categorical' TAG_CLOSE	
+;
+
+
+mdef_ContinuousType:
+	TAG_OPEN
+		'Continuous' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Distribution = uncert_DistributionType 
+		Transformation = mdef_TransformationType  
+	TAG_OPEN2 'Continuous' TAG_CLOSE	
+;
+
+mdef_TransformationType:
+	TAG_OPEN
+		'Transformation' 
+	TAG_CLOSE
+		Expr = ct_Rhs
+	TAG_OPEN2 'Transformation' TAG_CLOSE	
+;
+
+mdef_VariabilityLevelDefnType:
+	TAG_OPEN
+	'VariabilityLevel' 
+		id = ct_id 
+		Name = ct_Name? 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'VariabilityLevel' TAG_CLOSE))
+;
+
+mdef_ImportType:
+	TAG_OPEN
+	'Import' 
+		'resource' '=' resource = XS_ANY_URI 
+		'resourceType' '=' resourceType = mdef_ImportResourceTypeType 
+		'source' '=' source =  XS_TOKEN 
+		xmlns += ct_xmlns*
+	 TAG_CLOSE
+		Link += mdef_ImportLinkType+
+	TAG_OPEN2 'Import' TAG_CLOSE
+;
+
+mdef_ImportLinkType:
+	TAG_OPEN
+		'Link' 
+		'symbolPtr' '=' symbolPtr = XS_STRING 
+		xmlns += ct_xmlns*
+	 TAG_CLOSE
+		Var = Math_VarType
+	TAG_OPEN2 'Link' TAG_CLOSE	
+;
+
+mdef_ImportResourceTypeType:
+	sbml = "sbml" |
+	pharmml ="pharmml"
+;
+
+mdef_CovariateType:
+	TAG_OPEN
+		'Covariate' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Var = Math_VarType 
+		FixedEffect += mdef_FixedEffectType+ 
+	TAG_OPEN2 'Covariate' TAG_CLOSE	
+;
+
+mdef_FixedEffectType:
+	TAG_OPEN
+		'FixedEffect' 
+		xmlns += ct_xmlns*
+	 TAG_CLOSE
+		Var = Math_VarType 
+		(Category = mdef_CategoryType)? 
+	TAG_OPEN2 'FixedEffect' TAG_CLOSE	
+;
+
+mdef_CategoryType:
+	TAG_OPEN
+		'Category' 
+		catId = ct_catId 
+		Name = ct_Name? 
+		xmlns += ct_xmlns*
+	TAG_CLOSE  
+		Probability = mdef_ProbabilityType
+	TAG_OPEN2 'Category' TAG_CLOSE		
+;
+
+mdef_ProbabilityType:
+	TAG_OPEN
+		'Probability'
+		xmlns += ct_xmlns* 
+	TAG_CLOSE
+		Expr = ct_Rhs
+	TAG_OPEN2 'Probability' TAG_CLOSE	
+;
+
+mdef_RandomEffectType:
+	TAG_OPEN
+	'RandomEffect' 
+		levelId =  ct_levelId 
+		Name = ct_Name? 
+		symbId = ct_symbId  
+		xmlns += ct_xmlns*
+	 TAG_CLOSE
+		Distribution = uncert_DistributionType
+	TAG_OPEN2 'RandomEffect' TAG_CLOSE	
+;
+
+
+mdef_InitialConditionType:
+	TAG_OPEN
+	'InitialCondition' 
+		symbID = Math_symbId 
+		block = Math_block? 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_Rhs
+	TAG_OPEN2 'InitialCondition' TAG_CLOSE	
+;
+
+//***************************************************************************************************
+//***Design***
+//***************************************************************************************************
+ 
+design_TrialDesignType:
+	TAG_OPEN
+		'Design'
+		xmlns += ct_xmlns* 
+	TAG_CLOSE
+		Treatment += design_TreatmentType+ 
+		TreatmentEpoch += design_TreatmentEpohType+ 
+		Group += design_GroupType+
+	TAG_OPEN2 'Design' TAG_CLOSE
+;
+
+design_GroupType:
+	TAG_OPEN
+	'Group' 
+		id = ct_id 
+		Name = ct_Name? 
+		xmlns += ct_xmlns*
+	 TAG_CLOSE
+	    TreatmentEpochRef += design_TreatmentRefType*	
+	    Washout += design_WashoutType* 
+		Individuals = design_IdividualsType
+	TAG_OPEN2 'Group' TAG_CLOSE		
+;
+
+design_IdividualsType:
+	TAG_OPEN
+	'Individuals' 
+		symbId = ct_symbId  
+		Name = ct_Name? 
+		levelId =  ct_levelId 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_Rhs
+	TAG_OPEN2 'Individuals' TAG_CLOSE	
+;
+
+design_WashoutType: {design_WashoutType}
+	TAG_OPEN
+		'Washout' 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'Washout' TAG_CLOSE))	
+;
+
+
+design_TreatmentEpohType:
+	TAG_OPEN
+	'TreatmentEpoch' 
+		symbId = ct_symbId  
+		Name = ct_Name? 
+		xmlns += ct_xmlns*
+	 TAG_CLOSE
+		TreatmentRef += design_TreatmentRefType+ 
+		Start = design_StartType 
+		End = design_EndType 
+		Occasion = design_OccasionType 
+	TAG_OPEN2 'TreatmentEpoch' TAG_CLOSE	
+;
+
+design_OccasionType:
+	TAG_OPEN
+	'Occasion' 
+		symbId = ct_symbId  
+		Name = ct_Name? 
+		levelId =  ct_levelId 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Begin = design_BeginType 
+		End = design_EndType
+	TAG_OPEN2 'Occasion' TAG_CLOSE	
+;
+
+design_BeginType:
+	TAG_OPEN
+		'Begin' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_ScalarRhs
+	TAG_OPEN2 'Begin' TAG_CLOSE	
+;
+
+design_EndType:
+	TAG_OPEN
+		'End' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_ScalarRhs
+	TAG_OPEN2 'End' TAG_CLOSE	
+;
+
+design_StartType:
+	TAG_OPEN
+		'Start' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_ScalarRhs
+	TAG_OPEN2 'Start' TAG_CLOSE	
+;
+
+
+design_TreatmentRefType:
+	TAG_OPEN
+		'TreatmentRef' 
+		'idRef' '=' idRef = Math_BlockNameType 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'TreatmentRef' TAG_CLOSE))	
+;
+
+design_TreatmentType:
+	TAG_OPEN
+	'Treatment' 
+		symbId = Math_symbId  
+		Name = ct_Name? 
+		xmlns += ct_xmlns*
+	 TAG_CLOSE
+		DosingRegimen += design_DosingRegimenType+
+	TAG_OPEN2 'Treatment' TAG_CLOSE
+;
+
+design_DosingRegimenType: {design_DosingRegimenType}
+	TAG_OPEN
+		'DosingRegimen' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Bolus = design_BolusType?
+		Infusion = design_InfusionType?
+	TAG_OPEN2 'DosingRegimen' TAG_CLOSE	
+;
+
+design_InfusionType:
+	TAG_OPEN 
+		'Infusion'  
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		DoseAmount = design_DoseAmountType 
+		SteadyState = design_SteadyStateType?
+		DosingTimes = design_DosingTimesType?
+		Duration =  design_DurationType 
+	TAG_OPEN2 'Infusion' TAG_CLOSE
+;
+
+design_DurationType:
+	TAG_OPEN
+		'Duration'  
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = design_DosingVariableType
+	TAG_OPEN2 'Duration' TAG_CLOSE	
+;
+
+design_BolusType:
+	TAG_OPEN
+		'Bolus' 
+		xmlns += ct_xmlns* 
+	TAG_CLOSE
+		DoseAmount = design_DoseAmountType 
+		SteadyState = design_SteadyStateType? 
+		DosingTimes = design_DosingTimesType?
+	TAG_OPEN2 'Bolus' TAG_CLOSE
+;
+
+design_DosingTimesType:
+	TAG_OPEN
+		'DosingTimes'  
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_VectorType
+	TAG_OPEN2 'DosingTimes' TAG_CLOSE		
+;
+
+design_SteadyStateType:
+	TAG_OPEN
+		'SteadyState'  
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		DosingStart = design_DosingStartType 
+		DosingPeriod = design_DosingPeriodType
+	TAG_OPEN2 'SteadyState' TAG_CLOSE	
+;
+
+
+design_DosingStartType:
+	TAG_OPEN
+		'DosingStart'  
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = design_DosingVariableType
+	TAG_OPEN2 'DosingStart' TAG_CLOSE		
+;
+
+design_DosingPeriodType:
+	TAG_OPEN
+		'DosingPeriod'  
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = design_DosingVariableType	
+	TAG_OPEN2 'DosingPeriod' TAG_CLOSE		
+;
+
+design_DoseAmountType:
+	TAG_OPEN
+		'DoseAmount' 
+		xmlns += ct_xmlns* 
+	TAG_CLOSE
+		Expr = design_DosingVariableType	
+	TAG_OPEN2 'DoseAmount' TAG_CLOSE
+;
+
+design_DosingVariableType:
+	DoseVar = design_DoseVarType?
+	TargetVar = design_TargetVarType?
+	Amount = design_AmountType 
+;
+
+design_AmountType:
+	TAG_OPEN
+		'Amount' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Expr = ct_Rhs
+	TAG_OPEN2 'Amount' TAG_CLOSE		
+;
+
+design_TargetVarType:
+	TAG_OPEN
+		'TargetVar' 
+		symbId = Math_symbId  
+		block = Math_block? 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'TargetVar' TAG_CLOSE))	
+;
+
+design_DoseVarType:
+	TAG_OPEN
+		'DoseVar' 
+		symbId = Math_symbId   
+		block = Math_block? 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'DoseVar' TAG_CLOSE))
+;
+
+//***************************************************************************************************
+//End of Design
+//***Modeling steps***
+//***************************************************************************************************
+
+msteps_ModelingSteps:
+	TAG_OPEN
+		'ModelingSteps' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Variable += ct_VariableDefinitionType* 
+		EstimationStep += msteps_EstimationStep* 
+		SimulationStep += msteps_SimulationStep*
+		StepDependencies = msteps_StepDependenciesType
+	TAG_OPEN2 'ModelingSteps' TAG_CLOSE
+;
+
+msteps_StepDependenciesType:
+	TAG_OPEN
+		'StepDependencies'
+		xmlns += ct_xmlns* 
+	TAG_CLOSE
+		Description = ct_AnnotationType? 
+		Step += msteps_StepType+
+	TAG_OPEN2 'StepDependencies' TAG_CLOSE		
+;
+
+msteps_StepType:
+	TAG_OPEN
+		'Step' 
+		'idRef' '=' idRef = XS_STRING 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		DependantStep += msteps_DependantStepType+
+	TAG_OPEN2 'Step' TAG_CLOSE	
+;
+
+msteps_DependantStepType:
+	TAG_OPEN
+		'DependantStep' 
+		'idRef' '=' idRef = ct_BlockNameType 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'DependantStep' TAG_CLOSE))
+;	
+
+
+msteps_EstimationStep:
+	TAG_OPEN
+		'EstimationStep' 
+		id = ct_id 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Description = ct_AnnotationType? 
+		InitialValue += msteps_InitialValueType+ 
+		ObjectiveDataSet = msteps_ObjectiveDataSetType 
+		ParametersToEstimate = msteps_ParametersToEstimateType 
+		EstimationOperation += msteps_EstimationOperationType+
+	TAG_OPEN2 'EstimationStep' TAG_CLOSE	
+;
+
+msteps_ParametersToEstimateType:
+	TAG_OPEN
+		'ParametersToEstimate' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Variable += mSteps_VariableEstimateType
+	TAG_OPEN2 'ParametersToEstimate' TAG_CLOSE		
+;
+
+mSteps_VariableEstimateType:
+	TAG_OPEN
+		'Variable' 
+		symbID = Math_symbId 
+		fixed = mSteps_fixed 
+		block = Math_block? 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		InitialEstimate = mSteps_InitialEstimateType 
+		LowerBound = mSteps_LowerBoundType 
+		UpperBound = mSteps_UpperBoundType 
+	TAG_OPEN2 'Variable' TAG_CLOSE		
+;
+
+mSteps_fixed:
+	'fixed' '=' fixed = (Math_TRUE | Math_FALSE)
+;
+
+mSteps_UpperBoundType:
+	TAG_OPEN 
+		'UpperBound' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_ScalarRhs
+	TAG_OPEN2 'UpperBound' TAG_CLOSE		
+;
+
+
+mSteps_LowerBoundType:
+	TAG_OPEN
+		'LowerBound' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_ScalarRhs
+	TAG_OPEN2 'LowerBound' TAG_CLOSE		
+;
+
+mSteps_InitialEstimateType:
+	TAG_OPEN
+		'InitialEstimate' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_ScalarRhs
+	TAG_OPEN2 'InitialEstimate' TAG_CLOSE		
+;
+
+
+msteps_ObjectiveDataSetType:
+	TAG_OPEN
+		'ObjectiveDataSet' 
+		'dataSetRef' '=' dataSetRef = ct_SymbolNameType 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Mapping += msteps_MappingType+
+	TAG_OPEN2 'ObjectiveDataSet' TAG_CLOSE		
+;
+
+msteps_MappingType:
+	TAG_OPEN
+		'Mapping' 
+		'columnName' '=' columnName = ct_SymbolNameType 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Var = Math_VarType? 
+		UseVariabilityLevel = msteps_UseVariabilityLevel?
+		UseVariabilityNode = msteps_UseVariabilityNode?
+		DoseVar = design_DoseVarType?
+		TargetVar = msteps_TargetVarType?
+		Assign = msteps_AssignType? 
+		Output = msteps_OutputType? 
+		Restriction = ct_RestrictionType
+	TAG_OPEN2 'Mapping' TAG_CLOSE
+;
+
+msteps_OutputType:
+	TAG_OPEN
+		'Output' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Vars = Math_VarType
+	TAG_OPEN2 'Output' TAG_CLOSE	
+;
+
+msteps_AssignType:
+	TAG_OPEN
+		'Assign' 
+		symbId = Math_symbId  
+		block = Math_block? 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_Rhs
+	TAG_OPEN2 'Assign' TAG_CLOSE		
+;
+
+msteps_TargetVarType:
+	TAG_OPEN
+		'TargetVar' 
+		symbId = Math_symbId  
+		block = Math_block? 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'TargetVar' TAG_CLOSE))	
+;
+
+msteps_UseVariabilityLevel:
+	TAG_OPEN
+		'UseVariabilityLevel' 
+		'levelId' '=' levelId = ct_BlockNameType 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'UseVariabilityLevel' TAG_CLOSE))
+;
+
+msteps_UseVariabilityNode:
+	TAG_OPEN
+		'UseVariabilityNode' 
+		symbId = Math_symbId 
+		block = Math_block? 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'UseVariabilityNode' TAG_CLOSE))
+;
+
+msteps_SimulationStep:
+	TAG_OPEN
+		'SimulationStep' 
+		id = ct_id 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		(Description = ct_AnnotationType)? 
+		Replicates = ct_ReplicatesType 
+		InitialValue += msteps_InitialValueType+ 
+		SimDataSet = msteps_SimDataSetType 
+		Observations = msteps_ObservationsType 
+	TAG_OPEN2 'SimulationStep' TAG_CLOSE	
+;
+
+msteps_SimDataSetType:
+	TAG_OPEN
+		'SimDataSet' 
+		'dataSetRef' '=' dataSetRef = ct_SymbolNameType 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Mapping += msteps_MappingType+
+	TAG_OPEN2 'SimDataSet' TAG_CLOSE		
+;
+
+
+msteps_ObservationsType:
+	TAG_OPEN
+		'Observations'
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Timepoints  = msteps_TimepointsType 
+		Output += msteps_OutputType* 
+		WriteTo += msteps_WriteToType*
+	TAG_OPEN2 'Observations' TAG_CLOSE		
+;
+
+msteps_WriteToType:
+	TAG_OPEN
+		'WriteTo' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Var = Math_VarType 
+		Mapping += msteps_MappingType+
+	TAG_OPEN2 'WriteTo' TAG_CLOSE
+;
+
+
+msteps_TimepointsType:
+	TAG_OPEN
+		'Timepoints' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_Rhs
+	TAG_OPEN2 'Timepoints' TAG_CLOSE	
+;
+
+msteps_InitialValueType:
+	TAG_OPEN
+		'InitialValue' 
+		symbId = Math_symbId 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Content = ct_VariableAssignmentType	
+	TAG_OPEN2 'InitialValue' TAG_CLOSE
+;
+
+
+msteps_EstimationOperationType:
+	TAG_OPEN
+		'EstimationOperation' 
+		'opType' '=' opType = Math_EstimationOperationType
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'EstimationOperation' TAG_CLOSE))
+;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//End of Modeling steps
+//***Uncertainty***
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+uncert_DistributionType:
+	TAG_OPEN
+		'Distribution' 
+		xmlns += ct_xmlns*
+		writtenVersion = ct_writtenVersion 
+	TAG_CLOSE
+		Normal = uncert_Normal?
+		PDF = uncert_PDF?
+		Poison = uncert_Poison? 
+		Student = uncert_Student_t? 
+		Uniform = uncert_Uniform? 
+	TAG_OPEN2 'Distribution' TAG_CLOSE
+;
+
+uncert_Normal:
+	TAG_OPEN
+		'Normal' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Mean = uncert_Mean 
+		StdDev = uncert_StdDev?  
+		Variance = uncert_Variance? 
+		CoefficientOfVariance = uncert_CoefficientOfVariance?
+	TAG_OPEN2 'Normal' TAG_CLOSE
+;
+
+uncert_CoefficientOfVariance:
+	TAG_OPEN
+		'CoefficientOfVariance' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = uncert_DistributionParamType
+	TAG_OPEN2 'CoefficientOfVariance' TAG_CLOSE	
+;
+
+uncert_StdDev:
+	TAG_OPEN
+		'StdDev' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = uncert_DistributionParamType
+	TAG_OPEN2 'StdDev' TAG_CLOSE
+;
+
+uncert_DistributionParamType:
+	Equation = Math_EquationType | 
+	Scalar = Math_ScalarType |
+	Var = Math_VarType		
+;
+
+uncert_MeanParamType:
+	Expr = uncert_DistributionParamType
+;
+
+uncert_Mean:
+	TAG_OPEN
+		'Mean' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = uncert_MeanParamType
+	TAG_OPEN2 'Mean' TAG_CLOSE
+;
+
+uncert_Variance:
+	TAG_OPEN
+		'Variance' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = uncert_DistributionParamType
+	TAG_OPEN2 'Variance' TAG_CLOSE	
+;
+
+uncert_PDF:
+	TAG_OPEN
+		'PDF' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		FunctionParameter += uncert_ParameterDefinitionType* 
+		Equation = Math_EquationType
+	TAG_OPEN2 'PDF' TAG_CLOSE
+;
+
+uncert_ParameterDefinitionType:
+	TAG_OPEN
+		'FunctionParameter' 
+		id = Math_id  
+		Name = ct_Name? 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'FunctionParameter' TAG_CLOSE))	
+;
+
+uncert_Poison:
+	TAG_OPEN
+		'Poison' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Rate = uncert_Rate
+	TAG_OPEN2 'Poison' TAG_CLOSE	
+;
+
+uncert_Rate:
+	TAG_OPEN
+		'Rate' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = uncert_DistributionParamType
+	TAG_OPEN2 'Rate' TAG_CLOSE	
+;
+
+
+uncert_Student_t:
+	TAG_OPEN
+		'Student-t' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Location = uncert_Location 
+		Scale = uncert_Scale 
+		DegreesOfFreedom = uncertDegreesOfFreedom
+	TAG_OPEN2 'Student-t' TAG_CLOSE		
+;
+
+uncertDegreesOfFreedom:
+	TAG_OPEN
+		'DegreesOfFreedom'
+		xmlns += ct_xmlns* 
+	TAG_CLOSE
+		Expr = uncert_DistributionParamType
+	TAG_OPEN2 'DegreesOfFreedom' TAG_CLOSE		
+;
+
+uncert_Scale:
+	TAG_OPEN
+		'Scale' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = uncert_DistributionParamType
+	TAG_OPEN2 'Scale' TAG_CLOSE		
+;
+
+uncert_Location:
+	TAG_OPEN
+		'Location' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = uncert_DistributionParamType
+	TAG_OPEN2 'Location' TAG_CLOSE		
+;
+
+uncert_Uniform: {uncert_Uniform}
+	TAG_OPEN
+		'Uniform' 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'Uniform' TAG_CLOSE))	
+; 
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//End of Uncertainty
+//***CommonTypes***
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+ct_symbId:
+	('symbId' '=' symbId = ct_SymbolNameType) 
+;
+
+ct_id:
+	('id' '=' id = ct_BlockNameType) 
+;
+
+ct_symbolType:
+	('symbolType' '=' symbolType = ct_SymbolTypeType) 
+;
+
+ct_block:
+	'block' '=' block = ct_BlockNameType
+;
+
+ct_writtenVersion:
+	'writtenVersion' '=' writtenVersion = XS_STRING
+;
+
+ct_Decimal_Value:
+	'value' '=' value = XS_DECIMAL 
+;
+
+ct_String_Value:
+	'value' '=' value = XS_STRING 
+;
+
+ct_Int_Value:
+	'value' '=' value = XS_INT
+;
+ 
+ct_catId:
+	'catId' '=' catId = ct_SymbolNameType 
+;
+ 
+ct_ReplicatesType:
+	TAG_OPEN
+		'Replicates' 
+		symbId = ct_symbId 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_Rhs
+	TAG_OPEN2 'Replicates' TAG_CLOSE		
+;
+
+ct_AnnotationType: 
+	TAG_OPEN 
+		'Decsription' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Description = STRING
+	TAG_OPEN2 'Description' TAG_CLOSE;
+	
+ct_Rhs:
+	Equation = Math_EquationType | 
+	Scalar = Math_ScalarType |
+	Constant = Math_ConstantType |
+	String  = Math_StringType | 
+	Sequence = ct_SequenceType | 
+	Vector = ct_VectorType | 
+	FunctionCall = Math_FunctionCallType | 
+	DataSet = ct_DataSetType |
+	Var = Math_VarType |
+	Distribution = uncert_DistributionType
+; 
+
+ct_DataSetType: 
+	TAG_OPEN
+		'DataSet' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Definition = ct_DefinitionType 
+		ExternalSource += ct_ExternalSourceType* 
+		Row += ct_RowType* 
+		InternalSource += ct_InternalSourceType*
+	TAG_OPEN2 'DataSet' TAG_CLOSE;
+	
+ct_DefinitionType:
+	TAG_OPEN
+		'Definition'
+		xmlns += ct_xmlns* 
+	TAG_CLOSE
+		Definition += ct_ColumnType
+	TAG_OPEN2 'Definition' TAG_CLOSE
+;	
+
+ct_DefinitionRhsType:
+	TAG_OPEN
+		'Definition'
+		xmlns += ct_xmlns* 
+	TAG_CLOSE
+		Definition = ct_Rhs
+	TAG_OPEN2 'Definition' TAG_CLOSE
+;
+	
+ct_ColumnType: 
+	TAG_OPEN
+		'Column' 
+		'columnNum' '=' columnNum = ct_Int_Value 
+		'columnVar' '=' columnVar = ct_SymbolNameType 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'Column' TAG_CLOSE))
+;
+
+ct_ExternalSourceType: 
+	TAG_OPEN
+		'ExternalSource' 
+		'format' '=' format = ct_SymbolNameType 
+		('headerLine' '=' headerLine = (Math_TRUE |Math_FALSE))? 
+		('ignoreLineSymbol' '=' ignoreLineSymbol = ct_SymbolNameType)? 
+		'url' '=' url = XS_ANY_URI 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 |(TAG_CLOSE TAG_OPEN2 'ExternalSource' TAG_CLOSE));
+
+ct_RowType: {ct_RowType}
+	TAG_OPEN
+		'Row' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		Row += ct_RowTypeContent*
+	TAG_OPEN2 'Row' TAG_CLOSE;
+	
+ct_RowTypeContent:
+	Cell = ct_CellType | 
+	Null = ct_NullCellType
+;
+
+ct_NullCellType:
+	TAG_OPEN
+		'Null' 
+	TAG_CLOSE2
+;
+
+ct_CellType:
+	TAG_OPEN
+		'Cell'
+		value = ct_Decimal_Value 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+	TAG_OPEN2 'Cell' TAG_CLOSE;
+
+
+ct_InternalSourceType: 
+	TAG_OPEN 
+		'InternalSource' 
+		symbId = Math_symbId 
+		block = Math_block? 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'InternalSource' TAG_CLOSE))
+;
+
+ct_ScalarRhs:
+	Equation = Math_EquationType | 
+	Scalar = Math_ScalarType |
+	Var = Math_VarType |
+	String  = Math_StringType | 
+	FunctionCall = Math_FunctionCallType 
+;
+
+
+ct_levelId:
+	'levelId' '=' levelId = ct_BlockNameType 
+;
+
+ct_Name:
+	'name' '=' Name = STR
+;
+
+ct_VectorType: {ct_VectorType}
+	TAG_OPEN
+		'Vector' 
+		xmlns += ct_xmlns*
+	TAG_CLOSE 
+		(Sequence = ct_SequenceType)? 
+		(Scalar = Math_ScalarType)? 
+	TAG_OPEN2 'Vector' TAG_CLOSE
+;
+
+ct_SequenceType: 
+	TAG_OPEN 
+		'Sequence' 
+		'begin' '=' begin = ct_Decimal_Value 
+		'end' '=' end = ct_Decimal_Value?  
+		'repetition' '=' repetition = ct_Int_Value?    
+		'stepwise' '=' stepwise = ct_Decimal_Value 
+		xmlns += ct_xmlns*
+	(TAG_CLOSE2 | (TAG_CLOSE TAG_OPEN2 'Sequence' TAG_CLOSE));
+
+ct_BlockNameType: STR;
+
+ct_SymbolNameType: STR;
+
+ct_SymbolTypeType:  
+	scalar = '"scalar"' | 
+	derivative = '"derivative"' | 
+	distrib = '"distrib"' | 
+	dataSet = '"dataSet"'  
+;
+
+ct_VariableDefinitionType:
+	TAG_OPEN
+		'Variable'
+		symbId = ct_symbId 
+		symbolType = ct_symbolType 
+		independentVar = ct_independentVar 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Description = ct_AnnotationType? 
+		Expr = ct_Rhs
+	TAG_OPEN2 'Variable' TAG_CLOSE
+;
+
+
+ct_VariableAssignmentType: 
+	TAG_OPEN
+		'VariableAssignmentType' 
+		symbId = ct_symbId 
+		block = ct_block? 
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = ct_Rhs
+	TAG_OPEN2 'VariableAssignmentType' TAG_CLOSE
+;
+
+ct_RestrictionType:
+	TAG_OPEN
+		'Restriction'
+		xmlns += ct_xmlns*
+	TAG_CLOSE
+		Expr = Math_ConditionType
+	TAG_OPEN2 'Restriction' TAG_CLOSE
+;
+
+	
+//***************************************************************************************************
+//***End of CommonTypes***//
+//***NAMESPACES***//
+//***************************************************************************************************
+
+ct_xmlns:
+	 'xmlns' (':'ID)? '=' xmlns = XS_STRING 
+;
+
+Namespace:
+	ID':'
+;
+
+XS_TOKEN: STRING;
+XS_STRING: STR;
+XS_ANY_URI: STR;
+XS_DECIMAL: '"' DECIMAL '"';
+XS_INT: '"' INT '"';
+
+TAG_OPEN: '<'Namespace?;
+TAG_CLOSE: '>';
+TAG_CLOSE2: '/>';
+TAG_OPEN2: '</'Namespace?;
+ 
+ terminal STR:
+	'"' (ESCAPE_SEQUENCE | !('\\' | '"'))* '"';
+	
+terminal fragment ESCAPE_SEQUENCE:
+	'\\' ('b' | 't' | 'n' | 'f' | 'r' | '\"' | '\'' | '\\')
+	| UNICODE_ESCAPE
+	| OCTAL_ESCAPE;
+	
+terminal fragment OCTAL_ESCAPE:
+	  '\\' ('0'..'3') ('0'..'7') ('0'..'7')
+	| '\\' ('0'..'7') ('0'..'7')
+	| '\\' ('0'..'7');
+
+terminal fragment UNICODE_ESCAPE:
+	'\\' 'u' HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT;
+
+terminal fragment HEXDIGIT:
+	('0'..'9' | 'a'..'f' | 'A'..'F');	
+ 
+terminal DECIMAL
+    : INT '.' (INT)? | '.' INT 
+    ;
+    
+//terminal fragment EXPONENT: ('e'|'E') ('+'|'-')?('0'..'9')+;
+
+terminal ML_COMMENT: ('<!--') -> ('-->') ;
+terminal XML_ANNOTATION: '<?xml' -> '?>';
