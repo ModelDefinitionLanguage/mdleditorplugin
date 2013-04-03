@@ -1,6 +1,44 @@
-# OS generated files #
-######################
-.DS_Store*
-ehthumbs.db
+############################################################
+# OS generated files 
+############################################################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 Icon?
+ehthumbs.db
 Thumbs.db
+
+# Logs #
+######################
+*.log
+
+############################################################
+# Java
+############################################################
+*.class
+
+# Java Package Files #
+#*.jar
+#*.war
+#*.ear
+
+# Maven #
+target/
+
+# ANT #
+build/
+
+# eclipse #
+bin/
+
+
+############################################################
+# R files
+############################################################
+# History files
+.Rhistory
+
+# Example code in package build process
+*-Ex.R
