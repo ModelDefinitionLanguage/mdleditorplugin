@@ -1,0 +1,529 @@
+/**
+ */
+package org.ddmore.pml.pharmaML.impl;
+
+import java.util.Collection;
+
+import org.ddmore.pml.pharmaML.PharmaMLPackage;
+import org.ddmore.pml.pharmaML.ct_Name;
+import org.ddmore.pml.pharmaML.ct_symbId;
+import org.ddmore.pml.pharmaML.ct_xmlns;
+import org.ddmore.pml.pharmaML.mdef_CategoricalType;
+import org.ddmore.pml.pharmaML.mdef_ContinuousType;
+import org.ddmore.pml.pharmaML.mdef_CovariateVariabilityType;
+import org.ddmore.pml.pharmaML.mdef_transformation;
+
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
+
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
+
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
+
+/**
+ * <!-- begin-user-doc -->
+ * An implementation of the model object '<em><b>mdef Covariate Variability Type</b></em>'.
+ * <!-- end-user-doc -->
+ * <p>
+ * The following features are implemented:
+ * <ul>
+ *   <li>{@link org.ddmore.pml.pharmaML.impl.mdef_CovariateVariabilityTypeImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.ddmore.pml.pharmaML.impl.mdef_CovariateVariabilityTypeImpl#getSymbId <em>Symb Id</em>}</li>
+ *   <li>{@link org.ddmore.pml.pharmaML.impl.mdef_CovariateVariabilityTypeImpl#getTransformation <em>Transformation</em>}</li>
+ *   <li>{@link org.ddmore.pml.pharmaML.impl.mdef_CovariateVariabilityTypeImpl#getXmlns <em>Xmlns</em>}</li>
+ *   <li>{@link org.ddmore.pml.pharmaML.impl.mdef_CovariateVariabilityTypeImpl#getContinuous <em>Continuous</em>}</li>
+ *   <li>{@link org.ddmore.pml.pharmaML.impl.mdef_CovariateVariabilityTypeImpl#getCategorical <em>Categorical</em>}</li>
+ * </ul>
+ * </p>
+ *
+ * @generated
+ */
+public class mdef_CovariateVariabilityTypeImpl extends MinimalEObjectImpl.Container implements mdef_CovariateVariabilityType
+{
+  /**
+   * The cached value of the '{@link #getName() <em>Name</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected ct_Name name;
+
+  /**
+   * The cached value of the '{@link #getSymbId() <em>Symb Id</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSymbId()
+   * @generated
+   * @ordered
+   */
+  protected ct_symbId symbId;
+
+  /**
+   * The cached value of the '{@link #getTransformation() <em>Transformation</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTransformation()
+   * @generated
+   * @ordered
+   */
+  protected mdef_transformation transformation;
+
+  /**
+   * The cached value of the '{@link #getXmlns() <em>Xmlns</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getXmlns()
+   * @generated
+   * @ordered
+   */
+  protected EList<ct_xmlns> xmlns;
+
+  /**
+   * The cached value of the '{@link #getContinuous() <em>Continuous</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getContinuous()
+   * @generated
+   * @ordered
+   */
+  protected mdef_ContinuousType continuous;
+
+  /**
+   * The cached value of the '{@link #getCategorical() <em>Categorical</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCategorical()
+   * @generated
+   * @ordered
+   */
+  protected mdef_CategoricalType categorical;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected mdef_CovariateVariabilityTypeImpl()
+  {
+    super();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  protected EClass eStaticClass()
+  {
+    return PharmaMLPackage.eINSTANCE.getmdef_CovariateVariabilityType();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ct_Name getName()
+  {
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetName(ct_Name newName, NotificationChain msgs)
+  {
+    ct_Name oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__NAME, oldName, newName);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setName(ct_Name newName)
+  {
+    if (newName != name)
+    {
+      NotificationChain msgs = null;
+      if (name != null)
+        msgs = ((InternalEObject)name).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__NAME, null, msgs);
+      if (newName != null)
+        msgs = ((InternalEObject)newName).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__NAME, null, msgs);
+      msgs = basicSetName(newName, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__NAME, newName, newName));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ct_symbId getSymbId()
+  {
+    return symbId;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetSymbId(ct_symbId newSymbId, NotificationChain msgs)
+  {
+    ct_symbId oldSymbId = symbId;
+    symbId = newSymbId;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__SYMB_ID, oldSymbId, newSymbId);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setSymbId(ct_symbId newSymbId)
+  {
+    if (newSymbId != symbId)
+    {
+      NotificationChain msgs = null;
+      if (symbId != null)
+        msgs = ((InternalEObject)symbId).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__SYMB_ID, null, msgs);
+      if (newSymbId != null)
+        msgs = ((InternalEObject)newSymbId).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__SYMB_ID, null, msgs);
+      msgs = basicSetSymbId(newSymbId, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__SYMB_ID, newSymbId, newSymbId));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public mdef_transformation getTransformation()
+  {
+    return transformation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetTransformation(mdef_transformation newTransformation, NotificationChain msgs)
+  {
+    mdef_transformation oldTransformation = transformation;
+    transformation = newTransformation;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__TRANSFORMATION, oldTransformation, newTransformation);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setTransformation(mdef_transformation newTransformation)
+  {
+    if (newTransformation != transformation)
+    {
+      NotificationChain msgs = null;
+      if (transformation != null)
+        msgs = ((InternalEObject)transformation).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__TRANSFORMATION, null, msgs);
+      if (newTransformation != null)
+        msgs = ((InternalEObject)newTransformation).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__TRANSFORMATION, null, msgs);
+      msgs = basicSetTransformation(newTransformation, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__TRANSFORMATION, newTransformation, newTransformation));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<ct_xmlns> getXmlns()
+  {
+    if (xmlns == null)
+    {
+      xmlns = new EObjectContainmentEList<ct_xmlns>(ct_xmlns.class, this, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__XMLNS);
+    }
+    return xmlns;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public mdef_ContinuousType getContinuous()
+  {
+    return continuous;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetContinuous(mdef_ContinuousType newContinuous, NotificationChain msgs)
+  {
+    mdef_ContinuousType oldContinuous = continuous;
+    continuous = newContinuous;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CONTINUOUS, oldContinuous, newContinuous);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setContinuous(mdef_ContinuousType newContinuous)
+  {
+    if (newContinuous != continuous)
+    {
+      NotificationChain msgs = null;
+      if (continuous != null)
+        msgs = ((InternalEObject)continuous).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CONTINUOUS, null, msgs);
+      if (newContinuous != null)
+        msgs = ((InternalEObject)newContinuous).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CONTINUOUS, null, msgs);
+      msgs = basicSetContinuous(newContinuous, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CONTINUOUS, newContinuous, newContinuous));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public mdef_CategoricalType getCategorical()
+  {
+    return categorical;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetCategorical(mdef_CategoricalType newCategorical, NotificationChain msgs)
+  {
+    mdef_CategoricalType oldCategorical = categorical;
+    categorical = newCategorical;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CATEGORICAL, oldCategorical, newCategorical);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setCategorical(mdef_CategoricalType newCategorical)
+  {
+    if (newCategorical != categorical)
+    {
+      NotificationChain msgs = null;
+      if (categorical != null)
+        msgs = ((InternalEObject)categorical).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CATEGORICAL, null, msgs);
+      if (newCategorical != null)
+        msgs = ((InternalEObject)newCategorical).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CATEGORICAL, null, msgs);
+      msgs = basicSetCategorical(newCategorical, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CATEGORICAL, newCategorical, newCategorical));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
+    switch (featureID)
+    {
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__NAME:
+        return basicSetName(null, msgs);
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__SYMB_ID:
+        return basicSetSymbId(null, msgs);
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__TRANSFORMATION:
+        return basicSetTransformation(null, msgs);
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__XMLNS:
+        return ((InternalEList<?>)getXmlns()).basicRemove(otherEnd, msgs);
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CONTINUOUS:
+        return basicSetContinuous(null, msgs);
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CATEGORICAL:
+        return basicSetCategorical(null, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object eGet(int featureID, boolean resolve, boolean coreType)
+  {
+    switch (featureID)
+    {
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__NAME:
+        return getName();
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__SYMB_ID:
+        return getSymbId();
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__TRANSFORMATION:
+        return getTransformation();
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__XMLNS:
+        return getXmlns();
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CONTINUOUS:
+        return getContinuous();
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CATEGORICAL:
+        return getCategorical();
+    }
+    return super.eGet(featureID, resolve, coreType);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public void eSet(int featureID, Object newValue)
+  {
+    switch (featureID)
+    {
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__NAME:
+        setName((ct_Name)newValue);
+        return;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__SYMB_ID:
+        setSymbId((ct_symbId)newValue);
+        return;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__TRANSFORMATION:
+        setTransformation((mdef_transformation)newValue);
+        return;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__XMLNS:
+        getXmlns().clear();
+        getXmlns().addAll((Collection<? extends ct_xmlns>)newValue);
+        return;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CONTINUOUS:
+        setContinuous((mdef_ContinuousType)newValue);
+        return;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CATEGORICAL:
+        setCategorical((mdef_CategoricalType)newValue);
+        return;
+    }
+    super.eSet(featureID, newValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void eUnset(int featureID)
+  {
+    switch (featureID)
+    {
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__NAME:
+        setName((ct_Name)null);
+        return;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__SYMB_ID:
+        setSymbId((ct_symbId)null);
+        return;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__TRANSFORMATION:
+        setTransformation((mdef_transformation)null);
+        return;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__XMLNS:
+        getXmlns().clear();
+        return;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CONTINUOUS:
+        setContinuous((mdef_ContinuousType)null);
+        return;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CATEGORICAL:
+        setCategorical((mdef_CategoricalType)null);
+        return;
+    }
+    super.eUnset(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean eIsSet(int featureID)
+  {
+    switch (featureID)
+    {
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__NAME:
+        return name != null;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__SYMB_ID:
+        return symbId != null;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__TRANSFORMATION:
+        return transformation != null;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__XMLNS:
+        return xmlns != null && !xmlns.isEmpty();
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CONTINUOUS:
+        return continuous != null;
+      case PharmaMLPackage.MDEF_COVARIATE_VARIABILITY_TYPE__CATEGORICAL:
+        return categorical != null;
+    }
+    return super.eIsSet(featureID);
+  }
+
+} //mdef_CovariateVariabilityTypeImpl
