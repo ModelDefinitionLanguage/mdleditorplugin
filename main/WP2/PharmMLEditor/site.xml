@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="PharmML parser" url="https://sourceforge.net/projects/ddmore/files/update/pml">
+      This is an xText grammar for parsing PharmML
+   </description>
+   <feature url="features/eu.ddmore.pml.sdk_1.0.0.201304052305.jar" id="eu.ddmore.pml.sdk" version="1.0.0.201304052305">
+      <category name="DDMoRe"/>
+   </feature>
+   <category-def name="DDMoRe" label="DDMoRe"/>
+</site>
