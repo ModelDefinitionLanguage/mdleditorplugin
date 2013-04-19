@@ -18,6 +18,9 @@ Thumbs.db
 # Java
 ############################################################
 *.class
+#xtend generated trace files
+*.java._trace
+
 
 # Java Package Files #
 #*.jar
