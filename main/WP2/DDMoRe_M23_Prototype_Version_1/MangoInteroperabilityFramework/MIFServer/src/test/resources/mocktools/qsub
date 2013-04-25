@@ -1,3 +1,0 @@
-#!/usr/bin/python
-
-print "Your job 9999 (\"mockqsub.sh\") has been submitted"

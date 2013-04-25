@@ -1,4 +1,0 @@
-cd "SGE-SHARED-LOCATION/MIF-"
-
-find . ! -name 'MIF-*' -print | cpio -pdum JOB-REQUEST-OUTPUT-DIR
-
