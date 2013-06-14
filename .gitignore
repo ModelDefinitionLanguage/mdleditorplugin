@@ -36,6 +36,10 @@ build/
 # eclipse #
 bin/
 
+#xtext, xtend
+src-gen/
+xtend-gen/
+
 
 ############################################################
 # R files
