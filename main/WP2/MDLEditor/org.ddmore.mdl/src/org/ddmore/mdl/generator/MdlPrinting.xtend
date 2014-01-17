@@ -54,6 +54,7 @@ import org.ddmore.mdl.mdl.FormalArguments
 import org.ddmore.mdl.mdl.SimulationBlock
 import org.ddmore.mdl.mdl.EstimationBlock
 import org.ddmore.mdl.mdl.FileBlockStatement
+import org.ddmore.mdl.mdl.MclObject
 
 class MdlPrinting {
 
@@ -61,11 +62,15 @@ class MdlPrinting {
 	protected var externalCodeStart = new HashMap<String, ArrayList<String>>() //external code per target language section,
 	protected var externalCodeEnd = new HashMap<String, ArrayList<String>>() //external code per target language section,
 	
-	protected var eta_vars = newHashMap	//ETAs
-  	protected var eps_vars = newHashMap   //EPSs
-	protected var theta_vars = newHashMap //THETAs
-	protected var dadt_vars = newHashMap  //DADT	
-	protected var init_vars = newHashMap  //A		
+	protected var eta_vars = newHashMap	//ETAs     - Random variables, level 2
+  	protected var eps_vars = newHashMap   //EPSs   - Random variables, level 1
+	protected var theta_vars = newHashMap //THETAs - Structural parameters
+	protected var dadt_vars = newHashMap  //DADT   - Model prediction, ODE	
+	protected var init_vars = newHashMap  //A      - Model prediction, ODE, init attribute	
+	
+	protected var level_vars = newHashMap //       - Input variables, level attribute			
+	
+	protected val LEVEL_UNDEF = 0;
 	
 	//These maps are used to print same blocks (NM-TRAN SAME opetion in $OMEGA and $SIGMA)
 	protected var namedOmegaBlocks = new HashMap<String, Integer>() //Collection of names of $OMEGA records with dimensions
@@ -83,6 +88,7 @@ class MdlPrinting {
     	eps_vars.clear; 
     	namedOmegaBlocks.clear;
     	namedSigmaBlocks.clear;	
+    	level_vars.clear;
 	}
 	
 	//Collect variables from the MDL file
@@ -90,6 +96,7 @@ class MdlPrinting {
     	clearCollections();
     	for (o:m.objects){
 	  		if (o.modelObject != null){
+	  			setLevelVars(o.modelObject);
 	  			setRandomVariables(o.modelObject);
 	  			setStructuralParameters(o.modelObject);
 	  			setModelPredictionVariables(o.modelObject);
@@ -163,6 +170,26 @@ class MdlPrinting {
   		}
 	}
 	
+	def setLevelVars(ModelObject o){
+		for (b: o.blocks){
+			if(b.inputVariablesBlock != null){
+				for (SymbolDeclaration s: b.inputVariablesBlock.variables){
+					if (s.expression != null){
+						if (s.expression.list != null){
+							var level = s.expression.list.arguments.getAttribute("level");
+							if (!level.equals("")){
+								if (level_vars.get(s.identifier) == null){
+									level_vars.put(s.identifier, level);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+		
 	//Assign indices to variability parameters ($ETA, $ESP)
 	def protected setRandomVariables(ModelObject o){
     	var i = 1; var j = 1; 
@@ -172,6 +199,21 @@ class MdlPrinting {
 					if (s.randomList != null){	
 						var level = s.randomList.arguments.getAttribute("level");
 						val id = s.identifier;
+						if (level_vars.get(level) != null){
+							if (level_vars.get(level).equals("2")){
+								if (eta_vars.get(id) == null){
+									eta_vars.put(id, i);
+									i = i + 1;
+								}
+							}
+							if (level_vars.get(level).equals("1"))
+								if (eps_vars.get(id) == null){
+									eps_vars.put(id, j);
+									j = j + 1;
+								}	
+							}
+						}
+						/* 
 						if (level.equals("ID"))
 							if (eta_vars.get(id) == null){
 								eta_vars.put(id, i);
@@ -183,10 +225,13 @@ class MdlPrinting {
 								j = j + 1;
 							}	
 						}
+						*/
 	  			}
 	  		}
   		}
 	}
+	
+	//DV - 1, ID - 2
 	
 	//Find NM-TRAN functions
 	def protected prepareExternals(Mcl mcl) {
@@ -237,6 +282,36 @@ class MdlPrinting {
 	
 	def protected void prepareExternalCode(TargetBlock block) { }	
 	def protected void prepareExternalFunctions(ImportBlock block, String string) { }
+	
+	def defineLevel(Mcl mcl, String ref){
+		for (MclObject o: mcl.objects){
+			if (o.modelObject != null){
+				for (b: o.modelObject.blocks){
+					if(b.randomVariableDefinitionBlock != null){
+						for (SymbolDeclaration s: b.randomVariableDefinitionBlock.variables){
+							if (s.identifier.equals(ref)){
+								return s.defineLevel;
+							}
+						}
+					}
+				}
+			}
+		}
+		return LEVEL_UNDEF;
+	}
+	
+	def defineLevel(SymbolDeclaration s){
+		if (s.randomList != null){
+			var levelRef = s.randomList.arguments.getAttribute("level");
+			if (!levelRef.equals("")){
+				val level = level_vars.get(levelRef);
+				if (level != null)
+					return level;
+			}
+		}
+		return LEVEL_UNDEF;
+	}
+	
 	
 	//Print a list of external code snippets: beginning of section
 	def protected getExternalCodeStart(String sectionName){
@@ -375,7 +450,7 @@ class MdlPrinting {
 	///////////////////////////////////////////////////////////////////////////////
 	//Check whether MDL blocks are defined and non empty
 	///////////////////////////////////////////////////////////////////////////////
-	//Check that VARIABILITY block or its subblocks are not empty
+	//Check that HEADER block is not empty
 	def isHeaderDefined(DataObject obj){
 		for (b:obj.blocks){
 			if (b.headerBlock != null){
@@ -387,6 +462,7 @@ class MdlPrinting {
 		return false;
 	}
 
+    //Check that PRIOR block is not empty
 	def isPriorDefined(ParameterObject obj){
 		for (b:obj.blocks){
 			if (b.priorBlock != null){
@@ -491,21 +567,6 @@ class MdlPrinting {
 		}
 		return false;
 	}
-	
-	/*def isIndividualDefined(Mcl m){
-		for (o: m.objects){
-			if (o.modelObject != null){
-				for (mob: o.modelObject.blocks){
-					if (mob.individualVariablesBlock != null){
-						if (mob.individualVariablesBlock.statements.size > 0){
-							return true;
-						}
-					}
-				}				
-			}
-		}
-		return false;
-	}*/
 	
 	//Check if MIXTURE block is defined 
 	def isMixDefined(ModelObject o){
