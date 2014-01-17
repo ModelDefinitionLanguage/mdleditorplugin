@@ -1,0 +1,65 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="version1" class="eu.ddmore.convertertoolbox.domain.VersionImpl">
+		<property name="qualifier" value="qual" />
+	</bean>
+	
+	<bean id="mdl" class="eu.ddmore.convertertoolbox.domain.LanguageVersionImpl">
+		<property name="language" value="MDL" />
+		<property name="version">
+			<ref bean="version1" />
+		</property>
+	</bean>
+
+	<bean id="pharmaml" class="eu.ddmore.convertertoolbox.domain.LanguageVersionImpl">
+		<property name="language" value="PharmaML" />
+		<property name="version">
+			<ref bean="version1" />
+		</property>
+	</bean>
+
+	<bean id="nonmem" class="eu.ddmore.convertertoolbox.domain.LanguageVersionImpl">
+		<property name="language" value="NONMEM" />
+		<property name="version">
+			<ref bean="version1" />
+		</property>
+	</bean>
+
+	<bean id="converterProvider1" class="eu.ddmore.convertertoolbox.spi.DummyMDLToNMTRAN">
+		<property name="source">
+			<ref bean="mdl" />
+		</property>
+		<property name="target">
+			<ref bean="nonmem" />
+		</property>
+		<property name="converterVersion">
+			<ref bean="version1" />
+		</property>
+	</bean>
+
+	<bean id="converter1" class="eu.ddmore.convertertoolbox.java.ConverterImpl">
+		<property name="provider">
+			<ref bean="converterProvider1" />
+		</property>
+	</bean>
+	
+	<bean id="converter-maneger" class="eu.ddmore.convertertoolbox.java.ConverterManagerImpl">
+		<property name="converters">
+			<list>
+				<ref bean="converter1" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="converter-cli" class="eu.ddmore.convertertoolbox.cli.ConverterCLIImpl">
+		<property name="converterManager">
+			<ref bean="converter-maneger" />
+		</property>
+	</bean>
+	
+
+
+</beans>
