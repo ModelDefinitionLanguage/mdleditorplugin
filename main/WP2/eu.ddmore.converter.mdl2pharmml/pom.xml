@@ -54,7 +54,7 @@
 
 		<dependency>
 			<groupId>eu.ddmore</groupId>
-			<artifactId>mdlExport</artifactId>
+			<artifactId>mdl-domain</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 
