@@ -7,31 +7,23 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import eu.ddmore.convertertoolbox.api.conversion.ConversionListener;
-import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.api.domain.Version;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
-import eu.ddmore.convertertoolbox.conversion.ConverterImpl;
+import eu.ddmore.convertertoolbox.cli.Main;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
+import eu.ddmore.convertertoolbox.spi.DummyMDLToNMTRAN;
 import eu.ddmore.convertertoolbox.spi.DummyMDLToNMTRANFailure;
 
 /**
- * Test for {@link ConverterCLIImpl}.
+ * Test for {@link Main}.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/SpringBeans.xml" })
 public class ConverterImplTest {
-
-    @Autowired
-    private ConverterImpl converterProvider1;
+    
     private File pkPRED;
     private File outputDir;
 
@@ -44,7 +36,9 @@ public class ConverterImplTest {
 
     @Test
     public void shouldUseDummyConverterSingleFile() throws ConverterNotFoundException, IOException {
-        ConversionReport report = converterProvider1.convert(pkPRED, outputDir);
+        ConverterImpl converter = new ConverterImpl();
+        converter.setProvider(new DummyMDLToNMTRAN());
+        ConversionReport report = converter.convert(pkPRED, outputDir);
         assertEquals(ConversionCode.SUCCESS, report.getReturnCode());
         assertEquals(report.getDetails(Severity.ERROR).size(), 0);
     }
@@ -53,7 +47,9 @@ public class ConverterImplTest {
     public void shouldUseDummyConverterMultipleFiles() throws ConverterNotFoundException, IOException {
         File pkBOV = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_BOV.mdl").getPath());
         File[] src = new File[] { pkPRED, pkBOV };
-        ConversionReport[] report = converterProvider1.convert(src, outputDir);
+        ConverterImpl converter = new ConverterImpl();
+        converter.setProvider(new DummyMDLToNMTRAN());
+        ConversionReport[] report = converter.convert(src, outputDir);
         assertEquals(ConversionCode.SUCCESS, report[0].getReturnCode());
         assertEquals(ConversionCode.SUCCESS, report[1].getReturnCode());
         assertEquals(report[0].getDetails(Severity.ERROR).size(), 0);
@@ -75,8 +71,9 @@ public class ConverterImplTest {
             }
             
         };
-        
-        converterProvider1.convert(pkPRED, outputDir, listener);
+        ConverterImpl converter = new ConverterImpl();
+        converter.setProvider(new DummyMDLToNMTRAN());
+        converter.convert(pkPRED, outputDir, listener);
     }
     
     @Test
@@ -98,7 +95,9 @@ public class ConverterImplTest {
         };
         File pkBOV = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_BOV.mdl").getPath());
         File[] src = new File[] { pkPRED, pkBOV };
-        converterProvider1.convert(src, outputDir, listener);
+        ConverterImpl converter = new ConverterImpl();
+        converter.setProvider(new DummyMDLToNMTRAN());
+        converter.convert(src, outputDir, listener);
     }
     
     @Test
@@ -126,8 +125,12 @@ public class ConverterImplTest {
     @Test
     public void shouldFindConverterVersion() {
         Version expectedVersion = new VersionImpl();
-        expectedVersion.setQualifier("qual");
-        Version version = converterProvider1.getConverterVersion();
+        expectedVersion.setMajor(1);
+        expectedVersion.setMinor(0);
+        expectedVersion.setPatch(2);
+        ConverterImpl converter = new ConverterImpl();
+        converter.setProvider(new DummyMDLToNMTRAN());
+        Version version = converter.getConverterVersion();
         assertEquals(version, expectedVersion);
     }
 }

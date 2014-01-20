@@ -6,9 +6,9 @@ package eu.ddmore.convertertoolbox.conversion;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -18,12 +18,10 @@ import eu.ddmore.convertertoolbox.api.conversion.ConversionListener;
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
-import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
-import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
-import eu.ddmore.convertertoolbox.response.ConversionDetailImpl;
-import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
+import eu.ddmore.convertertoolbox.concurrent.FutureCallbackArrayImpl;
+import eu.ddmore.convertertoolbox.concurrent.FutureCallbackImpl;
 
 /**
  * Represents a converter available in the toolbox
@@ -31,7 +29,13 @@ import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
 public class ConverterImpl implements Converter {
 
     private ConverterProvider provider;
+    private static ExecutorService executorService;
+    private static final int MAX_THREADS_NUMBER = 10;
 
+    public ConverterImpl() {
+        executorService = Executors.newFixedThreadPool(MAX_THREADS_NUMBER);
+    }
+    
     public void setProvider(ConverterProvider provider) {
         this.provider = provider;
     }
@@ -48,7 +52,7 @@ public class ConverterImpl implements Converter {
 
     @Override
     public void convert(final File src, final File outputDirectory, final ConversionListener listener) throws IOException {
-        ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
+        ListeningExecutorService service = MoreExecutors.listeningDecorator(executorService);
         
         ListenableFuture<ConversionReport> conversion = service.submit(new Callable<ConversionReport>() {
 
@@ -56,55 +60,21 @@ public class ConverterImpl implements Converter {
                 return convert(src, outputDirectory);
             }
         });
-        Futures.addCallback(conversion, new FutureCallback<ConversionReport>() {
-
-            public void onSuccess(ConversionReport report) {
-                listener.conversionComplete(report);
-            }
-
-            public void onFailure(Throwable thrown) {
-                ConversionReport report = createConversionReport(thrown);
-                listener.conversionComplete(report);
-            }
-
-        });
+        Futures.addCallback(conversion, new FutureCallbackImpl(listener));
     }
 
     @Override
     public void convert(final File[] src, final File outputDirectory, final ConversionListener listener) throws IOException {
-        ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
+        ListeningExecutorService service = MoreExecutors.listeningDecorator(executorService);
         ListenableFuture<ConversionReport[]> conversion = service.submit(new Callable<ConversionReport[]>() {
 
             public ConversionReport[] call() throws IOException {
                 return convert(src, outputDirectory);
             }
         });
-        Futures.addCallback(conversion, new FutureCallback<ConversionReport[]>() {
-
-            public void onSuccess(ConversionReport[] reports) {
-                listener.conversionComplete(reports);
-            }
-
-            public void onFailure(Throwable thrown) {
-                ConversionReport[] reports = new ConversionReportImpl[src.length];
-                for (int i=0; i<src.length; i++) {
-                    reports[i] = createConversionReport(thrown);
-                }
-                listener.conversionComplete(reports);
-            }
-        });
+        Futures.addCallback(conversion, new FutureCallbackArrayImpl(listener, src.length));
     }
     
-    private ConversionReport createConversionReport(Throwable thrown) {
-        ConversionReport report = new ConversionReportImpl();
-        report.setReturnCode(ConversionCode.FAILURE);
-        ConversionDetail detail = new ConversionDetailImpl();
-        detail.addInfo("Error in reading/writing input/output file", thrown.getMessage());
-        report.addDetail(detail);
-        return report;
-    }
-
-
     @Override
     public ConverterProvider getConverterProvider() {
         return provider;

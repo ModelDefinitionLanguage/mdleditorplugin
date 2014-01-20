@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
-import eu.ddmore.convertertoolbox.cli.ConverterCLIImpl;
+import eu.ddmore.convertertoolbox.cli.Main;
 
 /**
  * Test for {@link LanguageVersionImpl}.
