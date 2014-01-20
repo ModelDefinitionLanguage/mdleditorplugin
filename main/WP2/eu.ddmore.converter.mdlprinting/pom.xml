@@ -20,11 +20,9 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>mdlExport</groupId>
+			<groupId>eu.ddmore</groupId>
 			<artifactId>mdlExport</artifactId>
-			<scope>system</scope>
-			<version>1.0</version>
-			<systemPath>${basedir}\lib\mdlExport.jar</systemPath>
+			<version>0.0.1</version>
 		</dependency>
 
 		<dependency>
