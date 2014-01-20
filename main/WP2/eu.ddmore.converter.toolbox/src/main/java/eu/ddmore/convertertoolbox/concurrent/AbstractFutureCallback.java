@@ -9,7 +9,11 @@ import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.response.ConversionDetailImpl;
 import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
 
-
+/**
+ * An abstract class containing the common state/behaviour of FutureCallbackImpl and FutureCallbackArrayImpl subtypes.
+ *
+ * @param <T> this will be either ConversionReport or ConversionReport[]
+ */
 public abstract class AbstractFutureCallback<T> implements FutureCallback<T> {
     
     protected ConversionListener listener;
@@ -18,6 +22,11 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<T> {
         this.listener = listener;
     }
 
+    /**
+     * 
+     * @param thrown the error thrown by the onFailure method that concrete subclasses should implement.
+     * @return a conversion report marked as 'FAILURE', with additional erro detail derived from the input error message.
+     */
     protected ConversionReport createConversionReport(Throwable thrown) {
         ConversionReport report = new ConversionReportImpl();
         report.setReturnCode(ConversionCode.FAILURE);
