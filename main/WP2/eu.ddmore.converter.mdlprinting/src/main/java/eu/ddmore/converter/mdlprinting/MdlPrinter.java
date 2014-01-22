@@ -5,6 +5,7 @@
  */
 package eu.ddmore.converter.mdlprinting;
 
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import org.ddmore.mdl.mdl.GroupVariablesBlockStatement;
 import org.ddmore.mdl.mdl.HeaderBlock;
 import org.ddmore.mdl.mdl.ImportBlock;
 import org.ddmore.mdl.mdl.IndividualVariablesBlock;
+import org.ddmore.mdl.mdl.InputVariablesBlock;
 import org.ddmore.mdl.mdl.LibraryBlock;
 import org.ddmore.mdl.mdl.Likelyhood;
 import org.ddmore.mdl.mdl.List;
@@ -159,6 +161,15 @@ public class MdlPrinter {
     }
   }.apply();
   
+  protected HashMap<Object,Object> level_vars = new Function0<HashMap<Object,Object>>() {
+    public HashMap<Object,Object> apply() {
+      HashMap<Object,Object> _newHashMap = CollectionLiterals.<Object, Object>newHashMap();
+      return _newHashMap;
+    }
+  }.apply();
+  
+  protected final int LEVEL_UNDEF = 0;
+  
   protected HashMap<String,Integer> namedOmegaBlocks = new Function0<HashMap<String,Integer>>() {
     public HashMap<String,Integer> apply() {
       HashMap<String,Integer> _hashMap = new HashMap<String,Integer>();
@@ -181,6 +192,7 @@ public class MdlPrinter {
     this.eps_vars.clear();
     this.namedOmegaBlocks.clear();
     this.namedSigmaBlocks.clear();
+    this.level_vars.clear();
   }
   
   protected void prepareCollections(final Mcl m) {
@@ -191,13 +203,15 @@ public class MdlPrinter {
       boolean _notEquals = (!Objects.equal(_modelObject, null));
       if (_notEquals) {
         ModelObject _modelObject_1 = o.getModelObject();
-        this.setRandomVariables(_modelObject_1);
+        this.setLevelVars(_modelObject_1);
         ModelObject _modelObject_2 = o.getModelObject();
-        this.setStructuralParameters(_modelObject_2);
+        this.setRandomVariables(_modelObject_2);
         ModelObject _modelObject_3 = o.getModelObject();
-        this.setModelPredictionVariables(_modelObject_3);
+        this.setStructuralParameters(_modelObject_3);
         ModelObject _modelObject_4 = o.getModelObject();
-        this.setInitialConditions(_modelObject_4);
+        this.setModelPredictionVariables(_modelObject_4);
+        ModelObject _modelObject_5 = o.getModelObject();
+        this.setInitialConditions(_modelObject_5);
       }
     }
   }
@@ -324,6 +338,44 @@ public class MdlPrinter {
     }
   }
   
+  public void setLevelVars(final ModelObject o) {
+    EList<ModelObjectBlock> _blocks = o.getBlocks();
+    for (final ModelObjectBlock b : _blocks) {
+      InputVariablesBlock _inputVariablesBlock = b.getInputVariablesBlock();
+      boolean _notEquals = (!Objects.equal(_inputVariablesBlock, null));
+      if (_notEquals) {
+        InputVariablesBlock _inputVariablesBlock_1 = b.getInputVariablesBlock();
+        EList<SymbolDeclaration> _variables = _inputVariablesBlock_1.getVariables();
+        for (final SymbolDeclaration s : _variables) {
+          AnyExpression _expression = s.getExpression();
+          boolean _notEquals_1 = (!Objects.equal(_expression, null));
+          if (_notEquals_1) {
+            AnyExpression _expression_1 = s.getExpression();
+            List _list = _expression_1.getList();
+            boolean _notEquals_2 = (!Objects.equal(_list, null));
+            if (_notEquals_2) {
+              AnyExpression _expression_2 = s.getExpression();
+              List _list_1 = _expression_2.getList();
+              Arguments _arguments = _list_1.getArguments();
+              String level = this.getAttribute(_arguments, "level");
+              boolean _equals = level.equals("");
+              boolean _not = (!_equals);
+              if (_not) {
+                String _identifier = s.getIdentifier();
+                Object _get = this.level_vars.get(_identifier);
+                boolean _equals_1 = Objects.equal(_get, null);
+                if (_equals_1) {
+                  String _identifier_1 = s.getIdentifier();
+                  this.level_vars.put(_identifier_1, level);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
   protected void setRandomVariables(final ModelObject o) {
     int i = 1;
     int j = 1;
@@ -342,24 +394,30 @@ public class MdlPrinter {
             Arguments _arguments = _randomList_1.getArguments();
             String level = this.getAttribute(_arguments, "level");
             final String id = s.getIdentifier();
-            boolean _equals = level.equals("ID");
-            if (_equals) {
-              Object _get = this.eta_vars.get(id);
-              boolean _equals_1 = Objects.equal(_get, null);
-              if (_equals_1) {
-                this.eta_vars.put(id, Integer.valueOf(i));
-                int _plus = (i + 1);
-                i = _plus;
+            Object _get = this.level_vars.get(level);
+            boolean _notEquals_2 = (!Objects.equal(_get, null));
+            if (_notEquals_2) {
+              Object _get_1 = this.level_vars.get(level);
+              boolean _equals = _get_1.equals("2");
+              if (_equals) {
+                Object _get_2 = this.eta_vars.get(id);
+                boolean _equals_1 = Objects.equal(_get_2, null);
+                if (_equals_1) {
+                  this.eta_vars.put(id, Integer.valueOf(i));
+                  int _plus = (i + 1);
+                  i = _plus;
+                }
               }
-            }
-            boolean _equals_2 = level.equals("DV");
-            if (_equals_2) {
-              Object _get_1 = this.eps_vars.get(id);
-              boolean _equals_3 = Objects.equal(_get_1, null);
-              if (_equals_3) {
-                this.eps_vars.put(id, Integer.valueOf(j));
-                int _plus_1 = (j + 1);
-                j = _plus_1;
+              Object _get_3 = this.level_vars.get(level);
+              boolean _equals_2 = _get_3.equals("1");
+              if (_equals_2) {
+                Object _get_4 = this.eps_vars.get(id);
+                boolean _equals_3 = Objects.equal(_get_4, null);
+                if (_equals_3) {
+                  this.eps_vars.put(id, Integer.valueOf(j));
+                  int _plus_1 = (j + 1);
+                  j = _plus_1;
+                }
               }
             }
           }
@@ -493,6 +551,54 @@ public class MdlPrinter {
   }
   
   protected void prepareExternalFunctions(final ImportBlock block, final String string) {
+  }
+  
+  public Object defineLevel(final Mcl mcl, final String ref) {
+    EList<MclObject> _objects = mcl.getObjects();
+    for (final MclObject o : _objects) {
+      ModelObject _modelObject = o.getModelObject();
+      boolean _notEquals = (!Objects.equal(_modelObject, null));
+      if (_notEquals) {
+        ModelObject _modelObject_1 = o.getModelObject();
+        EList<ModelObjectBlock> _blocks = _modelObject_1.getBlocks();
+        for (final ModelObjectBlock b : _blocks) {
+          RandomVariableDefinitionBlock _randomVariableDefinitionBlock = b.getRandomVariableDefinitionBlock();
+          boolean _notEquals_1 = (!Objects.equal(_randomVariableDefinitionBlock, null));
+          if (_notEquals_1) {
+            RandomVariableDefinitionBlock _randomVariableDefinitionBlock_1 = b.getRandomVariableDefinitionBlock();
+            EList<SymbolDeclaration> _variables = _randomVariableDefinitionBlock_1.getVariables();
+            for (final SymbolDeclaration s : _variables) {
+              String _identifier = s.getIdentifier();
+              boolean _equals = _identifier.equals(ref);
+              if (_equals) {
+                return this.defineLevel(s);
+              }
+            }
+          }
+        }
+      }
+    }
+    return this.LEVEL_UNDEF;
+  }
+  
+  public Object defineLevel(final SymbolDeclaration s) {
+    RandomList _randomList = s.getRandomList();
+    boolean _notEquals = (!Objects.equal(_randomList, null));
+    if (_notEquals) {
+      RandomList _randomList_1 = s.getRandomList();
+      Arguments _arguments = _randomList_1.getArguments();
+      String levelRef = this.getAttribute(_arguments, "level");
+      boolean _equals = levelRef.equals("");
+      boolean _not = (!_equals);
+      if (_not) {
+        final Object level = this.level_vars.get(levelRef);
+        boolean _notEquals_1 = (!Objects.equal(level, null));
+        if (_notEquals_1) {
+          return level;
+        }
+      }
+    }
+    return this.LEVEL_UNDEF;
   }
   
   protected String getExternalCodeStart(final String sectionName) {
@@ -994,22 +1100,6 @@ public class MdlPrinter {
     return false;
   }
   
-  /**
-   * def isIndividualDefined(Mcl m){
-   * for (o: m.objects){
-   * if (o.modelObject != null){
-   * for (mob: o.modelObject.blocks){
-   * if (mob.individualVariablesBlock != null){
-   * if (mob.individualVariablesBlock.statements.size > 0){
-   * return true;
-   * }
-   * }
-   * }
-   * }
-   * }
-   * return false;
-   * }
-   */
   public boolean isMixDefined(final ModelObject o) {
     EList<ModelObjectBlock> _blocks = o.getBlocks();
     for (final ModelObjectBlock mob : _blocks) {
@@ -2068,12 +2158,12 @@ public class MdlPrinter {
   public CharSequence print(final ConditionalStatement s) {
     StringConcatenation _builder = new StringConcatenation();
     {
-      ParExpression _parExpression = s.getParExpression();
-      boolean _notEquals = (!Objects.equal(_parExpression, null));
+      OrExpression _expression = s.getExpression();
+      boolean _notEquals = (!Objects.equal(_expression, null));
       if (_notEquals) {
         _builder.append("if ");
-        ParExpression _parExpression_1 = s.getParExpression();
-        CharSequence _print = this.print(_parExpression_1);
+        OrExpression _expression_1 = s.getExpression();
+        CharSequence _print = this.print(_expression_1);
         _builder.append(_print, "");
         _builder.newLineIfNotEmpty();
         {
@@ -2083,7 +2173,7 @@ public class MdlPrinter {
             _builder.append("\t");
             BlockStatement _ifStatement_1 = s.getIfStatement();
             Object _print_1 = this.print(_ifStatement_1);
-            _builder.append(_print_1, "	");
+            _builder.append(_print_1, " ");
             _builder.newLineIfNotEmpty();
           }
         }
@@ -2094,7 +2184,7 @@ public class MdlPrinter {
             _builder.append("\t");
             Block _ifBlock_1 = s.getIfBlock();
             Object _print_2 = this.print(_ifBlock_1);
-            _builder.append(_print_2, "	");
+            _builder.append(_print_2, " ");
             _builder.newLineIfNotEmpty();
           }
         }
@@ -2119,7 +2209,7 @@ public class MdlPrinter {
                 _builder.append("\t");
                 BlockStatement _elseStatement_2 = s.getElseStatement();
                 Object _print_3 = this.print(_elseStatement_2);
-                _builder.append(_print_3, "	");
+                _builder.append(_print_3, " ");
                 _builder.newLineIfNotEmpty();
               }
             }
@@ -2130,7 +2220,7 @@ public class MdlPrinter {
                 _builder.append("\t");
                 Block _elseBlock_2 = s.getElseBlock();
                 Object _print_4 = this.print(_elseBlock_2);
-                _builder.append(_print_4, "	");
+                _builder.append(_print_4, " ");
                 _builder.newLineIfNotEmpty();
               }
             }

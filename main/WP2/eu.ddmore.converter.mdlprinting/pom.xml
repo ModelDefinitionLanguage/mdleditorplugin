@@ -19,11 +19,6 @@
 
 	<dependencies>
 
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>mdl-domain</artifactId>
-			<version>0.0.1</version>
-		</dependency>
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -47,6 +42,14 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mdlExport</groupId>
+			<artifactId>mdlExport</artifactId>
+			<scope>system</scope>
+			<version>1.0</version>
+			<systemPath>${basedir}\lib\mdlExport.jar</systemPath>
 		</dependency>
 
 	</dependencies>
