@@ -56,7 +56,7 @@
 			<artifactId>mdlExport</artifactId>
 			<scope>system</scope>
 			<version>1.0</version>
-			<systemPath>${basedir}\lib\mdlExport.jar</systemPath>
+			<systemPath>${basedir}/lib/mdlExport.jar</systemPath>
 		</dependency>
 
 		<dependency>
