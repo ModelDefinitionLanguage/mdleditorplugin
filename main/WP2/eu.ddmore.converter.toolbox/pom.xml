@@ -58,7 +58,7 @@
 
 		<dependency>
 			<groupId>eu.ddmore</groupId>
-			<artifactId>converter.toolbox.api</artifactId>
+			<artifactId>converter-toolbox-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
