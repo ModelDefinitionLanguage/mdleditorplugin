@@ -19,7 +19,7 @@ import eu.ddmore.convertertoolbox.domain.VersionImpl;
 /**
  * Command line interface to the converter toolbox, aims to provide the same (where possible) functionality to the programmatic API 
  */
-public class Main {
+public final class Main {
 
     private ConverterManager converterManager;
     private static final int MAX_VERSION_NUMBERS = 3;

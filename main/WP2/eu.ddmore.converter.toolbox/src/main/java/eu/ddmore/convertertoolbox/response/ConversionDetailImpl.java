@@ -70,7 +70,7 @@ public class ConversionDetailImpl implements ConversionDetail {
 
     @Override
     public String toString() {
-        return String.format("ConversionDetailImpl [file=" + file + ", severity=" + severity + ", info=" + info + ", message=" + message + "]", file, severity, info, message);
+        return String.format("ConversionDetailImpl [file=%s, severity=%s, info=%s, message=%s]", file, severity, info, message);
     }
 
 }

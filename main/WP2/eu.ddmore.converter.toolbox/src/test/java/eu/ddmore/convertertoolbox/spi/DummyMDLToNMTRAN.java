@@ -7,11 +7,14 @@ import java.io.File;
 
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
+import eu.ddmore.convertertoolbox.response.ConversionDetailImpl;
 import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
 
 /**
@@ -50,13 +53,26 @@ public class DummyMDLToNMTRAN implements ConverterProvider {
     public ConversionReport performConvert(File src, File outputDirectory) {
         ConversionReport report = new ConversionReportImpl();
         report.setReturnCode(ConversionCode.SUCCESS);
+        ConversionDetail conversionDetail = createConversionDetail(src);
+        report.addDetail(conversionDetail);
         return report;
+    }
+
+    private ConversionDetail createConversionDetail(File src) {
+        ConversionDetail conversionDetail = new ConversionDetailImpl();
+        conversionDetail.addInfo("INFO", "What a nice conversion!");
+        conversionDetail.setMessage("Some message");
+        conversionDetail.setFile(src);
+        conversionDetail.setSeverity(Severity.ALL);
+        return conversionDetail;
     }
 
     @Override
     public ConversionReport[] performConvert(File[] src, File outputDirectory) {
         ConversionReport report = new ConversionReportImpl();
         report.setReturnCode(ConversionCode.SUCCESS);
+        ConversionDetail conversionDetail = createConversionDetail(src[0]);
+        report.addDetail(conversionDetail);
         return new ConversionReport[] { report, report };
     }
 

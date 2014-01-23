@@ -1,9 +1,11 @@
 package eu.ddmore.convertertoolbox.conversion;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import eu.ddmore.convertertoolbox.api.conversion.ConversionListener;
 import eu.ddmore.convertertoolbox.api.domain.Version;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.cli.Main;
@@ -41,6 +44,11 @@ public class ConverterImplTest {
         ConversionReport report = converter.convert(pkPRED, outputDir);
         assertEquals(ConversionCode.SUCCESS, report.getReturnCode());
         assertEquals(report.getDetails(Severity.ERROR).size(), 0);
+        List<ConversionDetail> details = report.getDetails(Severity.ALL);
+        assertNotNull(details);
+        assertEquals(details.get(0).getInfo().get("INFO"), "What a nice conversion!");
+        assertEquals(details.get(0).getMessage(), "Some message");
+        
     }
 
     @Test
