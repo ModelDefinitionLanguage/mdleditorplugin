@@ -45,23 +45,30 @@ public class LanguageVersionImpl implements LanguageVersion {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         LanguageVersionImpl other = (LanguageVersionImpl) obj;
         if (language == null) {
-            if (other.language != null)
+            if (other.language != null) {
                 return false;
-        } else if (!language.equals(other.language))
+            }
+        } else if (!language.equals(other.language)) {
             return false;
+        }
         if (version == null) {
-            if (other.version != null)
+            if (other.version != null) {
                 return false;
-        } else if (!version.equals(other.version))
+            }
+        } else if (!version.equals(other.version)) {
             return false;
+        }
         return true;
     }
 

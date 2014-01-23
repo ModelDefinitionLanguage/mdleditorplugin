@@ -126,6 +126,11 @@ public class MDLToNonmemConverter extends MdlPrinterUtility implements Converter
         targetVersion.setMajor(7);
         targetVersion.setMinor(2);
         target.setVersion(targetVersion);
+
+        converterVersion = new VersionImpl();
+        converterVersion.setMajor(1);
+        converterVersion.setMinor(0);
+        converterVersion.setPatch(2);
     }
 
     @Override
@@ -133,7 +138,6 @@ public class MDLToNonmemConverter extends MdlPrinterUtility implements Converter
         Injector injector = new MdlStandaloneSetup().createInjectorAndDoEMFRegistration();
         XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-        System.out.println("Input: " + src.getAbsolutePath());
 
         Resource resource = resourceSet.getResource(URI.createURI("file:///" + src.getAbsolutePath()), true);
         Mcl mcl = (Mcl) resource.getContents().get(0);

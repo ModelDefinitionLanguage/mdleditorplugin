@@ -4,6 +4,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +40,8 @@ public class ConverterManagerImplTest {
         mdl.setVersion(mdlVersion);
 
         converterManager = new ConverterManagerImpl();
-        ArrayList<Converter> converters = new ArrayList<Converter>();
-        
+        List<Converter> converters = new ArrayList<Converter>();
+
         ConverterImpl converter = new ConverterImpl();
         converter.setProvider(new DummyMDLToNMTRAN());
         converters.add(converter);
@@ -46,7 +49,7 @@ public class ConverterManagerImplTest {
         ConverterImpl converter2 = new ConverterImpl();
         converter2.setProvider(new DummyMDLToPharmML());
         converters.add(converter2);
-        
+
         converterManager.setConverters(converters);
     }
 
@@ -60,7 +63,7 @@ public class ConverterManagerImplTest {
         lang.setVersion(version);
         return lang;
     }
-    
+
     private LanguageVersion createNONMEMLanguage() {
         LanguageVersion lang = new LanguageVersionImpl();
         lang.setLanguage("NONMEM");
@@ -70,8 +73,7 @@ public class ConverterManagerImplTest {
         lang.setVersion(version);
         return lang;
     }
-    
-    
+
     @Test
     public void shouldFindConverterMDLToNONMEM() throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
@@ -79,12 +81,31 @@ public class ConverterManagerImplTest {
     }
 
     @Test
+    public void shouldFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
+        LanguageVersion nonmem = createNONMEMLanguage();
+        Version converterVersion = new VersionImpl();
+        converterVersion.setMajor(1);
+        converterVersion.setMinor(0);
+        converterVersion.setPatch(2);
+        assertNotNull(converterManager.getConverter(mdl, nonmem, converterVersion));
+    }
+
+    @Test(expected = ConverterNotFoundException.class)
+    public void shouldNotFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
+        LanguageVersion nonmem = createNONMEMLanguage();
+        Version converterVersion = new VersionImpl();
+        converterVersion.setMajor(1);
+        converterVersion.setMinor(0);
+        converterVersion.setPatch(3);
+        converterManager.getConverter(mdl, nonmem, converterVersion);
+    }
+    
+    @Test
     public void shouldFindConverterMDLToPharmML() throws ConverterNotFoundException, IOException {
         LanguageVersion pharmaml = createPharmMLLanguage();
         assertNotNull(converterManager.getConverter(mdl, pharmaml));
     }
-    
-    
+
     @Test(expected = ConverterNotFoundException.class)
     public void shouldNotFindConvertor() throws ConverterNotFoundException {
         LanguageVersion nonmem = createNONMEMLanguage();
@@ -92,5 +113,13 @@ public class ConverterManagerImplTest {
         converterManager.getConverter(pharmaml, nonmem);
     }
 
-
+    @Test
+    public void shouldFindCapabilities() throws ConverterNotFoundException, IOException {
+        Map<LanguageVersion, Collection<LanguageVersion>> sourceToTarget = converterManager.getCapabilities();
+        assertNotNull(sourceToTarget);
+        Collection<LanguageVersion> targetVersions = sourceToTarget.get(mdl);
+        assertNotNull(targetVersions);
+        assertNotNull(targetVersions.contains(createNONMEMLanguage()));
+        assertNotNull(targetVersions.contains(createPharmMLLanguage()));
+    }
 }

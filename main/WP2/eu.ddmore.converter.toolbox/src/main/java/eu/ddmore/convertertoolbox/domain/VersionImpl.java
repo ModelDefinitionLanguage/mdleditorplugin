@@ -70,6 +70,7 @@ public class VersionImpl implements Version {
         return this.patch - o.getPatch();
     }
 
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -83,24 +84,32 @@ public class VersionImpl implements Version {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VersionImpl other = (VersionImpl) obj;
-        if (major != other.major)
+        if (major != other.major) {
             return false;
-        if (minor != other.minor)
+        }
+        if (minor != other.minor) {
             return false;
-        if (patch != other.patch)
+        }
+        if (patch != other.patch) {
             return false;
+        }
         if (qualifier == null) {
-            if (other.qualifier != null)
+            if (other.qualifier != null) {
                 return false;
-        } else if (!qualifier.equals(other.qualifier))
+            }
+        } else if (!qualifier.equals(other.qualifier)) {
             return false;
+        }
         return true;
     }
 

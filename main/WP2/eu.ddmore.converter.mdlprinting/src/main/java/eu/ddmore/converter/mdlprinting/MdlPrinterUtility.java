@@ -22,7 +22,6 @@ public class MdlPrinterUtility extends MdlPrinter {
 	public ConversionReport printOutputFile(File src, File outputDirectory, String text, String fileEnding) {
 		String outputFileName = src.getName().replace(".mdl", fileEnding);
 		File outputFile = new File(outputDirectory.getAbsolutePath() +'/'+ outputFileName);
-		System.out.println("Output: "+ outputFile.getAbsolutePath());
 
 		ConversionReport report = new ConversionReportImpl();
 		

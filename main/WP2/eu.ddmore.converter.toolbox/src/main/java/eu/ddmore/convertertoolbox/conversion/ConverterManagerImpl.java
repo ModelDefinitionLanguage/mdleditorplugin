@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -30,7 +31,7 @@ import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
  */
 public class ConverterManagerImpl implements ConverterManager {
 
-    private ArrayList<Converter> converters;
+    private List<Converter> converters;
     private static final Logger LOGGER = Logger.getLogger(ConverterManagerImpl.class);
 
     public ConverterManagerImpl() {
@@ -38,7 +39,7 @@ public class ConverterManagerImpl implements ConverterManager {
     }
 
     public final void discoverConverters() {
-        ArrayList<Converter> converters = new ArrayList<Converter>();
+        converters = new ArrayList<Converter>();
         ServiceLoader<ConverterProvider> loader = ServiceLoader.load(ConverterProvider.class);
 
         for (ConverterProvider provider : loader) {
@@ -47,10 +48,9 @@ public class ConverterManagerImpl implements ConverterManager {
             converter.setProvider(provider);
             converters.add(converter);
         }
-        setConverters(converters);
     }
 
-    public void setConverters(ArrayList<Converter> converters) {
+    public void setConverters(List<Converter> converters) {
         LOGGER.info(String.format("Setting converters: %s", converters));
         this.converters = converters;
     }
