@@ -1,0 +1,18 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eu.ddmore</groupId>
+	<artifactId>converter-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0</version>
+
+	<modules>
+		<module>../eu.ddmore.converter.toolbox</module>
+		<module>../eu.ddmore.converter.toolbox.api</module>
+		<module>../eu.ddmore.converter.mdlprinting</module>
+		<module>../eu.ddmore.converter.test.mdl2nonmem.sucess</module>
+		<module>../eu.ddmore.converter.test.mdl2nonmem.failure</module>
+		<module>../eu.ddmore.converter.test</module>
+	</modules>
+
+</project>
