@@ -169,7 +169,11 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
         return converterVersion;
     }
 
-    
+    @Override
+    public String toString() {
+        return String.format("MDLToPharmMLConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion) ;
+    }
+
     
     public CharSequence convertToPharmML(final Mcl m) {
       CharSequence _xblockexpression = null;

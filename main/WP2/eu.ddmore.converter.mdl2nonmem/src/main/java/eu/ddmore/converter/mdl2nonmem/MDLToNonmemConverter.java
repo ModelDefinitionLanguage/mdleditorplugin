@@ -172,6 +172,11 @@ public class MDLToNonmemConverter extends MdlPrinterUtility implements Converter
         return converterVersion;
     }
 
+    @Override
+    public String toString() {
+        return String.format("MDLToNonmemConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion) ;
+    }
+
     public CharSequence convertToNMTRAN(final Mcl m) {
         CharSequence _xblockexpression = null;
         {
