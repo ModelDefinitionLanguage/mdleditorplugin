@@ -14,6 +14,10 @@ import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
+import eu.ddmore.convertertoolbox.api.response.ConversionReport;
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
+import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
+import eu.ddmore.convertertoolbox.cli.Main;
 import eu.ddmore.convertertoolbox.conversion.ConverterManagerImpl;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
@@ -82,7 +86,7 @@ public class IntegrationTest {
         converterVersion.setPatch(1);
         converterManager.getConverter(mdl, nonmem, converterVersion);
     }
-    
+
     @Test
     public void shouldFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
@@ -102,7 +106,7 @@ public class IntegrationTest {
         converterVersion.setPatch(3);
         converterManager.getConverter(mdl, nonmem, converterVersion);
     }
-    
+
     @Test
     public void shouldFindConverterMDLToPharmML() throws ConverterNotFoundException, IOException {
         LanguageVersion pharmaml = createPharmMLLanguage();
@@ -124,5 +128,13 @@ public class IntegrationTest {
         assertNotNull(targetVersions);
         assertNotNull(targetVersions.contains(createNONMEMLanguage()));
         assertNotNull(targetVersions.contains(createPharmMLLanguage()));
+    }
+
+    @Test
+    public void shouldConvertCLI() throws ConverterNotFoundException, IOException {
+        String[] args = new String[] { "files", "files", "MDL", "5.0.8", "NONMEM", "7.2.0" };
+        ConversionReport[] reports = new Main().runFromCommandLine(args);
+        assertEquals(ConversionCode.SUCCESS, reports[0].getReturnCode());
+        assertEquals(reports[0].getDetails(Severity.ERROR).size(), 0);
     }
 }
