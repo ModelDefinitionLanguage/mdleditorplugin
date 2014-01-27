@@ -65,10 +65,6 @@
 							<goal>compile</goal>
 							<goal>testCompile</goal>
 						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/xtend-gen</outputDirectory>
-							<testOutputDirectory>${basedir}/xtend-gen</testOutputDirectory>
-						</configuration>
 					</execution>
 				</executions>
 

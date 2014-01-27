@@ -53,7 +53,6 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
         Injector injector = new MdlStandaloneSetup().createInjectorAndDoEMFRegistration();
         XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-        System.out.println("Input: " + src.getAbsolutePath());
 
         Resource resource = resourceSet.getResource(URI.createURI("file:///" + src.getAbsolutePath()), true);
         Mcl mcl = (Mcl) resource.getContents().get(0);
@@ -61,7 +60,6 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
         Mdl2PharmML xtendConverter = new Mdl2PharmML();
         CharSequence converted = xtendConverter.convertToPharmML(mcl);
 
-        System.out.println("Xtend MDL to PharmML conversion");
         return printOutputFile(src, outputDirectory, converted.toString(), ".xml");
     }
 
