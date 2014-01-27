@@ -40,8 +40,10 @@ public class ConverterManagerImplTest {
         mdl.setVersion(mdlVersion);
 
         converterManager = new ConverterManagerImpl();
+        
         List<Converter> converters = new ArrayList<Converter>();
 
+       
         ConverterImpl converter = new ConverterImpl();
         converter.setProvider(new DummyMDLToNMTRAN());
         converters.add(converter);
@@ -51,6 +53,7 @@ public class ConverterManagerImplTest {
         converters.add(converter2);
 
         converterManager.setConverters(converters);
+        
     }
 
     private LanguageVersion createPharmMLLanguage() {

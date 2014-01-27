@@ -24,7 +24,7 @@ public final class Main {
     private ConverterManager converterManager;
     private static final int MAX_VERSION_NUMBERS = 3;
 
-    private Main() {
+    public Main() {
 
     }
 
@@ -37,8 +37,8 @@ public final class Main {
         return converter.convert(src, outputDirectory);
     }
 
-    private ConversionReport[] convert(File[] src, String srcLanguage, String srcVersion, String targetLanguage,
-            String targetVersion, File outputDirectory) throws ConverterNotFoundException, IOException {
+    private ConversionReport[] convert(File[] src, String srcLanguage, String srcVersion, String targetLanguage, String targetVersion,
+            File outputDirectory) throws ConverterNotFoundException, IOException {
         LanguageVersion source = getLanguageVersion(srcLanguage, srcVersion);
         LanguageVersion target = getLanguageVersion(targetLanguage, targetVersion);
 
@@ -80,8 +80,13 @@ public final class Main {
         langVer.setVersion(sourceVersion);
     }
 
-    private void runFromCommandLine(String... args) throws ConverterNotFoundException, IOException {
+    public ConversionReport[] runFromCommandLine(String... args) throws ConverterNotFoundException, IOException {
         if (args.length != 6) {
+            int i = 1;
+            System.out.println();
+            for (String arg : args) {
+                System.out.println(i++ + arg);
+            }
             throw new IllegalArgumentException(
                     "Illegal arguments. Run again by giving the arguments in the following format: 'sourcePath outputPath sourceLanguage sourceVersion targetLanguage targetVersion', e.g. 'myMDLFile.mdl C:/output/ MDL 5.0.8 NONMEM 7.2.0'");
         }
@@ -89,12 +94,12 @@ public final class Main {
         File src = new File(args[0]);
         File outputDirectory = new File(args[1]);
         if (src.isDirectory()) {
-            convert(src.listFiles(), args[2], args[3], args[4], args[5], outputDirectory);
+            return convert(src.listFiles(), args[2], args[3], args[4], args[5], outputDirectory);
         } else {
-            convert(src, args[2], args[3], args[4], args[5], outputDirectory);
-        }        
+            return new ConversionReport[] { convert(src, args[2], args[3], args[4], args[5], outputDirectory) };
+        }
     }
-    
+
     public static void main(String... args) throws ConverterNotFoundException, IOException {
         new Main().runFromCommandLine(args);
     }
