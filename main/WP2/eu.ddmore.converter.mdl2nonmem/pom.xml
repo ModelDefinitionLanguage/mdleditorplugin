@@ -53,8 +53,8 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
-			
-						<plugin>
+
+			<plugin>
 				<groupId>org.eclipse.xtend</groupId>
 				<artifactId>xtend-maven-plugin</artifactId>
 				<version>${xtend.version}</version>
@@ -80,7 +80,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			
+
 		</plugins>
 	</build>
 
