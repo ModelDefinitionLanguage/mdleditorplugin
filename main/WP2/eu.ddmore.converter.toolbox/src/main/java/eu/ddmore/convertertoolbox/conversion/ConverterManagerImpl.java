@@ -74,10 +74,10 @@ public class ConverterManagerImpl implements ConverterManager {
             }
         };
 
-        ImmutableSortedSet<Converter> sortedFruits = ImmutableSortedSet.orderedBy(versionOrder).addAll(properConverters).build();
+        ImmutableSortedSet<Converter> sortedConverters = ImmutableSortedSet.orderedBy(versionOrder).addAll(properConverters).build();
 
-        if (!sortedFruits.isEmpty()) {
-            Converter latestFoundConverter = sortedFruits.last();
+        if (!sortedConverters.isEmpty()) {
+            Converter latestFoundConverter = sortedConverters.last();
             LOGGER.info(String.format("Proper converter found: %s", latestFoundConverter));
             return latestFoundConverter;
         } else {

@@ -5,6 +5,12 @@ package eu.ddmore.convertertoolbox.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
@@ -82,11 +88,6 @@ public final class Main {
 
     public ConversionReport[] runFromCommandLine(String... args) throws ConverterNotFoundException, IOException {
         if (args.length != 6) {
-            int i = 1;
-            System.out.println();
-            for (String arg : args) {
-                System.out.println(i++ + arg);
-            }
             throw new IllegalArgumentException(
                     "Illegal arguments. Run again by giving the arguments in the following format: 'sourcePath outputPath sourceLanguage sourceVersion targetLanguage targetVersion', e.g. 'myMDLFile.mdl C:/output/ MDL 5.0.8 NONMEM 7.2.0'");
         }
@@ -94,10 +95,21 @@ public final class Main {
         File src = new File(args[0]);
         File outputDirectory = new File(args[1]);
         if (src.isDirectory()) {
-            return convert(src.listFiles(), args[2], args[3], args[4], args[5], outputDirectory);
+            File[] filesForConversion = getFilesFromDirectory(src);
+            return convert(filesForConversion, args[2], args[3], args[4], args[5], outputDirectory);
         } else {
             return new ConversionReport[] { convert(src, args[2], args[3], args[4], args[5], outputDirectory) };
         }
+    }
+
+    private File[] getFilesFromDirectory(File src) {
+        List<File> filesForConversion = new ArrayList<File>();
+        for (File f : src.listFiles()) {
+            if (!f.isDirectory()) {
+                filesForConversion.add(f);
+            }
+        }
+        return filesForConversion.toArray(new File[filesForConversion.size()]);
     }
 
     public static void main(String... args) throws ConverterNotFoundException, IOException {
