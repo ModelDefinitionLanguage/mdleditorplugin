@@ -5,6 +5,7 @@
  */
 package eu.ddmore.converter.mdl2nonmem
 
+import eu.ddmore.converter.mdlprinting.MdlPrinter
 import java.util.ArrayList
 import java.util.HashMap
 import org.ddmore.mdl.mdl.AndExpression
@@ -42,18 +43,8 @@ import org.ddmore.mdl.mdl.TargetBlock
 import org.ddmore.mdl.mdl.TaskObject
 import org.ddmore.mdl.mdl.TaskObjectBlock
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.IGenerator
-import org.eclipse.xtext.generator.IFileSystemAccess
-import eu.ddmore.converter.mdlprinting.MdlPrinter
 
-class Mdl2Nonmem extends MdlPrinter implements IGenerator{
-
- 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
- 		for(m: resource.allContents.toIterable.filter(typeof(Mcl))) {
-				fsa.generateFile(
-					resource.fileName + ".ctl", m.convertToNMTRAN)
-		}
-	}
+class Mdl2Nonmem extends MdlPrinter{
 	
 	val TARGET = "NMTRAN_CODE";
 
