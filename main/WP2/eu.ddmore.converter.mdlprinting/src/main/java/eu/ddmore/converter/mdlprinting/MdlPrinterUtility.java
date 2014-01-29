@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2013 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.converter.mdlprinting;
 
 import java.io.File;
