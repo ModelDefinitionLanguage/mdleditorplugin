@@ -3,7 +3,6 @@
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.response;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,23 +13,12 @@ import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
  */
 public class ConversionDetailImpl implements ConversionDetail {
 
-    private File file;
     private Severity severity;
     private Map<String, String> info;
     private String message;
 
     public ConversionDetailImpl() {
         info = new HashMap<String, String>();
-    }
-    
-    @Override
-    public File getFile() {
-        return file;
-    }
-
-    @Override
-    public void setFile(File file) {
-        this.file = file;
     }
 
     @Override
@@ -70,7 +58,7 @@ public class ConversionDetailImpl implements ConversionDetail {
 
     @Override
     public String toString() {
-        return String.format("ConversionDetailImpl [file=%s, severity=%s, info=%s, message=%s]", file, severity, info, message);
+        return String.format("ConversionDetailImpl [severity=%s, info=%s, message=%s]", severity, info, message);
     }
 
 }

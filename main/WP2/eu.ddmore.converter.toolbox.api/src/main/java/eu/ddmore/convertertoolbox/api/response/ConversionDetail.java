@@ -3,7 +3,6 @@
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.api.response;
 
-import java.io.File;
 import java.util.Map;
 
 /**
@@ -17,17 +16,6 @@ public interface ConversionDetail {
 	public enum Severity {
 		ALL, ERROR, WARNING, INFO, DEBUG;
 	}
-
-	/**
-	 * @return the conversion detail file.
-	 */
-    File getFile();
-
-    /**
-     * Sets the conversion detail file.
-     * @param file the conversion detail file to set
-     */
-    void setFile(File file);
 
     /**
      * @return the severity level associated with this ConversionDetail

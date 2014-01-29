@@ -62,7 +62,6 @@ public class DummyMDLToNMTRAN implements ConverterProvider {
         ConversionDetail conversionDetail = new ConversionDetailImpl();
         conversionDetail.addInfo("INFO", "What a nice conversion!");
         conversionDetail.setMessage("Some message");
-        conversionDetail.setFile(src);
         conversionDetail.setSeverity(Severity.ALL);
         return conversionDetail;
     }
