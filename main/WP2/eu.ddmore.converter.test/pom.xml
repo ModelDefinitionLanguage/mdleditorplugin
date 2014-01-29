@@ -12,6 +12,7 @@
 	<groupId>eu.ddmore.converter.test</groupId>
 	<artifactId>toolbox-integration-test</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>Converter Toolbox Integration Test</name>
 	<build>
 		<plugins>
 			<plugin>

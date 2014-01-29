@@ -12,6 +12,7 @@
 	<groupId>eu.ddmore.converter</groupId>
 	<artifactId>test-mdl2nonmem-failure</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>Converter Toolbox Test-Mdl2Nonmem-Failure</name>
 	<build>
 		<plugins>
 			<plugin>

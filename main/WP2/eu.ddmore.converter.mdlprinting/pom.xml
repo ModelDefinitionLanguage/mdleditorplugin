@@ -4,6 +4,7 @@
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-mdlprinting</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>Converter Helper MdlPrinting</name>
 
 	<properties>
 		<xtend.repo.url>http://build.eclipse.org/common/xtend/maven/</xtend.repo.url>

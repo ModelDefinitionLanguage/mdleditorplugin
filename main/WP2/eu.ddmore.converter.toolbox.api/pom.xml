@@ -4,7 +4,7 @@
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-toolbox-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>DDMoRe Converter Toolbox API</name>
+	<name>Converter Toolbox API</name>
 	<build>
 		<plugins>
 			<plugin>

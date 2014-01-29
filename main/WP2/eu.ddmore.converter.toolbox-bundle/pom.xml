@@ -1,8 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>eu.ddmore</groupId>
+
+	<parent>
+		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
+		<groupId>eu.ddmore</groupId>
+		<artifactId>converter-parent</artifactId>
+		<version>1.0</version>
+	</parent>
+
 	<artifactId>converter-toolbox-bundle</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
@@ -18,13 +24,13 @@
 			<version>1.0.0</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.eclipse.core</groupId>
 			<artifactId>org.eclipse.core.resources</artifactId>
 			<version>3.7.100</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>mdlExport</groupId>
 			<artifactId>mdlExport</artifactId>
@@ -32,7 +38,7 @@
 			<version>1.0</version>
 			<systemPath>${basedir}/lib/mdlExport.jar</systemPath>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>converter-toolbox</artifactId>
