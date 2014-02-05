@@ -42,14 +42,16 @@ import org.ddmore.mdl.mdl.SymbolDeclaration
 import org.ddmore.mdl.mdl.TargetBlock
 import org.ddmore.mdl.mdl.TaskObject
 import org.ddmore.mdl.mdl.TaskObjectBlock
-import org.eclipse.emf.ecore.resource.Resource
 
 class Mdl2Nonmem extends MdlPrinter{
 	
-	val TARGET = "NMTRAN_CODE";
-
+	protected val TARGET = "NMTRAN_CODE";
+	protected var Mcl mcl = null;
+	
 	//Print file name and analyse MCL objects in the source file
   	def convertToNMTRAN(Mcl m){
+  		mcl = m;
+  		
   		//Prepare external functions  		
   		m.prepareExternals;
   		
@@ -71,19 +73,19 @@ class Mdl2Nonmem extends MdlPrinter{
 	
 		'''
 		;mdl2nt «version» beta, last modification «date», Natallia Kokash (natallia.kokash@gmail.com)  
-		«m.printSIZES»
-		«m.printPROB»
+		«printSIZES»
+		«printPROB»
 		«FOR d:dataObjects»
 			«convertToNMTRAN(d, taskObjects)»
 	  	«ENDFOR»
 		«FOR t:taskObjects»
 			«t.printIGNORE»
 	  	«ENDFOR»
-		«m.printABBREVIATED»
+		«printABBREVIATED»
 		«FOR o:m.objects»
 			«IF o.modelObject != null»«o.modelObject.convertToNMTRAN»«ENDIF»
 	  	«ENDFOR»
-		«m.printAES»
+		«printAES»
 	  	«FOR o:m.objects»
 			«IF o.parameterObject != null»«o.parameterObject.convertToNMTRAN»«ENDIF»
 	  	«ENDFOR»
@@ -100,7 +102,7 @@ class Mdl2Nonmem extends MdlPrinter{
 //convertToNonmem MCL
 ////////////////////////////////////
 	//Print NM-TRAN record $SIZES
-	def printSIZES(Mcl m)'''
+	def printSIZES()'''
 	«IF "$SIZES".isTargetDefined»
 	
 	«getExternalCodeStart("$SIZES")»
@@ -109,7 +111,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	'''
 
 	//Print NM-TRAN record $PROB/$PROBLEM
-	def printPROB(Mcl m)'''
+	def printPROB()'''
 	«IF "$PROBLEM".isTargetDefined || "$PROB".isTargetDefined»
 	
 	«getExternalCodeStart("$PROBLEM")»
@@ -118,12 +120,12 @@ class Mdl2Nonmem extends MdlPrinter{
 	«getExternalCodeEnd("$PROB")»
 	«ELSE»
 	
-	$PROB «m.fileNameUpperCase»
+	$PROB «mcl.eResource.fileName.toUpperCase»
 	«ENDIF»
 	'''
 
 	//Print NM-TRAN record $ABB/$ABBREVIATED
-	def printABBREVIATED(Mcl m)'''
+	def printABBREVIATED()'''
 	«IF "$ABB".isTargetDefined || "$ABBREVIATED".isTargetDefined»
 
 	«getExternalCodeStart("$ABB")»
@@ -134,7 +136,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	'''
 	
 	//Print NM-TRAN record $AES
-	def printAES(Mcl m)'''
+	def printAES()'''
 	«IF "$AES".isTargetDefined»
 	
 	«getExternalCodeStart("$AES")»
@@ -420,7 +422,7 @@ class Mdl2Nonmem extends MdlPrinter{
 					}
 					val model = st.expression.arguments.getAttribute("model");
 					val trans = st.expression.arguments.getAttribute("trans");
-					val tol = b.eResource.getTOL;
+					val tol = getTOL;
 					return '''«IF !model.equals("")»«library.toUpperCase()»«model»«ENDIF» «IF !trans.equals("")»TRANS«trans»«ENDIF» «IF !tol.equals("")»TOL = «tol»«ENDIF»'''
 				}
 			}
@@ -439,7 +441,7 @@ class Mdl2Nonmem extends MdlPrinter{
 			«var bb = b.outputVariablesBlock»
 			«IF bb.variables.size > 0»
 				«FOR st: bb.variables SEPARATOR ' '»«st.toStr»«ENDFOR»
-				«val file = o.eResource.getTaskObjectName»
+				«val file = getTaskObjectName»
 				ONEHEADER NOPRINT «IF !file.equals("")»FILE=«file».fit«ENDIF» 
 			«ENDIF»
 		«ENDIF»	
@@ -997,26 +999,22 @@ class Mdl2Nonmem extends MdlPrinter{
 	'''
 		
 	//Get task object name 
-	def getTaskObjectName(Resource resource){
-		for(m: resource.allContents.toIterable.filter(typeof(Mcl))) {
-			for (obj: m.objects){
-	  			if (obj.taskObject != null)
-	  				return obj.identifier.name;
-	  		}
-		}		
+	def getTaskObjectName(){
+		for (obj: mcl.objects){
+  			if (obj.taskObject != null)
+  				return obj.identifier.name;
+  		}
 		return "";
 	}
 	
 	//Get $TOL attribute
-	def getTOL(Resource resource){
-		for(m: resource.allContents.toIterable.filter(typeof(Mcl))) {
-			for (obj: m.objects){
-	  			if (obj.taskObject != null){
-	  				val tol = obj.taskObject.getTOL;
-					if (tol.length > 0) return tol;
-	  			}
-	  		}
-		}		
+	def getTOL(){
+		for (obj: mcl.objects){
+  			if (obj.taskObject != null){
+  				val tol = obj.taskObject.getTOL;
+				if (tol.length > 0) return tol;
+  			}
+  		}
 		return "";
 	}
 	
