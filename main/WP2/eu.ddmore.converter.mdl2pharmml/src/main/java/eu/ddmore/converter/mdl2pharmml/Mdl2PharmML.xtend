@@ -198,7 +198,6 @@ class Mdl2PharmML extends MdlPrinter {
 			</Continuous>	
 		</Covariate>
 	'''	
-
 			
 	/////////////////////////////
 	// I.d Parameter Model
@@ -288,7 +287,7 @@ class Mdl2PharmML extends MdlPrinter {
 	
 	def print_Pieces(String symbol, String tag, ArrayList<Piece> pieces)'''
 	<«tag» symbId="«symbol»">
-		<Assign>
+		<ct:Assign>
 			<Equation>
 				<Piecewise>
 					«var parts = pieces.assembleConditions»
@@ -297,8 +296,8 @@ class Mdl2PharmML extends MdlPrinter {
 					«ENDFOR»
 				</Piecewise>
 			</Equation>
-		</Assign>
-	</«tag»>	
+		</ct:Assign>
+	</«tag»>
 	'''
 
 	//+ Here expr and condition are PharmML representation of MDL expressions
@@ -393,7 +392,7 @@ class Mdl2PharmML extends MdlPrinter {
 			}
 		}
 		if (s.elseBlock != null){
-			var i =0;
+			var i = 0;
 			for (b:s.elseBlock.statements){
 				b.addOrderOfConditionalSymbol(symbolOrders, base, i);
 				i = i + 1;
@@ -420,7 +419,6 @@ class Mdl2PharmML extends MdlPrinter {
 		</RandomVariable>
 	'''
 	
-		
 	/////////////////////////
 	// I.e Structural Model
 	/////////////////////////
@@ -436,11 +434,11 @@ class Mdl2PharmML extends MdlPrinter {
 					if (b.modelPredictionBlock != null){
 						for (st: b.modelPredictionBlock.statements){
 							if (st.statement != null) {
-								variables = variables + '''«st.statement.print_BlockStatement("Variable")»''';
+								variables = variables + '''«st.statement.print_BlockStatement("ct:Variable")»''';
 							} else 
 								if (st.odeBlock != null){
 									for (s: st.odeBlock.statements){
-										variables = variables + '''«s.print_BlockStatement("Variable")»''';	
+										variables = variables + '''«s.print_BlockStatement("ct:Variable")»''';	
 									}
 								}
 						}
@@ -513,7 +511,9 @@ class Mdl2PharmML extends MdlPrinter {
 				«IF randomVars.size > 0»
 					«FOR ss: randomVars.keySet»
 						«val ref = (ss as String).defineDistribution»
-						«ref.print_mdef_RandomVariable»	
+						«IF ref != null»
+							«ref.print_mdef_RandomVariable»	
+						«ENDIF»
 					«ENDFOR»
 				«ENDIF»
 			«ENDIF»
@@ -605,14 +605,14 @@ class Mdl2PharmML extends MdlPrinter {
 	/////////////////////////////////////
 	//+
 	def print_Assign(Expression expr)'''
-		<Assign>
+		<ct:Assign>
 			«expr.print_Math_Equation»
-		</Assign>
+		</ct:Assign>
 	'''
 	
 	//+
 	def print_Math_Equation(Expression expr)'''
-		<Equation xmlns="«xmlns_math»" writtenVersion="«writtenVersion»">
+		<Equation xmlns="«xmlns_math»">
 			«expr.print_Math_Expr»
 		</Equation>
 	'''	
@@ -898,7 +898,7 @@ class Mdl2PharmML extends MdlPrinter {
 				«var variance = args.getAttributeExpression("variance")»
 				«var stDev = args.getAttributeExpression("sd")»
 				«IF (distrType.length > 0) && distrType.equalsIgnoreCase('Normal')»
-					<NormalDistribution xmlns="«xmlns_uncert»" writtenVersion = "«writtenVersion»">
+					<NormalDistribution xmlns="«xmlns_uncert»">
 					«IF mean != null»
 						<Mean>
 							«mean.print_Math_Expr»
@@ -1162,8 +1162,7 @@ class Mdl2PharmML extends MdlPrinter {
 		«print_msteps_StepDependencies»
 	</ModellingSteps>
 	'''
-	
-		
+			
 	////////////////////////////////////////////////
 	// III.a Estimation Step
 	////////////////////////////////////////////////
@@ -1250,7 +1249,8 @@ class Mdl2PharmML extends MdlPrinter {
 		«ENDFOR»
 	</ObjectiveDataSet>
 	'''
-   //+ Print data set
+    
+    //+ Print data set
 	def print_msteps_DataSet(ModelObject obj){
 		var names = new ArrayList<String>();
 		var types = new ArrayList<String>();
@@ -1399,9 +1399,11 @@ class Mdl2PharmML extends MdlPrinter {
 	def print_BlockStatement(BlockStatement st, String tag)'''
 		«IF st.symbol != null»
 			<«tag» symbId="«st.symbol.identifier»">
+				<ct:Assign>
 				«IF st.symbol.expression != null»
 					«st.symbol.expression.print_Math_Expr»
 				«ENDIF»
+				</ct:Assign>
 			</«tag»>
 		«ENDIF»
 		«IF st.statement != null»
@@ -1580,9 +1582,9 @@ class Mdl2PharmML extends MdlPrinter {
 		switch (operator){
 			case "<": "lt"
 			case ">": "gt"
-			case "<=": "le"
-			case ">=": "ge"
-			case "==": "ne"
+			case "<=": "leq"
+			case ">=": "geq"
+			case "==": "neq"
 			case "!=": "eq"
 			case "+": "plus"
 			case "-": "minus"

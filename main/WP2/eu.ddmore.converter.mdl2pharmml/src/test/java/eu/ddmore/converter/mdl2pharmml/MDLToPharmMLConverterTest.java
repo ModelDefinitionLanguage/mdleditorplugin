@@ -3,6 +3,7 @@ package eu.ddmore.converter.mdl2pharmml;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,13 +33,15 @@ public class MDLToPharmMLConverterTest {
 
     @Test
     public void shouldSuccedToTransformMultipleMDLToPharmML() {
-        File pkpred = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_PRED.mdl").getPath());
-        File pkbov = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_BOV.mdl").getPath());
-        File outputDirectory = pkpred.getParentFile();
-        File[] src = new File[] { pkpred, pkbov };
-        ConversionReport[] reports = converter.performConvert(src, outputDirectory);
-        assertEquals(reports[0].getReturnCode(), ConversionCode.SUCCESS);
-        assertEquals(reports[1].getReturnCode(), ConversionCode.SUCCESS);
+    	File folder = new File(Thread.currentThread().getContextClassLoader().getResource("files/").getPath());
+    	File[] listOfFiles = folder.listFiles(new FilenameFilter() { 
+	         public boolean accept(File dir, String filename)
+             { return filename.endsWith(".mdl"); }
+	        } );
+    	ConversionReport[] reports = converter.performConvert(listOfFiles, folder);
+    	for (int i = 0; i < reports.length; i++) {
+    		assertEquals(reports[0].getReturnCode(), ConversionCode.SUCCESS);
+    	}
     }
 
     @Test
