@@ -55,6 +55,7 @@ import org.ddmore.mdl.mdl.SimulationBlock
 import org.ddmore.mdl.mdl.EstimationBlock
 import org.ddmore.mdl.mdl.FileBlockStatement
 import org.ddmore.mdl.mdl.MclObject
+import java.util.HashSet
 
 class MdlPrinter {
 
@@ -62,11 +63,11 @@ class MdlPrinter {
 	protected var externalCodeStart = new HashMap<String, ArrayList<String>>() //external code per target language section,
 	protected var externalCodeEnd = new HashMap<String, ArrayList<String>>() //external code per target language section,
 	
-	protected var eta_vars = newHashMap	//ETAs     - Random variables, level 2
+	protected var eta_vars = newHashMap	  //ETAs   - Random variables, level 2
   	protected var eps_vars = newHashMap   //EPSs   - Random variables, level 1
 	protected var theta_vars = newHashMap //THETAs - Structural parameters
-	protected var dadt_vars = newHashMap  //DADT   - Model prediction, ODE	
-	protected var init_vars = newHashMap  //A      - Model prediction, ODE, init attribute	
+	protected var dadt_vars = newHashMap  //DADT   - Model prediction -> ODE	
+	protected var init_vars = newHashMap  //A      - Model prediction -> ODE -> init attribute	
 	
 	protected var level_vars = newHashMap //       - Input variables, level attribute			
 	
@@ -171,15 +172,29 @@ class MdlPrinter {
 	}
 	
 	def setLevelVars(ModelObject o){
+		var tmp = o.getLevelVars("1");
+		for (v: tmp){
+			if (level_vars.get(v) == null)
+				level_vars.put(v, "1");
+		}
+		tmp = o.getLevelVars("2");
+		for (v: tmp){
+			if (level_vars.get(v) == null)
+				level_vars.put(v, "2");
+		}
+	}
+		
+	def protected getLevelVars(ModelObject o, String levelId) {
+		var levelVars = new HashSet<String>();
 		for (b: o.blocks){
 			if(b.inputVariablesBlock != null){
 				for (SymbolDeclaration s: b.inputVariablesBlock.variables){
 					if (s.expression != null){
 						if (s.expression.list != null){
 							var level = s.expression.list.arguments.getAttribute("level");
-							if (!level.equals("")){
-								if (level_vars.get(s.identifier) == null){
-									level_vars.put(s.identifier, level);
+							if (level.equals(levelId)){
+								if (!levelVars.contains(s.identifier)){
+									levelVars.add(s.identifier);
 								}
 							}
 						}
@@ -187,6 +202,7 @@ class MdlPrinter {
 				}
 			}
 		}
+		return levelVars;
 	}
 	
 		
@@ -715,7 +731,7 @@ class MdlPrinter {
 		return res;
 	}	
 	 
-	def toStr(AnyExpression e){
+	def String toStr(AnyExpression e){
 		var res = "";
 		if (e.expression != null){
 			res = res + e.expression.toStr;
@@ -792,7 +808,7 @@ class MdlPrinter {
 		}
 	}
 	
-	def toStr(Expression e){
+	def String toStr(Expression e){
 		return e.conditionalExpression.toStr
 	}
 	
@@ -903,7 +919,7 @@ class MdlPrinter {
 		return res;
 	}
 	
-	def toStr(UnaryExpression e){
+	def String toStr(UnaryExpression e){
 		var res = "";
 		if (e.expression != null){
 			res = res + e.operator.convertOperator + e.expression.toStr
@@ -1031,7 +1047,7 @@ class MdlPrinter {
 	«ENDIF»
 	'''	
 	
-	def print(Block b)'''
+	def String print(Block b)'''
 		«FOR st: b.statements»
 			«st.print»
 		«ENDFOR»
@@ -1055,7 +1071,7 @@ class MdlPrinter {
 		«ENDFOR»
 	'''	
 		
-	def print(BlockStatement st)'''
+	def String print(BlockStatement st)'''
 		«IF st.symbol != null»«st.symbol.print»«ENDIF»
 		«IF st.functionCall != null»«st.functionCall.print»«ENDIF»
 		«IF st.statement != null»«st.statement.print»«ENDIF»
