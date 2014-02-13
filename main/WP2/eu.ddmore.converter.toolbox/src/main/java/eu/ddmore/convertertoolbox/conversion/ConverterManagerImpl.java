@@ -44,7 +44,7 @@ public class ConverterManagerImpl implements ConverterManager {
 
         for (ConverterProvider provider : loader) {
             ConverterImpl converter = new ConverterImpl();
-            LOGGER.info(String.format("Found Provider: %s", provider.getClass().getName()));
+            LOGGER.info(String.format("Found Provider: %s from:[%s] to:[%s]", provider.getClass().getName(), provider.getSource(), provider.getTarget()));
             converter.setProvider(provider);
             converters.add(converter);
         }
