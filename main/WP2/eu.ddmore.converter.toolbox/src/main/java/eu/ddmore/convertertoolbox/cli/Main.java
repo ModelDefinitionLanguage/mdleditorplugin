@@ -52,7 +52,7 @@ public final class Main {
         return converter.convert(src, outputDirectory);
     }
 
-    private LanguageVersion getLanguageVersion(String language, String version) {
+    LanguageVersion getLanguageVersion(String language, String version) {
         Version sourceVersion = new VersionImpl();
 
         LanguageVersion langVer = new LanguageVersionImpl();
