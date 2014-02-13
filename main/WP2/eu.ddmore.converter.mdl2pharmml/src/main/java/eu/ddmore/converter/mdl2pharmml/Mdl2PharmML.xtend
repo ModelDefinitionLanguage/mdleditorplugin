@@ -13,7 +13,6 @@ import org.ddmore.mdl.mdl.OrExpression
 import org.ddmore.mdl.mdl.SymbolDeclaration
 import org.ddmore.mdl.mdl.UnaryExpression
 import org.ddmore.mdl.mdl.AndExpression
-import org.ddmore.mdl.mdl.MdlFactory
 import org.ddmore.mdl.mdl.LogicalExpression
 import org.ddmore.mdl.mdl.AdditiveExpression
 import org.ddmore.mdl.mdl.MultiplicativeExpression
@@ -28,25 +27,15 @@ import java.io.FileNotFoundException
 import java.io.File
 import org.ddmore.mdl.mdl.SymbolModification
 import eu.ddmore.converter.mdlprinting.MdlPrinter
+import org.ddmore.mdl.mdl.BlockStatement
+import org.ddmore.mdl.mdl.ConditionalStatement
+import java.util.HashMap
+import java.util.HashSet
+import org.ddmore.mdl.mdl.ParameterObject
 
-//import org.ddmore.mdl.mdl.ConditionalStatement
-//import org.ddmore.mdl.mdl.BlockStatement
-//import java.util.HashMap
-
-class Piece {
-	var Piece parent = null;
-	var OrExpression condition = null;
-	var Expression expression = null;
-	
-	new (Piece _parent, Expression _expression, OrExpression _condition){
-		parent = _parent;
-		condition = _condition;
-		expression = _expression;
-	}
-}
+//import org.ddmore.mdl.validation.MdlJavaValidator
 
 class Mdl2PharmML extends MdlPrinter {
-	
 	val	xsi="http://www.w3.org/2001/XMLSchema-instance"; 
 	val xsi_schemaLocation="http://www.pharmml.org/2013/03/PharmML http://www.pharmml.org/2013/03/PharmML";
 	val xmlns_pharmML="http://www.pharmml.org/2013/03/PharmML";
@@ -61,30 +50,88 @@ class Mdl2PharmML extends MdlPrinter {
 	val TYPE_INT = "int";
 	val TYPE_REAL = "real";
 	val writtenVersion = "0.1";
+	
+	//List of PharmML declared symbols and corresponding blocks 
+	protected var ind_vars = new HashSet<String>();
+	protected var vm_err_vars = new HashMap<String, HashSet<String>>(); 
+	protected var vm_mdl_vars = new HashMap<String, HashSet<String>>();
+	protected var cm_vars = new HashMap<String, HashSet<String>>();
+	protected var pm_vars = new HashMap<String, HashSet<String>>();	  
+	protected var om_vars = new HashMap<String, HashSet<String>>();	  
+	protected var sm_vars = new HashMap<String, HashSet<String>>();	  
 		
 	var Mcl mcl = null;
 	//Print file name and analyse all MCL objects in the source file
   	def convertToPharmML(Mcl m){
-  		mcl = m;
-  		
+  		mcl = m;  		
   		//Create a map of variables
   		m.prepareCollections;
-		var idv = m.getIndependentVariable; 
 		'''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<PharmML 
 			«print_PharmML_NameSpaces»
 			writtenVersion="«writtenVersion»">
 			<ct:Name>"«m.eResource.fileName»"</ct:Name>
-			«IF idv != null»
-				<IndependentVariable symbID="«idv»"/>
-			«ENDIF»
+			«print_mdef_IndependentVariables»
 			«print_mdef_ModelDefinition»
 		</PharmML>
 		'''
 		//print_design_TrialDesign
 		//print_msteps_ModellingSteps
 	}
+
+	override prepareCollections(Mcl m){
+		ind_vars.clear;
+		vm_err_vars.clear;
+		vm_mdl_vars.clear;
+		cm_vars.clear;
+		super.prepareCollections(m); //overwrite for optimization 
+
+		for (o: m.objects){
+			if (o.modelObject != null){
+				//Independent variables
+				var indVars = o.modelObject.getIndependentVars();
+				if (indVars.size > 0)
+					ind_vars.addAll(indVars);	
+			
+				//VariabilityModel definitions
+				var errorVars = o.modelObject.getLevelVars("1");
+				if (errorVars.size > 0)
+					vm_err_vars.put(o.identifier.name, errorVars);
+
+				var mdlVars = o.modelObject.getLevelVars("2");
+				if (mdlVars.size > 0)
+					vm_mdl_vars.put(o.identifier.name, mdlVars);
+
+				//CovariateModel				
+				var covariateVars = o.modelObject.getCovariateVars();
+				if (covariateVars.size > 0)
+					cm_vars.put(o.identifier.name, covariateVars);
+					
+				//StructuralModel
+				var structuralVars = o.modelObject.getStructuralVars;	
+				if (structuralVars.size > 0)
+					sm_vars.put(o.identifier.name, structuralVars);
+					
+				//ParameterModel
+				var parameters = o.modelObject.getParameters;	
+				if (parameters.size > 0)
+					pm_vars.put(o.identifier.name, parameters);
+					
+				//ObservationModel
+				var observationVars = o.modelObject.getObservationVars;	
+				if (observationVars.size > 0)
+					sm_vars.put(o.identifier.name, observationVars);
+					
+			}
+			if (o.parameterObject != null){
+				//ParameterModel
+				var parameters = o.parameterObject.getParameters;	
+				if (parameters.size > 0)
+					pm_vars.put(o.identifier.name, parameters);
+			}
+		}
+	}	
 	
 	//+ Print PharmML namespaces
 	def print_PharmML_NameSpaces()
@@ -113,6 +160,15 @@ class Mdl2PharmML extends MdlPrinter {
 		«print_mdef_StructuralModel»
 		«print_mdef_ObservationModel»
 	</ModelDefinition>
+	'''
+	
+	//////////////////////////////////////
+	//IndependentVariables
+	//////////////////////////////////////
+	def print_mdef_IndependentVariables()'''
+		«FOR s: ind_vars»
+			<IndependentVariable symbId="«s»"/>
+		«ENDFOR»
 	'''
 	//////////////////////////////////////
 	// I.a Function Definition (not used)
@@ -147,23 +203,37 @@ class Mdl2PharmML extends MdlPrinter {
 	/////////////////////////	
 	
 	def print_mdef_VariabilityModel(){
-		var model = '''''';
-		for (e: level_vars.entrySet){
-			if (e.value.equals("1"))
-				model = model + '''«print_mdef_VariabilityModel("obsErr", "error", e.key as String)»''';
-			if (e.value.equals("2"))	
-				model = model + '''«print_mdef_VariabilityModel("model", "model", e.key as String)»''';
+		var model = "";
+		for (o: mcl.objects){
+			if (o.modelObject != null){
+				var errorVars = vm_err_vars.get(o.identifier.name);
+				if (errorVars != null){
+					model = model + 
+					'''
+						<VariabilityModel blkId="vm_err.«o.identifier.name»" type = "error">
+							«FOR s: errorVars»
+								<Level symbId="«s»"/>
+							«ENDFOR»
+						</VariabilityModel>
+					'''		
+				}
+				
+				var mdlVars = vm_mdl_vars.get(o.identifier.name);
+				if (mdlVars != null){
+					model = model + 
+					'''
+						<VariabilityModel blkId="vm_mdl.«o.identifier.name»" type = "model">
+							«FOR s: mdlVars»
+								<Level symbId="«s»"/>
+							«ENDFOR»
+						</VariabilityModel>
+					'''		
+				}
+			}
 		}
-		'''«model»''';
+		return model;
 	}
 
-	def print_mdef_VariabilityModel(String blkId, String type, String symbId)	
-	'''	
-	<VariabilityModel blkId="«blkId»" type="«type»">
-		<Level symbId="«symbId»"/>
-	</VariabilityModel>
-	'''	
-	
 	/////////////////////////
 	// I.c Covariate Model
 	/////////////////////////
@@ -174,36 +244,25 @@ class Mdl2PharmML extends MdlPrinter {
 		var model = "";
 		for (o: mcl.objects){
 			if (o.modelObject != null){
-				var modelBlock = "";
-				for (b: o.modelObject.blocks){
-					if (b.inputVariablesBlock != null){
-						for (s: b.inputVariablesBlock.variables){
-							if (s.expression != null){
-								if (s.expression.list != null){
-									var use = s.expression.list.arguments.getAttribute("use");
-									if (use.equalsIgnoreCase("covariate")) {
-										modelBlock = modelBlock + s.identifier.print_mdef_CovariateModel;
-									}
-								}
-							}
-														
-						}
-					}					
-				}
-				model = model + 
-				'''
-				«IF (modelBlock.length > 0)»
-					<CovariateModel blkId="«o.identifier.name»">
-						«modelBlock»
+				var covariateVars = cm_vars.get(o.identifier.name);
+				if (covariateVars != null){
+					model = model +
+					'''
+					<CovariateModel blkId="cm.«o.identifier.name»">
+						«FOR s: covariateVars»
+							«s.print_mdef_CovariateModel»
+						«ENDFOR»
 					</CovariateModel>
-				«ENDIF»
-				'''				
+					'''
+				}
 			}
 		}
 		return model;
 	}
+	
+
+	//Keep maps of known PharmML variables per block to use it in blkRefId	
 		
-	//SimpleParameter vs IndividualParameter?
 	def print_mdef_CovariateModel(String symbId)'''
 		<Covariate symbId="«symbId»">
 			<Continuous>
@@ -248,17 +307,7 @@ class Mdl2PharmML extends MdlPrinter {
 					if (b.groupVariablesBlock != null){
 						for (st: b.groupVariablesBlock.statements){
 							if (st.statement != null){
-								if (st.statement.symbol != null){
-									val id = st.statement.symbol.identifier;
-									val expr = st.statement.symbol.expression;
-									statements = statements + id.print_mdef_SimpleParameter(expr);
-								}
-								//conditional statement
-								if (st.statement.statement != null){
-									//val id = st.statement.statement.identifier;
-									//val expr = st.statement.statement.expression;
-									//statements = statements + id.print_mdef_SimpleParameter(expr);
-								}
+								st.statement.print_BlockStatement("SimpleParameter");
 							}							
 						}
 					}	
@@ -272,10 +321,7 @@ class Mdl2PharmML extends MdlPrinter {
 			  		//Model object, INDIVIDUAL_VARIABLES
 					if (b.individualVariablesBlock != null){
 						for (s: b.individualVariablesBlock.statements){
-							if (s.symbol != null){
-								statements = statements + s.symbol.print_mdef_IndividualParameter;
-							}
-							//TODO: print conditional statements????
+							statements = statements + s.print_BlockStatement("IndividualParameter");
 						} 
 			  		}
 			  	}
@@ -283,7 +329,7 @@ class Mdl2PharmML extends MdlPrinter {
 	  		if (statements.length > 0){
 		  		model = model + 
 				'''
-					<ParameterModel blkId="«o.identifier.name»">
+					<ParameterModel blkId="pm.«o.identifier.name»">
 						«statements»
 					</ParameterModel>
 				''';
@@ -292,83 +338,159 @@ class Mdl2PharmML extends MdlPrinter {
   		return model;
 	}
 	
-	def print_mdef_SimpleParameter(String symbId, AnyExpression expr){
-		var param = '''<SimpleParameter symbId = "«symbId»"/>''';
-		if (expr != null){
-			if (expr.expression != null){
-				param =  
-				'''
-					<SimpleParameter symbId = "«symbId»">
-						«expr.expression.print_Assign»
-					</SimpleParameter>	
-				'''
-			}
-		}
-		return param;
-	}
-	
-	/*def print_ConditionalStatement(ConditionalStatement s){
+	def print_ConditionalStatement(ConditionalStatement s, String tag){
 		var symbols = new HashMap<String, ArrayList<Piece>>();
-		s.prepareConditionalSymbols(null, symbols);
+		var symbolOrders = new HashMap<String, Integer>();
+		var Piece parent = null;
+		s.prepareConditionalSymbols(parent, symbols);
+		s.defineOrderOfConditionalSymbols(symbolOrders, 0);
+		var max  = 0;
+		for (o: symbolOrders.entrySet){
+			if (max < o.value) max = o.value;
+		}
+		var model = "";
+		for (i: 0..max){
+			for (o: symbolOrders.entrySet){
+				if (i == o.value) {//print a symbol declaration with this number
+					val ArrayList<Piece> pieces = symbols.get(o.key);
+					if (pieces != null)
+						model = model + o.key.print_Pieces(tag, pieces);
+				}
+			}	
+		}
+		return model;
 	}	
 	
+	def print_Pieces(String symbol, String tag, ArrayList<Piece> pieces)'''
+	<«tag» symbId="«symbol»">
+		<ct:Assign>
+			<Equation>
+				<Piecewise>
+					«var parts = pieces.assembleConditions»
+					«FOR part:parts»
+						«print_Math_LogicOpPiece(part.expression, part.condition)»
+					«ENDFOR»
+				</Piecewise>
+			</Equation>
+		</ct:Assign>
+	</«tag»>
+	'''
+
+	//+ Here expr and condition are PharmML representation of MDL expressions
+	def print_Math_LogicOpPiece(String expr, String condition)'''
+		<Piece>
+			«expr»
+			«IF condition != null»
+				<Condition>
+					«condition»
+				</Condition>
+			«ENDIF»
+		</Piece>
+	'''	
+						
+	def assembleConditions(ArrayList<Piece> pieces){
+		var ArrayList<Piece> model = new ArrayList<Piece>();
+		var piecesWithExpr = pieces.filter[o | o.expression != null];
+		for (p: piecesWithExpr){
+			var Piece current = p;
+			var ArrayList<String> conditions = new ArrayList<String>();
+			while (current != null){ 
+				if (current.condition != null){
+					conditions.add(current.condition);
+				}
+				current = current.parent
+			}
+			if (conditions.size > 0){
+				var condition = conditions.print_Math_LogicAnd(0).toString;				
+				var Piece assembedPiece = new Piece(null, p.expression, condition);
+				model.add(assembedPiece);
+			}	
+		}
+		return model;
+	}
+	
 	def prepareConditionalSymbols(ConditionalStatement s, Piece parent, HashMap<String, ArrayList<Piece>> symbols){
-		if (s.ifStatement != null){
-			s.ifStatement.addConditionalSymbol(s.expression, parent, symbols);
+	 	if (s.ifStatement != null){
+			val mainExpr = s.expression.print_Math_LogicOr(0).toString;
+			s.ifStatement.addConditionalSymbol(mainExpr, parent, symbols);
 		}
 		if (s.elseStatement != null){
-			s.elseStatement.addConditionalSymbol(s.expression.dualExpression, parent, symbols);
+			val dualExpr = s.expression.print_DualExpression.toString;
+			s.elseStatement.addConditionalSymbol(dualExpr, parent, symbols);
 		}		
 		if (s.ifBlock != null){
-			for (b:s.ifBlock.statements){
-				b.addConditionalSymbol(s.expression, parent, symbols);
-			}
+			val mainExpr = s.expression.print_Math_LogicOr(0).toString;
+			for (b:s.ifBlock.statements)
+				b.addConditionalSymbol(mainExpr, parent, symbols);
 		}
 		if (s.elseBlock != null){
-			for (b:s.elseBlock.statements){
-				b.addConditionalSymbol(s.expression.dualExpression, parent, symbols);
-			}
+			val dualExpr = s.expression.print_DualExpression.toString;
+			for (b:s.elseBlock.statements)
+				b.addConditionalSymbol(dualExpr, parent, symbols);
 		}
 	}	
 	 
-	def addConditionalSymbol(BlockStatement s, OrExpression condition, Piece parent, HashMap<String, ArrayList<Piece>> symbols){
+	def void addConditionalSymbol(BlockStatement s, String condition, Piece parent, HashMap<String, ArrayList<Piece>> symbols){
 		if (s.symbol != null){
-			var pieces = symbols.get(s.symbol.identifier); 
-			if (pieces == null) pieces = new ArrayList<Piece>();
 			if (s.symbol.expression != null){
 				if (s.symbol.expression.expression != null){
-					var expression = s.symbol.expression.expression;
-					var Piece piece = new Piece(parent, expression, condition);
+					var pieces = symbols.get(s.symbol.identifier); 
+					if (pieces == null) pieces = new ArrayList<Piece>();
+					var Piece piece = new Piece(parent, s.symbol.expression.expression.print_Math_Expr.toString, condition);
 					pieces.add(piece);
+					symbols.put(s.symbol.identifier, pieces);
 				}
 			}
-			//add or update the map
-			symbols.put(s.symbol.identifier, pieces);
 		}	
 		if (s.statement != null){//nested conditional statement
 			var Piece newParent = new Piece(parent, null, condition);
 			s.statement.prepareConditionalSymbols(newParent, symbols);
 		}
-	}*/
+	}
 	
+	//Define order in which symbols will eb translated to PharmML	
+	def void defineOrderOfConditionalSymbols(ConditionalStatement s, HashMap<String, Integer> symbolOrders, Integer base){
+		if (s.ifStatement != null){
+			s.ifStatement.addOrderOfConditionalSymbol(symbolOrders, base, 0);
+		}
+		if (s.elseStatement != null){
+			s.elseStatement.addOrderOfConditionalSymbol(symbolOrders, base, 0);
+		}		
+		if (s.ifBlock != null){
+			var i = 0;
+			for (b:s.ifBlock.statements){
+				b.addOrderOfConditionalSymbol(symbolOrders, base, i);
+				i = i + 1;
+			}
+		}
+		if (s.elseBlock != null){
+			var i = 0;
+			for (b:s.elseBlock.statements){
+				b.addOrderOfConditionalSymbol(symbolOrders, base, i);
+				i = i + 1;
+			}
+		}
+	}	
+	
+	def void addOrderOfConditionalSymbol(BlockStatement s, HashMap<String, Integer> symbolOrders, Integer base, Integer order){
+		if (s.symbol != null){
+			var prev = symbolOrders.get(s.symbol.identifier); 
+			if (prev == null) prev = 0;
+			if (prev <= base + order)
+				symbolOrders.put(s.symbol.identifier, base + order);
+		}	
+		if (s.statement != null){//nested conditional statement
+			s.statement.defineOrderOfConditionalSymbols(symbolOrders, base + order);
+		}
+	}	
 	
 	def print_mdef_RandomVariable(SymbolDeclaration s)'''
-		<RandomVariable symbIdRef="«s.identifier»">
+		<RandomVariable symbId="«s.identifier»">
 			«s.print_VariabilityReference»
 			«s.print_uncert_Distribution»
 		</RandomVariable>
 	'''
 	
-	def print_mdef_IndividualParameter(SymbolDeclaration s)'''
-		<IndividualParameter symbIdRef="«s.identifier»">
-			«IF s.expression != null»
-				«IF s.expression.expression != null»
-					«s.expression.expression.print_Assign»
-				«ENDIF»
-			«ENDIF»
-		</IndividualParameter>
-	'''
-		
 	/////////////////////////
 	// I.e Structural Model
 	/////////////////////////
@@ -379,37 +501,25 @@ class Mdl2PharmML extends MdlPrinter {
 		for (o: mcl.objects){
 			if (o.modelObject != null){
 				var variables = "";
-				var initial = "";
 				for (b: o.modelObject.blocks){
 					if (b.modelPredictionBlock != null){
 						for (st: b.modelPredictionBlock.statements){
-							var SymbolDeclaration ref = null;
-							//TODO: process conditional statements
-							if (st.statement != null){
-								if (st.statement.symbol != null){
-									ref = st.statement.symbol;
-								}
-							}
-							if (st.odeBlock != null){
-								for (s: st.odeBlock.statements){
-									if (s.symbol != null){
-										ref = s.symbol;
+							if (st.statement != null) {
+								variables = variables + '''«st.statement.print_BlockStatement("ct:Variable")»''';
+							} else 
+								if (st.odeBlock != null){
+									for (s: st.odeBlock.statements){
+										variables = variables + '''«s.print_BlockStatement("ct:Variable")»''';	
 									}
 								}
-							}
-							if (ref != null){
-								variables = variables + '''«ref.print_ct_VariableDefinitionType»''';
-								initial = initial + '''«ref.print_InitialCondition»''';
-							}
 						}
 					}
 				}
 				model = model + 
 				'''
 					«IF (variables.length > 0)»
-						<StructuralModel blkId="«o.identifier.name»">
+						<StructuralModel blkId="sm.«o.identifier.name»">
 							«IF (variables.length > 0)»«variables»«ENDIF»
-							«IF (initial.length > 0)»«initial»«ENDIF»
 						</StructuralModel>
 					«ENDIF»
 				'''
@@ -430,7 +540,7 @@ class Mdl2PharmML extends MdlPrinter {
 				for (b: o.modelObject.blocks){
 					if (b.observationBlock != null){
 						for (st: b.observationBlock.statements){
-							if (st.symbol != null){
+							if (st.symbol != null){//!TODO: revise
 								statements = statements + '''«st.symbol.print_mdef_ObservationModel»''';
 							}
 						}
@@ -439,7 +549,7 @@ class Mdl2PharmML extends MdlPrinter {
 				model = model +
 				'''
 					«IF (statements.length > 0)»
-						<ObservationModel blkId="«o.identifier.name»">
+						<ObservationModel blkId="om.«o.identifier.name»">
 							«statements»
 						</ObservationModel>
 					«ENDIF»
@@ -466,19 +576,13 @@ class Mdl2PharmML extends MdlPrinter {
 		«IF s.expression != null»
 			«IF s.expression.expression != null»
 				«var expr = s.expression.expression»
-				«var classifiedVars = expr.classifyReferences»
-				«var simpleVars = classifiedVars.filter[k, v | v.equals("other")]»
-				«IF simpleVars.size > 0»
-					«FOR ss: simpleVars.keySet»
-						«val ref = ss as String»
-						<SimpleParameter symbId="«ref»"/>
-					«ENDFOR»
-				«ENDIF»	
-				«var randomVars = classifiedVars.filter[k, v | v.equals("eps")]»
+				«var randomVars = expr.getReferencesToRandomVars»
 				«IF randomVars.size > 0»
-					«FOR ss: randomVars.keySet»
-						«val ref = (ss as String).defineDistribution»
-						«ref.print_mdef_RandomVariable»	
+					«FOR ss: randomVars»
+						«val ref = ss.defineDistribution»
+						«IF ref != null»
+							«ref.print_mdef_RandomVariable»	
+						«ENDIF»
 					«ENDFOR»
 				«ENDIF»
 			«ENDIF»
@@ -518,66 +622,6 @@ class Mdl2PharmML extends MdlPrinter {
 		«ENDIF»
 	'''
 	
-	//+ Finds definition of a variable with a given name
-	def findIndividualVariable(FullyQualifiedSymbolName ref){
-		//find paramName in INDIVIDUAL_VARIABLES
-		for (o: mcl.objects){
-			if (o.modelObject != null){
-				if ((ref.object == null) || o.identifier.name.equalsIgnoreCase(ref.object.name))
-					for (b: o.modelObject.blocks){
-						if(b.individualVariablesBlock != null){
-							for (st: b.individualVariablesBlock.statements){
-								if (st.symbol != null){
-									var name = st.symbol.identifier;
-									if (name.equalsIgnoreCase(ref.identifier)){
-										return st.symbol;
-									}
-								}
-							}
-						}
-					}
-			}
-		}
-		return null;
-	}
-	
-	//+ Finds definition of a variable with a given full name
-	def findIndividualVariable(String fullName){
-		return fullName.toFullyQualifiedSymbolName.findIndividualVariable;
-	}
-	
-	def toFullyQualifiedSymbolName(String fullName){
-		var ref = MdlFactory::eINSTANCE.createFullyQualifiedSymbolName;
-		val _index = fullName.indexOf('$');
-		var varName = fullName;
-		if (_index > 0) {
-			varName = fullName.substring(_index + 1);
-			val objName = fullName.substring(0, _index);
-			val object = MdlFactory::eINSTANCE.createObjectName; 
-			object.setName(objName);
-			ref.setObject(object);
-		}
-		ref.setIdentifier(varName);		
-		return ref;
-	}
-	
-	//+ Find a transformation operator
-	def defineTransformationOperator(SymbolDeclaration s){
-		if (s.function != null){
-			//explicit definition in the form funct(ID)=expr;
-			return s.function;
-		} else {
-			if (s.expression != null){
-				if (s.expression.list != null){
-					var transform = s.expression.list.arguments.getAttribute("transform");
-					if (transform.length > 0) return transform;
-				}
-			}
-			//TODO: Parse expr to detect exp(x) function?
-			return "log";
-		}
-	}
-	
 	//+ returns distribution for the first declaration with a given variance
 	def defineDistribution(String ref){
 		//find paramName in RANDOM_VARIABLES_DEFINITION
@@ -586,10 +630,8 @@ class Mdl2PharmML extends MdlPrinter {
 				for (b: o.modelObject.blocks){
 					if(b.randomVariableDefinitionBlock != null){
 						for (SymbolDeclaration s: b.randomVariableDefinitionBlock.variables){
-							//var variance = s.randomList.arguments.getAttribute("variance");
-							if (s.identifier.equalsIgnoreCase(ref)){
+							if (s.identifier.equalsIgnoreCase(ref))
 								return s;
-							}
 						}
 					}
 				}
@@ -599,54 +641,41 @@ class Mdl2PharmML extends MdlPrinter {
 	}
 	
 	//+ For each reference, define its purpose
-	def classifyReferences(Expression expr){
-		var classifiedVars = newHashMap;
+	def getReferencesToRandomVars(Expression expr){
+		var classifiedVars = new HashSet<String>();
 		var iterator = expr.eAllContents();
 	    while (iterator.hasNext()){
 	    	var obj = iterator.next();
 	    	if (obj instanceof FullyQualifiedSymbolName){
 	    		var ref = obj as FullyQualifiedSymbolName;
-	    		if (classifiedVars.get(ref.toStr) == null){
-		    		if (theta_vars.get(ref.toStr) != null)
-			    		classifiedVars.put(ref.toStr, "theta")
-			    	else 
-			    	{	
-			    		if (eps_vars.get(ref.toStr) != null)
-			    			classifiedVars.put(ref.toStr, "eps")
-			    		else 
-			    		{	
-			    			if (eta_vars.get(ref.toStr) != null)
-			    				classifiedVars.put(ref.toStr, "eta")
-			    			else 
-			    				classifiedVars.put(ref.toStr, "other")
-			    		}
-			    	}
-	    		}
+	    		if (!classifiedVars.contains(ref.toStr))
+			    	if (eps_vars.get(ref.toStr) != null)
+			    		classifiedVars.add(ref.toStr)
 	    	}
 	    }
 	    return classifiedVars;
 	}
+	
 
 	/////////////////////////////////////
 	// General - print expression
 	/////////////////////////////////////
 	//+
 	def print_Assign(Expression expr)'''
-		<Assign>
+		<ct:Assign>
 			«expr.print_Math_Equation»
-		</Assign>
+		</ct:Assign>
 	'''
 	
 	//+
 	def print_Math_Equation(Expression expr)'''
-		<Equation xmlns="«xmlns_math»" writtenVersion="«writtenVersion»">
+		<Equation xmlns="«xmlns_math»">
 			«expr.print_Math_Expr»
 		</Equation>
-	'''
-	
+	'''	
 	
 	//+
-	def print_Math_Expr(Expression expr)'''
+	def CharSequence print_Math_Expr(Expression expr)'''
 		«expr.conditionalExpression.print_Math_LogicOp» 
 	'''
 	
@@ -654,8 +683,8 @@ class Mdl2PharmML extends MdlPrinter {
 	def print_Math_LogicOp(ConditionalExpression expr)'''
 		«IF expr.expression1 != null»
 			<Piecewise>
-				«expr.expression1.print_Math_LogicOpPiece(expr.expression)»
-				«expr.expression2.print_Math_LogicOpPiece(expr.expression.dualExpression)»
+				«expr.expression1.print_Math_LogicOpPiece(expr.expression.print_Math_LogicOr(0).toString)»
+				«expr.expression2.print_Math_LogicOpPiece(expr.expression.print_DualExpression.toString)»
 			</Piecewise>
 		«ELSE»
 			«expr.expression.print_Math_LogicOr(0)»
@@ -663,19 +692,21 @@ class Mdl2PharmML extends MdlPrinter {
 	'''		
 	
 	//+
-	def print_Math_LogicOpPiece(Expression expr, OrExpression condition)'''
+	def print_Math_LogicOpPiece(Expression expr, String condition)'''
 		<Piece>
 			«expr.print_Math_Expr»
-			<Condition>
-				«condition.print_Math_LogicOr(0)»
-			</Condition>
+			«IF condition != null»
+				<Condition>
+					«condition»
+				</Condition>
+			«ENDIF»
 		</Piece>
 	'''
 	
 	//+
-	def print_Math_LogicOr(OrExpression expr, int startIndex){
+	def CharSequence print_Math_LogicOr(OrExpression expr, int startIndex){
 		if (expr.expression != null){
-			if (startIndex < expr.operator.size){
+			if (startIndex < expr.expression.size - 1){
 				val first = expr.expression.get(startIndex).print_Math_LogicAnd(0);
 				val second = expr.print_Math_LogicOr(startIndex + 1);
 				return 
@@ -691,11 +722,31 @@ class Mdl2PharmML extends MdlPrinter {
 		}
 		return ''''''
 	}
+		
+	//+
+	def print_Math_LogicalOp(ArrayList<String> exprs, ArrayList<String> operators, int startIndex){
+		if (exprs!= null){
+			if ((startIndex < exprs.size - 1) && (startIndex < operators.size)){
+				val first = exprs.get(startIndex);
+				val second = exprs.print_Math_LogicAnd(startIndex + 1);
+				return 
+				'''
+				<LogicBinop op="«operators.get(startIndex)»">
+					«first»
+					«second»
+				</LogicBinop>
+				'''
+			} else {
+				return '''«exprs.get(startIndex)»'''
+			}
+		}
+		return ''''''
+	}
 
 	//+
-	def print_Math_LogicAnd(AndExpression expr, int startIndex){
+	def CharSequence print_Math_LogicAnd(AndExpression expr, int startIndex){
 		if (expr.expression != null){
-			if (startIndex < expr.operator.size){
+			if (startIndex < expr.expression.size - 1){
 				val first = expr.expression.get(startIndex).print_Math_LogicOp(0);
 				val second = expr.print_Math_LogicAnd(startIndex + 1);
 				return 
@@ -715,9 +766,9 @@ class Mdl2PharmML extends MdlPrinter {
 	//MDL: no XOR operator
 	
 	//+
-	def print_Math_LogicOp(LogicalExpression expr, int startIndex){
+	def CharSequence print_Math_LogicOp(LogicalExpression expr, int startIndex){
 		if (expr.expression != null){
-			if (startIndex < expr.operator.size){
+			if (startIndex < expr.expression.size - 1){
 				val operator = expr.operator.get(startIndex).convertOperator;
 				val first = expr.expression.get(startIndex).print_Math_AddOp(0);
 				val second = expr.print_Math_LogicOp(startIndex + 1);
@@ -736,9 +787,9 @@ class Mdl2PharmML extends MdlPrinter {
 	}
 	
 	//+
-	def print_Math_AddOp(AdditiveExpression expr, int startIndex) { 
+	def CharSequence print_Math_AddOp(AdditiveExpression expr, int startIndex) { 
 		if (expr.expression != null){
-			if (startIndex < expr.operator.size){
+			if (startIndex < expr.expression.size - 1){
 				val operator = expr.operator.get(startIndex).convertOperator;
 				val first = expr.expression.get(startIndex).print_Math_MultOp(0);
 				val second = expr.print_Math_AddOp(startIndex + 1);
@@ -766,9 +817,9 @@ class Mdl2PharmML extends MdlPrinter {
 	}
 	
 	//+
-	def print_Math_MultOp(MultiplicativeExpression expr, int startIndex) { 
+	def CharSequence print_Math_MultOp(MultiplicativeExpression expr, int startIndex) { 
 		if (expr.expression != null){
-			if (startIndex < expr.operator.size){
+			if (startIndex < expr.expression.size - 1){
 				val operator = expr.operator.get(startIndex).convertOperator;
 				val first = expr.expression.get(startIndex).print_Math_PowerOp(0);
 				val second = expr.print_Math_MultOp(startIndex + 1);
@@ -787,9 +838,9 @@ class Mdl2PharmML extends MdlPrinter {
 	}
 	
 	//+
-	def print_Math_PowerOp(PowerExpression expr, int startIndex) { 
+	def CharSequence print_Math_PowerOp(PowerExpression expr, int startIndex) { 
 		if (expr.expression != null){
-			if (startIndex < expr.operator.size){
+			if (startIndex < expr.expression.size - 1){
 				return 
 				'''
 				<Binop op="«expr.operator.get(startIndex).convertOperator»">
@@ -805,25 +856,25 @@ class Mdl2PharmML extends MdlPrinter {
 	}
 	
 	//+
-	def print_Math_BinOp(String operator, Expression expr1, Expression expr2)'''
-		<Binop op="«operator»">
-			«expr1.print_Math_Equation»
-			«expr2.print_Math_Equation»
-		</Binop>
-	'''	
+	//def print_Math_BinOp(String operator, Expression expr1, Expression expr2)'''
+	//	<Binop op="«operator»">
+	//		«expr1.print_Math_Equation»
+	//		«expr2.print_Math_Equation»
+	//	</Binop>
+	//'''	
 	
 	//+
-	def print_Math_BinOp(String operator, UnaryExpression expr1, UnaryExpression expr2)'''
-		<Binop op="«operator»">
-			«expr1.print_Math_UniOp»
-			«expr2.print_Math_UniOp»
-		</Binop>
-	'''
+	//def print_Math_BinOp(String operator, UnaryExpression expr1, UnaryExpression expr2)'''
+	//	<Binop op="«operator»">
+	//		«expr1.print_Math_UniOp»
+	//		«expr2.print_Math_UniOp»
+	//	</Binop>
+	//'''
 	
 	//+
-	def print_Math_UniOp(UnaryExpression expr)'''
+	def CharSequence print_Math_UniOp(UnaryExpression expr)'''
 		«IF expr.operator != null»
-			<Uniop op="«expr.operator»">
+			<Uniop op="«expr.operator.convertOperator»">
 				«expr.expression.print_Math_UniOp»
 			</Uniop>
 		«ELSE»
@@ -862,15 +913,60 @@ class Mdl2PharmML extends MdlPrinter {
 	
 	//+
 	def print_ct_SymbolRef(FullyQualifiedSymbolName ref)'''
-		<ct:SymbRef«IF ref.object != null» blkIdRef="«ref.object»"«ENDIF» symbIdRef="«ref.identifier»"/>
+		«var blkId = ref.getReferenceBlock»
+		<ct:SymbRef«IF blkId.length > 0» blkIdRef="«blkId»"«ENDIF» symbIdRef="«ref.identifier»"/>
 	'''
 	
 	//+ TODO: How to print attributes?
 	def print_ct_SymbolRef(FullyQualifiedArgumentName ref)'''
 		<Description>MDL reference to an attribute «ref.toStr»</Description>
-		<ct:SymbRef «IF ref.parent != null»«IF ref.parent.object != null»blkIdRef="«ref.parent.object»"«ENDIF»«ENDIF» 
+		«var blkId = ""»
+		«IF ref.parent != null»
+			«blkId = ref.parent.getReferenceBlock»
+		«ENDIF»
+		<ct:SymbRef «IF blkId.length > 0»blkIdRef="«blkId»"«ENDIF» 
 			symbIdRef="«ref.parent.identifier».«ref.toStr»"/>
 	'''
+	
+	//+Return name of PharmML block for a given reference
+	def getReferenceBlock(FullyQualifiedSymbolName ref){
+		if (ref.object != null){
+			var source = vm_err_vars.get(ref.object.name);
+			if (source != null)
+				if (source.contains(ref.identifier)) return "vm_err." + ref.object.name;
+			source = vm_mdl_vars.get(ref.object.name);
+			if (source != null)
+				if (source.contains(ref.identifier)) return "vm_mdl." + ref.object.name;
+			source = cm_vars.get(ref.object.name);
+			if (source != null)
+				if (source.contains(ref.identifier)) return "cm." + ref.object.name;
+			source = om_vars.get(ref.object.name);
+			if (source != null)
+				if (source.contains(ref.identifier)) return "om." + ref.object.name;	
+			source = sm_vars.get(ref.object.name);
+			if (source != null)
+				if (source.contains(ref.identifier)) return "sm." + ref.object.name;	
+			source = pm_vars.get(ref.object.name);
+			if (source != null)
+				if (source.contains(ref.identifier)) return "sm." + ref.object.name;	
+			return ref.object.name;
+		} else {
+			//try to find by name
+			for (set: vm_err_vars.entrySet)
+				if (set.value.contains(ref.identifier)) return "vm_err." + set.key;
+			for (set:vm_mdl_vars.entrySet)
+				if (set.value.contains(ref.identifier)) return "vm_mdl." + set.key;
+			for (set: cm_vars.entrySet)
+				if (set.value.contains(ref.identifier)) return "cm." + set.key;
+			for (set: om_vars.entrySet)
+				if (set.value.contains(ref.identifier)) return "om." + set.key;	
+			for (set: sm_vars.entrySet)
+				if (set.value.contains(ref.identifier)) return "sm." + set.key;	
+			for (set: pm_vars.entrySet)
+				if (set.value.contains(ref.identifier)) return "sm." + set.key;	
+			return "";
+		}
+	}	
 	
 	//+
 	def print_ct_Value(String value){
@@ -901,15 +997,26 @@ class Mdl2PharmML extends MdlPrinter {
 			«IF args != null»
 				«var distrType = args.getAttribute("type")»
 				«var mean = args.getAttributeExpression("mean")»
-				«var variance = args.getAttributeExpression("variance")»			
+				«var variance = args.getAttributeExpression("variance")»
+				«var stDev = args.getAttributeExpression("sd")»
 				«IF (distrType.length > 0) && distrType.equalsIgnoreCase('Normal')»
-					<NormalDistribution xmlns="«xmlns_uncert»" writtenVersion = "«writtenVersion»">
+					<NormalDistribution xmlns="«xmlns_uncert»">
+					«IF mean != null»
 						<Mean>
-							«IF mean != null»«mean.print_Math_Expr»«ENDIF»
+							«mean.print_Math_Expr»
 						</Mean>
-						<StdDev>
-							«IF variance != null»«variance.print_Math_Expr»«ENDIF»
-						</StdDev>
+					«ENDIF»
+					«IF variance != null»
+						<Variance>
+							«variance.print_Math_Expr»
+						</Variance>
+					«ELSE»
+						«IF stDev != null»
+							<StdDev>
+								«stDev.print_Math_Expr»
+							</StdDev>
+						«ENDIF»
+					«ENDIF»	
 					</NormalDistribution>
 				«ENDIF»
 			«ENDIF»
@@ -1157,8 +1264,7 @@ class Mdl2PharmML extends MdlPrinter {
 		«print_msteps_StepDependencies»
 	</ModellingSteps>
 	'''
-	
-		
+			
 	////////////////////////////////////////////////
 	// III.a Estimation Step
 	////////////////////////////////////////////////
@@ -1245,7 +1351,8 @@ class Mdl2PharmML extends MdlPrinter {
 		«ENDFOR»
 	</ObjectiveDataSet>
 	'''
-   //+ Print data set
+    
+    //+ Print data set
 	def print_msteps_DataSet(ModelObject obj){
 		var names = new ArrayList<String>();
 		var types = new ArrayList<String>();
@@ -1387,22 +1494,29 @@ class Mdl2PharmML extends MdlPrinter {
 	'''
 	
 	//+ PharmML.ct_Annotation
-	def print_ct_AnnotationType(String text)'''
+	def print_ct_Annotation(String text)'''
 	<Description>«text»</Description>
 	'''
 
-	//+ MDL.variable_declaration
-	def print_ct_VariableDefinitionType(SymbolDeclaration v)'''
-	<Variable symbId = "«v.identifier»"«IF v.expression.odeList != null» symbolType="derivative" independentVar="t"«ENDIF»>
-		«v.identifier.print_ct_AnnotationType»
-		«v.expression.print_Math_Expr»
-	</Variable>
+	def print_BlockStatement(BlockStatement st, String tag)'''
+		«IF st.symbol != null»
+			<«tag» symbId="«st.symbol.identifier»">
+				<ct:Assign>
+				«IF st.symbol.expression != null»
+					«st.symbol.expression.print_Math_Expr»
+				«ENDIF»
+				</ct:Assign>
+			</«tag»>
+		«ENDIF»
+		«IF st.statement != null»
+			«st.statement.print_ConditionalStatement(tag)»
+		«ENDIF»
 	'''
 	
 	//+
-	def print_Math_Expr(AnyExpression e)'''
+	def CharSequence print_Math_Expr(AnyExpression e)'''
 		«IF e.expression != null»
-			«e.expression.print_Math_Equation»
+			«e.expression.print_Math_Expr»
 		«ENDIF»
 		«IF e.list != null»
 			«e.print_list»
@@ -1411,7 +1525,7 @@ class Mdl2PharmML extends MdlPrinter {
 			«e.print_odeList»
 		«ENDIF»	
 	'''
-
+	
 	//+
 	def print_odeList(AnyExpression e) '''
 		«var deriv = e.odeList.arguments.getAttributeExpression("deriv")»
@@ -1440,9 +1554,18 @@ class Mdl2PharmML extends MdlPrinter {
 			}
 		}		
 	} 
-	
-	//+
-	def print_Math_FunctionCall(FunctionCall call)'''
+
+	//+ Convert math functions to PharmML 
+	def print_Math_FunctionCall(FunctionCall call){
+		//Convert standard mathematical functions to PharmML operators;
+		//if (MdlJavaValidator::standardFunctions.contains(call.identifier)){}
+		
+		return call.print_Math_FunctionCall_UserDefined;
+	}
+
+	//+ Convert user defined math functions to PharmML 
+	def print_Math_FunctionCall_UserDefined(FunctionCall call)
+	'''
 		<math:FunctionCall>
 			«call.identifier.print_ct_SymbolRef»
 			«FOR arg: call.arguments.arguments»
@@ -1456,8 +1579,7 @@ class Mdl2PharmML extends MdlPrinter {
 	<FunctionArgument «IF arg.identifier != null»symbId="«arg.identifier»"«ENDIF»>
 		«arg.expression.print_Math_Expr»
 	</FunctionArgument>
-	'''
-	
+	'''	
 	
 	//////////////////////////////////////////////////////////////////////
 	//Helper functions
@@ -1473,37 +1595,83 @@ class Mdl2PharmML extends MdlPrinter {
 		return TYPE_INT;
 	}
 
-	//+ Negation of the expression
-	def dualExpression(OrExpression expr){
-		var dualAnd = MdlFactory::eINSTANCE.createAndExpression;
-		var iterator = expr.expression.iterator();
-		while (iterator.hasNext){// x || y -> !x && !y 
-			var andExpression = iterator.next;
-			for (andAtom: andExpression.expression){
-				var logicalExpr = MdlFactory::eINSTANCE.createLogicalExpression();
-				if (andAtom.expression != null){
-					var iterator1 = andAtom.expression.iterator();
-					var operatorIterator1 = andAtom.operator.iterator();
-					if (iterator1.hasNext)
-						logicalExpr.expression.add(iterator1.next);
-					while (iterator1.hasNext && operatorIterator1.hasNext){
-						logicalExpr.operator.add(operatorIterator1.next.getDualOperator);
-						logicalExpr.expression.add(iterator1.next);
+	//+ Negation of the expression x || y -> !x && !y 
+	def print_DualExpression(OrExpression expr){
+		var newAndExprs = new ArrayList<String>();
+		for (andExpr: expr.expression){
+			var dualLogicalExprs = new ArrayList<String>();
+			for (logicalExpr: andExpr.expression){
+				if (logicalExpr.expression != null){
+					var newExpressions = new ArrayList<String>();
+					var newOperators = new ArrayList<String>();
+					for (addExpr: logicalExpr.expression){
+						newExpressions.add(addExpr.print_Math_AddOp(0).toString);
 					}
-				} else {
-					if (andAtom.boolean != null){
-						logicalExpr.setBoolean(andAtom.boolean);
-						if (andAtom.negation == null){
-							logicalExpr.setNegation("!");
+					if (logicalExpr.operator != null)
+						for (op: logicalExpr.operator){
+							newOperators.add(op.getDualOperator.convertOperator);
 						}
+					dualLogicalExprs.add(print_Math_LogicalOp(newExpressions, newOperators, 0).toString);	
+				} else {
+					if (logicalExpr.boolean != null){
+						if (logicalExpr.negation == null){
+							dualLogicalExprs.add( 
+							'''
+								<Uniop op="not">
+									<«logicalExpr.boolean»/>
+								</Uniop>
+							''')
+						} else 
+						dualLogicalExprs.add( 
+						'''
+							<«logicalExpr.boolean»/>
+						''')
 					}
 				}
-				dualAnd.expression.add(logicalExpr);					
+			}
+			newAndExprs.add(dualLogicalExprs.print_Math_LogicAnd(0).toString);		
+		}
+		return newAndExprs.print_Math_LogicOr(0);
+	}
+	
+	//+Expr1 && ... && Expr_n
+	def CharSequence print_Math_LogicAnd(ArrayList<String> exprs, int startIndex){
+		if (exprs!= null){
+			if (startIndex < exprs.size - 1){
+				val first = exprs.get(startIndex);
+				val second = exprs.print_Math_LogicAnd(startIndex + 1);
+				return 
+				'''
+				<LogicBinop op="and">
+					«first»
+					«second»
+				</LogicBinop>
+				'''
+			} else {
+				return '''«exprs.get(startIndex)»'''
 			}
 		}
-		var dualOr = MdlFactory::eINSTANCE.createOrExpression;
-		dualOr.expression.add(dualAnd);
-		return dualOr;
+		return ''''''
+	}
+	
+	//+Expr1 || ... || Expr_n
+	def CharSequence print_Math_LogicOr(ArrayList<String> exprs, int startIndex){
+		if (exprs!= null){
+			if (startIndex < exprs.size - 1){
+				val first = exprs.get(startIndex);
+				val second = exprs.print_Math_LogicOr(startIndex + 1);
+				return 
+				'''
+				<LogicBinop op="or">
+					«first»
+					«second»
+				</LogicBinop>
+				'''
+			} else {
+				return '''«exprs.get(startIndex)»'''
+			}
+		}
+		return ''''''
 	}
 	
 	//+Returns a dual operator for a given logical operator
@@ -1524,9 +1692,9 @@ class Mdl2PharmML extends MdlPrinter {
 		switch (operator){
 			case "<": "lt"
 			case ">": "gt"
-			case "<=": "le"
-			case ">=": "ge"
-			case "==": "ne"
+			case "<=": "leq"
+			case ">=": "geq"
+			case "==": "neq"
 			case "!=": "eq"
 			case "+": "plus"
 			case "-": "minus"
@@ -1537,24 +1705,160 @@ class Mdl2PharmML extends MdlPrinter {
 		}
 	}
 	
-	//+ Return first found input variable with use=idv (individual)
-	def getIndependentVariable(Mcl m){
-		for (obj: m.objects){
-			if (obj.modelObject != null){
-				for (block: obj.modelObject.blocks){
-					if (block.inputVariablesBlock != null){
-						for (s: block.inputVariablesBlock.variables){
-							if (s.expression != null){
-								if (s.expression.list != null){
-									var use = s.expression.list.arguments.getAttribute("use");
-									if (use.equalsIgnoreCase("idv")) return s.identifier;
-								}
-							}
+	//+ Return input variables with use=idv (individual)
+	def getIndependentVars(ModelObject obj){
+		var independentVars = new HashSet<String>();
+		for (block: obj.blocks){
+			if (block.inputVariablesBlock != null){
+				for (s: block.inputVariablesBlock.variables){
+					if (s.expression != null){
+						if (s.expression.list != null){
+							var use = s.expression.list.arguments.getAttribute("use");
+							if (use.equalsIgnoreCase("idv") && !independentVars.contains(s.identifier)) 
+								independentVars.add(s.identifier);
 						}
-					}	
+					}
 				}
 			}
 		}
-		return null;
+		return independentVars;
 	}
+	
+	//+ Return a list of structural variables per object
+	def getStructuralVars(ModelObject obj){
+		var structuralVars = new HashSet<String>();
+		for (b: obj.blocks){
+			if (b.modelPredictionBlock != null){
+				for (st: b.modelPredictionBlock.statements){
+					if (st.statement != null) {
+						structuralVars.addAll(st.statement.getSymbols);
+					} else 
+						if (st.odeBlock != null){
+							for (s: st.odeBlock.statements){
+								structuralVars.addAll(s.getSymbols);
+							}
+						}
+				}
+			}			
+		}
+		return structuralVars;
+	}
+	
+	//+Collect symbol names from a block
+	def HashSet<String> getSymbols(BlockStatement b){
+		var symbols = new HashSet<String>();
+		if (b.symbol != null){
+			if (!symbols.contains(b.symbol.identifier)) symbols.add(b.symbol.identifier);
+		}
+		if (b.statement != null){
+			val s = b.statement;
+			if (s.ifStatement != null){
+				symbols.addAll(s.ifStatement.getSymbols);
+			}
+			if (s.elseStatement != null){
+				symbols.addAll(s.elseStatement.getSymbols);
+			}		
+			if (s.ifBlock != null){
+				for (bb:s.ifBlock.statements)
+					symbols.addAll(bb.getSymbols);
+			}
+			if (s.elseBlock != null){
+				for (bb:s.elseBlock.statements)
+					symbols.addAll(bb.getSymbols);
+			}			
+		}
+		return symbols;
+	}
+	
+	//+ Return a list of covariate variables per object
+	def getCovariateVars(ModelObject obj){
+		var covariateVars = new HashSet<String>();
+		for (b: obj.blocks){
+			if (b.inputVariablesBlock != null){
+				for (s: b.inputVariablesBlock.variables){
+					if (s.expression != null){
+						if (s.expression.list != null){
+							var use = s.expression.list.arguments.getAttribute("use");
+							if (use.equalsIgnoreCase("covariate")) {
+								if (!covariateVars.contains(s.identifier))
+									covariateVars.add(s.identifier);
+							}
+						}
+					}
+												
+				}
+			}					
+		}
+		return covariateVars;		
+	}
+	
+	//+Returns declarations for ParameterModel
+	def getParameters(ModelObject obj){		
+		var parameters = new HashSet<String>();
+		for (b: obj.blocks){
+			//Model object, GROUP_VARIABLES (covariate parameters)
+			if (b.groupVariablesBlock != null){
+				for (st: b.groupVariablesBlock.statements){
+					if (st.statement != null){
+						parameters.addAll(st.statement.getSymbols());
+					}							
+				}
+			}	
+			//Model object, RANDOM_VARIABLES_DEFINITION
+			if (b.randomVariableDefinitionBlock != null){
+				for (s: b.randomVariableDefinitionBlock.variables){
+					if (eps_vars.get(s.identifier) != null)
+						parameters.add(s.identifier);
+				} 
+	  		}
+	  		//Model object, INDIVIDUAL_VARIABLES
+			if (b.individualVariablesBlock != null){
+				for (s: b.individualVariablesBlock.statements){
+					parameters.addAll(s.getSymbols());
+				} 
+	  		}
+	  	}
+	  	return parameters;
+	}
+	
+	//+Returns declarations for ParameterModel
+	def getParameters(ParameterObject obj){		
+		var parameters = new HashSet<String>();
+		for (b: obj.blocks){
+			//Parameter object, STRUCTURAL
+			if (b.structuralBlock != null){
+				for (id: b.structuralBlock.parameters) 
+					parameters.add(id.identifier);
+			}
+			//ParameterObject, VARIABILITY
+			if (b.variabilityBlock != null){
+				for (st: b.variabilityBlock.statements){
+					if (st.parameter != null)
+						parameters.add(st.parameter.identifier);
+				} 
+			}
+		}
+  		return parameters;
+	}
+	
+	//+Returns declarations in ObservationModel
+	def getObservationVars(ModelObject obj){
+		var observationVars = new HashSet<String>();
+		for (b: obj.blocks){
+			if (b.observationBlock != null){
+				for (st: b.observationBlock.statements){
+					if (st.symbol != null){//!TODO: revise
+						observationVars.add(st.symbol.identifier);
+						if (st.symbol.expression != null){
+							if (st.symbol.expression.expression != null){
+								observationVars.addAll(st.symbol.expression.expression.getReferencesToRandomVars);
+							}
+						}
+					}
+				}
+			}
+		}
+		return observationVars;
+	}
+	
 }
