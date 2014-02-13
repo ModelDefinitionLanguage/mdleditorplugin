@@ -21,7 +21,7 @@ public class LanguageVersionImpl implements LanguageVersion {
 
     @Override
     public void setLanguage(String language) {
-        this.language = language;
+        this.language = language.toUpperCase().replaceAll("-", "").replaceAll("_", "");
     }
 
     @Override
