@@ -14,10 +14,10 @@
 		<module>../eu.ddmore.converter.mdlprinting</module>
 		<module>../eu.ddmore.converter.mdl2nonmem</module>
 		<module>../eu.ddmore.converter.mdl2pharmml</module>
-		<module>../eu.ddmore.converter.test</module>
 		<module>../eu.ddmore.converter.test.mdl2nonmem.sucess</module>
 		<module>../eu.ddmore.converter.test.mdl2nonmem.failure</module>
 		<module>../eu.ddmore.converter.test.mdl2pharmml</module>
+		<module>../eu.ddmore.converter.test</module>
 		<module>../eu.ddmore.converter.toolbox-bundle</module>
 	</modules>
 

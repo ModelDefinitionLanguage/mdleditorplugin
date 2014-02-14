@@ -18,7 +18,7 @@ public class FutureCallbackImpl extends AbstractFutureCallback<ConversionReport>
      */
     @Override
     public void onSuccess(ConversionReport result) {
-        listener.conversionComplete(result);
+        getListener().conversionComplete(result);
     }
 
     /**
@@ -28,7 +28,7 @@ public class FutureCallbackImpl extends AbstractFutureCallback<ConversionReport>
     @Override
     public void onFailure(Throwable t) {
         ConversionReport report = createConversionReport(t);
-        listener.conversionComplete(report);
+        getListener().conversionComplete(report);
     }
 
 }

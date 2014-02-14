@@ -3,15 +3,11 @@ package eu.ddmore.mdl.generator;
 import java.io.File;
 import java.io.IOException;
 
-import org.ddmore.mdl.mdl.Mcl;
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.IGenerator;
-import org.eclipse.xtext.xbase.lib.IteratorExtensions;
-
-import com.google.common.collect.Iterables;
 
 import eu.ddmore.converter.mdlprinting.MdlPrinter;
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
@@ -27,6 +23,7 @@ public class ConverterWrapper extends MdlPrinter implements IGenerator {
     private ConverterManagerImpl converterManager;
     private LanguageVersion mdl;
     private LanguageVersion target;
+    private static final Logger LOGGER = Logger.getLogger(ConverterWrapper.class);
 
     //TODO: This is actually a property of the runtime eclipse that the MDLEditor user can change. We need to find that by some Preference class.
     private static final String SRC_GEN_PREFIX = "/src-gen";
@@ -61,9 +58,9 @@ public class ConverterWrapper extends MdlPrinter implements IGenerator {
             Converter converter = converterManager.getConverter(mdl, target);
             converter.convert(source, targetDir);
         } catch (ConverterNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 

@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,14 +26,14 @@ public class MDLToPharmMLConverterTest {
     }
 
     @Test
-    public void shouldSuccedToTransformMDLToPharmML() {
+    public void shouldSucceedToTransformMDLToPharmML() throws IOException {
         File src = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_PRED.mdl").getPath());
         File outputDirectory = src.getParentFile();
         assertEquals(converter.performConvert(src, outputDirectory).getReturnCode(), ConversionCode.SUCCESS);
     }
 
     @Test
-    public void shouldSuccedToTransformMultipleMDLToPharmML() {
+    public void shouldSucceedToTransformMultipleMDLToPharmML() throws IOException {
     	File folder = new File(Thread.currentThread().getContextClassLoader().getResource("files/").getPath());
     	File[] listOfFiles = folder.listFiles(new FilenameFilter() { 
 	         public boolean accept(File dir, String filename)

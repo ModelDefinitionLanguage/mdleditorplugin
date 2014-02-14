@@ -16,7 +16,7 @@ import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
  */
 public abstract class AbstractFutureCallback<T> implements FutureCallback<T> {
     
-    protected ConversionListener listener;
+    private ConversionListener listener;
     
     public AbstractFutureCallback(ConversionListener listener) {
         this.listener = listener;
@@ -36,4 +36,8 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<T> {
         return report;
     }
 
+    protected ConversionListener getListener() {
+        return listener;
+    }
+    
 }

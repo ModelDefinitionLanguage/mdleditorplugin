@@ -74,7 +74,7 @@ public class LanguageVersionImpl implements LanguageVersion {
 
     @Override
     public String toString() {
-        return String.format("LanguageVersionImpl [language=%s, version=%s]", language, version);
+        return String.format("%s %s", language, version);
     }
 
 }

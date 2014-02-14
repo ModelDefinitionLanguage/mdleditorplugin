@@ -8,6 +8,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,6 +32,14 @@ public class ConverterManagerImplTest {
     private ConverterManagerImpl converterManager;
 
     private LanguageVersion mdl;
+
+    static
+    {
+        Logger rootLogger = Logger.getRootLogger();
+        rootLogger.setLevel(Level.INFO);
+        rootLogger.addAppender(new ConsoleAppender(
+                   new PatternLayout("%-6r [%p] %c - %m%n")));
+    }
 
     @Before
     public void init() {
@@ -69,7 +81,7 @@ public class ConverterManagerImplTest {
 
     private LanguageVersion createNONMEMLanguage() {
         LanguageVersion lang = new LanguageVersionImpl();
-        lang.setLanguage("NONMEM");
+        lang.setLanguage("NMTRAN");
         Version version = new VersionImpl();
         version.setMajor(7);
         version.setMinor(2);

@@ -5,6 +5,7 @@
 package eu.ddmore.converter.mdl2nonmem;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.ddmore.mdl.MdlStandaloneSetup;
 import org.ddmore.mdl.mdl.Mcl;
@@ -39,7 +40,7 @@ public class MDLToNonmemConverter extends MdlPrinterUtility implements Converter
         source.setVersion(sourceVersion);
 
         target = new LanguageVersionImpl();
-        target.setLanguage("NONMEM");
+        target.setLanguage("NMTRAN");
         Version targetVersion = new VersionImpl();
         targetVersion.setMajor(7);
         targetVersion.setMinor(2);
@@ -52,7 +53,7 @@ public class MDLToNonmemConverter extends MdlPrinterUtility implements Converter
     }
 
     @Override
-    public ConversionReport performConvert(File src, File outputDirectory) {
+    public ConversionReport performConvert(File src, File outputDirectory) throws IOException {
         Injector injector = new MdlStandaloneSetup().createInjectorAndDoEMFRegistration();
         XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
@@ -67,7 +68,7 @@ public class MDLToNonmemConverter extends MdlPrinterUtility implements Converter
     }
 
     @Override
-    public ConversionReport[] performConvert(File[] src, File outputDirectory) {
+    public ConversionReport[] performConvert(File[] src, File outputDirectory) throws IOException {
         ConversionReport[] reports = new ConversionReport[src.length];
         int i = 0;
         for (File f : src) {

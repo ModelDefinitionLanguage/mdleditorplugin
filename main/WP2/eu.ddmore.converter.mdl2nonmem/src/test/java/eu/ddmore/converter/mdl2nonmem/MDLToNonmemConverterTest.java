@@ -3,6 +3,7 @@ package eu.ddmore.converter.mdl2nonmem;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,14 +25,14 @@ public class MDLToNonmemConverterTest {
     }
 
     @Test
-    public void shouldSucceedToTransformMDLToNONMEM() {
+    public void shouldSucceedToTransformMDLToNONMEM() throws IOException {
         File src = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_PRED.mdl").getPath());
         File outputDirectory = src.getParentFile();
         assertEquals(converter.performConvert(src, outputDirectory).getReturnCode(), ConversionCode.SUCCESS);
     }
 
     @Test
-    public void shouldSucceedToTransformMultipleMDLToNONMEM() {
+    public void shouldSucceedToTransformMultipleMDLToNONMEM() throws IOException {
         File pkpred = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_PRED.mdl").getPath());
         File pkbov = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_BOV.mdl").getPath());
         File outputDirectory = pkpred.getParentFile();
@@ -65,7 +66,7 @@ public class MDLToNonmemConverterTest {
     @Test
     public void shouldFindCorrectTargetVersion() {
         LanguageVersion target = new LanguageVersionImpl();
-        target.setLanguage("NONMEM");
+        target.setLanguage("NMTRAN");
         Version targetVersion = new VersionImpl();
         targetVersion.setMajor(7);
         targetVersion.setMinor(2);

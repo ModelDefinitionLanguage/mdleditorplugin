@@ -115,7 +115,11 @@ public class VersionImpl implements Version {
 
     @Override
     public String toString() {
-        return String.format("VersionImpl [%d.%d.%d-%s]", major, minor, patch, qualifier);
+        String base = String.format("%d.%d.%d", major, minor, patch);
+        if (qualifier!=null) {
+            base = String.format("%s-%s", base, qualifier);
+        }
+        return base;
     }
 
 }

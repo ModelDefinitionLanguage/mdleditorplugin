@@ -74,7 +74,7 @@ public class IntegrationTest {
 
     private LanguageVersion createNONMEMLanguage() {
         LanguageVersion lang = new LanguageVersionImpl();
-        lang.setLanguage("NONMEM");
+        lang.setLanguage("NMTRAN");
         Version version = new VersionImpl();
         version.setMajor(7);
         version.setMinor(2);
@@ -161,7 +161,7 @@ public class IntegrationTest {
 
     @Test
     public void shouldConvertCLI() throws ConverterNotFoundException, IOException {
-        String[] args = new String[] { "files", "files", "MDL", "5.0.8-qualm", "NONMEM", "7.2.0-qualn" };
+        String[] args = new String[] { "files", "files", "MDL", "5.0.8-qualm", "NMTRAN", "7.2.0-qualn" };
         ConversionReport[] reports = new Main().runFromCommandLine(args);
         assertEquals(ConversionCode.SUCCESS, reports[0].getReturnCode());
         assertEquals(reports[0].getDetails(Severity.ERROR).size(), 0);

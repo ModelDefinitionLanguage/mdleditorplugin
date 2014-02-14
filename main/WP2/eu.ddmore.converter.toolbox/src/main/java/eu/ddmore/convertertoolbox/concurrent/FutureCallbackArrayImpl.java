@@ -22,7 +22,7 @@ public class FutureCallbackArrayImpl extends AbstractFutureCallback<ConversionRe
      */
     @Override
     public void onSuccess(ConversionReport[] result) {
-        listener.conversionComplete(result);
+        getListener().conversionComplete(result);
     }
 
     /**
@@ -35,6 +35,6 @@ public class FutureCallbackArrayImpl extends AbstractFutureCallback<ConversionRe
         for (int i = 0; i < reportsNumber; i++) {
             reports[i] = createConversionReport(t);
         }
-        listener.conversionComplete(reports);
+        getListener().conversionComplete(reports);
     }
 }

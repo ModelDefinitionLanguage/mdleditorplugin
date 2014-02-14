@@ -38,7 +38,7 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
         source.setVersion(sourceVersion);
         
         target = new LanguageVersionImpl();
-        target.setLanguage("NONMEM");
+        target.setLanguage("NMTRAN");
         Version targetVersion = new VersionImpl();
         targetVersion.setMajor(7);
         targetVersion.setMinor(2);
@@ -55,12 +55,12 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
     public ConversionReport performConvert(File src, File outputDirectory) {
         ConversionReport report = new ConversionReportImpl();
         report.setReturnCode(ConversionCode.SUCCESS);
-        ConversionDetail conversionDetail = createConversionDetail(src);
+        ConversionDetail conversionDetail = createConversionDetail();
         report.addDetail(conversionDetail);
         return report;
     }
 
-    private ConversionDetail createConversionDetail(File src) {
+    private ConversionDetail createConversionDetail() {
         ConversionDetail conversionDetail = new ConversionDetailImpl();
         conversionDetail.addInfo("INFO", "What a nice conversion!");
         conversionDetail.setMessage("Some message");
@@ -72,7 +72,7 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
     public ConversionReport[] performConvert(File[] src, File outputDirectory) {
         ConversionReport report = new ConversionReportImpl();
         report.setReturnCode(ConversionCode.SUCCESS);
-        ConversionDetail conversionDetail = createConversionDetail(src[0]);
+        ConversionDetail conversionDetail = createConversionDetail();
         report.addDetail(conversionDetail);
         return new ConversionReport[] { report, report };
     }

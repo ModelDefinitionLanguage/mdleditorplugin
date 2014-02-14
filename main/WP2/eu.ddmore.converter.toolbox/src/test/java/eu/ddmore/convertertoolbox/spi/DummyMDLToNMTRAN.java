@@ -37,7 +37,7 @@ public class DummyMDLToNMTRAN implements ConverterProvider {
         source.setVersion(sourceVersion);
         
         target = new LanguageVersionImpl();
-        target.setLanguage("NONMEM");
+        target.setLanguage("NMTRAN");
         Version targetVersion = new VersionImpl();
         targetVersion.setMajor(7);
         targetVersion.setMinor(2);
