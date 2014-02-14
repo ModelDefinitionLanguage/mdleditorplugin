@@ -33,8 +33,6 @@ import java.util.HashMap
 import java.util.HashSet
 import org.ddmore.mdl.mdl.ParameterObject
 
-//import org.ddmore.mdl.validation.MdlJavaValidator
-
 class Mdl2PharmML extends MdlPrinter {
 	val	xsi="http://www.w3.org/2001/XMLSchema-instance"; 
 	val xsi_schemaLocation="http://www.pharmml.org/2013/03/PharmML http://www.pharmml.org/2013/03/PharmML";
@@ -59,7 +57,20 @@ class Mdl2PharmML extends MdlPrinter {
 	protected var pm_vars = new HashMap<String, HashSet<String>>();	  
 	protected var om_vars = new HashMap<String, HashSet<String>>();	  
 	protected var sm_vars = new HashMap<String, HashSet<String>>();	  
+	
 		
+	//List of mathematical functions (MDL = PharmML) converted to PharmML operator
+	var standardFunctions = newHashSet("abs", "exp", "factorial", "factl", "gammaln", "ln", "log", 
+		"logistic", "logit", "normcdf", "probit", "sqrt", "sin", "cos", "tan", "sec", "csc", "cot", 
+		"sinh", "cosh", "tanh", "sech", "csch", "coth", "arcsin", "arccos", "arctan", "arcsec", "arccsc", 
+		"arccot", "arcsinh", "arccosh", "arctanh", "arcsech", "arccsch", "arccoth", 
+		"floor", "ceiling", "logx", "root", "min", "max");
+	
+	//List of functions that are represented by special PharmML tags
+	//MDL != PharmML, e.g., "errorexit" is validated in MDL but converts to a usual function call  
+	var specialFunctions = newHashSet("seq", "update", "runif", "PHI");
+	
+	
 	var Mcl mcl = null;
 	//Print file name and analyse all MCL objects in the source file
   	def convertToPharmML(Mcl m){
@@ -187,7 +198,7 @@ class Mdl2PharmML extends MdlPrinter {
 	    }
 		'''
 		<FunctionDefinition xmlns:ct="«xmlns_ct»"
-			symbId="combinedErrorModel" symbolType="real">
+			symbId="combinedErrorModel" symbolType="«TYPE_REAL»">
 			«FOR arg: arguments»
 				<FunctionArgument symbId="«arg»" symbolType="«TYPE_REAL»"/>
 			«ENDFOR»
@@ -307,7 +318,7 @@ class Mdl2PharmML extends MdlPrinter {
 					if (b.groupVariablesBlock != null){
 						for (st: b.groupVariablesBlock.statements){
 							if (st.statement != null){
-								st.statement.print_BlockStatement("SimpleParameter");
+								st.statement.print_BlockStatement("SimpleParameter", false);
 							}							
 						}
 					}	
@@ -321,7 +332,7 @@ class Mdl2PharmML extends MdlPrinter {
 			  		//Model object, INDIVIDUAL_VARIABLES
 					if (b.individualVariablesBlock != null){
 						for (s: b.individualVariablesBlock.statements){
-							statements = statements + s.print_BlockStatement("IndividualParameter");
+							statements = statements + s.print_BlockStatement("IndividualParameter", false);
 						} 
 			  		}
 			  	}
@@ -505,11 +516,11 @@ class Mdl2PharmML extends MdlPrinter {
 					if (b.modelPredictionBlock != null){
 						for (st: b.modelPredictionBlock.statements){
 							if (st.statement != null) {
-								variables = variables + '''«st.statement.print_BlockStatement("ct:Variable")»''';
+								variables = variables + '''«st.statement.print_BlockStatement("ct:Variable", true)»''';
 							} else 
 								if (st.odeBlock != null){
 									for (s: st.odeBlock.statements){
-										variables = variables + '''«s.print_BlockStatement("ct:Variable")»''';	
+										variables = variables + '''«s.print_BlockStatement("ct:Variable", true)»''';	
 									}
 								}
 						}
@@ -789,22 +800,25 @@ class Mdl2PharmML extends MdlPrinter {
 	//+
 	def CharSequence print_Math_AddOp(AdditiveExpression expr, int startIndex) { 
 		if (expr.expression != null){
-			if (startIndex < expr.expression.size - 1){
-				val operator = expr.operator.get(startIndex).convertOperator;
-				val first = expr.expression.get(startIndex).print_Math_MultOp(0);
-				val second = expr.print_Math_AddOp(startIndex + 1);
-				return 
-				'''
-				<Binop op="«operator»">
-					«first»
-					«second»
-				</Binop>
-				'''
-			} else {
-				return '''«expr.expression.get(startIndex).print_Math_MultOp(0)»'''
+			if (expr.expression.size > 0){
+				if (startIndex < expr.expression.size - 1){
+					val operator = expr.operator.get(startIndex).convertOperator;
+					val first = expr.expression.get(startIndex).print_Math_MultOp(0);
+					val second = expr.print_Math_AddOp(startIndex + 1);
+					return 
+					'''
+					<Binop op="«operator»">
+						«first»
+						«second»
+					</Binop>
+					'''
+				} else {
+					return '''«expr.expression.get(startIndex).print_Math_MultOp(0)»'''
+				}
 			}
-		} else {
-			if (expr.string != null){
+		}
+		if (expr.string != null){
+			if (expr.string.size > 0){
 				var res = "";
 				for (s: expr.string){
 					res = res + s; 
@@ -1315,17 +1329,17 @@ class Mdl2PharmML extends MdlPrinter {
 	
 	//
 	def print_msteps_Sequence(String begin, String stepSize,  String end)'''
-	<ct:Sequence>
-		<ct:Begin>
-			«begin.print_ct_Value»
-		</ct:Begin>
-		<ct:StepSize>
-			«stepSize.print_ct_Value»
-		</ct:StepSize>
-		<ct:End>
-			«end.print_ct_Value»
-		</ct:End>
-	</ct:Sequence>
+		<ct:Sequence>
+			<ct:Begin>
+				«begin»
+			</ct:Begin>
+			<ct:StepSize>
+				«stepSize»
+			</ct:StepSize>
+			<ct:End>
+				«end»
+			</ct:End>
+		</ct:Sequence>
 	'''
 	
 	///////////////////////////////////////////////
@@ -1498,13 +1512,13 @@ class Mdl2PharmML extends MdlPrinter {
 	<Description>«text»</Description>
 	'''
 
-	def print_BlockStatement(BlockStatement st, String tag)'''
+	def print_BlockStatement(BlockStatement st, String tag, Boolean printType)'''
 		«IF st.symbol != null»
-			<«tag» symbId="«st.symbol.identifier»">
+			<«tag» symbId="«st.symbol.identifier»"«IF printType» symbolType="«TYPE_REAL»"«ENDIF»>
 				<ct:Assign>
-				«IF st.symbol.expression != null»
-					«st.symbol.expression.print_Math_Expr»
-				«ENDIF»
+					«IF st.symbol.expression != null»
+						«st.symbol.expression.print_Math_Expr»
+					«ENDIF»
 				</ct:Assign>
 			</«tag»>
 		«ENDIF»
@@ -1557,12 +1571,44 @@ class Mdl2PharmML extends MdlPrinter {
 
 	//+ Convert math functions to PharmML 
 	def print_Math_FunctionCall(FunctionCall call){
-		//Convert standard mathematical functions to PharmML operators;
-		//if (MdlJavaValidator::standardFunctions.contains(call.identifier)){}
-		
-		return call.print_Math_FunctionCall_UserDefined;
+		if (specialFunctions.contains(call.identifier.identifier)){
+			 if (call.identifier.identifier.equals("seq")){
+			 	val params = call.arguments.arguments;
+			 	//TODO: process named parameters: (start, stepSize, end) or (start, stepSize, repetition)
+			 	if (params.size == 3)
+			 		return print_msteps_Sequence(
+			 			params.get(0).expression.print_Math_Expr.toString, 
+			 			params.get(1).expression.print_Math_Expr.toString, 
+			 			params.get(2).expression.print_Math_Expr.toString
+			 		);
+			 }
+		} else {
+			if (standardFunctions.contains(call.identifier.identifier)){
+				//Convert standard mathematical functions to a PharmML operator with the same name;		
+				return call.print_Math_FunctionCall_Standard;	
+			} else {
+				return call.print_Math_FunctionCall_UserDefined;
+			}
+		}
 	}
 
+	//Functions from the standardFunctions list are PharmML operators
+	def print_Math_FunctionCall_Standard(FunctionCall call)
+	'''
+		«IF call.arguments.arguments.size == 1»
+			<Uniop op="«call.identifier.identifier»">
+				«call.arguments.arguments.get(0).expression.print_Math_Expr»
+			</Uniop>
+		«ELSE»
+			«IF call.arguments.arguments.size == 2»
+				<Binop op="«call.identifier.identifier»">
+					«call.arguments.arguments.get(0).expression.print_Math_Expr»
+					«call.arguments.arguments.get(1).expression.print_Math_Expr»
+				</Binop>
+			«ENDIF»
+		«ENDIF»
+	'''
+	
 	//+ Convert user defined math functions to PharmML 
 	def print_Math_FunctionCall_UserDefined(FunctionCall call)
 	'''
@@ -1576,7 +1622,7 @@ class Mdl2PharmML extends MdlPrinter {
 	
 	//+
 	def print_Math_FunctionArgument(Argument arg)'''
-	<FunctionArgument «IF arg.identifier != null»symbId="«arg.identifier»"«ENDIF»>
+	<FunctionArgument«IF arg.identifier != null» symbId="«arg.identifier»"«ENDIF»>
 		«arg.expression.print_Math_Expr»
 	</FunctionArgument>
 	'''	
