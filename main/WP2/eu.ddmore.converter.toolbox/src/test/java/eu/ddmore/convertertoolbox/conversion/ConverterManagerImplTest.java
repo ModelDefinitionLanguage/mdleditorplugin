@@ -33,14 +33,6 @@ public class ConverterManagerImplTest {
 
     private LanguageVersion mdl;
 
-    static
-    {
-        Logger rootLogger = Logger.getRootLogger();
-        rootLogger.setLevel(Level.INFO);
-        rootLogger.addAppender(new ConsoleAppender(
-                   new PatternLayout("%-6r [%p] %c - %m%n")));
-    }
-
     @Before
     public void init() {
         mdl = new LanguageVersionImpl();
