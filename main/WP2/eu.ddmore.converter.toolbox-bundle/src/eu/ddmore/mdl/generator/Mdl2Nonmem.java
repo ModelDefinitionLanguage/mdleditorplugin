@@ -10,7 +10,7 @@ public class Mdl2Nonmem extends ConverterWrapper {
 	public Mdl2Nonmem() {
 	    //Version-language attributes are hand coded until I learn how the MDLEditor will interact with the user.
         LanguageVersion lang = new LanguageVersionImpl();
-        lang.setLanguage("NONMEM");
+        lang.setLanguage("NMTRAN");
         Version version = new VersionImpl();
         version.setMajor(7);
         version.setMinor(2);
