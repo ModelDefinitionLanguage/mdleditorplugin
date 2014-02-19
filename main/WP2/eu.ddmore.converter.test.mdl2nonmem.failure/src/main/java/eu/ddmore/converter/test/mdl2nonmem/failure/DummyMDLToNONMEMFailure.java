@@ -30,15 +30,13 @@ public class DummyMDLToNONMEMFailure implements ConverterProvider {
         sourceVersion.setMajor(5);
         sourceVersion.setMinor(0);
         sourceVersion.setPatch(8);
-        sourceVersion.setQualifier("qualm");
         source.setVersion(sourceVersion);
         
         target = new LanguageVersionImpl();
-        target.setLanguage("NMTRAN");
+        target.setLanguage("NONMEM");
         Version targetVersion = new VersionImpl();
         targetVersion.setMajor(7);
         targetVersion.setMinor(2);
-        targetVersion.setQualifier("qualn");
         target.setVersion(targetVersion);
         
         converterVersion = new VersionImpl();

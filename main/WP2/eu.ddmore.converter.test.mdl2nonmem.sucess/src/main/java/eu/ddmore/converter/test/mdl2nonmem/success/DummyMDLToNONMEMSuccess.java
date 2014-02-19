@@ -34,15 +34,13 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
         sourceVersion.setMajor(5);
         sourceVersion.setMinor(0);
         sourceVersion.setPatch(8);
-        sourceVersion.setQualifier("qualm");
         source.setVersion(sourceVersion);
         
         target = new LanguageVersionImpl();
-        target.setLanguage("NMTRAN");
+        target.setLanguage("NONMEM");
         Version targetVersion = new VersionImpl();
         targetVersion.setMajor(7);
         targetVersion.setMinor(2);
-        targetVersion.setQualifier("qualn");
         target.setVersion(targetVersion);
         
         converterVersion = new VersionImpl();
@@ -55,12 +53,12 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
     public ConversionReport performConvert(File src, File outputDirectory) {
         ConversionReport report = new ConversionReportImpl();
         report.setReturnCode(ConversionCode.SUCCESS);
-        ConversionDetail conversionDetail = createConversionDetail();
+        ConversionDetail conversionDetail = createConversionDetail(src);
         report.addDetail(conversionDetail);
         return report;
     }
 
-    private ConversionDetail createConversionDetail() {
+    private ConversionDetail createConversionDetail(File src) {
         ConversionDetail conversionDetail = new ConversionDetailImpl();
         conversionDetail.addInfo("INFO", "What a nice conversion!");
         conversionDetail.setMessage("Some message");
@@ -72,7 +70,7 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
     public ConversionReport[] performConvert(File[] src, File outputDirectory) {
         ConversionReport report = new ConversionReportImpl();
         report.setReturnCode(ConversionCode.SUCCESS);
-        ConversionDetail conversionDetail = createConversionDetail();
+        ConversionDetail conversionDetail = createConversionDetail(src[0]);
         report.addDetail(conversionDetail);
         return new ConversionReport[] { report, report };
     }

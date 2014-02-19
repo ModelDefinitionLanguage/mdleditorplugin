@@ -28,6 +28,8 @@ import org.ddmore.mdl.mdl.PowerExpression
 import org.ddmore.mdl.mdl.UnaryExpression
 import org.ddmore.mdl.mdl.ParExpression
 import org.ddmore.mdl.mdl.Arguments
+import org.ddmore.mdl.mdl.DistributionArguments
+import org.ddmore.mdl.mdl.DistributionArgument
 import org.eclipse.emf.ecore.resource.Resource
 import org.ddmore.mdl.mdl.TargetBlock
 import org.ddmore.mdl.mdl.FullyQualifiedSymbolName
@@ -405,6 +407,31 @@ class MdlPrinter {
 	}
 	
 	//Return value of an attribute with a given name
+	def getAttribute(DistributionArguments a, String attrName){
+		for (arg: a.arguments)
+			if (arg.identifier != null && arg.identifier.equals(attrName)){
+				return arg.valueToStr;
+			}				
+		return "";
+	} 
+	
+	def findAttribute(DistributionArguments a, String attrName){
+		for (arg: a.arguments)
+			if (arg.identifier != null && arg.identifier.equals(attrName)){
+				return arg;
+			}				
+		return null;
+	}
+	
+	def valueToStr(DistributionArgument arg){
+		if (arg.distribution != null)
+			return arg.distribution.identifier;
+		if (arg.value != null)
+			return arg.value.toStr;	
+		return "";	
+	}	
+	
+	//Return value of an attribute with a given name
 	def getAttribute(Arguments a, String attrName){
 		for (arg: a.arguments)
 			if (arg.identifier != null &&
@@ -759,21 +786,12 @@ class MdlPrinter {
 		if (type.continuous != null){
 			return type.continuous.identifier
 		} 
-		if (type.covariate != null){
-			return type.covariate.identifier
-		} 
-		if (type.distribution != null){
-			return type.distribution.toStr
-		} 
 		if (type.use != null){
 			return type.use.toStr
 		} 
 		if (type.likelyhood != null){
 			return type.likelyhood.identifier	
 		} 
-		//if (type.missing != null){
-		//	return type.missing.identifier
-		//} 
 		if (type.target != null){
 			return type.target.identifier 
 		} 
@@ -1010,7 +1028,28 @@ class MdlPrinter {
 			}
 		}
 		return res;
-	}	
+	}
+	
+	def toStr(DistributionArguments arg){
+		var res  = "";
+		var iterator = arg.arguments.iterator();
+		if (iterator.hasNext ) {
+			var a = iterator.next; 
+			if (a.identifier != null){
+				res  = res + a.identifier + " = ";
+			}
+			res = res + a.valueToStr;
+		}
+		while (iterator.hasNext){
+			res  = res + ', ';
+			var a = iterator.next; 
+			if (a.identifier != null){
+				res  = res + a.identifier + " = ";
+			}
+			res  = res + a.valueToStr;
+		}
+		return res;
+	}			
 	
 	def toStr(FormalArguments arg) { 
 		var res  = "";

@@ -21,18 +21,21 @@ import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
  *
  */
 public class MdlPrinterUtility extends MdlPrinter {
+	
+	public ConversionReport printOutputFile(File src, File outputDirectory, String text, String fileEnding) {
+		String outputFileName = src.getName().replace(".mdl", fileEnding);
+		File outputFile = new File(outputDirectory.getAbsolutePath() +'/'+ outputFileName);
 
-    public ConversionReport printOutputFile(File src, File outputDirectory, String text, String fileEnding) throws IOException {
-        String outputFileName = src.getName().replace(".mdl", fileEnding);
-        File outputFile = new File(outputDirectory.getAbsolutePath() + '/' + outputFileName);
-
-        ConversionReport report = new ConversionReportImpl();
-        
-        //TODO: There is no way to get this info from the xtend genertated code.
-        report.setReturnCode(ConversionCode.SUCCESS);
-        
-        FileUtils.writeStringToFile(outputFile, text);
-        return report;
-    }
+		ConversionReport report = new ConversionReportImpl();
+		
+		//TODO: There is no way to get this info from the xtend genertated code.
+		report.setReturnCode(ConversionCode.SUCCESS);
+		try {
+			FileUtils.writeStringToFile(outputFile, text);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return report;
+	}
 
 }

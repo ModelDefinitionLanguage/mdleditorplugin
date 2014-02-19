@@ -42,8 +42,7 @@ class Mdl2PharmML extends MdlPrinter {
 	val xmlns_mdef="http://www.pharmml.org/2013/03/ModelDefinition";
 	val xmlns_mstep="http://www.pharmml.org/2013/03/ModellingSteps";
 	val xmlns_design="http://www.pharmml.org/2013/03/TrialDesign";
-	val xmlns_uncert="http://www.pharmml.org/2013/03/Uncertainty";
-	val xmlns_dataSet="http://www.pharmml.org/2013/08/Dataset";
+	val xmlns_ds="http://www.pharmml.org/2013/08/Dataset";
 	
 	val TYPE_INT = "int";
 	val TYPE_REAL = "real";
@@ -70,6 +69,7 @@ class Mdl2PharmML extends MdlPrinter {
 	//MDL != PharmML, e.g., "errorexit" is validated in MDL but converts to a usual function call  
 	var specialFunctions = newHashSet("seq", "update", "runif", "PHI");
 	
+	var distributionPrinter = new DistributionPrinter();
 	
 	var Mcl mcl = null;
 	//Print file name and analyse all MCL objects in the source file
@@ -152,10 +152,10 @@ class Mdl2PharmML extends MdlPrinter {
 		xsi:schemaLocation="«xsi_schemaLocation»"
 		xmlns:math="«xmlns_math»"
 		xmlns:ct="«xmlns_ct»"
+		xmlns:ds="«xmlns_ds»"
 		xmlns:mdef="«xmlns_mdef»"
 		xmlns:mstep="«xmlns_mstep»"
 		xmlns:design="«xmlns_design»"
-		xmlns:uncert="«xmlns_uncert»"
 		'''
 	
 	//////////////////////////////////////
@@ -365,17 +365,17 @@ class Mdl2PharmML extends MdlPrinter {
 				if (i == o.value) {//print a symbol declaration with this number
 					val ArrayList<Piece> pieces = symbols.get(o.key);
 					if (pieces != null)
-						model = model + o.key.print_Pieces(tag, pieces);
+						model = model + o.key.print_Pieces(tag, pieces, true);
 				}
 			}	
 		}
 		return model;
 	}	
 	
-	def print_Pieces(String symbol, String tag, ArrayList<Piece> pieces)'''
-	<«tag» symbId="«symbol»">
+	def print_Pieces(String symbol, String tag, ArrayList<Piece> pieces, boolean printType)'''
+	<«tag» symbId="«symbol»"«IF printType» symbolType="«TYPE_REAL»"«ENDIF»>
 		<ct:Assign>
-			<Equation>
+			<Equation xmlns="«xmlns_math»">
 				<Piecewise>
 					«var parts = pieces.assembleConditions»
 					«FOR part:parts»
@@ -498,7 +498,7 @@ class Mdl2PharmML extends MdlPrinter {
 	def print_mdef_RandomVariable(SymbolDeclaration s)'''
 		<RandomVariable symbId="«s.identifier»">
 			«s.print_VariabilityReference»
-			«s.print_uncert_Distribution»
+			«distributionPrinter.print_uncert_Distribution(s.randomList)»
 		</RandomVariable>
 	'''
 	
@@ -1003,40 +1003,7 @@ class Mdl2PharmML extends MdlPrinter {
 	def print_ct_Value(String value, String type)'''
 		<ct:«type»>«value»</ct:«type»>
 	'''
-		
-	//+ TODO: modify to print correctly any distribution
-	def print_uncert_Distribution(SymbolDeclaration s)'''
-		«IF s.randomList != null»
-			«var args = s.randomList.arguments»
-			«IF args != null»
-				«var distrType = args.getAttribute("type")»
-				«var mean = args.getAttributeExpression("mean")»
-				«var variance = args.getAttributeExpression("variance")»
-				«var stDev = args.getAttributeExpression("sd")»
-				«IF (distrType.length > 0) && distrType.equalsIgnoreCase('Normal')»
-					<NormalDistribution xmlns="«xmlns_uncert»">
-					«IF mean != null»
-						<Mean>
-							«mean.print_Math_Expr»
-						</Mean>
-					«ENDIF»
-					«IF variance != null»
-						<Variance>
-							«variance.print_Math_Expr»
-						</Variance>
-					«ELSE»
-						«IF stDev != null»
-							<StdDev>
-								«stDev.print_Math_Expr»
-							</StdDev>
-						«ENDIF»
-					«ENDIF»	
-					</NormalDistribution>
-				«ENDIF»
-			«ENDIF»
-		«ENDIF»
-	'''		
-	
+
 	/////////////////////////////////////////////////////////////////////////
 	// II Trial Design
 	//////////////////////////////////////////////////////////////////////////
@@ -1242,7 +1209,7 @@ class Mdl2PharmML extends MdlPrinter {
 	//
 	def print_design_Mapping(String mappingType, String ref)'''
 	<«mappingType»>
-		<ColumnRef xmlns="«xmlns_dataSet»" columnIdRef="«ref»"/>
+		<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«ref»"/>
 	</«mappingType»>
 	'''
 
@@ -1515,11 +1482,11 @@ class Mdl2PharmML extends MdlPrinter {
 	def print_BlockStatement(BlockStatement st, String tag, Boolean printType)'''
 		«IF st.symbol != null»
 			<«tag» symbId="«st.symbol.identifier»"«IF printType» symbolType="«TYPE_REAL»"«ENDIF»>
-				<ct:Assign>
-					«IF st.symbol.expression != null»
-						«st.symbol.expression.print_Math_Expr»
+				«IF st.symbol.expression != null»
+					«IF st.symbol.expression.expression != null»
+						«st.symbol.expression.expression.print_Assign»
 					«ENDIF»
-				</ct:Assign>
+				«ENDIF»
 			</«tag»>
 		«ENDIF»
 		«IF st.statement != null»
