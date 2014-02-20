@@ -276,7 +276,7 @@ class ReferenceResolver extends MdlPrinter{
 		return symbols;
 	}
 	
-	def isDependentVariable(String s){
+	def isDataVariable(String s){
 		return (eps_vars.get(s) != null)
 	}
 	

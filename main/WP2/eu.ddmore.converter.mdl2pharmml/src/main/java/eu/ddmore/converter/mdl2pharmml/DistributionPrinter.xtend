@@ -22,7 +22,7 @@ class DistributionPrinter extends MdlPrinter{
 	val definition = "http://www.uncertml.org/distributions/";
 	
 	//Recognised types of distributions
-	static val distribution_attrs = newHashMap(
+	val distribution_attrs = newHashMap(
 		'Bernoulli' 			-> newHashSet("probabilities"),          
 		'Beta'  				-> newHashSet("alpha", "beta"),              
 		'Binomial'  			-> newHashSet("numberOfTrials", "probabilityOfSuccess"),
@@ -57,15 +57,15 @@ class DistributionPrinter extends MdlPrinter{
 	val matrix_attrs = newHashSet("covarianceMatrix", "scaleMatrix");	
 
 	//Prints all distributions
-	public def print_uncert_Distribution(RandomList randomList){
+	public def CharSequence print_uncert_Distribution(RandomList randomList){
 		if (randomList != null){
 			if (randomList.arguments != null){
 				var type = randomList.arguments.getAttribute("type");
 				if (type.length > 0){
 					if (type.equals("FDistribution")) type = "F";	
 					switch(type){
-						case type.equals("MixtureModel"): return print_MixtureModel(randomList)
-						default: return print_DistributionDefault(randomList, type)
+						case type.equals("MixtureModel"): print_MixtureModel(randomList)
+						default: print_DistributionDefault(randomList, type)
 					}
 				}
 			}
@@ -136,7 +136,16 @@ class DistributionPrinter extends MdlPrinter{
 	def print_MixtureModel(RandomList randomList)
 	'''
 		<MixtureModelDistribution xmlns="«xmlns_uncert»" definition="«definition»mixture-model">
-			
+			«FOR arg: randomList.arguments.arguments»
+				«IF arg.component != null»
+					«val weight = arg.component.arguments.getAttribute("weight")»
+					«IF weight.length > 0»
+						<component weight="«weight»">
+							«arg.component.print_uncert_Distribution»
+						</component>
+					«ENDIF»
+				«ENDIF»
+			«ENDFOR»
 		</MixtureModelDistribution>
 	'''
 	
@@ -161,23 +170,35 @@ class DistributionPrinter extends MdlPrinter{
 		}
 	}
 	
+	def valueToStr(Primary p){
+		if (p.number != null){
+			return p.number;
+		}
+		if (p.symbol != null){
+			return p.symbol.toStr; 
+		}
+		if (p.vector != null) {
+			return p.vector.toStr;
+		}
+	}
+	
 	//Convert a vector c(1, 2, 3...) to a flattened list (1 2 3...)
 	//Should work fine with matrices c(c(1,2,3...),... c(10, 20, 30...)) as well
 	//TODO: test, possibly add validation that matrix in a form of nested lists is well-defined (i.e., N x M or N x N).
 	override toStr(Vector v) { 
-		var res  = v.identifier + '(';
+		var res  = "";
 		var iterator = v.values.iterator();
 		if (iterator.hasNext) {
-			res = res + iterator.next.toStr;
+			res = res + iterator.next.valueToStr;
 		}
 		while (iterator.hasNext){
 			res  = res + ' ';
-			res = res + iterator.next.toStr;
+			res = res + iterator.next.valueToStr;
 		}
-		return res + ')';
+		return res;
 	}
 	
-	//For references in distributions we jst print its name and 
+	//For references in distributions we just print its name and 
 	//do not point to the PharmML block (MDL object) it appears  
 	override toStr(FullyQualifiedSymbolName s){
 		return s.identifier;

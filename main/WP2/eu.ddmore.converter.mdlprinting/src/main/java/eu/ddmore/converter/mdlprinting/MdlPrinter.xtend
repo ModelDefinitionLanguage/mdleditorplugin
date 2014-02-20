@@ -423,11 +423,13 @@ class MdlPrinter {
 		return null;
 	}
 	
-	def valueToStr(DistributionArgument arg){
+	def String valueToStr(DistributionArgument arg){
 		if (arg.distribution != null)
 			return arg.distribution.identifier;
 		if (arg.value != null)
 			return arg.value.toStr;	
+		if (arg.component != null)
+			return arg.component.toStr;
 		return "";	
 	}	
 	
@@ -955,7 +957,7 @@ class MdlPrinter {
 		return call.identifier.toStr + "(" + call.arguments.toStr + ")";
 	}
 	
-	def toStr(Primary p){
+	def String toStr(Primary p){
 		if (p.number != null){
 			return  p.number;
 		}
