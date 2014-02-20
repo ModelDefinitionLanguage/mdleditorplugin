@@ -2,8 +2,8 @@
  * MDL converter toolbox, @DDMoRe
  * Author: Natallia Kokash, LIACS, 2014
  * 
- * Multiple values are not a problem, we print vector
- * */
+ * A class to convert distributions from MDL to PharmML
+ */
 package eu.ddmore.converter.mdl2pharmml
 
 import org.ddmore.mdl.mdl.RandomList
@@ -13,20 +13,20 @@ import org.ddmore.mdl.mdl.Vector
 import org.ddmore.mdl.mdl.DistributionArgument
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
+//TODO: test for all types of distributions 
+//TODO: document + examples
 class DistributionPrinter extends MdlPrinter{
 
-	//TODO: all but mixtute_model, add mixed model to the grammar, e.g.,	
-	//X = ~(type=mixedModel, ~(type=Normal...), ~(type=Gaussian...)...)
+	//TODO: external parameters? What if the location changes?
+	val xmlns_uncert="http://www.uncertml.org/3.0"; 
+	val definition = "http://www.uncertml.org/distributions/";
 	
-	//TODO: test for all types of distributions 
-	//TOSO: document + examples
-	//TODO: rewrite to work with omitted attribute names
-	
+	//Recognised types of distributions
 	static val distribution_attrs = newHashMap(
 		'Bernoulli' 			-> newHashSet("probabilities"),          
 		'Beta'  				-> newHashSet("alpha", "beta"),              
 		'Binomial'  			-> newHashSet("numberOfTrials", "probabilityOfSuccess"),
-		'Categorical'  			-> newHashSet(),
+		'Categorical'  			-> newHashSet(), //yet to be defined in the spec at http://www.uncertml.org/3.0
 		'Cauchy'            	-> newHashSet("location", "scale"),
 		'ChiSquare'         	-> newHashSet("degreesOfFreedom"), 
 		'Dirichlet' 	 		-> newHashSet("concentration"),
@@ -53,51 +53,58 @@ class DistributionPrinter extends MdlPrinter{
 		'Wishart'             	-> newHashSet("degreesOfFreedom", "scaleMatrix")
 	)
 	
-	val matrix_attrs = newHashSet("covarianceMatrix", "scaleMatrix");
-	
-	val xmlns_uncert="http://www.uncertml.org/3.0"; 
-	val definition = "http://www.uncertml.org/distributions/";
+	//Names of attributes that expect matrix as a value
+	val matrix_attrs = newHashSet("covarianceMatrix", "scaleMatrix");	
 
+	//Prints all distributions
 	public def print_uncert_Distribution(RandomList randomList){
 		if (randomList != null){
 			if (randomList.arguments != null){
 				var type = randomList.arguments.getAttribute("type");
 				if (type.length > 0){
 					if (type.equals("FDistribution")) type = "F";	
-					val recognizedArgs = distribution_attrs.get(type);
 					switch(type){
 						case type.equals("MixtureModel"): return print_MixtureModel(randomList)
-						default:
-							if (recognizedArgs != null){
-								return 
-								'''
-								<«type»Distribution xmlns="«xmlns_uncert»" definition="«type.getURLExtension»">
-									«FOR arg: randomList.arguments.arguments»
-										«IF recognizedArgs.contains(arg.identifier)»
-											«IF matrix_attrs.contains(arg.identifier)»
-												«var dimension = defineDimension(randomList, arg)»
-												<«arg.identifier» dimension="«dimension»">
-													<values>«arg.value.toStr»</values>
-												</«arg.identifier»>
-											«ELSE»	
-												<«arg.identifier»>
-													«arg.valueToStr»
-												</«arg.identifier»>
-											«ENDIF»
-										«ENDIF»
-									«ENDFOR»	
-								</«type»Distribution>
-								'''
-							}
-						}
+						default: return print_DistributionDefault(randomList, type)
+					}
 				}
 			}
 		}
 	}
 	
+	//NOTE: all attributes in distributions are named
+	protected def print_DistributionDefault(RandomList randomList, String type){
+		val recognizedArgs = distribution_attrs.get(type);
+		if (recognizedArgs == null) return "";
+		'''
+		<«type»Distribution xmlns="«xmlns_uncert»" definition="«type.getURLExtension»">
+			«FOR arg: randomList.arguments.arguments»
+				«IF arg.identifier != null»
+					«IF recognizedArgs.contains(arg.identifier)»
+						«IF matrix_attrs.contains(arg.identifier)»
+							«var dimension = defineDimension(randomList, arg)»
+							<«arg.identifier» dimension="«dimension»">
+								<values>«arg.value.toStr»</values>
+							</«arg.identifier»>
+						«ELSE»	
+							<«arg.identifier»>
+								«arg.valueToStr»
+							</«arg.identifier»>
+						«ENDIF»
+					«ENDIF»
+				«ENDIF»
+			«ENDFOR»	
+		</«type»Distribution>
+		'''
+	}
+	
+	//For distributions that expect matrix, determine its dimensions
+	//First look for an explicitly specified dimensions
+	//If the attribute dimensions is not found, calculate the dimensions based on the number of nested lists (not reliable)
+	//e.g., c(c(1,2,...), c(10, 20,...), c(100, 200,...)) yields 3	
 	protected def defineDimension(RandomList randomList, DistributionArgument matrixAttr){
 		var dimension = randomList.arguments.getAttribute("dimension");
-		if (dimension.length >= 0) {
+		if (dimension.length >= 0) {//explicit dimension is given
 			try{
 				Integer::parseInt(dimension);
 			} 
@@ -114,7 +121,9 @@ class DistributionPrinter extends MdlPrinter{
 		return 0;
 	}
 	
-	def getURLExtension(String type){
+	//Given distribution type, returns an URL to the XML schema
+	//For example, MultivariateStudentT corresponds to multivariate-student-t
+	protected def getURLExtension(String type){
 		try{
 			return definition + type.replaceAll("(.)([A-Z])", "$1-$2").toLowerCase();
 		} 
@@ -123,7 +132,7 @@ class DistributionPrinter extends MdlPrinter{
 		}
 	}
 	
-	//TODO
+	//TODO: add mixed model to the grammar, e.g.,	X = ~(type=mixedModel, ~(type=Normal...), ~(type=StudentT...)...)
 	def print_MixtureModel(RandomList randomList)
 	'''
 		<MixtureModelDistribution xmlns="«xmlns_uncert»" definition="«definition»mixture-model">
@@ -131,6 +140,9 @@ class DistributionPrinter extends MdlPrinter{
 		</MixtureModelDistribution>
 	'''
 	
+	//A value assigned to a distribution attribute can be a number, reference, or vector
+	//Reference to attributes and function call are fine according to MDL grammar but not PharmML specification
+	//TODO: either restrict grammar or extend PharmML
 	override toStr(Primary p){
 		if (p.number != null){
 			return '''<rVal>«p.number»</rVal>''';
@@ -149,6 +161,9 @@ class DistributionPrinter extends MdlPrinter{
 		}
 	}
 	
+	//Convert a vector c(1, 2, 3...) to a flattened list (1 2 3...)
+	//Should work fine with matrices c(c(1,2,3...),... c(10, 20, 30...)) as well
+	//TODO: test, possibly add validation that matrix in a form of nested lists is well-defined (i.e., N x M or N x N).
 	override toStr(Vector v) { 
 		var res  = v.identifier + '(';
 		var iterator = v.values.iterator();
@@ -162,7 +177,8 @@ class DistributionPrinter extends MdlPrinter{
 		return res + ')';
 	}
 	
-	//ignore object name or put it to blkRefId?
+	//For references in distributions we jst print its name and 
+	//do not point to the PharmML block (MDL object) it appears  
 	override toStr(FullyQualifiedSymbolName s){
 		return s.identifier;
 	}
