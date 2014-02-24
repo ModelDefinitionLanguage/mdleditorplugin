@@ -31,6 +31,7 @@ public class DummyMDLToPharmML implements ConverterProvider {
         sourceVersion.setMajor(5);
         sourceVersion.setMinor(0);
         sourceVersion.setPatch(8);
+        sourceVersion.setQualifier("qualm");
         source.setVersion(sourceVersion);
 
         target = new LanguageVersionImpl();
@@ -39,6 +40,7 @@ public class DummyMDLToPharmML implements ConverterProvider {
         targetVersion.setMajor(0);
         targetVersion.setMinor(2);
         targetVersion.setPatch(1);
+        targetVersion.setQualifier("qualp");
         target.setVersion(targetVersion);
 
         converterVersion = new VersionImpl();
