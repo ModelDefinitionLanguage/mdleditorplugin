@@ -11,9 +11,7 @@
 	<modules>
 		<module>../eu.ddmore.converter.toolbox</module>
 		<module>../eu.ddmore.converter.toolbox.api</module>
-		<module>../eu.ddmore.converter.mdlprinting</module>
-		<module>../eu.ddmore.converter.mdl2nonmem</module>
-		<module>../eu.ddmore.converter.mdl2pharmml</module>
+		<module>../eu.ddmore.converter.mdl</module>
 		<module>../eu.ddmore.converter.test.mdl2nonmem.sucess</module>
 		<module>../eu.ddmore.converter.test.mdl2nonmem.failure</module>
 		<module>../eu.ddmore.converter.test.mdl2pharmml</module>

@@ -48,19 +48,7 @@
 
 		<dependency>
 			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-mdl2nonmem</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-mdl2pharmml</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-mdlprinting</artifactId>
+			<artifactId>converter-mdl</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
