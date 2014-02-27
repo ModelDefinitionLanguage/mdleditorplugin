@@ -217,7 +217,7 @@ class MathPrinter extends MdlPrinter{
 		</Piece>
 	'''
 	
-	//+ (left associative)
+	//+ (right associative)
 	def CharSequence print_Math_LogicOr(OrExpression expr, int startIndex){
 		if (expr.expression != null){
 			if (expr.expression.size - startIndex > 1){
@@ -237,11 +237,11 @@ class MathPrinter extends MdlPrinter{
 		return ''''''
 	}
 		
-	//+ (left associative)
+	//+ (right associative)
 	def CharSequence print_Math_LogicAnd(AndExpression expr, int startIndex){
 		if (expr.expression != null){
 			if (expr.expression.size - startIndex > 1){
-				val first = expr.expression.get(startIndex).print_Math_LogicOp(0);
+				val first = expr.expression.get(startIndex).print_Math_LogicOp();
 				val second = expr.print_Math_LogicAnd(startIndex + 1);
 				return 
 				'''
@@ -251,34 +251,31 @@ class MathPrinter extends MdlPrinter{
 				</LogicBinop>
 				'''
 			} else {
-				return '''«expr.expression.get(startIndex).print_Math_LogicOp(0)»'''
+				return '''«expr.expression.get(startIndex).print_Math_LogicOp()»'''
+			}
+		}
+		return ''''''
+	}
+	
+	//+ 
+	def CharSequence print_Math_LogicOp(LogicalExpression expr){
+		if (expr.expression1 != null){
+			if (expr.expression2 != null){
+				return 
+				'''
+				<LogicBinop op="«expr.operator.convertOperator»">
+					«expr.expression1.print_Math_AddOp(0)»
+					«expr.expression2.print_Math_AddOp(0)»
+				</LogicBinop>
+				'''
+			} else {
+				return '''«expr.expression1.print_Math_AddOp(0)»'''
 			}
 		}
 		return ''''''
 	}
 	
 	//+ (left associative)
-	def CharSequence print_Math_LogicOp(LogicalExpression expr, int startIndex){
-		if (expr.expression != null){
-			if (expr.expression.size - startIndex > 1){
-				val operator = expr.operator.get(startIndex).convertOperator;
-				val first = expr.expression.get(startIndex).print_Math_AddOp(0);
-				val second = expr.print_Math_LogicOp(startIndex + 1);
-				return 
-				'''
-				<LogicBinop op="«operator»">
-					«first»
-					«second»
-				</LogicBinop>
-				'''
-			} else {
-				return '''«expr.expression.get(startIndex).print_Math_AddOp(0)»'''
-			}
-		}
-		return ''''''
-	}
-	
-	//+ (right associative)
 	def CharSequence print_Math_AddOp(AdditiveExpression expr, int offset) { 
 		if (expr.expression != null){
 			if (expr.expression.size > 0){
@@ -311,7 +308,7 @@ class MathPrinter extends MdlPrinter{
 		return ''''''			
 	}
 	
-	//+ (right associative)
+	//+ (left associative)
 	def CharSequence print_Math_MultOp(MultiplicativeExpression expr, int offset) { 
 		if (expr.expression != null){
 			if (expr.expression.size - offset > 1){
@@ -332,7 +329,7 @@ class MathPrinter extends MdlPrinter{
 		return ''''''		
 	}
 	
-	//+ (left associative)
+	//+ (right associative)
 	def CharSequence print_Math_PowerOp(PowerExpression expr, int startIndex) { 
 		if (expr.expression != null){
 			if (expr.expression.size - startIndex > 1){
@@ -356,29 +353,30 @@ class MathPrinter extends MdlPrinter{
 			<Uniop op="«expr.operator.convertOperator»">
 				«expr.expression.print_Math_UniOp»
 			</Uniop>
-		«ELSE»
-			«IF expr.parExpression != null»
-				«expr.parExpression.expression.print_Math_Expr»
-			«ELSE»
-				«IF expr.primary != null»
-					«expr.primary.print_Math_Primary»
-				«ENDIF»	
-			«ENDIF»
+		«ENDIF»
+		«IF expr.parExpression != null»
+			«expr.parExpression.expression.print_Math_Expr»
+		«ENDIF»
+		«IF expr.functionCall != null»
+			«expr.functionCall.print_Math_FunctionCall»
+		«ENDIF»
+		«IF expr.number != null»
+			«expr.number.print_ct_Value»
+		«ENDIF»
+		«IF expr.symbol !=null»
+			«expr.symbol.print_ct_SymbolRef»
+		«ENDIF»
+		«IF expr.attribute !=null»
+			«expr.attribute.print_ct_SymbolRef»
 		«ENDIF»
 	'''
 	
 	def CharSequence print_Math_Primary(Primary p)'''
-		«IF p.functionCall != null»
-			«p.functionCall.print_Math_FunctionCall»
-		«ENDIF»
 		«IF p.number != null»
 			«p.number.print_ct_Value»
 		«ENDIF»
 		«IF p.symbol !=null»
 			«p.symbol.print_ct_SymbolRef»
-		«ENDIF»
-		«IF p.attribute !=null»
-			«p.attribute.print_ct_SymbolRef»
 		«ENDIF»
 		«IF p.vector != null»
 			«p.vector.print_ct_Vector»
@@ -436,30 +434,26 @@ class MathPrinter extends MdlPrinter{
 		for (andExpr: expr.expression){
 			var dualLogicalExprs = new ArrayList<String>();
 			for (logicalExpr: andExpr.expression){
-				if (logicalExpr.expression != null){
-					var newExpressions = new ArrayList<String>();
-					var newOperators = new ArrayList<String>();
-					for (addExpr: logicalExpr.expression){
-						newExpressions.add(addExpr.print_Math_AddOp(0).toString);
-					}
-					if (logicalExpr.operator != null)
-						for (op: logicalExpr.operator){
-							newOperators.add(op.getDualOperator.convertOperator);
-						}
-					dualLogicalExprs.add(print_Math_LogicOp(newExpressions, newOperators, 0).toString);	
+				if (logicalExpr.expression2 != null){
+					var first = logicalExpr.expression1.print_Math_AddOp(0).toString;
+					var second = logicalExpr.expression2.print_Math_AddOp(0).toString;
+					var operator = logicalExpr.operator.getDualOperator.convertOperator;
+					dualLogicalExprs.add(print_Math_LogicOp(first, operator, second).toString);	
 				} else {
-					if (logicalExpr.boolean != null){
-						if (logicalExpr.negation == null){
-							dualLogicalExprs.add( 
-							'''
-								<Uniop op="not">
-									<«logicalExpr.boolean»/>
-								</Uniop>
-							''')
-						} else 
+					var res = "";
+					if (logicalExpr.boolean != null) res = logicalExpr.boolean;
+					if (logicalExpr.expression1 != null) res = logicalExpr.expression1.toStr;
+					if (logicalExpr.negation == null){
 						dualLogicalExprs.add( 
 						'''
-							<«logicalExpr.boolean»/>
+							<Uniop op="not">
+								<«res»/>
+							</Uniop>
+						''')
+					} else {
+						dualLogicalExprs.add( 
+						'''
+							<«res»/>
 						''')
 					}
 				}
@@ -470,26 +464,15 @@ class MathPrinter extends MdlPrinter{
 	}
 	
 	// Expr1 >= Expr2 == Expr3 (conversion is left associative, more then 2 operands do not make much sense anyway)
-	private def print_Math_LogicOp(ArrayList<String> exprs, ArrayList<String> operators, int startIndex){
-		if (exprs!= null){
-			if ((startIndex < exprs.size - 1) && (startIndex < operators.size)){
-				val first = exprs.get(startIndex);
-				val second = exprs.print_Math_LogicAnd(startIndex + 1);
-				return 
-				'''
-				<LogicBinop op="«operators.get(startIndex)»">
-					«first»
-					«second»
-				</LogicBinop>
-				'''
-			} else {
-				return '''«exprs.get(startIndex)»'''
-			}
-		}
-		return ''''''
-	}
+	private def print_Math_LogicOp(String first, String operator, String second)
+	'''
+		<LogicBinop op="«operator»">
+			«first»
+			«second»
+		</LogicBinop>
+	'''
 	
-	//+ Expr1 || ... || Expr_n (left associative)
+	//+ Expr1 || ... || Expr_n (right associative)
 	private def CharSequence print_Math_LogicOr(ArrayList<String> exprs, int startIndex){
 		if (exprs!= null){
 			if (startIndex < exprs.size - 1){

@@ -1,6 +1,7 @@
 package eu.ddmore.converter.mdl2pharmml
 
 import org.ddmore.mdl.mdl.SymbolDeclaration
+import org.ddmore.mdl.mdl.RandomVariable
 import org.ddmore.mdl.mdl.Expression
 import org.ddmore.mdl.mdl.Mcl
 import org.ddmore.mdl.mdl.MclObject
@@ -342,7 +343,7 @@ class Mdl2PharmML{
 		}
 	}	
 	
-	def print_mdef_RandomVariable(SymbolDeclaration s)'''
+	def print_mdef_RandomVariable(RandomVariable s)'''
 		<RandomVariable symbId="«s.identifier»">
 			«s.print_VariabilityReference»
 			«distributionPrinter.print_uncert_Distribution(s.randomList)»
@@ -417,14 +418,12 @@ class Mdl2PharmML{
 	}
 
 	//
-	def print_VariabilityReference(SymbolDeclaration s)'''
-		«IF s.randomList != null»
-			«val level = referenceResolver.getAttribute(s.randomList.arguments, "level")»
-			«IF level.length > 0»
-				<ct:VariabilityReference>
-					<ct:SymbRef symbIdRef="«level»"/>
-				</ct:VariabilityReference>
-			«ENDIF»
+	def print_VariabilityReference(RandomVariable s)'''
+		«val level = referenceResolver.getAttribute(s.randomList.arguments, "level")»
+		«IF level.length > 0»
+			<ct:VariabilityReference>
+				<ct:SymbRef symbIdRef="«level»"/>
+			</ct:VariabilityReference>
 		«ENDIF»
 	'''
 
@@ -486,7 +485,7 @@ class Mdl2PharmML{
 			if (o.modelObject != null){
 				for (b: o.modelObject.blocks){
 					if(b.randomVariableDefinitionBlock != null){
-						for (SymbolDeclaration s: b.randomVariableDefinitionBlock.variables){
+						for (s: b.randomVariableDefinitionBlock.variables){
 							if (s.identifier.equalsIgnoreCase(ref))
 								return s;
 						}
