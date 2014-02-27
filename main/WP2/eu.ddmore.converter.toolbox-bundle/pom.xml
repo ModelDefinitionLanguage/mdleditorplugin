@@ -10,51 +10,6 @@
 	<name>Converter Toolbox Bundle</name>
 	<description>Converter Toolbox as a Bundle</description>
 
-
-	<dependencies>
-
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>1.0.0</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.core</groupId>
-			<artifactId>org.eclipse.core.resources</artifactId>
-			<version>3.7.100</version>
-		</dependency>
-
-		<dependency>
-			<groupId>mdlExport</groupId>
-			<artifactId>mdlExport</artifactId>
-			<scope>system</scope>
-			<version>1.0</version>
-			<systemPath>${basedir}/lib/mdlExport.jar</systemPath>
-		</dependency>
-
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-toolbox</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-toolbox-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-mdl</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-	</dependencies>
-
-
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -85,4 +40,51 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>1.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>eu.ddmore</groupId>
+			<artifactId>converter-toolbox</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.ddmore</groupId>
+			<artifactId>converter-toolbox-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.ddmore</groupId>
+			<artifactId>converter-mdl</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>eu.ddmore</groupId>
+					<artifactId>org.ddmore.mdl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.inject</groupId>
+					<artifactId>guice</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>runtime</artifactId>
+			<version>3.9.0-v20130326-1255</version>
+		</dependency>
+
+	</dependencies>
+
 </project>
