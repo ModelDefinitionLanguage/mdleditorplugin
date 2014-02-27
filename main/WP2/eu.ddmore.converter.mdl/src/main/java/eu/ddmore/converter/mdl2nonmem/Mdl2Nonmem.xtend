@@ -779,20 +779,21 @@ class Mdl2Nonmem extends MdlPrinter{
 	«getExternalCodeStart("$INPUT")»
 	«FOR b:d.blocks»
 	    «IF b.headerBlock != null»
-			«FOR st: b.headerBlock.variables SEPARATOR ' '»«IF isDrop(st.identifier, t)»«st.identifier.toStr»=DROP«ELSE»«st.identifier.toStr»«ENDIF»«ENDFOR»
+			«FOR st: b.headerBlock.variables SEPARATOR ' '»«IF isDrop(st.identifier, t)»«st.identifier»=DROP«ELSE»«st.identifier»«ENDIF»«ENDFOR»
         «ENDIF»
 	«ENDFOR»
 	«getExternalCodeEnd("$INPUT")»
 	'''
 	
-    def isDrop(FullyQualifiedSymbolName id, java.util.List<TaskObject> t) {
+	//Note: We drop now all the variables in the specification regardless of the object they refer to
+    def isDrop(String id, java.util.List<TaskObject> t) {
         for (TaskObject tObj :t) {
             for (b: tObj.blocks) {
                 if (b.dataBlock !=  null) {
                     for (DataBlockStatement block: b.dataBlock.statements) {
                         if (block.dropList != null) {
                             for (FullyQualifiedSymbolName symbol : block.dropList.list.symbols) {
-                                if (id.identifier.equals(symbol.identifier))
+                                if (id.equals(symbol.identifier))
                                     return true;
                             }
                         }
@@ -1152,16 +1153,13 @@ class Mdl2Nonmem extends MdlPrinter{
 				//substitute variable name with Y
 				var listExpr  = v.expression.list.toStr;
 				if (!listExpr.equals("") && !res.equals("")){
-					if (v.function != null){
-						return res + v.function.convertID + "(Y) = " + listExpr + "\n"; 
-					}
 					return res + "Y = " + listExpr + "\n"; 	
 				}
 			}
 		}
 		return super.toStr(v);
-	}	
-
+	}
+	
 	//Instead of list(...) we print an expression from a certain attribute (depends on the type)
 	override toStr(List l){		
 		var type = l.arguments.getAttribute("type");

@@ -162,12 +162,6 @@ class DistributionPrinter extends MdlPrinter{
 		if (p.vector != null) {
 			return p.vector.toStr;
 		}
-		if (p.functionCall != null) {
-			return ""; //function calls not supported in distributions
-		}
-		if (p.attribute != null) {
-			return "";	//references to attributes not supported in distributions 
-		}
 	}
 	
 	def valueToStr(Primary p){

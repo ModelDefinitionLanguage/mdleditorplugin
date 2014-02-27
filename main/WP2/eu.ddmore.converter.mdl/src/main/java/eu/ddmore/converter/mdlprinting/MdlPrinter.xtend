@@ -8,6 +8,7 @@ package eu.ddmore.converter.mdlprinting
 import org.ddmore.mdl.mdl.Mcl
 import org.ddmore.mdl.mdl.FunctionCall
 import org.ddmore.mdl.mdl.SymbolDeclaration
+import org.ddmore.mdl.mdl.RandomVariable
 import org.ddmore.mdl.mdl.Block
 import org.ddmore.mdl.mdl.BlockStatement
 import org.ddmore.mdl.mdl.List
@@ -306,7 +307,7 @@ class MdlPrinter {
 			if (o.modelObject != null){
 				for (b: o.modelObject.blocks){
 					if(b.randomVariableDefinitionBlock != null){
-						for (SymbolDeclaration s: b.randomVariableDefinitionBlock.variables){
+						for (s: b.randomVariableDefinitionBlock.variables){
 							if (s.identifier.equals(ref)){
 								return s.defineLevel;
 							}
@@ -318,7 +319,7 @@ class MdlPrinter {
 		return LEVEL_UNDEF;
 	}
 	
-	def defineLevel(SymbolDeclaration s){
+	def defineLevel(RandomVariable s){
 		if (s.randomList != null){
 			var levelRef = s.randomList.arguments.getAttribute("level");
 			if (!levelRef.equals("")){
@@ -728,6 +729,20 @@ class MdlPrinter {
 	
 	def toStr(SymbolDeclaration v){
 		var res = "";
+		if (v.identifier != null) {
+			res = res + v.identifier.convertID;
+		}
+		var expr = ""; //First make sure that expression is not empty, than print "=" 
+		if (v.expression != null){
+			expr = v.expression.toStr;
+		}
+		if (!expr.trim().equals(""))
+			res = res + " = " + expr;
+		return res;
+	}
+
+	def toStr(RandomVariable v){
+		var res = "";
 		if (v.function != null){
 			res = res + v.function.convertID + '(' 
 		}
@@ -737,18 +752,10 @@ class MdlPrinter {
 		if (v.function != null){
 			res = res + ')' 
 		}
-		var expr = ""; //First make sure that expression is not empty, than print "=" 
-		if (v.expression != null){
-			expr = v.expression.toStr;
-		}
-		if (v.randomList != null){
-			expr = v.randomList.toStr;
-		}
-		if (!expr.trim().equals(""))
-			res = res + " = " + expr;
+		res = res + " = " + v.randomList.toStr;
 		return res;
-	}
-	
+	}	
+
 	def toStr(SymbolModification v){
 		var res = "";
 		if (v.identifier != null){
@@ -773,6 +780,9 @@ class MdlPrinter {
 		}
 		if (e.type != null){
 			res = res + e.type.toStr;
+		}
+		if (e.vector != null){
+			res = res + e.vector.toStr;
 		}
 		return res;
 	}
@@ -875,13 +885,11 @@ class MdlPrinter {
 		if (e.boolean != null){
 			res = res + e.boolean.toString;
 		}
-		var iterator = e.expression.iterator();
-		var operatorIterator = e.operator.iterator();
-		if (iterator.hasNext ) {
-			res = iterator.next.toStr;
-		}
-		while (iterator.hasNext && operatorIterator.hasNext){
-			res  = res + operatorIterator.next.convertOperator + iterator.next.toStr;
+		if (e.expression1 != null){
+			res  = res + e.expression1.toStr;
+			if (e.expression2 != null){
+				res = res + e.operator.convertOperator + e.expression2.toStr;
+			}
 		}
 		return res;
 	}
@@ -947,8 +955,17 @@ class MdlPrinter {
 		if (e.parExpression != null){
 			res = res + e.parExpression.toStr;
 		}
-		if (e.primary != null) {
-			res = res + e.primary.toStr
+		if (e.number != null){
+			return e.number;
+		}
+		if (e.symbol != null){
+			return e.symbol.toStr; 
+		}
+		if (e.functionCall != null) {
+			return e.functionCall.toStr
+		}
+		if (e.attribute != null) {
+			return e.attribute.toStr
 		}
 		return res;
 	}	
@@ -964,14 +981,8 @@ class MdlPrinter {
 		if (p.symbol != null){
 			return p.symbol.toStr; 
 		}
-		if (p.functionCall != null) {
-			return p.functionCall.toStr
-		}
 		if (p.vector != null) {
 			return p.vector.toStr
-		}
-		if (p.attribute != null) {
-			return p.attribute.toStr
 		}
 	}
 	
@@ -1143,6 +1154,8 @@ class MdlPrinter {
 	def print(FunctionCall call)'''«call.toStr»'''
 		
     def print(SymbolDeclaration v)'''«v.toStr»'''
+
+	def print(RandomVariable v)'''«v.toStr»'''
 
     def print(SymbolModification v)'''«v.toStr»'''
 
