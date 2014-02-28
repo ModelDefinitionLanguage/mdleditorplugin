@@ -24,12 +24,6 @@ public interface Converter {
      * @throws IOException if there is some error in file reading/writing
 	 */
     ConversionReport convert(File src, File outputDirectory) throws IOException;
-
-    /**
-     * Convert each of the source files and put the output file(s) in the output directory. 
-     * @throws IOException  if there is some error in file reading/writing
-     * @return a conversion report containing the details of the requested conversion 
-     */
     
     /**
      * Convert each of the source files and put the output file(s) in the output directory. 
@@ -40,12 +34,6 @@ public interface Converter {
      */
     ConversionReport[] convert(File[] src, File outputDirectory) throws IOException;
 
-    /**
-     * Convert the source file and put the output file(s) in the output directory. 
-     * @throws IOException  if there is some error in file reading/writing
-     * @param listener a callback hook, if specified the listener will be notified by the converter when certain states are reached  
-     */
-    
     /**
      * Convert the source file and put the output file(s) in the output directory. 
      * This method will run asynchronously, though it will return immediately. 

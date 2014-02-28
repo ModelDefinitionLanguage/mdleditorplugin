@@ -36,12 +36,6 @@ public interface ConverterManager {
 
     /**
      * Get the converter which is registered with the framework providing conversion from the specified input to output and the converter version matches that specified.
-     * @return a ready to use converter
-     * @throws if there is no converter registered in the toolbox that can convert from input to output and is of the specified version
-     */
-    
-    /**
-     * Get the converter which is registered with the framework providing conversion from the specified input to output and the converter version matches that specified.
 	 * @param source the conversion source language and version
 	 * @param target the conversion target language and version
      * @param converterVersion the converter version
