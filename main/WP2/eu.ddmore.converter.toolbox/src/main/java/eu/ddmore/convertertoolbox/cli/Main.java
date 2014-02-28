@@ -49,20 +49,22 @@ public final class Main {
     }
 
     LanguageVersion getLanguageVersion(String language, String version) {
-        Version sourceVersion = new VersionImpl();
+        //        Version sourceVersion = new VersionImpl();
 
         LanguageVersion langVer = new LanguageVersionImpl();
         langVer.setLanguage(language);
         String versionAsArray[] = version.split("-");
+        String qualifier=null;
         if (versionAsArray.length > 1) {
-            sourceVersion.setQualifier(versionAsArray[1]);
+            qualifier = versionAsArray[1];
+            //            sourceVersion.setQualifier(versionAsArray[1]);
         }
 
-        setVersion(sourceVersion, langVer, versionAsArray);
+        setVersion(qualifier, langVer, versionAsArray);
         return langVer;
     }
 
-    private void setVersion(Version sourceVersion, LanguageVersion langVer, String[] versionAsArray) {
+    private void setVersion(String qualifier, LanguageVersion langVer, String[] versionAsArray) {
         String versionNumbers = versionAsArray[0];
         String versionNumbersAsArray[] = versionNumbers.split("\\.");
         if (versionNumbersAsArray.length == 0) {
@@ -72,13 +74,20 @@ public final class Main {
             throw new IllegalArgumentException(
                     "The language version should contain at most thre numbers according to the 'Major.Minor.Patch' naming convention.");
         }
-        sourceVersion.setMajor(Integer.parseInt(versionNumbersAsArray[0]));
+        int major = Integer.parseInt(versionNumbersAsArray[0]);
+        int minor = 0;
+        int patch = 0;
+
+//        sourceVersion.setMajor(Integer.parseInt(versionNumbersAsArray[0]));
         if (versionNumbersAsArray.length > MAX_VERSION_NUMBERS - 2) {
-            sourceVersion.setMinor(Integer.parseInt(versionNumbersAsArray[1]));
+            minor = Integer.parseInt(versionNumbersAsArray[1]);
+//            sourceVersion.setMinor(Integer.parseInt(versionNumbersAsArray[1]));
         }
         if (versionNumbersAsArray.length > MAX_VERSION_NUMBERS - 1) {
-            sourceVersion.setPatch(Integer.parseInt(versionNumbersAsArray[2]));
+            patch = Integer.parseInt(versionNumbersAsArray[2]);
+//            sourceVersion.setPatch(Integer.parseInt(versionNumbersAsArray[2]));
         }
+        Version sourceVersion = new VersionImpl(major, minor, patch, qualifier);
         langVer.setVersion(sourceVersion);
     }
 

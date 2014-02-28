@@ -16,48 +16,26 @@ public class VersionImplTest {
 
     @Before
     public void initialize() {
-        nonmem72Vers = new VersionImpl();
-        nonmem72Vers.setMajor(7);
-        nonmem72Vers.setMinor(2);
-        nonmem72Vers.setPatch(3);
-        nonmem72Vers.setQualifier("7.2");
+        nonmem72Vers = new VersionImpl(7, 2, 3, "7.2");
     }
 
     @Test
     public void shouldBeEqual() {
-        Version nonmem72bVers = new VersionImpl();
-        nonmem72bVers.setMajor(7);
-        nonmem72bVers.setMinor(2);
-        nonmem72bVers.setPatch(3);
-        nonmem72bVers.setQualifier("7.2");
-        
+        Version nonmem72bVers = new VersionImpl(7, 2, 3, "7.2");
+
         assertEquals(nonmem72Vers, nonmem72bVers);
         assertEquals(nonmem72Vers.hashCode(), nonmem72bVers.hashCode());
     }
 
     @Test
     public void shouldNotBeEqual() {
-        Version nonmem71Vers = new VersionImpl();
-        nonmem71Vers.setMajor(7);
-        nonmem71Vers.setMinor(1);
-        nonmem71Vers.setPatch(3);
-        
+        Version nonmem71Vers = new VersionImpl(7, 1, 3, null);
         assertNotEquals(nonmem71Vers, nonmem72Vers);
     }
 
     @Test
     public void shouldBeLatestVersion() {
-        Version nonmem71Vers = new VersionImpl();
-        nonmem71Vers.setMajor(7);
-        nonmem71Vers.setMinor(1);
-        nonmem71Vers.setPatch(3);
-        
-        Version nonmem72bVers = new VersionImpl();
-        nonmem72bVers.setMajor(7);
-        nonmem72bVers.setMinor(2);
-        nonmem72bVers.setPatch(3);
-        nonmem72bVers.setQualifier("7.2");
-
+        Version nonmem71Vers = new VersionImpl(7, 1, 3, null);
         assertTrue(nonmem72Vers.compareTo(nonmem71Vers) > 0);
     }
 

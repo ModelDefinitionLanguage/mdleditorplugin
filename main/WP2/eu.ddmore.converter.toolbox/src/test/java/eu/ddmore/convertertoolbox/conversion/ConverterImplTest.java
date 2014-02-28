@@ -132,10 +132,7 @@ public class ConverterImplTest {
 
     @Test
     public void shouldFindConverterVersion() {
-        Version expectedVersion = new VersionImpl();
-        expectedVersion.setMajor(1);
-        expectedVersion.setMinor(0);
-        expectedVersion.setPatch(2);
+        Version expectedVersion = new VersionImpl(1,0,2,null);
         ConverterImpl converter = new ConverterImpl();
         converter.setProvider(new DummyMDLToNMTRAN());
         Version version = converter.getConverterVersion();

@@ -10,19 +10,25 @@ import eu.ddmore.convertertoolbox.api.domain.Version;
  */
 public class VersionImpl implements Version {
 
-    private int major;
-    private int minor;
-    private int patch;
-    private String qualifier;
+    private final int major;
+    private final int minor;
+    private final int patch;
+    private final String qualifier;
+
+    public VersionImpl(int major, int minor, int patch) {
+        this(major, minor, patch, null);
+    }
+
+    public VersionImpl(int major, int minor, int patch, String qualifier) {
+        this.major = major;
+        this.minor = minor;
+        this.patch = patch;
+        this.qualifier = qualifier;
+    }
 
     @Override
     public int getMajor() {
         return major;
-    }
-
-    @Override
-    public void setMajor(int major) {
-        this.major = major;
     }
 
     @Override
@@ -31,28 +37,13 @@ public class VersionImpl implements Version {
     }
 
     @Override
-    public void setMinor(int minor) {
-        this.minor = minor;
-    }
-
-    @Override
     public int getPatch() {
         return patch;
     }
 
     @Override
-    public void setPatch(int patch) {
-        this.patch = patch;
-    }
-
-    @Override
     public String getQualifier() {
         return qualifier;
-    }
-
-    @Override
-    public void setQualifier(String qualifier) {
-        this.qualifier = qualifier;
     }
 
     @Override

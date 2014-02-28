@@ -7,12 +7,11 @@
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>1.0</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>converter-toolbox</artifactId>
 	<name>Converter Toolbox Implementation</name>
-	<version>0.0.1-SNAPSHOT</version>
 	<build>
 		<plugins>
 			<plugin>
@@ -66,7 +65,7 @@
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>converter-toolbox-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 
 		<dependency>

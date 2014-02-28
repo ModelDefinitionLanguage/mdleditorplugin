@@ -34,23 +34,22 @@ public class MDLToPharmMLConverterTest {
 
     @Test
     public void shouldSucceedToTransformMultipleMDLToPharmML() throws IOException {
-    	File folder = new File(Thread.currentThread().getContextClassLoader().getResource("files/").getPath());
-    	File[] listOfFiles = folder.listFiles(new FilenameFilter() { 
-	         public boolean accept(File dir, String filename)
-             { return filename.endsWith(".mdl"); }
-	        } );
-    	ConversionReport[] reports = converter.performConvert(listOfFiles, folder);
-    	for (int i = 0; i < reports.length; i++) {
-    		assertEquals(reports[0].getReturnCode(), ConversionCode.SUCCESS);
-    	}
+        File folder = new File(Thread.currentThread().getContextClassLoader().getResource("files/").getPath());
+        File[] listOfFiles = folder.listFiles(new FilenameFilter() {
+
+            public boolean accept(File dir, String filename) {
+                return filename.endsWith(".mdl");
+            }
+        });
+        ConversionReport[] reports = converter.performConvert(listOfFiles, folder);
+        for (int i = 0; i < reports.length; i++) {
+            assertEquals(reports[0].getReturnCode(), ConversionCode.SUCCESS);
+        }
     }
 
     @Test
     public void shouldFindCorrectConverterVersion() {
-        Version converterVersion = new VersionImpl();
-        converterVersion.setMajor(1);
-        converterVersion.setMinor(0);
-        converterVersion.setPatch(2);
+        Version converterVersion = new VersionImpl(1, 0, 2, null);
         assertEquals(converter.getConverterVersion(), converterVersion);
     }
 
@@ -58,10 +57,7 @@ public class MDLToPharmMLConverterTest {
     public void shouldFindCorrectSourceVersion() {
         LanguageVersion source = new LanguageVersionImpl();
         source.setLanguage("MDL");
-        Version sourceVersion = new VersionImpl();
-        sourceVersion.setMajor(5);
-        sourceVersion.setMinor(0);
-        sourceVersion.setPatch(8);
+        Version sourceVersion = new VersionImpl(5, 0, 8, null);
         source.setVersion(sourceVersion);
         assertEquals(converter.getSource(), source);
     }
@@ -70,10 +66,7 @@ public class MDLToPharmMLConverterTest {
     public void shouldFindCorrectTargetVersion() {
         LanguageVersion target = new LanguageVersionImpl();
         target.setLanguage("PharmML");
-        Version targetVersion = new VersionImpl();
-        targetVersion.setMajor(0);
-        targetVersion.setMinor(2);
-        targetVersion.setPatch(1);
+        Version targetVersion = new VersionImpl(0, 2, 1, null);
         target.setVersion(targetVersion);
         assertEquals(converter.getTarget(), target);
     }

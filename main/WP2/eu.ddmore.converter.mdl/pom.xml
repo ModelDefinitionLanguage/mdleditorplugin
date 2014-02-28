@@ -6,11 +6,10 @@
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>1.0</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>converter-mdl</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 
 
 	<properties>
@@ -93,18 +92,24 @@
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>converter-toolbox-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>converter-toolbox</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>org.ddmore.mdl</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>eu.ddmore</groupId>
+					<artifactId>converter-toolbox-bundle</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>

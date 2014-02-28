@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * Copyright (C) 2013 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
@@ -32,23 +31,15 @@ public class MDLToNonmemConverter extends MdlPrinterUtility implements Converter
     public MDLToNonmemConverter() {
         source = new LanguageVersionImpl();
         source.setLanguage("MDL");
-        Version sourceVersion = new VersionImpl();
-        sourceVersion.setMajor(5);
-        sourceVersion.setMinor(0);
-        sourceVersion.setPatch(8);
+        Version sourceVersion = new VersionImpl(5, 0, 8, null);
         source.setVersion(sourceVersion);
 
         target = new LanguageVersionImpl();
         target.setLanguage("NMTRAN");
-        Version targetVersion = new VersionImpl();
-        targetVersion.setMajor(7);
-        targetVersion.setMinor(2);
+        Version targetVersion = new VersionImpl(7, 2, 0, null);
         target.setVersion(targetVersion);
 
-        converterVersion = new VersionImpl();
-        converterVersion.setMajor(1);
-        converterVersion.setMinor(0);
-        converterVersion.setPatch(2);
+        converterVersion = new VersionImpl(1, 0, 2, null);
     }
 
     @Override
@@ -62,7 +53,7 @@ public class MDLToNonmemConverter extends MdlPrinterUtility implements Converter
 
         Mdl2Nonmem xtendConverter = new Mdl2Nonmem();
         CharSequence converted = xtendConverter.convertToNMTRAN(mcl);
-        
+
         return printOutputFile(src, outputDirectory, converted.toString(), ".ctl");
     }
 
@@ -93,7 +84,7 @@ public class MDLToNonmemConverter extends MdlPrinterUtility implements Converter
 
     @Override
     public String toString() {
-        return String.format("MDLToNonmemConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion) ;
+        return String.format("MDLToNonmemConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion);
     }
 
 }

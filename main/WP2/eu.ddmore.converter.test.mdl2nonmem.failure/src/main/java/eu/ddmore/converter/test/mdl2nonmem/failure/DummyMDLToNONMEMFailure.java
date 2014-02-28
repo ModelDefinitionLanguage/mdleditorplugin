@@ -22,31 +22,21 @@ public class DummyMDLToNONMEMFailure implements ConverterProvider {
     private LanguageVersion source;
     private LanguageVersion target;
     private Version converterVersion;
-    
+
     public DummyMDLToNONMEMFailure() {
         source = new LanguageVersionImpl();
         source.setLanguage("MDL");
-        Version sourceVersion = new VersionImpl();
-        sourceVersion.setMajor(5);
-        sourceVersion.setMinor(0);
-        sourceVersion.setPatch(8);
-        sourceVersion.setQualifier("qualm");
+        Version sourceVersion = new VersionImpl(5, 0, 8, "qualm");
         source.setVersion(sourceVersion);
-        
+
         target = new LanguageVersionImpl();
         target.setLanguage("NMTRAN");
-        Version targetVersion = new VersionImpl();
-        targetVersion.setMajor(7);
-        targetVersion.setMinor(2);
-        targetVersion.setQualifier("qualn");
+        Version targetVersion = new VersionImpl(7, 2, 0, "qualn");
         target.setVersion(targetVersion);
-        
-        converterVersion = new VersionImpl();
-        converterVersion.setMajor(1);
-        converterVersion.setMinor(0);
-        converterVersion.setPatch(1);
+
+        converterVersion = new VersionImpl(1, 0, 1, null);
     }
-    
+
     @Override
     public ConversionReport performConvert(File src, File outputDirectory) throws IOException {
         throw new IOException("DummyMDLToNMTRANFailure");

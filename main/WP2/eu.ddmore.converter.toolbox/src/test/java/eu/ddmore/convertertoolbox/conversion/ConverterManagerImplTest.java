@@ -8,10 +8,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,17 +33,13 @@ public class ConverterManagerImplTest {
     public void init() {
         mdl = new LanguageVersionImpl();
         mdl.setLanguage("MDL");
-        Version mdlVersion = new VersionImpl();
-        mdlVersion.setMajor(5);
-        mdlVersion.setMinor(0);
-        mdlVersion.setPatch(8);
+        Version mdlVersion = new VersionImpl(5, 0, 8, null);
         mdl.setVersion(mdlVersion);
 
         converterManager = new ConverterManagerImpl();
-        
+
         List<Converter> converters = new ArrayList<Converter>();
 
-       
         ConverterImpl converter = new ConverterImpl();
         converter.setProvider(new DummyMDLToNMTRAN());
         converters.add(converter);
@@ -57,16 +49,13 @@ public class ConverterManagerImplTest {
         converters.add(converter2);
 
         converterManager.setConverters(converters);
-        
+
     }
 
     private LanguageVersion createPharmMLLanguage() {
         LanguageVersion lang = new LanguageVersionImpl();
         lang.setLanguage("PharmML");
-        Version version = new VersionImpl();
-        version.setMajor(0);
-        version.setMinor(2);
-        version.setPatch(1);
+        Version version = new VersionImpl(0, 2, 1, null);
         lang.setVersion(version);
         return lang;
     }
@@ -74,9 +63,7 @@ public class ConverterManagerImplTest {
     private LanguageVersion createNONMEMLanguage() {
         LanguageVersion lang = new LanguageVersionImpl();
         lang.setLanguage("NMTRAN");
-        Version version = new VersionImpl();
-        version.setMajor(7);
-        version.setMinor(2);
+        Version version = new VersionImpl(7, 2, 0, null);
         lang.setVersion(version);
         return lang;
     }
@@ -90,23 +77,17 @@ public class ConverterManagerImplTest {
     @Test
     public void shouldFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
-        Version converterVersion = new VersionImpl();
-        converterVersion.setMajor(1);
-        converterVersion.setMinor(0);
-        converterVersion.setPatch(2);
+        Version converterVersion = new VersionImpl(1, 0, 2, null);
         assertNotNull(converterManager.getConverter(mdl, nonmem, converterVersion));
     }
 
     @Test(expected = ConverterNotFoundException.class)
     public void shouldNotFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
-        Version converterVersion = new VersionImpl();
-        converterVersion.setMajor(1);
-        converterVersion.setMinor(0);
-        converterVersion.setPatch(3);
+        Version converterVersion = new VersionImpl(1, 0, 3, null);
         converterManager.getConverter(mdl, nonmem, converterVersion);
     }
-    
+
     @Test
     public void shouldFindConverterMDLToPharmML() throws ConverterNotFoundException, IOException {
         LanguageVersion pharmaml = createPharmMLLanguage();

@@ -5,7 +5,7 @@
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>Converter Master</name>
 
 	<modules>

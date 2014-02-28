@@ -44,32 +44,24 @@ public class MDLToNonmemConverterTest {
 
     @Test
     public void shouldFindCorrectConverterVersion() {
-        Version converterVersion = new VersionImpl();
-        converterVersion.setMajor(1);
-        converterVersion.setMinor(0);
-        converterVersion.setPatch(2);
+        Version converterVersion = new VersionImpl(1, 0, 2, null);
         assertEquals(converter.getConverterVersion(), converterVersion);
     }
-    
+
     @Test
     public void shouldFindCorrectSourceVersion() {
         LanguageVersion source = new LanguageVersionImpl();
         source.setLanguage("MDL");
-        Version sourceVersion = new VersionImpl();
-        sourceVersion.setMajor(5);
-        sourceVersion.setMinor(0);
-        sourceVersion.setPatch(8);
+        Version sourceVersion = new VersionImpl(5, 0, 8, null);
         source.setVersion(sourceVersion);
         assertEquals(converter.getSource(), source);
     }
-    
+
     @Test
     public void shouldFindCorrectTargetVersion() {
         LanguageVersion target = new LanguageVersionImpl();
         target.setLanguage("NMTRAN");
-        Version targetVersion = new VersionImpl();
-        targetVersion.setMajor(7);
-        targetVersion.setMinor(2);
+        Version targetVersion = new VersionImpl(7, 2, 0, null);
         target.setVersion(targetVersion);
         assertEquals(converter.getTarget(), target);
     }

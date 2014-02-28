@@ -8,7 +8,9 @@ package eu.ddmore.convertertoolbox.api.exception;
  */
 public class ConverterNotFoundException extends Exception {
 
-	public ConverterNotFoundException(String message) {
+    private static final long serialVersionUID = 1L;
+
+    public ConverterNotFoundException(String message) {
 		super(message);
 	}
 }

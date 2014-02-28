@@ -14,22 +14,10 @@ public interface Version extends Comparable<Version> {
     int getMajor();
 
     /**
-     * Sets the major version number.
-     * @param major the major version number to set
-     */
-    void setMajor(int major);
-
-    /**
      * 
      * @return the minor version number
      */
     int getMinor();
-
-    /**
-     * Sets the minor version number.
-     * @param minor the minor version number to set
-     */
-    void setMinor(int minor);
 
     /**
      * 
@@ -38,20 +26,9 @@ public interface Version extends Comparable<Version> {
     int getPatch();
 
     /**
-     * Sets the patch version number.
-     * @param patch the patch version number to set
-     */
-    void setPatch(int patch);
-
-    /**
      * 
      * @return the version qualifier
      */
     String getQualifier();
 
-    /**
-     * Sets the version qualifier.
-     * @param qualifier the version qualifier to set
-     */
-    void setQualifier(String qualifier);
 }
