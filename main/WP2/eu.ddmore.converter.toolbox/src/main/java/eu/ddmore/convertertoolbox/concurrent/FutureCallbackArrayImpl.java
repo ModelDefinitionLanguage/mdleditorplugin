@@ -17,7 +17,7 @@ public class FutureCallbackArrayImpl extends AbstractFutureCallback<ConversionRe
     }
 
     /**
-     * Called if the associated ListenableFuture object succesfully terminates its task.
+     * Called if the associated ListenableFuture object successfully terminates its task.
      * @param result the object returned by the call method of the associated ListenableFuture object.
      */
     @Override

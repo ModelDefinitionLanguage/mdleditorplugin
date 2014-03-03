@@ -25,7 +25,7 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<T> {
     /**
      * 
      * @param thrown the error thrown by the onFailure method that concrete subclasses should implement.
-     * @return a conversion report marked as 'FAILURE', with additional erro detail derived from the input error message.
+     * @return a conversion report marked as 'FAILURE', with additional error detail derived from the input error message.
      */
     protected ConversionReport createConversionReport(Throwable thrown) {
         ConversionReport report = new ConversionReportImpl();

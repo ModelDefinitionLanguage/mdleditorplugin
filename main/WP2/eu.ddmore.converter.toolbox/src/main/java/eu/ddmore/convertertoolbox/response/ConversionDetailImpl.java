@@ -3,8 +3,10 @@
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.response;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
 
@@ -18,7 +20,7 @@ public class ConversionDetailImpl implements ConversionDetail {
     private String message;
 
     public ConversionDetailImpl() {
-        info = new HashMap<String, String>();
+        info = Maps.newHashMap();
     }
 
     @Override
@@ -33,12 +35,12 @@ public class ConversionDetailImpl implements ConversionDetail {
 
     @Override
     public Map<String, String> getInfo() {
-        return info;
+        return ImmutableMap.copyOf(info);
     }
 
     @Override
     public void setInfo(Map<String, String> info) {
-        this.info = info;
+        this.info.putAll(info);
     }
 
     @Override

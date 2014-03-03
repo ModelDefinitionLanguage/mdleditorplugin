@@ -10,7 +10,6 @@
 		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 
-	<groupId>eu.ddmore.converter.test</groupId>
 	<artifactId>toolbox-integration-test</artifactId>
 	<name>Converter Toolbox Integration Test</name>
 	<build>
@@ -28,20 +27,20 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>eu.ddmore.converter</groupId>
+			<groupId>eu.ddmore</groupId>
 			<artifactId>test-mdl2nonmem-success</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>eu.ddmore.converter</groupId>
+			<groupId>eu.ddmore</groupId>
 			<artifactId>test-mdl2nonmem-failure</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>eu.ddmore.converter</groupId>
+			<groupId>eu.ddmore</groupId>
 			<artifactId>test-mdl2pharmml</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

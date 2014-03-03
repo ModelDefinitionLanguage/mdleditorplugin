@@ -14,10 +14,10 @@ public class MainTest {
         String language = "MDL";
         String version = "5.0.8-qualm";
         LanguageVersion source = new Main().getLanguageVersion(language, version);
-        assertEquals(source.getLanguage(), language);
-        assertEquals(source.getVersion().getMajor(), 5);
-        assertEquals(source.getVersion().getMinor(), 0);
-        assertEquals(source.getVersion().getPatch(), 8);
+        assertEquals(language, source.getLanguage());
+        assertEquals(5, source.getVersion().getMajor());
+        assertEquals(0, source.getVersion().getMinor());
+        assertEquals(8, source.getVersion().getPatch());
         assertEquals("qualm", source.getVersion().getQualifier());
     }
     
@@ -26,10 +26,21 @@ public class MainTest {
         String language = "MDL";
         String version = "5.0-qualm";
         LanguageVersion source = new Main().getLanguageVersion(language, version);
-        assertEquals(source.getLanguage(), language);
-        assertEquals(source.getVersion().getMajor(), 5);
-        assertEquals(source.getVersion().getMinor(), 0);
+        assertEquals(language, source.getLanguage());
+        assertEquals(5, source.getVersion().getMajor());
+        assertEquals(0, source.getVersion().getMinor());
         assertEquals("qualm", source.getVersion().getQualifier());
+    }
+
+    @Test
+    public void shouldCreateCorrectLanguageVersionDoubleHyphen() {
+        String language = "MDL";
+        String version = "5.0.8-some-qualm";
+        LanguageVersion source = new Main().getLanguageVersion(language, version);
+        assertEquals(language, source.getLanguage());
+        assertEquals(5, source.getVersion().getMajor());
+        assertEquals(0, source.getVersion().getMinor());
+        assertEquals("some-qualm", source.getVersion().getQualifier());
     }
 
 }

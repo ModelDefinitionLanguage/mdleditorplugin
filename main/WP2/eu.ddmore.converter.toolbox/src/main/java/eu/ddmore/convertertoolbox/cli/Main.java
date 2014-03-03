@@ -26,10 +26,6 @@ public final class Main {
     private ConverterManager converterManager;
     private static final int MAX_VERSION_NUMBERS = 3;
 
-    public Main() {
-
-    }
-
     private ConversionReport convert(File src, String srcLanguage, String srcVersion, String targetLanguage, String targetVersion,
             File outputDirectory) throws ConverterNotFoundException, IOException {
         LanguageVersion source = getLanguageVersion(srcLanguage, srcVersion);
@@ -49,23 +45,21 @@ public final class Main {
     }
 
     LanguageVersion getLanguageVersion(String language, String version) {
-        //        Version sourceVersion = new VersionImpl();
-
         LanguageVersion langVer = new LanguageVersionImpl();
         langVer.setLanguage(language);
-        String versionAsArray[] = version.split("-");
+        int hyphenFirstIndex = version.indexOf('-');
         String qualifier=null;
-        if (versionAsArray.length > 1) {
-            qualifier = versionAsArray[1];
-            //            sourceVersion.setQualifier(versionAsArray[1]);
+        String versionNumbers=null;
+        if (hyphenFirstIndex != -1) {
+            versionNumbers = version.substring(0, hyphenFirstIndex);
+            qualifier = version.substring(hyphenFirstIndex+1);
         }
 
-        setVersion(qualifier, langVer, versionAsArray);
+        setVersion(qualifier, versionNumbers, langVer);
         return langVer;
     }
 
-    private void setVersion(String qualifier, LanguageVersion langVer, String[] versionAsArray) {
-        String versionNumbers = versionAsArray[0];
+    private void setVersion(String qualifier, String versionNumbers, LanguageVersion langVer) {
         String versionNumbersAsArray[] = versionNumbers.split("\\.");
         if (versionNumbersAsArray.length == 0) {
             throw new IllegalArgumentException(
