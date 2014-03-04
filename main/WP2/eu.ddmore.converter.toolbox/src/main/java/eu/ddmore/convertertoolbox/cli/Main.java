@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import com.google.common.base.Preconditions;
+
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
@@ -25,6 +29,7 @@ public final class Main {
 
     private ConverterManager converterManager;
     private static final int MAX_VERSION_NUMBERS = 3;
+    private static final Logger LOGGER = Logger.getLogger(Main.class);
 
     private ConversionReport convert(File src, String srcLanguage, String srcVersion, String targetLanguage, String targetVersion,
             File outputDirectory) throws ConverterNotFoundException, IOException {
@@ -66,7 +71,7 @@ public final class Main {
                     "The language version should contain at least one number, e.g. '1' is interpreted into '1.0.0', '2.5' is interpreted into '2.5.0'.");
         } else if (versionNumbersAsArray.length > MAX_VERSION_NUMBERS) {
             throw new IllegalArgumentException(
-                    "The language version should contain at most thre numbers according to the 'Major.Minor.Patch' naming convention.");
+                    "The language version should contain at most three numbers according to the 'Major.Minor.Patch' naming convention.");
         }
         int major = Integer.parseInt(versionNumbersAsArray[0]);
         int minor = 0;
@@ -85,11 +90,18 @@ public final class Main {
         langVer.setVersion(sourceVersion);
     }
 
+    /**
+     * 
+     * @param args an array of 6 strings.   0:input file/folder, 1:output folder, 
+     *                                      2:source language name, 3:source language version-qualifier, 
+     *                                      4:target language name, 5:target language version-qualifier.
+     *                                      e.g. 'myMDLFile.mdl C:/output/ MDL 5.0.8 NMTRAN 7.2.0'
+     * @return array of Conversion reports that 
+     * @throws ConverterNotFoundException
+     * @throws IOException
+     */
     public ConversionReport[] runFromCommandLine(String... args) throws ConverterNotFoundException, IOException {
-        if (args.length != 6) {
-            throw new IllegalArgumentException(
-                    "Illegal arguments. Run again by giving the arguments in the following format: 'sourcePath outputPath sourceLanguage sourceVersion targetLanguage targetVersion', e.g. 'myMDLFile.mdl C:/output/ MDL 5.0.8 NONMEM 7.2.0'");
-        }
+        Preconditions.checkArgument(args.length == 6, "Illegal arguments. Run again by giving the arguments in the following format: 'sourcePath outputPath sourceLanguage sourceVersion targetLanguage targetVersion', e.g. 'myMDLFile.mdl C:/output/ MDL 5.0.8 NMTRAN 7.2.0'");
         converterManager = new ConverterManagerImpl();
         File src = new File(args[0]);
         File outputDirectory = new File(args[1]);
@@ -112,6 +124,9 @@ public final class Main {
     }
 
     public static void main(String... args) throws ConverterNotFoundException, IOException {
-        new Main().runFromCommandLine(args);
+        ConversionReport[] reports = new Main().runFromCommandLine(args);
+        for (ConversionReport report : reports) {
+            LOGGER.info(report);
+        }
     }
 }

@@ -12,15 +12,17 @@ import eu.ddmore.convertertoolbox.api.domain.Version;
 public class LanguageVersionImpl implements LanguageVersion {
 
     private String language;
+    private String originalLanguage;
     private Version version;
 
     @Override
     public String getLanguage() {
-        return language;
+        return originalLanguage;
     }
 
     @Override
     public void setLanguage(String language) {
+        this.originalLanguage = language;
         this.language = language.toUpperCase().replaceAll("-", "").replaceAll("_", "");
     }
 

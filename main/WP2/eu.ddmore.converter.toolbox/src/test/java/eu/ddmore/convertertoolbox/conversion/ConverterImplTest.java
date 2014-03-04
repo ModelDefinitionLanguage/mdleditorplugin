@@ -43,12 +43,11 @@ public class ConverterImplTest {
         converter.setProvider(new DummyMDLToNMTRAN());
         ConversionReport report = converter.convert(pkPRED, outputDir);
         assertEquals(ConversionCode.SUCCESS, report.getReturnCode());
-        assertEquals(report.getDetails(Severity.ERROR).size(), 0);
+        assertEquals(0, report.getDetails(Severity.ERROR).size());
         List<ConversionDetail> details = report.getDetails(Severity.ALL);
         assertNotNull(details);
-        assertEquals(details.get(0).getInfo().get("INFO"), "What a nice conversion!");
-        assertEquals(details.get(0).getMessage(), "Some message");
-        
+        assertEquals("What a nice conversion!", details.get(0).getInfo().get("INFO"));
+        assertEquals("Some message", details.get(0).getMessage());
     }
 
     @Test
@@ -60,8 +59,8 @@ public class ConverterImplTest {
         ConversionReport[] report = converter.convert(src, outputDir);
         assertEquals(ConversionCode.SUCCESS, report[0].getReturnCode());
         assertEquals(ConversionCode.SUCCESS, report[1].getReturnCode());
-        assertEquals(report[0].getDetails(Severity.ERROR).size(), 0);
-        assertEquals(report[1].getDetails(Severity.ERROR).size(), 0);
+        assertEquals(0, report[0].getDetails(Severity.ERROR).size());
+        assertEquals(0, report[1].getDetails(Severity.ERROR).size());
     }
 
     @Test
@@ -71,7 +70,7 @@ public class ConverterImplTest {
             @Override
             public void conversionComplete(ConversionReport report) {
                 assertEquals(ConversionCode.SUCCESS, report.getReturnCode());
-                assertEquals(report.getDetails(Severity.ERROR).size(), 0);
+                assertEquals(0, report.getDetails(Severity.ERROR).size());
             }
 
             @Override
@@ -96,8 +95,8 @@ public class ConverterImplTest {
             public void conversionComplete(ConversionReport[] report) {
                 assertEquals(ConversionCode.SUCCESS, report[0].getReturnCode());
                 assertEquals(ConversionCode.SUCCESS, report[1].getReturnCode());
-                assertEquals(report[0].getDetails(Severity.ERROR).size(), 0);
-                assertEquals(report[1].getDetails(Severity.ERROR).size(), 0);
+                assertEquals(0, report[0].getDetails(Severity.ERROR).size());
+                assertEquals(0, report[1].getDetails(Severity.ERROR).size());
             }
             
         };
@@ -136,6 +135,6 @@ public class ConverterImplTest {
         ConverterImpl converter = new ConverterImpl();
         converter.setProvider(new DummyMDLToNMTRAN());
         Version version = converter.getConverterVersion();
-        assertEquals(version, expectedVersion);
+        assertEquals(expectedVersion, version);
     }
 }
