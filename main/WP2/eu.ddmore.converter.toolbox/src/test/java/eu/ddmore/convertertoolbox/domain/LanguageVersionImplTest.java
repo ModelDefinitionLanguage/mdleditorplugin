@@ -18,18 +18,14 @@ public class LanguageVersionImplTest {
 
     @Before
     public void initialize() {
-        nonmem72 = new LanguageVersionImpl();
-        nonmem72.setLanguage("NMTRAN");
         Version nonmem72Vers = new VersionImpl(7, 2, 0, "qual");
-        nonmem72.setVersion(nonmem72Vers);
+        nonmem72 = new LanguageVersionImpl("NMTRAN", nonmem72Vers);
     }
 
     @Test
     public void shouldBeEqualHyphen() {
-        LanguageVersion nonmem72b = new LanguageVersionImpl();
-        nonmem72b.setLanguage("NM-TRAN");
         Version nonmem72bVers = new VersionImpl(7, 2, 0, "qual");
-        nonmem72b.setVersion(nonmem72bVers);
+        LanguageVersion nonmem72b = new LanguageVersionImpl("NM-TRAN", nonmem72bVers);
 
         assertEquals(nonmem72, nonmem72b);
         assertEquals(nonmem72.hashCode(), nonmem72b.hashCode());
@@ -37,10 +33,8 @@ public class LanguageVersionImplTest {
 
     @Test
     public void shouldBeEqualLowerCase() {
-        LanguageVersion nonmem72b = new LanguageVersionImpl();
-        nonmem72b.setLanguage("nmtran");
         Version nonmem72bVers = new VersionImpl(7, 2, 0, "qual");
-        nonmem72b.setVersion(nonmem72bVers);
+        LanguageVersion nonmem72b = new LanguageVersionImpl("nmtran", nonmem72bVers);
 
         assertEquals(nonmem72, nonmem72b);
         assertEquals(nonmem72.hashCode(), nonmem72b.hashCode());
@@ -48,10 +42,8 @@ public class LanguageVersionImplTest {
 
     @Test
     public void shouldNotBeEqual() {
-        LanguageVersion nonmem71 = new LanguageVersionImpl();
-        nonmem71.setLanguage("NMTRAN");
         Version nonmem71Vers = new VersionImpl(7, 1, 0, "qual");
-        nonmem71.setVersion(nonmem71Vers);
+        LanguageVersion nonmem71 = new LanguageVersionImpl("NMTRAN", nonmem71Vers);
 
         assertNotEquals(nonmem71, nonmem72);
     }

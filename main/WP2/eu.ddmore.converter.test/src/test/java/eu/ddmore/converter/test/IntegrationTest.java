@@ -46,27 +46,20 @@ public class IntegrationTest {
 
     @Before
     public void init() {
-        mdl = new LanguageVersionImpl();
-        mdl.setLanguage("MDL");
         Version mdlVersion = new VersionImpl(5, 0, 8, "qualm");
-        mdl.setVersion(mdlVersion);
-
+        mdl = new LanguageVersionImpl("MDL", mdlVersion);
         converterManager = new ConverterManagerImpl();
     }
 
     private LanguageVersion createPharmMLLanguage() {
-        LanguageVersion lang = new LanguageVersionImpl();
-        lang.setLanguage("PharmML");
         Version version = new VersionImpl(0, 2, 1, "qualp");
-        lang.setVersion(version);
+        LanguageVersion lang = new LanguageVersionImpl("PharmML", version);
         return lang;
     }
 
     private LanguageVersion createNONMEMLanguage() {
-        LanguageVersion lang = new LanguageVersionImpl();
-        lang.setLanguage("NMTRAN");
         Version version = new VersionImpl(7, 2, 0, "qualn");
-        lang.setVersion(version);
+        LanguageVersion lang = new LanguageVersionImpl("NMTRAN", version);
         return lang;
     }
 
@@ -101,10 +94,8 @@ public class IntegrationTest {
 
     @Test(expected = ConverterNotFoundException.class)
     public void shouldNotFindConverterMDLToNONMEMWithQualifier() throws ConverterNotFoundException, IOException {        
-        LanguageVersion nonmem = new LanguageVersionImpl();
-        nonmem.setLanguage("NMTRAN");
         Version version = new VersionImpl(7, 2, 0, "someQual");
-        nonmem.setVersion(version);
+        LanguageVersion nonmem = new LanguageVersionImpl("NMTRAN", version);
         Version converterVersion = new VersionImpl(1, 0, 2, null);
         converterManager.getConverter(mdl, nonmem, converterVersion);
     }

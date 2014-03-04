@@ -50,8 +50,6 @@ public final class Main {
     }
 
     LanguageVersion getLanguageVersion(String language, String version) {
-        LanguageVersion langVer = new LanguageVersionImpl();
-        langVer.setLanguage(language);
         int hyphenFirstIndex = version.indexOf('-');
         String qualifier=null;
         String versionNumbers=null;
@@ -59,12 +57,11 @@ public final class Main {
             versionNumbers = version.substring(0, hyphenFirstIndex);
             qualifier = version.substring(hyphenFirstIndex+1);
         }
-
-        setVersion(qualifier, versionNumbers, langVer);
-        return langVer;
+        Version sourceVersion = createVersion(qualifier, versionNumbers);
+        return new LanguageVersionImpl(language, sourceVersion);
     }
 
-    private void setVersion(String qualifier, String versionNumbers, LanguageVersion langVer) {
+    private Version createVersion(String qualifier, String versionNumbers) {
         String versionNumbersAsArray[] = versionNumbers.split("\\.");
         if (versionNumbersAsArray.length == 0) {
             throw new IllegalArgumentException(
@@ -86,8 +83,7 @@ public final class Main {
             patch = Integer.parseInt(versionNumbersAsArray[2]);
 //            sourceVersion.setPatch(Integer.parseInt(versionNumbersAsArray[2]));
         }
-        Version sourceVersion = new VersionImpl(major, minor, patch, qualifier);
-        langVer.setVersion(sourceVersion);
+        return new VersionImpl(major, minor, patch, qualifier);
     }
 
     /**

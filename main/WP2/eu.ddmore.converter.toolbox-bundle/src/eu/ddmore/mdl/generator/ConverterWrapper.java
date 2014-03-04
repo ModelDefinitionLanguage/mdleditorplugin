@@ -30,10 +30,8 @@ public class ConverterWrapper extends MdlPrinter implements IGenerator {
 
     public ConverterWrapper() {
         converterManager = new ConverterManagerImpl();
-        mdl = new LanguageVersionImpl();
-        mdl.setLanguage("MDL");
         Version mdlVersion = new VersionImpl(5, 0, 8, null);
-        mdl.setVersion(mdlVersion);
+        mdl = new LanguageVersionImpl("MDL", mdlVersion);
     }
 
     protected void setTargetLanguage(LanguageVersion target) {

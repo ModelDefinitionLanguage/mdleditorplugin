@@ -14,19 +14,8 @@ public interface LanguageVersion {
     String getLanguage();
 
     /**
-     * Sets the conversion language.
-     * @param language the conversion language to set
-     */
-    void setLanguage(String language);
-
-    /**
      * @return the converter version
      */
     Version getVersion();
 
-    /**
-     * Sets the converter version.
-     * @param version the converter version to set
-     */
-    void setVersion(Version version);
 }

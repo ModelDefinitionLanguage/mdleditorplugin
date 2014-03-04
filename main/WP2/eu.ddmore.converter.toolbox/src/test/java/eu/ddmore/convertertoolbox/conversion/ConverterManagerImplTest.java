@@ -31,10 +31,8 @@ public class ConverterManagerImplTest {
 
     @Before
     public void init() {
-        mdl = new LanguageVersionImpl();
-        mdl.setLanguage("MDL");
         Version mdlVersion = new VersionImpl(5, 0, 8, null);
-        mdl.setVersion(mdlVersion);
+        mdl = new LanguageVersionImpl("MDL", mdlVersion);
 
         converterManager = new ConverterManagerImpl();
 
@@ -53,18 +51,14 @@ public class ConverterManagerImplTest {
     }
 
     private LanguageVersion createPharmMLLanguage() {
-        LanguageVersion lang = new LanguageVersionImpl();
-        lang.setLanguage("PharmML");
         Version version = new VersionImpl(0, 2, 1, null);
-        lang.setVersion(version);
+        LanguageVersion lang = new LanguageVersionImpl("PharmML", version);
         return lang;
     }
 
     private LanguageVersion createNONMEMLanguage() {
-        LanguageVersion lang = new LanguageVersionImpl();
-        lang.setLanguage("NMTRAN");
         Version version = new VersionImpl(7, 2, 0, null);
-        lang.setVersion(version);
+        LanguageVersion lang = new LanguageVersionImpl("NMTRAN", version);
         return lang;
     }
 

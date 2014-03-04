@@ -28,15 +28,11 @@ public class DummyMDLToNMTRAN implements ConverterProvider {
     private Version converterVersion;
 
     public DummyMDLToNMTRAN() {
-        source = new LanguageVersionImpl();
-        source.setLanguage("MDL");
         Version sourceVersion = new VersionImpl(5, 0, 8, null);
-        source.setVersion(sourceVersion);
+        source = new LanguageVersionImpl("MDL", sourceVersion);
 
-        target = new LanguageVersionImpl();
-        target.setLanguage("NMTRAN");
         Version targetVersion = new VersionImpl(7, 2, 0, null);
-        target.setVersion(targetVersion);
+        target = new LanguageVersionImpl("NMTRAN", targetVersion);
 
         converterVersion = new VersionImpl(1, 0, 2, null);
     }

@@ -11,29 +11,24 @@ import eu.ddmore.convertertoolbox.api.domain.Version;
  */
 public class LanguageVersionImpl implements LanguageVersion {
 
-    private String language;
-    private String originalLanguage;
-    private Version version;
+    private final String language;
+    private final String originalLanguage;
+    private final Version version;
 
+    public LanguageVersionImpl(String language, Version version) {
+        this.originalLanguage = language;
+        this.language = language.toUpperCase().replaceAll("-", "").replaceAll("_", "");
+        this.version = version;
+    }
+    
     @Override
     public String getLanguage() {
         return originalLanguage;
     }
 
     @Override
-    public void setLanguage(String language) {
-        this.originalLanguage = language;
-        this.language = language.toUpperCase().replaceAll("-", "").replaceAll("_", "");
-    }
-
-    @Override
     public Version getVersion() {
         return version;
-    }
-
-    @Override
-    public void setVersion(Version version) {
-        this.version = version;
     }
 
     @Override

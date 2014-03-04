@@ -28,15 +28,11 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
     private Version converterVersion;
 
     public DummyMDLToNONMEMSuccess() {
-        source = new LanguageVersionImpl();
-        source.setLanguage("MDL");
         Version sourceVersion = new VersionImpl(5, 0, 8, "qualm");
-        source.setVersion(sourceVersion);
+        source = new LanguageVersionImpl("MDL", sourceVersion);
 
-        target = new LanguageVersionImpl();
-        target.setLanguage("NMTRAN");
         Version targetVersion = new VersionImpl(7, 2, 0, "qualn");
-        target.setVersion(targetVersion);
+        target = new LanguageVersionImpl("NMTRAN", targetVersion);
 
         converterVersion = new VersionImpl(1, 0, 2, null);
     }

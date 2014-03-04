@@ -25,15 +25,11 @@ public class DummyMDLToPharmML implements ConverterProvider {
     private Version converterVersion;
 
     public DummyMDLToPharmML() {
-        source = new LanguageVersionImpl();
-        source.setLanguage("MDL");
         Version sourceVersion = new VersionImpl(5, 0, 8, "qualm");
-        source.setVersion(sourceVersion);
+        source = new LanguageVersionImpl("MDL", sourceVersion);
 
-        target = new LanguageVersionImpl();
-        target.setLanguage("PharmML");
         Version targetVersion = new VersionImpl(0, 2, 1, "qualp");
-        target.setVersion(targetVersion);
+        target = new LanguageVersionImpl("PharmML", targetVersion);
 
         converterVersion = new VersionImpl(1, 0, 2);
     }

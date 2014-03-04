@@ -11,10 +11,8 @@ public class Mdl2PharmML extends ConverterWrapper implements IGenerator {
 
 	public Mdl2PharmML() {
         //Version-language attributes are hand coded until I learn how the MDLEditor will interact with the user.
-        LanguageVersion lang = new LanguageVersionImpl();
-        lang.setLanguage("PharmML");
         Version version = new VersionImpl(0, 2, 1, null);
-        lang.setVersion(version);
+        LanguageVersion lang = new LanguageVersionImpl("PharmML", version);
         setTargetLanguage(lang);
 	}
 

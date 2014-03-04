@@ -50,19 +50,15 @@ public class MDLToNonmemConverterTest {
 
     @Test
     public void shouldFindCorrectSourceVersion() {
-        LanguageVersion source = new LanguageVersionImpl();
-        source.setLanguage("MDL");
         Version sourceVersion = new VersionImpl(5, 0, 8, null);
-        source.setVersion(sourceVersion);
+        LanguageVersion source = new LanguageVersionImpl("MDL", sourceVersion);
         assertEquals(converter.getSource(), source);
     }
 
     @Test
     public void shouldFindCorrectTargetVersion() {
-        LanguageVersion target = new LanguageVersionImpl();
-        target.setLanguage("NMTRAN");
         Version targetVersion = new VersionImpl(7, 2, 0, null);
-        target.setVersion(targetVersion);
+        LanguageVersion target = new LanguageVersionImpl("NMTRAN", targetVersion);
         assertEquals(converter.getTarget(), target);
     }
 }
