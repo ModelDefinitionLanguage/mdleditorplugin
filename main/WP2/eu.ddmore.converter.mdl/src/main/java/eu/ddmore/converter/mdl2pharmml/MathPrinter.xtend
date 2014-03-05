@@ -111,7 +111,7 @@ class MathPrinter extends MdlPrinter{
 		<Categorical>
 		«FOR c: categories.arguments.arguments»
 			<Category>
-				«c.identifier»
+				«c.argumentName.identifier»
 			</Category>
 		«ENDFOR»
 		</Categorical>
@@ -170,7 +170,7 @@ class MathPrinter extends MdlPrinter{
 	
 	//+
 	def print_Math_FunctionArgument(Argument arg)'''
-	<FunctionArgument«IF arg.identifier != null» symbId="«arg.identifier»"«ENDIF»>
+	<FunctionArgument«IF arg.argumentName != null» symbId="«arg.argumentName.identifier»"«ENDIF»>
 		«arg.expression.print_Math_Expr»
 	</FunctionArgument>
 	'''	
