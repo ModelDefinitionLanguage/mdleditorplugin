@@ -34,11 +34,7 @@ public class ConverterManagerImpl implements ConverterManager {
     private List<Converter> converters;
     private static final Logger LOGGER = Logger.getLogger(ConverterManagerImpl.class);
 
-    public ConverterManagerImpl() {
-        discoverConverters();
-    }
-
-    public final void discoverConverters() {
+    public void discoverConverters() {
         converters = new ArrayList<Converter>();
         ServiceLoader<ConverterProvider> loader = ServiceLoader.load(ConverterProvider.class);
 
@@ -58,14 +54,14 @@ public class ConverterManagerImpl implements ConverterManager {
     @Override
     public Converter getConverter(final LanguageVersion source, final LanguageVersion target) throws ConverterNotFoundException {
 
-        Predicate<Converter> isProper = new Predicate<Converter>() {
+        Predicate<Converter> supportConversion = new Predicate<Converter>() {
 
             @Override
             public boolean apply(Converter converter) {
                 return isConversionSupported(converter, source, target);
             }
         };
-        Iterable<Converter> properConverters = Iterables.filter(converters, isProper);
+        Iterable<Converter> selectedConverters = Iterables.filter(converters, supportConversion);
 
         Ordering<Converter> versionOrder = new Ordering<Converter>() {
 
@@ -74,7 +70,7 @@ public class ConverterManagerImpl implements ConverterManager {
             }
         };
 
-        ImmutableSortedSet<Converter> sortedConverters = ImmutableSortedSet.orderedBy(versionOrder).addAll(properConverters).build();
+        ImmutableSortedSet<Converter> sortedConverters = ImmutableSortedSet.orderedBy(versionOrder).addAll(selectedConverters).build();
 
         if (!sortedConverters.isEmpty()) {
             Converter latestFoundConverter = sortedConverters.last();
@@ -93,7 +89,7 @@ public class ConverterManagerImpl implements ConverterManager {
     @Override
     public Converter getConverter(final LanguageVersion source, final LanguageVersion target, final Version converterVersion)
             throws ConverterNotFoundException {
-        Predicate<Converter> isProper = new Predicate<Converter>() {
+        Predicate<Converter> supportConversion = new Predicate<Converter>() {
 
             @Override
             public boolean apply(Converter converter) {
@@ -101,9 +97,9 @@ public class ConverterManagerImpl implements ConverterManager {
             }
         };
 
-        Iterable<Converter> properConverters = Iterables.filter(converters, isProper);
-        if (properConverters.iterator().hasNext()) {
-            Converter converter = properConverters.iterator().next();
+        Iterable<Converter> selectedConverters = Iterables.filter(converters, supportConversion);
+        if (selectedConverters.iterator().hasNext()) {
+            Converter converter = selectedConverters.iterator().next();
             LOGGER.info(String.format("Proper converter found: %s", converter));
             return converter;
         } else {

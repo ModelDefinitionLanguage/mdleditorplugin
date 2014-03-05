@@ -12,18 +12,16 @@ import eu.ddmore.convertertoolbox.api.domain.Version;
 public class LanguageVersionImpl implements LanguageVersion {
 
     private final String language;
-    private final String originalLanguage;
     private final Version version;
 
     public LanguageVersionImpl(String language, Version version) {
-        this.originalLanguage = language;
-        this.language = language.toUpperCase().replaceAll("-", "").replaceAll("_", "");
+        this.language = language;
         this.version = version;
     }
     
     @Override
     public String getLanguage() {
-        return originalLanguage;
+        return language;
     }
 
     @Override

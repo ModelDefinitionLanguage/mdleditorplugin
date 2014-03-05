@@ -16,12 +16,12 @@ public class VersionImplTest {
 
     @Before
     public void initialize() {
-        nonmem72Vers = new VersionImpl(7, 2, 3, "7.2");
+        nonmem72Vers = new VersionImpl(7, 2, 3, "qual");
     }
 
     @Test
     public void shouldBeEqual() {
-        Version nonmem72bVers = new VersionImpl(7, 2, 3, "7.2");
+        Version nonmem72bVers = new VersionImpl(7, 2, 3, "qual");
 
         assertEquals(nonmem72Vers, nonmem72bVers);
         assertEquals(nonmem72Vers.hashCode(), nonmem72bVers.hashCode());
@@ -29,13 +29,13 @@ public class VersionImplTest {
 
     @Test
     public void shouldNotBeEqual() {
-        Version nonmem71Vers = new VersionImpl(7, 1, 3, null);
+        Version nonmem71Vers = new VersionImpl(7, 1, 3);
         assertNotEquals(nonmem71Vers, nonmem72Vers);
     }
 
     @Test
     public void shouldBeLatestVersion() {
-        Version nonmem71Vers = new VersionImpl(7, 1, 3, null);
+        Version nonmem71Vers = new VersionImpl(7, 1, 3);
         assertTrue(nonmem72Vers.compareTo(nonmem71Vers) > 0);
     }
 

@@ -6,9 +6,9 @@ import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 /**
  * The AbstractFutureCallback inplementation for single report, i.e. single file conversion.
  */
-public class FutureCallbackImpl extends AbstractFutureCallback<ConversionReport> {
+public class ConversionCallbackImpl extends AbstractFutureCallback<ConversionReport> {
 
-    public FutureCallbackImpl(ConversionListener listener) {
+    public ConversionCallbackImpl(ConversionListener listener) {
         super(listener);
     }
 

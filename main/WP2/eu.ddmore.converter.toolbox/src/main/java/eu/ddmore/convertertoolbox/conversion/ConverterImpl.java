@@ -20,8 +20,7 @@ import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
-import eu.ddmore.convertertoolbox.concurrent.FutureCallbackArrayImpl;
-import eu.ddmore.convertertoolbox.concurrent.FutureCallbackImpl;
+import eu.ddmore.convertertoolbox.concurrent.ConversionCallbackImpl;
 
 /**
  * Represents a converter available in the toolbox
@@ -58,11 +57,6 @@ public class ConverterImpl implements Converter {
     }
 
     @Override
-    public ConversionReport[] convert(File[] src, File outputDirectory) throws IOException {
-        return provider.performConvert(src, outputDirectory);
-    }
-
-    @Override
     public void convert(final File src, final File outputDirectory, final ConversionListener listener) throws IOException {
         ListeningExecutorService service = MoreExecutors.listeningDecorator(executorService);
         
@@ -72,19 +66,7 @@ public class ConverterImpl implements Converter {
                 return convert(src, outputDirectory);
             }
         });
-        Futures.addCallback(conversion, new FutureCallbackImpl(listener));
-    }
-
-    @Override
-    public void convert(final File[] src, final File outputDirectory, final ConversionListener listener) throws IOException {
-        ListeningExecutorService service = MoreExecutors.listeningDecorator(executorService);
-        ListenableFuture<ConversionReport[]> conversion = service.submit(new Callable<ConversionReport[]>() {
-
-            public ConversionReport[] call() throws IOException {
-                return convert(src, outputDirectory);
-            }
-        });
-        Futures.addCallback(conversion, new FutureCallbackArrayImpl(listener, src.length));
+        Futures.addCallback(conversion, new ConversionCallbackImpl(listener));
     }
     
     @Override

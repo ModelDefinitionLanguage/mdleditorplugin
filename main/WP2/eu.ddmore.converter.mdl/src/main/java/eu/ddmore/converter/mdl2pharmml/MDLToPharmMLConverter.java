@@ -54,7 +54,6 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
         return printOutputFile(src, outputDirectory, converted.toString(), ".xml");
     }
 
-    @Override
     public ConversionReport[] performConvert(File[] src, File outputDirectory) throws IOException {
         ConversionReport[] reports = new ConversionReport[src.length];
         int i = 0;

@@ -25,10 +25,10 @@ public class DummyMDLToPharmML implements ConverterProvider {
     private Version converterVersion;
 
     public DummyMDLToPharmML() {
-        Version sourceVersion = new VersionImpl(5, 0, 8, null);
+        Version sourceVersion = new VersionImpl(5, 0, 8);
         source = new LanguageVersionImpl("MDL", sourceVersion);
 
-        Version targetVersion = new VersionImpl(0, 2, 1, null);
+        Version targetVersion = new VersionImpl(0, 2, 1);
         target = new LanguageVersionImpl("PharmML", targetVersion);
 
         converterVersion = new VersionImpl(1, 0, 2);
@@ -39,13 +39,6 @@ public class DummyMDLToPharmML implements ConverterProvider {
         ConversionReport report = new ConversionReportImpl();
         report.setReturnCode(ConversionCode.SUCCESS);
         return report;
-    }
-
-    @Override
-    public ConversionReport[] performConvert(File[] src, File outputDirectory) {
-        ConversionReport report = new ConversionReportImpl();
-        report.setReturnCode(ConversionCode.SUCCESS);
-        return new ConversionReport[] { report, report };
     }
 
     @Override

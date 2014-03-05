@@ -42,13 +42,6 @@ public class DummyMDLToPharmML implements ConverterProvider {
     }
 
     @Override
-    public ConversionReport[] performConvert(File[] src, File outputDirectory) {
-        ConversionReport report = new ConversionReportImpl();
-        report.setReturnCode(ConversionCode.SUCCESS);
-        return new ConversionReport[] { report, report };
-    }
-
-    @Override
     public LanguageVersion getSource() {
         return source;
     }

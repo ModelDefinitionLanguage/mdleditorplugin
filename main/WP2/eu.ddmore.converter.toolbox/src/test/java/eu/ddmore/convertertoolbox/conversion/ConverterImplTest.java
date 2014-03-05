@@ -26,7 +26,7 @@ import eu.ddmore.convertertoolbox.spi.DummyMDLToNMTRANFailure;
  * Test for {@link Main}.
  */
 public class ConverterImplTest {
-    
+
     private File pkPRED;
     private File outputDir;
 
@@ -51,19 +51,6 @@ public class ConverterImplTest {
     }
 
     @Test
-    public void shouldUseDummyConverterMultipleFiles() throws ConverterNotFoundException, IOException {
-        File pkBOV = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_BOV.mdl").getPath());
-        File[] src = new File[] { pkPRED, pkBOV };
-        ConverterImpl converter = new ConverterImpl();
-        converter.setProvider(new DummyMDLToNMTRAN());
-        ConversionReport[] report = converter.convert(src, outputDir);
-        assertEquals(ConversionCode.SUCCESS, report[0].getReturnCode());
-        assertEquals(ConversionCode.SUCCESS, report[1].getReturnCode());
-        assertEquals(0, report[0].getDetails(Severity.ERROR).size());
-        assertEquals(0, report[1].getDetails(Severity.ERROR).size());
-    }
-
-    @Test
     public void shouldUseDummyConverterSingleFileWithListener() throws ConverterNotFoundException, IOException {
         ConversionListener listener = new ConversionListener() {
 
@@ -73,65 +60,30 @@ public class ConverterImplTest {
                 assertEquals(0, report.getDetails(Severity.ERROR).size());
             }
 
-            @Override
-            public void conversionComplete(ConversionReport[] report) {
-            }
-            
         };
         ConverterImpl converter = new ConverterImpl();
         converter.setProvider(new DummyMDLToNMTRAN());
         converter.convert(pkPRED, outputDir, listener);
     }
-    
-    @Test
-    public void shouldUseDummyConverterMultipleFilesWithListener() throws ConverterNotFoundException, IOException {
-        ConversionListener listener = new ConversionListener() {
 
-            @Override
-            public void conversionComplete(ConversionReport report) {
-            }
-
-            @Override
-            public void conversionComplete(ConversionReport[] report) {
-                assertEquals(ConversionCode.SUCCESS, report[0].getReturnCode());
-                assertEquals(ConversionCode.SUCCESS, report[1].getReturnCode());
-                assertEquals(0, report[0].getDetails(Severity.ERROR).size());
-                assertEquals(0, report[1].getDetails(Severity.ERROR).size());
-            }
-            
-        };
-        File pkBOV = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_BOV.mdl").getPath());
-        File[] src = new File[] { pkPRED, pkBOV };
-        ConverterImpl converter = new ConverterImpl();
-        converter.setProvider(new DummyMDLToNMTRAN());
-        converter.convert(src, outputDir, listener);
-    }
-    
     @Test
     public void shouldUseDummyConverterFailureWithListener() throws ConverterNotFoundException, IOException {
         ConversionListener listener = new ConversionListener() {
 
             @Override
             public void conversionComplete(ConversionReport report) {
-            }
-
-            @Override
-            public void conversionComplete(ConversionReport[] report) {
-                assertEquals(ConversionCode.FAILURE, report[0].getReturnCode());
-                assertEquals(ConversionCode.FAILURE, report[1].getReturnCode());
+                assertEquals(ConversionCode.FAILURE, report.getReturnCode());
             }
             
         };
-        File pkBOV = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_BOV.mdl").getPath());
-        File[] src = new File[] { pkPRED, pkBOV };
         ConverterImpl converter = new ConverterImpl();
         converter.setProvider(new DummyMDLToNMTRANFailure());
-        converter.convert(src, outputDir, listener);
+        converter.convert(pkPRED, outputDir, listener);
     }
 
     @Test
     public void shouldFindConverterVersion() {
-        Version expectedVersion = new VersionImpl(1,0,2,null);
+        Version expectedVersion = new VersionImpl(1, 0, 2);
         ConverterImpl converter = new ConverterImpl();
         converter.setProvider(new DummyMDLToNMTRAN());
         Version version = converter.getConverterVersion();

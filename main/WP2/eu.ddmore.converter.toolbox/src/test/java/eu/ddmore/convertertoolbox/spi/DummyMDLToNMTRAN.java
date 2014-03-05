@@ -28,13 +28,13 @@ public class DummyMDLToNMTRAN implements ConverterProvider {
     private Version converterVersion;
 
     public DummyMDLToNMTRAN() {
-        Version sourceVersion = new VersionImpl(5, 0, 8, null);
+        Version sourceVersion = new VersionImpl(5, 0, 8);
         source = new LanguageVersionImpl("MDL", sourceVersion);
 
-        Version targetVersion = new VersionImpl(7, 2, 0, null);
+        Version targetVersion = new VersionImpl(7, 2, 0);
         target = new LanguageVersionImpl("NMTRAN", targetVersion);
 
-        converterVersion = new VersionImpl(1, 0, 2, null);
+        converterVersion = new VersionImpl(1, 0, 2);
     }
 
     @Override
@@ -52,15 +52,6 @@ public class DummyMDLToNMTRAN implements ConverterProvider {
         conversionDetail.setMessage("Some message");
         conversionDetail.setSeverity(Severity.ALL);
         return conversionDetail;
-    }
-
-    @Override
-    public ConversionReport[] performConvert(File[] src, File outputDirectory) {
-        ConversionReport report = new ConversionReportImpl();
-        report.setReturnCode(ConversionCode.SUCCESS);
-        ConversionDetail conversionDetail = createConversionDetail(src[0]);
-        report.addDetail(conversionDetail);
-        return new ConversionReport[] { report, report };
     }
 
     @Override

@@ -46,16 +46,21 @@ public final class Main {
         LanguageVersion target = getLanguageVersion(targetLanguage, targetVersion);
 
         Converter converter = converterManager.getConverter(source, target);
-        return converter.convert(src, outputDirectory);
+        ConversionReport[] reports = new ConversionReport[src.length];
+        int i = 0;
+        for (File inputFile : src) {
+            reports[i++] = converter.convert(inputFile, outputDirectory);
+        }
+        return reports;
     }
 
     LanguageVersion getLanguageVersion(String language, String version) {
         int hyphenFirstIndex = version.indexOf('-');
-        String qualifier=null;
-        String versionNumbers=null;
+        String qualifier = null;
+        String versionNumbers = null;
         if (hyphenFirstIndex != -1) {
             versionNumbers = version.substring(0, hyphenFirstIndex);
-            qualifier = version.substring(hyphenFirstIndex+1);
+            qualifier = version.substring(hyphenFirstIndex + 1);
         }
         Version sourceVersion = createVersion(qualifier, versionNumbers);
         return new LanguageVersionImpl(language, sourceVersion);
@@ -63,25 +68,22 @@ public final class Main {
 
     private Version createVersion(String qualifier, String versionNumbers) {
         String versionNumbersAsArray[] = versionNumbers.split("\\.");
-        if (versionNumbersAsArray.length == 0) {
-            throw new IllegalArgumentException(
+
+        Preconditions
+                .checkArgument(versionNumbersAsArray.length > 0,
                     "The language version should contain at least one number, e.g. '1' is interpreted into '1.0.0', '2.5' is interpreted into '2.5.0'.");
-        } else if (versionNumbersAsArray.length > MAX_VERSION_NUMBERS) {
-            throw new IllegalArgumentException(
-                    "The language version should contain at most three numbers according to the 'Major.Minor.Patch' naming convention.");
-        }
+        Preconditions
+                .checkArgument(versionNumbersAsArray.length <= MAX_VERSION_NUMBERS,
+                    "The language version should contain at most three numbers according to the 'Major.Minor.Patch' naming convention, e.g. '2.5.1'.");
+
         int major = Integer.parseInt(versionNumbersAsArray[0]);
         int minor = 0;
         int patch = 0;
-
-//        sourceVersion.setMajor(Integer.parseInt(versionNumbersAsArray[0]));
         if (versionNumbersAsArray.length > MAX_VERSION_NUMBERS - 2) {
             minor = Integer.parseInt(versionNumbersAsArray[1]);
-//            sourceVersion.setMinor(Integer.parseInt(versionNumbersAsArray[1]));
         }
         if (versionNumbersAsArray.length > MAX_VERSION_NUMBERS - 1) {
             patch = Integer.parseInt(versionNumbersAsArray[2]);
-//            sourceVersion.setPatch(Integer.parseInt(versionNumbersAsArray[2]));
         }
         return new VersionImpl(major, minor, patch, qualifier);
     }
@@ -97,8 +99,12 @@ public final class Main {
      * @throws IOException
      */
     public ConversionReport[] runFromCommandLine(String... args) throws ConverterNotFoundException, IOException {
-        Preconditions.checkArgument(args.length == 6, "Illegal arguments. Run again by giving the arguments in the following format: 'sourcePath outputPath sourceLanguage sourceVersion targetLanguage targetVersion', e.g. 'myMDLFile.mdl C:/output/ MDL 5.0.8 NMTRAN 7.2.0'");
+        Preconditions
+                .checkArgument(
+                    args.length == 6,
+                    "Illegal arguments. Run again by giving the arguments in the following format: 'sourcePath outputPath sourceLanguage sourceVersion targetLanguage targetVersion', e.g. 'myMDLFile.mdl C:/output/ MDL 5.0.8 NMTRAN 7.2.0'");
         converterManager = new ConverterManagerImpl();
+        converterManager.discoverConverters();
         File src = new File(args[0]);
         File outputDirectory = new File(args[1]);
         if (src.isDirectory()) {
@@ -120,9 +126,19 @@ public final class Main {
     }
 
     public static void main(String... args) throws ConverterNotFoundException, IOException {
+        
+        
+        
         ConversionReport[] reports = new Main().runFromCommandLine(args);
         for (ConversionReport report : reports) {
-            LOGGER.info(report);
+            if (report.getReturnCode().equals(ConversionReport.ConversionCode.SUCCESS)) {
+                LOGGER.info(report);
+                System.out.println(report);
+            } else {
+                LOGGER.error(report);
+                System.err.println(report);
+                System.exit(1);
+            }
         }
     }
 }

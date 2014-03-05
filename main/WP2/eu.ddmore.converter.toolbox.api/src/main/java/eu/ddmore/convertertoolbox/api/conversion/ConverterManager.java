@@ -17,8 +17,8 @@ public interface ConverterManager {
     
     /**
      * Discovers Converter Provider implementations available in the classpath. 
-     * This method should be called by every ConverterManager implementation constructor. 
-     * Optionally, it can be later re-called by client code to re-discover. 
+     * This method should be called by every ConverterManager implementation immediately after the constructor call. 
+     * Optionally, it can be later re-called by client code to re-discover Converter Providers. 
      */
     void discoverConverters();
     

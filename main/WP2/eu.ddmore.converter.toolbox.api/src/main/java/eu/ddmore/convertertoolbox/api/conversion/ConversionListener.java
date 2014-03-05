@@ -16,9 +16,4 @@ public interface ConversionListener {
      */
     void conversionComplete(ConversionReport report);
     
-    /**
-     * Called when conversion processing completes (failure or success).
-     * @param report a list of conversion reports
-     */
-    void conversionComplete(ConversionReport[] report);
 }

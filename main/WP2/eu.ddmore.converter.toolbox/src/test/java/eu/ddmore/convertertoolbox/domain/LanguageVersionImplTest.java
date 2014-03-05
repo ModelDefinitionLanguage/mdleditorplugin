@@ -23,21 +23,20 @@ public class LanguageVersionImplTest {
     }
 
     @Test
-    public void shouldBeEqualHyphen() {
+    public void shouldBeEqual() {
         Version nonmem72bVers = new VersionImpl(7, 2, 0, "qual");
-        LanguageVersion nonmem72b = new LanguageVersionImpl("NM-TRAN", nonmem72bVers);
+        LanguageVersion nonmem72b = new LanguageVersionImpl("NMTRAN", nonmem72bVers);
 
         assertEquals(nonmem72, nonmem72b);
         assertEquals(nonmem72.hashCode(), nonmem72b.hashCode());
     }
 
     @Test
-    public void shouldBeEqualLowerCase() {
+    public void shouldBeEqualQual() {
         Version nonmem72bVers = new VersionImpl(7, 2, 0, "qual");
         LanguageVersion nonmem72b = new LanguageVersionImpl("nmtran", nonmem72bVers);
 
-        assertEquals(nonmem72, nonmem72b);
-        assertEquals(nonmem72.hashCode(), nonmem72b.hashCode());
+        assertNotEquals(nonmem72, nonmem72b);
     }
 
     @Test

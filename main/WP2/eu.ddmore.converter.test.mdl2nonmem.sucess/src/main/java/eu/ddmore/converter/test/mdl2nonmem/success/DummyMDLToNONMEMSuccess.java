@@ -55,15 +55,6 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
     }
 
     @Override
-    public ConversionReport[] performConvert(File[] src, File outputDirectory) {
-        ConversionReport report = new ConversionReportImpl();
-        report.setReturnCode(ConversionCode.SUCCESS);
-        ConversionDetail conversionDetail = createConversionDetail();
-        report.addDetail(conversionDetail);
-        return new ConversionReport[] { report, report };
-    }
-
-    @Override
     public LanguageVersion getSource() {
         return source;
     }

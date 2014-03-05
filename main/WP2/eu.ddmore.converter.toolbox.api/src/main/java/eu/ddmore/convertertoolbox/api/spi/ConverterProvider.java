@@ -18,20 +18,11 @@ public interface ConverterProvider {
 	/**
 	 * Converts the source file using the languages and versions associated with this ConverterProvider.
 	 * @param src the source file to be converted
-	 * @param outputDirectory the output directory where the converted files will be stored
+	 * @param outputDirectory the output directory where the converted file will be stored
 	 * @return a conversion report containing the details of the requested conversion
      * @throws IOException if there is some error in file reading/writing
 	 */
     ConversionReport performConvert(File src, File outputDirectory) throws IOException;
-
-    /**
-	 * Converts the source files using the languages and versions associated with this ConverterProvider.
-	 * @param src an array of source files to be converted
-	 * @param outputDirectory the output directory where the converted files will be stored
-     * @return an array conversion reports containing the details of the requested conversions in input file order
-     * @throws IOException if there is some error in file reading/writing
-     */
-    ConversionReport[] performConvert(File[] src, File outputDirectory) throws IOException;
 
     /**
      * @return the source language and version
@@ -44,7 +35,7 @@ public interface ConverterProvider {
     LanguageVersion getTarget();
 
     /**
-     * @return thet converter version
+     * @return the converter version
      */
     Version getConverterVersion();
 }

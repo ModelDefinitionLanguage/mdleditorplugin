@@ -31,7 +31,7 @@ public class ConverterManagerImplTest {
 
     @Before
     public void init() {
-        Version mdlVersion = new VersionImpl(5, 0, 8, null);
+        Version mdlVersion = new VersionImpl(5, 0, 8);
         mdl = new LanguageVersionImpl("MDL", mdlVersion);
 
         converterManager = new ConverterManagerImpl();
@@ -51,13 +51,13 @@ public class ConverterManagerImplTest {
     }
 
     private LanguageVersion createPharmMLLanguage() {
-        Version version = new VersionImpl(0, 2, 1, null);
+        Version version = new VersionImpl(0, 2, 1);
         LanguageVersion lang = new LanguageVersionImpl("PharmML", version);
         return lang;
     }
 
     private LanguageVersion createNONMEMLanguage() {
-        Version version = new VersionImpl(7, 2, 0, null);
+        Version version = new VersionImpl(7, 2, 0);
         LanguageVersion lang = new LanguageVersionImpl("NMTRAN", version);
         return lang;
     }
@@ -71,14 +71,14 @@ public class ConverterManagerImplTest {
     @Test
     public void shouldFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
-        Version converterVersion = new VersionImpl(1, 0, 2, null);
+        Version converterVersion = new VersionImpl(1, 0, 2);
         assertNotNull(converterManager.getConverter(mdl, nonmem, converterVersion));
     }
 
     @Test(expected = ConverterNotFoundException.class)
     public void shouldNotFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
-        Version converterVersion = new VersionImpl(1, 0, 3, null);
+        Version converterVersion = new VersionImpl(1, 0, 3);
         converterManager.getConverter(mdl, nonmem, converterVersion);
     }
 

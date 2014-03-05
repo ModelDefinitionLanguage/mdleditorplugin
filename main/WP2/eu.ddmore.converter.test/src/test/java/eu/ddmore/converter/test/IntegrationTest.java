@@ -49,6 +49,7 @@ public class IntegrationTest {
         Version mdlVersion = new VersionImpl(5, 0, 8, "qualm");
         mdl = new LanguageVersionImpl("MDL", mdlVersion);
         converterManager = new ConverterManagerImpl();
+        converterManager.discoverConverters();
     }
 
     private LanguageVersion createPharmMLLanguage() {

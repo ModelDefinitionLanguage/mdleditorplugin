@@ -27,11 +27,6 @@ public class DummyMDLToNMTRANFailure implements ConverterProvider {
     }
 
     @Override
-    public ConversionReport[] performConvert(File[] src, File outputDirectory) throws IOException {
-        throw new IOException("DummyMDLToNMTRANFailure");
-    }
-
-    @Override
     public LanguageVersion getSource() {
         return source;
     }
