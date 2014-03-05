@@ -9,7 +9,6 @@ package eu.ddmore.converter.mdl2pharmml
 import org.ddmore.mdl.mdl.RandomList
 import org.ddmore.mdl.mdl.Primary 
 import org.ddmore.mdl.mdl.FullyQualifiedSymbolName
-import org.ddmore.mdl.mdl.Vector
 import org.ddmore.mdl.mdl.DistributionArgument
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
@@ -21,36 +20,39 @@ class DistributionPrinter extends MdlPrinter{
 	val xmlns_uncert="http://www.uncertml.org/3.0"; 
 	val definition = "http://www.uncertml.org/distributions/";
 	
-	//Recognised types of distributions
+	//Recognised types of distributions and attributes to print as PharmML tags
 	val distribution_attrs = newHashMap(
-		'Bernoulli' 			-> newHashSet("probabilities"),          
-		'Beta'  				-> newHashSet("alpha", "beta"),              
-		'Binomial'  			-> newHashSet("numberOfTrials", "probabilityOfSuccess"),
-		'Categorical'  			-> newHashSet(), //yet to be defined in the spec at http://www.uncertml.org/3.0
-		'Cauchy'            	-> newHashSet("location", "scale"),
-		'ChiSquare'         	-> newHashSet("degreesOfFreedom"), 
+		'Bernoulli' 			-> newHashSet("probability"),          
+		'Beta'  				-> newHashSet("alpha", "beta", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),              
+		'Binomial'  			-> newHashSet("numberOfTrials", "probabilityOfSuccess", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'Categorical'  			-> newHashSet("ncategories", "probabilities"), 
+		'Cauchy'            	-> newHashSet("location", "scale", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'ChiSquare'         	-> newHashSet("dof", "degreesOfFreedom", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"), 
 		'Dirichlet' 	 		-> newHashSet("concentration"),
-		'Exponential'  	    	-> newHashSet("rate"),
-		'FDistribution'     	-> newHashSet("denominator, numerator"),
-		'Gamma'             	-> newHashSet("shape", "scale"), 
-		'Geometric'         	-> newHashSet("probability"), 
-		'Hypergeometric'    	-> newHashSet("numberOfSuccesses", "numberOfTrials", "populationSize"), 
-		'InverseGamma'      	-> newHashSet("shape", "scale"), 
-		'Laplace'          	 	-> newHashSet("location", "scale"), 
-		'Logistic'         	 	-> newHashSet("location", "scale"), 
-		'LogNormal'         	-> newHashSet("logScale", "shape"), 
+		'Exponential'  	    	-> newHashSet("rate", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'FDistribution'     	-> newHashSet("denominator, numerator", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'Gamma'             	-> newHashSet("shape", "scale", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"), 
+		'Geometric'         	-> newHashSet("probability", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'Hypergeometric'    	-> newHashSet("numberOfSuccesses", "numberOfTrials", "populationSize", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"), 
+		'InverseGamma'      	-> newHashSet("shape", "scale", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"), 
+		'Laplace'          	 	-> newHashSet("location", "scale", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"), 
+		'Logistic'         	 	-> newHashSet("location", "scale", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"), 
+		'LogNormal'         	-> newHashSet("logScale", "shape", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
 		'Multinomial'       	-> newHashSet("numberOfTrials", "probabilities"), 
-		'MultivariateNormal'	-> newHashSet("mean", "covarianceMatrix"), //"dimension"
-		'MultivariateStudentT'	-> newHashSet("mean", "covarianceMatrix"), //"dimension"
-		'NegativeBinomial'    	-> newHashSet("numberOfFailures", "probability"),
-		'Normal'              	-> newHashSet("mean", "variance", "standardDeviation"),
-		'NormalInverseGamma' 	-> newHashSet("mean", "varianceScaling", "shape", "scale"),
-		'Pareto'              	-> newHashSet("scale", "shape"),
-		'Poisson'            	-> newHashSet("rate"),
-		'StudentT'            	-> newHashSet("location", "scale", "degreesOfFreedom"),
-		'Uniform'            	-> newHashSet("minimum", "maximum"),
-		'Weibull'             	-> newHashSet("scale", "shape"),
-		'Wishart'             	-> newHashSet("degreesOfFreedom", "scaleMatrix")
+		'MultivariateNormal'	-> newHashSet("meanVector", "covarianceMatrix"), //"dimension"
+		'MultivariateStudentT'	-> newHashSet("meanVector", "covarianceMatrix"), //"dimension"
+		'NegativeBinomial'    	-> newHashSet("numberOfFailures", "probability",  "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'Normal'              	-> newHashSet("mean", "variance", "stddev", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'NormalInverseGamma' 	-> newHashSet("mean", "varianceScaling", "shape", "scale",
+			"truncationLowerInclusiveBoundN", "truncationUpperInclusiveBoundN", 
+			"truncationLowerInclusiveBoundIG", "truncationUpperInclusiveBoundIG"
+		 ),
+		'Pareto'              	-> newHashSet("scale", "shape", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'Poisson'            	-> newHashSet("rate", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'StudentT'            	-> newHashSet("location", "scale", "degreesOfFreedom", "dof", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'Uniform'            	-> newHashSet("minimum", "maximum", "numberOfClasses"),
+		'Weibull'             	-> newHashSet("scale", "shape", "truncationLowerInclusiveBound", "truncationUpperInclusiveBound"),
+		'Wishart'             	-> newHashSet("degreesOfFreedom", "dof", "scaleMatrix")
 	)
 	
 	//Names of attributes that expect matrix as a value
@@ -83,19 +85,27 @@ class DistributionPrinter extends MdlPrinter{
 					«IF recognizedArgs.contains(arg.identifier)»
 						«IF matrix_attrs.contains(arg.identifier)»
 							«var dimension = defineDimension(randomList, arg)»
-							<«arg.identifier» dimension="«dimension»">
+							<«arg.identifier.convertAttribute» dimension="«dimension»">
 								<values>«arg.value.toStr»</values>
-							</«arg.identifier»>
+							</«arg.identifier.convertAttribute»>
 						«ELSE»	
-							<«arg.identifier»>
+							<«arg.identifier.convertAttribute»>
 								«arg.valueToStr»
-							</«arg.identifier»>
+							</«arg.identifier.convertAttribute»>
 						«ENDIF»
 					«ENDIF»
 				«ENDIF»
 			«ENDFOR»	
 		</«type»Distribution>
 		'''
+	}
+	
+	
+	protected def String convertAttribute(String attrName){
+		switch(attrName){
+			case "dof": "degreesOfFreedom"
+			default: attrName
+		}
 	}
 	
 	//For distributions that expect matrix, determine its dimensions
@@ -164,7 +174,7 @@ class DistributionPrinter extends MdlPrinter{
 		}
 	}
 	
-	def valueToStr(Primary p){
+	/*def valueToStr(Primary p){
 		if (p.number != null){
 			return p.number;
 		}
@@ -174,12 +184,12 @@ class DistributionPrinter extends MdlPrinter{
 		if (p.vector != null) {
 			return p.vector.toStr;
 		}
-	}
+	}*/
 	
 	//Convert a vector c(1, 2, 3...) to a flattened list (1 2 3...)
 	//Should work fine with matrices c(c(1,2,3...),... c(10, 20, 30...)) as well
 	//TODO: test, possibly add validation that matrix in a form of nested lists is well-defined (i.e., N x M or N x N).
-	override toStr(Vector v) { 
+	/*override toStr(Vector v) { 
 		var res  = "";
 		var iterator = v.values.iterator();
 		if (iterator.hasNext) {
@@ -190,7 +200,7 @@ class DistributionPrinter extends MdlPrinter{
 			res = res + iterator.next.valueToStr;
 		}
 		return res;
-	}
+	}*/
 	
 	//For references in distributions we just print its name and 
 	//do not point to the PharmML block (MDL object) it appears  
