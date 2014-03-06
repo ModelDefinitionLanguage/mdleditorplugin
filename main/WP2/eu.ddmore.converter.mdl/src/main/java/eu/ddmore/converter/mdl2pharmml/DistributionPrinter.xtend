@@ -81,17 +81,17 @@ class DistributionPrinter extends MdlPrinter{
 		'''
 		<«type»Distribution xmlns="«xmlns_uncert»" definition="«type.getURLExtension»">
 			«FOR arg: randomList.arguments.arguments»
-				«IF arg.identifier != null»
-					«IF recognizedArgs.contains(arg.identifier)»
-						«IF matrix_attrs.contains(arg.identifier)»
+				«IF arg.argumentName != null»
+					«IF recognizedArgs.contains(arg.argumentName.identifier)»
+						«IF matrix_attrs.contains(arg.argumentName.identifier)»
 							«var dimension = defineDimension(randomList, arg)»
-							<«arg.identifier.convertAttribute» dimension="«dimension»">
+							<«arg.argumentName.identifier.convertAttribute» dimension="«dimension»">
 								<values>«arg.value.toStr»</values>
-							</«arg.identifier.convertAttribute»>
+							</«arg.argumentName.identifier.convertAttribute»>
 						«ELSE»	
-							<«arg.identifier.convertAttribute»>
+							<«arg.argumentName.identifier.convertAttribute»>
 								«arg.valueToStr»
-							</«arg.identifier.convertAttribute»>
+							</«arg.argumentName.identifier.convertAttribute»>
 						«ENDIF»
 					«ENDIF»
 				«ENDIF»

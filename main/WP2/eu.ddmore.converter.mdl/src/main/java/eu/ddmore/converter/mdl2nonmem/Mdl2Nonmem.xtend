@@ -607,9 +607,9 @@ class Mdl2Nonmem extends MdlPrinter{
 				for (p: b.parameters.arguments) {
 					if (p.expression != null){
 						k = k + 1;
-						if (p.identifier != null){
-							if (eta_vars.get("eta_" + p.identifier) != null) isOmega = true;
-							if (eps_vars.get("eps_" + p.identifier) != null) isSigma = true;
+						if (p.argumentName != null){
+							if (eta_vars.get("eta_" + p.argumentName.identifier) != null) isOmega = true;
+							if (eps_vars.get("eps_" + p.argumentName.identifier) != null) isSigma = true;
 						} 
 					}
 				}		
@@ -628,9 +628,9 @@ class Mdl2Nonmem extends MdlPrinter{
 		if (b.parameters != null)
 			for (p: b.parameters.arguments) {
 				if (p.expression != null){
-					if (p.identifier != null){
-						if (eta_vars.get("eta_" + p.identifier) != null) isOmega = true;
-						if (eps_vars.get("eps_" + p.identifier) != null) isSigma = true;
+					if (p.argumentName != null){
+						if (eta_vars.get("eta_" + p.argumentName.identifier) != null) isOmega = true;
+						if (eps_vars.get("eps_" + p.argumentName.identifier) != null) isSigma = true;
 						k = k + 1;
 					}
 				}
@@ -646,8 +646,8 @@ class Mdl2Nonmem extends MdlPrinter{
 		var printFix = false;
 		var k = 0; 
 		for (a: b.arguments.arguments){
-			if (a.identifier != null){ 
-				if (a.identifier.equals("fix")){ 
+			if (a.argumentName != null){ 
+				if (a.argumentName.identifier.equals("fix")){ 
 					if (a.expression != null){
 						printFix = a.expression.isTrue	
 					}
@@ -664,12 +664,12 @@ class Mdl2Nonmem extends MdlPrinter{
 						i = i + 1;
 					}
 					k = k + 1;
-					if (p.identifier != null){
-						val isOmega = section.equals("$OMEGA") && (eta_vars.get("eta_" + p.identifier) != null);
-						val isSigma = section.equals("$SIGMA") && (eps_vars.get("eps_" + p.identifier) != null);
+					if (p.argumentName != null){
+						val isOmega = section.equals("$OMEGA") && (eta_vars.get("eta_" + p.argumentName.identifier) != null);
+						val isSigma = section.equals("$SIGMA") && (eps_vars.get("eps_" + p.argumentName.identifier) != null);
 						if (isOmega || isSigma)	{
 							result = result + tmpRes + p.expression.toStr + " ";
-							result = result + "; " + p.identifier + "\n";
+							result = result + "; " + p.argumentName.identifier + "\n";
 						}
 					} 
 					else
@@ -693,8 +693,8 @@ class Mdl2Nonmem extends MdlPrinter{
 		var printFix = false;
 		var k = 0; 
 		for (a: b.arguments.arguments){
-			if (a.identifier != null){ 
-				if (a.identifier.equals("fix")) 
+			if (a.argumentName != null){ 
+				if (a.argumentName.identifier.equals("fix")) 
 					if (a.expression != null){
 						printFix = a.expression.isTrue		
 					}
@@ -703,12 +703,12 @@ class Mdl2Nonmem extends MdlPrinter{
 		if (b.parameters != null)
 			for (p: b.parameters.arguments) {
 				if (p.expression != null){
-					if (p.identifier != null){
-						val isOmega = section.equals("$OMEGA") && (eta_vars.get("eta_" + p.identifier) != null);
-						val isSigma = section.equals("$SIGMA") && (eps_vars.get("eps_" + p.identifier) != null);
+					if (p.argumentName != null){
+						val isOmega = section.equals("$OMEGA") && (eta_vars.get("eta_" + p.argumentName.identifier) != null);
+						val isSigma = section.equals("$SIGMA") && (eps_vars.get("eps_" + p.argumentName.identifier) != null);
 						if (isOmega || isSigma)	{
 							result = result + p.expression.toStr + " ";
-							result = result + "; " + p.identifier + "\n";
+							result = result + "; " + p.argumentName.identifier + "\n";
 							k = k + 1;
 						}
 					} 
@@ -1182,8 +1182,8 @@ class Mdl2Nonmem extends MdlPrinter{
 		 	if (target != null){ 
 				if (target.equals(TARGET)) {
 					for (Argument arg: f.list.arguments.arguments){
-						if (arg.identifier != null)
-							args.put(arg.identifier, arg.expression.toStr)
+						if (arg.argumentName != null)
+							args.put(arg.argumentName.identifier, arg.expression.toStr)
 					}
 					externalFunctions.put(objName + "$" + f.identifier, args);
 				}
@@ -1223,8 +1223,8 @@ class Mdl2Nonmem extends MdlPrinter{
 	
 	//Selectors [] -> (), e.g., A[2] -> A(2)
 	override toStr(Selector s) { 
-		if (s.identifier != null)
-			return s.identifier.identifier;
+		if (s.argumentName != null)
+			return s.argumentName.identifier;
 		if (s.selector != null)
 			return "(" + s.selector + ")";
 	}	

@@ -401,7 +401,7 @@ class MdlPrinter {
 	
 	def isAttributeTrue(Arguments a, String attrName){
 		for (arg: a.arguments)
-			if (arg.identifier.equals(attrName)){
+			if (arg.argumentName.identifier.equals(attrName)){
 				return arg.expression.isTrue;
 			}
 		return false;
@@ -410,7 +410,7 @@ class MdlPrinter {
 	//Return value of an attribute with a given name
 	def getAttribute(DistributionArguments a, String attrName){
 		for (arg: a.arguments)
-			if (arg.identifier != null && arg.identifier.equals(attrName)){
+			if (arg.argumentName != null && arg.argumentName.identifier.equals(attrName)){
 				return arg.valueToStr;
 			}				
 		return "";
@@ -418,7 +418,7 @@ class MdlPrinter {
 	
 	def findAttribute(DistributionArguments a, String attrName){
 		for (arg: a.arguments)
-			if (arg.identifier != null && arg.identifier.equals(attrName)){
+			if (arg.argumentName != null && arg.argumentName.identifier.equals(attrName)){
 				return arg;
 			}				
 		return null;
@@ -437,9 +437,7 @@ class MdlPrinter {
 	//Return value of an attribute with a given name
 	def getAttribute(Arguments a, String attrName){
 		for (arg: a.arguments)
-			if (arg.identifier != null &&
-			    arg.identifier.equals(attrName)
-			)
+			if (arg.argumentName != null && arg.argumentName.identifier.equals(attrName))
 				return arg.expression.toStr
 		return "";
 	}	
@@ -447,9 +445,7 @@ class MdlPrinter {
 	//Return value of an attribute with a given name
 	def getAttributeExpression(Arguments a, String attrName){
 		for (arg: a.arguments)
-			if (arg.identifier != null &&
-			    arg.identifier.equals(attrName)
-			)
+			if (arg.argumentName != null && arg.argumentName.identifier.equals(attrName))
 				return arg.expression
 		return null;
 	}	
@@ -995,8 +991,8 @@ class MdlPrinter {
 	}
 	
 	def toStr(Selector s) { 
-		if (s.identifier != null)
-			return "." + s.identifier.identifier;
+		if (s.argumentName != null)
+			return "." + s.argumentName.identifier;
 		if (s.selector != null)
 			return "[" + s.selector + "]";
 	}
@@ -1023,8 +1019,8 @@ class MdlPrinter {
 		var iterator = arg.arguments.iterator();
 		if (iterator.hasNext ) {
 			var a = iterator.next; 
-			if (a.identifier != null){
-				res  = res + a.identifier + " = ";
+			if (a.argumentName != null){
+				res  = res + a.argumentName.identifier + " = ";
 			}
 			if (a.expression != null){
 				res = res + a.expression.toStr;
@@ -1033,8 +1029,8 @@ class MdlPrinter {
 		while (iterator.hasNext){
 			res  = res + ', ';
 			var a = iterator.next; 
-			if (a.identifier != null){
-				res  = res + a.identifier + " = ";
+			if (a.argumentName != null){
+				res  = res + a.argumentName.identifier + " = ";
 			}
 			if (a.expression != null){
 				res = res + a.expression.toStr;
@@ -1048,16 +1044,16 @@ class MdlPrinter {
 		var iterator = arg.arguments.iterator();
 		if (iterator.hasNext ) {
 			var a = iterator.next; 
-			if (a.identifier != null){
-				res  = res + a.identifier + " = ";
+			if (a.argumentName != null){
+				res  = res + a.argumentName.identifier + " = ";
 			}
 			res = res + a.valueToStr;
 		}
 		while (iterator.hasNext){
 			res  = res + ', ';
 			var a = iterator.next; 
-			if (a.identifier != null){
-				res  = res + a.identifier + " = ";
+			if (a.argumentName != null){
+				res  = res + a.argumentName.identifier + " = ";
 			}
 			res  = res + a.valueToStr;
 		}
