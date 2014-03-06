@@ -6,7 +6,9 @@ package eu.ddmore.convertertoolbox.cli;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -43,14 +45,14 @@ public final class Main {
     @Option(name = DASH + "out", handler = StringOptionHandler.class, usage = "Output folder path.")
     private String output;
 
-    @Option(name = DASH + "sln", handler = StringOptionHandler.class, usage = "Source Language Name.")
+    @Option(name = DASH + "sn", handler = StringOptionHandler.class, usage = "Source Language Name, e.g. 'MDL'.")
     private String sourceLanguageName;
-    @Option(name = DASH + "slv", handler = StringOptionHandler.class, usage = "Source Language Version.")
+    @Option(name = DASH + "sv", handler = StringOptionHandler.class, usage = "Source Language Version, e.g. '5.0.8'.")
     private String sourceLanguageVersion;
 
-    @Option(name = DASH + "tln", handler = StringOptionHandler.class, usage = "Target Language Name.")
+    @Option(name = DASH + "tn", handler = StringOptionHandler.class, usage = "Target Language Name, e.g 'NMTRAN'.")
     private String targetLanguageName;
-    @Option(name = DASH + "tlv", handler = StringOptionHandler.class, usage = "Target Language Version.")
+    @Option(name = DASH + "tv", handler = StringOptionHandler.class, usage = "Target Language Version, e.g '7.2'.")
     private String targetLanguageVersion;
 
     private ConversionReport convert(File src, String srcLanguage, String srcVersion, String targetLanguage, String targetVersion,
@@ -163,19 +165,46 @@ public final class Main {
         }
     }
 
+    private String exposeCappabilities() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("The following conversions are supported: \n");
+        for (Map.Entry<LanguageVersion, Collection<LanguageVersion>> e : converterManager.getCapabilities().entrySet()) {
+            LanguageVersion source = e.getKey();
+            Collection<LanguageVersion> targets = e.getValue();
+            for (LanguageVersion target : targets) {
+                sb.append("From [");
+                sb.append(source);
+                sb.append("] To [");
+                sb.append(target);
+                sb.append("]");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
     public static void main(String... args) throws ConverterNotFoundException, IOException {
         Main cli = new Main();
         cli.parseArguments(args);
-        ConversionReport[] reports = cli.runFromCommandLine();
-        for (ConversionReport report : reports) {
-            if (report.getReturnCode().equals(ConversionReport.ConversionCode.SUCCESS)) {
-                LOGGER.info(report);
-                System.out.println(report);
-            } else {
-                LOGGER.error(report);
-                System.err.println(report);
-                System.exit(1);
+        ConversionReport[] reports = null;
+        try {
+            reports = cli.runFromCommandLine();
+            for (ConversionReport report : reports) {
+                if (report.getReturnCode().equals(ConversionReport.ConversionCode.SUCCESS)) {
+                    LOGGER.info(report);
+                    System.out.println(report);
+                } else {
+                    LOGGER.error(report);
+                    System.err.println(report);
+                    System.exit(1);
+                }
             }
+        } catch (ConverterNotFoundException e) {
+            LOGGER.error(e.getMessage());
+            LOGGER.error(cli.exposeCappabilities());
+            System.err.println(e.getMessage());
+            System.err.println(cli.exposeCappabilities());
+            System.exit(1);
         }
     }
 

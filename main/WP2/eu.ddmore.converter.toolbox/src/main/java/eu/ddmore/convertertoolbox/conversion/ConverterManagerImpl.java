@@ -31,11 +31,11 @@ import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
  */
 public class ConverterManagerImpl implements ConverterManager {
 
-    private List<Converter> converters;
+    private List<Converter> converters = new ArrayList<Converter>();
     private static final Logger LOGGER = Logger.getLogger(ConverterManagerImpl.class);
 
     public void discoverConverters() {
-        converters = new ArrayList<Converter>();
+        converters.clear();
         ServiceLoader<ConverterProvider> loader = ServiceLoader.load(ConverterProvider.class);
 
         for (ConverterProvider provider : loader) {
