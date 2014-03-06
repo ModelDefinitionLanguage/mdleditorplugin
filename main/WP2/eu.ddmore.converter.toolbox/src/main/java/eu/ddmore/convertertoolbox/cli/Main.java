@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -40,19 +39,19 @@ public final class Main {
 
     private static final String DASH = "-";
 
-    @Option(name = DASH + "in", handler = StringOptionHandler.class, usage = "Input file or folder path.")
+    @Option(name = DASH + "in", handler = StringOptionHandler.class, usage = "Input file or folder path.", required = true)
     private String src;
-    @Option(name = DASH + "out", handler = StringOptionHandler.class, usage = "Output folder path.")
+    @Option(name = DASH + "out", handler = StringOptionHandler.class, usage = "Output folder path.", required = true)
     private String output;
 
-    @Option(name = DASH + "sn", handler = StringOptionHandler.class, usage = "Source Language Name, e.g. 'MDL'.")
+    @Option(name = DASH + "source-language-name", aliases = { DASH + "sn" }, handler = StringOptionHandler.class, usage = "Source Language Name, e.g. 'MDL'.", required = true)
     private String sourceLanguageName;
-    @Option(name = DASH + "sv", handler = StringOptionHandler.class, usage = "Source Language Version, e.g. '5.0.8'.")
+    @Option(name = DASH + "source-language-version", aliases = { DASH + "sv" }, handler = StringOptionHandler.class, usage = "Source Language Version, e.g. '5.0.8'.", required = true)
     private String sourceLanguageVersion;
 
-    @Option(name = DASH + "tn", handler = StringOptionHandler.class, usage = "Target Language Name, e.g 'NMTRAN'.")
+    @Option(name = DASH + "target-language-name", aliases = { DASH + "tn" }, handler = StringOptionHandler.class, usage = "Target Language Name, e.g 'NMTRAN'.", required = true)
     private String targetLanguageName;
-    @Option(name = DASH + "tv", handler = StringOptionHandler.class, usage = "Target Language Version, e.g '7.2'.")
+    @Option(name = DASH + "target-language-version", aliases = { DASH + "tv" }, handler = StringOptionHandler.class, usage = "Target Language Version, e.g '7.2'.", required = true)
     private String targetLanguageVersion;
 
     private ConversionReport convert(File src, String srcLanguage, String srcVersion, String targetLanguage, String targetVersion,
@@ -154,12 +153,6 @@ public final class Main {
         try {
             parser = new CmdLineParser(this);
             parser.parseArgument(args);
-            verifyArgumentIsNotMissing(src, parser);
-            verifyArgumentIsNotMissing(output, parser);
-            verifyArgumentIsNotMissing(sourceLanguageName, parser);
-            verifyArgumentIsNotMissing(sourceLanguageVersion, parser);
-            verifyArgumentIsNotMissing(targetLanguageName, parser);
-            verifyArgumentIsNotMissing(targetLanguageVersion, parser);
         } catch (CmdLineException e) {
             exit(parser, e.getMessage());
         }
@@ -168,6 +161,9 @@ public final class Main {
     private String exposeCappabilities() {
         StringBuilder sb = new StringBuilder();
         sb.append("The following conversions are supported: \n");
+        if (converterManager.getCapabilities().isEmpty()) {
+            sb.append("No Converter Providers were discovered.\n");
+        }
         for (Map.Entry<LanguageVersion, Collection<LanguageVersion>> e : converterManager.getCapabilities().entrySet()) {
             LanguageVersion source = e.getKey();
             Collection<LanguageVersion> targets = e.getValue();
@@ -177,8 +173,8 @@ public final class Main {
                 sb.append("] To [");
                 sb.append(target);
                 sb.append("]");
+                sb.append("\n");
             }
-            sb.append("\n");
         }
         return sb.toString();
     }
@@ -205,12 +201,6 @@ public final class Main {
             System.err.println(e.getMessage());
             System.err.println(cli.exposeCappabilities());
             System.exit(1);
-        }
-    }
-
-    private static void verifyArgumentIsNotMissing(String arg, CmdLineParser parser) {
-        if (StringUtils.isEmpty(arg)) {
-            exit(parser, "");
         }
     }
 

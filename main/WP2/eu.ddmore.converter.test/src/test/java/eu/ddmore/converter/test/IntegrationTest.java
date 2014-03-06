@@ -126,7 +126,7 @@ public class IntegrationTest {
 
     @Test
     public void shouldConvertCLI() throws ConverterNotFoundException, IOException {
-        String[] args = new String[] { "-in", "files", "-out", "files", "-sln", "MDL", "-slv", "5.0.8-qualm", "-tln", "NMTRAN", "-tlv", "7.2.0-qualn" };
+        String[] args = new String[] { "-in", "files", "-out", "files", "-sn", "MDL", "-sv", "5.0.8-qualm", "-tn", "NMTRAN", "-tv", "7.2.0-qualn" };
         Main cli = new Main();
         cli.parseArguments(args);
         ConversionReport[] reports = cli.runFromCommandLine();

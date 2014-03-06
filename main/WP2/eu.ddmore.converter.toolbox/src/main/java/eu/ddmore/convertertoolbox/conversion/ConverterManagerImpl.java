@@ -74,7 +74,7 @@ public class ConverterManagerImpl implements ConverterManager {
 
         if (!sortedConverters.isEmpty()) {
             Converter latestFoundConverter = sortedConverters.last();
-            LOGGER.info(String.format("Proper converter found: %s", latestFoundConverter));
+            LOGGER.info(String.format("Valid converter found: %s", latestFoundConverter));
             return latestFoundConverter;
         } else {
             throw new ConverterNotFoundException(String.format("No converter matches the given inputs [source=%s, target=%s]", source,

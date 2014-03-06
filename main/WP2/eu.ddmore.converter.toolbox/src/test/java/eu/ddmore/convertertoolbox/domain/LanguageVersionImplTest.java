@@ -32,7 +32,7 @@ public class LanguageVersionImplTest {
     }
 
     @Test
-    public void shouldBeEqualQual() {
+    public void shouldNotBeEqualLowerCase() {
         Version nonmem72bVers = new VersionImpl(7, 2, 0, "qual");
         LanguageVersion nonmem72b = new LanguageVersionImpl("nmtran", nonmem72bVers);
 
