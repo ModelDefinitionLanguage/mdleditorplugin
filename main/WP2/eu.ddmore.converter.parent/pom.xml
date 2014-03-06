@@ -16,6 +16,7 @@
 		<module>../eu.ddmore.converter.test.mdl2pharmml</module>
 		<module>../eu.ddmore.converter.test</module>
 		<module>../eu.ddmore.converter.mdl</module>
+		<module>../eu.ddmore.converter.toolbox-bundle</module>
 	</modules>
 
 	<properties>
