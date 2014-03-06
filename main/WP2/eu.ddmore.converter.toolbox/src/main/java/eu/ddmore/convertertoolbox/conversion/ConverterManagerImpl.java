@@ -34,6 +34,7 @@ public class ConverterManagerImpl implements ConverterManager {
     private List<Converter> converters = new ArrayList<Converter>();
     private static final Logger LOGGER = Logger.getLogger(ConverterManagerImpl.class);
 
+    @Override
     public void discoverConverters() {
         converters.clear();
         ServiceLoader<ConverterProvider> loader = ServiceLoader.load(ConverterProvider.class);
