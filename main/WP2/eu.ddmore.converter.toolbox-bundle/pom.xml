@@ -43,7 +43,6 @@
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Embed-Dependency>!org.eclipse.*</Embed-Dependency>
-						<Embed-Transitive>true</Embed-Transitive>
 						<Export-Package>eu.ddmore.mdl.generator;eu.ddmore.converter.mdlprinting</Export-Package>
 						<Import-Package>*;resolution:=optional</Import-Package>
 					</instructions>
