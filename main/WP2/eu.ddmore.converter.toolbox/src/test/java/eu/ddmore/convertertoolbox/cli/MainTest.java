@@ -2,9 +2,15 @@ package eu.ddmore.convertertoolbox.cli;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
+import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
+import eu.ddmore.convertertoolbox.api.response.ConversionReport;
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
+import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 
 
 public class MainTest {

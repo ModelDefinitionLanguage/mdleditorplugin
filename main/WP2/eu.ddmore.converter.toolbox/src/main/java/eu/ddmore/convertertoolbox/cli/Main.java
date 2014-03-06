@@ -8,7 +8,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.spi.StringOptionHandler;
 
 import com.google.common.base.Preconditions;
 
@@ -30,6 +35,23 @@ public final class Main {
     private ConverterManager converterManager;
     private static final int MAX_VERSION_NUMBERS = 3;
     private static final Logger LOGGER = Logger.getLogger(Main.class);
+
+    private static final String DASH = "-";
+
+    @Option(name = DASH + "in", handler = StringOptionHandler.class, usage = "Input file or folder path.")
+    private String src;
+    @Option(name = DASH + "out", handler = StringOptionHandler.class, usage = "Output folder path.")
+    private String output;
+
+    @Option(name = DASH + "sln", handler = StringOptionHandler.class, usage = "Source Language Name.")
+    private String sourceLanguageName;
+    @Option(name = DASH + "slv", handler = StringOptionHandler.class, usage = "Source Language Version.")
+    private String sourceLanguageVersion;
+
+    @Option(name = DASH + "tln", handler = StringOptionHandler.class, usage = "Target Language Name.")
+    private String targetLanguageName;
+    @Option(name = DASH + "tlv", handler = StringOptionHandler.class, usage = "Target Language Version.")
+    private String targetLanguageVersion;
 
     private ConversionReport convert(File src, String srcLanguage, String srcVersion, String targetLanguage, String targetVersion,
             File outputDirectory) throws ConverterNotFoundException, IOException {
@@ -61,6 +83,8 @@ public final class Main {
         if (hyphenFirstIndex != -1) {
             versionNumbers = version.substring(0, hyphenFirstIndex);
             qualifier = version.substring(hyphenFirstIndex + 1);
+        } else {
+            versionNumbers = version;
         }
         Version sourceVersion = createVersion(qualifier, versionNumbers);
         return new LanguageVersionImpl(language, sourceVersion);
@@ -98,20 +122,18 @@ public final class Main {
      * @throws ConverterNotFoundException
      * @throws IOException
      */
-    public ConversionReport[] runFromCommandLine(String... args) throws ConverterNotFoundException, IOException {
-        Preconditions
-                .checkArgument(
-                    args.length == 6,
-                    "Illegal arguments. Run again by giving the arguments in the following format: 'sourcePath outputPath sourceLanguage sourceVersion targetLanguage targetVersion', e.g. 'myMDLFile.mdl C:/output/ MDL 5.0.8 NMTRAN 7.2.0'");
+    public ConversionReport[] runFromCommandLine() throws ConverterNotFoundException, IOException {
         converterManager = new ConverterManagerImpl();
         converterManager.discoverConverters();
-        File src = new File(args[0]);
-        File outputDirectory = new File(args[1]);
-        if (src.isDirectory()) {
-            File[] filesForConversion = getFilesFromDirectory(src);
-            return convert(filesForConversion, args[2], args[3], args[4], args[5], outputDirectory);
+        File srcAsFile = new File(src);
+        File outputDirectory = new File(output);
+        if (srcAsFile.isDirectory()) {
+            File[] filesForConversion = getFilesFromDirectory(srcAsFile);
+            return convert(filesForConversion, sourceLanguageName, sourceLanguageVersion, targetLanguageName, targetLanguageVersion,
+                outputDirectory);
         } else {
-            return new ConversionReport[] { convert(src, args[2], args[3], args[4], args[5], outputDirectory) };
+            return new ConversionReport[] { convert(srcAsFile, sourceLanguageName, sourceLanguageVersion, targetLanguageName,
+                targetLanguageVersion, outputDirectory) };
         }
     }
 
@@ -125,11 +147,26 @@ public final class Main {
         return filesForConversion.toArray(new File[filesForConversion.size()]);
     }
 
+    public void parseArguments(String... args) {
+        CmdLineParser parser = null;
+        try {
+            parser = new CmdLineParser(this);
+            parser.parseArgument(args);
+            verifyArgumentIsNotMissing(src, parser);
+            verifyArgumentIsNotMissing(output, parser);
+            verifyArgumentIsNotMissing(sourceLanguageName, parser);
+            verifyArgumentIsNotMissing(sourceLanguageVersion, parser);
+            verifyArgumentIsNotMissing(targetLanguageName, parser);
+            verifyArgumentIsNotMissing(targetLanguageVersion, parser);
+        } catch (CmdLineException e) {
+            exit(parser, e.getMessage());
+        }
+    }
+
     public static void main(String... args) throws ConverterNotFoundException, IOException {
-        
-        
-        
-        ConversionReport[] reports = new Main().runFromCommandLine(args);
+        Main cli = new Main();
+        cli.parseArguments(args);
+        ConversionReport[] reports = cli.runFromCommandLine();
         for (ConversionReport report : reports) {
             if (report.getReturnCode().equals(ConversionReport.ConversionCode.SUCCESS)) {
                 LOGGER.info(report);
@@ -141,4 +178,17 @@ public final class Main {
             }
         }
     }
+
+    private static void verifyArgumentIsNotMissing(String arg, CmdLineParser parser) {
+        if (StringUtils.isEmpty(arg)) {
+            exit(parser, "");
+        }
+    }
+
+    private static void exit(CmdLineParser parser, String msg) {
+        System.err.println(msg);
+        parser.printUsage(System.out);
+        System.exit(1);
+    }
+
 }
