@@ -29,15 +29,17 @@ import org.ddmore.mdl.mdl.FullyQualifiedArgumentName
 class MathPrinter extends MdlPrinter{
 
 	//Needed to fill BlkIdRef attributes of references in expressions that point to PharmML blocks where variables are defined
- 	extension ReferenceResolver resolver=null
-    	new(ReferenceResolver resolver) {
+ 	public extension ReferenceResolver resolver=null
+    
+    new(ReferenceResolver resolver) {
     	this.resolver = resolver
  	}
   
 	val xmlns_math="http://www.pharmml.org/2013/03/Maths";
 	val xmlns_ct="http://www.pharmml.org/2013/03/CommonTypes";
-		
-	val TYPE_REAL = "real";
+	
+	public val TYPE_INT = "int";
+	public val TYPE_REAL = "real";
 	
 	//List of mathematical functions (MDL = PharmML) converted to PharmML unary or binary operators
 	var standardFunctions = newHashSet("abs", "exp", "factorial", "factl", "gammaln", "ln", "log", 
@@ -175,7 +177,7 @@ class MathPrinter extends MdlPrinter{
 	</FunctionArgument>
 	'''	
 	
-		def print_Assign(Expression expr)'''
+	def print_Assign(Expression expr)'''
 		<ct:Assign>
 			«expr.print_Math_Equation»
 		</ct:Assign>

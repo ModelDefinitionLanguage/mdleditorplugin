@@ -1,0 +1,90 @@
+package eu.ddmore.converter.mdl2pharmml
+
+import org.ddmore.mdl.mdl.Mcl
+import java.util.ArrayList
+import java.io.FileReader
+import java.io.BufferedReader
+import java.io.FileNotFoundException
+import java.io.File
+
+class DataSetPrinter {
+	protected Mcl mcl = null;
+	protected extension MathPrinter mathPrinter = null;
+	
+	new(Mcl mcl, MathPrinter mathPrinter){
+		this.mcl = mcl;
+		this.mathPrinter = mathPrinter;
+	}	
+	
+	//
+	def print_Columns(String[] names, String[] types)
+	'''
+		«IF names.size == types.size»
+			«FOR i: 0..names.size-1»
+				<ds:Column columnId="«names.get(i)»" valueType="«types.get(i)»" columnNum="«i»"/>
+			«ENDFOR»
+		«ELSE»
+			«FOR i: 0..names.size-1»
+				<ds:Column columnId="«names.get(i)»" columnNum="«i»"/>
+			«ENDFOR»
+		«ENDIF»
+	'''
+	
+	//
+	def print_Row(String[] atoms)'''
+	<Row>
+		«FOR row: atoms»
+			«print_ct_Value(row)»
+		«ENDFOR»
+	</Row>
+	'''
+	
+	// May need to skip first line (repeated column names) 
+	// TODO: Do we need to check actual types against types deduced from MDL???
+	def print_DataSet(ArrayList<String> names, ArrayList<String> types, ArrayList<String[]> values)
+	'''
+	<DataSet>
+		<ds:Definition>
+			«print_Columns(names, types)»
+		</ds:Definition>
+		<ds:Table>	
+			«FOR row: values»
+				«row.print_Row»
+			«ENDFOR»
+		</ds:Table>
+	</DataSet>
+	'''
+	
+	//
+	def getDataFileContent(String fileName){
+		var values = new ArrayList<String[]>();
+		var BufferedReader fileReader = null;
+		var modelPath = mcl.eResource.getURI.toPlatformString(true);
+		if (modelPath != null){
+			var file = new File(modelPath);
+			var dataPath = file.getParent + "\\" + fileName;		
+			try{
+				//First try the path as it is			
+				fileReader = new BufferedReader(new FileReader(dataPath));
+			}		
+			catch(FileNotFoundException e){
+				//If not found, try to look in the folder "data"
+				dataPath = file.getParent + "\\data\\" + fileName;
+				try{
+					fileReader = new BufferedReader(new FileReader(dataPath));
+					if (fileReader.ready()){ 
+						var line = "";
+						while ((line = fileReader.readLine()) != null) {
+							val atoms = line.split("\\s{1,}|,|;");
+				        	values.add(atoms);
+				        }
+				    	fileReader.close();			
+					}			
+				}
+				catch(FileNotFoundException e1){}
+			}
+		}
+		return values;
+	}	
+	
+}

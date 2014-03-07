@@ -12,7 +12,7 @@ import org.ddmore.mdl.mdl.Expression
 
 class ReferenceResolver extends MdlPrinter{
 	
-	extension Mcl mcl = null;  
+	Mcl mcl = null;  
   	new(Mcl mcl) {
     	this.mcl = mcl
     	prepareCollections(mcl);
@@ -220,7 +220,8 @@ class ReferenceResolver extends MdlPrinter{
 						observationVars.add(st.symbol.identifier);
 						if (st.symbol.expression != null){
 							if (st.symbol.expression.expression != null){
-								observationVars.addAll(st.symbol.expression.expression.getReferencesToRandomVars);
+								var classifiedVars = st.symbol.expression.expression.getReferences;
+								observationVars.addAll(classifiedVars.keySet);
 							}
 						}
 					}
@@ -285,16 +286,18 @@ class ReferenceResolver extends MdlPrinter{
 	}
 	
 	//+ For each reference, define its purpose
-	def getReferencesToRandomVars(Expression expr){
-		var classifiedVars = new HashSet<String>();
+	def getReferences(Expression expr){
+		var classifiedVars = new HashMap<String, String>();
 		var iterator = expr.eAllContents();
 	    while (iterator.hasNext()){
 	    	var obj = iterator.next();
 	    	if (obj instanceof FullyQualifiedSymbolName){
 	    		var ref = obj as FullyQualifiedSymbolName;
-	    		if (!classifiedVars.contains(ref.toStr))
+	    		if (classifiedVars.get(ref.toStr) == null)
 			    	if (eps_vars.get(ref.toStr) != null)
-			    		classifiedVars.add(ref.toStr)
+			    		classifiedVars.put(ref.toStr, "random")
+			    	else 	
+			    		classifiedVars.put(ref.toStr, "other");
 	    	}
 	    }
 	    return classifiedVars;
