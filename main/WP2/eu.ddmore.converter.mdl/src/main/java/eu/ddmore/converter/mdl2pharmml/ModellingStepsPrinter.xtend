@@ -88,7 +88,7 @@ class ModellingStepsPrinter extends DataSetPrinter{
 		«FOR o: mcl.objects»
 			«IF o.modelObject != null»«o.modelObject.print_msteps_DataSet»«ENDIF»
 		«ENDFOR»
-	</ObjectiveDataSet>s
+	</ObjectiveDataSet>
 	'''
     
     //+ Print data set
