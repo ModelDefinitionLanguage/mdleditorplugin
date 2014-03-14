@@ -21,24 +21,26 @@ class Mdl2PharmML{
 	val xmlns_ds="http://www.pharmml.org/2013/08/Dataset";
 	val writtenVersion = "0.1";
 
-	var Mcl mcl = null;
-	var DistributionPrinter distributionPrinter = null;
-	var ReferenceResolver referenceResolver = null; 
+	Mcl mcl = null;
+	var DistributionPrinter distrPrinter = null;
 	var MathPrinter mathPrinter = null;
-	
+	var ReferenceResolver resolver = null;
+
 	//Print file name and analyse all MCL objects in the source file
   	def convertToPharmML(Mcl m){
   		mcl = m;  
-  		distributionPrinter = new DistributionPrinter();
-  		referenceResolver = new ReferenceResolver(mcl);	
-		mathPrinter = new MathPrinter(referenceResolver);
+  		resolver = new ReferenceResolver();
+  		resolver.prepareCollections(mcl);
+		mathPrinter = new MathPrinter(resolver);
+  		distrPrinter = new DistributionPrinter();
+
 		val msPrinter = new ModellingStepsPrinter(mcl, mathPrinter);  		
 		'''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<PharmML 
 			«print_PharmML_NameSpaces»
 			writtenVersion="«writtenVersion»">
-			<ct:Name>"«referenceResolver.fileName(m.eResource)»"</ct:Name>
+			<ct:Name>"«mathPrinter.fileName(m)»"</ct:Name>
 			«print_mdef_IndependentVariables»
 			«print_mdef_ModelDefinition»
 			«msPrinter.print_msteps_ModellingSteps»
@@ -80,7 +82,7 @@ class Mdl2PharmML{
 	//IndependentVariables
 	//////////////////////////////////////
 	protected def print_mdef_IndependentVariables()'''
-		«FOR s: referenceResolver.ind_vars»
+		«FOR s: resolver.ind_vars»
 			<IndependentVariable symbId="«s»"/>
 		«ENDFOR»
 	'''
@@ -96,11 +98,11 @@ class Mdl2PharmML{
 		var model = "";
 		for (o: mcl.objects){
 			if (o.modelObject != null){
-				var errorVars = referenceResolver.vm_err_vars.get(o.identifier.name);
+				var errorVars = resolver.vm_err_vars.get(o.objectName.name);
 				if (errorVars != null){
 					model = model + 
 					'''
-						<VariabilityModel blkId="vm_err.«o.identifier.name»" type = "error">
+						<VariabilityModel blkId="vm_err.«o.objectName.name»" type = "error">
 							«FOR s: errorVars»
 								<Level symbId="«s»"/>
 							«ENDFOR»
@@ -108,11 +110,11 @@ class Mdl2PharmML{
 					'''		
 				}
 				
-				var mdlVars = referenceResolver.vm_mdl_vars.get(o.identifier.name);
+				var mdlVars = resolver.vm_mdl_vars.get(o.objectName.name);
 				if (mdlVars != null){
 					model = model + 
 					'''
-						<VariabilityModel blkId="vm_mdl.«o.identifier.name»" type = "model">
+						<VariabilityModel blkId="vm_mdl.«o.objectName.name»" type = "model">
 							«FOR s: mdlVars»
 								<Level symbId="«s»"/>
 							«ENDFOR»
@@ -134,11 +136,11 @@ class Mdl2PharmML{
 		var model = "";
 		for (o: mcl.objects){
 			if (o.modelObject != null){
-				var covariateVars = referenceResolver.cm_vars.get(o.identifier.name);
+				var covariateVars = resolver.cm_vars.get(o.objectName.name);
 				if (covariateVars != null){
 					model = model +
 					'''
-					<CovariateModel blkId="cm.«o.identifier.name»">
+					<CovariateModel blkId="cm.«o.objectName.name»">
 						«FOR s: covariateVars»
 							«s.print_mdef_CovariateModel»
 						«ENDFOR»
@@ -179,13 +181,13 @@ class Mdl2PharmML{
 					//Parameter object, STRUCTURAL
 					if (b.structuralBlock != null){
 						for (id: b.structuralBlock.parameters) 
-							statements = statements + '''<SimpleParameter symbId = "«id.identifier»"/>'''
+							statements = statements + '''<SimpleParameter symbId = "«id.symbolName.name»"/>'''
 			  		}
 			  		//ParameterObject, VARIABILITY
 			  		if (b.variabilityBlock != null){
 						for (st: b.variabilityBlock.statements){
 							if (st.parameter != null)
-								statements = statements + '''<SimpleParameter symbId = "«st.parameter.identifier»"/>'''
+								statements = statements + '''<SimpleParameter symbId = "«st.parameter.symbolName.name»"/>'''
 						} 
 			  		}
 			  	}
@@ -203,7 +205,7 @@ class Mdl2PharmML{
 					//Model object, RANDOM_VARIABLES_DEFINITION
 					if (b.randomVariableDefinitionBlock != null){
 						for (s: b.randomVariableDefinitionBlock.variables){
-							if (referenceResolver.isIndependentVariable(s.identifier))
+							if (resolver.isIndependentVariable(s.symbolName.name))
 								statements = statements + s.print_mdef_RandomVariable;
 						} 
 			  		}
@@ -218,7 +220,7 @@ class Mdl2PharmML{
 	  		if (statements.length > 0){
 		  		model = model + 
 				'''
-					<ParameterModel blkId="pm.«o.identifier.name»">
+					<ParameterModel blkId="pm.«o.objectName.name»">
 						«statements»
 					</ParameterModel>
 				''';
@@ -276,11 +278,11 @@ class Mdl2PharmML{
 		if (s.symbol != null){
 			if (s.symbol.expression != null){
 				if (s.symbol.expression.expression != null){
-					var pieces = symbols.get(s.symbol.identifier); 
+					var pieces = symbols.get(s.symbol.symbolName.name); 
 					if (pieces == null) pieces = new ArrayList<Piece>();
 					var Piece piece = new Piece(parent, mathPrinter.print_Math_Expr(s.symbol.expression.expression).toString, condition);
 					pieces.add(piece);
-					symbols.put(s.symbol.identifier, pieces);
+					symbols.put(s.symbol.symbolName.name, pieces);
 				}
 			}
 		}	
@@ -322,10 +324,10 @@ class Mdl2PharmML{
 	
 	def void addOrderOfConditionalSymbol(BlockStatement s, HashMap<String, Integer> symbolOrders, Integer base, Integer order){
 		if (s.symbol != null){
-			var prev = symbolOrders.get(s.symbol.identifier); 
+			var prev = symbolOrders.get(s.symbol.symbolName.name); 
 			if (prev == null) prev = 0;
 			if (prev <= base + order)
-				symbolOrders.put(s.symbol.identifier, base + order);
+				symbolOrders.put(s.symbol.symbolName.name, base + order);
 		}	
 		if (s.statement != null){//nested conditional statement
 			s.statement.defineOrderOfConditionalSymbols(symbolOrders, base + order);
@@ -333,9 +335,9 @@ class Mdl2PharmML{
 	}	
 	
 	def print_mdef_RandomVariable(RandomVariable s)'''
-		<RandomVariable symbId="«s.identifier»">
+		<RandomVariable symbId="«s.symbolName.name»">
 			«s.print_VariabilityReference»
-			«distributionPrinter.print_uncert_Distribution(s.randomList)»
+			«distrPrinter.print_uncert_Distribution(s.randomList)»
 		</RandomVariable>
 	'''
 	
@@ -366,7 +368,7 @@ class Mdl2PharmML{
 				model = model + 
 				'''
 					«IF (variables.length > 0)»
-						<StructuralModel blkId="sm.«o.identifier.name»">
+						<StructuralModel blkId="sm.«o.objectName.name»">
 							«IF (variables.length > 0)»«variables»«ENDIF»
 						</StructuralModel>
 					«ENDIF»
@@ -394,7 +396,7 @@ class Mdl2PharmML{
 				model = model +
 				'''
 					«IF (statements.length > 0)»
-						<ObservationModel blkId="om.«o.identifier.name»">
+						<ObservationModel blkId="om.«o.objectName.name»">
 							«statements»
 						</ObservationModel>
 					«ENDIF»
@@ -419,7 +421,7 @@ class Mdl2PharmML{
 		«IF s.expression != null»
 			«IF s.expression.expression != null»
 				«var expr = s.expression.expression»
-				«var classifiedVars = referenceResolver.getReferences(expr)»
+				«var classifiedVars = resolver.getReferences(expr)»
 				«IF classifiedVars.size > 0»
 					«FOR ss: classifiedVars.entrySet.filter[x | x.value.equals("random")]»
 						«val ref = ss.key.defineDistribution»
@@ -430,7 +432,7 @@ class Mdl2PharmML{
 				«ENDIF»
 			«ENDIF»
 		«ENDIF»
-		<General symbId="«s.identifier»">
+		<General symbId="«s.symbolName.name»">
 			«IF s.expression.expression != null»
 				«mathPrinter.print_Assign(s.expression.expression)»
 			«ENDIF»
@@ -439,7 +441,7 @@ class Mdl2PharmML{
 	
 	//
 	def print_VariabilityReference(RandomVariable s)'''
-		«val level = referenceResolver.getAttribute(s.randomList.arguments, "level")»
+		«val level = mathPrinter.getAttribute(s.randomList.arguments, "level")»
 		«IF level.length > 0»
 			<ct:VariabilityReference>
 				<ct:SymbRef symbIdRef="«level»"/>
@@ -454,7 +456,7 @@ class Mdl2PharmML{
 	/*def print_mdef_ErrorModel(Expression expr)'''
     <ErrorModel>
     	«IF expr != null»
-    		«mathPrinter.print_Assign(expr)»
+    		«print_Assign(expr)»
     	«ENDIF»
     </ErrorModel>
 	'''*/
@@ -463,11 +465,11 @@ class Mdl2PharmML{
 	/*def print_InitialCondition(SymbolDeclaration s)'''
 		«IF s.expression != null»
 			«IF s.expression.odeList != null»
-				«var init = referenceResolver.getAttributeExpression(s.expression.odeList.arguments, "init")»
+				«var init = getAttributeExpression(s.expression.odeList.arguments, "init")»
 				«IF init != null»
 					«IF init.expression != null»
-						<InitialCondition symbID="«s.identifier»">
-							«mathPrinter.print_Math_Expr(init.expression)»
+						<InitialCondition symbID="«s.name»">
+							«print_Math_Expr(init.expression)»
 						</InitialCondition>
 					«ENDIF»	
 				«ENDIF»
@@ -483,7 +485,7 @@ class Mdl2PharmML{
 				for (b: o.modelObject.blocks){
 					if(b.randomVariableDefinitionBlock != null){
 						for (s: b.randomVariableDefinitionBlock.variables){
-							if (s.identifier.equalsIgnoreCase(ref))
+							if (s.symbolName.name.equalsIgnoreCase(ref))
 								return s;
 						}
 					}
@@ -495,7 +497,7 @@ class Mdl2PharmML{
 	
 	def print_BlockStatement(BlockStatement st, String tag, Boolean printType)'''
 		«IF st.symbol != null»
-			<«tag» symbId="«st.symbol.identifier»"«IF printType» symbolType="«mathPrinter.TYPE_REAL»"«ENDIF»>
+			<«tag» symbId="«st.symbol.symbolName.name»"«IF printType» symbolType="«mathPrinter.TYPE_REAL»"«ENDIF»>
 				«IF st.symbol.expression != null»
 					«IF st.symbol.expression.expression != null»
 						«mathPrinter.print_Assign(st.symbol.expression.expression)»
@@ -519,7 +521,7 @@ class Mdl2PharmML{
 				model = model +
 				'''
 					«IF (statements.length > 0)»
-						<Correlation blkId="c.«o.identifier.name»">
+						<Correlation blkId="c.«o.objectName.name»">
 							«statements»
 						</Correlation>
 					«ENDIF»

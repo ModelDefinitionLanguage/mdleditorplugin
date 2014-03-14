@@ -184,17 +184,17 @@ class DistributionPrinter extends MdlPrinter{
 		<«type»Distribution xmlns="«xmlns_uncert»" definition="«type.getURLExtension»">
 			«FOR arg: randomList.arguments.arguments»
 				«IF arg.argumentName != null»
-					«IF recognizedArgs.containsKey(arg.argumentName.identifier)»
-						«val dataType = recognizedArgs.get(arg.argumentName.identifier)»
-						«IF matrix_attrs.contains(arg.argumentName.identifier)»
+					«IF recognizedArgs.containsKey(arg.argumentName.name)»
+						«val dataType = recognizedArgs.get(arg.argumentName.name)»
+						«IF matrix_attrs.contains(arg.argumentName.name)»
 							«var dimension = defineDimension(randomList, arg)»
-							<«arg.argumentName.identifier.convertAttribute» dimension="«dimension»">
+							<«arg.argumentName.name.convertAttribute» dimension="«dimension»">
 								<values>«arg.value.toPharmML(dataType)»</values>
-							</«arg.argumentName.identifier.convertAttribute»>
+							</«arg.argumentName.name.convertAttribute»>
 						«ELSE»	
-							<«arg.argumentName.identifier.convertAttribute»>
+							<«arg.argumentName.name.convertAttribute»>
 								«arg.value.toPharmML(dataType)»
-							</«arg.argumentName.identifier.convertAttribute»>
+							</«arg.argumentName.name.convertAttribute»>
 						«ENDIF»
 					«ENDIF»
 				«ENDIF»
@@ -277,6 +277,6 @@ class DistributionPrinter extends MdlPrinter{
 	//For references in distributions we just print its name and 
 	//do not point to the PharmML block (MDL object) it appears  
 	override toStr(FullyQualifiedSymbolName s){
-		return s.identifier;
+		return s.symbol.name;
 	}
 }

@@ -99,7 +99,7 @@ class ModellingStepsPrinter extends DataSetPrinter{
 			if (b.inputVariablesBlock != null){
 				if (b.inputVariablesBlock.variables != null){
 					for (s: b.inputVariablesBlock.variables){
-						names.add(s.identifier);
+						names.add(s.symbolName.name);
 						types.add(mathPrinter.TYPE_REAL);
 					} 
 				}

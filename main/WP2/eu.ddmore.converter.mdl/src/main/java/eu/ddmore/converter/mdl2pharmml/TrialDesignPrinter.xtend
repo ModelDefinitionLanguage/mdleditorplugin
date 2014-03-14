@@ -130,7 +130,7 @@ class TrialDesignPrinter extends DataSetPrinter {
 	
 	def print_design_Assign(SymbolDeclaration s, String blkIdRef)'''
 	«IF s != null»
-		<ct:SymbRef symbIdRef="«s.identifier»«IF blkIdRef.length > 0» blkIdRef="«blkIdRef»"«ENDIF»"/>
+		<ct:SymbRef symbIdRef="«s.symbolName.name»«IF blkIdRef.length > 0» blkIdRef="«blkIdRef»"«ENDIF»"/>
 		«IF s.expression.expression != null»
 			«print_Assign(s.expression.expression)»
 		«ENDIF»
@@ -193,9 +193,9 @@ class TrialDesignPrinter extends DataSetPrinter {
 									var use = getAttribute(s.expression.list.arguments, "use");
 									if (use.length > 0){
 										if (use.equals("id")) 
-											mappings = mappings + "IndividualMapping".print_design_Mapping(s.identifier);
+											mappings = mappings + "IndividualMapping".print_design_Mapping(s.symbolName.name);
 										if (use.equals("amt"))	
-											mappings = mappings + "ArmMapping".print_design_Mapping(s.identifier);
+											mappings = mappings + "ArmMapping".print_design_Mapping(s.symbolName.name);
 										//...	
                 					}
 								}
