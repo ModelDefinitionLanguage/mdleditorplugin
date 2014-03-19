@@ -2,13 +2,12 @@ package eu.ddmore.converter.mdl2pharmml
 
 import org.ddmore.mdl.mdl.SymbolDeclaration
 import org.ddmore.mdl.mdl.Mcl
-import org.ddmore.mdl.mdl.ModelObject
-import java.util.ArrayList
+import org.ddmore.mdl.mdl.DataObject
 
 class ModellingStepsPrinter extends DataSetPrinter{ 
 	
-	new(Mcl mcl, MathPrinter mathPrinter){
-		super(mcl, mathPrinter);
+	new(Mcl mcl, MathPrinter mathPrinter, ReferenceResolver resolver){
+		super(mcl, mathPrinter, resolver);
 	}	
 	
 	////////////////////////////////////////////////
@@ -19,16 +18,40 @@ class ModellingStepsPrinter extends DataSetPrinter{
 	<ModellingSteps>
 		«print_msteps_EstimationStep("estimStep1")»
 		«print_msteps_SimulationStep("simulStep1")»
-		«print_msteps_StepDependencies»
 	</ModellingSteps>
 	'''
+	//«print_msteps_StepDependencies»
+
+	//Choose an operation: estimate vs. simulate
+	def executeOperation(){
+		for (o: mcl.objects){
+			if (o.taskObject != null){
+				for (b: o.taskObject.blocks){
+					if (b.functionDeclaration != null){
+						for (bb: b.functionDeclaration.functionBody.blocks){
+							if (bb.estimateBlock != null){
+								//model = modelBlock, 
+								//parameter = parameterBlock, 
+								//data = dataBlock
+							}
+							if (bb.simulateBlock != null){
+								
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	////////////////////////////////////////////////
 	// III.a Estimation Step
 	////////////////////////////////////////////////
 	def print_msteps_EstimationStep(String stepId)'''
 	<EstimationStep oid="«stepId»">
-		«print_msteps_ObjectiveDataSet»
+		«FOR o: mcl.objects»
+			«IF o.dataObject != null»«o.dataObject.print_msteps_DataSet»«ENDIF»
+		«ENDFOR»
 	</EstimationStep>
 	'''
 		
@@ -85,41 +108,132 @@ class ModellingStepsPrinter extends DataSetPrinter{
 	//+
 	def print_msteps_ObjectiveDataSet()'''
 	<ObjectiveDataSet dataSetRef="">
-		«FOR o: mcl.objects»
-			«IF o.modelObject != null»«o.modelObject.print_msteps_DataSet»«ENDIF»
-		«ENDFOR»
 	</ObjectiveDataSet>
 	'''
-    
-    //+ Print data set
-	def print_msteps_DataSet(ModelObject obj){
-		var names = new ArrayList<String>();
-		var types = new ArrayList<String>();
+	
+	//Assume that 
+	// DATA_INPUT_VARIABLES contains attribute 'mapping' with the name of a corresponding variable
+	// MODEL_INPUT_VARIABLES contains attribute 'use'
+	def print_NONMEM_DataSet(DataObject obj){
+		var res = "";
 		for (b: obj.blocks){
-			if (b.inputVariablesBlock != null){
-				if (b.inputVariablesBlock.variables != null){
-					for (s: b.inputVariablesBlock.variables){
-						names.add(s.symbolName.name);
-						types.add(mathPrinter.TYPE_REAL);
-					} 
+			if (b.headerBlock != null){
+				for (s: b.headerBlock.variables){
+					var columnId = s.symbolName.name;
+					var symbId = s.symbolName.name;
+					if (s.expression != null){
+						if (s.expression.list != null){
+							val newName = s.expression.list.arguments.getAttribute("mapping");
+							if (newName.length > 0)
+								symbId = newName;
+						}
+					}
+					val expectedVar = symbId.getModelInputVariable;
+					var blkIdRef = symbId.getReferenceBlock;
+					if (expectedVar != null){
+						if (expectedVar.expression != null){
+							if (expectedVar.expression.list != null){
+								val use = expectedVar.expression.list.arguments.getAttribute("use");
+								if (use.length > 0){
+									if (use.equals(ENUM_USE_ID)){
+										res = res + print_msteps_IndividualMapping(columnId, symbId, blkIdRef);
+									} else {
+										if (use.equals(ENUM_USE_COVARIATE)){
+											res = res + print_msteps_CovariateMapping(columnId, symbId, blkIdRef);
+										} else {
+											res = res + print_msteps_VariableMapping(columnId, symbId, blkIdRef);
+										}
+									}									
+								} else {
+									res = res + print_msteps_VariableMapping(columnId);
+								}
+							}
+						}						
+					}
 				}
 			}
 		}
-		var fileName = getDataSource(mcl);
-		if (fileName.length > 0){
-			var values = fileName.getDataFileContent;
-			if (values == null){
-				val dotIndex = fileName.indexOf('.');
-				var fileExtension = "";
-				if (dotIndex > 0) fileExtension = fileName.substring(dotIndex + 1);		
-				return
-				'''				
-					<Description>Source file not found («fileName»)!</Description>
-					<ExternalSource url="file=///«fileName»" format="«fileExtension»"/>	
-				''';
-			}
-			print_DataSet(names, types, values);
-		}
-	}	
+		'''
+		<NONMEMdataSet>
+			«res»
+		</NONMEMdataSet>
+		'''
+	}
 	
+	def print_msteps_IndividualMapping(String columnId, String symbId, String blkIdRef)'''
+		<NMIndividualMapping>
+			<ds:ColumnRef columnIdRef="«columnId»"/>
+			<ds:SymbRef «IF blkIdRef.length > 0» blkIdRef="«blkIdRef»" «ENDIF»symbIdRef="«symbId»"/>
+		</NMIndividualMapping>
+	'''
+	
+	def print_msteps_CovariateMapping(String columnId, String symbId, String blkIdRef)'''
+		<NMCovariateMapping>
+			<ds:ColumnRef columnIdRef="«columnId»"/>
+			<ds:SymbRef «IF blkIdRef.length > 0» blkIdRef="«blkIdRef»" «ENDIF»symbIdRef="«symbId»"/>
+		</NMCovariateMapping>
+	'''
+	
+	def print_msteps_VariableMapping(String columnId, String symbId, String blkIdRef)'''
+		<NMVariableMapping>
+			<ds:ColumnRef columnIdRef="«columnId»"/>
+			<ds:SymbRef «IF blkIdRef.length > 0» blkIdRef="«blkIdRef»" «ENDIF»symbIdRef="«symbId»"/>
+		</NMVariableMapping>
+	'''
+	
+	def print_msteps_VariableMapping(String columnId)'''
+		<NMVariableMapping>
+			<ds:ColumnRef columnIdRef="«columnId»"/>
+		</NMVariableMapping>
+	'''
+	
+	//Return a corresponding model variable
+	def getModelInputVariable(String name){
+		for (o: mcl.objects){
+			if (o.modelObject != null){
+				for (b: o.modelObject.blocks){
+					if (b.inputVariablesBlock != null){
+						for (s: b.inputVariablesBlock.variables){
+							if (s.symbolName.name.equals(name)){
+								return s;
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+    
+    //+ Print data set
+	def print_msteps_DataSet(DataObject obj){
+		var res = "";
+		for (b: obj.blocks)	{
+			if (b.fileBlock != null){
+				for (s: b.fileBlock.statements){
+					if (s.variable.symbolName.name.equals("data")){
+						if (s.variable.expression != null){
+							if (s.variable.expression.list != null){
+								val source = s.variable.expression.list.arguments.getAttribute("source");
+								val inputformat = s.variable.expression.list.arguments.getAttribute("inputformat");
+								if (inputformat.equals(ENUM_FORMAT_NONMEM)){
+									res  = res + obj.print_NONMEM_DataSet;
+								}
+								if (source.length > 0){
+									res = res + source.print_msteps_ExternalSource;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return res;
+	}
+	
+	def print_msteps_ExternalSource(String source)'''				
+		«val dotIndex = source.indexOf('.')»
+		<ExternalSource url="file=///«source»" 
+			format="«source.substring(dotIndex + 1)»"/>	
+	'''	
 }

@@ -10,8 +10,8 @@ class TrialDesignPrinter extends DataSetPrinter {
 	// II Trial Design
 	//////////////////////////////////////////////////////////////////////////
 
-	new(Mcl mcl, MathPrinter mathPrinter){
-		super(mcl, mathPrinter);
+	new(Mcl mcl, MathPrinter mathPrinter, ReferenceResolver resolver){
+		super(mcl, mathPrinter, resolver);
 	}	
 	
 	def print_design_TrialDesign()'''

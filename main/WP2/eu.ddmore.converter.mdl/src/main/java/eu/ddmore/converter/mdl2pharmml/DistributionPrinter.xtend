@@ -16,16 +16,8 @@ import eu.ddmore.converter.mdlprinting.MdlPrinter
 //TODO: document + examples
 class DistributionPrinter extends MdlPrinter{
 
-	//TODO: external parameters? What if the location changes?
-	val xmlns_uncert="http://www.uncertml.org/3.0"; 
-	val definition = "http://www.uncertml.org/distributions/";
-	
-	val nVal = "nVal";          //natural number
-	val pnVal = "pnVal";       //positive natural 
-	val rVal = "rVal";         //rVal number
-	val prVal = "prVal";      //positive rVal
-	val pVal = "pVal";  //probability type
-	
+	extension DataType dataType = new DataType();
+
 	//Recognised types of distributions and pairs (attribute, value type) to print as PharmML tags
 	val distribution_attrs = newHashMap(
 		'Bernoulli' -> newHashMap(

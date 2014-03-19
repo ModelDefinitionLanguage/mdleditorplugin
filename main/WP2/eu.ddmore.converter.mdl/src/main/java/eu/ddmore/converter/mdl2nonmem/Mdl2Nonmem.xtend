@@ -723,8 +723,7 @@ class Mdl2Nonmem extends MdlPrinter{
 		«section» «IF k > 0»BLOCK («k») «ENDIF»
 		«result»
 		'''; 
-	}
-	
+	}	
 
 	//Print VARIABILITY parameter in $SIGMA or $OMEGA
 	def printVariabilityParameter(ParameterDeclaration s, String section){

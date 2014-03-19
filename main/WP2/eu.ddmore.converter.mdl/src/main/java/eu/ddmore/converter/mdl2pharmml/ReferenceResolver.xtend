@@ -11,7 +11,14 @@ import org.ddmore.mdl.mdl.BlockStatement
 import org.ddmore.mdl.mdl.Expression
 import org.ddmore.mdl.mdl.SymbolDeclaration
 
-class ReferenceResolver extends MdlPrinter{
+class ReferenceResolver{
+
+	val Mcl mcl;
+	extension MdlPrinter mdlPrinter = new MdlPrinter();
+	new(Mcl m) {
+    	this.mcl = m;
+    	prepareCollections(m);
+ 	}
 	
 	//protected val LEVEL_UNDEF = 0;	
 	protected var eps_vars = newHashMap   //EPSs   - Random variables, level 1
@@ -97,24 +104,29 @@ class ReferenceResolver extends MdlPrinter{
 				if (source.contains(ref.symbol.name)) return "sm." + ref.object.name;	
 			source = pm_vars.get(ref.object.name);
 			if (source != null)
-				if (source.contains(ref.symbol.name)) return "sm." + ref.object.name;	
+				if (source.contains(ref.symbol.name)) return "pm." + ref.object.name;	
 			return ref.object.name;
 		} else {
 			//try to find by name
-			for (set: vm_err_vars.entrySet)
-				if (set.value.contains(ref.symbol.name)) return "vm_err." + set.key;
-			for (set:vm_mdl_vars.entrySet)
-				if (set.value.contains(ref.symbol.name)) return "vm_mdl." + set.key;
-			for (set: cm_vars.entrySet)
-				if (set.value.contains(ref.symbol.name)) return "cm." + set.key;
-			for (set: om_vars.entrySet)
-				if (set.value.contains(ref.symbol.name)) return "om." + set.key;	
-			for (set: sm_vars.entrySet)
-				if (set.value.contains(ref.symbol.name)) return "sm." + set.key;	
-			for (set: pm_vars.entrySet)
-				if (set.value.contains(ref.symbol.name)) return "sm." + set.key;	
-			return "";
+			return getReferenceBlock(ref.symbol.name);
 		}
+	}	
+	
+	def getReferenceBlock(String name){
+		//try to find by name
+		for (set: vm_err_vars.entrySet)
+			if (set.value.contains(name)) return "vm_err." + set.key;
+		for (set:vm_mdl_vars.entrySet)
+			if (set.value.contains(name)) return "vm_mdl." + set.key;
+		for (set: cm_vars.entrySet)
+			if (set.value.contains(name)) return "cm." + set.key;
+		for (set: om_vars.entrySet)
+			if (set.value.contains(name)) return "om." + set.key;	
+		for (set: sm_vars.entrySet)
+			if (set.value.contains(name)) return "sm." + set.key;	
+		for (set: pm_vars.entrySet)
+			if (set.value.contains(name)) return "pm." + set.key;	
+		return "";
 	}	
 	
 	//+ Return input variables with use=idv (individual)

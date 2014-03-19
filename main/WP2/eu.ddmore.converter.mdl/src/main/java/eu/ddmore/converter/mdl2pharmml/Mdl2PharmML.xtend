@@ -4,22 +4,14 @@ import org.ddmore.mdl.mdl.SymbolDeclaration
 import org.ddmore.mdl.mdl.RandomVariable
 import org.ddmore.mdl.mdl.Mcl
 import org.ddmore.mdl.mdl.MclObject
+import org.ddmore.mdl.mdl.Arguments
 import java.util.ArrayList
 import org.ddmore.mdl.mdl.BlockStatement
 import org.ddmore.mdl.mdl.ConditionalStatement
 import java.util.HashMap
 
 class Mdl2PharmML{
-	val	xsi="http://www.w3.org/2001/XMLSchema-instance"; 
-	val xsi_schemaLocation="http://www.pharmml.org/2013/03/PharmML http://www.pharmml.org/2013/03/PharmML";
-	val xmlns_pharmML="http://www.pharmml.org/2013/03/PharmML";
-	val xmlns_math="http://www.pharmml.org/2013/03/Maths";
-	val xmlns_ct="http://www.pharmml.org/2013/03/CommonTypes";
-	val xmlns_mdef="http://www.pharmml.org/2013/03/ModelDefinition";
-	val xmlns_mstep="http://www.pharmml.org/2013/03/ModellingSteps";
-	val xmlns_design="http://www.pharmml.org/2013/03/TrialDesign";
-	val xmlns_ds="http://www.pharmml.org/2013/08/Dataset";
-	val writtenVersion = "0.1";
+	extension DataType dataType = new DataType();
 
 	Mcl mcl = null;
 	var DistributionPrinter distrPrinter = null;
@@ -29,12 +21,11 @@ class Mdl2PharmML{
 	//Print file name and analyse all MCL objects in the source file
   	def convertToPharmML(Mcl m){
   		mcl = m;  
-  		resolver = new ReferenceResolver();
-  		resolver.prepareCollections(mcl);
+  		resolver = new ReferenceResolver(mcl); 
 		mathPrinter = new MathPrinter(resolver);
   		distrPrinter = new DistributionPrinter();
 
-		val msPrinter = new ModellingStepsPrinter(mcl, mathPrinter);  		
+		val msPrinter = new ModellingStepsPrinter(mcl, mathPrinter, resolver);  		
 		'''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<PharmML 
@@ -87,7 +78,7 @@ class Mdl2PharmML{
 		«ENDFOR»
 	'''
 	//////////////////////////////////////
-	// I.a Function Definition (not used)
+	// I.a Function Definition (not used) - call from here if needed
 	//////////////////////////////////////
 
 	/////////////////////////
@@ -293,7 +284,7 @@ class Mdl2PharmML{
 	}
 	
 	def print_Pieces(String symbol, String tag, ArrayList<Piece> pieces, boolean printType)'''
-	<«tag» symbId="«symbol»"«IF printType» symbolType="«mathPrinter.TYPE_REAL»"«ENDIF»>
+	<«tag» symbId="«symbol»"«IF printType» symbolType="«TYPE_REAL»"«ENDIF»>
 		«mathPrinter.print_Pieces(pieces)»
 	</«tag»>
 	'''
@@ -485,7 +476,7 @@ class Mdl2PharmML{
 				for (b: o.modelObject.blocks){
 					if(b.randomVariableDefinitionBlock != null){
 						for (s: b.randomVariableDefinitionBlock.variables){
-							if (s.symbolName.name.equalsIgnoreCase(ref))
+							if (s.symbolName.name.equals(ref))
 								return s;
 						}
 					}
@@ -497,7 +488,7 @@ class Mdl2PharmML{
 	
 	def print_BlockStatement(BlockStatement st, String tag, Boolean printType)'''
 		«IF st.symbol != null»
-			<«tag» symbId="«st.symbol.symbolName.name»"«IF printType» symbolType="«mathPrinter.TYPE_REAL»"«ENDIF»>
+			<«tag» symbId="«st.symbol.symbolName.name»"«IF printType» symbolType="«TYPE_REAL»"«ENDIF»>
 				«IF st.symbol.expression != null»
 					«IF st.symbol.expression.expression != null»
 						«mathPrinter.print_Assign(st.symbol.expression.expression)»
@@ -516,18 +507,78 @@ class Mdl2PharmML{
 	def print_mdef_CollerationModel(){
 		var model = "";
 		for (o: mcl.objects){
-			if (o.modelObject != null){
-				var statements = "";
-				model = model +
-				'''
-					«IF (statements.length > 0)»
-						<Correlation blkId="c.«o.objectName.name»">
-							«statements»
-						</Correlation>
-					«ENDIF»
-				'''				
+			if (o.parameterObject != null){
+				for (b: o.parameterObject.blocks){
+					if (b.variabilityBlock != null){
+						for (c: b.variabilityBlock.statements){
+							if (c.diagBlock != null){
+							}
+							if (c.matrixBlock != null){
+								val type = mathPrinter.getAttribute(c.matrixBlock.arguments, "type");
+								if (type.equals(ENUM_RANDOM_EFFECT_SD)){
+									print_mdef_CollerationModel_CorrelationCoefficient(
+										o.objectName.name, c.matrixBlock.parameters
+									);
+								}
+								if (type.equals(ENUM_RANDOM_EFFECT_VAR)){
+									print_mdef_CollerationModel_Covariance(
+										o.objectName.name, c.matrixBlock.parameters
+									);									
+								}
+							}
+							if (c.sameBlock != null){
+							}
+						}
+						var statements = "";
+						model = model +
+						'''
+							«IF (statements.length > 0)»
+								<Correlation blkId="c.«o.objectName.name»">
+									«statements»
+								</Correlation>
+							«ENDIF»
+						'''				
+					}
+				}
 			}
 		}
 		return model;
 	}	
+	
+	def print_mdef_CollerationModel_CorrelationCoefficient(String objName, Arguments args){
+		var randomVars = "";
+		if (args.arguments.size > 2) 
+			return 
+			'''
+				<Description>
+					Conversion of correlations of random effects for large matrices is not supported yet!
+				</Description>
+			'''; 
+		for (i: 0..args.arguments.size){
+			val arg = args.arguments.get(i);
+			if (arg.argumentName != null){
+				randomVars = randomVars + 
+				'''
+					<RandomVariable«i + 1»>
+						<ct:SymbRef symbIdRef="«arg.argumentName»"/>
+					<RandomVariable«i + 1»>
+				'''
+			}		
+		}
+		//Retrieve the name of the block
+		//for (set:resolver.vm_mdl_vars.entrySet)
+		//		if (set.value.contains(name)) return "vm_mdl." + set.key;
+		'''
+			<Correlation blkId="c.«objName»">
+				«randomVars»	
+				<CorrelationCoefficient>
+				</CorrelationCoefficient>
+			</Correlation>
+		'''			
+	}
+
+	def print_mdef_CollerationModel_Covariance(String objName, Arguments args){
+		
+	}
+	
 }
