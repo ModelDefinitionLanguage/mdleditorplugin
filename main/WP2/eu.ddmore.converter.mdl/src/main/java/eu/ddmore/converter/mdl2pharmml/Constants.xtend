@@ -45,4 +45,7 @@ class DataType {
 	
 	public val individualVariables = newHashSet(ENUM_USE_ID);
 	public val covariateVariables = newHashSet(ENUM_USE_COVARIATE);
+
+	public val OPERATION_ESTIMATE = "estim";	
+	public val OPERATION_SIMULATE = "simul";
 }

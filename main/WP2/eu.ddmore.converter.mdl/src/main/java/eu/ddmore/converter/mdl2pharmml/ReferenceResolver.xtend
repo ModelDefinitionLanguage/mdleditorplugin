@@ -87,25 +87,7 @@ class ReferenceResolver{
 	//+Return name of PharmML block for a given reference
 	def getReferenceBlock(FullyQualifiedSymbolName ref){
 		if (ref.object != null){
-			var source = vm_err_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.symbol.name)) return "vm_err." + ref.object.name;
-			source = vm_mdl_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.symbol.name)) return "vm_mdl." + ref.object.name;
-			source = cm_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.symbol.name)) return "cm." + ref.object.name;
-			source = om_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.symbol.name)) return "om." + ref.object.name;	
-			source = sm_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.symbol.name)) return "sm." + ref.object.name;	
-			source = pm_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.symbol.name)) return "pm." + ref.object.name;	
-			return ref.object.name;
+			return getReferenceBlock(ref.object.name, ref.symbol.name);
 		} else {
 			//try to find by name
 			return getReferenceBlock(ref.symbol.name);
@@ -127,6 +109,29 @@ class ReferenceResolver{
 		for (set: pm_vars.entrySet)
 			if (set.value.contains(name)) return "pm." + set.key;	
 		return "";
+	}	
+	
+	def getReferenceBlock(String objName, String name){
+		//try to find by name
+		var source = vm_err_vars.get(objName);
+		if (source != null)
+			if (source.contains(name)) return "vm_err." +objName
+		source = vm_mdl_vars.get(name);
+		if (source != null)
+			if (source.contains(name)) return "vm_mdl." + objName
+		source = cm_vars.get(objName);
+		if (source != null)
+			if (source.contains(name)) return "cm." + objName
+		source = om_vars.get(objName);
+		if (source != null)
+			if (source.contains(name)) return "om." + objName	
+		source = sm_vars.get(objName);
+		if (source != null)
+			if (source.contains(name)) return "sm." + objName	
+		source = pm_vars.get(objName);
+		if (source != null)
+			if (source.contains(name)) return "pm." + objName	
+		return objName;
 	}	
 	
 	//+ Return input variables with use=idv (individual)
