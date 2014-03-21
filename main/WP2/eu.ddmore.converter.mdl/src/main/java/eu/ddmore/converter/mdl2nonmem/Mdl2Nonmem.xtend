@@ -1245,12 +1245,12 @@ class Mdl2Nonmem extends MdlPrinter{
   						block.targetBlock.prepareExternalCode;
   				}
   			}
-  			if (o.telObject != null){
+  			/*if (o.telObject != null){
   				for (BlockStatement block: o.telObject.statements){
   					if (block.targetBlock != null)
   						block.targetBlock.prepareExternalCode;
   				}
-  			}
+  			}*/
   		}
 	}
 	

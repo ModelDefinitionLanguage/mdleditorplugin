@@ -141,8 +141,7 @@ class Mdl2PharmML{
 			}
 		}
 		return model;
-	}
-	
+	}	
 
 	//Keep maps of known PharmML variables per block to use it in blkRefId	
 	protected def print_mdef_CovariateModel(String symbId)'''
