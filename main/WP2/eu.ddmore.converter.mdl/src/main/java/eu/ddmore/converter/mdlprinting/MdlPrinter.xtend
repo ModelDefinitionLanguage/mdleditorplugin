@@ -31,7 +31,6 @@ import org.ddmore.mdl.mdl.ParExpression
 import org.ddmore.mdl.mdl.Arguments
 import org.ddmore.mdl.mdl.DistributionArguments
 import org.ddmore.mdl.mdl.DistributionArgument
-import org.eclipse.emf.ecore.resource.Resource
 import org.ddmore.mdl.mdl.TargetBlock
 import org.ddmore.mdl.mdl.FullyQualifiedSymbolName
 import org.ddmore.mdl.mdl.Vector
@@ -42,350 +41,26 @@ import org.ddmore.mdl.mdl.Distribution
 import org.ddmore.mdl.mdl.UseType
 import org.ddmore.mdl.mdl.FullyQualifiedArgumentName
 import org.ddmore.mdl.mdl.Selector
-import java.util.HashMap
-import org.ddmore.mdl.mdl.ModelObjectBlock
-import org.ddmore.mdl.mdl.ParameterObjectBlock
-import org.ddmore.mdl.mdl.ImportBlock
-import org.ddmore.mdl.mdl.DataObjectBlock
-import org.ddmore.mdl.mdl.TaskObjectBlock
-import java.util.ArrayList
-import org.eclipse.emf.common.util.EList
 import org.ddmore.mdl.mdl.ParameterObject
 import org.ddmore.mdl.mdl.EstimateTask
+import org.ddmore.mdl.mdl.SimulateTask
 import org.ddmore.mdl.mdl.DataObject
 import org.ddmore.mdl.mdl.FormalArguments
 import org.ddmore.mdl.mdl.SimulationBlock
 import org.ddmore.mdl.mdl.EstimationBlock
 import org.ddmore.mdl.mdl.FileBlockStatement
-import org.ddmore.mdl.mdl.MclObject
-import java.util.HashSet
 
 class MdlPrinter {
 
-	protected var externalFunctions = new HashMap<String, HashMap<String, String>>() //list of external functions 
-	protected var externalCodeStart = new HashMap<String, ArrayList<String>>() //external code per target language section,
-	protected var externalCodeEnd = new HashMap<String, ArrayList<String>>() //external code per target language section,
-	
-	protected var eta_vars = newHashMap	  //ETAs   - Random variables, level 2
-  	protected var eps_vars = newHashMap   //EPSs   - Random variables, level 1
-	protected var theta_vars = newHashMap //THETAs - Structural parameters
-	protected var dadt_vars = newHashMap  //DADT   - Model prediction -> ODE	
-	protected var init_vars = newHashMap  //A      - Model prediction -> ODE -> init attribute	
-	
-	protected var level_vars = newHashMap //       - Input variables, level attribute			
-	
-	protected val LEVEL_UNDEF = 0;
-	
-	//These maps are used to print same blocks (NM-TRAN SAME opetion in $OMEGA and $SIGMA)
-	protected var namedOmegaBlocks = new HashMap<String, Integer>() //Collection of names of $OMEGA records with dimensions
-	protected var namedSigmaBlocks = new HashMap<String, Integer>() //Collection of names of $SIGMA records with dimensions
-	
-	
-	///////////////////////////////////////////////
-	//Prepares variable maps
-	///////////////////////////////////////////////
-	def protected clearCollections(){
-		init_vars.clear;
-		dadt_vars.clear;
-		theta_vars.clear;
-		eta_vars.clear;
-    	eps_vars.clear; 
-    	namedOmegaBlocks.clear;
-    	namedSigmaBlocks.clear;	
-    	level_vars.clear;
-	}
-	
-	//Collect variables from the MDL file
-	def protected prepareCollections(Mcl m){
-    	clearCollections();
-    	for (o:m.objects){
-	  		if (o.modelObject != null){
-	  			setLevelVars(o.modelObject);
-	  			setRandomVariables(o.modelObject);
-	  			setStructuralParameters(o.modelObject);
-	  			setModelPredictionVariables(o.modelObject);
-	  			setInitialConditions(o.modelObject);
-	  		} 
-  		}
-	}
-	
-	//Collect initial conditions from ODE list, init attribute
-	def protected setInitialConditions(ModelObject o){
-		var i = 1;
-		for (b:o.blocks){
-			if (b.modelPredictionBlock != null)
-				for (s: b.modelPredictionBlock.statements){
-					if (s.odeBlock != null)
-						for (ss: s.odeBlock.statements){
-							if (ss.symbol != null)
-								if (ss.symbol.expression != null)
-									if (ss.symbol.expression.odeList != null){
-										val initCond = ss.symbol.expression.odeList.arguments.getAttribute("init");
-										if (!initCond.equals("")){
-											init_vars.put(i, initCond);
-										} else init_vars.put(i, "0");
-										i = i + 1;
-									}
-						}
-				}
-		}
-	}
-	
-	//Assign indices to MODEL variables and expressions
-	def protected setModelPredictionVariables(ModelObject o) { 
-		var i = 1;
-		for (b:o.blocks){
-			if (b.modelPredictionBlock != null){
-				for (s: b.modelPredictionBlock.statements){
-					if (s.odeBlock != null){
-						for (ss: s.odeBlock.statements){
-							var x = ss.symbol;
-							if (x != null){
-								if (x.expression != null){
-									if (x.expression.odeList != null){
-										var id = x.identifier;
-										if (dadt_vars.get(id) == null){
-											dadt_vars.put(id, i);
-											i = i + 1;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	
-	//Assign indices to THETAs
-	def protected setStructuralParameters(ModelObject o){
-    	var i = 1; 
-		for (b: o.blocks){
-	  		if (b.structuralParametersBlock != null){
-				for (id: b.structuralParametersBlock.parameters) {
-					if (theta_vars.get(id.toStr) == null){
-						theta_vars.put(id.toStr, i);
-						i = i + 1;
-					}
-				}
-	  		}	  				
-  		}
-	}
-	
-	def setLevelVars(ModelObject o){
-		var tmp = o.getLevelVars("1");
-		for (v: tmp){
-			if (level_vars.get(v) == null)
-				level_vars.put(v, "1");
-		}
-		tmp = o.getLevelVars("2");
-		for (v: tmp){
-			if (level_vars.get(v) == null)
-				level_vars.put(v, "2");
-		}
-	}
-		
-	def protected getLevelVars(ModelObject o, String levelId) {
-		var levelVars = new HashSet<String>();
-		for (b: o.blocks){
-			if(b.inputVariablesBlock != null){
-				for (SymbolDeclaration s: b.inputVariablesBlock.variables){
-					if (s.expression != null){
-						if (s.expression.list != null){
-							var level = s.expression.list.arguments.getAttribute("level");
-							if (level.equals(levelId)){
-								if (!levelVars.contains(s.identifier)){
-									levelVars.add(s.identifier);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return levelVars;
-	}
-	
-		
-	//Assign indices to variability parameters ($ETA, $ESP)
-	def protected setRandomVariables(ModelObject o){
-    	var i = 1; var j = 1; 
-		for (b: o.blocks){
-	  		if (b.randomVariableDefinitionBlock != null){
-				for (s: b.randomVariableDefinitionBlock.variables) {
-					if (s.randomList != null){	
-						var level = s.randomList.arguments.getAttribute("level");
-						val id = s.identifier;
-						if (level_vars.get(level) != null){
-							if (level_vars.get(level).equals("2")){
-								if (eta_vars.get(id) == null){
-									eta_vars.put(id, i);
-									i = i + 1;
-								}
-							}
-							if (level_vars.get(level).equals("1"))
-								if (eps_vars.get(id) == null){
-									eps_vars.put(id, j);
-									j = j + 1;
-								}	
-							}
-						}
-						/* 
-						if (level.equals("ID"))
-							if (eta_vars.get(id) == null){
-								eta_vars.put(id, i);
-								i = i + 1;
-							}
-						if (level.equals("DV"))
-							if (eps_vars.get(id) == null){
-								eps_vars.put(id, j);
-								j = j + 1;
-							}	
-						}
-						*/
-	  			}
-	  		}
-  		}
-	}
-	
-	//DV - 1, ID - 2
-	
-	//Find NM-TRAN functions
-	def protected prepareExternals(Mcl mcl) {
-		externalFunctions.clear;	
-		externalCodeStart.clear;	
-		externalCodeEnd.clear;	
-		for (o:mcl.objects){
-  			if (o.modelObject != null){
-  				for (ModelObjectBlock block: o.modelObject.blocks){
-  					if (block.importBlock != null)
-  						block.importBlock.prepareExternalFunctions(o.identifier.name);
-  					if (block.targetBlock != null)
-  						block.targetBlock.prepareExternalCode;
-  				}
-  			}
-  			if (o.parameterObject != null){
-  				for (ParameterObjectBlock block: o.parameterObject.blocks){
-  					if (block.importBlock != null)
-  						block.importBlock.prepareExternalFunctions(o.identifier.name);
-  					if (block.targetBlock != null)
-  						block.targetBlock.prepareExternalCode;
-  				}
-  	  		}
-   			if (o.dataObject != null){
-  				for (DataObjectBlock block: o.dataObject.blocks){
-  					if (block.importBlock != null)
-  						block.importBlock.prepareExternalFunctions(o.identifier.name);
-  					if (block.targetBlock != null)
-  						block.targetBlock.prepareExternalCode;
-  				}
-  			}
-  			if (o.taskObject != null){
-  				for (TaskObjectBlock block: o.taskObject.blocks){
-  					if (block.importBlock != null)
-  						block.importBlock.prepareExternalFunctions(o.identifier.name);
-  					if (block.targetBlock != null)
-  						block.targetBlock.prepareExternalCode;
-  				}
-  			}
-  			if (o.telObject != null){
-  				for (BlockStatement block: o.telObject.statements){
-  					if (block.targetBlock != null)
-  						block.targetBlock.prepareExternalCode;
-  				}
-  			}
-  		}
-	}
-	
-	def protected void prepareExternalCode(TargetBlock block) { }	
-	def protected void prepareExternalFunctions(ImportBlock block, String string) { }
-	
-	def defineLevel(Mcl mcl, String ref){
-		for (MclObject o: mcl.objects){
-			if (o.modelObject != null){
-				for (b: o.modelObject.blocks){
-					if(b.randomVariableDefinitionBlock != null){
-						for (s: b.randomVariableDefinitionBlock.variables){
-							if (s.identifier.equals(ref)){
-								return s.defineLevel;
-							}
-						}
-					}
-				}
-			}
-		}
-		return LEVEL_UNDEF;
-	}
-	
-	def defineLevel(RandomVariable s){
-		if (s.randomList != null){
-			var levelRef = s.randomList.arguments.getAttribute("level");
-			if (!levelRef.equals("")){
-				val level = level_vars.get(levelRef);
-				if (level != null)
-					return level;
-			}
-		}
-		return LEVEL_UNDEF;
-	}
-	
-	
-	//Print a list of external code snippets: beginning of section
-	def protected getExternalCodeStart(String sectionName){
-		var res = "";		
-		val snippets = externalCodeStart.get(sectionName) 
-		if (snippets != null){
-			for (x: snippets){
-				res = res + "\n" + x;
-			}
-		}
-		return res;
-	}
-	
-	//Print a list of external code snippets: end of section
-	def protected getExternalCodeEnd(String sectionName){
-		var res = "";		
-		val snippets = externalCodeEnd.get(sectionName) 
-		if (snippets != null){
-			for (x: snippets){
-				res = res + "\n" + x;
-			}
-		}
-		return res;
-	}
-	
-	//Return attributes of an external function	from the collection
-	def protected getExternalFunctionAttributes(FullyQualifiedSymbolName ref) { 
-		if (ref.object != null)				
-			return externalFunctions.get(ref.object.name + "$" + ref.identifier)
-		else {
-			//match the short name
-			for (pair: externalFunctions.entrySet){
-				val str = pair.key as String;
-				if (str != null){
-					val functID = str.substring(str.indexOf("$") + 1);
-					if (functID.equals(ref.identifier)) return pair.value; 
-				}
-			}
-		}	
-	}
-
 	//Get MDL file name in upper-case
-	def fileNameUpperCase(Mcl m){
-		m.eResource.fileName.toUpperCase()
+	def fileName(Mcl m){
+		var fileName = m.eResource.getURI().lastSegment;
+		return fileName.substring(0, fileName.lastIndexOf('.'));
 	}	
-	
-	//Get MDL file name
-	def fileName(Resource resource){
-		var fileName = resource.getURI().lastSegment
-		fileName.substring(0, fileName.lastIndexOf('.'))
-	}
 	
 	def isTrue(AnyExpression e){
 		if (e.expression != null){
-			if (e.expression.conditionalExpression != null){
+			if (e.expression.conditionalExpression.expression != null){
 				val orExpr = e.expression.conditionalExpression.expression;
 				val andExpr = orExpr.expression.get(0);
 				val logicalExpr = andExpr.expression.get(0);	
@@ -396,12 +71,11 @@ class MdlPrinter {
 			}
 		}
 		return (e.toStr.equalsIgnoreCase("yes") || e.toStr.equalsIgnoreCase("true") || e.toStr.equals("1"));
-	}
-	
+	}	
 	
 	def isAttributeTrue(Arguments a, String attrName){
 		for (arg: a.arguments)
-			if (arg.argumentName.identifier.equals(attrName)){
+			if (arg.argumentName.name.equals(attrName)){
 				return arg.expression.isTrue;
 			}
 		return false;
@@ -410,7 +84,7 @@ class MdlPrinter {
 	//Return value of an attribute with a given name
 	def getAttribute(DistributionArguments a, String attrName){
 		for (arg: a.arguments)
-			if (arg.argumentName != null && arg.argumentName.identifier.equals(attrName)){
+			if (arg.argumentName != null && arg.argumentName.name.equals(attrName)){
 				return arg.valueToStr;
 			}				
 		return "";
@@ -418,7 +92,7 @@ class MdlPrinter {
 	
 	def findAttribute(DistributionArguments a, String attrName){
 		for (arg: a.arguments)
-			if (arg.argumentName != null && arg.argumentName.identifier.equals(attrName)){
+			if (arg.argumentName != null && arg.argumentName.name.equals(attrName)){
 				return arg;
 			}				
 		return null;
@@ -437,7 +111,7 @@ class MdlPrinter {
 	//Return value of an attribute with a given name
 	def getAttribute(Arguments a, String attrName){
 		for (arg: a.arguments)
-			if (arg.argumentName != null && arg.argumentName.identifier.equals(attrName))
+			if (arg.argumentName != null && arg.argumentName.name.equals(attrName))
 				return arg.expression.toStr
 		return "";
 	}	
@@ -445,20 +119,19 @@ class MdlPrinter {
 	//Return value of an attribute with a given name
 	def getAttributeExpression(Arguments a, String attrName){
 		for (arg: a.arguments)
-			if (arg.argumentName != null && arg.argumentName.identifier.equals(attrName))
+			if (arg.argumentName != null && arg.argumentName.name.equals(attrName))
 				return arg.expression
 		return null;
 	}	
 	
 	//Find reference to a data file 
-	def getDataSource(Mcl m){
+	public def getDataSource(Mcl m){
 		for (obj: m.objects){
 			if (obj.dataObject != null){
 				for (b: obj.dataObject.blocks){
 					if (b.fileBlock != null){
 						for (s: b.fileBlock.statements){
-							val dataSource = s.getDataSource;
-							if (dataSource.length > 0) return dataSource;
+							return s.getDataSource;
 						}
 					} 
 				}
@@ -467,18 +140,9 @@ class MdlPrinter {
 		return "";
 	}
 	
-	//Find reference to a data file 
-	def getDataSource(Resource resource){
-		for(m: resource.allContents.toIterable.filter(typeof(Mcl))) {
-			var source = m.getDataSource;
-			if (source.length > 0) return source;
-		}		
-		return "";
-	}
-	
 	def getDataSource(FileBlockStatement s){
 		if (s.variable != null){
-			if (s.variable.identifier.equals("data")){
+			if (s.variable.symbolName.name.equals("data")){
 				if (s.variable.expression != null){
 					if (s.variable.expression.list != null)
 						return s.variable.expression.list.arguments.getAttribute("source");
@@ -677,20 +341,30 @@ class MdlPrinter {
 	def isCovarianceDefined(EstimateTask b){
 		for (s: b.statements)
 			if (s.symbol != null){
-				if (s.symbol.identifier.equals("cov"))
+				if (s.symbol.symbolName.name.equals("cov"))
 					if (s.symbol.expression != null) return true;
 			}
 		return false;		
 	}
 	
-	
-	def isTargetDefined(String sectionName){
-		return externalCodeStart.containsKey(sectionName) || externalCodeEnd.containsKey(sectionName);
-	}
-    
+ 
     //Check whether there is a target block in a list of block statements			
-    def isInlineTargetDefined(String targetName, EList<BlockStatement> list){
-		for (s: list){
+    def isInlineTargetDefined(String targetName, EstimateTask task){
+		for (s: task.statements){
+			if (s.targetBlock != null){
+				val target = s.targetBlock.arguments.getAttribute("target");
+		 		if (target != null) 
+					if (target.equals(targetName)) {
+						return true;
+					}
+			}
+		}
+		return false;
+	}
+	
+	 //Check whether there is a target block in a list of block statements			
+    def isInlineTargetDefined(String targetName, SimulateTask task){
+		for (s: task.statements){
 			if (s.targetBlock != null){
 				val target = s.targetBlock.arguments.getAttribute("target");
 		 		if (target != null) 
@@ -719,33 +393,38 @@ class MdlPrinter {
 		if (name.object != null){
 			res  = name.object.name + "$" ;
 		}
-		res = res + name.identifier.convertID;
+		res = res + name.symbol.name.convertID;
 		return res;
 	}
 	
 	def toStr(SymbolDeclaration v){
 		var res = "";
-		if (v.identifier != null) {
-			res = res + v.identifier.convertID;
+		if (v.symbolName.name != null) {
+			res = res + v.symbolName.name.convertID;
 		}
 		var expr = ""; //First make sure that expression is not empty, than print "=" 
 		if (v.expression != null){
 			expr = v.expression.toStr;
+			if (!expr.trim().equals(""))
+				res = res + " = " + expr;
 		}
-		if (!expr.trim().equals(""))
-			res = res + " = " + expr;
+		if (v.randomList != null){
+			expr = v.randomList.toStr;
+			if (!expr.trim().equals(""))
+				res = res + expr;
+		}
 		return res;
 	}
 
 	def toStr(RandomVariable v){
 		var res = "";
-		if (v.function != null){
-			res = res + v.function.convertID + '(' 
+		if (v.functionName != null){
+			res = res + v.functionName.name.convertID + '('      
 		}
-		if (v.identifier != null) {
-			res = res + v.identifier.convertID;
+		if (v.symbolName != null) {     
+			res = res + v.symbolName.name.convertID;
 		}
-		if (v.function != null){
+		if (v.functionName != null){
 			res = res + ')' 
 		}
 		res = res + " = " + v.randomList.toStr;
@@ -904,15 +583,7 @@ class MdlPrinter {
 			}
 		}
 		if (e.string != null){		
-			var iterator = e.string.iterator();
-			//var operatorIterator  = e.operator.iterator();
-			if (iterator.hasNext ) {
-				res = iterator.next;
-			}
-			while (iterator.hasNext){ // && operatorIterator.hasNext){
-				//res  = res + operatorIterator.next.convertOperator + iterator.next;
-				res  = res + iterator.next; //concatenation
-			}
+			res  = e.string; 
 		}
 		return res;
 	}
@@ -992,7 +663,7 @@ class MdlPrinter {
 	
 	def toStr(Selector s) { 
 		if (s.argumentName != null)
-			return "." + s.argumentName.identifier;
+			return "." + s.argumentName.name;
 		if (s.selector != null)
 			return "[" + s.selector + "]";
 	}
@@ -1020,7 +691,7 @@ class MdlPrinter {
 		if (iterator.hasNext ) {
 			var a = iterator.next; 
 			if (a.argumentName != null){
-				res  = res + a.argumentName.identifier + " = ";
+				res  = res + a.argumentName.name + " = ";
 			}
 			if (a.expression != null){
 				res = res + a.expression.toStr;
@@ -1030,7 +701,7 @@ class MdlPrinter {
 			res  = res + ', ';
 			var a = iterator.next; 
 			if (a.argumentName != null){
-				res  = res + a.argumentName.identifier + " = ";
+				res  = res + a.argumentName.name + " = ";
 			}
 			if (a.expression != null){
 				res = res + a.expression.toStr;
@@ -1045,7 +716,7 @@ class MdlPrinter {
 		if (iterator.hasNext ) {
 			var a = iterator.next; 
 			if (a.argumentName != null){
-				res  = res + a.argumentName.identifier + " = ";
+				res  = res + a.argumentName.name + " = ";
 			}
 			res = res + a.valueToStr;
 		}
@@ -1053,7 +724,7 @@ class MdlPrinter {
 			res  = res + ', ';
 			var a = iterator.next; 
 			if (a.argumentName != null){
-				res  = res + a.argumentName.identifier + " = ";
+				res  = res + a.argumentName.name + " = ";
 			}
 			res  = res + a.valueToStr;
 		}
@@ -1065,15 +736,15 @@ class MdlPrinter {
 		var iterator = arg.arguments.iterator();
 		if (iterator.hasNext ) {
 			var a = iterator.next; 
-			if (a.identifier != null){
-				res  = res + a.identifier;
+			if (a.name != null){
+				res  = res + a.name;
 			}
 		}
 		while (iterator.hasNext){
 			res  = res + ', ';
 			var a = iterator.next; 
-			if (a.identifier != null){
-				res  = res + a.identifier;
+			if (a.name != null){
+				res  = res + a.name;
 			}
 		}
 		return res;

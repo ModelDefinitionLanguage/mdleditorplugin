@@ -29,17 +29,12 @@ import org.ddmore.mdl.mdl.FullyQualifiedArgumentName
 class MathPrinter extends MdlPrinter{
 
 	//Needed to fill BlkIdRef attributes of references in expressions that point to PharmML blocks where variables are defined
- 	public extension ReferenceResolver resolver=null
+    public extension DataType dataType = new DataType();
+ 	extension ReferenceResolver resolver=null
     
     new(ReferenceResolver resolver) {
     	this.resolver = resolver
  	}
-  
-	val xmlns_math="http://www.pharmml.org/2013/03/Maths";
-	val xmlns_ct="http://www.pharmml.org/2013/03/CommonTypes";
-	
-	public val TYPE_INT = "int";
-	public val TYPE_REAL = "real";
 	
 	//List of mathematical functions (MDL = PharmML) converted to PharmML unary or binary operators
 	var standardFunctions = newHashSet("abs", "exp", "factorial", "factl", "gammaln", "ln", "log", 
@@ -113,7 +108,7 @@ class MathPrinter extends MdlPrinter{
 		<Categorical>
 		«FOR c: categories.arguments.arguments»
 			<Category>
-				«c.argumentName.identifier»
+				«c.argumentName.name»
 			</Category>
 		«ENDFOR»
 		</Categorical>
@@ -121,8 +116,8 @@ class MathPrinter extends MdlPrinter{
 
 	//+ Convert math functions to PharmML 
 	def print_Math_FunctionCall(FunctionCall call){
-		if (specialFunctions.contains(call.identifier.identifier)){
-			 if (call.identifier.identifier.equals("seq")){
+		if (specialFunctions.contains(call.identifier.symbol.name)){
+			 if (call.identifier.symbol.name.equals("seq")){
 			 	val params = call.arguments.arguments;
 			 	//TODO: process named parameters: (start, stepSize, end) or (start, stepSize, repetition)
 			 	if (params.size == 3)
@@ -133,7 +128,7 @@ class MathPrinter extends MdlPrinter{
 			 		);
 			 }
 		} else {
-			if (standardFunctions.contains(call.identifier.identifier)){
+			if (standardFunctions.contains(call.identifier.symbol.name)){
 				//Convert standard mathematical functions to a PharmML operator with the same name;		
 				return call.print_Math_FunctionCall_Standard;	
 			} else {
@@ -146,12 +141,12 @@ class MathPrinter extends MdlPrinter{
 	def print_Math_FunctionCall_Standard(FunctionCall call)
 	'''
 		«IF call.arguments.arguments.size == 1»
-			<Uniop op="«call.identifier.identifier»">
+			<Uniop op="«call.identifier.symbol.name»">
 				«call.arguments.arguments.get(0).expression.print_Math_Expr»
 			</Uniop>
 		«ELSE»
 			«IF call.arguments.arguments.size == 2»
-				<Binop op="«call.identifier.identifier»">
+				<Binop op="«call.identifier.symbol.name»">
 					«call.arguments.arguments.get(0).expression.print_Math_Expr»
 					«call.arguments.arguments.get(1).expression.print_Math_Expr»
 				</Binop>
@@ -172,7 +167,7 @@ class MathPrinter extends MdlPrinter{
 	
 	//+
 	def print_Math_FunctionArgument(Argument arg)'''
-	<FunctionArgument«IF arg.argumentName != null» symbId="«arg.argumentName.identifier»"«ENDIF»>
+	<FunctionArgument«IF arg.argumentName != null» symbId="«arg.argumentName.name»"«ENDIF»>
 		«arg.expression.print_Math_Expr»
 	</FunctionArgument>
 	'''	
@@ -298,14 +293,8 @@ class MathPrinter extends MdlPrinter{
 			}
 		}
 		if (expr.string != null){
-			if (expr.string.size > 0){
-				var res = "";
-				for (s: expr.string){
-					res = res + s; 
-				}
-				return 
-				'''<ct:String>«res»</ct:String>'''
-			}
+			return 
+			'''<ct:String>«expr.string»</ct:String>'''
 		}
 		return ''''''			
 	}
@@ -596,7 +585,7 @@ class MathPrinter extends MdlPrinter{
 	//+
 	def print_ct_SymbolRef(FullyQualifiedSymbolName ref)'''
 		«var blkId = resolver.getReferenceBlock(ref)»
-		<ct:SymbRef«IF blkId.length > 0» blkIdRef="«blkId»"«ENDIF» symbIdRef="«ref.identifier»"/>
+		<ct:SymbRef«IF blkId.length > 0» blkIdRef="«blkId»"«ENDIF» symbIdRef="«ref.symbol.name»"/>
 	'''
 	
 	//+ TODO: How to print attributes?
@@ -607,6 +596,6 @@ class MathPrinter extends MdlPrinter{
 			«blkId = resolver.getReferenceBlock(ref.parent)»
 		«ENDIF»
 		<ct:SymbRef «IF blkId.length > 0»blkIdRef="«blkId»"«ENDIF» 
-			symbIdRef="«ref.parent.identifier».«ref.toStr»"/>
+			symbIdRef="«ref.parent.symbol.name».«ref.toStr»"/>
 	'''
 }

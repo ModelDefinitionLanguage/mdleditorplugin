@@ -5,14 +5,8 @@
  */
 package eu.ddmore.converter.mdl2nonmem
 
-import eu.ddmore.converter.mdlprinting.MdlPrinter
 import java.util.ArrayList
-import java.util.HashMap
-import org.ddmore.mdl.mdl.AndExpression
-import org.ddmore.mdl.mdl.Argument
-import org.ddmore.mdl.mdl.Arguments
 import org.ddmore.mdl.mdl.BlockStatement
-import org.ddmore.mdl.mdl.ConditionalStatement
 import org.ddmore.mdl.mdl.DataBlockStatement
 import org.ddmore.mdl.mdl.DataObject
 import org.ddmore.mdl.mdl.DiagBlock
@@ -20,47 +14,52 @@ import org.ddmore.mdl.mdl.EstimateTask
 import org.ddmore.mdl.mdl.ExecuteTask
 import org.ddmore.mdl.mdl.FileBlock
 import org.ddmore.mdl.mdl.FileBlockStatement
-import org.ddmore.mdl.mdl.FullyQualifiedArgumentName
 import org.ddmore.mdl.mdl.FullyQualifiedSymbolName
-import org.ddmore.mdl.mdl.FunctionCall
-import org.ddmore.mdl.mdl.ImportBlock
-import org.ddmore.mdl.mdl.ImportedFunction
-import org.ddmore.mdl.mdl.List
-import org.ddmore.mdl.mdl.LogicalExpression
 import org.ddmore.mdl.mdl.MatrixBlock
 import org.ddmore.mdl.mdl.Mcl
 import org.ddmore.mdl.mdl.MixtureBlock
 import org.ddmore.mdl.mdl.ModelObject
 import org.ddmore.mdl.mdl.ModelPredictionBlock
-import org.ddmore.mdl.mdl.OrExpression
 import org.ddmore.mdl.mdl.ParameterDeclaration
 import org.ddmore.mdl.mdl.ParameterObject
 import org.ddmore.mdl.mdl.SameBlock
-import org.ddmore.mdl.mdl.Selector
 import org.ddmore.mdl.mdl.SimulateTask
 import org.ddmore.mdl.mdl.SymbolDeclaration
-import org.ddmore.mdl.mdl.TargetBlock
 import org.ddmore.mdl.mdl.TaskObject
 import org.ddmore.mdl.mdl.TaskObjectBlock
+import java.util.HashMap
+import org.ddmore.mdl.mdl.ModelObjectBlock
+import org.ddmore.mdl.mdl.ParameterObjectBlock
+import org.ddmore.mdl.mdl.ImportBlock
+import org.ddmore.mdl.mdl.DataObjectBlock
+import org.ddmore.mdl.mdl.TargetBlock
+import java.util.HashSet
+import org.ddmore.mdl.mdl.ImportedFunction
+import org.ddmore.mdl.mdl.Argument
+import eu.ddmore.converter.mdlprinting.MdlPrinter
+import org.ddmore.mdl.mdl.FullyQualifiedArgumentName
+import org.ddmore.mdl.mdl.FunctionCall
+import org.ddmore.mdl.mdl.List
+import org.ddmore.mdl.mdl.LogicalExpression
+import org.ddmore.mdl.mdl.Selector
+import org.ddmore.mdl.mdl.Arguments
+import org.ddmore.mdl.mdl.ConditionalStatement
+import org.ddmore.mdl.mdl.OrExpression
+import org.ddmore.mdl.mdl.AndExpression
 
 class Mdl2Nonmem extends MdlPrinter{
 	
-	protected val TARGET = "NMTRAN_CODE";
 	protected var Mcl mcl = null;
+	protected val TARGET = "NMTRAN_CODE";
 	
 	//Print file name and analyse MCL objects in the source file
   	def convertToNMTRAN(Mcl m){
   		mcl = m;
-  		
-  		//Prepare external functions  		
-  		m.prepareExternals;
-  		
-  		//Create a map of variables
-  		m.prepareCollections;
+  		m.prepareCollections();
 
   		var version = "1.02";
   		var date = "24.08.2013"
-  		
+		
   		var java.util.List<DataObject> dataObjects = new ArrayList<DataObject>
   		var java.util.List<TaskObject> taskObjects = new ArrayList<TaskObject>
   		
@@ -120,7 +119,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	«getExternalCodeEnd("$PROB")»
 	«ELSE»
 	
-	$PROB «mcl.eResource.fileName.toUpperCase»
+	$PROB «mcl.fileName.toUpperCase»
 	«ENDIF»
 	'''
 
@@ -337,7 +336,7 @@ class Mdl2Nonmem extends MdlPrinter{
 						«IF x != null»
 							«IF x.expression != null»
 								«IF x.expression.odeList != null»
-									COMP(«x.identifier»)
+									COMP(«x.symbolName.name»)
 								«ENDIF»
 							«ENDIF»
 						«ENDIF»
@@ -371,7 +370,7 @@ class Mdl2Nonmem extends MdlPrinter{
 								«IF x.expression.odeList != null»
 									«var deriv = x.expression.odeList.arguments.getAttribute("deriv")»
 									«IF !deriv.equals("")»
-										«var id = x.identifier»
+										«var id = x.symbolName.name»
 										«IF dadt_vars.get(id) != null»
 											DADT(«dadt_vars.get(id)») = «deriv»
 										«ENDIF»	
@@ -415,7 +414,7 @@ class Mdl2Nonmem extends MdlPrinter{
 				for (st: ss.libraryBlock.statements){
 					var libraryRef = st.expression.identifier;
 					var attributes = libraryRef.getExternalFunctionAttributes();
-					var library = libraryRef.identifier;
+					var library = libraryRef.symbol.name;
 					if (attributes != null){
 						var name = attributes.get("name");
 						if (name != null) library = name;
@@ -573,7 +572,7 @@ class Mdl2Nonmem extends MdlPrinter{
 			«section» «IF k > 0»BLOCK («k») SAME«ENDIF»
 			«IF b.parameters != null»
 				«FOR p: b.parameters.arguments»
-					; «p.identifier»
+					; «p.name»
 				«ENDFOR»
 			«ENDIF»
 			'''
@@ -608,8 +607,8 @@ class Mdl2Nonmem extends MdlPrinter{
 					if (p.expression != null){
 						k = k + 1;
 						if (p.argumentName != null){
-							if (eta_vars.get("eta_" + p.argumentName.identifier) != null) isOmega = true;
-							if (eps_vars.get("eps_" + p.argumentName.identifier) != null) isSigma = true;
+							if (eta_vars.get("eta_" + p.argumentName.name) != null) isOmega = true;
+							if (eps_vars.get("eps_" + p.argumentName.name) != null) isSigma = true;
 						} 
 					}
 				}		
@@ -629,8 +628,8 @@ class Mdl2Nonmem extends MdlPrinter{
 			for (p: b.parameters.arguments) {
 				if (p.expression != null){
 					if (p.argumentName != null){
-						if (eta_vars.get("eta_" + p.argumentName.identifier) != null) isOmega = true;
-						if (eps_vars.get("eps_" + p.argumentName.identifier) != null) isSigma = true;
+						if (eta_vars.get("eta_" + p.argumentName.name) != null) isOmega = true;
+						if (eps_vars.get("eps_" + p.argumentName.name) != null) isSigma = true;
 						k = k + 1;
 					}
 				}
@@ -647,7 +646,7 @@ class Mdl2Nonmem extends MdlPrinter{
 		var k = 0; 
 		for (a: b.arguments.arguments){
 			if (a.argumentName != null){ 
-				if (a.argumentName.identifier.equals("fix")){ 
+				if (a.argumentName.name.equals("fix")){ 
 					if (a.expression != null){
 						printFix = a.expression.isTrue	
 					}
@@ -665,11 +664,11 @@ class Mdl2Nonmem extends MdlPrinter{
 					}
 					k = k + 1;
 					if (p.argumentName != null){
-						val isOmega = section.equals("$OMEGA") && (eta_vars.get("eta_" + p.argumentName.identifier) != null);
-						val isSigma = section.equals("$SIGMA") && (eps_vars.get("eps_" + p.argumentName.identifier) != null);
+						val isOmega = section.equals("$OMEGA") && (eta_vars.get("eta_" + p.argumentName.name) != null);
+						val isSigma = section.equals("$SIGMA") && (eps_vars.get("eps_" + p.argumentName.name) != null);
 						if (isOmega || isSigma)	{
 							result = result + tmpRes + p.expression.toStr + " ";
-							result = result + "; " + p.argumentName.identifier + "\n";
+							result = result + "; " + p.argumentName.name + "\n";
 						}
 					} 
 					else
@@ -694,7 +693,7 @@ class Mdl2Nonmem extends MdlPrinter{
 		var k = 0; 
 		for (a: b.arguments.arguments){
 			if (a.argumentName != null){ 
-				if (a.argumentName.identifier.equals("fix")) 
+				if (a.argumentName.name.equals("fix")) 
 					if (a.expression != null){
 						printFix = a.expression.isTrue		
 					}
@@ -704,11 +703,11 @@ class Mdl2Nonmem extends MdlPrinter{
 			for (p: b.parameters.arguments) {
 				if (p.expression != null){
 					if (p.argumentName != null){
-						val isOmega = section.equals("$OMEGA") && (eta_vars.get("eta_" + p.argumentName.identifier) != null);
-						val isSigma = section.equals("$SIGMA") && (eps_vars.get("eps_" + p.argumentName.identifier) != null);
+						val isOmega = section.equals("$OMEGA") && (eta_vars.get("eta_" + p.argumentName.name) != null);
+						val isSigma = section.equals("$SIGMA") && (eps_vars.get("eps_" + p.argumentName.name) != null);
 						if (isOmega || isSigma)	{
 							result = result + p.expression.toStr + " ";
-							result = result + "; " + p.argumentName.identifier + "\n";
+							result = result + "; " + p.argumentName.name + "\n";
 							k = k + 1;
 						}
 					} 
@@ -724,12 +723,11 @@ class Mdl2Nonmem extends MdlPrinter{
 		«section» «IF k > 0»BLOCK («k») «ENDIF»
 		«result»
 		'''; 
-	}
-	
+	}	
 
 	//Print VARIABILITY parameter in $SIGMA or $OMEGA
 	def printVariabilityParameter(ParameterDeclaration s, String section){
-		var name = s.identifier;
+		var name = s.symbolName.name;
 		//SIGMA <=> EPS, OMEGA <=> ETA	
 		var isOmega = (section.equals("$OMEGA") && eta_vars.get("eta_" + name) != null);
 		var isSigma = (section.equals("$SIGMA") && eps_vars.get("eps_" + name) != null);
@@ -749,7 +747,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	//Find attributes in STRUCTURAL_VARIABLES and form an NMTRAN statement
 	def printTheta(ParameterDeclaration s){
 		if (s.list != null){		
-			var name = s.identifier;
+			var name = s.symbolName.name;
 			val value = s.list.arguments.getAttribute("value");
 			val lo = s.list.arguments.getAttribute("lo");
 			val hi = s.list.arguments.getAttribute("hi");
@@ -779,7 +777,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	«getExternalCodeStart("$INPUT")»
 	«FOR b:d.blocks»
 	    «IF b.headerBlock != null»
-			«FOR st: b.headerBlock.variables SEPARATOR ' '»«IF isDrop(st.identifier, t)»«st.identifier»=DROP«ELSE»«st.identifier»«ENDIF»«ENDFOR»
+			«FOR st: b.headerBlock.variables SEPARATOR ' '»«IF isDrop(st.symbolName.name, t)»«st.symbolName.name»=DROP«ELSE»«st.symbolName.name»«ENDIF»«ENDFOR»
         «ENDIF»
 	«ENDFOR»
 	«getExternalCodeEnd("$INPUT")»
@@ -793,7 +791,7 @@ class Mdl2Nonmem extends MdlPrinter{
                     for (DataBlockStatement block: b.dataBlock.statements) {
                         if (block.dropList != null) {
                             for (FullyQualifiedSymbolName symbol : block.dropList.list.symbols) {
-                                if (id.equals(symbol.identifier))
+                                if (id.equals(symbol.symbol.name))
                                     return true;
                             }
                         }
@@ -829,7 +827,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	//Processing FILE block statement for $DATA
 	def printIGNORE(FileBlockStatement s){
 		if (s.variable != null){
-			if (s.variable.identifier.equals("data")){
+			if (s.variable.symbolName.name.equals("data")){
 				if (s.variable.expression != null){
 					if (s.variable.expression.list != null){
 						var ignore = s.variable.expression.list.arguments.getAttribute("ignore");
@@ -842,7 +840,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	
 	def getData(FileBlock b){
 		for (s: b.statements){
-			if (s.variable.identifier.equals("data")){
+			if (s.variable.symbolName.name.equals("data")){
 				if (s.variable.expression != null){
 					if (s.variable.expression.list != null){
 						var data = s.variable.expression.list.arguments.getAttribute("source");
@@ -895,7 +893,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	
 	//Processing SIMULATE block for $SIM 
 	def print(SimulateTask b)'''
-		«var isInlineTargetDefined = TARGET.isInlineTargetDefined(b.statements)»
+		«var isInlineTargetDefined = TARGET.isInlineTargetDefined(b)»
 		«IF !isInlineTargetDefined»
 		
 		$SIM 
@@ -918,7 +916,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	
 	//Processing ESTIMATE block for $EST
 	def print(EstimateTask b)'''
-		«var isInlineTargetDefined = TARGET.isInlineTargetDefined(b.statements)»
+		«var isInlineTargetDefined = TARGET.isInlineTargetDefined(b)»
 		«IF !isInlineTargetDefined»
 		
 		$EST 
@@ -942,7 +940,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	
 	//Print attributes for default $EST record
 	def printDefaultEstimate(SymbolDeclaration s) { 
-		if (s.identifier.equals("algo")){
+		if (s.symbolName.name.equals("algo")){
 			if (s.expression.expression != null)
 				''' METHOD=«s.expression.expression.toStr»'''
 			else {
@@ -957,10 +955,10 @@ class Mdl2Nonmem extends MdlPrinter{
 			}	
 		}
 		else
-			if (s.identifier.equals("max"))
+			if (s.symbolName.name.equals("max"))
 			''' MAX=«s.expression.print»'''
 		else
-			if (s.identifier.equals("sig"))
+			if (s.symbolName.name.equals("sig"))
 			''' SIG=«s.expression.print»'''
 	}
 	
@@ -983,7 +981,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	
 	//Print "cov" attribute for $COVARIATE record 
 	def printCovariance(SymbolDeclaration s) { 
-		if (s.identifier.equals("cov")){
+		if (s.symbolName.name.equals("cov")){
 			if (s.expression != null){
 				if (s.expression.toStr.replaceAll("\\s","").equals(""))
 				'''«s.expression.print»'''
@@ -1003,7 +1001,7 @@ class Mdl2Nonmem extends MdlPrinter{
 	def getTaskObjectName(){
 		for (obj: mcl.objects){
   			if (obj.taskObject != null)
-  				return obj.identifier.name;
+  				return obj.objectName.name;
   		}
 		return "";
 	}
@@ -1026,7 +1024,7 @@ class Mdl2Nonmem extends MdlPrinter{
 				for (ss: b.modelBlock.statements){
 					var x = ss.statement.symbol;
 					if (x != null){
-						if (x.identifier.equals("tolrel")){
+						if (x.symbolName.name.equals("tolrel")){
 							if (x.expression != null)
 								return x.expression.toStr;
 						}
@@ -1037,11 +1035,387 @@ class Mdl2Nonmem extends MdlPrinter{
 		return "";
 	}	
 	
-	///////////////////////////////////////////////////////////////////////
-	//Overridden converter functions
-	///////////////////////////////////////////////////////////////////////
+	 
+	protected var externalFunctions = new HashMap<String, HashMap<String, String>>() //list of external functions 
+	protected var externalCodeStart = new HashMap<String, ArrayList<String>>() //external code per target language section,
+	protected var externalCodeEnd = new HashMap<String, ArrayList<String>>() //external code per target language section,
+ 	
+	protected var theta_vars = newHashMap //THETAs - Structural parameters
+	protected var dadt_vars = newHashMap  //DADT   - Model prediction -> ODE	
+	protected var init_vars = newHashMap  //A      - Model prediction -> ODE -> init attribute	
 	
-	//Convert variable names to NM-TRAN versions
+	protected var eps_vars = newHashMap   //EPSs   - Random variables, level 1
+	protected var eta_vars = newHashMap	  //ETAs   - Random variables, level 2
+	
+	protected var level_vars = newHashMap //       - Input variables, level attribute			
+	
+	//These maps are used to print same blocks (NM-TRAN SAME opetion in $OMEGA and $SIGMA)
+	protected var namedOmegaBlocks = new HashMap<String, Integer>() //Collection of names of $OMEGA records with dimensions
+	protected var namedSigmaBlocks = new HashMap<String, Integer>() //Collection of names of $SIGMA records with dimensions
+	
+ 	def protected clearCollections(){
+		init_vars.clear;
+		dadt_vars.clear;
+		theta_vars.clear;
+		eta_vars.clear;
+    	eps_vars.clear; 
+    	namedOmegaBlocks.clear;
+    	namedSigmaBlocks.clear;	
+    	eta_vars.clear;
+    	eps_vars.clear; 
+	}
+	
+	//Collect variables from the MDL file
+	def protected prepareCollections(Mcl m){
+    	clearCollections();
+    	for (o:m.objects){
+	  		if (o.modelObject != null){
+	  			setLevelVars(o.modelObject);
+	  			setRandomVariables(o.modelObject);
+	  			setStructuralParameters(o.modelObject);
+	  			setModelPredictionVariables(o.modelObject);
+	  			setInitialConditions(o.modelObject);
+	  		} 
+  		}
+  		m.prepareExternals;
+	}	
+	
+	def setLevelVars(ModelObject o){
+		var tmp = o.getLevelVars("1");
+		for (v: tmp){
+			if (level_vars.get(v) == null)
+				level_vars.put(v, "1");
+		}
+		tmp = o.getLevelVars("2");
+		for (v: tmp){
+			if (level_vars.get(v) == null)
+				level_vars.put(v, "2");
+		}
+	}
+		
+	def protected getLevelVars(ModelObject o, String levelId) {
+		var levelVars = new HashSet<String>();
+		for (b: o.blocks){
+			if(b.inputVariablesBlock != null){
+				for (SymbolDeclaration s: b.inputVariablesBlock.variables){
+					if (s.expression != null){
+						if (s.expression.list != null){
+							var level = s.expression.list.arguments.getAttribute("level");
+							if (level.equals(levelId)){
+								if (!levelVars.contains(s.symbolName.name)){
+									levelVars.add(s.symbolName.name);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return levelVars;
+	}	
+		
+	//Assign indices to variability parameters ($ETA, $ESP)
+	def protected setRandomVariables(ModelObject o){
+    	var i = 1; var j = 1; 
+		for (b: o.blocks){
+	  		if (b.randomVariableDefinitionBlock != null){
+				for (s: b.randomVariableDefinitionBlock.variables) {
+					if (s.randomList != null){	
+						var level = s.randomList.arguments.getAttribute("level");
+						val id = s.symbolName.name;
+						if (level_vars.get(level) != null){
+							if (level_vars.get(level).equals("2")){
+								if (eta_vars.get(id) == null){
+									eta_vars.put(id, i);
+									i = i + 1;
+								}
+							}
+							if (level_vars.get(level).equals("1"))
+								if (eps_vars.get(id) == null){
+									eps_vars.put(id, j);
+									j = j + 1;
+								}	
+							}
+						}
+	  			}
+	  		}
+  		}
+	}
+	
+	
+	//Collect initial conditions from ODE list, init attribute
+	def protected setInitialConditions(ModelObject o){
+		var i = 1;
+		for (b:o.blocks){
+			if (b.modelPredictionBlock != null)
+				for (s: b.modelPredictionBlock.statements){
+					if (s.odeBlock != null)
+						for (ss: s.odeBlock.statements){
+							if (ss.symbol != null)
+								if (ss.symbol.expression != null)
+									if (ss.symbol.expression.odeList != null){
+										val initCond = ss.symbol.expression.odeList.arguments.getAttribute("init");
+										if (!initCond.equals("")){
+											init_vars.put(i, initCond);
+										} else init_vars.put(i, "0");
+										i = i + 1;
+									}
+						}
+				}
+		}
+	}
+	
+	//Assign indices to MODEL variables and expressions
+	def protected setModelPredictionVariables(ModelObject o) { 
+		var i = 1;
+		for (b:o.blocks){
+			if (b.modelPredictionBlock != null){
+				for (s: b.modelPredictionBlock.statements){
+					if (s.odeBlock != null){
+						for (ss: s.odeBlock.statements){
+							var x = ss.symbol;
+							if (x != null){
+								if (x.expression != null){
+									if (x.expression.odeList != null){
+										var id = x.symbolName.name;
+										if (dadt_vars.get(id) == null){
+											dadt_vars.put(id, i);
+											i = i + 1;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	//Assign indices to THETAs
+	def protected setStructuralParameters(ModelObject o){
+    	var i = 1; 
+		for (b: o.blocks){
+	  		if (b.structuralParametersBlock != null){
+				for (id: b.structuralParametersBlock.parameters) {
+					if (theta_vars.get(id.symbol.name) == null){
+						theta_vars.put(id.symbol.name, i);
+						i = i + 1;
+					}
+				}
+	  		}	  				
+  		}
+	}
+	
+	//Find NM-TRAN functions
+	def protected prepareExternals(Mcl mcl) {
+		externalFunctions.clear;	
+		externalCodeStart.clear;	
+		externalCodeEnd.clear;	
+		for (o:mcl.objects){
+  			if (o.modelObject != null){
+  				for (ModelObjectBlock block: o.modelObject.blocks){
+  					if (block.importBlock != null)
+  						block.importBlock.prepareExternalFunctions(o.objectName.name);
+  					if (block.targetBlock != null)
+  						block.targetBlock.prepareExternalCode;
+  				}
+  			}
+  			if (o.parameterObject != null){
+  				for (ParameterObjectBlock block: o.parameterObject.blocks){
+  					if (block.importBlock != null)
+  						block.importBlock.prepareExternalFunctions(o.objectName.name);
+  					if (block.targetBlock != null)
+  						block.targetBlock.prepareExternalCode;
+  				}
+  	  		}
+   			if (o.dataObject != null){
+  				for (DataObjectBlock block: o.dataObject.blocks){
+  					if (block.importBlock != null)
+  						block.importBlock.prepareExternalFunctions(o.objectName.name);
+  					if (block.targetBlock != null)
+  						block.targetBlock.prepareExternalCode;
+  				}
+  			}
+  			if (o.taskObject != null){
+  				for (TaskObjectBlock block: o.taskObject.blocks){
+  					if (block.importBlock != null)
+  						block.importBlock.prepareExternalFunctions(o.objectName.name);
+  					if (block.targetBlock != null)
+  						block.targetBlock.prepareExternalCode;
+  				}
+  			}
+  			/*if (o.telObject != null){
+  				for (BlockStatement block: o.telObject.statements){
+  					if (block.targetBlock != null)
+  						block.targetBlock.prepareExternalCode;
+  				}
+  			}*/
+  		}
+	}
+	
+	//Prepare a list of external function declarations to define their NMTRAN names 
+	 def void prepareExternalFunctions(ImportBlock b, String objName){
+		for (ImportedFunction f: b.functions){
+			var args = new HashMap<String, String>();
+			var target = f.list.arguments.getAttribute("target");
+		 	if (target != null){ 
+				if (target.equals(TARGET)) {
+					for (Argument arg: f.list.arguments.arguments){
+						if (arg.argumentName != null)
+							args.put(arg.argumentName.name, arg.expression.toStr)
+					}
+					externalFunctions.put(objName + "$" + f.functionName.name, args);
+				}
+			}
+		}
+	}	
+	
+	 //Prepare a map of section with corresponding target blocks
+	 def void prepareExternalCode(TargetBlock b){
+		val target = b.arguments.getAttribute("target");
+		if (target != null){ 
+			if (target.equals(TARGET)) {
+				val location = b.arguments.getAttribute("location");
+				if (b.arguments.isAttributeTrue("first")){
+					var codeSnippets = externalCodeStart.get(location);
+					if (codeSnippets == null) codeSnippets = new ArrayList<String>();
+					codeSnippets.add(b.toStr);
+					externalCodeStart.put(location, codeSnippets);
+				} else {
+					var codeSnippets = externalCodeEnd.get(location);
+					if (codeSnippets == null) codeSnippets = new ArrayList<String>();
+					codeSnippets.add(b.toStr);
+					externalCodeEnd.put(location, codeSnippets);
+				} 
+			}
+		}
+	}	
+
+	
+ 	//Print a list of external code snippets: beginning of section
+	def protected getExternalCodeStart(String sectionName){
+		var res = "";		
+		val snippets = externalCodeStart.get(sectionName) 
+		if (snippets != null){
+			for (x: snippets){
+				res = res + "\n" + x;
+			}
+		}
+		return res;
+	}
+	
+	//Print a list of external code snippets: end of section
+	def protected getExternalCodeEnd(String sectionName){
+		var res = "";		
+		val snippets = externalCodeEnd.get(sectionName) 
+		if (snippets != null){
+			for (x: snippets){
+				res = res + "\n" + x;
+			}
+		}
+		return res;
+	}
+ 
+ 	//Return attributes of an external function	from the collection
+	def protected getExternalFunctionAttributes(FullyQualifiedSymbolName ref) { 
+		if (ref.object != null)				
+			return externalFunctions.get(ref.object.name + "$" + ref.symbol.name)
+		else {
+			//match the short name
+			for (pair: externalFunctions.entrySet){
+				val str = pair.key as String;
+				if (str != null){
+					val functID = str.substring(str.indexOf("$") + 1);
+					if (functID.equals(ref.symbol.name)) return pair.value; 
+				}
+			}
+		}	
+	}
+	
+	def isTargetDefined(String sectionName){
+		return externalCodeStart.containsKey(sectionName) || externalCodeEnd.containsKey(sectionName);
+	}		
+	
+		//(==, !=, <, > etc.) - here we skip boolean values!
+	override toStr(LogicalExpression e){
+		if (e.boolean != null) 	return "";
+		return super.toStr(e);
+	}				
+	
+	//Print variableDeclaration substituting ID with "Y" if it is a list with LIKELIHOOD or continuous type
+	override toStr(SymbolDeclaration v){
+		if (v.expression != null){
+			if (v.expression.list != null){
+				var type = v.expression.list.arguments.getAttribute("type");
+				var res = "";
+				if (type.equals("continuous")){
+					res = "F_FLAG = 0\n" 
+				}	
+				if (type.equals("LIKELIHOOD")){
+					res = "F_FLAG = 1\n"	
+				}		
+				//substitute variable name with Y
+				var listExpr  = v.expression.list.toStr;
+				if (!listExpr.equals("") && !res.equals("")){
+					return res + "Y = " + listExpr + "\n"; 	
+				}
+			}
+		}
+		return super.toStr(v);
+	}
+	
+	//Instead of list(...) we print an expression from a certain attribute (depends on the type)
+	override toStr(List l){		
+		var type = l.arguments.getAttribute("type");
+		var res = "";
+		if (type.equals("LIKELIHOOD")){
+			res = l.arguments.getAttribute("likelihood");
+		} else if (type.equals("continuous")){
+			var ruv = l.arguments.getAttribute("ruv");
+			var prediction = l.arguments.getAttribute("prediction")
+			res = prediction + ruv
+		}			
+		return res;
+	}
+
+	
+	//References to attributes: skip variable name and replace selectors, e.g,  amount.A[2] -> A(2)
+	override toStr(FullyQualifiedArgumentName name) { 
+		var res = "";
+		for (s: name.selectors){
+			res = res + s.toStr
+		}
+		return res;
+	}
+	
+	//Selectors [] -> (), e.g., A[2] -> A(2)
+	override toStr(Selector s) { 
+		if (s.argumentName != null)
+			return s.argumentName.name;
+		if (s.selector != null)
+			return "(" + s.selector + ")";
+	}	
+	
+	//toStr function call
+	override toStr(FunctionCall call){
+		if (call.identifier.toStr.trim.equalsIgnoreCase("errorexit"))
+			return "EXIT" + call.arguments.toStrWithoutCommas;
+		return super.toStr(call);	
+	}	
+		
+	//toStr list arguments without commas
+	def toStrWithoutCommas(Arguments arg){
+		var res  = "";
+		var iterator = arg.arguments.iterator();
+		while (iterator.hasNext){
+			var a = iterator.next; 
+			res = res + " " + a.expression.toStr;
+		}
+		return res;
+	}	
+	
+		//Convert variable names to NM-TRAN versions
 	override convertID(String id){
 		if (id.indexOf('_') > 0){			
 
@@ -1130,120 +1504,5 @@ class Mdl2Nonmem extends MdlPrinter{
 		«ENDIF»
 		ENDIF
 	«ENDIF»
-	'''
-	
-	//(==, !=, <, > etc.) - here we skip boolean values!
-	override toStr(LogicalExpression e){
-		if (e.boolean != null) 	return "";
-		return super.toStr(e);
-	}				
-	
-	//Print variableDeclaration substituting ID with "Y" if it is a list with LIKELIHOOD or continuous type
-	override toStr(SymbolDeclaration v){
-		if (v.expression != null){
-			if (v.expression.list != null){
-				var type = v.expression.list.arguments.getAttribute("type");
-				var res = "";
-				if (type.equals("continuous")){
-					res = "F_FLAG = 0\n" 
-				}	
-				if (type.equals("LIKELIHOOD")){
-					res = "F_FLAG = 1\n"	
-				}		
-				//substitute variable name with Y
-				var listExpr  = v.expression.list.toStr;
-				if (!listExpr.equals("") && !res.equals("")){
-					return res + "Y = " + listExpr + "\n"; 	
-				}
-			}
-		}
-		return super.toStr(v);
-	}
-	
-	//Instead of list(...) we print an expression from a certain attribute (depends on the type)
-	override toStr(List l){		
-		var type = l.arguments.getAttribute("type");
-		var res = "";
-		if (type.equals("LIKELIHOOD")){
-			res = l.arguments.getAttribute("likelihood");
-		} else if (type.equals("continuous")){
-			var ruv = l.arguments.getAttribute("ruv");
-			var prediction = l.arguments.getAttribute("prediction")
-			res = prediction + ruv
-		}			
-		return res;
-	}
-
-	//Prepare a list of external function declarations to define their NMTRAN names 
-	 override void prepareExternalFunctions(ImportBlock b, String objName){
-		for (ImportedFunction f: b.functions){
-			var args = new HashMap<String, String>();
-			var target = f.list.arguments.getAttribute("target");
-		 	if (target != null){ 
-				if (target.equals(TARGET)) {
-					for (Argument arg: f.list.arguments.arguments){
-						if (arg.argumentName != null)
-							args.put(arg.argumentName.identifier, arg.expression.toStr)
-					}
-					externalFunctions.put(objName + "$" + f.identifier, args);
-				}
-			}
-		}
-	}	
-	
-	 //Prepare a map of section with corresponding target blocks
-	 override void prepareExternalCode(TargetBlock b){
-		val target = b.arguments.getAttribute("target");
-		if (target != null){ 
-			if (target.equals(TARGET)) {
-				val location = b.arguments.getAttribute("location");
-				if (b.arguments.isAttributeTrue("first")){
-					var codeSnippets = externalCodeStart.get(location);
-					if (codeSnippets == null) codeSnippets = new ArrayList<String>();
-					codeSnippets.add(b.toStr);
-					externalCodeStart.put(location, codeSnippets);
-				} else {
-					var codeSnippets = externalCodeEnd.get(location);
-					if (codeSnippets == null) codeSnippets = new ArrayList<String>();
-					codeSnippets.add(b.toStr);
-					externalCodeEnd.put(location, codeSnippets);
-				} 
-			}
-		}
-	}	
-	
-	//References to attributes: skip variable name and replace selectors, e.g,  amount.A[2] -> A(2)
-	override toStr(FullyQualifiedArgumentName name) { 
-		var res = "";
-		for (s: name.selectors){
-			res = res + s.toStr
-		}
-		return res;
-	}
-	
-	//Selectors [] -> (), e.g., A[2] -> A(2)
-	override toStr(Selector s) { 
-		if (s.argumentName != null)
-			return s.argumentName.identifier;
-		if (s.selector != null)
-			return "(" + s.selector + ")";
-	}	
-	
-	//toStr function call
-	override toStr(FunctionCall call){
-		if (call.identifier.toStr.trim.equalsIgnoreCase("errorexit"))
-			return "EXIT" + call.arguments.toStrWithoutCommas;
-		return super.toStr(call);	
-	}
-	
-	//toStr list arguments without commas
-	def toStrWithoutCommas(Arguments arg){
-		var res  = "";
-		var iterator = arg.arguments.iterator();
-		while (iterator.hasNext){
-			var a = iterator.next; 
-			res = res + " " + a.expression.toStr;
-		}
-		return res;
-	}			
+	'''	
 }

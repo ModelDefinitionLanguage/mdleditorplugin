@@ -9,14 +9,21 @@ import org.ddmore.mdl.mdl.FullyQualifiedSymbolName
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 import org.ddmore.mdl.mdl.BlockStatement
 import org.ddmore.mdl.mdl.Expression
+import org.ddmore.mdl.mdl.SymbolDeclaration
 
-class ReferenceResolver extends MdlPrinter{
+class ReferenceResolver{
+
+	val Mcl mcl;
+	extension MdlPrinter mdlPrinter = new MdlPrinter();
+	new(Mcl m) {
+    	this.mcl = m;
+    	prepareCollections(m);
+ 	}
 	
-	Mcl mcl = null;  
-  	new(Mcl mcl) {
-    	this.mcl = mcl
-    	prepareCollections(mcl);
- 	}  
+	//protected val LEVEL_UNDEF = 0;	
+	protected var eps_vars = newHashMap   //EPSs   - Random variables, level 1
+	protected var eta_vars = newHashMap	  //ETAs   - Random variables, level 2
+	protected var level_vars = newHashMap //       - Input variables, level attribute			
 	
 	//List of PharmML declared symbols and corresponding blocks 
 	protected var ind_vars = new HashSet<String>();
@@ -25,17 +32,14 @@ class ReferenceResolver extends MdlPrinter{
 	protected var cm_vars = new HashMap<String, HashSet<String>>();
 	protected var pm_vars = new HashMap<String, HashSet<String>>();	  
 	protected var om_vars = new HashMap<String, HashSet<String>>();	  
-	protected var sm_vars = new HashMap<String, HashSet<String>>();	  
+	protected var sm_vars = new HashMap<String, HashSet<String>>();	 
 		
-	override prepareCollections(Mcl m){
-		ind_vars.clear;
-		vm_err_vars.clear;
-		vm_mdl_vars.clear;
-		cm_vars.clear;
-		super.prepareCollections(m);
-		
+	def prepareCollections(Mcl m){
 		for (o: m.objects){
 			if (o.modelObject != null){
+	  			setLevelVars(o.modelObject);
+	  			setRandomVariables(o.modelObject);
+
 				//Independent variables
 				var indVars = o.modelObject.getIndependentVars();
 				if (indVars.size > 0)
@@ -44,38 +48,38 @@ class ReferenceResolver extends MdlPrinter{
 				//VariabilityModel definitions
 				var errorVars = o.modelObject.getLevelVars("1");
 				if (errorVars.size > 0)
-					vm_err_vars.put(o.identifier.name, errorVars);
+					vm_err_vars.put(o.objectName.name, errorVars);
 
 				var mdlVars = o.modelObject.getLevelVars("2");
 				if (mdlVars.size > 0)
-					vm_mdl_vars.put(o.identifier.name, mdlVars);
+					vm_mdl_vars.put(o.objectName.name, mdlVars);
 
 				//CovariateModel				
 				var covariateVars = o.modelObject.getCovariateVars();
 				if (covariateVars.size > 0)
-					cm_vars.put(o.identifier.name, covariateVars);
+					cm_vars.put(o.objectName.name, covariateVars);
 					
 				//StructuralModel
 				var structuralVars = o.modelObject.getStructuralVars;	
 				if (structuralVars.size > 0)
-					sm_vars.put(o.identifier.name, structuralVars);
+					sm_vars.put(o.objectName.name, structuralVars);
 					
 				//ParameterModel
 				var parameters = o.modelObject.getParameters;	
 				if (parameters.size > 0)
-					pm_vars.put(o.identifier.name, parameters);
+					pm_vars.put(o.objectName.name, parameters);
 					
 				//ObservationModel
 				var observationVars = o.modelObject.getObservationVars;	
 				if (observationVars.size > 0)
-					sm_vars.put(o.identifier.name, observationVars);
+					sm_vars.put(o.objectName.name, observationVars);
 					
 			}
 			if (o.parameterObject != null){
 				//ParameterModel
 				var parameters = o.parameterObject.getParameters;	
 				if (parameters.size > 0)
-					pm_vars.put(o.identifier.name, parameters);
+					pm_vars.put(o.objectName.name, parameters);
 			}
 		}
 	}
@@ -83,41 +87,51 @@ class ReferenceResolver extends MdlPrinter{
 	//+Return name of PharmML block for a given reference
 	def getReferenceBlock(FullyQualifiedSymbolName ref){
 		if (ref.object != null){
-			var source = vm_err_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.identifier)) return "vm_err." + ref.object.name;
-			source = vm_mdl_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.identifier)) return "vm_mdl." + ref.object.name;
-			source = cm_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.identifier)) return "cm." + ref.object.name;
-			source = om_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.identifier)) return "om." + ref.object.name;	
-			source = sm_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.identifier)) return "sm." + ref.object.name;	
-			source = pm_vars.get(ref.object.name);
-			if (source != null)
-				if (source.contains(ref.identifier)) return "sm." + ref.object.name;	
-			return ref.object.name;
+			return getReferenceBlock(ref.object.name, ref.symbol.name);
 		} else {
 			//try to find by name
-			for (set: vm_err_vars.entrySet)
-				if (set.value.contains(ref.identifier)) return "vm_err." + set.key;
-			for (set:vm_mdl_vars.entrySet)
-				if (set.value.contains(ref.identifier)) return "vm_mdl." + set.key;
-			for (set: cm_vars.entrySet)
-				if (set.value.contains(ref.identifier)) return "cm." + set.key;
-			for (set: om_vars.entrySet)
-				if (set.value.contains(ref.identifier)) return "om." + set.key;	
-			for (set: sm_vars.entrySet)
-				if (set.value.contains(ref.identifier)) return "sm." + set.key;	
-			for (set: pm_vars.entrySet)
-				if (set.value.contains(ref.identifier)) return "sm." + set.key;	
-			return "";
+			return getReferenceBlock(ref.symbol.name);
 		}
+	}	
+	
+	def getReferenceBlock(String name){
+		//try to find by name
+		for (set: vm_err_vars.entrySet)
+			if (set.value.contains(name)) return "vm_err." + set.key;
+		for (set:vm_mdl_vars.entrySet)
+			if (set.value.contains(name)) return "vm_mdl." + set.key;
+		for (set: cm_vars.entrySet)
+			if (set.value.contains(name)) return "cm." + set.key;
+		for (set: om_vars.entrySet)
+			if (set.value.contains(name)) return "om." + set.key;	
+		for (set: sm_vars.entrySet)
+			if (set.value.contains(name)) return "sm." + set.key;	
+		for (set: pm_vars.entrySet)
+			if (set.value.contains(name)) return "pm." + set.key;	
+		return "";
+	}	
+	
+	def getReferenceBlock(String objName, String name){
+		//try to find by name
+		var source = vm_err_vars.get(objName);
+		if (source != null)
+			if (source.contains(name)) return "vm_err." +objName
+		source = vm_mdl_vars.get(name);
+		if (source != null)
+			if (source.contains(name)) return "vm_mdl." + objName
+		source = cm_vars.get(objName);
+		if (source != null)
+			if (source.contains(name)) return "cm." + objName
+		source = om_vars.get(objName);
+		if (source != null)
+			if (source.contains(name)) return "om." + objName	
+		source = sm_vars.get(objName);
+		if (source != null)
+			if (source.contains(name)) return "sm." + objName	
+		source = pm_vars.get(objName);
+		if (source != null)
+			if (source.contains(name)) return "pm." + objName	
+		return objName;
 	}	
 	
 	//+ Return input variables with use=idv (individual)
@@ -129,8 +143,8 @@ class ReferenceResolver extends MdlPrinter{
 					if (s.expression != null){
 						if (s.expression.list != null){
 							var use = s.expression.list.arguments.getAttribute("use");
-							if (use.equalsIgnoreCase("idv") && !independentVars.contains(s.identifier)) 
-								independentVars.add(s.identifier);
+							if (use.equalsIgnoreCase("idv") && !independentVars.contains(s.symbolName.name)) 
+								independentVars.add(s.symbolName.name);
 						}
 					}
 				}
@@ -139,7 +153,7 @@ class ReferenceResolver extends MdlPrinter{
 		return independentVars;
 	}
 		
-		//+ Return a list of covariate variables per object
+	//+ Return a list of covariate variables per object
 	def getCovariateVars(ModelObject obj){
 		var covariateVars = new HashSet<String>();
 		for (b: obj.blocks){
@@ -149,8 +163,8 @@ class ReferenceResolver extends MdlPrinter{
 						if (s.expression.list != null){
 							var use = s.expression.list.arguments.getAttribute("use");
 							if (use.equalsIgnoreCase("covariate")) {
-								if (!covariateVars.contains(s.identifier))
-									covariateVars.add(s.identifier);
+								if (!covariateVars.contains(s.symbolName.name))
+									covariateVars.add(s.symbolName.name);
 							}
 						}
 					}
@@ -176,8 +190,8 @@ class ReferenceResolver extends MdlPrinter{
 			//Model object, RANDOM_VARIABLES_DEFINITION
 			if (b.randomVariableDefinitionBlock != null){
 				for (s: b.randomVariableDefinitionBlock.variables){
-					if (eps_vars.get(s.identifier) != null)
-						parameters.add(s.identifier);
+					if (eps_vars.get(s.symbolName.name) != null)
+						parameters.add(s.symbolName.name);
 				} 
 	  		}
 	  		//Model object, INDIVIDUAL_VARIABLES
@@ -197,13 +211,13 @@ class ReferenceResolver extends MdlPrinter{
 			//Parameter object, STRUCTURAL
 			if (b.structuralBlock != null){
 				for (id: b.structuralBlock.parameters) 
-					parameters.add(id.identifier);
+					parameters.add(id.symbolName.name);
 			}
 			//ParameterObject, VARIABILITY
 			if (b.variabilityBlock != null){
 				for (st: b.variabilityBlock.statements){
 					if (st.parameter != null)
-						parameters.add(st.parameter.identifier);
+						parameters.add(st.parameter.symbolName.name);
 				} 
 			}
 		}
@@ -217,7 +231,7 @@ class ReferenceResolver extends MdlPrinter{
 			if (b.observationBlock != null){
 				for (st: b.observationBlock.statements){
 					if (st.symbol != null){//!TODO: revise
-						observationVars.add(st.symbol.identifier);
+						observationVars.add(st.symbol.symbolName.name);
 						if (st.symbol.expression != null){
 							if (st.symbol.expression.expression != null){
 								var classifiedVars = st.symbol.expression.expression.getReferences;
@@ -255,7 +269,7 @@ class ReferenceResolver extends MdlPrinter{
 	def HashSet<String> getSymbols(BlockStatement b){
 		var symbols = new HashSet<String>();
 		if (b.symbol != null){
-			if (!symbols.contains(b.symbol.identifier)) symbols.add(b.symbol.identifier);
+			if (!symbols.contains(b.symbol.symbolName.name)) symbols.add(b.symbol.symbolName.name);
 		}
 		if (b.statement != null){
 			val s = b.statement;
@@ -302,5 +316,66 @@ class ReferenceResolver extends MdlPrinter{
 	    }
 	    return classifiedVars;
 	}
+
+	def setLevelVars(ModelObject o){
+		var tmp = o.getLevelVars("1");
+		for (v: tmp){
+			if (level_vars.get(v) == null)
+				level_vars.put(v, "1");
+		}
+		tmp = o.getLevelVars("2");
+		for (v: tmp){
+			if (level_vars.get(v) == null)
+				level_vars.put(v, "2");
+		}
+	}
 		
+	def protected getLevelVars(ModelObject o, String levelId) {
+		var levelVars = new HashSet<String>();
+		for (b: o.blocks){
+			if(b.inputVariablesBlock != null){
+				for (SymbolDeclaration s: b.inputVariablesBlock.variables){
+					if (s.expression != null){
+						if (s.expression.list != null){
+							var level = s.expression.list.arguments.getAttribute("level");
+							if (level.equals(levelId)){
+								if (!levelVars.contains(s.symbolName.name)){
+									levelVars.add(s.symbolName.name);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return levelVars;
+	}	
+		
+	//Assign indices to variability parameters ($ETA, $ESP)
+	def protected setRandomVariables(ModelObject o){
+    	var i = 1; var j = 1; 
+		for (b: o.blocks){
+	  		if (b.randomVariableDefinitionBlock != null){
+				for (s: b.randomVariableDefinitionBlock.variables) {
+					if (s.randomList != null){	
+						var level = s.randomList.arguments.getAttribute("level");
+						val id = s.symbolName.name;
+						if (level_vars.get(level) != null){
+							if (level_vars.get(level).equals("2")){
+								if (eta_vars.get(id) == null){
+									eta_vars.put(id, i);
+									i = i + 1;
+								}
+							}
+							if (level_vars.get(level).equals("1"))
+								if (eps_vars.get(id) == null){
+									eps_vars.put(id, j);
+									j = j + 1;
+								}	
+							}
+						}
+	  			}
+	  		}
+  		}
+	}
 }

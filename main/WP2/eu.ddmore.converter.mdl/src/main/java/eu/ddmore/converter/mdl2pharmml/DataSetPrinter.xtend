@@ -9,11 +9,14 @@ import java.io.File
 
 class DataSetPrinter {
 	protected Mcl mcl = null;
+	protected extension DataType dataType = new DataType();
 	protected extension MathPrinter mathPrinter = null;
+	protected extension ReferenceResolver resolver=null;
 	
-	new(Mcl mcl, MathPrinter mathPrinter){
+	new(Mcl mcl, MathPrinter mathPrinter, ReferenceResolver resolver){
 		this.mcl = mcl;
 		this.mathPrinter = mathPrinter;
+		this.resolver = resolver;
 	}	
 	
 	//
@@ -55,36 +58,48 @@ class DataSetPrinter {
 	</DataSet>
 	'''
 	
-	//
 	def getDataFileContent(String fileName){
 		var values = new ArrayList<String[]>();
 		var BufferedReader fileReader = null;
-		var modelPath = mcl.eResource.getURI.toPlatformString(true);
-		if (modelPath != null){
-			var file = new File(modelPath);
-			var dataPath = file.getParent + "\\" + fileName;		
-			try{
-				//First try the path as it is			
-				fileReader = new BufferedReader(new FileReader(dataPath));
+		var file = new File(fileName);
+		if (file.isAbsolute()) {
+			try{			
+				fileReader = new BufferedReader(new FileReader(fileName)); 
+			} 
+			catch(FileNotFoundException e1){
+				//File does not exist	
+				return null;
 			}		
-			catch(FileNotFoundException e){
-				//If not found, try to look in the folder "data"
-				dataPath = file.getParent + "\\data\\" + fileName;
-				try{
-					fileReader = new BufferedReader(new FileReader(dataPath));
-					if (fileReader.ready()){ 
-						var line = "";
-						while ((line = fileReader.readLine()) != null) {
-							val atoms = line.split("\\s{1,}|,|;");
-				        	values.add(atoms);
-				        }
-				    	fileReader.close();			
-					}			
+		} else {
+			//The fileName contains relative path to the data file, try to find it in the project folder
+			var modelPath = mcl.eResource.getURI.toPlatformString(true);
+			if (modelPath != null){
+				var dataPath = file.getParent + "\\" + fileName;	
+				System::out.println("Looking for a file:" + dataPath);	
+				try{			
+					fileReader = new BufferedReader(new FileReader(dataPath)); //First try the path as it is
+				}		
+				catch(FileNotFoundException e){
+					dataPath = file.getParent + "\\data\\" + fileName; //If not found, try to look in the folder "data"
+					System::out.println("Looking for a file:" + dataPath);	
+					try{
+						fileReader = new BufferedReader(new FileReader(dataPath));
+					}
+					catch(FileNotFoundException e1){
+						//File does not exist
+						return null;
+					}
 				}
-				catch(FileNotFoundException e1){}
 			}
 		}
+		if (fileReader.ready()){ 
+			var line = "";
+			while ((line = fileReader.readLine()) != null) {
+				val atoms = line.split("\\s{1,}|,|;");
+	        	values.add(atoms);
+	        }
+	    	fileReader.close();			
+		}		
 		return values;
 	}	
-	
 }

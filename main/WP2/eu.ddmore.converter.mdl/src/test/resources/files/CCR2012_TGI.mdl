@@ -1,6 +1,6 @@
 # nt2mdl 1.022 beta Nick Holford n.holford@auckland.ac.nz
 CCR2012_TGI_dat = dataobj{
-   HEADER{
+   DATA_INPUT_VARIABLES{
       ID=list(type=categorical)
       TIME=list(type=continuous)
       AMT=list(type=continuous)
@@ -45,7 +45,7 @@ CCR2012_TGI_par = parobj{
 
 CCR2012_TGI_mdl = mdlobj{
 
-   INPUT_VARIABLES{
+   MODEL_INPUT_VARIABLES{
       ID=list(use=id, level=2)
       TIME=list(use=idv, units="h")
       AMT=list(use=amt)
@@ -125,7 +125,7 @@ CCR2012_TGI_mdl = mdlobj{
    }# end OBSERVATION
 
 
-   OUTPUT_VARIABLES{
+   MODEL_OUTPUT_VARIABLES{
       ID
       TIME
       Y

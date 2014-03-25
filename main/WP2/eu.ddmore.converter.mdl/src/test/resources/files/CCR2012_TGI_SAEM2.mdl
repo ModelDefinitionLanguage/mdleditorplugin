@@ -2,7 +2,7 @@
 CCR2012_TGI_SAEM2_dat = dataobj{
 ### Data object
 # The data object specifies a table of columns of data variables and the variable names which will be also used by the model object
-   HEADER{
+   DATA_INPUT_VARIABLES{
       ID=list(type=categorical)
       TIME=list(type=continuous,units="h")
       AMT=list(type=continuous,units="mg")
@@ -63,7 +63,7 @@ CCR2012_TGI_SAEM2_par = parobj{
 # Model variables are derived from the input data variables and parameters using algebraic expressions.
 CCR2012_TGI_SAEM2_mdl = mdlobj{
 
-   INPUT_VARIABLES{
+   MODEL_INPUT_VARIABLES{
 # A name for each input data variable is required. Special uses of input data variables are indicated by the use attribute if the data variable name is not a standard name. Standard names may include ID, IDV, AMT, DV, MDV, etc. similar to standard data items recognized by NM-TRAN or Monolix. The type option is not required but may be useful as metadata. This kind of metadata (with an option to recode) could alternatively be specified in the data object.
       ID=list(use=id, level=2)
       TIME=list(use=idv,units="h")
@@ -176,7 +176,7 @@ CCR2012_TGI_SAEM2_mdl = mdlobj{
    }# end OBSERVATION
 
 
-   OUTPUT_VARIABLES{
+   MODEL_OUTPUT_VARIABLES{
 # The OUTPUT block specifies the model variables that may be exported from the model object.
       ID
       TIME
