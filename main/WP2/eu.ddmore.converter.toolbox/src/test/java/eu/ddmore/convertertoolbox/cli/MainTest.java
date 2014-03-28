@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import com.google.common.collect.Sets;
+
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
@@ -59,7 +61,7 @@ public class MainTest {
         File f1 = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_BOV.mdl").getPath());
         File f2 = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_PRED.mdl").getPath());
         File[] expected = new File[] {f1, f2};
-        assertEquals(Arrays.asList(expected), Arrays.asList(found));
+        assertEquals(Sets.newHashSet(expected), Sets.newHashSet(found));
     }
     
     @Test
