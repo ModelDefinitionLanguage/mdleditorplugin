@@ -2,13 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
 		<version>0.0.3-SNAPSHOT</version>
 	</parent>
+
+	<properties>
+		<jacoco.version>0.6.0.201210061924</jacoco.version>
+	</properties>
 
 	<artifactId>toolbox-integration-test</artifactId>
 	<name>Converter Toolbox Integration Test</name>
@@ -22,6 +26,27 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+
+			<!-- Code coverage -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<configuration>
+					<excludes>
+						<exclude>eu.ddmore.converter.test.*</exclude>
+						<exclude>eu.ddmore.convertertoolbox.api.*</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 

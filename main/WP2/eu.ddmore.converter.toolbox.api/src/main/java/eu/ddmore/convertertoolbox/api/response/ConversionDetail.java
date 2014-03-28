@@ -14,7 +14,14 @@ public interface ConversionDetail {
 	 * Models the severity levels.
 	 */
 	public enum Severity {
-		ALL, ERROR, WARNING, INFO, DEBUG;
+		ERROR(1), WARNING(2), INFO(3), DEBUG(4), ALL(5);
+		private int rank;
+		private Severity(int rank) {
+		    this.rank = rank;
+		}
+		public int getRank() {
+		    return rank;
+		}
 	}
 
     /**

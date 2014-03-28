@@ -40,19 +40,19 @@ public final class Main {
     private static final String DASH = "-";
 
     @Option(name = DASH + "in", handler = StringOptionHandler.class, usage = "Input file or folder path.", required = true)
-    private String src;
+    String src;
     @Option(name = DASH + "out", handler = StringOptionHandler.class, usage = "Output folder path.", required = true)
-    private String output;
+    String output;
 
     @Option(name = DASH + "source-language-name", aliases = { DASH + "sn" }, handler = StringOptionHandler.class, usage = "Source Language Name, e.g. 'MDL'.", required = true)
-    private String sourceLanguageName;
+    String sourceLanguageName;
     @Option(name = DASH + "source-language-version", aliases = { DASH + "sv" }, handler = StringOptionHandler.class, usage = "Source Language Version, e.g. '5.0.8'.", required = true)
-    private String sourceLanguageVersion;
+    String sourceLanguageVersion;
 
     @Option(name = DASH + "target-language-name", aliases = { DASH + "tn" }, handler = StringOptionHandler.class, usage = "Target Language Name, e.g 'NMTRAN'.", required = true)
-    private String targetLanguageName;
+    String targetLanguageName;
     @Option(name = DASH + "target-language-version", aliases = { DASH + "tv" }, handler = StringOptionHandler.class, usage = "Target Language Version, e.g '7.2'.", required = true)
-    private String targetLanguageVersion;
+    String targetLanguageVersion;
 
     private ConversionReport convert(File src, String srcLanguage, String srcVersion, String targetLanguage, String targetVersion,
             File outputDirectory) throws ConverterNotFoundException, IOException {
@@ -138,7 +138,7 @@ public final class Main {
         }
     }
 
-    private File[] getFilesFromDirectory(File src) {
+    File[] getFilesFromDirectory(File src) {
         List<File> filesForConversion = new ArrayList<File>();
         for (File f : src.listFiles()) {
             if (!f.isDirectory()) {

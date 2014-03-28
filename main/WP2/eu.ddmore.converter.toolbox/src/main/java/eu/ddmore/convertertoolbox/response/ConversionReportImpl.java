@@ -39,7 +39,7 @@ public class ConversionReportImpl implements ConversionReport {
         }
         List<ConversionDetail> res = new ArrayList<ConversionDetail>();
         for (ConversionDetail d : details) {
-            if (d.getServerity() == severity) {
+            if (d.getServerity().getRank() <= severity.getRank()) {
                 res.add(d);
             }
         }

@@ -8,10 +8,15 @@ import java.io.IOException;
 
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
+import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
+import eu.ddmore.convertertoolbox.response.ConversionDetailImpl;
+import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
 
 /**
  * Interface which Converter providers should implement to enable them to be
@@ -30,12 +35,51 @@ public class DummyMDLToNONMEMFailure implements ConverterProvider {
         Version targetVersion = new VersionImpl(7, 2, 0, "qualn");
         target = new LanguageVersionImpl("NMTRAN", targetVersion);
 
-        converterVersion = new VersionImpl(1, 0, 1, null);
+        converterVersion = new VersionImpl(1, 0, 1);
     }
 
     @Override
     public ConversionReport performConvert(File src, File outputDirectory) throws IOException {
-        throw new IOException("DummyMDLToNMTRANFailure");
+        if (src.getName().equals("exception")) {
+            throw new IOException("DummyMDLToNMTRANFailure");
+        }
+
+        ConversionReport report = new ConversionReportImpl();
+        report.setReturnCode(ConversionCode.FAILURE);
+        report.addDetail(createConversionDetail(Severity.ERROR));
+        if (src.getName().contains("w")) {
+            report.addDetail(createConversionDetail(Severity.WARNING));
+        }
+        if (src.getName().contains("i")) {
+            report.addDetail(createConversionDetail(Severity.INFO));
+        }
+        if (src.getName().contains("d")) {
+            report.addDetail(createConversionDetail(Severity.DEBUG));
+        }
+        return report;
+    }
+
+    private ConversionDetail createConversionDetail(Severity severity) {
+        ConversionDetail conversionDetail = new ConversionDetailImpl();
+        conversionDetail.setSeverity(severity);
+        if (severity.equals(Severity.ERROR)) {
+            conversionDetail.addInfo("error1", "error1");
+            conversionDetail.addInfo("error2", "error2");
+            conversionDetail.setMessage("ERROR message");
+        } else if (severity.equals(Severity.WARNING)) {
+            conversionDetail.addInfo("warning1", "warning1");
+            conversionDetail.addInfo("warning2", "warning2");
+            conversionDetail.setMessage("WARNING message");
+        } else if (severity.equals(Severity.INFO)) {
+            conversionDetail.addInfo("info1", "info1");
+            conversionDetail.addInfo("info2", "info2");
+            conversionDetail.setMessage("INFO message");
+        } else if (severity.equals(Severity.DEBUG)) {
+            conversionDetail.addInfo("debug1", "debug1");
+            conversionDetail.addInfo("debug2", "debug2");
+            conversionDetail.setMessage("DEBUG message");
+        }
+        return conversionDetail;
     }
 
     @Override

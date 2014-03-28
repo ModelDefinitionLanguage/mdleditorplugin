@@ -18,7 +18,8 @@ public interface ConverterManager {
     /**
      * Discovers Converter Provider implementations available in the classpath. 
      * This method should be called by every ConverterManager implementation immediately after the constructor call. 
-     * Optionally, it can be later re-called by client code to re-discover Converter Providers. 
+     * After that, it does not make any sense to call that again. The JVM classpath is static, so exactly the same 
+     * Converter Providers will be discovered irrespective if you added or removed any of them inbetween. 
      */
     void discoverConverters();
     
