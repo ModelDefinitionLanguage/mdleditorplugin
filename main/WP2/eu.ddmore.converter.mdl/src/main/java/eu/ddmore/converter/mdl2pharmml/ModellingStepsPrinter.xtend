@@ -148,8 +148,8 @@ class ModellingStepsPrinter extends DataSetPrinter{
 		if (dObj == null || mObj == null) return "";
 		var res = "";
 		for (b: dObj.blocks){
-			if (b.headerBlock != null){
-				for (s: b.headerBlock.variables){
+			if (b.dataInputBlock != null){
+				for (s: b.dataInputBlock.variables){
 					var columnId = s.symbolName.name;
 					var symbId = s.symbolName.name;
 					if (s.expression != null){

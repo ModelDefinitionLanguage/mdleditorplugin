@@ -49,13 +49,16 @@ import org.ddmore.mdl.mdl.FormalArguments
 import org.ddmore.mdl.mdl.SimulationBlock
 import org.ddmore.mdl.mdl.EstimationBlock
 import org.ddmore.mdl.mdl.FileBlockStatement
+import org.apache.commons.io.FilenameUtils
+
 
 class MdlPrinter {
 
-	//Get MDL file name in upper-case
+	//Get MDL file name
 	def fileName(Mcl m){
-		var fileName = m.eResource.getURI().lastSegment;
-		return fileName.substring(0, fileName.lastIndexOf('.'));
+		var fileName = m.eResource.getURI().path;
+		var baseName = FilenameUtils::getBaseName(fileName);
+		return baseName;
 	}	
 	
 	def isTrue(AnyExpression e){
@@ -159,8 +162,8 @@ class MdlPrinter {
 	//Check that HEADER block is not empty
 	def isHeaderDefined(DataObject obj){
 		for (b:obj.blocks){
-			if (b.headerBlock != null){
-				if (b.headerBlock.variables.size > 0){
+			if (b.dataInputBlock != null){
+				if (b.dataInputBlock.variables.size > 0){
 				 	return true;
 				}
 			}

@@ -776,8 +776,8 @@ class Mdl2Nonmem extends MdlPrinter{
 	«ENDIF»
 	«getExternalCodeStart("$INPUT")»
 	«FOR b:d.blocks»
-	    «IF b.headerBlock != null»
-			«FOR st: b.headerBlock.variables SEPARATOR ' '»«IF isDrop(st.symbolName.name, t)»«st.symbolName.name»=DROP«ELSE»«st.symbolName.name»«ENDIF»«ENDFOR»
+	    «IF b.dataInputBlock != null»
+			«FOR st: b.dataInputBlock.variables SEPARATOR ' '»«IF isDrop(st.symbolName.name, t)»«st.symbolName.name»=DROP«ELSE»«st.symbolName.name»«ENDIF»«ENDFOR»
         «ENDIF»
 	«ENDFOR»
 	«getExternalCodeEnd("$INPUT")»

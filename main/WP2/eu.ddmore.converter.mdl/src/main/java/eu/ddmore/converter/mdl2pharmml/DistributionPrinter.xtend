@@ -21,132 +21,136 @@ class DistributionPrinter extends MdlPrinter{
 	//Recognised types of distributions and pairs (attribute, value type) to print as PharmML tags
 	val distribution_attrs = newHashMap(
 		'Bernoulli' -> newHashMap(
-			"probability" -> pVal),          
+			"probability" -> new Attribute("probability", pVal)),          
 		'Beta'  -> newHashMap(
-			"alpha" -> rVal, 
-			"beta" -> rVal,  
-			"truncationLowerInclusiveBound" -> pVal, 
-			"truncationUpperInclusiveBound" -> pVal),  
+			"alpha" -> new Attribute("alpha", rVal), 
+			"beta" -> new Attribute("beta", rVal),  
+			"lower" -> new Attribute("truncationLowerInclusiveBound", pVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", pVal)),  
 		'Binomial' -> newHashMap(
-			"numberOfTrials" -> nVal, 
-			"probabilityOfSuccess" -> pVal, 
-			"truncationLowerInclusiveBound" -> nVal, 
-			"truncationUpperInclusiveBound" -> nVal),
+			"numberOfTrials" -> new Attribute("numberOfTrials", nVal), 
+			"probabilityOfSuccess" -> new Attribute("probabilityOfSuccess", pVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", nVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", nVal)),
 		'Categorical' -> newHashMap(
-			"ncategories" -> nVal, 
-			"probabilities" -> pVal), 
+			"ncategories" -> new Attribute("ncategories", nVal), 
+			"probabilities" -> new Attribute("probabilities", pVal)), 
 		'Cauchy' -> newHashMap(
-			"location" -> rVal, 
-			"scale" -> prVal, 
-			"truncationLowerInclusiveBound" -> nVal, 
-			"truncationUpperInclusiveBound" -> nVal),
+			"location" -> new Attribute("location", rVal), 
+			"scale" -> new Attribute("scale", prVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", nVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", nVal)),
 		'ChiSquare' -> newHashMap(
-			"degreesOfFreedom" -> pnVal, "dof" -> pnVal, 
-			"truncationLowerInclusiveBound" -> prVal, 
-			"truncationUpperInclusiveBound" -> prVal), 
+			"degreesOfFreedom" -> new Attribute("degreesOfFreedom", pnVal), 
+			"dof" -> new Attribute("degreesOfFreedom", pnVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", prVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", prVal)), 
 		'Dirichlet' -> newHashMap(
-			"concentration" -> prVal),
+			"concentration" -> new Attribute("concentration", prVal)),
 		'Exponential' -> newHashMap(
-			"rate" -> prVal, 
-			"truncationLowerInclusiveBound" -> prVal, 
-			"truncationUpperInclusiveBound" -> prVal),
+			"alpha" -> new Attribute("rate", prVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", prVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", prVal)),
 		'FDistribution' -> newHashMap(
-			"denominator" -> nVal, 
-			"numerator" -> nVal, 
-			"truncationLowerInclusiveBound" -> prVal, 
-			"truncationUpperInclusiveBound" -> prVal),
+			"denominator" -> new Attribute("denominator", nVal), 
+			"numerator" -> new Attribute("numerator", nVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", prVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", prVal)),
 		'Gamma' -> newHashMap(
-			"shape" -> prVal, 
-			"scale" -> prVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal),
+			"shape" -> new Attribute("shape", prVal), 
+			"scale" -> new Attribute("scale", prVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)),
 		'Geometric' -> newHashMap(
-			"probability" -> pVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal),
+			"probability" -> new Attribute("probability", pVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)),
 		'Hypergeometric' -> newHashMap(
-			"numberOfSuccesses" -> nVal, 
-			"numberOfTrials" -> nVal, 
-			"populationSize" -> nVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal), 
+			"numberOfSuccesses" -> new Attribute("numberOfSuccesses", nVal), 
+			"numberOfTrials" -> new Attribute("numberOfTrials", nVal), 
+			"populationSize" -> new Attribute("populationSize", nVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)), 
 		'InverseGamma' -> newHashMap(
-			"shape" -> prVal, 
-			"scale" -> prVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal), 
+			"shape" -> new Attribute("shape", prVal), 
+			"scale" -> new Attribute("scale", prVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)), 
 		'Laplace' -> newHashMap(
-			"location" -> rVal, 
-			"scale" -> prVal,
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal), 
+			"location" -> new Attribute("location", rVal), 
+			"scale" -> new Attribute("scale", prVal),
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)), 
 		'Logistic' -> newHashMap(
-			"location" -> rVal, 
-			"scale" -> prVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal), 
+			"location" -> new Attribute("location", rVal), 
+			"scale" -> new Attribute("scale", prVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)), 
 		'LogNormal' -> newHashMap(
-			"logScale" -> rVal, 
-			"shape" -> prVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal),
+			"logScale" -> new Attribute("logScale", rVal), 
+			"shape" -> new Attribute("shape", prVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)),
 		'Multinomial' -> newHashMap(
-			"numberOfTrials" -> nVal, 
-			"probabilities" -> pVal), 
+			"numberOfTrials" -> new Attribute("numberOfTrials", nVal), 
+			"probabilities" -> new Attribute("probabilities", pVal)), 
 		'MultivariateNormal' -> newHashMap(
-			"meanVector" -> rVal, 
-			"covarianceMatrix" -> rVal), 
+			"meanVector" -> new Attribute("meanVector", rVal), 
+			"covarianceMatrix" -> new Attribute("covarianceMatrix", rVal)), 
 		'MultivariateStudentT'	-> newHashMap(
-			"meanVector" -> rVal, 
-			"covarianceMatrix" -> rVal, 
-			"degreesOfFreedom" -> pnVal, "dof" -> pnVal), 
+			"meanVector" -> new Attribute("meanVector", rVal), 
+			"covarianceMatrix" -> new Attribute("covarianceMatrix", rVal), 
+			"degreesOfFreedom" -> new Attribute("degreesOfFreedom", pnVal), 
+			"dof" -> new Attribute("degreesOfFreedom", pnVal)), 
 		'NegativeBinomial'    	-> newHashMap(
-			"numberOfFailures" -> nVal, 
-			"probability" -> pVal,  
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal),
+			"numberOfFailures" -> new Attribute("numberOfFailures", nVal), 
+			"probability" -> new Attribute("probability", pVal),  
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)),
 		'Normal' -> newHashMap(
-			"mean" -> rVal, 
-			"variance" -> prVal, 
-			"stddev" -> prVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal),
+			"mean" -> new Attribute("mean", rVal), 
+			"variance" -> new Attribute("variance", prVal), 
+			"stddev" -> new Attribute("stddev", prVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)),
 		'NormalInverseGamma' 	-> newHashMap(
-			"mean" -> rVal, 
-			"varianceScaling" -> prVal, 
-			"shape" -> prVal, 
-			"scale" -> prVal,
-			"truncationLowerInclusiveBoundN" -> nVal, 
-			"truncationUpperInclusiveBoundN" -> nVal, 
-			"truncationLowerInclusiveBoundIG" -> rVal, 
-			"truncationUpperInclusiveBoundIG" -> rVal),
+			"mean" -> new Attribute("mean", rVal), 
+			"varianceScaling" -> new Attribute("varianceScaling", prVal), 
+			"shape" -> new Attribute("shape", prVal), 
+			"scale" -> new Attribute("scale", prVal),
+			"lowerN" -> new Attribute("truncationLowerInclusiveBoundN", nVal), 
+			"upperN" -> new Attribute("truncationUpperInclusiveBoundN", nVal), 
+			"lowerIG" -> new Attribute("truncationLowerInclusiveBoundIG", rVal), 
+			"upperIG" -> new Attribute("truncationUpperInclusiveBoundIG", rVal)),
 		'Pareto' -> newHashMap(
-			"scale" -> prVal, 
-			"shape" -> prVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal),
+			"scale" -> new Attribute("scale", prVal), 
+			"shape" -> new Attribute("shape", prVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)),
 		'Poisson' -> newHashMap(
-			"rate" -> prVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal),
+			"alpha" -> new Attribute("rate", prVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)),
 		'StudentT' -> newHashMap(
-			"location" -> rVal, 
-			"scale" -> prVal, 
-			"degreesOfFreedom" -> pnVal, "dof" -> pnVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal),
+			"location" -> new Attribute("location", rVal), 
+			"scale" -> new Attribute("scale", prVal), 
+			"degreesOfFreedom" -> new Attribute("degreesOfFreedom", pnVal), 
+			"dof" -> new Attribute("degreesOfFreedom", pnVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)),
 		'Uniform' -> newHashMap(
-			"minimum" -> rVal, 
-			"maximum" -> rVal, 
-			"numberOfClasses" -> nVal),
+			"minimum" -> new Attribute("minimum", rVal), 
+			"maximum" -> new Attribute("maximum", rVal), 
+			"numberOfClasses" -> new Attribute("numberOfClasses", nVal)),
 		'Weibull' -> newHashMap(
-			"scale" -> prVal, 
-			"shape" -> prVal, 
-			"truncationLowerInclusiveBound" -> rVal, 
-			"truncationUpperInclusiveBound" -> rVal),
+			"scale" -> new Attribute("scale", prVal), 
+			"shape" -> new Attribute("shape", prVal), 
+			"lower" -> new Attribute("truncationLowerInclusiveBound", rVal), 
+			"upper" -> new Attribute("truncationUpperInclusiveBound", rVal)),
 		'Wishart' -> newHashMap(
-			"degreesOfFreedom" -> rVal, "dof" -> rVal, 
-			"scaleMatrix" -> prVal)
+			"degreesOfFreedom" -> new Attribute("degreesOfFreedom", rVal), 
+			"dof" -> new Attribute("degreesOfFreedom", rVal), 
+			"scaleMatrix" -> new Attribute("scaleMatrix", prVal))
 	)
 	
 	//Names of attributes that expect matrix as a value
@@ -177,30 +181,27 @@ class DistributionPrinter extends MdlPrinter{
 			«FOR arg: randomList.arguments.arguments»
 				«IF arg.argumentName != null»
 					«IF recognizedArgs.containsKey(arg.argumentName.name)»
-						«val dataType = recognizedArgs.get(arg.argumentName.name)»
-						«IF matrix_attrs.contains(arg.argumentName.name)»
-							«var dimension = defineDimension(randomList, arg)»
-							<«arg.argumentName.name.convertAttribute» dimension="«dimension»">
-								<values>«arg.value.toPharmML(dataType)»</values>
-							</«arg.argumentName.name.convertAttribute»>
-						«ELSE»	
-							<«arg.argumentName.name.convertAttribute»>
-								«arg.value.toPharmML(dataType)»
-							</«arg.argumentName.name.convertAttribute»>
-						«ENDIF»
+						«val attr = recognizedArgs.get(arg.argumentName.name)»
+						«IF attr != null»
+							«val dataType = attr.type»
+							«val attrName = attr.name»
+							«IF matrix_attrs.contains(arg.argumentName.name)»
+								«var dimension = defineDimension(randomList, arg)»
+								<«attrName» dimension="«dimension»">
+									<values>«arg.value.toPharmML(dataType)»</values>
+								</«attrName»>
+							«ELSE»	
+								<«attrName»>
+									«arg.value.toPharmML(dataType)»
+								</«attrName»>
+							«ENDIF»
+							«ENDIF»
 					«ENDIF»
 				«ENDIF»
 			«ENDFOR»	
 		</«type»Distribution>
 		'''
 	}	
-	
-	protected def String convertAttribute(String attrName){
-		switch(attrName){
-			case "dof": "degreesOfFreedom"
-			default: attrName
-		}
-	}
 	
 	//For distributions that expect matrix, determine its dimensions
 	//First look for an explicitly specified dimensions
