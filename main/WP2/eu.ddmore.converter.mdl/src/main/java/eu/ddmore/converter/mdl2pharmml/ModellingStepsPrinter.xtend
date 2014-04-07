@@ -162,7 +162,7 @@ class ModellingStepsPrinter extends DataSetPrinter{
 					val expectedVar = mObj.getModelInputVariable(symbId);
 					var blkIdRef = mObjName.getReferenceBlock(symbId);
 					if (expectedVar != null){
-						res = res + print_msteps_ColumnMapping(columnId, symbId, blkIdRef);
+						res = res + print_ds_ColumnMapping(columnId, symbId, blkIdRef);
 					}
 				}
 			}
@@ -173,13 +173,6 @@ class ModellingStepsPrinter extends DataSetPrinter{
 		</NONMEMdataSet>
 		'''
 	}
-	
-	def print_msteps_ColumnMapping(String columnId, String symbId, String blkIdRef)'''
-		<NMColumnMapping>
-			<ds:ColumnRef columnIdRef="«columnId»"/>
-			<ds:SymbRef «IF blkIdRef.length > 0» blkIdRef="«blkIdRef»" «ENDIF»symbIdRef="«symbId»"/>
-		</NMColumnMapping>
-	'''
 	
 	//Return a corresponding model variable
 	def getModelInputVariable(ModelObject mObj, String name){

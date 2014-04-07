@@ -117,4 +117,12 @@ class DataSetPrinter {
 		</ds:ImportData>
 			
 	'''	
+	
+	def print_ds_ColumnMapping(String columnId, String symbId, String blkIdRef)'''
+		<ColumnMapping>
+			<ds:ColumnRef columnIdRef="«columnId»"/>
+			<ds:SymbRef «IF blkIdRef.length > 0» blkIdRef="«blkIdRef»" «ENDIF»symbIdRef="«symbId»"/>
+		</ColumnMapping>
+	'''
+	
 }
