@@ -23,6 +23,8 @@ import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
 
+import eu.ddmore.converter.mdl2pharmml.Mdl2PharmML;
+
 public class MDLToPharmMLConverter extends MdlPrinterUtility implements ConverterProvider {
 
     private LanguageVersion source;

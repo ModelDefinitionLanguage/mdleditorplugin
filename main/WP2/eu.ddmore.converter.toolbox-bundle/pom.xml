@@ -16,18 +16,6 @@
 	<name>Converter Toolbox Bundle</name>
 	<description>Converter Toolbox as a Bundle</description>
 
-	<properties>
-		<xtend.repo.url>http://build.eclipse.org/common/xtend/maven/</xtend.repo.url>
-		<xtend.version>2.4.0</xtend.version>
-		<antlr.version>3.2</antlr.version>
-	</properties>
-
-	<repositories>
-		<repository>
-			<id>xtend</id>
-			<url>${xtend.repo.url}</url>
-		</repository>
-	</repositories>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -81,50 +69,6 @@
 			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-mdl</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<groupId>eu.ddmore</groupId>
-					<artifactId>org.ddmore.mdl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.google.inject</groupId>
-					<artifactId>guice</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.core</groupId>
-			<artifactId>runtime</artifactId>
-			<version>3.9.0-v20130326-1255</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.eclipse</groupId>
-					<artifactId>osgi</artifactId>
-				</exclusion>
-			</exclusions>
-
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.birt.runtime</groupId>
-			<artifactId>org.eclipse.core.resources</artifactId>
-			<version>3.8.1.v20121114-124432</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.xtend</groupId>
-			<artifactId>org.eclipse.xtend.standalone</artifactId>
-			<version>${xtend.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>antlr-runtime</artifactId>
-			<version>${antlr.version}</version>
-		</dependency>
 
 	</dependencies>
 

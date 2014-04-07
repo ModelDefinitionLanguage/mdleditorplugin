@@ -20,7 +20,7 @@ import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
  * @author itheocharis
  *
  */
-public class MdlPrinterUtility extends MdlPrinter {
+public class MdlPrinterUtility {
 	
 	public ConversionReport printOutputFile(File src, File outputDirectory, String text, String fileEnding) {
 		String outputFileName = src.getName().replace(".mdl", fileEnding);

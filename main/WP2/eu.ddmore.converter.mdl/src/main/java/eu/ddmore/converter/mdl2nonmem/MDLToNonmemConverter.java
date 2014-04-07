@@ -22,6 +22,8 @@ import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
 
+import eu.ddmore.converter.mdl2nonmem.Mdl2Nonmem;
+
 public class MDLToNonmemConverter extends MdlPrinterUtility implements ConverterProvider {
 
     private LanguageVersion source;
@@ -43,7 +45,7 @@ public class MDLToNonmemConverter extends MdlPrinterUtility implements Converter
         Injector injector = new MdlStandaloneSetup().createInjectorAndDoEMFRegistration();
         XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-
+        
         Resource resource = resourceSet.getResource(URI.createURI("file:///" + src.getAbsolutePath()), true);
         Mcl mcl = (Mcl) resource.getContents().get(0);
 

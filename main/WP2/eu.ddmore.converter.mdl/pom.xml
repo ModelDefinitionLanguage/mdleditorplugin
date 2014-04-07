@@ -6,7 +6,7 @@
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>0.0.3-SNAPSHOT</version>
+		<version>0.0.4-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>converter-mdl</artifactId>
@@ -24,12 +24,6 @@
 			<url>${xtend.repo.url}</url>
 		</repository>
 	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>xtend</id>
-			<url>${xtend.repo.url}</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<build>
 		<plugins>
@@ -59,33 +53,6 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>org.eclipse.xtend</groupId>
-				<artifactId>xtend-maven-plugin</artifactId>
-				<version>${xtend.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-				</executions>
-
-				<dependencies>
-					<dependency>
-						<groupId>org.eclipse.xtend</groupId>
-						<artifactId>org.eclipse.xtend.lib</artifactId>
-						<version>${xtend.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.antlr</groupId>
-						<artifactId>antlr-runtime</artifactId>
-						<version>${antlr.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-
 		</plugins>
 	</build>
 
@@ -105,19 +72,6 @@
 			<groupId>eu.ddmore</groupId>
 			<artifactId>org.ddmore.mdl</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
 		</dependency>
 
 		<dependency>

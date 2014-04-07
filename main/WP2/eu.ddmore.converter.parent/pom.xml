@@ -5,18 +5,16 @@
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<name>Converter Master</name>
 
 	<modules>
-		<module>../eu.ddmore.converter.toolbox</module>
 		<module>../eu.ddmore.converter.toolbox.api</module>
+		<module>../eu.ddmore.converter.toolbox</module>
 		<module>../eu.ddmore.converter.test.mdl2nonmem.sucess</module>
 		<module>../eu.ddmore.converter.test.mdl2nonmem.failure</module>
 		<module>../eu.ddmore.converter.test.mdl2pharmml</module>
 		<module>../eu.ddmore.converter.test</module>
-		<module>../eu.ddmore.converter.mdl</module>
-		<module>../eu.ddmore.converter.toolbox-bundle</module>
 	</modules>
 
 	<properties>
