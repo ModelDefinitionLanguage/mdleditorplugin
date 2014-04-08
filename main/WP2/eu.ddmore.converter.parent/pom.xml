@@ -15,6 +15,7 @@
 		<module>../eu.ddmore.converter.test.mdl2nonmem.failure</module>
 		<module>../eu.ddmore.converter.test.mdl2pharmml</module>
 		<module>../eu.ddmore.converter.test</module>
+		<module>../eu.ddmore.converter.mdl</module>
 	</modules>
 
 	<properties>
