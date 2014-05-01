@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>eu.ddmore</groupId>
-	<artifactId>converter-pharmml_v03_2nmtran</artifactId>
+	<artifactId>converter-pharmml_v03_nmtran_v72</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Converter Provider MPharmML 0.3 to NMTRAN</name>
 

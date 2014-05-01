@@ -14,7 +14,7 @@
             <outputDirectory>lib</outputDirectory>
             <unpack>false</unpack>
             <includes>
-                <include>eu.ddmore:converter-pharmml_v03_2nmtran:jar:jar-with-dependencies</include>
+                <include>eu.ddmore:converter-pharmml_v03_nmtran_v72:jar:jar-with-dependencies</include>
             </includes>
         </dependencySet>
         <dependencySet>
