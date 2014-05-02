@@ -13,7 +13,7 @@ import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext;
 class TableStatement extends NMTranFormatter {
     private Parameters parameters
     private String inputHeaders
-    private ConversionContext converterUtils
+    private ConversionContext conversionContext
     
     def getStatement(String fileBase) {
         def sb = new StringBuilder();
@@ -36,7 +36,7 @@ class TableStatement extends NMTranFormatter {
         for (Map.Entry<String, String> e : parameters.etaToOmega.entrySet()) {
             String eta = e.key
             String omega = e.value
-            int omegaIndex = converterUtils.omegasInPrintOrder.indexOf(omega)+1
+            int omegaIndex = conversionContext.omegasInPrintOrder.indexOf(omega)+1
             
             sb << "ETA${omegaIndex} "
         }

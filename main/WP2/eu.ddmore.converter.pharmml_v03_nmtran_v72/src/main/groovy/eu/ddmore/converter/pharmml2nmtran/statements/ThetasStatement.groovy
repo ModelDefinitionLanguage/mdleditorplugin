@@ -16,7 +16,7 @@ import javax.xml.bind.JAXBElement
 class ThetasStatement extends NMTranFormatter {
     private Parameters parameters
     private PharmML pmlDOM
-    private ConversionContext converterUtils
+    private ConversionContext conversionContext
 
     def getStatement() {
         def sb = new StringBuilder("\$THETA\n");
@@ -43,7 +43,7 @@ class ThetasStatement extends NMTranFormatter {
             String name = it.symbRef.symbIdRef
             Theta theta = parameters.isTheta(name)
             if (theta) {
-                thetaToNMTRAN[theta.index] = converterUtils.convert(it)
+                thetaToNMTRAN[theta.index] = conversionContext.convert(it)
             }
         }
     }
@@ -53,7 +53,7 @@ class ThetasStatement extends NMTranFormatter {
             String name = it.symbRef.symbIdRef
             Theta theta = parameters.isTheta(name)
             if (theta) {
-                thetaToNMTRAN[theta.index] = converterUtils.convert(it)
+                thetaToNMTRAN[theta.index] = conversionContext.convert(it)
             }
         }
     }

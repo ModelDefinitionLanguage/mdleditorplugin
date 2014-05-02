@@ -211,8 +211,6 @@ class DataStatement extends NMTranFormatter {
                 //If data is given in PharmML, then individuals are represented by the their PharmML name, e.g. 'i1'
                 dataRows = dataSet.getRowsFor(subject.name)
             }
-            println 'subject: '+ subject
-            println 'dataRows: '+ dataRows
             if (dataRows) {
                 Collection<DataRow> dosingRows = activity.getDosingInfoFor(''+ subject.id)
                 if (!dosingRows) {

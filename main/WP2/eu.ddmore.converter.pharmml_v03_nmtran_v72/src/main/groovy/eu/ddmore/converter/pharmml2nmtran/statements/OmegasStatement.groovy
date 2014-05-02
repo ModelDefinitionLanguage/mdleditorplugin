@@ -23,7 +23,7 @@ import javax.xml.bind.JAXBElement
 class OmegasStatement extends NMTranFormatter {
     private Parameters parameters
     private PharmML pmlDOM
-    private ConversionContext converterUtils
+    private ConversionContext conversionContext
     
     def getStatement() {
         def sb = new StringBuilder();
@@ -75,7 +75,7 @@ class OmegasStatement extends NMTranFormatter {
                     String name = commonParamElem.value.symbId
                     if (parameters.isOmega(name) && commonParamElem.value.assign) {
                         sb << "${commonParamElem.value.assign.scalar.value.value} FIX ; ${name.toUpperCase()}\n"
-                        converterUtils.omegasInPrintOrder.add(name)
+                        conversionContext.omegasInPrintOrder.add(name)
                     }
                 }
             }
@@ -88,8 +88,8 @@ class OmegasStatement extends NMTranFormatter {
         String name = type.symbRef.symbIdRef        
         if (parameters.isOmega(name)) {
             if (!omegasFoundInCorrelations.contains(name)) {
-                sb << converterUtils.convert(type)
-                converterUtils.omegasInPrintOrder.add(name)
+                sb << conversionContext.convert(type)
+                conversionContext.omegasInPrintOrder.add(name)
             }
         }
         return sb
@@ -116,7 +116,7 @@ class OmegasStatement extends NMTranFormatter {
 
         for (int i=0; i<dimension; i++) {
             String eta1 = elements[i]
-            converterUtils.omegasInPrintOrder.add(parameters.etaToOmega[eta1])
+            conversionContext.omegasInPrintOrder.add(parameters.etaToOmega[eta1])
             for (int j=0; j<=i; j++) {
                 if (i == j) {
                     sb << findInitialEstimateOf(parameters.etaToOmega[eta1])
@@ -143,7 +143,7 @@ class OmegasStatement extends NMTranFormatter {
                 }
                 //if no correlation is defined in any ParameterEstimation element
                 if (parameterEstimateType) {
-                    sb << converterUtils.convert(parameterEstimateType, false)
+                    sb << conversionContext.convert(parameterEstimateType, false)
                 }
             }
             if (elem.value instanceof SimulationStepType) {
@@ -151,7 +151,7 @@ class OmegasStatement extends NMTranFormatter {
                 VariableAssignmentType type = simStep.variableAssignment.find {
                     it.symbRef.symbIdRef == idref
                 }
-                sb << converterUtils.convert(type, false)
+                sb << conversionContext.convert(type, false)
             }
         }
         sb

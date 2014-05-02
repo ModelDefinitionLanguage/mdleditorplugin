@@ -18,7 +18,7 @@ import eu.ddmore.convertertoolbox.cli.Main;
 /**
  * Test for {@link Main}.
  */
-public class CLI_IT {
+public class MainIT {
 
     @Test
     public void shouldConvertCLI() throws ConverterNotFoundException, IOException {

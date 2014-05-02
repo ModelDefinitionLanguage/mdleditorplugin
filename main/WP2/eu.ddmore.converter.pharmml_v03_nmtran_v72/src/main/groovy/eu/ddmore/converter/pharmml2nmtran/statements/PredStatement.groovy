@@ -37,24 +37,24 @@ class PredStatement extends NMTranFormatter {
 
     private PharmML pmlDOM
     private Parameters parameters
-    private ConversionContext converterUtils
+    private ConversionContext conversionContext
 
     private Map<String, String> continuousCovariates
     private Map<String, CategoricalAttribute> categoricalCovariates
     private Map<String,String> simpleParameterToNmtran
 
     //Computed when the sigma statement is created. Needed here for the error model
-    private Map<String, String> epsilonToSigma = converterUtils.epsilonToSigma
+    private Map<String, String> epsilonToSigma = conversionContext.epsilonToSigma
     private List<DerivativeVariableType> derivativeVariableTypes
 
     private Map<String, String> derivativeNames
     private Set<String> definedInDES
 
 
-    public PredStatement(PharmML pmlDOM, Parameters parameters, ConversionContext converterUtils) {
+    public PredStatement(PharmML pmlDOM, Parameters parameters, ConversionContext conversionContext) {
         this.pmlDOM = pmlDOM
         this.parameters = parameters
-        this.converterUtils = converterUtils
+        this.conversionContext = conversionContext
         derivativeNames = new HashMap<String, String>()
         definedInDES = new HashSet<String>()
     }
@@ -121,7 +121,7 @@ class PredStatement extends NMTranFormatter {
         sb << endline(getStructuralParameters().toString())
         i=1
         derivativeVariableTypes.each { var ->
-            sb << converterUtils.convert(var, i++)
+            sb << conversionContext.convert(var, i++)
         }
         des(sb.toString())
     }
@@ -158,7 +158,7 @@ class PredStatement extends NMTranFormatter {
 
         parameters.structuralVars.each { name, type ->
             if (! type.getClass().equals( DerivativeVariableType.class) ) {
-                sb << endline("${converterUtils.convert(type)}")
+                sb << endline("${conversionContext.convert(type)}")
                 if (derivativeVariableTypes) {
                     definedInDES.add(name)
                 }
@@ -173,7 +173,7 @@ class PredStatement extends NMTranFormatter {
         
         Map<String, String> inputNameToVariable = new HashMap<String, String>(derivativeNames)
         inputNameToVariable[name] = name + "2"
-        sb << endline("${converterUtils.convert(type, inputNameToVariable)}")
+        sb << endline("${conversionContext.convert(type, inputNameToVariable)}")
         sb
     }
 
@@ -213,7 +213,7 @@ class PredStatement extends NMTranFormatter {
                         visitedThetas.add(name)
                         cov << buildCovariateString(name.toUpperCase(), thetaIndex, covString)
                     } else if (individualParameterType.gaussianModel.generalCovariate) {
-                        cov << converterUtils.convert(individualParameterType.gaussianModel.generalCovariate.assign)
+                        cov << conversionContext.convert(individualParameterType.gaussianModel.generalCovariate.assign)
                     }
                 } else if (individualParameterType.assign) {
                     Equation equation = individualParameterType.assign.equation
@@ -224,7 +224,7 @@ class PredStatement extends NMTranFormatter {
                         visitedThetas.add(name)
                         cov << buildCovariateString(name.toUpperCase(), thetaIndex, null)
                     } else {
-                        cov << endline(indent({converterUtils.convert(parameters.getGroupVariable(name))}))
+                        cov << endline(indent({conversionContext.convert(parameters.getGroupVariable(name))}))
                     }
                 }
             }
@@ -241,7 +241,7 @@ class PredStatement extends NMTranFormatter {
                 if ( !parameters.isOmega(it.value.symbId) && (it.value instanceof SimpleParameterType) && it.value.assign ){
                     String rightPart
                     if (it.value.assign.equation) {
-                        rightPart = converterUtils.convert(it.value.assign.equation)
+                        rightPart = conversionContext.convert(it.value.assign.equation)
                     } else if (it.value.assign.scalar) {
                         rightPart = it.value.assign.scalar.value.value
                     }
@@ -255,7 +255,7 @@ class PredStatement extends NMTranFormatter {
     def reportCovariate() {
         def sb = new StringBuilder();
         pmlDOM.modelDefinition.covariateModel.each {
-            it.covariate.each { sb << endline(indent("${converterUtils.convert(it)}")) }
+            it.covariate.each { sb << endline(indent("${conversionContext.convert(it)}")) }
         }
         sb
     }
@@ -305,15 +305,15 @@ class PredStatement extends NMTranFormatter {
 
                             String omega = parameters.etaToOmega[etaName]
 
-                            int omegaIndex = converterUtils.omegasInPrintOrder.indexOf(omega)+1
+                            int omegaIndex = conversionContext.omegasInPrintOrder.indexOf(omega)+1
                             omegaIndices.add(omegaIndex)
                         }
                         ind.append(buildIndividualString(symbolName.toUpperCase(), name.toUpperCase(), omegaIndices))
                     } else if (individualParameterType.gaussianModel.generalCovariate) {
-                        ind << endline(indent("${rename(symbolName.toUpperCase())}${converterUtils.convert(individualParameterType.gaussianModel.generalCovariate.assign)}"))
+                        ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.gaussianModel.generalCovariate.assign)}"))
                     }
                 } else if (individualParameterType.assign) {
-                    ind << endline(indent("${rename(symbolName.toUpperCase())}${converterUtils.convert(individualParameterType.assign)}"))
+                    ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.assign)}"))
                 }
             }
         }
@@ -338,7 +338,7 @@ class PredStatement extends NMTranFormatter {
                 String variableName = varType.symbId
                 if (varType.assign && (varType.assign.equation.piecewise) ) {
                     PiecewiseType piecewise = varType.assign.equation.piecewise
-                    String pieceWiseAsNmtran = converterUtils.convert(piecewise, variableName, simpleParameterToNmtran).replaceAll("\\(t-tD\\)", "TIME").toUpperCase()
+                    String pieceWiseAsNmtran = conversionContext.convert(piecewise, variableName, simpleParameterToNmtran).replaceAll("\\(t-tD\\)", "TIME").toUpperCase()
                     conditionals.add(pieceWiseAsNmtran);
                 }
             }
@@ -349,7 +349,7 @@ class PredStatement extends NMTranFormatter {
     private void findSimpleParametersInStructuralModel(StructuralModelType structuralModel) {
         simpleParameterToNmtran = new HashMap<String,String>()
         structuralModel.simpleParameter.each {
-            simpleParameterToNmtran[it.symbId] = converterUtils.convert(it)
+            simpleParameterToNmtran[it.symbId] = conversionContext.convert(it)
         }
     }
 
@@ -370,7 +370,7 @@ class PredStatement extends NMTranFormatter {
                     name = rename(name.toUpperCase())
                 }
                 def firstPart = "Y=${name}+"
-                def secondPart = "${converterUtils.convert(errorType.errorModel.assign.equation.functionCall, derivativeNames)}"
+                def secondPart = "${conversionContext.convert(errorType.errorModel.assign.equation.functionCall, derivativeNames)}"
                 sb << indent(firstPart)
 
                 if (errorType.residualError) {
@@ -389,7 +389,7 @@ class PredStatement extends NMTranFormatter {
                 }
             } else if (type.observationError.value instanceof GeneralObsError) {
                 GeneralObsError errorType = type.observationError.value
-                sb << indent("Y${converterUtils.convert(errorType.assign)}")
+                sb << indent("Y${conversionContext.convert(errorType.assign)}")
             }
         }
         endline(sb.toString())
@@ -403,7 +403,7 @@ class PredStatement extends NMTranFormatter {
                 if (it.continuous) {
                     UniopType uniopType = it.continuous.transformation.equation.uniop
                     if (uniopType) {
-                        String covariate = converterUtils.convert(uniopType)
+                        String covariate = conversionContext.convert(uniopType)
                         String covName = parameters.varToName.get(it.symbId) ?: it.symbId
                         continuousCovariates.put(covName, covariate)
                     }

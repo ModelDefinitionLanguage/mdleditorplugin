@@ -19,7 +19,7 @@ class SigmasStatement extends NMTranFormatter {
     private PharmML pmlDOM
     private Map<String, String> sigmasToNMtran
     private Map<String, String> epsilonToSigma = [:]
-    private ConversionContext converterUtils
+    private ConversionContext conversionContext
 
     def getStatement() {
         computeSigmasToNMTRAN()
@@ -90,8 +90,8 @@ class SigmasStatement extends NMTranFormatter {
     
     private void considerSigma(type) {
         String name = type.symbRef.symbIdRef
-        if (converterUtils.parameters.isSigma(name)) {
-            sigmasToNMtran.put(name, converterUtils.convert(type))
+        if (conversionContext.parameters.isSigma(name)) {
+            sigmasToNMtran.put(name, conversionContext.convert(type))
         }
     }
 
@@ -115,7 +115,7 @@ class SigmasStatement extends NMTranFormatter {
             res.representaion = stddev.var.varId
         } else {
             res.id = stddev.prVal.value
-            Sigma sigma = converterUtils.parameters.createConstantSigma()
+            Sigma sigma = conversionContext.parameters.createConstantSigma()
             res.representaion = sigma.representation
         }
         res

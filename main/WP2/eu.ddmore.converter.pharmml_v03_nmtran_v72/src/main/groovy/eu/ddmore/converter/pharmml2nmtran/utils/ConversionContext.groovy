@@ -63,7 +63,13 @@ import eu.ddmore.libpharmml.dom.modellingsteps.ToEstimateType
 import eu.ddmore.libpharmml.dom.trialdesign.PopulationMappingType
 import eu.ddmore.libpharmml.dom.uncertml.NormalDistribution
 
-
+/**
+ * This is a main conversion class that provides overloaded 'convert' methods 
+ * that convert libPharmML types to NMTRAN. 
+ * The first argument of each convert method is a libPharmML type we want to convert.
+ * In many cases maps are passed as arguments for string substitutions 
+ * (inspired by the substitution evaluation strategy in lamda-calculus).
+ */
 public class ConversionContext extends NMTranFormatter {
 
     private PharmML pmlDOM
@@ -120,19 +126,19 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     def getTableStatement() {
-        new TableStatement("parameters":parameters, "inputHeaders":inputHeaders, "converterUtils":this).getStatement(fileBase)
+        new TableStatement("parameters":parameters, "inputHeaders":inputHeaders, conversionContext:this).getStatement(fileBase)
     }
 
     def getThetasStatement() {
-        new ThetasStatement("parameters":parameters, "pmlDOM":pmlDOM, "converterUtils":this).getStatement()
+        new ThetasStatement("parameters":parameters, "pmlDOM":pmlDOM, conversionContext:this).getStatement()
     }
 
     def getOmegasStatement() {
-        new OmegasStatement("parameters":parameters, "pmlDOM":pmlDOM, "converterUtils":this).getStatement()
+        new OmegasStatement("parameters":parameters, "pmlDOM":pmlDOM, "conversionContext":this).getStatement()
     }
 
     public StringBuilder getSigmasStatement() {
-        SigmasStatement sigmasStatement = new SigmasStatement("pmlDOM":pmlDOM, "converterUtils":this)
+        SigmasStatement sigmasStatement = new SigmasStatement("pmlDOM":pmlDOM, "conversionContext":this)
         epsilonToSigma = sigmasStatement.epsilonToSigma
         sigmasStatement.getStatement()
     }
@@ -141,6 +147,12 @@ public class ConversionContext extends NMTranFormatter {
         return convert(type, true)
     }
 
+    /**
+     * 
+     * @param type the VariableAssignmentType to convert
+     * @param verbose if true, NMTRAN comments are appended in the end of the line
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(VariableAssignmentType type, boolean verbose) {
         def sb = new StringBuilder();
         sb << convert(type.assign, false)
@@ -154,6 +166,12 @@ public class ConversionContext extends NMTranFormatter {
         convert(type, new HashMap<String, String>())
     }
 
+    /**
+     * 
+     * @param type the FunctionCallType to convert
+     * @param inputNameToValue a string substitution map (inspired by the substitution evaluation strategy in lamda-calculus).
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(FunctionCallType type, Map<String, String> inputNameToValue) {
         StringBuilder sb = new StringBuilder();
         String functionName = type.symbRef.symbIdRef
@@ -172,6 +190,12 @@ public class ConversionContext extends NMTranFormatter {
         sb << convert(functions.get(functionName), args)
     }
 
+    /**
+     * 
+     * @param type the FunctionDefinitionType to convert
+     * @param args the list of function arguments
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(FunctionDefinitionType type, List<String> args) {
         StringBuilder sb = new StringBuilder();
         Map<String, String> inputNameToValue = new HashMap<String, String>()
@@ -188,6 +212,11 @@ public class ConversionContext extends NMTranFormatter {
         sb
     }
 
+    /**
+     * 
+     * @param s
+     * @return a Theta NMTRAN representation of s, if s is a Theta, otherwise s
+     */
     private String toTheta(String s) {
         Theta theta = parameters.isTheta(s)
         theta ? "THETA(${theta.index})" : s
@@ -197,6 +226,13 @@ public class ConversionContext extends NMTranFormatter {
         return convert(type, true)
     }
 
+    /**
+     * 
+     * @param type the ParameterEstimateType type to convert
+     * @param verbose if true NMTRAN comment will be appended in the end of the line and 
+     *                if the parameter is fixed the 'FIX' label will be appended
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(ParameterEstimateType type, boolean verbose) {
         String name = type.symbRef.symbIdRef
 
@@ -247,6 +283,13 @@ public class ConversionContext extends NMTranFormatter {
         convert(piecewise, null, simpleParameterToNmtran)
     }
 
+    /**
+     * 
+     * @param piecewise the PiecewiseType type to convert
+     * @param variableName the name of the variable that will be assigned to different values dependening on the condition 
+     * @param simpleParameterToNmtran a map of precomputed nmtran representations of parameters
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(PiecewiseType piecewise, String variableName, Map<String,String> simpleParameterToNmtran) {
         StringBuilder sb = new StringBuilder();
         piecewise.piece.each {
@@ -271,6 +314,12 @@ public class ConversionContext extends NMTranFormatter {
         convert(type, new HashMap<String, String>())
     }
 
+    /**
+     * 
+     * @param type the VariableDefinitionType type to convert
+     * @param inputNameToVariable a string substitution map
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(VariableDefinitionType type, Map<String, String> inputNameToVariable) {
         def sb = new StringBuilder()
         String name = type.symbId
@@ -280,6 +329,12 @@ public class ConversionContext extends NMTranFormatter {
         sb << "\t${rename(name.toUpperCase())}${convert(type.assign, true, inputNameToVariable)}"
     }
 
+    /**
+     * 
+     * @param piece the PieceType to convert
+     * @param variableName the name of the variable to assign a value
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(PieceType piece, String variableName) {
         StringBuilder sb = new StringBuilder();
         if (piece.condition) {
@@ -294,6 +349,12 @@ public class ConversionContext extends NMTranFormatter {
         sb
     }
 
+    /**
+     * 
+     * @param type the RealValueType type to convert
+     * @param variableName the name of the variable to assign a value
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(RealValueType type, String variableName) {
         def sb = new StringBuilder()
         sb << " THEN\n\t${rename(variableName)}=${type.value}\n"
@@ -328,6 +389,12 @@ public class ConversionContext extends NMTranFormatter {
         return convert(binopType, new HashMap<String, String>())
     }
 
+    /**
+     * 
+     * @param binopType the BinopType to convert
+     * @param inputNameToValue a string substitution map
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(BinopType binopType, Map<String, String> inputNameToValue) {
         def sb = new StringBuilder()
         String left = convert(binopType.content.get(0).value, inputNameToValue)
@@ -367,6 +434,12 @@ public class ConversionContext extends NMTranFormatter {
         return convert(type, new HashMap<String, String>())
     }
 
+    /**
+     * 
+     * @param type the UniopType type to convert
+     * @param inputNameToValue a string substitution map
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(UniopType type, Map<String, String> inputNameToValue) {
         StringBuilder sb = new StringBuilder()
 
@@ -402,6 +475,12 @@ public class ConversionContext extends NMTranFormatter {
         return convert(type, new HashMap<String, String>())
     }
 
+    /**
+     * 
+     * @param type the SymbolRefType type to convert
+     * @param inputNameToValue a string substitution map
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(SymbolRefType type, Map<String, String> inputNameToValue) {
         StringBuilder sb = new StringBuilder()
         String name = type.symbIdRef
@@ -435,6 +514,12 @@ public class ConversionContext extends NMTranFormatter {
         sb
     }
 
+    /**
+     * 
+     * @param type the DerivativeVariableType type to convert
+     * @param index the order of type among all the derivative variables of the model
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(DerivativeVariableType type, int index) {
         StringBuilder sb = new StringBuilder()
         sb << "\tDADT(${index})${convert(type.assign)}\n"
@@ -454,6 +539,13 @@ public class ConversionContext extends NMTranFormatter {
         convert(type, true, new HashMap<String, String>())
     }
 
+    /**
+     * 
+     * @param type the Rhs type to convert
+     * @param verbose if true '=' symbol will be printed before the assignment
+     * @param inputNameToValue a string substitution map
+     * @return the NMTRAN representation of the type
+     */
     public StringBuilder convert(Rhs type, boolean verbose, Map<String, String> inputNameToValue) {
         def sb = new StringBuilder()
         if (verbose) {
@@ -473,6 +565,12 @@ public class ConversionContext extends NMTranFormatter {
         return convert(type, new HashMap<String, String>())
     }
 
+    /**
+     * 
+     * @param type the Equation type to convert
+     * @param inputNameToValue a string substitution map
+     * @return he NMTRAN representation of the type
+     */
     public StringBuilder convert(Equation type, Map<String, String> inputNameToValue) {
         StringBuilder sb = new StringBuilder()
         if (type.binop) {

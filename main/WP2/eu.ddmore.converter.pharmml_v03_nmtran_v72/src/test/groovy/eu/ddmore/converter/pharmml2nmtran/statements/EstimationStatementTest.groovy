@@ -19,8 +19,8 @@ class EstimationStatementTest {
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def is = FileUtils.openInputStream(src)
         def pmlDOM = pmlAPI.createDomFromResource(is).getDom()
-        ConversionContext converterUtils = new ConversionContext(pmlDOM, src)        
-        assertEquals("\$EST METHOD=COND INTER MAXEVALS=9999 PRINT=10\n\$COV\n", converterUtils.getEstimationStatement().toString())
+        ConversionContext conversionContext = new ConversionContext(pmlDOM, src)        
+        assertEquals("\$EST METHOD=COND INTER MAXEVALS=9999 PRINT=10\n\$COV\n", conversionContext.getEstimationStatement().toString())
     }
 
     @Test
@@ -29,7 +29,7 @@ class EstimationStatementTest {
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def is = FileUtils.openInputStream(src)
         def pmlDOM = pmlAPI.createDomFromResource(is).getDom()
-        ConversionContext converterUtils = new ConversionContext(pmlDOM, src)        
-        assertEquals("\$EST METHOD=SAEM INTER NBURN=2000 NITER=1000 ISAMPLE=2 IACCEPT=0.4 PRINT=10 CTYPE=3\n\$COV\n", converterUtils.getEstimationStatement().toString())
+        ConversionContext conversionContext = new ConversionContext(pmlDOM, src)        
+        assertEquals("\$EST METHOD=SAEM INTER NBURN=2000 NITER=1000 ISAMPLE=2 IACCEPT=0.4 PRINT=10 CTYPE=3\n\$COV\n", conversionContext.getEstimationStatement().toString())
     }
 }

@@ -30,7 +30,7 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
     private LanguageVersion source;
     private LanguageVersion target;
     private Version converterVersion;
-    private ConversionContext converterUtils;
+    private ConversionContext conversionContext;
 
     public PharmMLToNMTRANConverter() {
         Version sourceVersion = new VersionImpl(0, 2, 1);
@@ -74,39 +74,39 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
 
     private StringBuilder toNMTRAN(pmlDOM, src, outputDirectory) {
         StringBuilder nmtran = new StringBuilder();
-        converterUtils = new ConversionContext(pmlDOM, src)
+        conversionContext = new ConversionContext(pmlDOM, src)
 
-        nmtran.append(converterUtils.getProblemStatement())
+        nmtran.append(conversionContext.getProblemStatement())
         nmtran.append('\n')
         if (pmlDOM.modellingSteps) {
             DataStatement dataStatement = new DataStatement(pmlDOM, outputDirectory.getAbsolutePath()+'/'+ src.getName().replace(".xml", ""))
             String dataFilePointer = dataStatement.createDataFile()
             List<String> headers = dataStatement.getHeaders()
-            nmtran.append(converterUtils.getInputStatement(headers))
+            nmtran.append(conversionContext.getInputStatement(headers))
 
             nmtran.append(dataFilePointer)
             nmtran.append('\n')
-            if (converterUtils.isEstimation()) {
-                nmtran.append(converterUtils.getEstimationStatement())
+            if (conversionContext.isEstimation()) {
+                nmtran.append(conversionContext.getEstimationStatement())
                 nmtran.append('\n')
-            } else if (converterUtils.isSimulation()) {
-                nmtran.append(converterUtils.getSimulationStatement())
+            } else if (conversionContext.isSimulation()) {
+                nmtran.append(conversionContext.getSimulationStatement())
                 nmtran.append('\n')
             }
-            nmtran.append(converterUtils.getThetasStatement())
+            nmtran.append(conversionContext.getThetasStatement())
             nmtran.append('\n')
-            nmtran.append(converterUtils.getOmegasStatement())
+            nmtran.append(conversionContext.getOmegasStatement())
             nmtran.append('\n')
-            nmtran.append(converterUtils.getSigmasStatement())
+            nmtran.append(conversionContext.getSigmasStatement())
             nmtran.append('\n')
         } else {
             //TODO: Conversion error should be thrown here
             throw new RuntimeException("Modelling steps missing. They are required by NMTRAN.")
         }
 
-        nmtran.append(converterUtils.getPred())
+        nmtran.append(conversionContext.getPred())
         nmtran.append('\n')
-        nmtran.append(converterUtils.getTableStatement())
+        nmtran.append(conversionContext.getTableStatement())
 
         nmtran
     }
