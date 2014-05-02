@@ -33,13 +33,14 @@ public class ConversionDetailImplTest {
     @Test
     public void shouldBeEqualErrorsSettingDetails() {
         ConversionDetail error1 = new ConversionDetailImpl();
+        error1.setSeverity(Severity.ERROR);
         error1.setMessage("ERROR message");
         Map<String, String> info = new HashMap<String, String>();
         error1.addInfo("error1", "error1");
         error1.addInfo("error2", "error2");
         error1.setInfo(info);
         ConversionDetail error2 = createConversionDetail(Severity.ERROR);
-        assertNotEquals(error1, error2);
+        assertEquals(error1, error2);
     }
     
     @Test

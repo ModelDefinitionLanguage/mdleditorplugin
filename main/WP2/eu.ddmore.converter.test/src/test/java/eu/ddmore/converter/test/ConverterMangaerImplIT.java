@@ -37,7 +37,7 @@ import eu.ddmore.convertertoolbox.response.ConversionDetailImpl;
 /**
  * Test for {@link ConverterManagerImpl}.
  */
-public class IntegrationTest {
+public class ConverterMangaerImplIT {
 
     private ConverterManagerImpl converterManager;
 
@@ -124,118 +124,90 @@ public class IntegrationTest {
     }
 
     @Test
-    public void shouldConvertCLI() throws ConverterNotFoundException, IOException {
-        String[] args = new String[] { "-in", "files", "-out", "files", "-sn", "MDL", "-sv", "5.0.8-qualm", "-tn", "NMTRAN", "-tv", "7.2.0-qualn" };
-        Main cli = new Main();
-        cli.parseArguments(args);
-        ConversionReport[] reports = cli.runFromCommandLine();
-        assertEquals(ConversionCode.SUCCESS, reports[0].getReturnCode());
-        assertEquals(reports[0].getDetails(Severity.ERROR).size(), 0);
-    }
-    
-    @Test
-    public void shouldConvertCLIDir() throws ConverterNotFoundException, IOException {
-        String srcDirPath = Thread.currentThread().getContextClassLoader().getResource("files/").getPath();
-        String[] args = new String[] { "-in", srcDirPath, "-out", "files", "-sn", "MDL", "-sv", "5.0.8-qualm", "-tn", "NMTRAN", "-tv", "7.2.0-qualn" };
-        Main cli = new Main();
-        cli.parseArguments(args);
-        ConversionReport[] reports = cli.runFromCommandLine();
-        assertEquals(ConversionCode.SUCCESS, reports[0].getReturnCode());
-        assertEquals(reports[0].getDetails(Severity.ERROR).size(), 0);
+    public void shouldFindInfoDetails() throws ConverterNotFoundException, IOException {
+        File src = new File("i");
+        ConversionReport report = getReportFromSuccessfulConversion(src);
+        assertEquals(createDetailsFromCode(src.getName()), report.getDetails(Severity.INFO));
     }
 
-    @Test
-    public void shouldFindInfoDetails() throws ConverterNotFoundException, IOException {
+    private ConversionReport getReportFromSuccessfulConversion(File src) throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
         Converter converter = converterManager.getConverter(mdl, nonmem);
-        File src = new File("i"); 
         ConversionReport report = converter.convert(src, null);
-
-        assertEquals(createDetails(src.getName()), report.getDetails(Severity.INFO));
+        return report;
     }
 
     @Test
     public void shouldFindInfoAndWarningsDetails() throws ConverterNotFoundException, IOException {
-        LanguageVersion nonmem = createNONMEMLanguage();
-        Converter converter = converterManager.getConverter(mdl, nonmem);
-        File src = new File("iw"); 
-        ConversionReport report = converter.convert(src, null);
-        assertEquals(createDetails(src.getName()), report.getDetails(Severity.INFO));
+        File src = new File("iw");
+        ConversionReport report = getReportFromSuccessfulConversion(src);
+        assertEquals(createDetailsFromCode(src.getName()), report.getDetails(Severity.INFO));
     }
 
     @Test
     public void shouldFindInfoAndWarningsAndDebugDetails() throws ConverterNotFoundException, IOException {
-        LanguageVersion nonmem = createNONMEMLanguage();
-        Converter converter = converterManager.getConverter(mdl, nonmem);
         File src = new File("iwd"); 
-        ConversionReport report = converter.convert(src, null);
-        assertEquals(createDetails(src.getName()), report.getDetails(Severity.DEBUG));
+        ConversionReport report = getReportFromSuccessfulConversion(src);
+        assertEquals(createDetailsFromCode(src.getName()), report.getDetails(Severity.DEBUG));
     }
     
     @Test
     public void shouldFindAllDetails() throws ConverterNotFoundException, IOException {
-        LanguageVersion nonmem = createNONMEMLanguage();
-        Converter converter = converterManager.getConverter(mdl, nonmem);
-        File src = new File("iwd"); 
-        ConversionReport report = converter.convert(src, null);
-        assertEquals(createDetails(src.getName()), report.getDetails(Severity.ALL));
+        File src = new File("iwd");
+        ConversionReport report = getReportFromSuccessfulConversion(src);
+        assertEquals(createDetailsFromCode(src.getName()), report.getDetails(Severity.ALL));
     }
     
     @Test
     public void shouldFindOnlyInfoAndWarningButNotDebugDetails() throws ConverterNotFoundException, IOException {
-        LanguageVersion nonmem = createNONMEMLanguage();
-        Converter converter = converterManager.getConverter(mdl, nonmem);
-        File src = new File("iwd"); 
-        ConversionReport report = converter.convert(src, null);
-        assertEquals(createDetails("iw"), report.getDetails(Severity.INFO));
+        File src = new File("iwd");
+        ConversionReport report = getReportFromSuccessfulConversion(src);
+        assertEquals(createDetailsFromCode("iw"), report.getDetails(Severity.INFO));
     }
     
     @Test
     public void shouldFindOnlyWarningsButNotInfoNorDebugDetails() throws ConverterNotFoundException, IOException {
-        LanguageVersion nonmem = createNONMEMLanguage();
-        Converter converter = converterManager.getConverter(mdl, nonmem);
-        File src = new File("iwd"); 
-        ConversionReport report = converter.convert(src, null);
-        assertEquals(createDetails("w"), report.getDetails(Severity.WARNING));
+        File src = new File("iwd");
+        ConversionReport report = getReportFromSuccessfulConversion(src);
+        assertEquals(createDetailsFromCode("w"), report.getDetails(Severity.WARNING));
     }
-    
+        
     @Test
     public void shouldFindErrorsDetails() throws ConverterNotFoundException, IOException {
+        File src = new File("e");
+        ConversionReport report = getReportFromFailedConversion(src);
+        assertEquals(createDetailsFromCode(src.getName()), report.getDetails(Severity.ERROR));
+    }
+    
+    private ConversionReport getReportFromFailedConversion(File src) throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
         Converter converter = converterManager.getConverter(mdl, nonmem, new VersionImpl(1, 0, 1));
-        File src = new File("e");
         ConversionReport report = converter.convert(src, null);
-        assertEquals(createDetails(src.getName()), report.getDetails(Severity.ERROR));
+        return report;
     }
     
     @Test
     public void shouldFindErrorsAndWarningsDetails() throws ConverterNotFoundException, IOException {
-        LanguageVersion nonmem = createNONMEMLanguage();
-        Converter converter = converterManager.getConverter(mdl, nonmem, new VersionImpl(1, 0, 1));
         File src = new File("ew");
-        ConversionReport report = converter.convert(src, null);
-        assertEquals(createDetails(src.getName()), report.getDetails(Severity.WARNING));
+        ConversionReport report = getReportFromFailedConversion(src);
+        assertEquals(createDetailsFromCode(src.getName()), report.getDetails(Severity.WARNING));
     }
     
     @Test
     public void shouldFindErrorsAndWarningsButNotInfoDetails() throws ConverterNotFoundException, IOException {
-        LanguageVersion nonmem = createNONMEMLanguage();
-        Converter converter = converterManager.getConverter(mdl, nonmem, new VersionImpl(1, 0, 1));
         File src = new File("ewi");
-        ConversionReport report = converter.convert(src, null);
-        assertEquals(createDetails("ew"), report.getDetails(Severity.WARNING));
+        ConversionReport report = getReportFromFailedConversion(src);
+        assertEquals(createDetailsFromCode("ew"), report.getDetails(Severity.WARNING));
     }
     
     @Test
     public void shouldAllWithErrorsDetails() throws ConverterNotFoundException, IOException {
-        LanguageVersion nonmem = createNONMEMLanguage();
-        Converter converter = converterManager.getConverter(mdl, nonmem, new VersionImpl(1, 0, 1));
         File src = new File("ewd");
-        ConversionReport report = converter.convert(src, null);
-        assertEquals(createDetails(src.getName()), report.getDetails(Severity.ALL));
+        ConversionReport report = getReportFromFailedConversion(src);
+        assertEquals(createDetailsFromCode(src.getName()), report.getDetails(Severity.ALL));
     }
     
-    private List<ConversionDetail> createDetails(String code) {
+    private List<ConversionDetail> createDetailsFromCode(String code) {
         List<ConversionDetail> details = new ArrayList<ConversionDetail>();
         if (code.contains("e")) {
             details.add(createConversionDetail(Severity.ERROR));
