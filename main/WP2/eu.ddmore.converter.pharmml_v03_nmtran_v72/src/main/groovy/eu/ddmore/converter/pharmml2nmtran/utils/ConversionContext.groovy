@@ -413,7 +413,11 @@ public class ConversionContext extends NMTranFormatter {
 
             sb << addParenthesisIfNeeded(left)
             sb << operator
-            sb << addParenthesisIfNeeded(right)
+            if (binopType.op.equals("divide")) {
+                sb << "(${right})"
+            } else {
+                sb << addParenthesisIfNeeded(right)
+            }
 
             if (binopType.op.equals("minus")) {
                 sb << ')'
