@@ -7,13 +7,13 @@ import java.util.List;
 
 import eu.ddmore.converter.pharmml2nmtran.model.Theta;
 import eu.ddmore.converter.pharmml2nmtran.utils.Parameters;
-import eu.ddmore.converter.pharmml2nmtran.utils.ConverterUtils;
+import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext;
 
 
 class TableStatement extends NMTranFormatter {
     private Parameters parameters
     private String inputHeaders
-    private ConverterUtils converterUtils
+    private ConversionContext converterUtils
     
     def getStatement(String fileBase) {
         def sb = new StringBuilder();

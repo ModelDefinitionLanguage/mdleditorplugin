@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBElement
 
 import eu.ddmore.converter.pharmml2nmtran.model.Sigma
-import eu.ddmore.converter.pharmml2nmtran.utils.ConverterUtils;
+import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext;
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.modeldefn.ObservationModelType
 import eu.ddmore.libpharmml.dom.modeldefn.ParameterRandomVariableType
@@ -19,7 +19,7 @@ class SigmasStatement extends NMTranFormatter {
     private PharmML pmlDOM
     private Map<String, String> sigmasToNMtran
     private Map<String, String> epsilonToSigma = [:]
-    private ConverterUtils converterUtils
+    private ConversionContext converterUtils
 
     def getStatement() {
         computeSigmasToNMTRAN()
@@ -72,18 +72,19 @@ class SigmasStatement extends NMTranFormatter {
     private void computeSigmasToNMTRAN() {
         sigmasToNMtran = new HashMap<String, String>()
         for (JAXBElement elem in pmlDOM.modellingSteps.commonModellingStep) {
-            if (elem.value instanceof EstimationStepType) {
-                EstimationStepType estStep = (EstimationStepType) elem.value
-                estStep.parametersToEstimate.parameterEstimation.each {
-                    considerSigma(it)
-                }
-            }
-            if (elem.value instanceof SimulationStepType) {
-                SimulationStepType simStep = (SimulationStepType) elem.value
-                simStep.variableAssignment.each {
-                    considerSigma(it)
-                }
-            }
+            collectSigmaParameters(elem.value)
+        }
+    }
+    
+    private void collectSigmaParameters(EstimationStepType estStep) {
+        estStep.parametersToEstimate.parameterEstimation.each {
+            considerSigma(it)
+        }
+    }
+    
+    private void collectSigmaParameters(SimulationStepType simStep) {
+        simStep.variableAssignment.each {
+            considerSigma(it)
         }
     }
     

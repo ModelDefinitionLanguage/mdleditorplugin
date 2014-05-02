@@ -135,7 +135,6 @@ class TrialDesignLoaderExample1Test {
             assertEquals(expected[i].epoch, cell.epoch)
             assertSegments(expected[i++].segments, cell.segments)
         }
-//        assertEquals(expected, loader.structure.getCells())
     }
     
     private void assertSegments(List<Segment> expected, List<Segment> found) {

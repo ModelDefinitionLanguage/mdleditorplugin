@@ -64,7 +64,7 @@ import eu.ddmore.libpharmml.dom.trialdesign.PopulationMappingType
 import eu.ddmore.libpharmml.dom.uncertml.NormalDistribution
 
 
-public class ConverterUtils extends NMTranFormatter {
+public class ConversionContext extends NMTranFormatter {
 
     private PharmML pmlDOM
     private Parameters parameters
@@ -76,7 +76,7 @@ public class ConverterUtils extends NMTranFormatter {
     private List<String> omegasInPrintOrder
     private Map<String,String> simpleParameterToNmtran
 
-    public ConverterUtils(PharmML pmlDOM, File src) {
+    public ConversionContext(PharmML pmlDOM, File src) {
         this.pmlDOM = pmlDOM
         fileBase = src.name.substring(0, src.name.indexOf('.'))
         symbolRefs = new HashSet<String>()

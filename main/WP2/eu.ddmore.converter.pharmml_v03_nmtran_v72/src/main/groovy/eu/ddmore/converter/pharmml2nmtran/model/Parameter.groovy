@@ -8,6 +8,11 @@ abstract class Parameter {
     protected String representation
     protected boolean isDefinedInParameterModel
 
+    /**
+     * 
+     * @param representation the name of the parameter in PharmML input. In NMTRAN it is not used, we only print that in comments.
+     * @param isDefinedInParameterModel true if the parameter is defined inside the parameter model, false otherwise. 
+     */
     public Parameter(String representation, boolean isDefinedInParameterModel) {
         this.representation = representation
         this.isDefinedInParameterModel = isDefinedInParameterModel

@@ -135,7 +135,8 @@ class DataStatement extends NMTranFormatter {
         DataSet dataSet = modellingSteps.estimationSteps[0].objectiveDataSets[0].dataSet
         TreeSet<Subject> orderedSubjects = orderSubjects(arm.subjects)
 
-        computeHeaders(orderedSubjects.first())
+        List<String> subjectHeaders = computeHeaders(orderedSubjects.first())
+        printHeaders(subjectHeaders)
 
         orderedSubjects.each { subject ->
             Collection<DataRow> dataRows = dataSet.getRowsFor(subject.name)
@@ -151,11 +152,11 @@ class DataStatement extends NMTranFormatter {
         }
     }
 
-    private void computeHeaders(Subject subject) {
+    private List<String> computeHeaders(Subject subject) {
         List<String> columns = new ArrayList<String>()
         columns.addAll(subject.getAttributeToValue().keySet())
         columns.add('AMT')
-        printHeaders(columns)
+        return columns
     }
 
     private void printSimulationStepArm(Arm arm, Cell cell, Bolus activity) {

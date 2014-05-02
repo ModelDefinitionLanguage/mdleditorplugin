@@ -8,7 +8,7 @@ import eu.ddmore.converter.pharmml2nmtran.utils.Parameters;
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.modellingsteps.EstimationStepType
 import eu.ddmore.libpharmml.dom.modellingsteps.SimulationStepType
-import eu.ddmore.converter.pharmml2nmtran.utils.ConverterUtils;
+import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext;
 
 import javax.xml.bind.JAXBElement
 
@@ -16,7 +16,7 @@ import javax.xml.bind.JAXBElement
 class ThetasStatement extends NMTranFormatter {
     private Parameters parameters
     private PharmML pmlDOM
-    private ConverterUtils converterUtils
+    private ConversionContext converterUtils
 
     def getStatement() {
         def sb = new StringBuilder("\$THETA\n");

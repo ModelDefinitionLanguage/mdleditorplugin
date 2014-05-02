@@ -19,18 +19,28 @@ class EstimationStatement extends NMTranFormatter {
                 sb << "\$EST "
                 EstimationStepType estStep = (EstimationStepType) elem.value
                 estStep.operation.each {
-                    if (it.opType.value.equals("estPop")) {
-                        sb << computeMethod(estStep.operation[0].algorithm)
-                    }
-                    if (!estFIMFound) {
-                        estFIMFound = it.opType.value.equals("estFIM")
+                    switch ( it.opType.value ) {
+                        case "estPop":
+                            sb << computeMethod(estStep.operation[0].algorithm)
+                            break
+                            
+                        case "estFIM":
+                            estFIMFound = true
+                            break
+                            
+                        case "estIndiv":
+                            break
+
+                        default:
+                            throw new RuntimeException("Only 'estPop', 'estFIM', or 'estIndiv' are allowed here.")
+                            break
                     }
                 }
             }
         }
         sb << "\n${estFIMFound ? "\$COV\n": "" }"
     }
-    
+
     def computeMethod(algorithm) {
         def sb = new StringBuilder()
         sb << "METHOD="

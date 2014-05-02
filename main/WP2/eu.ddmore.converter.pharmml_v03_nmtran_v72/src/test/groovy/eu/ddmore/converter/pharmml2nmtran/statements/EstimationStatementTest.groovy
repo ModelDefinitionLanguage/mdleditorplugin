@@ -3,7 +3,7 @@ package eu.ddmore.converter.pharmml2nmtran.statements;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import eu.ddmore.converter.pharmml2nmtran.utils.ConverterUtils
+import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext
 import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
 
@@ -19,7 +19,7 @@ class EstimationStatementTest {
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def is = FileUtils.openInputStream(src)
         def pmlDOM = pmlAPI.createDomFromResource(is).getDom()
-        ConverterUtils converterUtils = new ConverterUtils(pmlDOM, src)        
+        ConversionContext converterUtils = new ConversionContext(pmlDOM, src)        
         assertEquals("\$EST METHOD=COND INTER MAXEVALS=9999 PRINT=10\n\$COV\n", converterUtils.getEstimationStatement().toString())
     }
 
@@ -29,7 +29,7 @@ class EstimationStatementTest {
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def is = FileUtils.openInputStream(src)
         def pmlDOM = pmlAPI.createDomFromResource(is).getDom()
-        ConverterUtils converterUtils = new ConverterUtils(pmlDOM, src)        
+        ConversionContext converterUtils = new ConversionContext(pmlDOM, src)        
         assertEquals("\$EST METHOD=SAEM INTER NBURN=2000 NITER=1000 ISAMPLE=2 IACCEPT=0.4 PRINT=10 CTYPE=3\n\$COV\n", converterUtils.getEstimationStatement().toString())
     }
 }

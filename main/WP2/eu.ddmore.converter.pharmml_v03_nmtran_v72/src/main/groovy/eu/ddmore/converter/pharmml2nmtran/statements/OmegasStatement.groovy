@@ -9,7 +9,7 @@ import eu.ddmore.converter.pharmml2nmtran.equivalence.EquivalenceClass
 import eu.ddmore.converter.pharmml2nmtran.equivalence.EquivalenceClassesComputer
 import eu.ddmore.converter.pharmml2nmtran.model.CorrelationKey
 import eu.ddmore.converter.pharmml2nmtran.utils.Parameters;
-import eu.ddmore.converter.pharmml2nmtran.utils.ConverterUtils;
+import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext;
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.commontypes.VariableAssignmentType
 import eu.ddmore.libpharmml.dom.modeldefn.CorrelationType
@@ -23,7 +23,7 @@ import javax.xml.bind.JAXBElement
 class OmegasStatement extends NMTranFormatter {
     private Parameters parameters
     private PharmML pmlDOM
-    private ConverterUtils converterUtils
+    private ConversionContext converterUtils
     
     def getStatement() {
         def sb = new StringBuilder();

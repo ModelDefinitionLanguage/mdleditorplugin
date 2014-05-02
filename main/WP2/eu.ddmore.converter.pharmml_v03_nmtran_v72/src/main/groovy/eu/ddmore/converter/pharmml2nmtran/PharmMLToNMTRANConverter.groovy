@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat
 import org.apache.commons.io.FileUtils;
 
 import eu.ddmore.converter.pharmml2nmtran.statements.DataStatement;
-import eu.ddmore.converter.pharmml2nmtran.utils.ConverterUtils;
+import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext;
 import eu.ddmore.converter.pharmml2nmtran.utils.TextFileWriter;
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
@@ -30,7 +30,7 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
     private LanguageVersion source;
     private LanguageVersion target;
     private Version converterVersion;
-    private ConverterUtils converterUtils;
+    private ConversionContext converterUtils;
 
     public PharmMLToNMTRANConverter() {
         Version sourceVersion = new VersionImpl(0, 2, 1);
@@ -74,7 +74,7 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
 
     private StringBuilder toNMTRAN(pmlDOM, src, outputDirectory) {
         StringBuilder nmtran = new StringBuilder();
-        converterUtils = new ConverterUtils(pmlDOM, src)
+        converterUtils = new ConversionContext(pmlDOM, src)
 
         nmtran.append(converterUtils.getProblemStatement())
         nmtran.append('\n')

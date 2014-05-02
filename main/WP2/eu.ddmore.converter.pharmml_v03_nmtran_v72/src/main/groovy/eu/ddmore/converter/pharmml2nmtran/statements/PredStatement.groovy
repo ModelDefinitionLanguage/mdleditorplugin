@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import eu.ddmore.converter.pharmml2nmtran.model.Theta;
-import eu.ddmore.converter.pharmml2nmtran.utils.ConverterUtils;
+import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext;
 import eu.ddmore.converter.pharmml2nmtran.utils.Parameters;
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType
@@ -37,7 +37,7 @@ class PredStatement extends NMTranFormatter {
 
     private PharmML pmlDOM
     private Parameters parameters
-    private ConverterUtils converterUtils
+    private ConversionContext converterUtils
 
     private Map<String, String> continuousCovariates
     private Map<String, CategoricalAttribute> categoricalCovariates
@@ -51,7 +51,7 @@ class PredStatement extends NMTranFormatter {
     private Set<String> definedInDES
 
 
-    public PredStatement(PharmML pmlDOM, Parameters parameters, ConverterUtils converterUtils) {
+    public PredStatement(PharmML pmlDOM, Parameters parameters, ConversionContext converterUtils) {
         this.pmlDOM = pmlDOM
         this.parameters = parameters
         this.converterUtils = converterUtils
