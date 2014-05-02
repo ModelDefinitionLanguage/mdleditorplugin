@@ -205,9 +205,19 @@ class DataStatement extends NMTranFormatter {
         printHeaders(activity.dataset.getColumns())
         
         orderedSubjects.each { subject ->
+            //If data is given in external files, then individuals are represented by order ids. e.g. '1'
             Collection<DataRow> dataRows = dataSet.getRowsFor(''+ subject.id)
+            if (!dataRows) {
+                //If data is given in PharmML, then individuals are represented by the their PharmML name, e.g. 'i1'
+                dataRows = dataSet.getRowsFor(subject.name)
+            }
+            println 'subject: '+ subject
+            println 'dataRows: '+ dataRows
             if (dataRows) {
                 Collection<DataRow> dosingRows = activity.getDosingInfoFor(''+ subject.id)
+                if (!dosingRows) {
+                    dosingRows = activity.getDosingInfoFor(subject.name)
+                }
 
                 Set<Double> times = new TreeSet<Double>()
                 TreeMultimap<Double, String> dosingLines = createDosingRowsForSubject(subject, dosingRows, activity.dataset.getColumns(), arm.index)
@@ -294,7 +304,8 @@ class DataStatement extends NMTranFormatter {
         for (DataRow dataRow : dosingRows) {
             def dataLine = new StringBuilder(subject.id)
             def dosingMap = dataRow.asMap(columns)
-            dataLine << "${subject.id}, ${dosingMap.get('TIME')}, ., ${armIndex}, ${dosingMap.get('DOSE')}, 1, 1"
+            String doseColumnName = columns.get(columns.size()-1)
+            dataLine << "${subject.id}, ${dosingMap.get('TIME')}, ., ${armIndex}, ${dosingMap.get(doseColumnName)}, 1, 1"
 
             Double time = Double.valueOf(dataRow.asMap(columns).get('TIME'))
             timeToLine.put(time, dataLine.toString())
