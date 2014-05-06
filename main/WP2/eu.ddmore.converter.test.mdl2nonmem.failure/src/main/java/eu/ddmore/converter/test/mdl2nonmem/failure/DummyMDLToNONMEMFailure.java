@@ -109,4 +109,8 @@ public class DummyMDLToNONMEMFailure implements ConverterProvider {
         this.converterVersion = converterVersion;
     }
 
+    @Override
+    public String toString() {
+        return String.format("DummyMDLToNONMEMFailureConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion);
+    }
 }

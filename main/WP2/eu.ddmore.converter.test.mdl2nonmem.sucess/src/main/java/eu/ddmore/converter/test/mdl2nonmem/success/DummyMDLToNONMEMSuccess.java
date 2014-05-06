@@ -103,4 +103,8 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
         this.converterVersion = converterVersion;
     }
 
+    @Override
+    public String toString() {
+        return String.format("DummyMDLToNONMEMSuccessConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion);
+    }
 }

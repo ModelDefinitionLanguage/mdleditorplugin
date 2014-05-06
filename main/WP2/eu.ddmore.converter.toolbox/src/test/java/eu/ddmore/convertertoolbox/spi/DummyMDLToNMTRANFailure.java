@@ -53,4 +53,8 @@ public class DummyMDLToNMTRANFailure implements ConverterProvider {
         this.converterVersion = converterVersion;
     }
 
+    @Override
+    public String toString() {
+        return String.format("DummyMDLToNMTRANFailureConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion);
+    }
 }

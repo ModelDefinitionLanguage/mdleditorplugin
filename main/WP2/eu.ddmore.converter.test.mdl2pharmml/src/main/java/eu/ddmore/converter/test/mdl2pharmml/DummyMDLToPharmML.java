@@ -68,4 +68,8 @@ public class DummyMDLToPharmML implements ConverterProvider {
         this.converterVersion = converterVersion;
     }
 
+    @Override
+    public String toString() {
+        return String.format("DummyMDLToPharmMLConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion);
+    }
 }
