@@ -5,7 +5,6 @@ package eu.ddmore.converter.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,7 +66,7 @@ public class ConverterManagerImplIT {
     }
 
     @Test
-    public void shouldFindOldConverterMDLToNONMEM() throws ConverterNotFoundException, IOException {
+    public void shouldFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
         Version converterVersion = new VersionImpl(1, 0, 1);
         Converter foundConverter = converterManager.getConverter(mdl, nonmem, converterVersion);
@@ -75,21 +74,11 @@ public class ConverterManagerImplIT {
         assertEquals("Should have found correct converter version", converterVersion, foundConverter.getConverterVersion());
     }
 
-    @Test
-    public void shouldFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
-        LanguageVersion nonmem = createNONMEMLanguage();
-        Version converterVersion = new VersionImpl(1, 0, 2);
-        assertNotNull(converterManager.getConverter(mdl, nonmem, converterVersion));
-    }
-
     @Test(expected = ConverterNotFoundException.class)
     public void shouldNotFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
         Version converterVersion = new VersionImpl(1, 0, 3);
-        Converter foundConverter = converterManager.getConverter(mdl, nonmem, converterVersion);
-
-        // should never get here
-        fail("Should have thrown exception, but instead found converter: " + foundConverter);
+        converterManager.getConverter(mdl, nonmem, converterVersion);
     }
 
     @Test(expected = ConverterNotFoundException.class)
@@ -97,10 +86,7 @@ public class ConverterManagerImplIT {
         Version version = new VersionImpl(7, 2, 0, "someQual");
         LanguageVersion nonmem = new LanguageVersionImpl("NMTRAN", version);
         Version converterVersion = new VersionImpl(1, 0, 2);
-        Converter foundConverter = converterManager.getConverter(mdl, nonmem, converterVersion);
-
-        // should never get here
-        fail("Should have thrown exception, but instead found converter: " + foundConverter);
+        converterManager.getConverter(mdl, nonmem, converterVersion);
     }
 
     @Test
@@ -110,14 +96,10 @@ public class ConverterManagerImplIT {
     }
 
     @Test(expected = ConverterNotFoundException.class)
-    public void shouldNotFindConvertor() throws ConverterNotFoundException {
+    public void shouldNotFindConverter() throws ConverterNotFoundException {
         LanguageVersion nonmem = createNONMEMLanguage();
         LanguageVersion pharmml = createPharmMLLanguage();
-        Converter foundConverter = null;
-        foundConverter = converterManager.getConverter(pharmml, nonmem);
-
-        // should never get here
-        fail("Should have thrown exception, but instead found converter: " + foundConverter);
+        converterManager.getConverter(pharmml, nonmem);
     }
 
     @Test
