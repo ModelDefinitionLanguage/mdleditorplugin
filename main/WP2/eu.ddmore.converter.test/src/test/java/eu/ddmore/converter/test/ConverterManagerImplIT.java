@@ -5,6 +5,7 @@ package eu.ddmore.converter.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,10 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,10 +22,8 @@ import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
-import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
-import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
-import eu.ddmore.convertertoolbox.cli.Main;
+import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.conversion.ConverterManagerImpl;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
@@ -37,7 +32,7 @@ import eu.ddmore.convertertoolbox.response.ConversionDetailImpl;
 /**
  * Test for {@link ConverterManagerImpl}.
  */
-public class ConverterMangaerImplIT {
+public class ConverterManagerImplIT {
 
     private ConverterManagerImpl converterManager;
 
@@ -75,7 +70,9 @@ public class ConverterMangaerImplIT {
     public void shouldFindOldConverterMDLToNONMEM() throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
         Version converterVersion = new VersionImpl(1, 0, 1);
-        converterManager.getConverter(mdl, nonmem, converterVersion);
+        Converter foundConverter = converterManager.getConverter(mdl, nonmem, converterVersion);
+        assertNotNull(foundConverter);
+        assertEquals("Should have found correct converter version", converterVersion, foundConverter.getConverterVersion());
     }
 
     @Test
@@ -89,7 +86,10 @@ public class ConverterMangaerImplIT {
     public void shouldNotFindConverterMDLToNONMEMWithVersion() throws ConverterNotFoundException, IOException {
         LanguageVersion nonmem = createNONMEMLanguage();
         Version converterVersion = new VersionImpl(1, 0, 3);
-        converterManager.getConverter(mdl, nonmem, converterVersion);
+        Converter foundConverter = converterManager.getConverter(mdl, nonmem, converterVersion);
+
+        // should never get here
+        fail("Should have thrown exception, but instead found converter: " + foundConverter);
     }
 
     @Test(expected = ConverterNotFoundException.class)
@@ -97,20 +97,27 @@ public class ConverterMangaerImplIT {
         Version version = new VersionImpl(7, 2, 0, "someQual");
         LanguageVersion nonmem = new LanguageVersionImpl("NMTRAN", version);
         Version converterVersion = new VersionImpl(1, 0, 2);
-        converterManager.getConverter(mdl, nonmem, converterVersion);
+        Converter foundConverter = converterManager.getConverter(mdl, nonmem, converterVersion);
+
+        // should never get here
+        fail("Should have thrown exception, but instead found converter: " + foundConverter);
     }
 
     @Test
     public void shouldFindConverterMDLToPharmML() throws ConverterNotFoundException, IOException {
-        LanguageVersion pharmaml = createPharmMLLanguage();
-        assertNotNull(converterManager.getConverter(mdl, pharmaml));
+        LanguageVersion pharmml = createPharmMLLanguage();
+        assertNotNull(converterManager.getConverter(mdl, pharmml));
     }
 
     @Test(expected = ConverterNotFoundException.class)
     public void shouldNotFindConvertor() throws ConverterNotFoundException {
         LanguageVersion nonmem = createNONMEMLanguage();
-        LanguageVersion pharmaml = createPharmMLLanguage();
-        converterManager.getConverter(pharmaml, nonmem);
+        LanguageVersion pharmml = createPharmMLLanguage();
+        Converter foundConverter = null;
+        foundConverter = converterManager.getConverter(pharmml, nonmem);
+
+        // should never get here
+        fail("Should have thrown exception, but instead found converter: " + foundConverter);
     }
 
     @Test
@@ -246,5 +253,4 @@ public class ConverterMangaerImplIT {
         }
         return conversionDetail;
     }
-
 }
