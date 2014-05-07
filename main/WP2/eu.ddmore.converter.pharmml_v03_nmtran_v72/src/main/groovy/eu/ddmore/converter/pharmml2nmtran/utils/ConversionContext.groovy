@@ -295,19 +295,19 @@ public class ConversionContext extends NMTranFormatter {
         piecewise.piece.each {
             PieceType pieceIt = (PieceType)it
             if (sb) {
-                sb << "ELSE\n";
+                sb << endline("ELSE");
             }
             StringBuilder pieceBuilder = convert(pieceIt, variableName);
 
             for (String symbolRef : symbolRefs) {
                 String nmTranSymbolDefinition = simpleParameterToNmtran.get(symbolRef);
                 if (nmTranSymbolDefinition && !nmTranSymbolDefinition.equalsIgnoreCase(rename(symbolRef))) {
-                    sb << "\t${nmTranSymbolDefinition}\n"
+                    sb << endline(indent("${nmTranSymbolDefinition}"))
                 }
             }
             sb << pieceBuilder
         }
-        sb << "\nENDIF\n";
+        sb << endline(endline()+"ENDIF");
     }
 
     public StringBuilder convert(VariableDefinitionType type) {
@@ -400,32 +400,38 @@ public class ConversionContext extends NMTranFormatter {
         String left = convert(binopType.content.get(0).value, inputNameToValue)
         String operator = getMathRepresentationOf(binopType.op)
         String right = convert(binopType.content.get(1).value, inputNameToValue)
-
-        if (binopType.op.equals("plus")) {
-            sb << left
-            sb << operator
-            sb << right
-            return sb
-        } else {
-            if (binopType.op.equals("minus")) {
-                sb << '('
-            }
-
-            sb << addParenthesisIfNeeded(left)
-            sb << operator
-            if (binopType.op.equals("divide")) {
-                sb << "(${right})"
-            } else {
-                sb << addParenthesisIfNeeded(right)
-            }
-
-            if (binopType.op.equals("minus")) {
-                sb << ')'
-            }
-            return sb
+        switch(binopType.op) {
+            case 'plus':
+                sb << sum(left, operator, right)
+            break;
+            case 'minus':
+                sb << substraction(left, operator, right)
+            break;
+            case 'divide':
+                sb << division(left, operator, right)
+            break;
+            default:
+                sb << genericMathOperation(left, operator, right)
+            break
         }
+        return sb
     }
-
+    
+    private String sum(String left, String operator, String right) {
+        left + operator + right
+    }
+    
+    private String substraction(String left, String operator, String right) {
+        '(' + addParenthesisIfNeeded(left) + operator + addParenthesisIfNeeded(right) + ')'
+    }
+    
+    private String division(String left, String operator, String right) {
+        addParenthesisIfNeeded(left) + operator + "(${right})"
+    }
+    
+    private String genericMathOperation(String left, String operator, String right) {
+        addParenthesisIfNeeded(left) + operator + addParenthesisIfNeeded(right)
+    }
     private String addParenthesisIfNeeded(String operand) {
         if ( (operand.contains('+') || operand.contains('-')) && !operand.startsWith('(')) {
             return '('+ operand +')'

@@ -29,7 +29,11 @@ public class NMTranFormatter {
     }
 
     public String endline(String text) {
-        return text + "\n";
+        return text + endline();
+    }
+    
+    public String endline() {
+        return "\n";
     }
     
     public String rename(String name) {
