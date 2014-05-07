@@ -422,17 +422,17 @@ public class ConversionContext extends NMTranFormatter {
     }
     
     private String subtraction(String left, String operator, String right) {
-        '(' + addParenthesisIfNeeded(left) + operator + addParenthesisIfNeeded(right) + ')'
+        '(' + addParenthesesIfNeeded(left) + operator + addParenthesesIfNeeded(right) + ')'
     }
     
     private String division(String left, String operator, String right) {
-        addParenthesisIfNeeded(left) + operator + "(${right})"
+        addParenthesesIfNeeded(left) + operator + "(${right})"
     }
     
     private String genericMathOperation(String left, String operator, String right) {
-        addParenthesisIfNeeded(left) + operator + addParenthesisIfNeeded(right)
+        addParenthesesIfNeeded(left) + operator + addParenthesesIfNeeded(right)
     }
-    private String addParenthesisIfNeeded(String operand) {
+    private String addParenthesesIfNeeded(String operand) {
         if ( (operand.contains('+') || operand.contains('-')) && !operand.startsWith('(')) {
             return '('+ operand +')'
         } else {
