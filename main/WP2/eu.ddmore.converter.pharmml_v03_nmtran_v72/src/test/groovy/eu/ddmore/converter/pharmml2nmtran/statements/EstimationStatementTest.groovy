@@ -20,7 +20,7 @@ class EstimationStatementTest {
         def is = FileUtils.openInputStream(src)
         def pmlDOM = pmlAPI.createDomFromResource(is).getDom()
         ConversionContext conversionContext = new ConversionContext(pmlDOM, src)        
-        assertEquals("\$EST METHOD=COND INTER MAXEVALS=9999 PRINT=10\n\$COV\n", conversionContext.getEstimationStatement().toString())
+        assertEquals("\$EST METHOD=COND INTER MAXEVALS=9999 PRINT=10 NOABORT\n\$COV\n", conversionContext.getEstimationStatement().toString())
     }
 
     @Test
