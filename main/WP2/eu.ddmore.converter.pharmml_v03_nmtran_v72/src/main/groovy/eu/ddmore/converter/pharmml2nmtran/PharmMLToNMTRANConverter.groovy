@@ -33,13 +33,13 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
     private ConversionContext conversionContext;
 
     public PharmMLToNMTRANConverter() {
-        Version sourceVersion = new VersionImpl(0, 2, 1);
+        Version sourceVersion = new VersionImpl(0, 3, 0);
         source = new LanguageVersionImpl("PharmML", sourceVersion);
 
         Version targetVersion = new VersionImpl(7, 2, 0);
         target = new LanguageVersionImpl("NMTRAN", targetVersion);
 
-        converterVersion = new VersionImpl(1, 0, 2);
+        converterVersion = new VersionImpl(1, 0, 3);
     }
 
     @Override
