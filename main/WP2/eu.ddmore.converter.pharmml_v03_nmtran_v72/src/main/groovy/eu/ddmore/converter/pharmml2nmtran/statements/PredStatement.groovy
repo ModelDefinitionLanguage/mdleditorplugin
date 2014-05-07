@@ -44,39 +44,43 @@ class PredStatement extends NMTranFormatter {
     private Map<String,String> simpleParameterToNmtran
 
     //Computed when the sigma statement is created. Needed here for the error model
-    private Map<String, String> epsilonToSigma = conversionContext.epsilonToSigma
+    private final Map<String, String> epsilonToSigma
     private List<DerivativeVariableType> derivativeVariableTypes
 
-    private Map<String, String> derivativeNames
-    private Set<String> definedInDES
-
+    private final Map<String, String> derivativeNames = new HashMap<String, String>()
+    private final Set<String> definedInDES = new HashSet<String>()
 
     public PredStatement(PharmML pmlDOM, Parameters parameters, ConversionContext conversionContext) {
         this.pmlDOM = pmlDOM
         this.parameters = parameters
         this.conversionContext = conversionContext
-        derivativeNames = new HashMap<String, String>()
-        definedInDES = new HashSet<String>()
+        this.epsilonToSigma = conversionContext.epsilonToSigma
     }
 
     def getStatement() {
         def sb = new StringBuilder()
-        derivativeVariableTypes = new ArrayList<DerivativeVariableType>()
-        pmlDOM.modelDefinition.structuralModel.each {
-            it.commonVariable.each {
-                if (it.value instanceof DerivativeVariableType) {
-                    derivativeVariableTypes.add( it.value )
-                }
-            }
-        }
-
-        if (derivativeVariableTypes) {
+        if (getDerivativeVariableTypes()) {
             sb << getDerivativePredStatement()
         } else {
             sb << getNonDerivativePredStatement()
         }
     }
 
+    private List<DerivativeVariableType> getDerivativeVariableTypes() {
+        if(derivativeVariableTypes == null) {
+            derivativeVariableTypes = new ArrayList<DerivativeVariableType>()
+            pmlDOM.modelDefinition.structuralModel.each {
+                it.commonVariable.each {
+                    if (it.value instanceof DerivativeVariableType) {
+                        derivativeVariableTypes.add( it.value )
+                    }
+                }
+            }
+        }
+        return derivativeVariableTypes;
+    }
+    
+    
     def getDerivativePredStatement() {
         StringBuilder sb = new StringBuilder()
         sb << "\$SUBS ADVAN13 TOL=9\n"
@@ -92,7 +96,7 @@ class PredStatement extends NMTranFormatter {
     def getDifferentialInitialConditions() {
         StringBuilder sb = new StringBuilder();
         int i=1
-        derivativeVariableTypes.each { var ->
+        getDerivativeVariableTypes().each { var ->
             String initialCondition
             if (var.initialCondition) {
                 if (var.initialCondition.initialValue.assign.symbRef) {
@@ -112,7 +116,7 @@ class PredStatement extends NMTranFormatter {
         StringBuilder sb = new StringBuilder();
         int i=1
 
-        derivativeVariableTypes.each { var ->
+        getDerivativeVariableTypes().each { var ->
             sb << endline(indent("${rename(var.symbId.toUpperCase())}=A(${i})"))
             derivativeNames[var.symbId] = "A(${i})"
             i++
@@ -120,7 +124,7 @@ class PredStatement extends NMTranFormatter {
         sb << endline("")
         sb << endline(getStructuralParameters().toString())
         i=1
-        derivativeVariableTypes.each { var ->
+        getDerivativeVariableTypes().each { var ->
             sb << conversionContext.convert(var, i++)
         }
         des(sb.toString())
@@ -138,7 +142,7 @@ class PredStatement extends NMTranFormatter {
         StringBuilder sb = new StringBuilder();
         sb << getCovariatesFromModel()
         sb << getIndividualsFromModel()
-        if (!derivativeVariableTypes) {
+        if (!getDerivativeVariableTypes()) {
             sb << getStructuralParameters()
         }
         sb << getConditionalStatements().join("")
@@ -147,7 +151,7 @@ class PredStatement extends NMTranFormatter {
 
     def getModelStatement() {
         StringBuilder sb = new StringBuilder();
-        derivativeVariableTypes.each { var ->
+        getDerivativeVariableTypes().each { var ->
             sb << endline(indent("COMP (${rename(var.symbId.toUpperCase())})"))
         }
         model(sb.toString())
@@ -159,7 +163,7 @@ class PredStatement extends NMTranFormatter {
         parameters.structuralVars.each { name, type ->
             if (! type.getClass().equals( DerivativeVariableType.class) ) {
                 sb << endline("${conversionContext.convert(type)}")
-                if (derivativeVariableTypes) {
+                if (getDerivativeVariableTypes()) {
                     definedInDES.add(name)
                 }
             }
@@ -359,7 +363,7 @@ class PredStatement extends NMTranFormatter {
             if (type.observationError.value instanceof GaussianObsError) {
                 ObservationErrorType errorType = type.observationError.value
                 String name = String.valueOf(errorType.output.symbRef.symbIdRef.value)
-                if (definedInDES || derivativeVariableTypes) {
+                if (definedInDES || getDerivativeVariableTypes()) {
                     if (derivativeNames[name]) {
                         name = derivativeNames[name].toUpperCase()
                     } else {
