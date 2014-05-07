@@ -46,7 +46,7 @@ class EstimationStatement extends NMTranFormatter {
         sb << "METHOD="
         if (algorithm) {
             if (algorithm.definition.equals("FOCEI")) {
-                sb << "COND INTER MAXEVALS=9999 PRINT=10"
+                sb << "COND INTER MAXEVALS=9999 PRINT=10 NOABORT"
             }else if (algorithm.definition.equals("SAEM")) {
                 sb << "SAEM INTER NBURN=2000 NITER=1000 ISAMPLE=2 IACCEPT=0.4 PRINT=10 CTYPE=3"
             } else {
