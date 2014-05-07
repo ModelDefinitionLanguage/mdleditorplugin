@@ -405,7 +405,7 @@ public class ConversionContext extends NMTranFormatter {
                 sb << sum(left, operator, right)
             break;
             case 'minus':
-                sb << substraction(left, operator, right)
+                sb << subtraction(left, operator, right)
             break;
             case 'divide':
                 sb << division(left, operator, right)
@@ -421,7 +421,7 @@ public class ConversionContext extends NMTranFormatter {
         left + operator + right
     }
     
-    private String substraction(String left, String operator, String right) {
+    private String subtraction(String left, String operator, String right) {
         '(' + addParenthesisIfNeeded(left) + operator + addParenthesisIfNeeded(right) + ')'
     }
     
