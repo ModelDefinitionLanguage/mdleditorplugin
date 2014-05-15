@@ -60,7 +60,7 @@ class ThetasStatement extends NMTranFormatter {
     
     def considerThetasInBolus() {
         def thetaToNMTRAN = [:]
-        pmlDOM.trialDesign.structure.activity.each {
+        pmlDOM?.trialDesign?.structure?.activity.each {
             if (it.dosingRegimen.value.steadyState) {
                 String name = it.dosingRegimen.value.steadyState.interval.symbRef.symbIdRef
                 Double value = it.dosingRegimen.value.steadyState.interval.assign.scalar.value.value

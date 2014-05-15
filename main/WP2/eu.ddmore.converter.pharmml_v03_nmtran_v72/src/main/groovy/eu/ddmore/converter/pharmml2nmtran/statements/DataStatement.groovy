@@ -40,7 +40,7 @@ class DataStatement extends NMTranFormatter {
 
     private PharmML pmlDOM
     private String outputPath
-    private Structure structure
+    private Structure structure = new Structure()
     private ModellingSteps modellingSteps
     private File file
     private TextFileWriter textWriter
@@ -50,13 +50,16 @@ class DataStatement extends NMTranFormatter {
         this.pmlDOM = pmlDOM
         this.outputPath = outputPath
 
-        TrialDesignLoader trialDesignloader = new TrialDesignLoader("trialDesign":pmlDOM.trialDesign)
-        trialDesignloader.load()
-        structure = trialDesignloader.structure
-
+		if(pmlDOM.trialDesign) {
+			TrialDesignLoader trialDesignloader = new TrialDesignLoader("trialDesign":pmlDOM.trialDesign)
+			trialDesignloader.load()
+			structure = trialDesignloader.structure
+		}
+		
         ModellingStepsLoader modellingStepsLoader = new ModellingStepsLoader(pmlDOM.modellingSteps)
         modellingStepsLoader.load()
         modellingSteps = modellingStepsLoader.modellingSteps
+		computeEstimationHeaders()
 
         file = new File(outputPath + "_data.csv")
         textWriter = new TextFileWriter();
@@ -74,22 +77,22 @@ class DataStatement extends NMTranFormatter {
         return headers
     }
 
-    private void computeHeaders(List<String> dosingColumns) {
+    private void computeEstimationHeaders() {
         headers = new ArrayList<String>()
-        DataSet dataSet = modellingSteps.estimationSteps[0].objectiveDataSets[0].dataSet
-        List<String> dataColumns = modellingSteps.estimationSteps[0].objectiveDataSets[0].dataSet.columns
+        DataSet dataSet = modellingSteps?.estimationSteps[0]?.objectiveDataSets[0]?.dataSet
+        List<String> dataColumns = dataSet?.columns ?: []
         for (String dataColumn : dataColumns) {
             headers.add(dataColumn.toUpperCase())
         }
+    }
+	
+    private void computeDosingHeaders(List<String> dosingColumns) {
         headers.add('ARM')
 
         for (String dosingColumn : dosingColumns) {
-            if (!dataColumns.contains(dosingColumn)) {
-                if (dosingColumn.equals('DOSE')) {
-                    headers.add('AMT')
-                } else {
-                    headers.add(dosingColumn)
-                }
+			String columnName = ( dosingColumn == "DOSE" ? "AMT" : dosingColumn )
+            if (!headers.contains(columnName)) {
+				headers.add(columnName)
             }
         }
         headers.add('MDV')
@@ -135,7 +138,7 @@ class DataStatement extends NMTranFormatter {
         DataSet dataSet = modellingSteps.estimationSteps[0].objectiveDataSets[0].dataSet
         TreeSet<Subject> orderedSubjects = orderSubjects(arm.subjects)
 
-        List<String> subjectHeaders = computeHeaders(orderedSubjects.first())
+        List<String> subjectHeaders = getSubjectHeaders(orderedSubjects.first())
         printHeaders(subjectHeaders)
 
         orderedSubjects.each { subject ->
@@ -152,7 +155,7 @@ class DataStatement extends NMTranFormatter {
         }
     }
 
-    private List<String> computeHeaders(Subject subject) {
+    private List<String> getSubjectHeaders(Subject subject) {
         List<String> columns = new ArrayList<String>()
         columns.addAll(subject.getAttributeToValue().keySet())
         columns.add('AMT')
@@ -165,7 +168,8 @@ class DataStatement extends NMTranFormatter {
 
         DataSet dataSet = modellingSteps.estimationSteps[0].objectiveDataSets[0].dataSet
         TreeSet<Subject> orderedSubjects = orderSubjects(arm.subjects)
-        computeHeaders(orderedSubjects.first())
+        List<String> subjectHeaders = getSubjectHeaders(orderedSubjects.first())
+		//computeHeaders(orderedSubjects.first()) 
         
         orderedSubjects.each { subject ->
             Collection<DataRow> dataRows = dataSet.getRowsFor(subject.name)
@@ -229,9 +233,9 @@ class DataStatement extends NMTranFormatter {
     }
 
     private void printHeaders(List<String> dosingColumns) {
-        computeHeaders(dosingColumns)
+        computeDosingHeaders(dosingColumns)
 
-        //Sets the headeer of the csv. Starts with '@' to ommit the first line.
+        //Sets the header of the csv. Starts with '@' to ommit the first line.
         textWriter.writeToFile(file, '@' + headers.join(','))
     }
 

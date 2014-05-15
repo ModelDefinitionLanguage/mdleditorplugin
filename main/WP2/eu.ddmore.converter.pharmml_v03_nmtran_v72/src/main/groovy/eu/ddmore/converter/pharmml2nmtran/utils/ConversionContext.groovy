@@ -34,6 +34,7 @@ import eu.ddmore.libpharmml.dom.commontypes.VariableAssignmentType
 import eu.ddmore.libpharmml.dom.commontypes.VariableDefinitionType
 import eu.ddmore.libpharmml.dom.maths.BinopType;
 import eu.ddmore.libpharmml.dom.maths.Condition;
+import eu.ddmore.libpharmml.dom.maths.ConstantType
 import eu.ddmore.libpharmml.dom.maths.Equation;
 import eu.ddmore.libpharmml.dom.maths.FunctionCallType
 import eu.ddmore.libpharmml.dom.maths.LogicBinOpType;
@@ -587,8 +588,22 @@ public class ConversionContext extends NMTranFormatter {
             sb << convert(type.binop, inputNameToValue)
         } else if (type.symbRef) {
             sb << convert(type.symbRef, inputNameToValue)
-        }
+        } else if(type.piecewise) {
+        	sb << convert(type.piecewise, inputNameToValue)
+		}
         
+        sb
+    }
+
+    /**
+     * 
+     * @param type the ConstantType to convert
+     * @param inputNameToValue a string substitution map
+     * @return the NMTRAN representation of the type
+     */
+    public StringBuilder convert(ConstantType type, Map<String, String> inputNameToValue) {
+        StringBuilder sb = new StringBuilder()
+        sb << type.op
         sb
     }
 
@@ -605,6 +620,7 @@ public class ConversionContext extends NMTranFormatter {
         sb
     }
 
+	
     private String getMathRepresentationOf(String s) {
         if (s.equals("minus")) {
             return "-";

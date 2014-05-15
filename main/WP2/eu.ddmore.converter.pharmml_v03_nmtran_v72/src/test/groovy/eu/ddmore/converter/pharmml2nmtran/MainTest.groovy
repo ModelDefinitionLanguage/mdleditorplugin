@@ -33,15 +33,15 @@ class MainTest {
         converter.performConvert(src, src.getParentFile());
     }
     
-    @Ignore
+	@Ignore
     @Test
     public void convertExample2() {
         PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
         File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'example2.xml').getPath());
         converter.performConvert(src, src.getParentFile());
     }
-    
-    @Ignore
+
+	@Ignore    
     @Test
     public void convertExample4() {
         PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
@@ -56,11 +56,26 @@ class MainTest {
         converter.performConvert(src, src.getParentFile());
     }
     
-    @Ignore
+	@Ignore
     @Test
-    public void convertFriberg2009Prolactinev20140331v9() {
+    public void convert2008ThamJCCR_NONMEM() {
         PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
-        File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'Friberg2009Prolactinev20140331v9.xml').getPath());
+        File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'2008ThamJCCR_NONMEM.xml').getPath());
+        converter.performConvert(src, src.getParentFile());
+    }
+    
+
+    @Test
+    public void convertFriberg2009Prolactin_v20140506v11() {
+        PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
+        File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'Friberg2009Prolactin_v20140506v11.xml').getPath());
+        converter.performConvert(src, src.getParentFile());
+    }
+    
+	@Test
+    public void convertFriberg2009Prolactin_v20140506v13_NONMEM() {
+        PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
+        File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'Friberg2009Prolactin_v20140506v13_NONMEM.xml').getPath());
         converter.performConvert(src, src.getParentFile());
     }
     

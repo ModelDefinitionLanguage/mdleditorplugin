@@ -127,14 +127,16 @@ public class Parameters {
     private void findCorrelations() {
         pmlDOM.modelDefinition.parameterModel.each {
             it.correlation.each {
-                if (it.pairwise.covariance) {
+                if (it?.pairwise?.covariance) {
                     throw new RuntimeException("'Correlation/Pairwise/Covariance' element is not yet supported.")
                 }
-                String name = it.pairwise.correlationCoefficient.symbRef.symbIdRef
-                correlations.put(name, it)
-                String eta1 = it.pairwise.randomVariable1.symbRef.symbIdRef
-                String eta2 = it.pairwise.randomVariable2.symbRef.symbIdRef
-                correlationkeyToName.put(new CorrelationKey(eta1, eta2), name)
+				if(it.pairwise) {
+					String name = it.pairwise.correlationCoefficient.symbRef.symbIdRef
+					correlations.put(name, it)
+					String eta1 = it.pairwise.randomVariable1.symbRef.symbIdRef
+					String eta2 = it.pairwise.randomVariable2.symbRef.symbIdRef
+					correlationkeyToName.put(new CorrelationKey(eta1, eta2), name)
+				}
             }
         }
     }

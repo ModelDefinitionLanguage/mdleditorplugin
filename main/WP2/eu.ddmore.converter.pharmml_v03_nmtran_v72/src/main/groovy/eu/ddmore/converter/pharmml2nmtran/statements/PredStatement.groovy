@@ -41,7 +41,7 @@ class PredStatement extends NMTranFormatter {
 
     private Map<String, String> continuousCovariates
     private Map<String, CategoricalAttribute> categoricalCovariates
-    private Map<String,String> simpleParameterToNmtran
+    private Map<String,String> simpleParameterToNmtran = new HashMap<String,String>()
 
     //Computed when the sigma statement is created. Needed here for the error model
     private final Map<String, String> epsilonToSigma
@@ -55,6 +55,43 @@ class PredStatement extends NMTranFormatter {
         this.parameters = parameters
         this.conversionContext = conversionContext
         this.epsilonToSigma = conversionContext.epsilonToSigma
+		
+		setupSimpleParameters()
+		findCovariates()
+		
+    }
+
+	private void setupSimpleParameters() {
+		for (StructuralModelType structuralModel in pmlDOM.modelDefinition.structuralModel ) {
+			structuralModel.simpleParameter.each {
+				simpleParameterToNmtran[it.symbId] = conversionContext.convert(it)
+			}
+		}
+	}
+	
+    def findCovariates() {
+        continuousCovariates = new HashMap<String, String>()
+        categoricalCovariates = new HashMap<String, CategoricalAttribute>()
+        for (CovariateModelType covariatelModel in pmlDOM.modelDefinition.covariateModel ) {
+            covariatelModel.covariate.each {
+                if (it.continuous) {
+                    UniopType uniopType = it.continuous.transformation.equation.uniop
+                    if (uniopType) {
+                        String covariate = conversionContext.convert(uniopType)
+                        String covName = parameters.varToName.get(it.symbId) ?: it.symbId
+                        continuousCovariates.put(covName, covariate)
+                    }
+                } else {
+                    String name = it.symbId
+                    Set<String> categories = new HashSet<String>()
+                    it.categorical.category.each { cat ->
+                        categories.add(cat.catId)
+                    }
+                    CategoricalAttribute categoricalAttribute = new CategoricalAttribute(name, categories)
+                    categoricalCovariates[name] = categoricalAttribute
+                }
+            }
+        }
     }
 
     def getStatement() {
@@ -99,19 +136,29 @@ class PredStatement extends NMTranFormatter {
         getDerivativeVariableTypes().each { var ->
             String initialCondition
             if (var.initialCondition) {
-                if (var.initialCondition.initialValue.assign.symbRef) {
-                    initialCondition = var.initialCondition.initialValue.assign.symbRef.symbIdRef
-                    sb << endline(indent( "A_0(${i}) = ${rename(initialCondition.toUpperCase())}" ))
-                } else if (var.initialCondition.initialValue.assign.scalar) {
-                    initialCondition = var.initialCondition.initialValue.assign.scalar.value.value
-                    sb << endline(indent( "A_0(${i}) = ${initialCondition}" ))
-                }
-            }
+				if(var.initialCondition.initialValue) {
+	                if (var.initialCondition.initialValue.assign.symbRef) {
+	                    initialCondition = var.initialCondition.initialValue.assign.symbRef.symbIdRef
+	                    sb << endline(indent( "A_0(${i}) = ${rename(initialCondition.toUpperCase())}" ))
+	                } else if (var.initialCondition.initialValue.assign.scalar) {
+	                    initialCondition = getInitialConditionFromScalar(var.initialCondition.initialValue.assign.scalar, i) 
+	                    sb << endline(indent( initialCondition ))
+	                }
+				} else if(var.initialCondition.assign.scalar) {
+                    initialCondition = getInitialConditionFromScalar(var.initialCondition.assign.scalar, i) 
+                    sb << endline(indent( initialCondition ))
+				}
+            } 
             i++
         }
         sb
     }
 
+	def getInitialConditionFromScalar(scalar, i) {
+		def initialCondition = scalar.value.value
+		"A_0(${i}) = ${initialCondition}"
+	}
+	
     def getDifferentialEquationsStatement() {
         StringBuilder sb = new StringBuilder();
         int i=1
@@ -162,7 +209,8 @@ class PredStatement extends NMTranFormatter {
 
         parameters.structuralVars.each { name, type ->
             if (! type.getClass().equals( DerivativeVariableType.class) ) {
-                sb << endline("${conversionContext.convert(type)}")
+				def dvt = conversionContext.convert(type)
+                sb << endline("${dvt}")
                 if (getDerivativeVariableTypes()) {
                     definedInDES.add(name)
                 }
@@ -182,7 +230,6 @@ class PredStatement extends NMTranFormatter {
     }
 
     def getCovariatesFromModel() {
-        findCovariates()
         StringBuilder cov = new StringBuilder();
         pmlDOM.modelDefinition.parameterModel.each { cov << endline(getCovariatesFromModelType(it).toString()) }
         cov
@@ -244,7 +291,12 @@ class PredStatement extends NMTranFormatter {
             it.commonParameterElement.each {
                 if ( !parameters.isOmega(it.value.symbId) && (it.value instanceof SimpleParameterType) && it.value.assign ){
                     String rightPart
-                    if (it.value.assign.equation) {
+					if(it.value.assign?.equation?.piecewise) {
+						String pieceWiseAsNmtran = conversionContext.convert(it.value.assign.equation.piecewise, 
+							it.value.symbId, simpleParameterToNmtran)
+							.replaceAll("\\(t-tD\\)", "TIME").toUpperCase()
+						sb << endline(indent(pieceWiseAsNmtran))
+					} else if (it.value.assign.equation) {					
                         rightPart = conversionContext.convert(it.value.assign.equation)
                     } else if (it.value.assign.scalar) {
                         rightPart = it.value.assign.scalar.value.value
@@ -336,7 +388,6 @@ class PredStatement extends NMTranFormatter {
     public List<String> getConditionalStatements() {
         List<String> conditionals = new ArrayList<String>();
         for (StructuralModelType structuralModel in pmlDOM.modelDefinition.structuralModel ) {
-            findSimpleParametersInStructuralModel(structuralModel);
             List<SimpleParameterType> simpleParameterTypes = pmlDOM.modelDefinition.structuralModel.simpleParameter
             for (CommonVariableDefinitionType varType in structuralModel.commonVariable.value ) {
                 String variableName = varType.symbId
@@ -348,13 +399,6 @@ class PredStatement extends NMTranFormatter {
             }
         }
         conditionals
-    }
-
-    private void findSimpleParametersInStructuralModel(StructuralModelType structuralModel) {
-        simpleParameterToNmtran = new HashMap<String,String>()
-        structuralModel.simpleParameter.each {
-            simpleParameterToNmtran[it.symbId] = conversionContext.convert(it)
-        }
     }
 
     def getErrorFormula() {
@@ -397,31 +441,6 @@ class PredStatement extends NMTranFormatter {
             }
         }
         endline(sb.toString())
-    }
-
-    def findCovariates() {
-        continuousCovariates = new HashMap<String, String>()
-        categoricalCovariates = new HashMap<String, CategoricalAttribute>()
-        for (CovariateModelType covariatelModel in pmlDOM.modelDefinition.covariateModel ) {
-            covariatelModel.covariate.each {
-                if (it.continuous) {
-                    UniopType uniopType = it.continuous.transformation.equation.uniop
-                    if (uniopType) {
-                        String covariate = conversionContext.convert(uniopType)
-                        String covName = parameters.varToName.get(it.symbId) ?: it.symbId
-                        continuousCovariates.put(covName, covariate)
-                    }
-                } else {
-                    String name = it.symbId
-                    Set<String> categories = new HashSet<String>()
-                    it.categorical.category.each { cat ->
-                        categories.add(cat.catId)
-                    }
-                    CategoricalAttribute categoricalAttribute = new CategoricalAttribute(name, categories)
-                    categoricalCovariates[name] = categoricalAttribute
-                }
-            }
-        }
     }
 
 }
