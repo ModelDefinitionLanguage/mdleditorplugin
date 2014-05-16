@@ -18,16 +18,18 @@ public class PredStatementTest {
         File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'Friberg2009Prolactin_v20140506v11.xml').getPath());
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
 		def is = FileUtils.openInputStream(src)
-		def pmlDOM = pmlAPI.createDomFromResource(is).getDom()
+		PharmML pmlDOM = pmlAPI.createDomFromResource(is).getDom()
 
 		ConversionContext conversionContext = new ConversionContext(pmlDOM, src)
-		Parameters parameters = new Parameters(pmlDOM)
-		parameters.init()
 
-		PredStatement pred = new PredStatement(pmlDOM, parameters, conversionContext)
-		StringBuilder sb = pred.reportSimpleParamsWithAssigns()
+		def commonParameters = pmlDOM.modelDefinition.parameterModel.collect{ it.commonParameterElement ?: [] }.flatten()
 		
-		//assertEquals("", sb.toString() )
+		def PHS1 = commonParameters.find { it.value.symbId =="PHS1" }
+		
+		String pieceWiseAsNmtran = conversionContext.convert( PHS1.value.assign.equation.piecewise, "PHS1", conversionContext.simpleParameterToNmtran)
+			
+		
+		assertEquals("IF(NM_PAT.EQ.NM_HV)\n	NM_PHS1=NM_PHS1\nELSE\nIF(NM_PAT.EQ.NM_PAT)\n	NM_PHS1=NM_PHS1+NM_DPHS\nENDIF\n", pieceWiseAsNmtran )
  	}
 
 }

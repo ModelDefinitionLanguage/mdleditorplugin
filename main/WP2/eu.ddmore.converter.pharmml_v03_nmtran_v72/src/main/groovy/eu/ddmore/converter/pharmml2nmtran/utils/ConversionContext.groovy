@@ -78,6 +78,8 @@ public class ConversionContext extends NMTranFormatter {
     private Set<String> symbolRefs
     private Map<String, String> epsilonToSigma
     private Map<String, FunctionDefinitionType> functions
+	private PredStatement predStatement
+	SigmasStatement sigmasStatement
     private String inputHeaders
     private String fileBase
     private List<String> omegasInPrintOrder
@@ -94,6 +96,11 @@ public class ConversionContext extends NMTranFormatter {
         parameters = new Parameters(pmlDOM)
         parameters.init()
         findFunctions()
+        sigmasStatement = new SigmasStatement("pmlDOM":pmlDOM, "conversionContext":this)
+        epsilonToSigma = sigmasStatement.epsilonToSigma
+
+		predStatement = new PredStatement(pmlDOM, parameters, this)
+		simpleParameterToNmtran = predStatement.simpleParameterToNmtran
     }
 
     private void findFunctions() {
@@ -121,9 +128,7 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     def getPred() {
-        PredStatement pred = new PredStatement(pmlDOM, parameters, this)
-        simpleParameterToNmtran = pred.simpleParameterToNmtran
-        pred.getStatement()
+        predStatement.getStatement()
     }
 
     def getTableStatement() {
@@ -139,8 +144,6 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     public StringBuilder getSigmasStatement() {
-        SigmasStatement sigmasStatement = new SigmasStatement("pmlDOM":pmlDOM, "conversionContext":this)
-        epsilonToSigma = sigmasStatement.epsilonToSigma
         sigmasStatement.getStatement()
     }
 
@@ -308,7 +311,7 @@ public class ConversionContext extends NMTranFormatter {
             }
             sb << pieceBuilder
         }
-        sb << endline(endline()+"ENDIF");
+        sb << endline("ENDIF");
     }
 
     public StringBuilder convert(VariableDefinitionType type) {
@@ -339,13 +342,15 @@ public class ConversionContext extends NMTranFormatter {
     public StringBuilder convert(PieceType piece, String variableName) {
         StringBuilder sb = new StringBuilder();
         if (piece.condition) {
-            sb << convert(piece.condition);
+            sb << convert(piece.condition) << "\n";
         }
         if (piece.scalar) {
-            sb << convert(piece.scalar.value, variableName);
+            sb << convert(piece.scalar.value, variableName) << "\n";
         }
         if (piece.binop) {
-            sb << "\t${rename(variableName)}=${convert(piece.binop)}"
+            sb << endline("\t${rename(variableName)}=${convert(piece.binop)}")
+        } else if(piece.symbRef) {
+			sb << endline("\t${rename(variableName)}=${convert(piece.symbRef)}")
         }
         sb
     }

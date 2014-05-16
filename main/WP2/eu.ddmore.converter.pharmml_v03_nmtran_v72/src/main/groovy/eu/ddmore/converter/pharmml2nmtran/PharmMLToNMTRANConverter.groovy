@@ -72,7 +72,7 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
         }
     }
 
-    private StringBuilder toNMTRAN(pmlDOM, src, outputDirectory) {
+    public StringBuilder toNMTRAN(pmlDOM, src, outputDirectory) {
         StringBuilder nmtran = new StringBuilder();
         conversionContext = new ConversionContext(pmlDOM, src)
 
