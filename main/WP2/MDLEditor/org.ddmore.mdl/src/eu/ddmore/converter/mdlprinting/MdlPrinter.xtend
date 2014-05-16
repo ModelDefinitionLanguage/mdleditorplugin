@@ -50,6 +50,8 @@ import org.ddmore.mdl.validation.AttributeValidator
 
 class MdlPrinter {
 	
+	public var mdlVersion = "5.1.4";
+		
 	//Get MDL file name
 	def fileName(Mcl m){
 		var fileName = m.eResource.getURI().path;
@@ -127,21 +129,32 @@ class MdlPrinter {
 	public def getDataSource(Mcl m){
 		for (obj: m.objects){
 			if (obj.dataObject != null){
-				for (b: obj.dataObject.blocks){
-					if (b.sourceBlock != null){
-						if (b.sourceBlock.list != null){
-							var source = b.sourceBlock.list.arguments.getAttributeExpression(AttributeValidator::attr_file.name);
-							if (source == null){
-								source = b.sourceBlock.list.arguments.getAttributeExpression(AttributeValidator::attr_script.name);
-							}
-							if (source != null) 
-								return source.toStr
-							 else 
-								return "";
-						}
-					} 
-				}
+				var res = obj.dataObject.getDataFile;
+				if (res.length > 0) return res;
 			}
+		}
+		return "";
+	}
+	
+	//Find reference to a data file 
+	public def getDataFile(DataObject dataObject){
+		for (b: dataObject.blocks){
+			if (b.sourceBlock != null){
+				var source = b.sourceBlock.list.arguments.getAttribute(AttributeValidator::attr_file.name);
+				return source;
+			} 
+		}
+		return "";
+	}
+
+
+	//Find reference to a data file 
+	public def getScriptFile(DataObject dataObject){
+		for (b: dataObject.blocks){
+			if (b.sourceBlock != null){
+				var source = b.sourceBlock.list.arguments.getAttribute(AttributeValidator::attr_script.name);
+				return source;
+			} 
 		}
 		return "";
 	}

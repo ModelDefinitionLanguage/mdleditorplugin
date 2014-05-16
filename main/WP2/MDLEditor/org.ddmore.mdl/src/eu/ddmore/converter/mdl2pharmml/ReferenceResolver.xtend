@@ -12,6 +12,8 @@ import org.ddmore.mdl.mdl.Expression
 import org.ddmore.mdl.validation.AttributeValidator
 import org.ddmore.mdl.types.UseType
 import org.ddmore.mdl.mdl.SymbolDeclaration
+import org.ddmore.mdl.mdl.DataDerivedBlock
+import org.ddmore.mdl.validation.Utils
 
 class ReferenceResolver{
 	val Mcl mcl;
@@ -54,7 +56,7 @@ class ReferenceResolver{
 				if (errorVars.size > 0)
 					vm_err_vars.put(o.objectName.name, errorVars);
 
-				var mdlVars = o.modelObject.getLevelVars("2");
+				var mdlVars = o.modelObject.getLevelVars("2")
 				if (mdlVars.size > 0)
 					vm_mdl_vars.put(o.objectName.name, mdlVars);
 
@@ -108,6 +110,14 @@ class ReferenceResolver{
 	    }
 	}
 	
+	def getDerivedVariables(DataDerivedBlock b){
+		var derivedVars = newArrayList;
+		for (st: b.statements){
+			Utils::addSymbolNoRepeat(derivedVars, st);
+		}
+		return derivedVars;
+	}
+	
 	//+Return name of PharmML block for a given reference
 	def getReferenceBlock(FullyQualifiedSymbolName ref){
 		if (ref.object != null){
@@ -156,7 +166,7 @@ class ReferenceResolver{
 		source = pm_vars.get(objName);
 		if (source != null)
 			if (source.contains(name)) return "pm." + objName	
-		return objName;
+		return "";
 	}	
 	
 	//+ Return input variables with use=idv (individual)
@@ -227,6 +237,29 @@ class ReferenceResolver{
 	  	}
 	  	return parameters;
 	}
+	
+	//Return a model variable (matched by name or by alias name!)
+	def getModelInputVariable(ModelObject mObj, String name){
+		for (b: mObj.blocks){
+			if (b.inputVariablesBlock != null){
+				for (s: b.inputVariablesBlock.variables){
+					if (s.symbolName.symbol.name.equals(name)){
+						return s;
+					}
+					if (s.expression != null){
+						if (s.expression.list != null){
+							var alias = s.expression.list.arguments.getAttribute(AttributeValidator::attr_alias.name);
+							if (alias.length > 0){
+								if (alias.equals(name)) return s;
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
 	
 	//+Returns declarations for ParameterModel
 	def getParameters(ParameterObject obj){		
