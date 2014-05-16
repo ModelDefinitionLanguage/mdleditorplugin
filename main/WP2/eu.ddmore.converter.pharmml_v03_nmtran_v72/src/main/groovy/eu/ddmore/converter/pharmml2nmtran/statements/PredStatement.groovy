@@ -301,7 +301,9 @@ class PredStatement extends NMTranFormatter {
                     } else if (it.value.assign.scalar) {
                         rightPart = it.value.assign.scalar.value.value
                     }
-                    sb << endline(indent("${rename(it.value.symbId.toUpperCase())}=${rightPart}"))
+					if(rightPart) {
+						sb << endline(indent("${rename(it.value.symbId.toUpperCase())}=${rightPart}"))
+					}
                 }
             }
         }
