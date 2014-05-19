@@ -3,7 +3,7 @@ package eu.ddmore.converter.pharmml2nmtran.statements;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.junit.Ignore
+import org.junit.Ignore;
 import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext
 import eu.ddmore.converter.pharmml2nmtran.utils.Parameters
 import eu.ddmore.libpharmml.PharmMlFactory
