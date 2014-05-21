@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PharmML xmlns="http://www.pharmml.org/2013/03/PharmML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	 xsi:schemaLocation="http://www.pharmml.org/2013/03/PharmML http://www.pharmml.org/2013/03/PharmML"
-	 writtenVersion="0.2.1">
+	 writtenVersion="0.3">
 	<ct:Name xmlns:ct="http://www.pharmml.org/2013/03/CommonTypes" id="i1">Friberg - CPT 2009</ct:Name>
 	<ct:Description xmlns:ct="http://www.pharmml.org/2013/03/CommonTypes" id="i2">This model is based on the publication:An agonist-antagonist interaction model for prolactin release follwing risperidone and paliperidone treatment         Friberg LE, Vermeulen AM, Petersson KJF, and Karlsson MO. CPT 2009; 85(4), 2009.</ct:Description>
 	<IndependentVariable symbId="t"/>
