@@ -4,25 +4,29 @@ import java.util.Collection;
 
 import com.google.common.base.Preconditions;
 
-import eu.ddmore.pharmacometrics.model.trialdesign.population.DataRow;
-import eu.ddmore.pharmacometrics.model.trialdesign.population.DataSet;
+import eu.ddmore.pharmacometrics.model.data.DataSet;
+import eu.ddmore.pharmacometrics.model.data.Row;
 
 
 public class IndividualDosing implements Activity {
-    private final DataSet dataset;
+    private final DataSet dataSet;
     
     public IndividualDosing(DataSet dataset) {
-        this.dataset = dataset;
+        this.dataSet = dataset;
     }
 
-    public Collection<DataRow> getDosingInfoFor(String subjectId) {
+    public DataSet getDataSet() {
+		return dataSet;
+	}
+
+	public Collection<Row> getDosingInfoFor(String subjectId) {
         Preconditions.checkNotNull(subjectId);
-        return dataset.getRowsFor(subjectId);
+        return dataSet.getRowsFor(subjectId);
     }
 
     @Override
     public String toString() {
-        return "IndividualDosing [dataset=" + dataset + "]";
+        return "IndividualDosing [dataset=" + dataSet + "]";
     }
 
 }

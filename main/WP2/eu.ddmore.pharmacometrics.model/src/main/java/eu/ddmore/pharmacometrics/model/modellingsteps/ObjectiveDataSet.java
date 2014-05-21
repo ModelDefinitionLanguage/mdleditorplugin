@@ -5,19 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import eu.ddmore.pharmacometrics.model.trialdesign.population.DataSet;
+import eu.ddmore.pharmacometrics.model.data.DataSet;
 
 
 public class ObjectiveDataSet {
 
-    private final List<String> individualMappings;
-    private final Map<String, String> variableMappings;
+    private final List<String> individualMappings = new ArrayList<String>();
+    private final Map<String, String> variableMappings = new HashMap<String, String>();
     private final DataSet dataSet;
     
     public ObjectiveDataSet(DataSet dataSet) {
         this.dataSet = dataSet;
-        individualMappings = new ArrayList<String>();
-        variableMappings = new HashMap<String, String>();
     }
     
     public DataSet getDataSet() {
@@ -49,7 +47,5 @@ public class ObjectiveDataSet {
     public String toString() {
         return "ObjectiveDataSet [individualMappings=" + individualMappings + ", variableMappings=" + variableMappings + ", dataSet="
             + dataSet + "]";
-    }
-    
-    
+    }   
 }

@@ -6,12 +6,10 @@ import java.util.List;
 
 public class ModellingSteps {
 
-    private List<EstimationStep> estimationSteps;
+    private List<EstimationStep> estimationSteps = new ArrayList<EstimationStep>();
+    private List<NonmemDataSet> nonmemDataSets = new ArrayList<NonmemDataSet>();
     
-    public ModellingSteps() {
-        estimationSteps = new ArrayList<EstimationStep>();
-    }
-    
+  
     public void add(EstimationStep s) {
         estimationSteps.add(s);
     }
@@ -20,9 +18,17 @@ public class ModellingSteps {
         return estimationSteps;
     }
 
+    public void add(NonmemDataSet s) {
+    	nonmemDataSets.add(s);
+    }
+    
+    public List<NonmemDataSet> getNonmemDataSets() {
+        return nonmemDataSets;
+    }
+
     @Override
     public String toString() {
-        return "ModellingSteps [estimationSteps=" + estimationSteps + "]";
+        return "ModellingSteps [estimationSteps=" + estimationSteps + " nonmemDataSets=" + nonmemDataSets + "]";
     }
     
     
