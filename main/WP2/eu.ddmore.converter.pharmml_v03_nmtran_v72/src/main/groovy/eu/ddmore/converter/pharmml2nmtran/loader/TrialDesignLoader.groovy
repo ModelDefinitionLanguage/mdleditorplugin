@@ -17,14 +17,13 @@ import eu.ddmore.libpharmml.dom.trialdesign.SteadyStateType
 import eu.ddmore.libpharmml.dom.trialdesign.TrialDesignType
 import eu.ddmore.libpharmml.dom.trialdesign.InfusionType.DoseAmount
 
+import eu.ddmore.pharmacometrics.model.data.DataSet
 import eu.ddmore.pharmacometrics.model.trialdesign.Subject
 import eu.ddmore.pharmacometrics.model.trialdesign.math.BinaryExpression
 import eu.ddmore.pharmacometrics.model.trialdesign.math.Constant
 import eu.ddmore.pharmacometrics.model.trialdesign.math.Expression
 import eu.ddmore.pharmacometrics.model.trialdesign.math.Variable
 import eu.ddmore.pharmacometrics.model.trialdesign.math.BinaryExpression.Operator
-import eu.ddmore.pharmacometrics.model.trialdesign.population.DataRow
-import eu.ddmore.pharmacometrics.model.trialdesign.population.DataSet
 import eu.ddmore.pharmacometrics.model.trialdesign.structure.Activity
 import eu.ddmore.pharmacometrics.model.trialdesign.structure.Arm
 import eu.ddmore.pharmacometrics.model.trialdesign.structure.Bolus

@@ -8,11 +8,14 @@ import eu.ddmore.libpharmml.dom.modellingsteps.EstimationStepType
 import eu.ddmore.libpharmml.dom.modellingsteps.IndividualMappingType
 import eu.ddmore.libpharmml.dom.modellingsteps.MappingType
 import eu.ddmore.libpharmml.dom.modellingsteps.ModellingStepsType
+import eu.ddmore.libpharmml.dom.modellingsteps.NONMEMdataSetType
 import eu.ddmore.libpharmml.dom.modellingsteps.VariableMappingType
+import eu.ddmore.pharmacometrics.model.data.DataSet
 import eu.ddmore.pharmacometrics.model.modellingsteps.EstimationStep
 import eu.ddmore.pharmacometrics.model.modellingsteps.ModellingSteps
+import eu.ddmore.pharmacometrics.model.modellingsteps.NonmemDataSet
 import eu.ddmore.pharmacometrics.model.modellingsteps.ObjectiveDataSet
-import eu.ddmore.pharmacometrics.model.trialdesign.population.DataSet
+
 
 /**
  * Responsible for loading <ModellingSteps> elements in main memory.
@@ -21,11 +24,10 @@ import eu.ddmore.pharmacometrics.model.trialdesign.population.DataSet
 class ModellingStepsLoader {
 
     private final ModellingStepsType modellingStepsType
-    private ModellingSteps modellingSteps
+    private ModellingSteps modellingSteps = new ModellingSteps()
 
     public ModellingStepsLoader(ModellingStepsType modellingStepsType) {
         this.modellingStepsType = modellingStepsType
-        modellingSteps = new ModellingSteps()
     }
 
     public void load() {
@@ -44,6 +46,18 @@ class ModellingStepsLoader {
                 throw new RuntimeException("Simulations are not yet supported.")
             }
         }
+
+		modellingStepsType.nonmeMdataSet.each { set ->
+			if (set instanceof NONMEMdataSetType) {
+				NonmemDataSet nonmemDataSet = new NonmemDataSet(set.oid);
+				DataSet dataSet = DataSetLoader.load(set.dataSet)
+				nonmemDataSet.dataSet = dataSet
+				modellingSteps.add(nonmemDataSet)
+			} else {
+				//TODO: can there be any other types?
+				throw new RuntimeException("Only NONMEMdataSetTypes are supported.")
+			}
+		}
     }
 
     public void loadMappings(ObjectiveDataSet objectiveDataSet, DatasetMappingType objDataset) {

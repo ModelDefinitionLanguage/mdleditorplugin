@@ -22,11 +22,12 @@ import eu.ddmore.libpharmml.dom.trialdesign.ActivityType
 import eu.ddmore.libpharmml.dom.trialdesign.BolusType;
 import eu.ddmore.libpharmml.dom.trialdesign.DosingTimesPointsType
 import eu.ddmore.libpharmml.dom.trialdesign.DosingVariableType
+import eu.ddmore.pharmacometrics.model.data.DataSet
+import eu.ddmore.pharmacometrics.model.data.Row
 import eu.ddmore.pharmacometrics.model.modellingsteps.ModellingSteps
+import eu.ddmore.pharmacometrics.model.modellingsteps.ObjectiveDataSet
 import eu.ddmore.pharmacometrics.model.trialdesign.Subject
 import eu.ddmore.pharmacometrics.model.trialdesign.math.Expression
-import eu.ddmore.pharmacometrics.model.trialdesign.population.DataRow
-import eu.ddmore.pharmacometrics.model.trialdesign.population.DataSet
 import eu.ddmore.pharmacometrics.model.trialdesign.structure.Activity;
 import eu.ddmore.pharmacometrics.model.trialdesign.structure.Arm;
 import eu.ddmore.pharmacometrics.model.trialdesign.structure.Bolus;
@@ -50,7 +51,7 @@ class DataStatement extends NMTranFormatter {
         this.pmlDOM = pmlDOM
         this.outputPath = outputPath
 
-		if(pmlDOM.trialDesign) {
+		if (pmlDOM.trialDesign) {
 			TrialDesignLoader trialDesignloader = new TrialDesignLoader("trialDesign":pmlDOM.trialDesign)
 			trialDesignloader.load()
 			structure = trialDesignloader.structure
@@ -59,7 +60,16 @@ class DataStatement extends NMTranFormatter {
         ModellingStepsLoader modellingStepsLoader = new ModellingStepsLoader(pmlDOM.modellingSteps)
         modellingStepsLoader.load()
         modellingSteps = modellingStepsLoader.modellingSteps
-		computeEstimationHeaders()
+
+		ObjectiveDataSet ods = modellingSteps?.estimationSteps[0]?.objectiveDataSets[0]
+		
+		if (ods) {
+			// use objective data set
+			computeEstimationHeaders(ods.dataSet)
+		} else {
+			// use NONMEM data set
+			computeEstimationHeaders(modellingSteps.nonmemDataSets[0].dataSet)
+		}
 
         file = new File(outputPath + "_data.csv")
         textWriter = new TextFileWriter();
@@ -77,10 +87,9 @@ class DataStatement extends NMTranFormatter {
         return headers
     }
 
-    private void computeEstimationHeaders() {
+    private void computeEstimationHeaders(DataSet dataSet) {
         headers = new ArrayList<String>()
-        DataSet dataSet = modellingSteps?.estimationSteps[0]?.objectiveDataSets[0]?.dataSet
-        List<String> dataColumns = dataSet?.columns ?: []
+        List<String> dataColumns = dataSet?.columnNames ?: []
         for (String dataColumn : dataColumns) {
             headers.add(dataColumn.toUpperCase())
         }
@@ -142,12 +151,12 @@ class DataStatement extends NMTranFormatter {
         printHeaders(subjectHeaders)
 
         orderedSubjects.each { subject ->
-            Collection<DataRow> dataRows = dataSet.getRowsFor(subject.name)
+            Collection<Row> dataRows = dataSet.getRowsFor(subject.name)
             if (dataRows) {
                 Set<Double> times = new TreeSet<Double>()
                 TreeMultimap<Double, String> dosingLines = createDosingRowsForSubject(subject, activity, arm.index)
                 times.addAll(dosingLines.keySet())
-                TreeMultimap<Double, String> dataLines = createDataRowsForSubject(subject, dataRows, capitalize(dataSet.getColumns()), arm.index)
+                TreeMultimap<Double, String> dataLines = createDataRowsForSubject(subject, dataRows, capitalize(dataSet.getColumnNames()), arm.index)
                 times.addAll(dataLines.keySet())
 
                 printRecordsInTimeOrder(times, dosingLines, dataLines)
@@ -172,12 +181,12 @@ class DataStatement extends NMTranFormatter {
 		//computeHeaders(orderedSubjects.first()) 
         
         orderedSubjects.each { subject ->
-            Collection<DataRow> dataRows = dataSet.getRowsFor(subject.name)
+            Collection<Row> dataRows = dataSet.getRowsFor(subject.name)
             if (dataRows) {
                 Set<Double> times = new TreeSet<Double>()
                 TreeMultimap<Double, String> dosingLines = createDosingRowsForSubject(subject, activity, arm.index)
                 times.addAll(dosingLines.keySet())
-                TreeMultimap<Double, String> dataLines = createDataRowsForSubject(subject, dataRows, capitalize(dataSet.getColumns()), arm.index)
+                TreeMultimap<Double, String> dataLines = createDataRowsForSubject(subject, dataRows, capitalize(dataSet.getColumnNames()), arm.index)
                 times.addAll(dataLines.keySet())
 
                 printRecordsInTimeOrder(times, dosingLines, dataLines)
@@ -206,25 +215,25 @@ class DataStatement extends NMTranFormatter {
 
         TreeSet<Subject> orderedSubjects = orderSubjects(arm.subjects)
 
-        printHeaders(activity.dataset.getColumns())
+        printHeaders(activity.dataSet.getColumnNames())
         
         orderedSubjects.each { subject ->
             //If data is given in external files, then individuals are represented by order ids. e.g. '1'
-            Collection<DataRow> dataRows = dataSet.getRowsFor(''+ subject.id)
+            Collection<Row> dataRows = dataSet.getRowsFor(''+ subject.id)
             if (!dataRows) {
                 //If data is given in PharmML, then individuals are represented by the their PharmML name, e.g. 'i1'
                 dataRows = dataSet.getRowsFor(subject.name)
             }
             if (dataRows) {
-                Collection<DataRow> dosingRows = activity.getDosingInfoFor(''+ subject.id)
+                Collection<Row> dosingRows = activity.getDosingInfoFor(''+ subject.id)
                 if (!dosingRows) {
                     dosingRows = activity.getDosingInfoFor(subject.name)
                 }
 
                 Set<Double> times = new TreeSet<Double>()
-                TreeMultimap<Double, String> dosingLines = createDosingRowsForSubject(subject, dosingRows, activity.dataset.getColumns(), arm.index)
+                TreeMultimap<Double, String> dosingLines = createDosingRowsForSubject(subject, dosingRows, activity.dataSet.getColumnNames(), arm.index)
                 times.addAll(dosingLines.keySet())
-                TreeMultimap<Double, String> dataLines = createDataRowsForSubject(subject, dataRows, dataSet.getColumns(), arm.index)
+                TreeMultimap<Double, String> dataLines = createDataRowsForSubject(subject, dataRows, dataSet.getColumnNames(), arm.index)
                 times.addAll(dataLines.keySet())
 
                 printRecordsInTimeOrder(times, dosingLines, dataLines)
@@ -259,9 +268,9 @@ class DataStatement extends NMTranFormatter {
         }
     }
 
-    private TreeMultimap<Double, String> createDataRowsForSubject(Subject subject, Collection<DataRow> dataRows, List<String> columns, int armIndex) {
+    private TreeMultimap<Double, String> createDataRowsForSubject(Subject subject, Collection<Row> dataRows, List<String> columns, int armIndex) {
         TreeMultimap<Double, String> timeToLine = TreeMultimap.create()
-        for (DataRow dataRow : dataRows) {
+        for (Row dataRow : dataRows) {
             def dataLine = new StringBuilder()
             dataLine << "${subject.id}"
             for (int i=1; i<dataRow.data.size(); i++ ) {
@@ -301,9 +310,9 @@ class DataStatement extends NMTranFormatter {
         timeToLine
     }
 
-    private TreeMultimap<Double, String> createDosingRowsForSubject(Subject subject, Collection<DataRow> dosingRows, List<String> columns, int armIndex) {
+    private TreeMultimap<Double, String> createDosingRowsForSubject(Subject subject, Collection<Row> dosingRows, List<String> columns, int armIndex) {
         TreeMultimap<Double, String> timeToLine = TreeMultimap.create()
-        for (DataRow dataRow : dosingRows) {
+        for (Row dataRow : dosingRows) {
             def dataLine = new StringBuilder(subject.id)
             def dosingMap = dataRow.asMap(columns)
             String doseColumnName = columns.get(columns.size()-1)
