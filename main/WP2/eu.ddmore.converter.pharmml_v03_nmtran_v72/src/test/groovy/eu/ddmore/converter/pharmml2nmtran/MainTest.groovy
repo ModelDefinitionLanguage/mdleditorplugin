@@ -66,9 +66,9 @@ class MainTest {
     
 
     @Test
-    public void convertFriberg2009Prolactin_v20140506v11() {
+    public void convertFriberg2009Prolactin_v20140506v11_03() {
         PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
-        File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'Friberg2009Prolactin_v20140506v11.xml').getPath());
+        File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'Friberg2009Prolactin_v20140506v11_0.3.xml').getPath());
         converter.performConvert(src, src.getParentFile());
     }
     
