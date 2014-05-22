@@ -44,7 +44,8 @@ class DataStatement extends NMTranFormatter {
     private Structure structure = new Structure()
     private ModellingSteps modellingSteps
     private File file
-    private TextFileWriter textWriter
+	private String filePathAndName
+    private TextFileWriter textWriter = new TextFileWriter();
     private List<String> headers
 
     public DataStatement(PharmML pmlDOM, String outputPath) {
@@ -66,21 +67,23 @@ class DataStatement extends NMTranFormatter {
 		if (ods) {
 			// use objective data set
 			computeEstimationHeaders(ods.dataSet)
+			filePathAndName = outputPath + "_data.csv"
 		} else {
 			// use NONMEM data set
-			computeEstimationHeaders(modellingSteps.nonmemDataSets[0].dataSet)
+			DataSet dataSet = modellingSteps.nonmemDataSets[0].dataSet
+			computeEstimationHeaders(dataSet)
+
+			/*
+			 * The use of the <url> property here is temporary until PharmML
+			 * 0.3.1 is released.  From 0.3.1 it will be called <path>
+			 */
+			filePathAndName = dataSet.importData.url
 		}
-
-        file = new File(outputPath + "_data.csv")
-        textWriter = new TextFileWriter();
-    }
-
-    public DataStatement() {
     }
 
     public String createDataFile() {
         composeData()
-        "\$DATA $file.name IGNORE=@\n"
+        "\$DATA $filePathAndName IGNORE=@\n"
     }
 
     public List<String> getHeaders() {
@@ -109,7 +112,9 @@ class DataStatement extends NMTranFormatter {
     }
 
     public void composeData() {
-        for (Object epoch : structure.epochs) {
+		file = new File(filePathAndName)
+
+		for (Object epoch : structure.epochs) {
             List<Cell> cellsOfEpoch = structure.getCellsOfEpoch(epoch)
             for (Cell cell : cellsOfEpoch){
                 cell.segments.each {

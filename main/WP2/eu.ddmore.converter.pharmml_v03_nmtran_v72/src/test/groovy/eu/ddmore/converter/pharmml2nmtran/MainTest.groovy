@@ -48,22 +48,27 @@ class MainTest {
         File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'example4.xml').getPath());
         converter.performConvert(src, src.getParentFile());
     }
-    
+
     @Test
     public void convert2008ThamJCCR() {
         PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
         File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'2008ThamJCCR.xml').getPath());
         converter.performConvert(src, src.getParentFile());
     }
-    
-	@Ignore
+
     @Test
     public void convert2008ThamJCCR_NONMEM() {
         PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
         File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'2008ThamJCCR_NONMEM.xml').getPath());
         converter.performConvert(src, src.getParentFile());
     }
-    
+
+	@Test
+	public void convert2008ThamCCR_v03_NONMEM() {
+		PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
+		File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'2008ThamCCR_v03_NONMEM.xml').getPath());
+		converter.performConvert(src, src.getParentFile());
+	}
 
     @Test
     public void convertFriberg2009Prolactin_v20140506v11_03() {
