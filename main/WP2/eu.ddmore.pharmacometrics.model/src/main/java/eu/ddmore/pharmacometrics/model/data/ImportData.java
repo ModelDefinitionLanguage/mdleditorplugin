@@ -14,10 +14,17 @@ public class ImportData {
 		this.delimiter = delimiter;
 	}
 
+	/*
+	 * The 'name' and 'url' attributes will be replaced by a single
+	 * 'path' attribute that points directly to the data file (ie
+	 * including the folder path and name) *relative* to the PharmML
+	 * file in version 0.3.1.  
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/* See comment above */
 	public String getUrl() {
 		return url;
 	}
@@ -29,7 +36,7 @@ public class ImportData {
 	public String getDelimiter() {
 		return delimiter;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "ImportData [name=" + name + ", url=" + url + ", format="
