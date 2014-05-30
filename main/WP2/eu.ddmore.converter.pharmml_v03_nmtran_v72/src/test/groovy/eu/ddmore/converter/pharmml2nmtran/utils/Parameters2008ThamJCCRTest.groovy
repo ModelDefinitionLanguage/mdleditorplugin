@@ -10,7 +10,7 @@ import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
 import org.apache.commons.io.FileUtils;
 
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.path
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.PATH
 
 
 class Parameters2008ThamJCCRTest {
@@ -18,7 +18,7 @@ class Parameters2008ThamJCCRTest {
     
     @Before
     public void init() {
-        File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'2008ThamJCCR.xml').getPath());
+        File src = new File(Thread.currentThread().getContextClassLoader().getResource(PATH +'2008ThamJCCR.xml').getPath());
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def is = FileUtils.openInputStream(src)
         def pmlDOM = pmlAPI.createDomFromResource(is).getDom()

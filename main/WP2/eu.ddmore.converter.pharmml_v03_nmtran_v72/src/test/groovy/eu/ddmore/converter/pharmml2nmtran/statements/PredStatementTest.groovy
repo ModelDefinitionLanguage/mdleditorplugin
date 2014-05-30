@@ -10,14 +10,14 @@ import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
 
 import org.apache.commons.io.FileUtils;
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.path
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.PATH
 
 public class PredStatementTest {
 
 	@Ignore
 	@Test
 	public void testSimpleAssignedParameters() {
-        File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'Friberg2009Prolactin_v20140506v13_NONMEM.xml').getPath());
+        File src = new File(Thread.currentThread().getContextClassLoader().getResource(PATH +'Friberg2009Prolactin_v20140506v13_NONMEM.xml').getPath());
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
 		def is = FileUtils.openInputStream(src)
 		PharmML pmlDOM = pmlAPI.createDomFromResource(is).getDom()

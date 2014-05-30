@@ -9,7 +9,7 @@ import eu.ddmore.converter.pharmml2nmtran.model.Sigma
 import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
 import org.apache.commons.io.FileUtils;
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.path
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.PATH
 
 
 class ParametersFriberg2009Prolactinev20140331v9Test {
@@ -17,7 +17,7 @@ class ParametersFriberg2009Prolactinev20140331v9Test {
     
     @Before
     public void init() {
-        File src = new File(Thread.currentThread().getContextClassLoader().getResource(path +'Friberg2009Prolactinev20140331v9.xml').getPath());
+        File src = new File(Thread.currentThread().getContextClassLoader().getResource(PATH +'Friberg2009Prolactinev20140331v9.xml').getPath());
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def is = FileUtils.openInputStream(src)
         def pmlDOM = pmlAPI.createDomFromResource(is).getDom()

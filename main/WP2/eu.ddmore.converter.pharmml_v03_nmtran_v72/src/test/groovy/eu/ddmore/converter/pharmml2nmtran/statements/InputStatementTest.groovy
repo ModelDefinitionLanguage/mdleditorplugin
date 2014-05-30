@@ -13,7 +13,7 @@ import org.apache.commons.io.FileUtils
 
 class InputStatementTest {
 
-	static final String MAIN_TEST_PATH = eu.ddmore.converter.pharmml2nmtran.MainTest.path
+	static final String MAIN_TEST_PATH = eu.ddmore.converter.pharmml2nmtran.MainTest.PATH
 
 	@Ignore
 	@Test
