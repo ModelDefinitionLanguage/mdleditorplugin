@@ -35,6 +35,8 @@ build/
 
 # eclipse #
 bin/
+.settings
+
 
 #xtext, xtend
 src-gen/
