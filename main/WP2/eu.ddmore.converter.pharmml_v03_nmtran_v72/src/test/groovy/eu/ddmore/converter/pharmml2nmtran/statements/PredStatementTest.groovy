@@ -34,6 +34,41 @@ public class PredStatementTest {
  	}
 
 	@Test
+	public void testComplexAssignedParameters() {
+        File src = new File(Thread.currentThread().getContextClassLoader().getResource(PATH +'Friberg2009Prolactin_v20140506v13_NONMEM.xml').getPath());
+        def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
+		def is = FileUtils.openInputStream(src)
+		PharmML pmlDOM = pmlAPI.createDomFromResource(is).getDom()
+
+		ConversionContext conversionContext = new ConversionContext(pmlDOM, src)
+
+		def commonParameters = pmlDOM.modelDefinition.parameterModel.collect{ it.commonParameterElement ?: [] }.flatten()
+		
+		def POP_PRL0 = commonParameters.find { it.value.symbId == "pop_PRL0" }
+		
+		String pieceWiseAsNmtran = conversionContext.convert( POP_PRL0.value.assign.equation.piecewise, "POP_PRL0", conversionContext.simpleParameterToNmtran)
+			
+String expected = """IF(NM_PAT.EQ.NM_HV)
+	NM_POP_PRL0=THETA(1)
+ELSE
+IF(((NM_PAT.EQ.NM_PAT).AND.(NM_SEX.EQ.NM_M)).AND.(NM_STUDY.NE.NM_STU101))
+	NM_POP_PRL0=THETA(2)
+ELSE
+IF(((NM_PAT.EQ.NM_PAT).AND.(NM_SEX.EQ.NM_F)).AND.(NM_STUDY.NE.NM_STU101))
+	NM_POP_PRL0=THETA(3)
+ELSE
+IF(((NM_PAT.EQ.NM_PAT).AND.(NM_SEX.EQ.NM_M)).AND.(NM_STUDY.EQ.NM_STU101))
+	NM_POP_PRL0=THETA(4)
+ELSE
+IF(((NM_PAT.EQ.NM_PAT).AND.(NM_SEX.EQ.NM_F)).AND.(NM_STUDY.EQ.NM_STU101))
+	NM_POP_PRL0=THETA(5)
+ENDIF
+"""
+
+		assertEquals(expected, pieceWiseAsNmtran )
+ 	}
+
+	@Test
 	public void testEtaCount() {
 		File src = new File(Thread.currentThread().getContextClassLoader().getResource(PATH +'Friberg2009Prolactin_v20140506v13_NONMEM.xml').getPath());
 		def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()

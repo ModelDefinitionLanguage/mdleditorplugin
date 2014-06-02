@@ -377,13 +377,16 @@ public class ConversionContext extends NMTranFormatter {
     public StringBuilder convert(Condition condition) {
         StringBuilder sb = new StringBuilder();
         if (condition.logicBinop) {
-            sb << convert(condition.logicBinop)
+			// IF only applied at the level of the conditional; logical operations are all within the same IF statement
+            sb << "IF${convert(condition.logicBinop)}"
         }
         sb
     }
 
     public StringBuilder convert(LogicBinOpType logicBinaryOperator) {
-        def sb = "IF(${convert(logicBinaryOperator.content.get(0).value)}.${getMathRepresentationOf(logicBinaryOperator.op)}"
+		// Convert the logical to it's purest form (x.eq.y, x.ne.z, etc.)
+		// Brackets are around the logical to preserve operator precedence 
+        def sb = "(${convert(logicBinaryOperator.content.get(0).value)}.${getMathRepresentationOf(logicBinaryOperator.op)}"
         sb << ".${convert(logicBinaryOperator.content.get(1).value)})"
     }
 
