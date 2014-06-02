@@ -13,6 +13,7 @@ import eu.ddmore.converter.pharmml2nmtran.utils.Parameters;
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType
 import eu.ddmore.libpharmml.dom.commontypes.DerivativeVariableType
+import eu.ddmore.libpharmml.dom.commontypes.SymbolRefType
 import eu.ddmore.libpharmml.dom.commontypes.VariableDefinitionType
 import eu.ddmore.libpharmml.dom.maths.Equation
 import eu.ddmore.libpharmml.dom.maths.PiecewiseType
@@ -25,6 +26,7 @@ import eu.ddmore.libpharmml.dom.modeldefn.IndividualParameterType
 import eu.ddmore.libpharmml.dom.modeldefn.ObservationErrorType
 import eu.ddmore.libpharmml.dom.modeldefn.ObservationModelType
 import eu.ddmore.libpharmml.dom.modeldefn.ParameterModelType;
+import eu.ddmore.libpharmml.dom.modeldefn.ParameterRandomEffectType
 import eu.ddmore.libpharmml.dom.modeldefn.SimpleParameterType;
 import eu.ddmore.libpharmml.dom.modeldefn.StructuralModelType
 import eu.ddmore.pharmacometrics.model.trialdesign.CategoricalAttribute
@@ -352,32 +354,32 @@ class PredStatement extends NMTranFormatter {
 
                 if (individualParameterType.gaussianModel) {
                     String name =null
-                    if (individualParameterType.gaussianModel.linearCovariate) {
-                        name = individualParameterType.gaussianModel.linearCovariate.populationParameter.assign.symbRef.symbIdRef
-                        def omegaIndices = []
-                        individualParameterType.gaussianModel.randomEffects.symbRef.each {
-                            String etaName = it.symbIdRef
+					if (individualParameterType.gaussianModel.linearCovariate) {
+						name = individualParameterType.gaussianModel.linearCovariate.populationParameter.assign.symbRef.symbIdRef
+						def omegaIndices = []
+						individualParameterType.gaussianModel.randomEffects.each {
+							it.symbRef.each {
+								SymbolRefType pret = (SymbolRefType)it
+								String etaName = pret.getSymbIdRef()
 
-                            //The next line is added becasue libPharmML 3.0 returns the 'etaName' as '[etaName]', so I have to remove '[' and ']'. If they fix it, remove the line.
-                            etaName = etaName.replace('[', '').replace(']', '')
+								String omega = parameters.etaToOmega[etaName]
 
-                            String omega = parameters.etaToOmega[etaName]
-
-                            int omegaIndex = conversionContext.omegasInPrintOrder.indexOf(omega)+1
-                            omegaIndices.add(omegaIndex)
-                        }
-                        ind.append(buildIndividualString(symbolName.toUpperCase(), name.toUpperCase(), omegaIndices))
-                    } else if (individualParameterType.gaussianModel.generalCovariate) {
-                        ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.gaussianModel.generalCovariate.assign)}"))
-                    }
-                } else if (individualParameterType.assign) {
-                    ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.assign)}"))
-                }
-            }
-        }
-        ind << reportSimpleParamsWithAssigns()
-        ind
-    }
+								int omegaIndex = conversionContext.omegasInPrintOrder.indexOf(omega)+1
+								omegaIndices.add(omegaIndex)
+							}
+						}
+						ind.append(buildIndividualString(symbolName.toUpperCase(), name.toUpperCase(), omegaIndices))
+					} else if (individualParameterType.gaussianModel.generalCovariate) {
+						ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.gaussianModel.generalCovariate.assign)}"))
+					}
+				} else if (individualParameterType.assign) {
+					ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.assign)}"))
+				}
+			}
+		}
+		ind << reportSimpleParamsWithAssigns()
+		ind
+	}
 
     private String buildIndividualString(String symbolNameInUpperCase, String nameInUpperCase, List<Integer> omegaIndices) {
         def sb = new StringBuilder()
