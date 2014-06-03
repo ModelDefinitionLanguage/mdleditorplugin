@@ -43,7 +43,6 @@ class PredStatement extends NMTranFormatter {
 
     private Map<String, String> continuousCovariates
     private Map<String, CategoricalAttribute> categoricalCovariates
-    private Map<String,String> simpleParameterToNmtran = new HashMap<String,String>()
 
     //Computed when the sigma statement is created. Needed here for the error model
     private final Map<String, String> epsilonToSigma
@@ -58,19 +57,10 @@ class PredStatement extends NMTranFormatter {
         this.conversionContext = conversionContext
         this.epsilonToSigma = conversionContext.epsilonToSigma
 		
-		setupSimpleParameters()
 		findCovariates()
 		
     }
 
-	private void setupSimpleParameters() {
-		for (StructuralModelType structuralModel in pmlDOM.modelDefinition.structuralModel ) {
-			structuralModel.simpleParameter.each {
-				simpleParameterToNmtran[it.symbId] = conversionContext.convert(it)
-			}
-		}
-	}
-	
     def findCovariates() {
         continuousCovariates = new HashMap<String, String>()
         categoricalCovariates = new HashMap<String, CategoricalAttribute>()
@@ -237,12 +227,6 @@ class PredStatement extends NMTranFormatter {
         cov
     }
 
-    def getIndividualsFromModel() {
-        StringBuilder ind = new StringBuilder();
-        pmlDOM.modelDefinition.parameterModel.each { ind << endline(getIndividualsFromModelType(it).toString()) }
-        ind
-    }
-
     private StringBuilder getCovariatesFromModelType(ParameterModelType parameterModelType) {
         StringBuilder cov = new StringBuilder();
         def visitedThetas = new HashSet<String>();
@@ -287,31 +271,6 @@ class PredStatement extends NMTranFormatter {
         cov
     }
 
-    def reportSimpleParamsWithAssigns() {
-        def sb = new StringBuilder();
-        pmlDOM.modelDefinition.parameterModel.each {
-            it.commonParameterElement.each {
-                if ( !parameters.isOmega(it.value.symbId) && (it.value instanceof SimpleParameterType) && it.value.assign ){
-                    String rightPart
-					if(it.value.assign?.equation?.piecewise) {
-						String pieceWiseAsNmtran = conversionContext.convert(it.value.assign.equation.piecewise, 
-							it.value.symbId, simpleParameterToNmtran)
-							.replaceAll("\\(t-tD\\)", "TIME").toUpperCase()
-						sb << endline(indent(pieceWiseAsNmtran))
-					} else if (it.value.assign.equation) {					
-                        rightPart = conversionContext.convert(it.value.assign.equation)
-                    } else if (it.value.assign.scalar) {
-                        rightPart = it.value.assign.scalar.value.value
-                    }
-					if(rightPart) {
-						sb << endline(indent("${rename(it.value.symbId.toUpperCase())}=${rightPart}"))
-					}
-                }
-            }
-        }
-        sb
-    }
-
     def reportCovariate() {
         def sb = new StringBuilder();
         pmlDOM.modelDefinition.covariateModel.each {
@@ -345,38 +304,76 @@ class PredStatement extends NMTranFormatter {
         endline(cov.toString())
     }
 
+    def getIndividualsFromModel() {
+        StringBuilder ind = new StringBuilder();
+        pmlDOM.modelDefinition.parameterModel.each { ind << endline(getIndividualsFromModelType(it).toString()) }
+        ind
+    }
+
     private StringBuilder getIndividualsFromModelType(ParameterModelType parameterModelType) {
         StringBuilder ind = new StringBuilder();
-        for (JAXBElement elem in parameterModelType.commonParameterElement) {
+		
+		// DDMORE-702
+		// Write out parameters in the order they are defined in the PharmML
+		// This is not correct. The right way is to:
+		// - go through each parameter that is created (i.e. on the lhs of an equation)
+		// - order each  the iterator such that creation happens before it is referenced in the rhs of an equation
+		// This needs an each with a fairly complex sorting algorithm
+        
+		for (JAXBElement elem in parameterModelType.commonParameterElement) {
             if (elem.value instanceof IndividualParameterType) {
-                IndividualParameterType individualParameterType = (IndividualParameterType) elem.value;
-                String symbolName = individualParameterType.symbId
-
-                if (individualParameterType.gaussianModel) {
-                    String name =null
-					if (individualParameterType.gaussianModel.linearCovariate) {
-						name = individualParameterType.gaussianModel.linearCovariate.populationParameter.assign.symbRef.symbIdRef
-						def omegaIndices = []
-						individualParameterType.gaussianModel.randomEffects.each {
-							it.symbRef.each {
-								SymbolRefType pret = (SymbolRefType)it
-								String etaName = pret.getSymbIdRef()
-
-								int omegaIndex = conversionContext.getOmegaIndex(etaName)
-								omegaIndices.add(omegaIndex)
-							}
-						}
-						ind.append(buildIndividualString(symbolName.toUpperCase(), name.toUpperCase(), omegaIndices))
-					} else if (individualParameterType.gaussianModel.generalCovariate) {
-						ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.gaussianModel.generalCovariate.assign)}"))
-					}
-				} else if (individualParameterType.assign) {
-					ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.assign)}"))
-				}
+                ind = printIndividualParameter(elem, ind)
+			} else if (!parameters.isOmega(elem.value.symbId) && (elem.value instanceof SimpleParameterType) && elem.value.assign) {
+                ind = printSimpleParameter(elem, ind)
 			}
 		}
-		ind << reportSimpleParamsWithAssigns()
 		ind
+	}
+
+	private StringBuilder printIndividualParameter(JAXBElement elem, StringBuilder ind) {
+		IndividualParameterType individualParameterType = (IndividualParameterType) elem.value;
+		String symbolName = individualParameterType.symbId
+
+		if (individualParameterType.gaussianModel) {
+			String name =null
+			if (individualParameterType.gaussianModel.linearCovariate) {
+				name = individualParameterType.gaussianModel.linearCovariate.populationParameter.assign.symbRef.symbIdRef
+				def omegaIndices = []
+				individualParameterType.gaussianModel.randomEffects.each {
+					it.symbRef.each {
+						SymbolRefType pret = (SymbolRefType)it
+						String etaName = pret.getSymbIdRef()
+
+						int omegaIndex = conversionContext.getOmegaIndex(etaName)
+						omegaIndices.add(omegaIndex)
+					}
+				}
+				ind.append(buildIndividualString(symbolName.toUpperCase(), name.toUpperCase(), omegaIndices))
+			} else if (individualParameterType.gaussianModel.generalCovariate) {
+				ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.gaussianModel.generalCovariate.assign)}"))
+			}
+		} else if (individualParameterType.assign) {
+			ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.assign)}"))
+		}
+		return ind
+	}
+
+	private StringBuilder printSimpleParameter(JAXBElement elem, StringBuilder ind) {
+		String rightPart
+		if(elem.value.assign?.equation?.piecewise) {
+			String pieceWiseAsNmtran = conversionContext.convert(elem.value.assign.equation.piecewise,
+					elem.value.symbId)
+					.replaceAll("\\(t-tD\\)", "TIME").toUpperCase()
+			ind << endline(indent(pieceWiseAsNmtran))
+		} else if (elem.value.assign.equation) {
+			rightPart = conversionContext.convert(elem.value.assign.equation)
+		} else if (elem.value.assign.scalar) {
+			rightPart = elem.value.assign.scalar.value.value
+		}
+		if(rightPart) {
+			ind << endline(indent("${rename(elem.value.symbId.toUpperCase())}=${rightPart}"))
+		}
+		return ind
 	}
 
     private String buildIndividualString(String symbolNameInUpperCase, String nameInUpperCase, List<Integer> omegaIndices) {
@@ -395,7 +392,7 @@ class PredStatement extends NMTranFormatter {
                 String variableName = varType.symbId
                 if (varType.assign && (varType.assign.equation.piecewise) ) {
                     PiecewiseType piecewise = varType.assign.equation.piecewise
-                    String pieceWiseAsNmtran = conversionContext.convert(piecewise, variableName, simpleParameterToNmtran).replaceAll("\\(t-tD\\)", "TIME").toUpperCase()
+                    String pieceWiseAsNmtran = conversionContext.convert(piecewise, variableName).replaceAll("\\(t-tD\\)", "TIME").toUpperCase()
                     conditionals.add(pieceWiseAsNmtran);
                 }
             }

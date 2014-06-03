@@ -85,7 +85,8 @@ public class ConversionContext extends NMTranFormatter {
     private String inputHeaders
     private String fileBase
     private List<String> omegasInPrintOrder
-    private Map<String,String> simpleParameterToNmtran
+	private Map<String,String> simpleParameterToNmtran = new HashMap<String,String>()
+	
 
     public ConversionContext(PharmML pmlDOM, File src) {
         this.pmlDOM = pmlDOM
@@ -102,7 +103,7 @@ public class ConversionContext extends NMTranFormatter {
         epsilonToSigma = sigmasStatement.epsilonToSigma
 
 		predStatement = new PredStatement(pmlDOM, parameters, this)
-		simpleParameterToNmtran = predStatement.simpleParameterToNmtran
+		setupSimpleParameters()
     }
 
     private void findFunctions() {
@@ -112,6 +113,14 @@ public class ConversionContext extends NMTranFormatter {
         }
     }
 
+	private void setupSimpleParameters() {
+		for (StructuralModelType structuralModel in pmlDOM.modelDefinition.structuralModel ) {
+			structuralModel.simpleParameter.each {
+				simpleParameterToNmtran[it.symbId] = convert(it)
+			}
+		}
+	}
+	
     def getProblemStatement() {
         "\$PROBLEM ${pmlDOM.name.value}\n"
     }
@@ -169,7 +178,7 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     public StringBuilder convert(FunctionCallType type) {
-        convert(type, new HashMap<String, String>())
+        convert(type, simpleParameterToNmtran)
     }
 
     /**
@@ -285,8 +294,8 @@ public class ConversionContext extends NMTranFormatter {
         sb
     }
 
-    public StringBuilder convert(PiecewiseType piecewise, Map<String,String> simpleParameterToNmtran) {
-        convert(piecewise, null, simpleParameterToNmtran)
+    public StringBuilder convert(PiecewiseType piecewise, String name) {
+        convert(piecewise, name, simpleParameterToNmtran)
     }
 
     /**
@@ -317,7 +326,7 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     public StringBuilder convert(VariableDefinitionType type) {
-        convert(type, new HashMap<String, String>())
+        convert(type, simpleParameterToNmtran)
     }
 
     /**
@@ -369,7 +378,7 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     public String convert(RealValueType type) {
-        return convert(type, new HashMap<String, String>())
+        return convert(type, simpleParameterToNmtran)
     }
 
     public String convert(RealValueType type, Map<String, String> inputNameToValue) {
@@ -397,7 +406,7 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     public StringBuilder convert(BinopType binopType) {
-        return convert(binopType, new HashMap<String, String>())
+        return convert(binopType, simpleParameterToNmtran)
     }
 
     /**
@@ -452,7 +461,7 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     public StringBuilder convert(UniopType type) {
-        return convert(type, new HashMap<String, String>())
+        return convert(type, simpleParameterToNmtran)
     }
 
     /**
@@ -493,7 +502,7 @@ public class ConversionContext extends NMTranFormatter {
 
 
     public StringBuilder convert(SymbolRefType type) {
-        return convert(type, new HashMap<String, String>())
+        return convert(type, simpleParameterToNmtran)
     }
 
     /**
@@ -557,7 +566,7 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     public StringBuilder convert(Rhs type) {
-        convert(type, true, new HashMap<String, String>())
+        convert(type, true, simpleParameterToNmtran)
     }
 		
     /**
@@ -583,7 +592,7 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     public StringBuilder convert(Equation type) {
-        return convert(type, new HashMap<String, String>())
+        return convert(type, simpleParameterToNmtran)
     }
 
     /**

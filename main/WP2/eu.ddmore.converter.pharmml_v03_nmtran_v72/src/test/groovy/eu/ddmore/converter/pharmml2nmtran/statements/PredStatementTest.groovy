@@ -30,7 +30,7 @@ public class PredStatementTest {
 		
 		def PHS1 = commonParameters.find { it.value.symbId =="PHS1" }
 		
-		String pieceWiseAsNmtran = conversionContext.convert( PHS1.value.assign.equation.piecewise, "PHS1", conversionContext.simpleParameterToNmtran)
+		String pieceWiseAsNmtran = conversionContext.convert( PHS1.value.assign.equation.piecewise, "PHS1")
 			
 		// Think this is ok - no simple parameters in structural model, so we can't name the thetas
 		String expected = "IF(${PREFIX}PAT.EQ.${PREFIX}HV)\n	${PREFIX}PHS1=THETA(9)\nELSE\nIF(${PREFIX}PAT.EQ.${PREFIX}PAT)\n	${PREFIX}PHS1=THETA(9)+THETA(8)\nENDIF\n"
@@ -88,20 +88,26 @@ ENDIF
 		String ind = ps.getIndividualsFromModel().toString()
 		
 		String[] lines = ind.split("\\n")
-		String nm_kout = lines[0].split("=")[1]
+		String nm_koutEq = lines.findResult { it.contains("KOUT=") ? it : null }
+		String nm_kout = nm_koutEq.split("=")[1]
 		String expected = "${PREFIX}POP_KOUT*EXP(ETA(4))"
 		assertEquals(expected, nm_kout)
 		
-		String nm_prl0 = lines[1].split("=")[1]
+		String nm_prl0Eq = lines.findResult { it.find(/\s${PREFIX}PRL0=/) ? it : null }
+		
+//		String nm_prl0Eq = lines.findResult { it.contains("=") && it?.split("=")[0]?.equals("PRL0") ? it : null }
+		String nm_prl0 = nm_prl0Eq.split("=")[1]
 		expected = "${PREFIX}POP_PRL0*EXP(ETA(1))*EXP(ETA(3))"
 		assertEquals(expected, nm_prl0 )
 		
-		String amp1 = lines[2].split("=")[1]
+		String amp1Eq = lines.findResult { it.contains("AMP1=") ? it : null }
+		String amp1 = amp1Eq.split("=")[1]
 		expected = "${PREFIX}POP_AMP1*EXP(ETA(5))"
 		assertEquals(expected, amp1)
 		
-		String phs2 = lines[3].split("=")[1]
-		expected = "${PREFIX}THETA(11)+ETA(6)"
+		String phs2Eq = lines.findResult { it.find(/\s${PREFIX}PHS2=/) ? it : null }
+		String phs2 = phs2Eq.split("=")[1]
+		expected = "THETA(11)+ETA(6)"
 		assertEquals(expected, phs2 )
 
 	}
