@@ -362,9 +362,7 @@ class PredStatement extends NMTranFormatter {
 								SymbolRefType pret = (SymbolRefType)it
 								String etaName = pret.getSymbIdRef()
 
-								String omega = parameters.etaToOmega[etaName]
-
-								int omegaIndex = conversionContext.omegasInPrintOrder.indexOf(omega)+1
+								int omegaIndex = conversionContext.getOmegaIndex(etaName)
 								omegaIndices.add(omegaIndex)
 							}
 						}

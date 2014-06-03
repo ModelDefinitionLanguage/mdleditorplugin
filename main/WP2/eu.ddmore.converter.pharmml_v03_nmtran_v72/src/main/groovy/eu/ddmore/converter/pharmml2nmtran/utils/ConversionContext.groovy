@@ -36,6 +36,7 @@ import eu.ddmore.libpharmml.dom.maths.BinopType;
 import eu.ddmore.libpharmml.dom.maths.Condition;
 import eu.ddmore.libpharmml.dom.maths.ConstantType
 import eu.ddmore.libpharmml.dom.maths.Equation;
+import eu.ddmore.libpharmml.dom.maths.EquationType
 import eu.ddmore.libpharmml.dom.maths.FunctionCallType
 import eu.ddmore.libpharmml.dom.maths.LogicBinOpType;
 import eu.ddmore.libpharmml.dom.maths.PieceType;
@@ -56,6 +57,7 @@ import eu.ddmore.libpharmml.dom.modeldefn.ParameterModelType
 import eu.ddmore.libpharmml.dom.modeldefn.ParameterRandomVariableType
 import eu.ddmore.libpharmml.dom.modeldefn.SimpleParameterType;
 import eu.ddmore.libpharmml.dom.modeldefn.StructuralModelType
+import eu.ddmore.libpharmml.dom.modeldefn.IndividualParameterType.GaussianModel
 import eu.ddmore.libpharmml.dom.modellingsteps.EstimationStepType
 import eu.ddmore.libpharmml.dom.modellingsteps.InitialEstimateType
 import eu.ddmore.libpharmml.dom.modellingsteps.ParameterEstimateType
@@ -509,7 +511,7 @@ public class ConversionContext extends NMTranFormatter {
         if (theta) {
             sb.append(theta.toIndexString())
         } else if (parameters.etas.contains(name)) {
-            sb << "ETA(${parameters.getOmegaIndexFromEta(name)})"
+            sb << "ETA(${getOmegaIndex(name)})"
         } else if (epsilonToSigma.get(name)) {
             String sigmaName = epsilonToSigma.get(name)
             int sigmaIndex = parameters.isSigma(sigmaName).index
@@ -557,7 +559,7 @@ public class ConversionContext extends NMTranFormatter {
     public StringBuilder convert(Rhs type) {
         convert(type, true, new HashMap<String, String>())
     }
-
+		
     /**
      * 
      * @param type the Rhs type to convert
@@ -628,6 +630,24 @@ public class ConversionContext extends NMTranFormatter {
         sb
     }
 
+	/**
+	 * Returns the omega index of the given eta.
+	 * 
+	 * Maps the eta to the omega in parameters, and returns the value from the print order
+	 * 
+	 * @param etaName
+	 * @return int
+	 */
+	public int getOmegaIndex(String etaName) {
+		String omega = parameters.etaToOmega[etaName]
+		if(omega==null) {
+			throw new RuntimeException("Cannot find eta ${etaName} in list ${parameters.etaToOmega.toMapString()}")
+		}
+		if(!omegasInPrintOrder.contains(omega)) {
+			throw new RuntimeException("Cannot find omega ${omega} in omegas ${omegasInPrintOrder.toString()}")
+		}
+		omegasInPrintOrder.indexOf(omega)+1
+	}
 	
     private String getMathRepresentationOf(String s) {
         if (s.equals("minus")) {
