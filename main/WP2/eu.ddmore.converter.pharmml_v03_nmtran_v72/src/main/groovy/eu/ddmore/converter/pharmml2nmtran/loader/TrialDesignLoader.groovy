@@ -41,7 +41,7 @@ import eu.ddmore.pharmacometrics.model.trialdesign.structure.Variability
 import com.google.common.base.Preconditions;
 
 /**
- * This class is responsible for loading in manin memory the TrialDesign element by using 
+ * This class is responsible for loading in main memory the TrialDesign element by using 
  * the data structures defined in pharmacometrics model.
  */
 class TrialDesignLoader {
