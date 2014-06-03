@@ -24,7 +24,7 @@ import eu.ddmore.libpharmml.PharmMlFactory
 
 
 /**
- * This is a ConverterProvider implementation from PharmML 0.2.1 to NMTRAN 7.2 
+ * This is a ConverterProvider implementation from PharmML to NMTRAN, specified versions thereof.
  */
 public class PharmMLToNMTRANConverter implements ConverterProvider {
     private LanguageVersion source;
