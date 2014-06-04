@@ -17,14 +17,6 @@
                 <include>eu.ddmore:converter-pharmml_v03_nmtran_v72:jar:jar-with-dependencies</include>
             </includes>
         </dependencySet>
-        <dependencySet>
-          <useStrictFiltering>true</useStrictFiltering>
-          <scope>system</scope>
-          <includes>
-            <include>eu.ddmore:libPharmml:jar</include>
-          </includes>
-          <outputDirectory>lib</outputDirectory>
-        </dependencySet>
     </dependencySets>
     <fileSets>
         <fileSet>
