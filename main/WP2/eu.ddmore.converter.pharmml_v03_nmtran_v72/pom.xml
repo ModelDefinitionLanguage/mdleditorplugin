@@ -19,6 +19,15 @@
 			<name>Mango Artifactory</name>
 			<url>http://artifactrepo.mango.local/artifactory/libs-releases</url>
 		</repository>
+		<!-- Note that this repository definition (and indeed the Mango one above) won't
+			 be used internally at Mango since the Maven settings.xml specifies that our
+			 Artifactory server is the universal mirror for all artifacts; but if this
+			 project is built by someone external to Mango then this would kick in. -->
+		<repository>
+			<id>ebi</id>
+			<name>European Bioinformatics Institute</name>
+			<url>http://www.ebi.ac.uk/~maven/m2repo</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -44,6 +53,11 @@
 			<artifactId>pharmacometrics-model</artifactId>
 			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>eu.ddmore.pharmml</groupId>
+			<artifactId>libPharmML</artifactId>
+			<version>0.3.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -62,14 +76,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>libPharmml</artifactId>
-			<scope>system</scope>
-			<version>0.3</version>
-			<systemPath>${basedir}/lib/libPharmML-0.3.jar</systemPath>
 		</dependency>
 
 		<dependency>
