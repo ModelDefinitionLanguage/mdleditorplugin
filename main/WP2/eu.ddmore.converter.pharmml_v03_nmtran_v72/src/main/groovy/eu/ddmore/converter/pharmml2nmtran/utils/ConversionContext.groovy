@@ -374,7 +374,7 @@ public class ConversionContext extends NMTranFormatter {
      */
     public StringBuilder convert(RealValueType type, String variableName) {
         def sb = new StringBuilder()
-        sb << " THEN\n\t${rename(variableName)}=${type.value}\n"
+        sb << " \n\t${rename(variableName)}=${type.value}\n"
     }
 
     public String convert(RealValueType type) {
@@ -389,7 +389,7 @@ public class ConversionContext extends NMTranFormatter {
         StringBuilder sb = new StringBuilder();
         if (condition.logicBinop) {
 			// IF only applied at the level of the conditional; logical operations are all within the same IF statement
-            sb << "IF${convert(condition.logicBinop)}"
+            sb << "IF${convert(condition.logicBinop)} THEN "
         }
         sb
     }
