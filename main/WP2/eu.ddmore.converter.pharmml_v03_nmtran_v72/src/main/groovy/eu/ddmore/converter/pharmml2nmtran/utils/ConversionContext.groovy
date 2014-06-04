@@ -620,11 +620,21 @@ public class ConversionContext extends NMTranFormatter {
      * @param inputNameToValue a string substitution map
      * @return the NMTRAN representation of the type
      */
-    public StringBuilder convert(ConstantType type, Map<String, String> inputNameToValue) {
-        StringBuilder sb = new StringBuilder()
-        sb << type.op
-        sb
-    }
+	public StringBuilder convert(ConstantType type, Map<String, String> inputNameToValue) {
+		StringBuilder sb = new StringBuilder()
+		sb << getValueOfConstant(type.op)
+		sb
+	}
+	
+	private String getValueOfConstant(String s){
+		Properties constantProperties = new Properties();
+		constantProperties.load(ConversionContext.class.getResource("/constants.properties").openStream());
+		if(constantProperties.stringPropertyNames().contains(s)){
+			return constantProperties.getProperty(s)
+		}else{
+			throw new IllegalArgumentException("Not supported constant: "+ s);
+		}
+	}
 
     public StringBuilder convert(CovariateDefinitionType type) {
         StringBuilder sb = new StringBuilder()
