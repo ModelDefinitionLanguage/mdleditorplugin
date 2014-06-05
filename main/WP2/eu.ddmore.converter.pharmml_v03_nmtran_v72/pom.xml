@@ -179,7 +179,7 @@
 						<configuration>
 						    <!-- Don't replace the original JAR, attach the shaded JAR as an additional artifact -->
 							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>withdeps</shadedClassifierName>
+							<shadedClassifierName>jar-with-dependencies</shadedClassifierName>
 							<artifactSet>
 								<includes>
 								</includes>
