@@ -6,7 +6,7 @@
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-pharmml_v03_nmtran_v72</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Converter Provider MPharmML 0.3 to NMTRAN</name>
+	<name>Converter Provider for PharmML 0.3 to NMTRAN 7.2</name>
 
 
 	<properties>
@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>eu.ddmore.pharmml</groupId>
 			<artifactId>libPharmML</artifactId>
-			<version>0.3.1</version>
+			<version>0.3.1-b2</version>
 		</dependency>
 
 		<dependency>
