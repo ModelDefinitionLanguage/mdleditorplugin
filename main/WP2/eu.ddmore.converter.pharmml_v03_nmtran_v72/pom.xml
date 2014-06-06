@@ -167,20 +167,67 @@
 				</dependencies>
 			</plugin>
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.2</version>
 				<executions>
 					<execution>
-						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-						</configuration>
-						<id>jar-with-dependencies</id>
 						<phase>package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>shade</goal>
 						</goals>
+						<configuration>
+						    <!-- Don't replace the original JAR, attach the shaded JAR as an additional artifact -->
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedClassifierName>jar-with-dependencies</shadedClassifierName>
+							<artifactSet>
+								<includes>
+								</includes>
+								<excludes>
+								</excludes>
+							</artifactSet>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Implementation-Version>${project.version} build ${env.BUILD_NUMBER}</Implementation-Version>
+										<Build-Branch>${env.GIT_BRANCH}</Build-Branch>
+										<Build-Revision>${env.GIT_COMMIT}</Build-Revision>
+									</manifestEntries>
+								</transformer>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+							</transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                    	<!-- Prevent cruft from third party dependencies being included in the uber-JAR and confusing people looking at the contents of this JAR -->
+                                        <exclude>META-INF/LICENSE</exclude>
+                                        <exclude>META-INF/LICENSE.txt</exclude>
+                                        <exclude>META-INF/README</exclude>
+                                        <exclude>META-INF/README.txt</exclude>
+                                        <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/NOTICE.txt</exclude>
+                                        <exclude>LICENSE</exclude>
+                                        <exclude>LICENSE.txt</exclude>
+                                        <exclude>README</exclude>
+                                        <exclude>README.txt</exclude>
+                                        <exclude>NOTICE</exclude>
+                                        <exclude>NOTICE.txt</exclude>
+                                        <exclude>RELEASE-NOTES.txt</exclude>
+                                        <exclude>about.html</exclude>
+										<exclude>README.html</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.SF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters> 
+						</configuration>
 					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
 					<execution>
 						<configuration>
 							<descriptors>
@@ -195,6 +242,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			
 
 		</plugins>
 		<pluginManagement>
