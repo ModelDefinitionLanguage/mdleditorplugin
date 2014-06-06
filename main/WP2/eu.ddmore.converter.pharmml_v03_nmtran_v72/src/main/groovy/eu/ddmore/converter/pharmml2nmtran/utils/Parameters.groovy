@@ -3,18 +3,15 @@
  ******************************************************************************/
 package eu.ddmore.converter.pharmml2nmtran.utils
 
-import java.util.List;
-import java.util.Map;
+import javax.xml.bind.JAXBElement
 
 import eu.ddmore.converter.pharmml2nmtran.model.CorrelationKey
-import eu.ddmore.converter.pharmml2nmtran.model.Omega;
-import eu.ddmore.converter.pharmml2nmtran.model.Sigma;
-import eu.ddmore.converter.pharmml2nmtran.model.Theta;
-import eu.ddmore.libpharmml.dom.PharmML;
+import eu.ddmore.converter.pharmml2nmtran.model.Omega
+import eu.ddmore.converter.pharmml2nmtran.model.Sigma
+import eu.ddmore.converter.pharmml2nmtran.model.Theta
+import eu.ddmore.libpharmml.dom.PharmML
 import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType
 import eu.ddmore.libpharmml.dom.commontypes.RealValueType
-import eu.ddmore.libpharmml.dom.commontypes.VariableDefinitionType
-import eu.ddmore.libpharmml.dom.dataset.ColumnMappingType
 import eu.ddmore.libpharmml.dom.maths.PiecewiseType
 import eu.ddmore.libpharmml.dom.modeldefn.CorrelationType
 import eu.ddmore.libpharmml.dom.modeldefn.ParameterModelType
@@ -24,40 +21,30 @@ import eu.ddmore.libpharmml.dom.modeldefn.StructuralModelType
 import eu.ddmore.libpharmml.dom.modellingsteps.EstimationStepType
 import eu.ddmore.libpharmml.dom.modellingsteps.ParameterEstimateType
 import eu.ddmore.libpharmml.dom.trialdesign.BolusType
-import eu.ddmore.libpharmml.dom.trialdesign.CovariateMappingType
-import javax.xml.bind.JAXBElement
 
 
 public class Parameters {
 
-    private PharmML pmlDOM
-    private Map<String, Theta> thetas;
-    private Map<String, Omega> omegas;
-    private Map<String, Sigma> sigmas;
+    private final PharmML pmlDOM
+    private final Map<String, Theta> thetas = new HashMap<String, Theta>()
+    private final Map<String, Omega> omegas = new HashMap<String, Omega>()
+    private final Map<String, Sigma> sigmas = new HashMap<String, Sigma>()
+    private final Map<String, SimpleParameterType> groups = new HashMap<String, SimpleParameterType>()
+    private final Map<String, CommonVariableDefinitionType> structuralVars = new HashMap<String, CommonVariableDefinitionType>()
+    private final Map<String, CorrelationType> correlations = new HashMap<String, CorrelationType>()
+    private final Map<CorrelationKey, String> correlationkeyToName = new HashMap<CorrelationKey, String>() 
+    private final Map<String, String> varToName = new HashMap<String, String>()
+    
     private Map<String, String> etaToOmega
-    private Map<String, SimpleParameterType> groups;
-    private Map<String, CommonVariableDefinitionType> structuralVars;
     private Set<String> etas;
     private Double dosingTime;
     private String dosingTimeVarname;
-    private Map<String, CorrelationType> correlations
-    private Map<CorrelationKey, String> correlationkeyToName
-    private Map<String, String> varToName
     private int thetasCounter=1
     private int sigmasCounter=1
     private int omegasCounter=1
 
     public Parameters(PharmML pmlDOM) {
         this.pmlDOM = pmlDOM;
-        thetas = new HashMap<String, Theta>();
-        omegas = new HashMap<String, Omega>();
-        sigmas = new HashMap<String, Sigma>();
-        groups = new HashMap<String, SimpleParameterType>()
-        structuralVars = new HashMap<String, CommonVariableDefinitionType>()
-        etaToOmega = new HashMap<String, String>()
-        correlations = new HashMap<String, CorrelationType>()
-        correlationkeyToName = new HashMap<CorrelationKey, String>()
-        varToName = new HashMap<String, String>()
     }
 
     /**
@@ -68,8 +55,6 @@ public class Parameters {
         findSimpleParameters();
         findStructuralVariables();
 
-        //If a TrialDesign does not exist, this seems to be fatal for NMTRAN.
-        //If that is true, we should report a conversion error.
         if (pmlDOM.trialDesign) {
             findDosingTime();
             findVariableMappings()
@@ -80,19 +65,19 @@ public class Parameters {
     }
 
     public Map<String, Theta> getThetas() {
-        thetas
+		thetas.asImmutable()
     }
 
     public Map<String, Omega> getOmegas() {
-        omegas
+		omegas.asImmutable()
     }
 
     public Map<String, Sigma> getSigmas() {
-        sigmas
+		sigmas.asImmutable()
     }
 
     public Set<String> getEtas() {
-        etas
+        etas.asImmutable()
     }
 
     public SimpleParameterType getGroupVariable(String s) {
@@ -309,7 +294,7 @@ public class Parameters {
                     String name = commonParamElem.value.symbId
                     if (omegasFromEtas.contains(name)) {
                         Omega omega = new Omega(name, omegasCounter++, false)
-                        omegas.put(name, omega)
+                        this.@omegas.put(name, omega)
                         groups.remove(name)
                     }
                 }
@@ -361,10 +346,10 @@ public class Parameters {
             vars.each {
                 if (omegaVars.contains(it)) {
                     Omega omega = new Omega(it, omegasCounter++, false);
-                    omegas.put(it, omega)
+                    this.@omegas.put(it, omega)
                 } else if (!thetas.containsKey(it)) {
                     Theta theta = new Theta(it, false, thetasCounter++);
-                    thetas.putAt(it, theta);
+                    this.@thetas.putAt(it, theta);
                 }
 
             }
