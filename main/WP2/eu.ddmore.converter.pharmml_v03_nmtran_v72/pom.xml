@@ -3,10 +3,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-pharmml_v03_nmtran_v72</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Converter Provider for PharmML 0.3 to NMTRAN 7.2</name>
+	
+	<parent>
+		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
+		<groupId>eu.ddmore</groupId>
+		<artifactId>converter-parent</artifactId>
+		<version>0.0.4-SNAPSHOT</version>
+	</parent>
 
 
 	<properties>
