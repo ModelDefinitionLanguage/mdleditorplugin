@@ -38,8 +38,6 @@ import org.ddmore.mdl.mdl.ObservationBlock
 import org.ddmore.mdl.mdl.EnumType
 import org.ddmore.mdl.mdl.Selector
 import org.ddmore.mdl.mdl.ParameterObject
-import org.ddmore.mdl.mdl.EstimateTask
-import org.ddmore.mdl.mdl.SimulateTask
 import org.ddmore.mdl.mdl.DataObject
 import org.ddmore.mdl.mdl.FormalArguments
 import org.ddmore.mdl.mdl.SimulationBlock
@@ -57,8 +55,7 @@ class MdlPrinter {
 	public static def MdlPrinter getInstance(){
 		return mdlPrinter;
 	}
-	
-    
+	    
 	//Get MDL file name
 	def fileName(Mcl m){
 		var fileName = m.eResource.getURI().path;
@@ -81,28 +78,31 @@ class MdlPrinter {
 		return e.toStr.equalsIgnoreCase("true");
 	}	
 	
-	def isAttributeTrue(Arguments a, String attrName){
-		for (arg: a.arguments)
-			if (arg.argumentName.name.equals(attrName)){
-				return arg.expression.isTrue;
-			}
+	def isAttributeTrue(Arguments args, String attrName){
+		if (args != null)
+			for (arg: args.arguments)
+				if (arg.argumentName != null && arg.argumentName.name.equals(attrName)){
+					return arg.expression.isTrue;
+				}
 		return false;
 	}
 	
 	//Return value of an attribute with a given name
-	def getAttribute(DistributionArguments a, String attrName){
-		for (arg: a.arguments)
-			if (arg.argumentName != null && arg.argumentName.name.equals(attrName)){
-				return arg.valueToStr;
-			}				
+	def getAttribute(DistributionArguments args, String attrName){
+		if (args != null)
+			for (arg: args.arguments)
+				if (arg.argumentName != null && arg.argumentName.name.equals(attrName)){
+					return arg.valueToStr;
+				}				
 		return "";
 	} 
 	
-	def findAttribute(DistributionArguments a, String attrName){
-		for (arg: a.arguments)
-			if (arg.argumentName != null && arg.argumentName.name.equals(attrName)){
-				return arg;
-			}				
+	def findAttribute(DistributionArguments args, String attrName){
+		if (args != null)
+			for (arg: args.arguments)
+				if (arg.argumentName != null && arg.argumentName.name.equals(attrName)){
+					return arg;
+				}				
 		return null;
 	}
 	
@@ -117,18 +117,20 @@ class MdlPrinter {
 	}	
 	
 	//Return value of an attribute with a given name
-	def getAttribute(Arguments a, String attrName){
-		for (arg: a.arguments)
-			if (arg.argumentName != null && arg.argumentName.name.equals(attrName))
-				return arg.expression.toStr
+	def getAttribute(Arguments args, String attrName){
+		if (args != null)
+			for (arg: args.arguments)
+				if (arg.argumentName != null && arg.argumentName.name.equals(attrName))
+					return arg.expression.toStr
 		return "";
 	}	
 	
 	//Return value of an attribute with a given name
-	def getAttributeExpression(Arguments a, String attrName){
-		for (arg: a.arguments)
-			if (arg.argumentName != null && arg.argumentName.name.equals(attrName))
-				return arg.expression
+	def getAttributeExpression(Arguments args, String attrName){
+		if (args != null)
+			for (arg: args.arguments)
+				if (arg.argumentName != null && arg.argumentName.name.equals(attrName))
+					return arg.expression
 		return null;
 	}	
 	
@@ -345,45 +347,6 @@ class MdlPrinter {
 		for (b: o.blocks){
 			if ( b.outputVariablesBlock != null){
 				if ( b.outputVariablesBlock.variables.size > 0) return true;
-			}
-		}
-		return false;
-	}
-	
-	//Check if attribute cov is define in ESTIMATE block
-	def isCovarianceDefined(EstimateTask b){
-		for (s: b.statements)
-			if (s.symbol != null){
-				if (s.symbol.symbolName.name.equals("cov"))
-					if (s.symbol.expression != null) return true;
-			}
-		return false;		
-	}
-	
- 
-    //Check whether there is a target block in a list of block statements			
-    def isInlineTargetDefined(String targetName, EstimateTask task){
-		for (s: task.statements){
-			if (s.targetBlock != null){
-				val target = s.targetBlock.arguments.getAttribute(AttributeValidator::attr_req_target.name);
-		 		if (target != null) 
-					if (target.equals(targetName)) {
-						return true;
-					}
-			}
-		}
-		return false;
-	}
-	
-	 //Check whether there is a target block in a list of block statements			
-    def isInlineTargetDefined(String targetName, SimulateTask task){
-		for (s: task.statements){
-			if (s.targetBlock != null){
-				val target = s.targetBlock.arguments.getAttribute(AttributeValidator::attr_req_target.name);
-		 		if (target != null) 
-					if (target.equals(targetName)) {
-						return true;
-					}
 			}
 		}
 		return false;
@@ -631,7 +594,10 @@ class MdlPrinter {
 	}	
 	
 	def toStr(FunctionCall call){
-		return call.identifier.toStr + "(" + call.arguments.toStr + ")";
+		var res = call.identifier.toStr;
+		if (call.arguments != null)
+		 	res = res + "(" + call.arguments.toStr + ")";
+		 return res;	
 	}
 	
 	def String toStr(Primary p){
@@ -647,9 +613,13 @@ class MdlPrinter {
 	}
 	
 	def toStr(FullyQualifiedArgumentName name) { 
-		var res = name.parent.name;
-		for (s: name.selectors){
-			res = res + s.toStr
+		var res = "";
+		if (name != null){
+			if (name.parent != null)
+				res = name.parent.name;
+			for (s: name.selectors){
+				res = res + s.toStr
+			}
 		}
 		return res;
 	}
