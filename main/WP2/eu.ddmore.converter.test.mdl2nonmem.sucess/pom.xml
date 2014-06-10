@@ -7,30 +7,14 @@
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>0.0.4-SNAPSHOT</version>
+		<version>0.0.5-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>test-mdl2nonmem-success</artifactId>
 	<name>Converter Toolbox Test-Mdl2Nonmem-Success</name>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-toolbox-api</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
+		<!-- TODO: Remove this dependency! Should just depend on the API. -->
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>converter-toolbox</artifactId>
