@@ -9,6 +9,10 @@
 	<name>Aggregator for Converter modules</name>
 
 	<modules>
+		<!-- Note that these are just the 'core' converter modules;
+		     the converter implementations themselves are generally
+		     built separately and brought in for the assembly of
+		     the Zip file. -->
 		<module>../eu.ddmore.converter.toolbox.api</module>
 		<module>../eu.ddmore.converter.toolbox</module>
 		<module>../eu.ddmore.converter.test.mdl2nonmem.sucess</module>
@@ -16,9 +20,6 @@
 		<module>../eu.ddmore.converter.test.mdl2pharmml</module>
 		<module>../eu.ddmore.converter.test</module>
 		<module>../eu.ddmore.converter.mdl</module>
-		<!-- TODO: Technically this is an optional converter module but for the Demonstrator 1.0 release
-			 we want this included in the SEE build -->
-		<module>../eu.ddmore.converter.pharmml_v03_nmtran_v72</module>
 	</modules>
 	
 	<build>
@@ -42,5 +43,15 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<dependencies>
+		<!-- "Optional" converters are specified as dependencies here. -->
+		<dependency>
+			<groupId>eu.ddmore</groupId>
+			<artifactId>converter-pharmml_v03_nmtran_v72</artifactId>
+			<version>0.0.5-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+	</dependencies>
 	
 </project>
