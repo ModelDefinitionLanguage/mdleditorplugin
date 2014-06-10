@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eu.ddmore</groupId>
+	<artifactId>converter-modules-aggregator</artifactId>
+	<packaging>pom</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Aggregator for Converter modules</name>
+
+	<modules>
+		<module>../eu.ddmore.converter.toolbox.api</module>
+		<module>../eu.ddmore.converter.toolbox</module>
+		<module>../eu.ddmore.converter.test.mdl2nonmem.sucess</module>
+		<module>../eu.ddmore.converter.test.mdl2nonmem.failure</module>
+		<module>../eu.ddmore.converter.test.mdl2pharmml</module>
+		<module>../eu.ddmore.converter.test</module>
+		<module>../eu.ddmore.converter.mdl</module>
+		<!-- TODO: Technically this is an optional converter module but for the Demonstrator 1.0 release
+			 we want this included in the SEE build -->
+		<module>../eu.ddmore.converter.pharmml_v03_nmtran_v72</module>
+	</modules>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/binary.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<id>binary</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+</project>

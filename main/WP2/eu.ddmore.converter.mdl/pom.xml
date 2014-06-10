@@ -6,11 +6,10 @@
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>0.0.4-SNAPSHOT</version>
+		<version>0.0.5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>converter-mdl</artifactId>
-
 
 	<properties>
 		<xtend.repo.url>http://build.eclipse.org/common/xtend/maven/</xtend.repo.url>
@@ -25,43 +24,8 @@
 		</repository>
 	</repositories>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
-
 	<dependencies>
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-toolbox-api</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
+		<!-- TODO: Remove this dependency! Should just depend on the API. --> 
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>converter-toolbox</artifactId>
@@ -81,4 +45,5 @@
 		</dependency>
 
 	</dependencies>
+	
 </project>

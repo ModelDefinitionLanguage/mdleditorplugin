@@ -4,84 +4,28 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>converter-pharmml_v03_nmtran_v72</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>Converter Provider for PharmML 0.3 to NMTRAN 7.2</name>
 	
 	<parent>
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>0.0.4-SNAPSHOT</version>
+		<version>0.0.5-SNAPSHOT</version>
 	</parent>
 
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
-	<repositories>
-		<repository>
-			<id>mango-artifactory</id>
-			<name>Mango Artifactory</name>
-			<url>http://artifactrepo.mango.local/artifactory/libs-releases</url>
-		</repository>
-		<!-- Note that this repository definition (and indeed the Mango one above) won't
-			 be used internally at Mango since the Maven settings.xml specifies that our
-			 Artifactory server is the universal mirror for all artifacts; but if this
-			 project is built by someone external to Mango then this would kick in. -->
-		<repository>
-			<id>ebi</id>
-			<name>European Bioinformatics Institute</name>
-			<url>http://www.ebi.ac.uk/~maven/m2repo</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>2.1.5</version>
-			<type>jar</type>
-		</dependency>
 
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-toolbox-api</artifactId>
-			<version>0.0.4-SNAPSHOT</version>
-		</dependency>
+		<!-- TODO: Remove this dependency! Should just depend on the API. -->
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>converter-toolbox</artifactId>
 			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>pharmacometrics-model</artifactId>
 			<version>0.0.3-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.ddmore.pharmml</groupId>
-			<artifactId>libPharmML</artifactId>
-			<version>0.3.1-b2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -100,12 +44,6 @@
 			<groupId>xml-resolver</groupId>
 			<artifactId>xml-resolver</artifactId>
 			<version>1.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>15.0</version>
 		</dependency>
 
 		<dependency>
@@ -152,7 +90,6 @@
 
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
 				<configuration>
 					<compilerId>groovy-eclipse-compiler</compilerId>
 				</configuration>
@@ -162,95 +99,16 @@
 						<artifactId>groovy-eclipse-compiler</artifactId>
 						<version>2.8.0-01</version>
 					</dependency>
-
 					<dependency>
 						<groupId>org.codehaus.groovy</groupId>
 						<artifactId>groovy-eclipse-batch</artifactId>
-
 						<version>2.1.8-01</version>
 					</dependency>
-
 				</dependencies>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-						    <!-- Don't replace the original JAR, attach the shaded JAR as an additional artifact -->
-							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>jar-with-dependencies</shadedClassifierName>
-							<artifactSet>
-								<includes>
-								</includes>
-								<excludes>
-								</excludes>
-							</artifactSet>
-							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<manifestEntries>
-										<Implementation-Version>${project.version} build ${env.BUILD_NUMBER}</Implementation-Version>
-										<Build-Branch>${env.GIT_BRANCH}</Build-Branch>
-										<Build-Revision>${env.GIT_COMMIT}</Build-Revision>
-									</manifestEntries>
-								</transformer>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-							</transformers>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                    	<!-- Prevent cruft from third party dependencies being included in the uber-JAR and confusing people looking at the contents of this JAR -->
-                                        <exclude>META-INF/LICENSE</exclude>
-                                        <exclude>META-INF/LICENSE.txt</exclude>
-                                        <exclude>META-INF/README</exclude>
-                                        <exclude>META-INF/README.txt</exclude>
-                                        <exclude>META-INF/NOTICE</exclude>
-                                        <exclude>META-INF/NOTICE.txt</exclude>
-                                        <exclude>LICENSE</exclude>
-                                        <exclude>LICENSE.txt</exclude>
-                                        <exclude>README</exclude>
-                                        <exclude>README.txt</exclude>
-                                        <exclude>NOTICE</exclude>
-                                        <exclude>NOTICE.txt</exclude>
-                                        <exclude>RELEASE-NOTES.txt</exclude>
-                                        <exclude>about.html</exclude>
-										<exclude>README.html</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.SF</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters> 
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/binary.xml</descriptor>
-							</descriptors>
-						</configuration>
-						<id>binary</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			
-
 		</plugins>
+		
 		<pluginManagement>
 			<plugins>
 				<plugin>

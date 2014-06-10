@@ -2,24 +2,91 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-parent</artifactId>
+	<version>0.0.5-SNAPSHOT</version>
+	<name>Parent POM for Converter modules</name>
 	<packaging>pom</packaging>
-	<version>0.0.4-SNAPSHOT</version>
-	<name>Converter Master</name>
-
-	<modules>
-		<module>../eu.ddmore.converter.toolbox.api</module>
-		<module>../eu.ddmore.converter.toolbox</module>
-		<module>../eu.ddmore.converter.test.mdl2nonmem.sucess</module>
-		<module>../eu.ddmore.converter.test.mdl2nonmem.failure</module>
-		<module>../eu.ddmore.converter.test.mdl2pharmml</module>
-		<module>../eu.ddmore.converter.test</module>
-		<module>../eu.ddmore.converter.mdl</module>
-	</modules>
+	
+	<repositories>
+		<repository>
+			<id>mango-artifactory</id>
+			<name>Mango Artifactory</name>
+			<url>http://artifactrepo.mango.local/artifactory/libs-releases</url>
+		</repository>
+		<!-- Note that this repository definition (and indeed the Mango one above) won't
+			 be used internally at Mango since the Maven settings.xml specifies that our
+			 Artifactory server is the universal mirror for all artifacts; but if this
+			 project is built by someone external to Mango then this would kick in. -->
+		<repository>
+			<id>ebi</id>
+			<name>European Bioinformatics Institute</name>
+			<url>http://www.ebi.ac.uk/~maven/m2repo</url>
+		</repository>
+	</repositories>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	
+	<dependencies>
+		<!-- These are the dependencies that are shared between the child projects -->
 
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>2.1.5</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>15.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>eu.ddmore.pharmml</groupId>
+			<artifactId>libPharmML</artifactId>
+			<version>0.3.1-b2</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>eu.ddmore</groupId>
+			<artifactId>converter-toolbox-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	
+	</dependencies>
+	
+	<build>
+	
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	
+	</build>
+	
 </project>

@@ -7,6 +7,26 @@
     <formats>
         <format>zip</format>
     </formats>
+   	<moduleSets>
+   		<moduleSet>
+   		<includes>
+   			<include>eu.ddmore:converter-toolbox:jar</include>
+   			<include>eu.ddmore:converter-mdl:jar</include>
+   			<include>eu.ddmore:converter-pharmml_v03_nmtran_v72:jar</include>
+		</includes>
+   		<binaries>
+            <outputDirectory>lib</outputDirectory>
+            <unpack>false</unpack>
+            <useStrictFiltering>true</useStrictFiltering>
+            <dependencySets>
+            	<dependencySet>
+            		<unpack>false</unpack>
+            	</dependencySet>
+            </dependencySets>
+   		</binaries>
+   		</moduleSet>
+   	</moduleSets>
+   	<!--
     <dependencySets>
         <dependencySet>
             <useStrictFiltering>true</useStrictFiltering>
@@ -14,10 +34,11 @@
             <outputDirectory>lib</outputDirectory>
             <unpack>false</unpack>
             <includes>
-                <include>eu.ddmore:converter-pharmml_v03_nmtran_v72:jar:jar-with-dependencies</include>
+                <include>eu.ddmore:converter-toolbox:jar:shaded</include>
             </includes>
         </dependencySet>
     </dependencySets>
+ 	-->
     <fileSets>
         <fileSet>
             <directory>src/main/scripts</directory>
