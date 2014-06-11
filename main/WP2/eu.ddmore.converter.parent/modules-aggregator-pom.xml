@@ -7,6 +7,14 @@
 	<packaging>pom</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Aggregator for Converter modules</name>
+	
+	<repositories>
+		<repository>
+			<id>mango-artifactory</id>
+			<name>Mango Artifactory</name>
+			<url>http://artifactrepo.mango.local/artifactory/libs-releases</url>
+		</repository>
+	</repositories>
 
 	<modules>
 		<!-- Note that these are just the 'core' converter modules;
