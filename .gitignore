@@ -36,6 +36,8 @@ build/
 # eclipse #
 bin/
 .settings
+.project
+.classpath
 
 
 #xtext, xtend
