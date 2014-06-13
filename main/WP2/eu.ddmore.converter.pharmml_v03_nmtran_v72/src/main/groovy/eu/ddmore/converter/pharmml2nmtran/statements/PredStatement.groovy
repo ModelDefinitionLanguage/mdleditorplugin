@@ -9,6 +9,7 @@ import java.util.Set;
 
 import eu.ddmore.converter.pharmml2nmtran.model.Theta;
 import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext;
+import eu.ddmore.converter.pharmml2nmtran.utils.ParameterVariableSortHelper
 import eu.ddmore.converter.pharmml2nmtran.utils.Parameters;
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType
@@ -305,12 +306,18 @@ class PredStatement extends NMTranFormatter {
     }
 
     def getIndividualsFromModel() {
-        StringBuilder ind = new StringBuilder();
-        pmlDOM.modelDefinition.parameterModel.each { ind << endline(getIndividualsFromModelType(it).toString()) }
-        ind
+		StringBuilder ind = new StringBuilder();
+		
+		ParameterVariableSortHelper paramSortHelper = new ParameterVariableSortHelper();
+		Map references = paramSortHelper.getParameterVariableRefs(pmlDOM.modelDefinition)
+		Map comparisonMap = paramSortHelper.arrangeParameterElements(references)
+		comparisonMap.each {k,v ->
+			ind << endline(getIndividualsFromModelType(v).toString())
+		}
+		ind
     }
 
-    private StringBuilder getIndividualsFromModelType(ParameterModelType parameterModelType) {
+    private StringBuilder getIndividualsFromModelType(JAXBElement elem) {
         StringBuilder ind = new StringBuilder();
 		
 		// DDMORE-702
@@ -319,16 +326,15 @@ class PredStatement extends NMTranFormatter {
 		// - go through each parameter that is created (i.e. on the lhs of an equation)
 		// - order each  the iterator such that creation happens before it is referenced in the rhs of an equation
 		// This needs an each with a fairly complex sorting algorithm
-        
-		for (JAXBElement elem in parameterModelType.commonParameterElement) {
+
             if (elem.value instanceof IndividualParameterType) {
                 ind = printIndividualParameter(elem, ind)
 			} else if (!parameters.isOmega(elem.value.symbId) && (elem.value instanceof SimpleParameterType) && elem.value.assign) {
                 ind = printSimpleParameter(elem, ind)
 			}
-		}
 		ind
 	}
+
 
 	private StringBuilder printIndividualParameter(JAXBElement elem, StringBuilder ind) {
 		IndividualParameterType individualParameterType = (IndividualParameterType) elem.value;

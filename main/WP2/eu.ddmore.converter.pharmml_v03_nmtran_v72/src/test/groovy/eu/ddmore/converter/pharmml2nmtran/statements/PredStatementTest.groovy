@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.Ignore;
 import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext
+import eu.ddmore.converter.pharmml2nmtran.utils.ParameterVariableSortHelper;
 import eu.ddmore.converter.pharmml2nmtran.utils.Parameters
 import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
