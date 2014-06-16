@@ -83,52 +83,52 @@ class MainTest {
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void convertDelbene() {
-        def conversionReport = performConversion('delbene.xml')
+        def conversionReport = performConversion('Delbene/delbene.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void convertDeWinter_JPP_2006() {
-        def conversionReport = performConversion('DeWinter_JPP_2006.xml')
+        def conversionReport = performConversion('DeWinter/DeWinter_JPP_2006.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void convertFriberg_SchizophreniaModel__ClinPharmcolTher_2009_fixAUC_v2() {
-        def conversionReport = performConversion('Friberg_SchizophreniaModel__ClinPharmcolTher_2009_fixAUC_v2.xml')
+        def conversionReport = performConversion('FribergSchizophreniaModel/Friberg_SchizophreniaModel__ClinPharmcolTher_2009_fixAUC_v2.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void convertHamren_CPT_2008() {
-        def conversionReport = performConversion('Hamren_CPT_2008.xml')
+        def conversionReport = performConversion('Hamren/Hamren_CPT_2008.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void convertLledo_JPP_2013() {
-        def conversionReport = performConversion('Lledo_JPP_2013.xml')
+        def conversionReport = performConversion('Lledo/Lledo_JPP_2013.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void convertRocchetti() {
-        def conversionReport = performConversion('rocchetti.xml')
+        def conversionReport = performConversion('Rocchetti/rocchetti.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void convertSimeoni() {
-        def conversionReport = performConversion('simeoni.xml')
+        def conversionReport = performConversion('Simeoni/simeoni.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
