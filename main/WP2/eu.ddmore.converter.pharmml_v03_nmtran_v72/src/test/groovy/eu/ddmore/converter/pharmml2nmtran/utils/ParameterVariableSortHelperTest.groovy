@@ -10,11 +10,11 @@ import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
 
 import org.apache.commons.io.FileUtils;
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR_v_0_3
 
 class ParameterVariableSortHelperTest {
 
-	private final String prolactinModel = TEST_DATA_DIR + "Friberg2009Prolactin/Friberg2009Prolactin_v20140523v14_NONMEM.xml"
+	private final String prolactinModel = TEST_DATA_DIR_v_0_3 + "Friberg2009Prolactin/Friberg2009Prolactin_v20140523v14_NONMEM.xml"
 
     @Test
     public void testArrangeParameterElements() {

@@ -14,7 +14,7 @@ import org.junit.Test;
 
 class MainTest {
 
-    private final static String TEST_DATA_DIR = "/eu/ddmore/testdata/models/pharmml/"
+    private final static String TEST_DATA_DIR_v_0_3 = "/eu/ddmore/testdata/models/pharmml/v0.3/"
     private final static String WORKING_DIR = "target/MainTest_Working_Dir/"
 
     private final PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
@@ -143,7 +143,7 @@ class MainTest {
 
     private File getFile(String relativePathToFile) {
 
-        final URL urlToFile = MainTest.class.getResource(TEST_DATA_DIR + relativePathToFile);
+        final URL urlToFile = MainTest.class.getResource(TEST_DATA_DIR_v_0_3 + relativePathToFile);
         File destFile = new File(WORKING_DIR + relativePathToFile)
         FileUtils.copyURLToFile(urlToFile, destFile);
 

@@ -26,14 +26,14 @@ import eu.ddmore.pharmacometrics.model.trialdesign.structure.Segment
 
 import org.apache.commons.io.FileUtils;
 
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR_v_0_3
 
 class TrialDesignLoaderExample3Test {
     TrialDesignLoader loader;
 
     @Before
     public void init() {
-        final URL urlToFile = TrialDesignLoaderExample3Test.class.getResource(TEST_DATA_DIR + "example3/example3.xml");
+        final URL urlToFile = TrialDesignLoaderExample3Test.class.getResource(TEST_DATA_DIR_v_0_3 + "example3/example3.xml");
         
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()

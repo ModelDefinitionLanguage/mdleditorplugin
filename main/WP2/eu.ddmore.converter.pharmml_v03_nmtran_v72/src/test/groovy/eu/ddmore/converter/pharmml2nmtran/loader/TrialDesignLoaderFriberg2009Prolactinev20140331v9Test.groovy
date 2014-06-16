@@ -1,6 +1,6 @@
 package eu.ddmore.converter.pharmml2nmtran.loader;
 
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR_v_0_3
 import static org.junit.Assert.*
 
 import org.junit.Before
@@ -16,7 +16,7 @@ class TrialDesignLoaderFriberg2009Prolactinev20140331v9Test {
 
     @Before
     public void init() {
-        final URL urlToFile = TrialDesignLoaderFriberg2009Prolactinev20140331v9Test.class.getResource(TEST_DATA_DIR + "Friberg2009Prolactin/Friberg2009Prolactinev20140331v9.xml");
+        final URL urlToFile = TrialDesignLoaderFriberg2009Prolactinev20140331v9Test.class.getResource(TEST_DATA_DIR_v_0_3 + "Friberg2009Prolactin/Friberg2009Prolactinev20140331v9.xml");
 
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
