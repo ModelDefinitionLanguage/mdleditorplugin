@@ -7,33 +7,38 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import eu.ddmore.convertertoolbox.api.conversion.ConversionListener;
 import eu.ddmore.convertertoolbox.api.domain.Version;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
-import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
-import eu.ddmore.convertertoolbox.cli.Main;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
 import eu.ddmore.convertertoolbox.spi.DummyMDLToNMTRAN;
 import eu.ddmore.convertertoolbox.spi.DummyMDLToNMTRANFailure;
 
-/**
- * Test for {@link Main}.
- */
+
 public class ConverterImplTest {
+
+    private static final String TEST_DATA_DIR = "/eu/ddmore/testdata/models/mdl/warfarin_PK_PRED/";
+    private static final String TEST_FILE = "warfarin_PK_PRED.mdl";
+    private static final String WORKING_DIR = "target/ConverterImplTest_Working_Dir/";
 
     private File pkPRED;
     private File outputDir;
 
     @Before
-    public void initialize() {
+    public void setUp() throws IOException {
         // Some file valid in source language.
-        pkPRED = new File(Thread.currentThread().getContextClassLoader().getResource("files/warfarin_PK_PRED.mdl").getPath());
+        FileUtils.copyInputStreamToFile(
+            ConverterImplTest.class.getResourceAsStream(TEST_DATA_DIR + TEST_FILE),
+            new File(WORKING_DIR, TEST_FILE));
+        pkPRED = new File(TEST_FILE);
         outputDir = pkPRED.getParentFile();
     }
 
@@ -74,7 +79,7 @@ public class ConverterImplTest {
             public void conversionComplete(ConversionReport report) {
                 assertEquals(ConversionCode.FAILURE, report.getReturnCode());
             }
-            
+
         };
         ConverterImpl converter = new ConverterImpl();
         converter.setProvider(new DummyMDLToNMTRANFailure());
@@ -89,4 +94,5 @@ public class ConverterImplTest {
         Version version = converter.getConverterVersion();
         assertEquals(expectedVersion, version);
     }
+
 }
