@@ -3,7 +3,6 @@ package eu.ddmore.converter.pharmml2nmtran.utils;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import eu.ddmore.converter.pharmml2nmtran.model.Sigma
 import eu.ddmore.libpharmml.PharmMlFactory

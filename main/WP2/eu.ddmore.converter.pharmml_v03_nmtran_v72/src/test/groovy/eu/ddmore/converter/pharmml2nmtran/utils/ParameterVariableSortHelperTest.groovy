@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import eu.ddmore.libpharmml.dom.PharmML
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import eu.ddmore.libpharmml.PharmMlFactory
