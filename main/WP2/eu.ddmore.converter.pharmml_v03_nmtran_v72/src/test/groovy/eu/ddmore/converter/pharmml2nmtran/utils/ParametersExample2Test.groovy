@@ -8,7 +8,7 @@ import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
 import org.apache.commons.io.FileUtils;
 
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.PATH
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
 
 class ParametersExample2Test {
     Parameters parameters
@@ -16,8 +16,7 @@ class ParametersExample2Test {
     @Before
     public void init() {
         
-        // TODO: Move the data to models project and reference from TEST_DATA_DIR base directory
-        final URL urlToFile = ParametersExample4Test.class.getResource("/0.3/example2.xml");
+        final URL urlToFile = ParametersExample2Test.class.getResource(TEST_DATA_DIR + "example2/example2.xml");
         
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()

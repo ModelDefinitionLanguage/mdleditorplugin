@@ -35,21 +35,21 @@ class MainTest {
     @Ignore
     @Test
     public void convertExample1() {
-        def conversionReport = performConversion('example1.xml')
+        def conversionReport = performConversion('example1/example1.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
     @Ignore
     @Test
     public void convertExample2() {
-        def conversionReport = performConversion('example2.xml')
+        def conversionReport = performConversion('example2/example2.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
     @Ignore
     @Test
     public void convertExample4() {
-        def conversionReport = performConversion('example4.xml')
+        def conversionReport = performConversion('example4/example4.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 

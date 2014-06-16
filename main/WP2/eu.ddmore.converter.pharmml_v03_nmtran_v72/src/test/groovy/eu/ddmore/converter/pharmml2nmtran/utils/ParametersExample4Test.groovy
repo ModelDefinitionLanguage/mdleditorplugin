@@ -16,8 +16,7 @@ class ParametersExample4Test {
     @Before
     public void init() {
         
-        // TODO: Move the data to models project and reference from TEST_DATA_DIR base directory
-        final URL urlToFile = ParametersExample4Test.class.getResource("/0.3/example4.xml");
+        final URL urlToFile = ParametersExample4Test.class.getResource(TEST_DATA_DIR + "example4/example4.xml");
         
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()

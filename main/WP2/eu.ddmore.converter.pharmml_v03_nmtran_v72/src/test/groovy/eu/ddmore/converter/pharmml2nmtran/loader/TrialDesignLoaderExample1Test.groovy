@@ -33,8 +33,7 @@ class TrialDesignLoaderExample1Test {
     @Before
     public void init() {
 
-        // TODO: Move the data to models project and reference from TEST_DATA_DIR base directory
-        final URL urlToFile = TrialDesignLoaderExample1Test.class.getResource("/0.3/example1.xml");
+        final URL urlToFile = TrialDesignLoaderExample1Test.class.getResource(TEST_DATA_DIR + "/example1/example1.xml");
 
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
