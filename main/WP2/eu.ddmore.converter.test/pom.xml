@@ -41,7 +41,13 @@
 		</plugins>
 	</build>
 
-	<dependencies>
+    <dependencies>
+	
+        <dependency>
+            <groupId>eu.ddmore.testdata</groupId>
+            <artifactId>models</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 	
 		<dependency>
 			<groupId>eu.ddmore</groupId>
