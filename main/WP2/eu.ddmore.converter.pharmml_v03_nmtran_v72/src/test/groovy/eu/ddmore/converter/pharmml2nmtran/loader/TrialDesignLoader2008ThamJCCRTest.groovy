@@ -24,19 +24,19 @@ import eu.ddmore.pharmacometrics.model.trialdesign.structure.DosingTimesSequence
 import eu.ddmore.pharmacometrics.model.trialdesign.structure.Epoch
 import eu.ddmore.pharmacometrics.model.trialdesign.structure.Segment
 
-
 import org.apache.commons.io.FileUtils;
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.PATH
+
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
 
 class TrialDesignLoader2008ThamJCCRTest {
     TrialDesignLoader loader;
 
     @Before
     public void init() {
-        File src = new File(Thread.currentThread().getContextClassLoader().getResource(PATH +'2008ThamJCCR.xml').getPath());
+        final URL urlToFile = TrialDesignLoader2008ThamJCCRTest.class.getResource(TEST_DATA_DIR + "2008ThamCCR/2008ThamJCCR.xml");
+
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
-        def is = FileUtils.openInputStream(src)
-        def pmlDOM = pmlAPI.createDomFromResource(is).getDom()
+        def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
         loader = new TrialDesignLoader("trialDesign":pmlDOM.trialDesign)
         loader.load()
     }
@@ -60,5 +60,4 @@ class TrialDesignLoader2008ThamJCCRTest {
         expected.add(epoch)
         assertEquals(expected, loader.structure.getEpochs())
     }
-
 }

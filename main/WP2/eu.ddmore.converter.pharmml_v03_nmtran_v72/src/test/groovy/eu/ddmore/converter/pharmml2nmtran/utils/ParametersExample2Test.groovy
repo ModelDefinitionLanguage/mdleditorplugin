@@ -15,10 +15,12 @@ class ParametersExample2Test {
     
     @Before
     public void init() {
-        File src = new File(Thread.currentThread().getContextClassLoader().getResource(PATH +'example2.xml').getPath());
+        
+        // TODO: Move the data to models project and reference from TEST_DATA_DIR base directory
+        final URL urlToFile = ParametersExample4Test.class.getResource("/0.3/example2.xml");
+        
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
-        def is = FileUtils.openInputStream(src)
-        def pmlDOM = pmlAPI.createDomFromResource(is).getDom()
+        def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
         parameters = new Parameters(pmlDOM)
         parameters.init()
     }

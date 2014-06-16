@@ -10,25 +10,25 @@ import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
 import org.apache.commons.io.FileUtils;
 
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.PATH
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
 
 class ParametersExample5Test {
     Parameters parameters
-    
+
     @Before
     public void init() {
-        File src = new File(Thread.currentThread().getContextClassLoader().getResource(PATH +'example5.xml').getPath());
+        final URL urlToFile = Parameters2008ThamJCCRTest.class.getResource(TEST_DATA_DIR + "example5/example5.xml");
+
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
-        def is = FileUtils.openInputStream(src)
-        def pmlDOM = pmlAPI.createDomFromResource(is).getDom()
+        def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
         parameters = new Parameters(pmlDOM)
         parameters.init()
     }
-    
+
     @Test
     public void testThetas() {
         Set<String> expected = new HashSet<String>()
-        
+
         expected.add("C0")
         expected.add("pop_P0")
         expected.add("pop_Q0")
@@ -61,7 +61,7 @@ class ParametersExample5Test {
         Set<String> expected = new HashSet<String>()
         assertEquals(expected, parameters.sigmas.keySet())
     }
-    
+
     @Test
     public void testEtas() {
         Set<String> expected = new HashSet<String>()
@@ -75,7 +75,7 @@ class ParametersExample5Test {
         expected.add("eta_LAMBDAP")
         assertEquals(expected, parameters.etas)
     }
-    
+
     @Test
     public void testGroups() {
         Set<String> expected = new HashSet<String>()
@@ -108,5 +108,4 @@ class ParametersExample5Test {
         expected.put("eta_LAMBDAP", "omega_LAMBDAP")
         assertEquals(expected, parameters.etaToOmega)
     }
-
 }

@@ -25,17 +25,19 @@ import eu.ddmore.pharmacometrics.model.trialdesign.structure.Segment
 
 
 import org.apache.commons.io.FileUtils;
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.PATH
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
 
 class TrialDesignLoaderExample2Test {
     TrialDesignLoader loader;
 
     @Before
     public void init() {
-        File src = new File(Thread.currentThread().getContextClassLoader().getResource(PATH +'example2.xml').getPath());
+
+        // TODO: Move the data to models project and reference from TEST_DATA_DIR base directory
+        final URL urlToFile = TrialDesignLoaderExample2Test.class.getResource("/0.3/example2.xml");
+
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
-        def is = FileUtils.openInputStream(src)
-        def pmlDOM = pmlAPI.createDomFromResource(is).getDom()
+        def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
         loader = new TrialDesignLoader("trialDesign":pmlDOM.trialDesign)
         loader.load()
     }
@@ -63,7 +65,7 @@ class TrialDesignLoaderExample2Test {
     @Test
     public void testCells() {
         Epoch e1 = new Epoch("start":0, "end":12)
-        
+
         DosingTimes steadyState = new DosingTimesSequence(0, 12, 0)
         Expression doseAmount1 = new Constant(100.0)
         Bolus d1 = new Bolus(doseAmount1, steadyState, false)
@@ -88,21 +90,21 @@ class TrialDesignLoaderExample2Test {
             assertSegments(expected[i++].segments, cell.segments)
         }
     }
-    
+
     private void assertSegments(List<Segment> expected, List<Segment> found) {
         assertEquals(expected.size(), found.size());
         for (int i=0; i<expected.size(); i++) {
             assertSegment(expected[i], found[i]);
         }
     }
-    
+
     private void assertSegment(Segment expected, Segment found) {
         assertEquals(expected.activities.size(), found.activities.size());
         for (int i=0; i<expected.activities.size(); i++) {
             assertActivity(expected.activities[i], found.activities[i]);
         }
     }
-    
+
     private void assertActivity(Bolus expected, Bolus found) {
         assertEquals(expected.dosingTimes, found.dosingTimes)
         assertEquals(expected.doseAmount, found.doseAmount)
