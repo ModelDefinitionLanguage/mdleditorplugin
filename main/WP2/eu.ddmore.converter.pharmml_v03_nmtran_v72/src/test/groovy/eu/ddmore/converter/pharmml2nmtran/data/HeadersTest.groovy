@@ -1,6 +1,6 @@
 package eu.ddmore.converter.pharmml2nmtran.data;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
 import java.io.File;
 
@@ -11,7 +11,8 @@ import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
 import org.apache.commons.io.FileUtils;
 
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR_v_0_3
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.V_0_3_SUBDIR
 
 class HeadersTest {
 
@@ -65,10 +66,10 @@ class HeadersTest {
         headers.add("EVID")
         assertEquals(headers, dataStatement.getHeaders())
     }
-    
+
     private File getFile(String relativePathToFile) {
-        
-        final URL urlToFile = HeadersTest.class.getResource(TEST_DATA_DIR_v_0_3 + relativePathToFile);
+
+        final URL urlToFile = HeadersTest.class.getResource(TEST_DATA_DIR + V_0_3_SUBDIR + relativePathToFile);
         File destFile = new File(WORKING_DIR + relativePathToFile)
         FileUtils.copyURLToFile(urlToFile, destFile);
 

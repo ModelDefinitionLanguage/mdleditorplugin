@@ -1,6 +1,6 @@
 package eu.ddmore.converter.pharmml2nmtran.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,8 @@ import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
 import org.apache.commons.io.FileUtils;
 
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR_v_0_3
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.V_0_3_SUBDIR
 
 
 class Parameters2008ThamJCCRTest {
@@ -17,7 +18,7 @@ class Parameters2008ThamJCCRTest {
 
     @Before
     public void init() {
-        final URL urlToFile = Parameters2008ThamJCCRTest.class.getResource(TEST_DATA_DIR_v_0_3 + "2008ThamCCR/2008ThamJCCR.xml");
+        final URL urlToFile = Parameters2008ThamJCCRTest.class.getResource(TEST_DATA_DIR + V_0_3_SUBDIR + "2008ThamCCR/2008ThamJCCR.xml");
 
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()

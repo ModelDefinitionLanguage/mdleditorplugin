@@ -11,12 +11,14 @@ import eu.ddmore.libpharmml.dom.PharmML
 
 import org.apache.commons.io.FileUtils;
 
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR_v_0_3
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.V_0_3_SUBDIR
+
 import static eu.ddmore.converter.pharmml2nmtran.statements.NMTranFormatter.PREFIX
 
 public class PredStatementTest {
 
-    private final String prolactinModel = TEST_DATA_DIR_v_0_3 + "Friberg2009Prolactin/Friberg2009Prolactin_v20140523v14_NONMEM.xml"
+    private final String prolactinModel = TEST_DATA_DIR + V_0_3_SUBDIR + "Friberg2009Prolactin/Friberg2009Prolactin_v20140523v14_NONMEM.xml"
 
     @Test
     public void testSimpleAssignedParameters() {

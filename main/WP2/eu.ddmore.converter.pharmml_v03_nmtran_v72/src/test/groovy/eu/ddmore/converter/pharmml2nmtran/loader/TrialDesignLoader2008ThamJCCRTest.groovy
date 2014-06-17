@@ -1,6 +1,6 @@
 package eu.ddmore.converter.pharmml2nmtran.loader;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
 import java.util.List;
 
@@ -25,14 +25,15 @@ import eu.ddmore.pharmacometrics.model.trialdesign.structure.Segment
 
 import org.apache.commons.io.FileUtils;
 
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR_v_0_3
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.V_0_3_SUBDIR
 
 class TrialDesignLoader2008ThamJCCRTest {
     TrialDesignLoader loader;
 
     @Before
     public void init() {
-        final URL urlToFile = TrialDesignLoader2008ThamJCCRTest.class.getResource(TEST_DATA_DIR_v_0_3 + "2008ThamCCR/2008ThamJCCR.xml");
+        final URL urlToFile = TrialDesignLoader2008ThamJCCRTest.class.getResource(TEST_DATA_DIR + V_0_3_SUBDIR + "2008ThamCCR/2008ThamJCCR.xml");
 
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()

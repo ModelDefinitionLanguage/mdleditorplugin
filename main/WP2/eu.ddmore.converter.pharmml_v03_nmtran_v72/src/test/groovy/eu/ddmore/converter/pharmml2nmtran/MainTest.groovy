@@ -14,9 +14,9 @@ import org.junit.Test;
 
 class MainTest {
 
-    private final static String TEST_DATA_DIR = "/eu/ddmore/testdata/models/pharmml/"
-    private final static String WORKING_DIR = "target/MainTest_Working_Dir/"
-    private final static String V_0_3_SUBDIR = "v0.3/"
+    final static String TEST_DATA_DIR = "/eu/ddmore/testdata/models/pharmml/"
+    final static String WORKING_DIR = "target/MainTest_Working_Dir/"
+    final static String V_0_3_SUBDIR = "v0.3/"
 
     private final PharmMLToNMTRANConverter converter = new PharmMLToNMTRANConverter();
 

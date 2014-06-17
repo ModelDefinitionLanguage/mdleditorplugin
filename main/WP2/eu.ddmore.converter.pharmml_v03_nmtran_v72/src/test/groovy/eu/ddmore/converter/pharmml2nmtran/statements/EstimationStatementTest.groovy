@@ -1,6 +1,6 @@
 package eu.ddmore.converter.pharmml2nmtran.statements;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
 import org.junit.Test;
 import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext
@@ -8,14 +8,15 @@ import eu.ddmore.libpharmml.PharmMlFactory
 import eu.ddmore.libpharmml.dom.PharmML
 
 import org.apache.commons.io.FileUtils;
-import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR_v_0_3
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.TEST_DATA_DIR
+import static eu.ddmore.converter.pharmml2nmtran.MainTest.V_0_3_SUBDIR
 
 
 class EstimationStatementTest {
 
     @Test
     public void testExample3() {
-        final URL urlToFile = EstimationStatementTest.class.getResource(TEST_DATA_DIR_v_0_3 + "example3/example3.xml");
+        final URL urlToFile = EstimationStatementTest.class.getResource(TEST_DATA_DIR + V_0_3_SUBDIR + "example3/example3.xml");
 
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
@@ -26,7 +27,7 @@ class EstimationStatementTest {
 
     @Test
     public void testExample5() {
-        final URL urlToFile = EstimationStatementTest.class.getResource(TEST_DATA_DIR_v_0_3 + "example5/example5.xml");
+        final URL urlToFile = EstimationStatementTest.class.getResource(TEST_DATA_DIR + V_0_3_SUBDIR + "example5/example5.xml");
 
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
