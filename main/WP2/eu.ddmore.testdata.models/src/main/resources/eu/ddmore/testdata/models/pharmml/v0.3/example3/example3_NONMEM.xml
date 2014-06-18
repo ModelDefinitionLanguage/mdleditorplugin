@@ -8,10 +8,12 @@
     xmlns:mdef="http://www.pharmml.org/2013/03/ModelDefinition"
     xmlns:mstep="http://www.pharmml.org/2013/03/ModellingSteps"
     xmlns:mml="http://www.pharmml.org/2013/03/PharmML"
-    writtenVersion="0.3">
+    writtenVersion="0.3" id="i1">
     
+    <!-- MODEL NAME -->
     <ct:Name>Example 3 - basic Warfarin PK estimation with covariate W - with NONMEM dataset</ct:Name>
     
+    <!-- INDEPENDENT VARIABLE -->
     <IndependentVariable symbId="t"/>
     
     <!-- FUNCTION DEFINITION -->
@@ -40,9 +42,11 @@
         <VariabilityModel blkId="randEffect" type="parameterVariability">
             <Level symbId="indiv"/>
         </VariabilityModel>
+        
         <VariabilityModel blkId="resErr" type="residualError">
             <Level symbId="residual"/>
         </VariabilityModel>
+        
         
         <!-- COVARIATE MODEL -->
         <CovariateModel blkId="cm1">
@@ -50,12 +54,18 @@
                 <Continuous>
                     <Transformation>
                         <math:Equation>
-                            <ct:SymbRef symbIdRef="W"/>
+                            <math:Uniop op="log">
+                                <math:Binop op="divide">
+                                    <ct:SymbRef symbIdRef="W"/>
+                                    <ct:Real>70</ct:Real>
+                                </math:Binop>
+                            </math:Uniop>
                         </math:Equation>
                     </Transformation>
                 </Continuous>
             </Covariate>
         </CovariateModel>
+        
         
         <!-- PARAMETER MODEL -->
         <ParameterModel blkId="pm1">
@@ -63,21 +73,18 @@
             <SimpleParameter symbId="omega_Tlag"/>
             <SimpleParameter symbId="pop_ka"/>
             <SimpleParameter symbId="omega_ka"/>
-            <SimpleParameter symbId="pop_Tlag"/>
-            <SimpleParameter symbId="omega_Tlag"/>
             <SimpleParameter symbId="pop_V"/>
             <SimpleParameter symbId="omega_V"/>
             <SimpleParameter symbId="beta_V"/>
             <SimpleParameter symbId="pop_CL"/>
             <SimpleParameter symbId="omega_CL"/>
             <SimpleParameter symbId="beta_CL"/>
-            
             <!-- Tlag -->
             <RandomVariable symbId="eta_Tlag">
                 <ct:VariabilityReference>
                     <ct:SymbRef blkIdRef="randEffect" symbIdRef="indiv"/>
                 </ct:VariabilityReference>
-                <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="0.1">
+                <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
                     <mean>
                         <rVal>0</rVal></mean>
                     <stddev>
@@ -100,13 +107,12 @@
                     </RandomEffects>
                 </GaussianModel>
             </IndividualParameter>
-            
             <!-- ka -->
             <RandomVariable symbId="eta_ka">
                 <ct:VariabilityReference>
                     <ct:SymbRef blkIdRef="randEffect" symbIdRef="indiv"/>
                 </ct:VariabilityReference>
-                <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="0.1">
+                <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
                     <mean>
                         <rVal>0</rVal></mean>
                     <stddev>
@@ -129,13 +135,12 @@
                     </RandomEffects>
                 </GaussianModel>
             </IndividualParameter>
-            
             <!-- V -->
             <RandomVariable symbId="eta_V">
                 <ct:VariabilityReference>
                     <ct:SymbRef blkIdRef="randEffect" symbIdRef="indiv"/>
                 </ct:VariabilityReference>
-                <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="0.1">
+                <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
                     <mean>
                         <rVal>0</rVal></mean>
                     <stddev>
@@ -164,13 +169,12 @@
                     </RandomEffects>
                 </GaussianModel>
             </IndividualParameter>
-            
             <!-- CL -->
             <RandomVariable symbId="eta_CL">
                 <ct:VariabilityReference>
                     <ct:SymbRef blkIdRef="randEffect" symbIdRef="indiv"/>
                 </ct:VariabilityReference>
-                <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="0.1">
+                <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
                     <mean>
                         <rVal>0</rVal></mean>
                     <stddev>
@@ -293,11 +297,12 @@
         <ObservationModel blkId="om1">
             <SimpleParameter symbId="a"/>
             <SimpleParameter symbId="b"/>
+            <SimpleParameter symbId="sigma"/>
             <RandomVariable symbId="epsilon_C">
                 <ct:VariabilityReference>
                     <ct:SymbRef blkIdRef="resErr" symbIdRef="residual"/>
                 </ct:VariabilityReference>
-                <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="0.1">
+                <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
                     <mean>
                         <rVal>0</rVal>
                     </mean>
@@ -306,7 +311,7 @@
                     </stddev>
                 </NormalDistribution>
             </RandomVariable>
-            <Standard symbId="C">
+            <Standard symbId="C_obs">
                 <Output>
                     <ct:SymbRef symbIdRef="C"/>
                 </Output>
@@ -346,7 +351,7 @@
             </ColumnMapping>
             <ColumnMapping>
                 <ds:ColumnRef columnIdRef="dv"/>
-                <ct:SymbRef blkIdRef="om1" symbIdRef="Cc"/>
+                <ct:SymbRef blkIdRef="om1" symbIdRef="C_obs"/>
             </ColumnMapping>
             <ColumnMapping>
                 <ds:ColumnRef columnIdRef="wt"/>
@@ -367,7 +372,7 @@
                 </ds:Definition>
                 <ds:ImportData oid="id1">
                     <ds:name>warfarin_conc_pca</ds:name>
-                    <ds:url>file:///../examples_0_2_2/datasets/</ds:url>
+                    <ds:url>../data/warfarin_conc_pca.csv</ds:url>
                     <ds:format>CSV</ds:format>
                     <ds:delimiter>COMMA</ds:delimiter>
                 </ds:ImportData>
@@ -397,6 +402,12 @@
                         <ct:Real>1</ct:Real>
                     </InitialEstimate>
                 </ParameterEstimation>
+                <ParameterEstimation>
+                    <ct:SymbRef blkIdRef="pm1" symbIdRef="beta_V"/>
+                    <mstep:InitialEstimate fixed="false">
+                        <ct:Real>1</ct:Real>
+                    </mstep:InitialEstimate>
+                </ParameterEstimation>
                 <!-- CL -->
                 <ParameterEstimation>
                     <ct:SymbRef blkIdRef="pm1" symbIdRef="pop_CL"/>
@@ -406,6 +417,12 @@
                 </ParameterEstimation>
                 <ParameterEstimation>
                     <ct:SymbRef blkIdRef="pm1" symbIdRef="omega_CL"/>
+                    <mstep:InitialEstimate fixed="false">
+                        <ct:Real>1</ct:Real>
+                    </mstep:InitialEstimate>
+                </ParameterEstimation>
+                <ParameterEstimation>
+                    <ct:SymbRef blkIdRef="pm1" symbIdRef="beta_CL"/>
                     <mstep:InitialEstimate fixed="false">
                         <ct:Real>1</ct:Real>
                     </mstep:InitialEstimate>
@@ -449,7 +466,15 @@
                     <mstep:InitialEstimate fixed="false">
                         <ct:Real>1</ct:Real>
                     </mstep:InitialEstimate>
-                </ParameterEstimation>                
+                </ParameterEstimation>
+                <!-- sigma -->
+                <ParameterEstimation>
+                    <ct:SymbRef blkIdRef="om1" symbIdRef="sigma"/>
+                    <mstep:InitialEstimate fixed="false">
+                        <ct:Real>1</ct:Real>
+                    </mstep:InitialEstimate>
+                </ParameterEstimation>
+                
             </ParametersToEstimate>
             
             <!-- OPERATION -->
