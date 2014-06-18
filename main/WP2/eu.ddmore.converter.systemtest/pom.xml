@@ -77,9 +77,8 @@ Note that the generated output models aren't verified in terms of content, just 
 							<artifactItems>
 								<artifactItem>
 						            <groupId>eu.ddmore</groupId>
-						            <artifactId>converter-modules-aggregator</artifactId>
+						            <artifactId>converter-toolbox-bundle</artifactId>
 						            <version>${converter.toolbox.version}</version>
-						            <classifier>binary</classifier>
 									<type>zip</type>
 									<outputDirectory>${project.build.directory}</outputDirectory>
 								</artifactItem>

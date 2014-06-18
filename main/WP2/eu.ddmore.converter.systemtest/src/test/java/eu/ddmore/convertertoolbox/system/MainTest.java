@@ -38,7 +38,7 @@ public class MainTest {
     
     final static String PARENT_WORKING_DIR = "target/WorkingDir";
     
-    final static String CONVERTER_TOOLBOX_EXECUTABLE = "target/converter-modules-aggregator-0.0.1-SNAPSHOT/convert.bat";
+    final static String CONVERTER_TOOLBOX_EXECUTABLE = "target/converter-toolbox-bundle-0.0.1-SNAPSHOT/convert.bat";
     
     // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes
     final static int FILE_SIZE_THRESHOLD = 50;
