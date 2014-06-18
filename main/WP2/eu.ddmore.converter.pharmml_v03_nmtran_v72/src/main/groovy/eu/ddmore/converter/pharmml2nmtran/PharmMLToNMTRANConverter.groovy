@@ -46,7 +46,7 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
     public ConversionReport performConvert(File src, File outputDirectory) throws IOException {
         String outputFileName = computeOutputFileName(src.getName())
 
-        File outputFile = new File(outputDirectory.getAbsolutePath() +'/'+ outputFileName);
+        File outputFile = new File(outputDirectory.getAbsolutePath() + File.separator + outputFileName);
 
         def is = FileUtils.openInputStream(src)
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
@@ -79,8 +79,8 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
         nmtran.append(conversionContext.getProblemStatement())
         nmtran.append('\n')
         if (pmlDOM.modellingSteps) {
-            DataStatement dataStatement = new DataStatement(pmlDOM, outputDirectory.getAbsolutePath()+'/'+ src.getName().replace(".xml", ""))
-            String dataFilePointer = dataStatement.createDataFile()
+            DataStatement dataStatement = new DataStatement(pmlDOM, outputDirectory.getAbsolutePath() + File.separator + src.getName().replace(".xml", ""))
+			String dataFilePointer = dataStatement.statement
             List<String> headers = dataStatement.getHeaders()
             nmtran.append(conversionContext.getInputStatement(headers))
 
