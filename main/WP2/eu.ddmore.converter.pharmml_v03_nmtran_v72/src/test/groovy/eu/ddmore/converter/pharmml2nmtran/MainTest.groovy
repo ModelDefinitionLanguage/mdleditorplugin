@@ -138,6 +138,41 @@ class MainTest {
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
+	@Test
+	public void shouldComputeCorrectOutputNameRegularExtension() {
+		def computedName = converter.computeOutputFileName("testModel1.xml")
+		assertEquals("Correct output name should be computed.", "testModel1.ctl", computedName)
+	}
+
+	@Test
+	public void shouldComputeCorrectOutputNameNoExtension() {
+		def computedName = converter.computeOutputFileName("testModel2")
+		assertEquals("Correct output name should be computed.", "testModel2.ctl", computedName)
+	}
+
+	@Test
+	public void shouldComputeCorrectOutputNameMultipleDotsRegularExtension() {
+		def computedName = converter.computeOutputFileName("test.Model.3.xml")
+		assertEquals("Correct output name should be computed.", "test.Model.3.ctl", computedName)
+	}
+
+	@Test
+	public void shouldComputeCorrectOutputNameMultipleDotsNoExtension() {
+		def computedName = converter.computeOutputFileName("test.Model.4")
+		assertEquals("Correct output name should be computed.", "test.Model.4.ctl", computedName)
+	}
+
+	@Test
+	public void shouldComputeCorrectOutputNameMultipleDotsMultipleUsesOfExtension() {
+		def computedName = converter.computeOutputFileName("test.Model.xml.5.xml")
+		assertEquals("Correct output name should be computed.", "test.Model.xml.5.ctl", computedName)
+	}
+
+		@Test
+	public void shouldComputeCorrectOutputNameDifferentExtension() {
+		def computedName = converter.computeOutputFileName("testModel6.mod")
+		assertEquals("Correct output name should be computed.", "testModel6.mod.ctl", computedName)
+	}
 
     private ConversionReport performConversion_v_0_3(String fileToConvert, String ... dataFiles) {
         File srcFile = getFile(fileToConvert, V_0_3_SUBDIR)
@@ -155,5 +190,4 @@ class MainTest {
 
         return destFile
     }
-
 }
