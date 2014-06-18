@@ -38,10 +38,14 @@
 				<version>2.2</version>
 				<executions>
 					<execution>
+                        <!-- What is the purpose of the shaded jar? The converter-parent modules-aggregator-pom builds the assembly zip now.
+                             Probably reinstate this once converters have their own classpaths in which case each converter would be a
+                             shaded JAR and this converter toolbox itself would be a shaded JAR.
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
 						</goals>
+						-->
 						<configuration>
 						    <!-- Don't replace the original JAR, attach the shaded JAR as an additional artifact -->
 							<shadedArtifactAttached>true</shadedArtifactAttached>
