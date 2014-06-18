@@ -418,7 +418,7 @@
                 </ds:Definition>
                 <ds:ImportData oid="sd">
                     <ds:name>dsd</ds:name>
-                    <ds:url>ds</ds:url>
+                    <ds:url>dsd</ds:url>
                     <ds:format>CSV</ds:format>
                     <ds:delimiter>COMMA</ds:delimiter>
                 </ds:ImportData>
@@ -429,8 +429,7 @@
             <TargetToolName>dasd</TargetToolName>
             <ds:TargetToolData>
                 <ds:ImportTargetData oid="sdd">
-                    <ds:name>dsds</ds:name>
-                    <ds:url>sadas</ds:url>
+                    <ds:path>dsds.csv</ds:path>
                 </ds:ImportTargetData>
             </ds:TargetToolData>
         </TargetTool>
@@ -551,14 +550,14 @@
                     <mstep:InitialEstimate fixed="false">
                         <ct:Real>1</ct:Real>
                     </mstep:InitialEstimate>
-                </ParameterEstimation>               
+                </ParameterEstimation>
                 <!-- sigma -->
                 <ParameterEstimation>
                     <ct:SymbRef blkIdRef="om1" symbIdRef="sigma"/>
                     <mstep:InitialEstimate fixed="false">
                         <ct:Real>1</ct:Real>
                     </mstep:InitialEstimate>
-                </ParameterEstimation>                
+                </ParameterEstimation>
                 
             </ParametersToEstimate>
             

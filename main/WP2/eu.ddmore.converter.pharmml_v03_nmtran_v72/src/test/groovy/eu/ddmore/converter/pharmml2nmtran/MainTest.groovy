@@ -32,6 +32,12 @@ class MainTest {
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
+	@Test
+	public void convertExample3_NONMEM() {
+		def conversionReport = performConversion_v_0_3('example3/example3_NONMEM.xml')
+		assertNotNull("ConversionReport should not be null", conversionReport)
+	}
+
     @Ignore
     @Test
     public void convertExample1() {
@@ -143,8 +149,8 @@ class MainTest {
 
     private File getFile(final String relativePathToFile, final String versionSubDirectory) {
 
-        final URL urlToFile = MainTest.class.getResource(TEST_DATA_DIR + V_0_3_SUBDIR + relativePathToFile)
-        File destFile = new File(WORKING_DIR + V_0_3_SUBDIR + relativePathToFile)
+        final URL urlToFile = MainTest.class.getResource(TEST_DATA_DIR + versionSubDirectory + relativePathToFile)
+        File destFile = new File(WORKING_DIR + versionSubDirectory + relativePathToFile)
         FileUtils.copyURLToFile(urlToFile, destFile)
 
         return destFile

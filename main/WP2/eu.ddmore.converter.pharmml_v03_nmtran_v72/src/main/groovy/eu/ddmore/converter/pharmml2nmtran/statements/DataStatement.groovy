@@ -3,7 +3,6 @@
  ******************************************************************************/
 package eu.ddmore.converter.pharmml2nmtran.statements
 
-import java.sql.ResultSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,25 +38,22 @@ import eu.ddmore.pharmacometrics.model.trialdesign.structure.Structure
 
 class DataStatement extends NMTranFormatter {
 
-    private PharmML pmlDOM
-    private String outputPath
-    private Structure structure = new Structure()
+	private static final String DATA_FILE_NAME_SUFFIX = "_data.csv"
+
+    private final PharmML pmlDOM
+    private final String dataFileNamePathAndPrefix
+
+    private Structure structure
     private ModellingSteps modellingSteps
     private File file
-	private String filePathAndName
+	private String fileName
     private TextFileWriter textWriter = new TextFileWriter();
     private List<String> headers
 
-    public DataStatement(PharmML pmlDOM, String outputPath) {
+    public DataStatement(PharmML pmlDOM, String dataFileNamePathAndPrefix) {
         this.pmlDOM = pmlDOM
-        this.outputPath = outputPath
+        this.dataFileNamePathAndPrefix = dataFileNamePathAndPrefix
 
-		if (pmlDOM.trialDesign) {
-			TrialDesignLoader trialDesignloader = new TrialDesignLoader("trialDesign":pmlDOM.trialDesign)
-			trialDesignloader.load()
-			structure = trialDesignloader.structure
-		}
-		
         ModellingStepsLoader modellingStepsLoader = new ModellingStepsLoader(pmlDOM.modellingSteps)
         modellingStepsLoader.load()
         modellingSteps = modellingStepsLoader.modellingSteps
@@ -67,28 +63,32 @@ class DataStatement extends NMTranFormatter {
 		if (ods) {
 			// use objective data set
 			computeEstimationHeaders(ods.dataSet)
-			filePathAndName = outputPath + "_data.csv"
+			fileName = getBaseFileName(dataFileNamePathAndPrefix) + DATA_FILE_NAME_SUFFIX
+			composeData()
 		} else {
 			// use NONMEM data set
-			DataSet dataSet = modellingSteps.nonmemDataSets[0].dataSet
+			DataSet dataSet = getNonmemDataSet()
 			computeEstimationHeaders(dataSet)
 
 			/*
 			 * The use of the <url> property here is temporary until PharmML
 			 * 0.3.1 is released.  From 0.3.1 it will be called <path>
 			 */
-			filePathAndName = dataSet.importData.url
+			fileName = getBaseFileName(dataSet.importData.url)
 		}
     }
 
-    public String createDataFile() {
-        composeData()
-        "\$DATA $filePathAndName IGNORE=@\n"
-    }
+	public String getStatement() {
+		endline("\$DATA $fileName IGNORE=@")
+	}
 
     public List<String> getHeaders() {
-        return headers
+        headers
     }
+
+	private getBaseFileName(fileNamePath) {
+		new File(fileNamePath).getName()
+	}
 
     private void computeEstimationHeaders(DataSet dataSet) {
         headers = new ArrayList<String>()
@@ -112,7 +112,13 @@ class DataStatement extends NMTranFormatter {
     }
 
     public void composeData() {
-		file = new File(filePathAndName)
+		file = new File(dataFileNamePathAndPrefix + DATA_FILE_NAME_SUFFIX)
+
+		if (pmlDOM.trialDesign) {
+			TrialDesignLoader trialDesignloader = new TrialDesignLoader("trialDesign":pmlDOM.trialDesign)
+			trialDesignloader.load()
+			structure = trialDesignloader.structure
+		}
 
 		for (Object epoch : structure.epochs) {
             List<Cell> cellsOfEpoch = structure.getCellsOfEpoch(epoch)
@@ -134,10 +140,7 @@ class DataStatement extends NMTranFormatter {
     }
 
     private void printArm(Arm arm, Cell cell, Bolus activity) {
-        Expression doseAmount = activity.doseAmount
-        DosingTimes dosingTimes = activity.dosingTimes
 
-        DataSet dataSet
         if (modellingSteps.estimationSteps) {
             printEstimationStepArm(arm, cell, activity)
         } else {
@@ -149,7 +152,7 @@ class DataStatement extends NMTranFormatter {
         Expression doseAmount = activity.doseAmount
         DosingTimes dosingTimes = activity.dosingTimes
 
-        DataSet dataSet = modellingSteps.estimationSteps[0].objectiveDataSets[0].dataSet
+        DataSet dataSet = getObjectiveDataSet()
         TreeSet<Subject> orderedSubjects = orderSubjects(arm.subjects)
 
         List<String> subjectHeaders = getSubjectHeaders(orderedSubjects.first())
@@ -180,7 +183,7 @@ class DataStatement extends NMTranFormatter {
         Expression doseAmount = activity.doseAmount
         DosingTimes dosingTimes = activity.dosingTimes
 
-        DataSet dataSet = modellingSteps.estimationSteps[0].objectiveDataSets[0].dataSet
+        DataSet dataSet = getObjectiveDataSet()
         TreeSet<Subject> orderedSubjects = orderSubjects(arm.subjects)
         List<String> subjectHeaders = getSubjectHeaders(orderedSubjects.first())
 		//computeHeaders(orderedSubjects.first()) 
@@ -216,7 +219,7 @@ class DataStatement extends NMTranFormatter {
             throw new RuntimeException("Multiple ObjectiveDataSets inside EstimationSteps are not yet supported.")
         }
         
-        DataSet dataSet = modellingSteps.estimationSteps[0].objectiveDataSets[0].dataSet
+        DataSet dataSet = getObjectiveDataSet()
 
         TreeSet<Subject> orderedSubjects = orderSubjects(arm.subjects)
 
@@ -249,7 +252,7 @@ class DataStatement extends NMTranFormatter {
     private void printHeaders(List<String> dosingColumns) {
         computeDosingHeaders(dosingColumns)
 
-        //Sets the header of the csv. Starts with '@' to ommit the first line.
+        //Sets the header of the csv. Starts with '@' to omit the first line.
         textWriter.writeToFile(file, '@' + headers.join(','))
     }
 
@@ -265,10 +268,10 @@ class DataStatement extends NMTranFormatter {
             Collection<String> dataLinesForTime = dataLines.get(time)
 
             for (String dosingLineForTime : dosingLinesForTime) {
-                textWriter.appendToFile(file, '\n' + dosingLineForTime)
+                textWriter.appendToFile(file, endline() + dosingLineForTime)
             }
             for (String dataLineForTime : dataLinesForTime) {
-                textWriter.appendToFile(file, '\n' + dataLineForTime)
+                textWriter.appendToFile(file, endline() + dataLineForTime)
             }
         }
     }
@@ -329,4 +332,11 @@ class DataStatement extends NMTranFormatter {
         timeToLine
     }
 
+	private getObjectiveDataSet() {
+		modellingSteps.estimationSteps[0].objectiveDataSets[0].dataSet
+	}
+	
+	private getNonmemDataSet() {
+		modellingSteps.nonmemDataSets[0].dataSet
+	}
 }
