@@ -21,7 +21,7 @@ public class ModelsDiscoverer {
     }
     
     Collection<File> getAllModels() {
-        LOGGER.info("Processing models within subdirectory \"" + this.modelsSubdirectory + "\" ...");
+        LOGGER.info("Discovering models with file extension ." + modelFileExtension + " within subdirectory \"" + this.modelsSubdirectory + "\" ...");
         final File rootDirectory = new File(PATH_TO_MODELS_DIR + this.modelsSubdirectory);
         final Collection<File> allModelFiles = FileUtils.listFiles(rootDirectory, new String[] {this.modelFileExtension}, true);
         for (final File modelFile : allModelFiles) {
