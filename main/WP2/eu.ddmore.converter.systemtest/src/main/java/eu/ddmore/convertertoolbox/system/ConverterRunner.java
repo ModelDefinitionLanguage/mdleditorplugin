@@ -1,7 +1,5 @@
 package eu.ddmore.convertertoolbox.system;
 
-import static org.junit.Assert.fail;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -85,8 +83,7 @@ public class ConverterRunner {
             IOUtils.write("Invoking converter toolbox command : " + cmdLine + "\n\n", stdoutOS);
             stderrOS = new BufferedOutputStream(new FileOutputStream(stderrFile));
         } catch (IOException ioe) {
-            fail("IOException thrown while trying to set up output streams for converter stdout and stderr: " + ioe);
-            return false; // Not reached but keeps compiler happy
+            throw new RuntimeException("IOException thrown while trying to set up output streams for converter stdout and stderr: " + ioe);
         }
         
         // Create the executor object, providing a stream handler that will avoid
@@ -109,7 +106,7 @@ public class ConverterRunner {
             } catch (IOException ioe) {
             }
         } catch (final IOException ioe) {
-            fail("IOException occurred trying to execute converter batch script: " + ioe);
+            throw new RuntimeException("IOException occurred trying to execute converter batch script: " + ioe);
         }
         
         try {
