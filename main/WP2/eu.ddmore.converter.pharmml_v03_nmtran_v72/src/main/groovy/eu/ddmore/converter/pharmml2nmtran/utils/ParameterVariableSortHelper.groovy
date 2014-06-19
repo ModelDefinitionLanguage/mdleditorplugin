@@ -57,6 +57,11 @@ public class ParameterVariableSortHelper {
 					 }
 			   }
 			   
+			   if(assignment.symbRef){
+				   relatedVariables.add("INITIAL_VALUE")
+				   relatedVariables.add(assignment.symbRef.symbIdRef)
+			   }
+			   			   
 			   if(assignment.scalar){
 				   if(assignment.scalar.value){
 					   if(assignment.scalar.value instanceof RealValueType){
@@ -120,7 +125,7 @@ public class ParameterVariableSortHelper {
 		def checkForInitialConditionValues = { parameter ->
 			def symbIdRefs = []
 			if(parameter?.initialCondition?.initialValue?.assign){				
-				parameter.initialCondition?.initialValue.assign.scalar.each {
+				parameter.initialCondition?.initialValue.assign.each {
 					symbIdRefs.add(getName(parameter.initialCondition.initialValue.assign))
 				}
 			}
@@ -139,8 +144,11 @@ public class ParameterVariableSortHelper {
 			}
 			if(elem.value instanceof DerivativeVariableType){
 				def refList =[]
+				if(references.containsKey(elem)){
+					refList.add(references[elem])
+				}
 				refList.add(checkForInitialConditionValues(elem.value))
-				refList.add(getReferencesInParameter(elem.value))
+				refList.add(getReferencesInParameter(elem.value))				
 				references[elem] = refList.flatten() 
 			}
 		}
@@ -166,6 +174,7 @@ public class ParameterVariableSortHelper {
 		
 	}
 	
+	Set paramsLookingFor = []
 	public Map arrangeParameterElements(referencesMap){
 		this.referencesMap = referencesMap
 		referencesMap.each {k,v->
@@ -181,23 +190,30 @@ public class ParameterVariableSortHelper {
 		}
 		rearrangedMap
 	}
-	
+
 	def compareNextParams(JAXBElement parameter){
-		List nextReferenceList = referencesMap[parameter]		
-		for (String reference :nextReferenceList){
-			if(reference.equals("INITIAL_VALUE")){
-				rearrangedMap.put(parameter.value.symbId,parameter);
-			}
-			if(reference.equals(parameter.value.symbId)){
-				continue
-			}
-			if(!checkIfReferenceExists(rearrangedMap.keySet(),reference)){
-				if(tempSortMap.get(reference)!=null){
-					compareNextParams(tempSortMap.get(reference))
+		if(parameter!=null){
+			List nextReferenceList = referencesMap[parameter]		
+			paramsLookingFor.add(parameter.value.symbId)
+			for (String reference :nextReferenceList){
+				
+				if(reference.equals(parameter.value.symbId)){
+					continue
+				}
+				if(reference.equals("INITIAL_VALUE")){
+					rearrangedMap.put(parameter.value.symbId,parameter)
+					paramsLookingFor.remove(parameter.value.symbId)
+				}else if(!checkIfReferenceExists(rearrangedMap.keySet(),reference)){
+					if(paramsLookingFor.contains(reference)){
+//						throw new RuntimeException("Cyclic dependency encountered for : "+ reference + " to : "+ parameter.value.symbId)					 
+					}else{
+						compareNextParams(tempSortMap.get(reference))
+					}
 				}
 			}
+			rearrangedMap.put(parameter.value.symbId,parameter)
+			paramsLookingFor.remove(parameter.value.symbId)
 		}
-		rearrangedMap.put(parameter.value.symbId,parameter);
 	}
 	
 	private boolean checkIfReferenceExists(Set comparisonList, String nextReference){

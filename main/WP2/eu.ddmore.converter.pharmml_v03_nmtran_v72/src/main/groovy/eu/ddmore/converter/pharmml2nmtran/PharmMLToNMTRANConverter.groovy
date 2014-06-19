@@ -27,20 +27,15 @@ import eu.ddmore.libpharmml.PharmMlFactory
  * This is a ConverterProvider implementation from PharmML to NMTRAN, specified versions thereof.
  */
 public class PharmMLToNMTRANConverter implements ConverterProvider {
-    private LanguageVersion source;
-    private LanguageVersion target;
-    private Version converterVersion;
+
+	private static final String PHARMML_FILE_EXTENSION = ".xml"
+	private static final String NMTRAN_FILE_EXTENSION = ".ctl"
+	
+	private final LanguageVersion source = new LanguageVersionImpl("PharmML", new VersionImpl(0, 3, 0))
+    private final LanguageVersion target = new LanguageVersionImpl("NMTRAN", new VersionImpl(7, 2, 0))
+    private final Version converterVersion = new VersionImpl(1, 0, 3);
     private ConversionContext conversionContext;
 
-    public PharmMLToNMTRANConverter() {
-        Version sourceVersion = new VersionImpl(0, 3, 0);
-        source = new LanguageVersionImpl("PharmML", sourceVersion);
-
-        Version targetVersion = new VersionImpl(7, 2, 0);
-        target = new LanguageVersionImpl("NMTRAN", targetVersion);
-
-        converterVersion = new VersionImpl(1, 0, 3);
-    }
 
     @Override
     public ConversionReport performConvert(File src, File outputDirectory) throws IOException {
@@ -64,11 +59,12 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
     }
 
     private String computeOutputFileName(String name) {
-        int dotIndex = name.indexOf('.')
-        if (dotIndex == -1) {
-            return name + ".ctl"
+        int dotIndex = name.lastIndexOf(PHARMML_FILE_EXTENSION)
+
+		if (dotIndex == -1) {
+            return name + NMTRAN_FILE_EXTENSION
         } else {
-            return name.substring(0, dotIndex) + ".ctl"
+            return name.substring(0, dotIndex) + NMTRAN_FILE_EXTENSION
         }
     }
 
