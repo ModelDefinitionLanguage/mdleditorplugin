@@ -3,6 +3,7 @@
  ******************************************************************************/
 package eu.ddmore.converter.pharmml2nmtran.utils;
 
+import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType;
 import eu.ddmore.libpharmml.dom.commontypes.DerivativeVariableType
 import eu.ddmore.libpharmml.dom.commontypes.IntValueType;
 import eu.ddmore.libpharmml.dom.commontypes.RealValueType;
@@ -28,11 +29,14 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
 
+import org.codehaus.groovy.util.StringUtil;
+
 public class ParameterVariableSortHelper {
 	
 	private Set<String> relatedVariables = new HashSet<String>()
 	static final int LHS = 0
 	static final int RHS = 1
+	String dadt = "DADT"
 	Map referencesMap = [:]
 	Map rearrangedMap = [:]
 	Map tempSortMap = [:]
@@ -57,6 +61,11 @@ public class ParameterVariableSortHelper {
 					 }
 			   }
 			   
+			   if(assignment.symbRef){
+				   relatedVariables.add("INITIAL_VALUE")
+				   relatedVariables.add(assignment.symbRef.symbIdRef)
+			   }
+			   			   
 			   if(assignment.scalar){
 				   if(assignment.scalar.value){
 					   if(assignment.scalar.value instanceof RealValueType){
@@ -120,7 +129,7 @@ public class ParameterVariableSortHelper {
 		def checkForInitialConditionValues = { parameter ->
 			def symbIdRefs = []
 			if(parameter?.initialCondition?.initialValue?.assign){				
-				parameter.initialCondition?.initialValue.assign.scalar.each {
+				parameter.initialCondition?.initialValue.assign.each {
 					symbIdRefs.add(getName(parameter.initialCondition.initialValue.assign))
 				}
 			}
@@ -128,6 +137,7 @@ public class ParameterVariableSortHelper {
 		}
 		
 		Map references = [:]
+		def dadtCount = 0
 		
 		def getReferenceForElements = {elem ->
 			
@@ -137,11 +147,13 @@ public class ParameterVariableSortHelper {
 				) {				
 				references[elem] = getReferencesInParameter(elem.value)
 			}
-			if(elem.value instanceof DerivativeVariableType){
-				def refList =[]
-				refList.add(checkForInitialConditionValues(elem.value))
-				refList.add(getReferencesInParameter(elem.value))
-				references[elem] = refList.flatten() 
+			if(elem.value instanceof DerivativeVariableType){				
+				references[elem] = checkForInitialConditionValues(elem.value)
+				def refList = getReferencesInParameter(elem.value)
+				if(refList){					
+					dadtCount++
+					references[dadt+dadtCount] = refList
+				}
 			}
 		}
 		
@@ -166,12 +178,16 @@ public class ParameterVariableSortHelper {
 		
 	}
 	
+	Set paramsLookingFor = []
 	public Map arrangeParameterElements(referencesMap){
 		this.referencesMap = referencesMap
 		referencesMap.each {k,v->
 			if(k instanceof JAXBElement){
 				(v)?tempSortMap.put(k.value.symbId,k):rearrangedMap.put(k.value.symbId,k)
 			}
+			else if(isDADT(k)){
+					tempSortMap.put(k,k)
+				}
 		}
 
 		tempSortMap.each { k,v ->
@@ -181,23 +197,36 @@ public class ParameterVariableSortHelper {
 		}
 		rearrangedMap
 	}
-	
-	def compareNextParams(JAXBElement parameter){
-		List nextReferenceList = referencesMap[parameter]		
-		for (String reference :nextReferenceList){
-			if(reference.equals("INITIAL_VALUE")){
-				rearrangedMap.put(parameter.value.symbId,parameter);
-			}
-			if(reference.equals(parameter.value.symbId)){
-				continue
-			}
-			if(!checkIfReferenceExists(rearrangedMap.keySet(),reference)){
-				if(tempSortMap.get(reference)!=null){
-					compareNextParams(tempSortMap.get(reference))
+
+	private boolean isDADT(Object objToTest){
+		(objToTest instanceof String)?objToTest.contains(dadt):false
+	}
+	def compareNextParams(Object parameter){
+		if(parameter!=null){
+			List nextReferenceList = referencesMap[parameter]			
+			def symbId = (isDADT(parameter))?parameter:parameter.value.symbId
+			paramsLookingFor.add(symbId)
+			for (String reference :nextReferenceList){
+				
+				if(reference.equals(symbId)){
+					continue
+				}
+				if(reference.equals("INITIAL_VALUE")){
+					rearrangedMap.put(symbId,parameter)
+					paramsLookingFor.remove(symbId)
+				}else if(!checkIfReferenceExists(rearrangedMap.keySet(),reference)){
+					if(paramsLookingFor.contains(reference)){
+						throw new RuntimeException("Cyclic dependency encountered for : "+ reference + " to : "+ symbId)					 
+					}else{
+						compareNextParams(tempSortMap.get(reference))
+					}
 				}
 			}
+			if(!isDADT(parameter)){
+				rearrangedMap.put(symbId,parameter)
+			}
+			paramsLookingFor.remove(symbId)
 		}
-		rearrangedMap.put(parameter.value.symbId,parameter);
 	}
 	
 	private boolean checkIfReferenceExists(Set comparisonList, String nextReference){

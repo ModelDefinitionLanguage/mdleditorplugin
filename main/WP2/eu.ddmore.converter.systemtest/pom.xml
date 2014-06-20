@@ -16,16 +16,20 @@ Note that the generated output models aren't verified in terms of content, just 
         <maven.compiler.source>1.6</maven.compiler.source> 
         <maven.compiler.target>1.6</maven.compiler.target>
         <converter.toolbox.version>0.0.1-SNAPSHOT</converter.toolbox.version>
+        <testdata.models.version>0.0.1-SNAPSHOT</testdata.models.version>
+        <models.working.dir>${project.build.directory}/WorkingDir</models.working.dir>
     </properties> 
 	
 	<dependencies>
 	
+        <!--
         <dependency>
             <groupId>eu.ddmore.testdata</groupId>
             <artifactId>models</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        -->
         
         <dependency>
             <groupId>junit</groupId>
@@ -53,6 +57,12 @@ Note that the generated output models aren't verified in terms of content, just 
         </dependency>
         
 		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>17.0</version>
+		</dependency>
+        
+		<dependency>
 		    <groupId>log4j</groupId>
 		    <artifactId>log4j</artifactId>
 		    <version>1.2.17</version>
@@ -68,7 +78,7 @@ Note that the generated output models aren't verified in terms of content, just 
 				<version>2.8</version>
 				<executions>
 					<execution>
-						<id>unpack</id>
+						<id>unpack-converter-toolbox</id>
 						<phase>process-resources</phase>
 						<goals>
 							<goal>unpack</goal>
@@ -85,6 +95,24 @@ Note that the generated output models aren't verified in terms of content, just 
 							</artifactItems>
 						</configuration>
 					</execution>
+                    <execution>
+                        <id>unpack-testdata-models</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>eu.ddmore.testdata</groupId>
+                                    <artifactId>models</artifactId>
+                                    <version>${testdata.models.version}</version>
+                                    <outputDirectory>${models.working.dir}</outputDirectory>
+                                    <excludes>META-INF/</excludes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
 				</executions>
 			</plugin>
 		</plugins>
