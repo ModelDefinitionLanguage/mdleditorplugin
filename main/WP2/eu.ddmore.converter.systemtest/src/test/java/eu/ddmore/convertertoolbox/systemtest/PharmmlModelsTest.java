@@ -25,7 +25,7 @@ public class PharmmlModelsTest {
     private final static String OUTPUT_FILE_EXTENSION = ".ctl";
     
     // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes
-    private final static int NMTRAN_FILE_SIZE_THRESHOLD = 50; // TODO: Proper threshhold
+    private final static int NMTRAN_FILE_SIZE_THRESHOLD = 30; // Required: $PROB $INPUT $DATA
     
     /**
      * The method that produces the parameters to be passed to each construction of the test class.
