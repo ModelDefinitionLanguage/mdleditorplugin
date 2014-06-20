@@ -67,7 +67,7 @@ public class ConverterRunner {
         // Build up the command line to execute
         CommandLine cmdLine = new CommandLine("cmd");
         cmdLine.addArgument("/c");
-        cmdLine.addArgument(new File(CONVERTER_TOOLBOX_EXECUTABLE).getAbsolutePath());
+        cmdLine.addArgument(new File(CONVERTER_TOOLBOX_EXECUTABLE).getName());
         cmdLine.addArgument(this.modelFile.getAbsolutePath());
         cmdLine.addArgument(outputDir.getAbsolutePath());
         cmdLine.addArgument(this.sourceLang);
@@ -90,6 +90,7 @@ public class ConverterRunner {
         // the child process becoming blocked because nothing is consuming its output,
         // and also a timeout
         DefaultExecutor executor = new DefaultExecutor();
+        executor.setWorkingDirectory(new File(CONVERTER_TOOLBOX_EXECUTABLE).getParentFile());
         executor.setExitValue(0); // Required "success" return code
         ExecuteWatchdog watchdog = new ExecuteWatchdog(15000); // Will kill the process after 15 seconds
         executor.setWatchdog(watchdog);
