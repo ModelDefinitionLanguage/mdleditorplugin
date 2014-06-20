@@ -1,4 +1,4 @@
-package eu.ddmore.convertertoolbox.system;
+package eu.ddmore.convertertoolbox.systemtest;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -17,6 +17,9 @@ import org.junit.runners.Parameterized;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+
+import eu.ddmore.convertertoolbox.systemtest.ConverterRunner;
+import eu.ddmore.convertertoolbox.systemtest.ModelsDiscoverer;
 
 
 /**

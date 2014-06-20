@@ -1,4 +1,4 @@
-package eu.ddmore.convertertoolbox.system;
+package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

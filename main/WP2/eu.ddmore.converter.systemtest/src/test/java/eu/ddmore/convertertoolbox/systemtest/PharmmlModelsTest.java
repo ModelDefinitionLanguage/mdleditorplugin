@@ -1,4 +1,4 @@
-package eu.ddmore.convertertoolbox.system;
+package eu.ddmore.convertertoolbox.systemtest;
 
 import static org.junit.Assert.assertTrue;
 
@@ -9,21 +9,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import eu.ddmore.convertertoolbox.systemtest.ConverterRunner;
+
 
 /**
- * Run MDL -> PharmML conversions over the testdata models within the "mdl" subdirectory.
+ * Run PharmML -> NMTRAN conversions over the testdata models within the "pharmml" subdirectory.
  */
 @RunWith(Parameterized.class)
-public class MdlModelsTest {
+public class PharmmlModelsTest {
     
-    private final static Logger LOGGER = Logger.getLogger(MdlModelsTest.class);
+    private final static Logger LOGGER = Logger.getLogger(PharmmlModelsTest.class);
     
-    private final static String MODELS_SUBDIRECTORY = "mdl";
-    private final static String MODELS_FILE_EXTENSION = "mdl";
-    private final static String OUTPUT_FILE_EXTENSION = ".xml";
+    private final static String MODELS_SUBDIRECTORY = "pharmml";
+    private final static String MODELS_FILE_EXTENSION = "xml";
+    private final static String OUTPUT_FILE_EXTENSION = ".ctl";
     
     // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes
-    private final static int PHARMML_FILE_SIZE_THRESHOLD = 638;
+    private final static int NMTRAN_FILE_SIZE_THRESHOLD = 50; // TODO: Proper threshhold
     
     /**
      * The method that produces the parameters to be passed to each construction of the test class.
@@ -51,7 +53,7 @@ public class MdlModelsTest {
      *                         prefix stripped off; this is incorporated into the display name of the test
      *                         but is otherwise unused
      */
-    public MdlModelsTest(final File model, final String modelShortPath) {
+    public PharmmlModelsTest(final File model, final String modelShortPath) {
         this.model = model;
     }
     
@@ -60,9 +62,9 @@ public class MdlModelsTest {
      * {@link File} parameter that was constructor-injected into this instance of the test class.
      */
     @Test
-    public void testMdlToPharmMLConversion() {
+    public void testPharmMLToNMTRANConversion() {
         final ConverterRunner runner = new ConverterRunner(
-            this.model, OUTPUT_FILE_EXTENSION, "MDL", "5.1.6", "PharmML", "0.3.0", PHARMML_FILE_SIZE_THRESHOLD);
+            this.model, OUTPUT_FILE_EXTENSION, "PharmML", "0.3.0", "NMTRAN", "7.2", NMTRAN_FILE_SIZE_THRESHOLD);
         final boolean success = runner.run();
         assertTrue("Conversion should not error out", success);
     }

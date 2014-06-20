@@ -1,4 +1,4 @@
-package eu.ddmore.convertertoolbox.system;
+package eu.ddmore.convertertoolbox.systemtest;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

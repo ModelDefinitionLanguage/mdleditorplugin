@@ -1,4 +1,4 @@
-package eu.ddmore.convertertoolbox.system;
+package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.File;
 
@@ -6,6 +6,8 @@ import org.junit.runners.Parameterized;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+
+import eu.ddmore.convertertoolbox.systemtest.ModelsDiscoverer;
 
 
 public class ModelsTestHelper {
