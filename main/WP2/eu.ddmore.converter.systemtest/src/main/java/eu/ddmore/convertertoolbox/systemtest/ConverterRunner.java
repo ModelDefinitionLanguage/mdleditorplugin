@@ -115,7 +115,7 @@ public class ConverterRunner {
         } catch (final IOException e) {
         }
         
-        // Test if the conversion was successful
+        // Heuristically test if the conversion didn't fail (we can only generically check for failure rather than success)
         final File expectedOutputFile = new File(outputDir, FilenameUtils.getBaseName(this.modelFile.getPath()) + this.outputFileExtension); 
         final boolean passed = isConversionErrorFree(expectedOutputFile, stderrFile);
         
