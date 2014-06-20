@@ -115,6 +115,19 @@ Note that the generated output models aren't verified in terms of content, just 
                     </execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+                <!-- Run the custom test suite rather than the individual unit tests -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.17</version>
+				<configuration>
+					<includes>
+						<include>**/AllTests.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+      
 		</plugins>
 		
 		<pluginManagement>

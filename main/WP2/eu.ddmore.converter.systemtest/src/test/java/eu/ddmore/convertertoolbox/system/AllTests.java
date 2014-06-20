@@ -15,5 +15,4 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
     MdlModelsTest.class, PharmmlModelsTest.class, GeneratedPharmmlModelsTest.class
 })
-public class AllTests {
-}
+public class AllTests {}
