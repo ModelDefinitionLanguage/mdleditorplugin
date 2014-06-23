@@ -29,7 +29,7 @@ class TestMDLToJSONConverter {
 	}
 		
 	@Test
-	public void testGetDataObject() {
+	public void testProlactinMay2014() {
 		def json = getJson("ex_model7_prolactin_May2014_OAM.mdl")
 			
 		def dataObject = json.ex_model7_prolactin_Jan2014_dat
@@ -48,7 +48,20 @@ class TestMDLToJSONConverter {
 		assertEquals("continuous", STU.type[0])
 
 		def TIME = dataInputVariables.TIME
-		assertEquals("h", TIME.units[0])		
+		assertEquals("h", TIME.units[0])	
+		
+		def parameterObject = json.ex_model7_prolactin_Jan2014_par
+		def structuralModel = parameterObject.STRUCTURAL
+		
+		def POP_KOUT = structuralModel.POP_KOUT
+		assertEquals(".1", POP_KOUT.lo[0])
+		
+		def POP_AMP = structuralModel.POP_AMP
+		assertEquals("-.75", POP_AMP.lo[0])
+		
+		
+		
+			
 	}
 	
     def getJson  = { String fileToConvert ->

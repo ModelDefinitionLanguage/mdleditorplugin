@@ -13,7 +13,10 @@ import org.ddmore.mdl.mdl.EnumType
 import org.ddmore.mdl.mdl.Expression;
 import org.ddmore.mdl.mdl.FunctionName;
 import org.ddmore.mdl.mdl.LogicalExpression
+import org.ddmore.mdl.mdl.MultiplicativeExpression
 import org.ddmore.mdl.mdl.OrExpression;
+import org.ddmore.mdl.mdl.PowerExpression
+import org.ddmore.mdl.mdl.UnaryExpression
 
 public class XtextWrapper {
 
@@ -92,11 +95,28 @@ public class XtextWrapper {
 	}
 
 	public static Object unwrap(AdditiveExpression expression) {
-		// Needs to do more than this in case there are more expressions in here
-		if(expression.getExpression().size() != 0 || expression.getOperator() != null) {
+		if(expression.getExpression().size() != 0 && expression.getOperator() != null) {
 			logger.debug(expression)
+			return unwrap(expression.getExpression().get(0))
 		}
 		return expression.getString()	
+	}
+	
+	public static Object unwrap(MultiplicativeExpression expression) {
+		return unwrap(expression.getExpression().get(0))
+	}
+	
+	public static Object unwrap(PowerExpression expression) {
+		return unwrap(expression.getExpression().get(0))	
+	}
+	
+	public static Object unwrap(UnaryExpression expression) {
+		def ret
+		if(expression.getOperator()) {
+			ret = expression.getOperator() + unwrap(expression.getExpression())
+			return ret
+		}
+		return expression.getNumber();
 	}
 	
 	public static Object unwrap(AndExpression expression) {

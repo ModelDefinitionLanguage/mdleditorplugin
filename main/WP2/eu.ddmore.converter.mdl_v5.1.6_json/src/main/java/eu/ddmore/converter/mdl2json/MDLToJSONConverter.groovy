@@ -118,8 +118,8 @@ public class MDLToJSONConverter implements ConverterProvider {
 			ret = jb.toString()
 		}	
 		catch(Exception e) {
-			logger.error(e, "Could not turn MCL into JSON")
-			System.err.println(e.getMessage(), "Could not turn MDL into JSON")
+			logger.error("Could not turn MCL into JSON", e)
+			System.err.println("Could not turn MDL into JSON" + e.getMessage() )
 		}
 		
 		return ret;
