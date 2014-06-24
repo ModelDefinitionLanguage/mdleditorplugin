@@ -20,6 +20,8 @@ public class ModelsTestHelper {
      * return an {@link Iterable} of Arrays, even though we only have one parameter and hence
      * would much prefer to return an {@link Iterable} of {@link File}s.
      * <p>
+     * @param modelsSubdirectory - subdirectory of target/WorkingDir/eu/ddmore/testdata/models from which models will be discovered
+     * @param modelsFileExtension - the file extension, excluding the dot, of the model files
      * @return the models to convert, as {@link File} objects
      */
     public static Iterable<Object[]> getModelsToTest(final String modelsSubdirectory, final String modelsFileExtension) {
