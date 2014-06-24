@@ -173,14 +173,18 @@ public class GeneratedPharmmlModelsTest {
     /**
      * Test method that tests the conversion of a particular model file as provided by the
      * {@link File} parameter that was constructor-injected into this instance of the test class.
+     * <p>
+     * @throws IOException - if couldn't read stderr file
      */
     @Test
-    public void testPharmMLToNMTRANConversionForPharmMLGeneratedByMdlToPharmMLConversion() {
+    public void testPharmMLToNMTRANConversionForPharmMLGeneratedByMdlToPharmMLConversion() throws IOException {
         final ConverterRunner runner = new ConverterRunner(
             this.generatedPharmmlModel, OUTPUT_FILE_EXTENSION, "PharmML", "0.3.0", "NMTRAN", "7.2",
             new ConverterOutputFailureChecker(NMTRAN_FILE_SIZE_THRESHOLD));
         final boolean success = runner.run();
-        assertTrue("Conversion should not error out", success);
+        if (!success) {
+            fail("Conversion failed; standard error:\n" + FileUtils.readFileToString(runner.getStandardErrorFile()));
+        }
     }
     
 }

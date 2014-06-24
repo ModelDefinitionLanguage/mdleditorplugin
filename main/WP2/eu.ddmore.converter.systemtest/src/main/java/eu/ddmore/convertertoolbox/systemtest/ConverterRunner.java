@@ -42,14 +42,24 @@ public class ConverterRunner {
         this.converterOutputFailureChecker = convFailChecker;
     }
     
+    File getModelFile() {
+        return this.modelFile;
+    }
+    
+    File getStandardOutputFile() {
+        return new File(FilenameUtils.removeExtension(this.modelFile.getAbsolutePath()) + ".convert.stdout");
+    }
+    
+    File getStandardErrorFile() {
+        return new File(FilenameUtils.removeExtension(this.modelFile.getAbsolutePath()) + ".convert.stderr");
+    }
+    
     boolean run() {
         
-        // Define the output directory and stdout and stderr files
-        final File outputDir = new File(this.modelFile.getParent(), OUTPUT_SUBDIRECTORY);
-        final File stdoutFile = new File(FilenameUtils.removeExtension(this.modelFile.getAbsolutePath()) + ".convert.stdout");
-        final File stderrFile = new File(FilenameUtils.removeExtension(this.modelFile.getAbsolutePath()) + ".convert.stderr");
-        
         // Initialise output directory and stdout and stderr files
+        final File outputDir = new File(this.modelFile.getParent(), OUTPUT_SUBDIRECTORY);
+        final File stdoutFile = getStandardOutputFile();
+        final File stderrFile = getStandardErrorFile();
         try {
             FileUtils.deleteDirectory(outputDir);
         } catch (IOException e1) {
