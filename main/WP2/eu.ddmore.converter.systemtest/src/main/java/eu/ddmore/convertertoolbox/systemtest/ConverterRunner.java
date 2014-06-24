@@ -107,8 +107,10 @@ public class ConverterRunner {
         executor.setStreamHandler(pumpStreamHandler);
 
         // Finally actually execute the batch script
+        final long startTime = System.currentTimeMillis();
         try {
             executor.execute(cmdLine);
+            LOGGER.info("Conversion of " + this.modelFile + " took " + ((System.currentTimeMillis() - startTime) / 1000.0) + " seconds");
         } catch (final ExecuteException eex) { // Command has failed or timed out
             try {
                 IOUtils.write("\n\nError code " + eex.getExitValue() + " returned from converter toolbox command : " + cmdLine + "\n\n", stderrOS);
