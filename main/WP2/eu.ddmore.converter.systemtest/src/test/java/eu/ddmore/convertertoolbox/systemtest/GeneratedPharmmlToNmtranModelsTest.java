@@ -96,7 +96,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
      * <b>Precondition:</b> The MDL Models conversion tests have already been run, in order that
      * the generated PharmML files are actually present.
      * <p>
-     * The PharmML models generated from the MDL Models conversion are written to "mdl/[modelname]/output" subdirectories.
+     * The PharmML models generated from the MDL Models conversion are written to "mdl/[modelname]/output-xml" subdirectories.
      * Find all the actual PharmML files (i.e. with .xml extension) within these directories (there may be data files etc.
      * in there too), and copy each of their containing folders (i.e. including the associated data files), to a suitably
      * named directory (i.e. taken from the name of the model in the path to the PharmML file) under a
@@ -116,10 +116,10 @@ public class GeneratedPharmmlToNmtranModelsTest {
             new ModelsDiscoverer(ORIGINAL_MDL_MODELS_SUBDIRECTORY, PHARMML_MODELS_FILE_EXTENSION).getAllModels(),
             new Predicate<File>() {
                 /**
-                 * Since .xml is a generic file extension, need to filter out any XML files that are not within a "mdl/[modelname]/output" subdirectory.
+                 * Since .xml is a generic file extension, need to filter out any XML files that are not within a "mdl/[modelname]/output-xml" subdirectory.
                  */
                 public boolean apply(File input) {
-                    return input.getParentFile().getName().equals(ConverterRunner.OUTPUT_SUBDIRECTORY);
+                    return input.getParentFile().getName().equals(ConverterRunner.OUTPUT_SUBDIRECTORY_BASENAME + PHARMML_MODELS_FILE_EXTENSION);
                 };
             }
         );

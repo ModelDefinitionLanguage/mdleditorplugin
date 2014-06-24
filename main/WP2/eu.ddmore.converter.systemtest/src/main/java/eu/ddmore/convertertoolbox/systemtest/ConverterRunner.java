@@ -19,7 +19,7 @@ public class ConverterRunner {
     private final static Logger LOGGER = Logger.getLogger(ConverterRunner.class);
 
     final static String CONVERTER_TOOLBOX_EXECUTABLE = "target/converter-toolbox-bundle-0.0.1-SNAPSHOT/convert.bat";
-    final static String OUTPUT_SUBDIRECTORY = "output";
+    final static String OUTPUT_SUBDIRECTORY_BASENAME = "output-";
     
     private final File modelFile;
     private final String outputFileExtension;
@@ -56,7 +56,7 @@ public class ConverterRunner {
     void run() {
         
         // Initialise output directory and stdout and stderr files
-        final File outputDir = new File(this.modelFile.getParent(), OUTPUT_SUBDIRECTORY);
+        final File outputDir = new File(this.modelFile.getParent(), OUTPUT_SUBDIRECTORY_BASENAME + this.outputFileExtension);
         final File stdoutFile = getStandardOutputFile();
         final File stderrFile = getStandardErrorFile();
         outputDir.mkdir(); // Ideally we'd clear out the output dir here but there may be multiple model files within the same dir
