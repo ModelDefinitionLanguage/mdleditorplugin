@@ -18,7 +18,7 @@ public class MdlToPharmmlModelsTest {
     
     private final static String MODELS_SUBDIRECTORY = "mdl";
     private final static String MODELS_FILE_EXTENSION = "mdl";
-    private final static String OUTPUT_FILE_EXTENSION = ".xml";
+    private final static String OUTPUT_FILE_EXTENSION = "xml";
     
     // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes
     private final static int PHARMML_FILE_SIZE_THRESHOLD = 638;
