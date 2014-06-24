@@ -51,7 +51,7 @@ public class ConverterOutputFailureCheckerImpl implements ConverterOutputFailure
         if (FileUtils.sizeOf(stderrFile) > 0) {
             // Errors were produced onto the standard error stream
             try {
-                fail("Standard error output was produced during the conversion process:\n" + FileUtils.readFileToString(stderrFile));
+                fail("Standard error output was produced during the conversion process:\n--- BEGIN STDERR DUMP ---\n" + FileUtils.readFileToString(stderrFile) + "\n--- END STDERR DUMP ---");
             } catch (IOException e) {
                 fail("IOException thrown while trying to read stderr file: " + e);
             }
