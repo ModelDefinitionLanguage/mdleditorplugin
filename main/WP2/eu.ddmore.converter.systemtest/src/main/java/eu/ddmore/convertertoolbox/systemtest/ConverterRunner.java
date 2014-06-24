@@ -95,7 +95,7 @@ public class ConverterRunner {
         DefaultExecutor executor = new DefaultExecutor();
         executor.setWorkingDirectory(new File(CONVERTER_TOOLBOX_EXECUTABLE).getParentFile());
         executor.setExitValue(0); // Required "success" return code
-        ExecuteWatchdog watchdog = new ExecuteWatchdog(30000); // Will kill the process after 15 seconds
+        ExecuteWatchdog watchdog = new ExecuteWatchdog(30000); // Will kill the process after 30 seconds
         executor.setWatchdog(watchdog);
         PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(stdoutOS, stderrOS);
         executor.setStreamHandler(pumpStreamHandler);
