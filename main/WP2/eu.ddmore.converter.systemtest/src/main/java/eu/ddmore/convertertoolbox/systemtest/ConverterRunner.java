@@ -10,7 +10,6 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -60,12 +59,7 @@ public class ConverterRunner {
         final File outputDir = new File(this.modelFile.getParent(), OUTPUT_SUBDIRECTORY);
         final File stdoutFile = getStandardOutputFile();
         final File stderrFile = getStandardErrorFile();
-        try {
-            FileUtils.deleteDirectory(outputDir);
-        } catch (IOException e1) {
-            LOGGER.error("Unable to delete directory " + outputDir);
-        }
-        outputDir.mkdir();
+        outputDir.mkdir(); // Ideally we'd clear out the output dir here but there may be multiple model files within the same dir
         if (stdoutFile.exists() && !stdoutFile.delete()) {
             LOGGER.error("Unable to delete file " + stdoutFile);
         }
