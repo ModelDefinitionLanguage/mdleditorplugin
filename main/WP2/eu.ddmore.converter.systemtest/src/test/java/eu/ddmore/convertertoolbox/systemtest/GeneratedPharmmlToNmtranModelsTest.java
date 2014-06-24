@@ -23,13 +23,13 @@ import com.google.common.collect.Iterables;
  * Run PharmML -> NMTRAN conversions, but on PharmML files that were output by MDL -> PharmML
  * conversions rather than on hand-crafted PharmML.
  * <p>
- * {@link MdlModelsTest} runs the MDL -> PharmML conversions hence that test class needs to be
+ * {@link MdlToPharmmlModelsTest} runs the MDL -> PharmML conversions hence that test class needs to be
  * run before this test class; the {@link AllTests} test suite enforces this.
  */
 @RunWith(Parameterized.class)
-public class GeneratedPharmmlModelsTest {
+public class GeneratedPharmmlToNmtranModelsTest {
     
-    private final static Logger LOGGER = Logger.getLogger(GeneratedPharmmlModelsTest.class);
+    private final static Logger LOGGER = Logger.getLogger(GeneratedPharmmlToNmtranModelsTest.class);
     
     private final static String ORIGINAL_MDL_MODELS_SUBDIRECTORY = "mdl";
     private final static String ORIGINAL_MDL_MODELS_FILE_EXTENSION = "mdl";
@@ -48,9 +48,9 @@ public class GeneratedPharmmlModelsTest {
      * <p>
      * The actual constructions of this test class take place later, immediately before the tests
      * are actually run, at which point the generated PharmML model files <b>will</b> be present
-     * ({@link AllTests} enforces {@link MdlModelsTest} to be run before this
-     * {@link GeneratedPharmmlModelsTest}), hence the constructor
-     * {@link GeneratedPharmmlModelsTest#GeneratedPharmmlModelsTest(File, String)} is responsible
+     * ({@link AllTests} enforces {@link MdlToPharmmlModelsTest} to be run before this
+     * {@link GeneratedPharmmlToNmtranModelsTest}), hence the constructor
+     * {@link GeneratedPharmmlToNmtranModelsTest#GeneratedPharmmlModelsTest(File, String)} is responsible
      * for taking the MDL model file and obtaining the corresponding generated PharmML model file
      * on which the conversion will be run.
      * <p>
@@ -160,7 +160,7 @@ public class GeneratedPharmmlModelsTest {
      *                         prefix stripped off; this is incorporated into the display name of the test
      *                         but is otherwise unused
      */
-    public GeneratedPharmmlModelsTest(final File originalMdlModel, final String modelShortPath) {
+    public GeneratedPharmmlToNmtranModelsTest(final File originalMdlModel, final String modelShortPath) {
         // Obtain generatedPharmmlModel from originalMdlModel
         this.generatedPharmmlModel = new File(getGeneratedPharrmlModelFilePathFromMdlModelFilePath(originalMdlModel.getPath()));
         assertTrue("Generated PharmML model \"" + this.generatedPharmmlModel + "\" was not found. Was MdlModelsTest run first?",
