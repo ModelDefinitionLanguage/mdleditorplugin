@@ -122,7 +122,7 @@ public class ConverterRunner {
         }
         
         // Heuristically test if the conversion didn't fail (we can only generically check for failure rather than success)
-        final File expectedOutputFile = new File(outputDir, FilenameUtils.getBaseName(this.modelFile.getPath()) + this.outputFileExtension);
+        final File expectedOutputFile = new File(outputDir, FilenameUtils.getBaseName(this.modelFile.getPath()) + "." + this.outputFileExtension);
         this.converterOutputFailureChecker.check(expectedOutputFile, stdoutFile, stderrFile); // fail()s if appropriate
     }
     
