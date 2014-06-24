@@ -13,6 +13,6 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    MdlToPharmmlModelsTest.class, PharmmlToNmtranModelsTest.class, GeneratedPharmmlToNmtranModelsTest.class
+    MdlToPharmmlModelsTest.class, PharmmlToNmtranModelsTest.class, GeneratedPharmmlToNmtranModelsTest.class, MdlToNmtranModelsTest.class
 })
 public class AllTests {}
