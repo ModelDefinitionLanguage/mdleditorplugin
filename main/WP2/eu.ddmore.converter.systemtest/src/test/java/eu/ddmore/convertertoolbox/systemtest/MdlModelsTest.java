@@ -1,18 +1,12 @@
 package eu.ddmore.convertertoolbox.systemtest;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import eu.ddmore.convertertoolbox.systemtest.ConverterRunner;
 
 
 /**
@@ -63,18 +57,13 @@ public class MdlModelsTest {
     /**
      * Test method that tests the conversion of a particular model file as provided by the
      * {@link File} parameter that was constructor-injected into this instance of the test class.
-     * <p>
-     * @throws IOException - if couldn't read stderr file
      */
     @Test
-    public void testMdlToPharmMLConversion() throws IOException {
-        final ConverterRunner runner = new ConverterRunner(
+    public void testMdlToPharmMLConversion() {
+        new ConverterRunner(
             this.model, OUTPUT_FILE_EXTENSION, "MDL", "5.1.6", "PharmML", "0.3.0",
-            new ConverterOutputFailureChecker(PHARMML_FILE_SIZE_THRESHOLD));
-        final boolean success = runner.run();
-        if (!success) {
-            fail("Conversion failed; standard error:\n" + FileUtils.readFileToString(runner.getStandardErrorFile()));
-        }
+            new ConverterOutputFailureCheckerImpl(PHARMML_FILE_SIZE_THRESHOLD)
+        ).run();
     }
     
 }

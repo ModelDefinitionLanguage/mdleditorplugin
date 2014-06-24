@@ -54,7 +54,7 @@ public class ConverterRunner {
         return new File(FilenameUtils.removeExtension(this.modelFile.getAbsolutePath()) + ".convert.stderr");
     }
     
-    boolean run() {
+    void run() {
         
         // Initialise output directory and stdout and stderr files
         final File outputDir = new File(this.modelFile.getParent(), OUTPUT_SUBDIRECTORY);
@@ -126,10 +126,8 @@ public class ConverterRunner {
         }
         
         // Heuristically test if the conversion didn't fail (we can only generically check for failure rather than success)
-        final File expectedOutputFile = new File(outputDir, FilenameUtils.getBaseName(this.modelFile.getPath()) + this.outputFileExtension); 
-        final boolean passed = this.converterOutputFailureChecker.isConversionErrorFree(expectedOutputFile, stdoutFile, stderrFile);
-        LOGGER.info((passed ? "PASSED" : "FAILED") + " conversion of " + this.modelFile);
-        return passed;
+        final File expectedOutputFile = new File(outputDir, FilenameUtils.getBaseName(this.modelFile.getPath()) + this.outputFileExtension);
+        this.converterOutputFailureChecker.check(expectedOutputFile, stdoutFile, stderrFile); // fail()s if appropriate
     }
     
 }

@@ -18,9 +18,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import eu.ddmore.convertertoolbox.systemtest.ConverterRunner;
-import eu.ddmore.convertertoolbox.systemtest.ModelsDiscoverer;
-
 
 /**
  * Run PharmML -> NMTRAN conversions, but on PharmML files that were output by MDL -> PharmML
@@ -173,18 +170,13 @@ public class GeneratedPharmmlModelsTest {
     /**
      * Test method that tests the conversion of a particular model file as provided by the
      * {@link File} parameter that was constructor-injected into this instance of the test class.
-     * <p>
-     * @throws IOException - if couldn't read stderr file
      */
     @Test
-    public void testPharmMLToNMTRANConversionForPharmMLGeneratedByMdlToPharmMLConversion() throws IOException {
-        final ConverterRunner runner = new ConverterRunner(
+    public void testPharmMLToNMTRANConversionForPharmMLGeneratedByMdlToPharmMLConversion() {
+        new ConverterRunner(
             this.generatedPharmmlModel, OUTPUT_FILE_EXTENSION, "PharmML", "0.3.0", "NMTRAN", "7.2",
-            new ConverterOutputFailureChecker(NMTRAN_FILE_SIZE_THRESHOLD));
-        final boolean success = runner.run();
-        if (!success) {
-            fail("Conversion failed; standard error:\n" + FileUtils.readFileToString(runner.getStandardErrorFile()));
-        }
+            new ConverterOutputFailureCheckerImpl(NMTRAN_FILE_SIZE_THRESHOLD)
+        ).run();
     }
     
 }
