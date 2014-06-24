@@ -10,11 +10,6 @@
 	<packaging>pom</packaging>
 	
 	<repositories>
-		<repository>
-			<id>mango-artifactory</id>
-			<name>Mango Artifactory</name>
-			<url>http://artifactrepo.mango.local/artifactory/libs-releases</url>
-		</repository>
 		<!-- Note that this repository definition (and indeed the Mango one above) won't
 			 be used internally at Mango since the Maven settings.xml specifies that our
 			 Artifactory server is the universal mirror for all artifacts; but if this
