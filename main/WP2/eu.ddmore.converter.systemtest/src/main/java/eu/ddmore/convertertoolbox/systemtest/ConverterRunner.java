@@ -28,19 +28,18 @@ public class ConverterRunner {
     private final String sourceVersion;
     private final String targetLang;
     private final String targetVersion;
-    // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes
-    private final int outputFileSizeThreshhold;
+    private final ConverterOutputFailureChecker converterOutputFailureChecker;
     
     ConverterRunner(final File modelFile, final String outputFileExtension,
             final String sourceLang, final String sourceVersion, final String targetLang, final String targetVersion,
-            final int outputFileSizeThreshhold) {
+            final ConverterOutputFailureChecker convFailChecker) {
         this.modelFile = modelFile;
         this.outputFileExtension = outputFileExtension;
         this.sourceLang = sourceLang;
         this.sourceVersion = sourceVersion;
         this.targetLang = targetLang;
         this.targetVersion = targetVersion;
-        this.outputFileSizeThreshhold = outputFileSizeThreshhold;
+        this.converterOutputFailureChecker = convFailChecker;
     }
     
     boolean run() {
@@ -118,28 +117,9 @@ public class ConverterRunner {
         
         // Heuristically test if the conversion didn't fail (we can only generically check for failure rather than success)
         final File expectedOutputFile = new File(outputDir, FilenameUtils.getBaseName(this.modelFile.getPath()) + this.outputFileExtension); 
-        final boolean passed = isConversionErrorFree(expectedOutputFile, stderrFile);
-        
-        if (passed) {
-            LOGGER.info("PASSED conversion of " + this.modelFile);
-        } else {
-            LOGGER.error("FAILED conversion of " + this.modelFile);
-        }
+        final boolean passed = this.converterOutputFailureChecker.isConversionErrorFree(expectedOutputFile, stdoutFile, stderrFile);
+        LOGGER.info((passed ? "PASSED" : "FAILED") + " conversion of " + this.modelFile);
         return passed;
-    }
-    
-    private boolean isConversionErrorFree(final File expectedOutputFile, final File stderrFile) {
-        if (! expectedOutputFile.exists()) {
-            return false;
-        }
-        if (FileUtils.sizeOf(expectedOutputFile) < this.outputFileSizeThreshhold) {
-            return false;
-        }
-        if (FileUtils.sizeOf(stderrFile) > 0) {
-            // Errors were produced onto the standard error stream
-            return false;
-        }
-        return true;
     }
     
 }

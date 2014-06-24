@@ -64,7 +64,8 @@ public class MdlModelsTest {
     @Test
     public void testMdlToPharmMLConversion() {
         final ConverterRunner runner = new ConverterRunner(
-            this.model, OUTPUT_FILE_EXTENSION, "MDL", "5.1.6", "PharmML", "0.3.0", PHARMML_FILE_SIZE_THRESHOLD);
+            this.model, OUTPUT_FILE_EXTENSION, "MDL", "5.1.6", "PharmML", "0.3.0",
+            new ConverterOutputFailureChecker(PHARMML_FILE_SIZE_THRESHOLD));
         final boolean success = runner.run();
         assertTrue("Conversion should not error out", success);
     }
