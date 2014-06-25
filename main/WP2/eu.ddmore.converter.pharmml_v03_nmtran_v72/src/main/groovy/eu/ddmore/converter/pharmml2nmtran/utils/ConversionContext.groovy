@@ -65,6 +65,7 @@ import eu.ddmore.libpharmml.dom.modellingsteps.SimulationStepType
 import eu.ddmore.libpharmml.dom.modellingsteps.ToEstimateType
 import eu.ddmore.libpharmml.dom.trialdesign.PopulationMappingType
 import eu.ddmore.libpharmml.dom.uncertml.NormalDistribution
+import eu.ddmore.pharmacometrics.model.trialdesign.CategoricalAttribute
 
 /**
  * This is a main conversion class that provides overloaded 'convert' methods 
@@ -176,6 +177,28 @@ public class ConversionContext extends NMTranFormatter {
         }
         sb
     }
+	
+	public String verifyAndRename(String name){
+		
+		return (isCovariateVariableType(name))?name:rename(name)
+	}
+	
+	private boolean isCovariateVariableType(String variableTypeName){
+		boolean result
+		if(predStatement == null){
+				return result
+		}
+		if(predStatement.categoricalCovariates.containsKey(variableTypeName)){
+			return true;
+		}else{
+			for(CategoricalAttribute catCovariate: predStatement.categoricalCovariates.values()){
+				result = catCovariate.categoriesToIndex.containsKey(variableTypeName)
+				if(result){
+					return result
+				}
+			}
+		}		
+	}
 
     public StringBuilder convert(FunctionCallType type) {
         convert(type, simpleParameterToNmtran)
@@ -536,7 +559,7 @@ public class ConversionContext extends NMTranFormatter {
                 name = parameters.varToName.get(name)
             }
             if (!name.contains("A(")) {
-                name = rename(name)
+                name = verifyAndRename(name)
             }
             sb.append(name.toUpperCase())
         }

@@ -231,7 +231,7 @@
                     </math:LogicBinop>
                     <math:LogicBinop op="neq">
                       <ct:SymbRef symbIdRef="Study"/>
-                      <ct:SymbRef symbIdRef="STU101"/>
+                      <ct:SymbRef symbIdRef="STUD101"/>
                     </math:LogicBinop>
                   </math:LogicBinop>
                 </math:Condition>
@@ -252,7 +252,7 @@
                     </math:LogicBinop>
                     <math:LogicBinop op="neq">
                       <ct:SymbRef symbIdRef="Study"/>
-                      <ct:SymbRef symbIdRef="STU101"/>
+                      <ct:SymbRef symbIdRef="STUD101"/>
                     </math:LogicBinop>
                   </math:LogicBinop>
                 </math:Condition>
@@ -273,7 +273,7 @@
                     </math:LogicBinop>
                     <math:LogicBinop op="eq">
                       <ct:SymbRef symbIdRef="Study"/>
-                      <ct:SymbRef symbIdRef="STU101"/>
+                      <ct:SymbRef symbIdRef="STUD101"/>
                     </math:LogicBinop>
                   </math:LogicBinop>
                 </math:Condition>
@@ -294,7 +294,7 @@
                     </math:LogicBinop>
                     <math:LogicBinop op="eq">
                       <ct:SymbRef symbIdRef="Study"/>
-                      <ct:SymbRef symbIdRef="STU101"/>
+                      <ct:SymbRef symbIdRef="STUD101"/>
                     </math:LogicBinop>
                   </math:LogicBinop>
                 </math:Condition>

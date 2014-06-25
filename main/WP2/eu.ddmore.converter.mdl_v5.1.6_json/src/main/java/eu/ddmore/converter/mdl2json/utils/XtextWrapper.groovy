@@ -1,5 +1,6 @@
 package eu.ddmore.converter.mdl2json.utils;
 
+import eu.ddmore.converter.mdlprinting.MdlPrinter
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import org.ddmore.mdl.mdl.AdditiveExpression
 import org.ddmore.mdl.mdl.AndExpression
 import org.ddmore.mdl.mdl.AnyExpression;
 import org.ddmore.mdl.mdl.Argument;
+import org.ddmore.mdl.mdl.Arguments;
 import org.ddmore.mdl.mdl.ConditionalExpression;
 import org.ddmore.mdl.mdl.EnumType
 import org.ddmore.mdl.mdl.Expression;
@@ -22,37 +24,35 @@ public class XtextWrapper {
 
 	private static Logger logger = Logger.getLogger(XtextWrapper.class)
 	
+	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
+	
 	public static Object unwrap(AnyExpression expression) {
 		
 		if(expression.getExpression()!=null) {
 			return unwrap(expression.getExpression());
 		} else if(expression.getList() !=null ) {
-			Map m = new HashMap();
-			for(Argument a : expression.getList().getArguments().getArguments() ) {
-				m.put(a.getArgumentName().getName(), unwrap(a.getExpression()));
-			}
+			Map m = argumentsToMap(expression.getList().getArguments())
 			return m;
 		} else if(expression.getOdeList()!=null) {
-			
+			Map m = argumentsToMap(expression.getOdeList().getArguments())
+			return m
 		} else if(expression.getVector()!=null) {
-			
+			return mdlPrinter.toStr(expression.getVector())
 		} else if(expression.getType()!=null) {
-			if( expression.getType().getType()!=null) {
-				if(expression.getType().getType().getContinuous()!=null) {
-					return expression.getType().getType().getContinuous()
-				} else if(expression.getType().getType().getCategorical()!=null) {
-					return expression.getType().getType().getCategorical()
-				} else if (expression.getType().getType().getLikelihood()!=null) {
-					return expression.getType().getType().getLikelihood()
-				}
-			} else {
-				return unwrap(expression.getType())
-			}
+			return mdlPrinter.toStr(expression.getType())
 		}
 		logger.debug(expression)
 		return null;
 	}
 
+	private static Map argumentsToMap(Arguments args) {
+		Map m = [:]
+		for(Argument a : args.getArguments() ) {
+			m.put(a.getArgumentName().getName(), mdlPrinter.toStr(a.getExpression()));
+		}
+		return m
+	}
+	
 	public static Object unwrap(EnumType enumType) {
 		if(enumType.getInput()) {
 			return enumType.getInput().getIdentifier()

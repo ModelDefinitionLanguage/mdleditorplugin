@@ -1,0 +1,110 @@
+# nt2mdl 1.043 beta Nick Holford n.holford@auckland.ac.nz
+delbene_dat = dataobj{
+### Data object
+# The data object specifies a table of columns of data variables and the variable names which will be also used by the model object
+   DATA_INPUT_VARIABLES{
+      ID=list(type=categorical)
+      TIME=list(type=continuous,units="h")
+      DV=list(type=continuous)
+      CONC=list(type=continuous)
+   }# end DATA_INPUT_VARIABLES
+
+   SOURCE{
+      myData=list(
+           file="delbene2009_data.csv",
+           inputformat=nonmemFormat,
+           ignore="@")
+   }# end SOURCE
+} # end data object
+
+delbene_par = parobj{
+### Parameter object
+# The parameter object defines the numerical values of the parameters with optional constraints (lo and high values) and units.
+
+   STRUCTURAL{
+# The STRUCTURAL block define the structural model parameters.
+      #THETA
+      POP_LAMBDA0=list(value=0.1,lo=0,hi=INF)
+      POP_K1=list(value=0.1,lo=0,hi=INF)
+      POP_K2=list(value=0.1,lo=0,hi=INF)
+      POP_W0=list(value=1000,lo=0,hi=INF)
+      POP_CV=list(value=0.1,lo=0,hi=INF)
+   }# end STRUCTURAL
+   
+  VARIABILITY{
+      PPV_RUV=list(value=1, fix=true)
+   }
+} # end of parameter object
+
+delbene_mdl = mdlobj{
+### Model object
+# The model object receives a list of input data variables from the data object and parameters (constants)from the parameter object.
+# The parameter and variable names in the model object must be matched by a similar name in the parameter and data objects.
+# Note that variables in the data object and parameters may be defined in the parameter object that are not referenced in the model object.
+# Model variables are derived from the input data variables and parameters using algebraic expressions.
+
+   MODEL_INPUT_VARIABLES{
+# A name for each input data variable is required. Special uses of input data variables are indicated by the use attribute if the data variable name is not a standard name. Standard names may include ID, IDV, AMT, DV, MDV, etc. similar to standard data items recognized by NM-TRAN or Monolix. The type option is not required but may be useful as metadata. This kind of metadata (with an option to recode) could alternatively be specified in the data object.
+      ID=list(use=id,level=2)
+      TIME=list(use=idv,units="h")
+      DV=list(type=continuous,use=dv,level=1)
+      CONC=list(type=continuous,use=covariate)
+   }# end MODEL_INPUT_VARIABLES
+
+# The STRUCTURAL_PARAMETERS Block defines the structural model parameters.
+   STRUCTURAL_PARAMETERS{
+# A name for each parameter is required. Other attributes such as units are optional.
+# Units may be used to achieve consistency between the parameter, data and model object values.
+# This could be implemented during the WP2 translation process.
+
+      #THETA
+      POP_LAMBDA0
+      POP_K1
+      POP_K2
+      POP_W0
+      POP_CV
+   }# end STRUCTURAL_PARAMETERS
+   
+   VARIABILITY_PARAMETERS{
+      PPV_RUV
+   }
+
+RANDOM_VARIABLE_DEFINITION{
+   eps1~(type=normal, mean=0, var=PPV_RUV,level=DV)
+}
+   MODEL_PREDICTION{
+# The MODEL_PREDICTION block calculates model predictions based on model variables defined in the previous model object blocks.
+# Code in this block expresses the structural model after group and individual parameter differences have been included.
+# It can be considered as an expression of a deterministic prediction. It is the essential component of a shared sub-model.
+# This block should not contain any covariate computations expressing predictable or unpredictable (random) between subject differences.
+
+
+      ## COMPARTMENTS
+      ## 
+      ## COMP =  NP
+      ## COMP =  N1
+      ## COMP =  N2
+      ## COMP =  N3
+      ## #initial conditions
+      ## A_0(1) = W0
+      ## A_0(2) = 0
+      ## A_0(3) = 0
+      ## A_0(4) = 0
+
+   ODE{
+      NP=ode(deriv= POP_LAMBDA0*NP-POP_K2*CONC*NP)
+      N1=ode(deriv= POP_K2*CONC*NP-POP_K1*N1)
+      N2=ode(deriv= POP_K1*N1-POP_K1*N2)
+      N3=ode(deriv= POP_K1*N2-POP_K1*N3)
+   }# end ODE
+   
+   NT = NP+N1+N2+N3
+   IRES = DV-NT
+   IWRES = IRES/POP_CV
+   }# end MODEL_PREDICTION
+
+OBSERVATION{
+   Y = NT+NT*POP_CV*eps1
+}
+} # end of model object
+
