@@ -1,0 +1,129 @@
+# nt2mdl 1.043 beta Nick Holford n.holford@auckland.ac.nz
+Rocchetti_dat = dataobj{
+### Data object
+# The data object specifies a table of columns of data variables and the variable names which will be also used by the model object
+   DATA_INPUT_VARIABLES{
+      ID=list(type=categorical)
+      TIME=list(type=continuous,units="h")
+      DV=list(type=continuous)
+      AMTA=list(type=continuous)
+      AMTB=list(type=continuous)
+   }# end DATA_INPUT_VARIABLES
+
+   SOURCE{
+      myData=list(
+           file="rocchetti2013_data.csv",
+           inputformat=nonmemFormat,
+           ignore="#")
+   }# end SOURCE
+} # end data object
+
+Rocchetti_par = parobj{
+### Parameter object
+# The parameter object defines the numerical values of the parameters with optional constraints (lo and high values) and units.
+
+   STRUCTURAL{
+# The STRUCTURAL block define the structural model parameters.
+      #THETA
+      POP_KA_A=list(value=2.69 ,fix=true)
+      POP_KE_A=list(value=0.115 ,fix=true)
+      POP_FV1_A=list(value=8.4 ,fix=true)
+      POP_KA_B=list(value=18.8 ,fix=true)
+      POP_KE_B=list(value=49.2 ,fix=true)
+      POP_K21=list(value=141.1 ,fix=true)
+      POP_K12=list(value=10.4 ,fix=true)
+      POP_FV1_B=list(value=4.69 ,fix=true)
+      POP_K2=list(value=0.221)
+      POP_LAMBDA0=list(value=1.14)
+      POP_LAMBDA1=list(value=0.129)
+      POP_K1=list(value=3.54)
+      POP_IC50=list(value=2.02)
+      POP_IC50COMBO=list(value=1)
+      POP_W0=list(value=0.062)
+      POP_CV=list(value=1)
+      POP_EMAX=list(value=1 ,fix=true)
+      POP_PSI=list(value=20 ,fix=true)
+   }# end STRUCTURAL
+
+} # end of parameter object
+
+Rocchetti_mdl = mdlobj{
+### Model object
+# The model object receives a list of input data variables from the data object and parameters (constants)from the parameter object.
+# The parameter and variable names in the model object must be matched by a similar name in the parameter and data objects.
+# Note that variables in the data object and parameters may be defined in the parameter object that are not referenced in the model object.
+# Model variables are derived from the input data variables and parameters using algebraic expressions.
+
+   MODEL_INPUT_VARIABLES{
+# A name for each input data variable is required. Special uses of input data variables are indicated by the use attribute if the data variable name is not a standard name. Standard names may include ID, IDV, AMT, DV, MDV, etc. similar to standard data items recognized by NM-TRAN or Monolix. The type option is not required but may be useful as metadata. This kind of metadata (with an option to recode) could alternatively be specified in the data object.
+      ID=list(use=id,level=2)
+      TIME=list(use=idv,units="h")
+      DV=list(type=continuous,use=dv,level=1)
+      AMTA=list(type=continuous,use=covariate)
+      AMTB=list(type=continuous,use=covariate)
+   }# end MODEL_INPUT_VARIABLES
+
+# The STRUCTURAL_PARAMETERS Block defines the structural model parameters.
+   STRUCTURAL_PARAMETERS{
+# A name for each parameter is required. Other attributes such as units are optional.
+# Units may be used to achieve consistency between the parameter, data and model object values.
+# This could be implemented during the WP2 translation process.
+
+      #THETA
+      POP_KA_A
+      POP_KE_A
+      POP_FV1_A
+      POP_KA_B
+      POP_KE_B
+      POP_K21
+      POP_K12
+      POP_FV1_B
+      POP_K2
+      POP_LAMBDA0
+      POP_LAMBDA1
+      POP_K1
+      POP_IC50
+      POP_IC50COMBO
+      POP_W0
+      POP_CV
+      POP_EMAX
+      POP_PSI
+   }# end STRUCTURAL_PARAMETERS
+
+   MODEL_PREDICTION{
+# The MODEL_PREDICTION block calculates model predictions based on model variables defined in the previous model object blocks.
+# Code in this block expresses the structural model after group and individual parameter differences have been included.
+# It can be considered as an expression of a deterministic prediction. It is the essential component of a shared sub-model.
+# This block should not contain any covariate computations expressing predictable or unpredictable (random) between subject differences.
+
+
+      ## COMPARTMENTS
+      ## 
+      ## COMP =  Z0
+      ## COMP =  Z1
+      ## COMP =  Z2
+      ## COMP =  Z3
+      ## #initial conditions
+      ## A_0(4) = 0
+      ## A_0(1) = W0
+      ## A_0(2) = 0
+      ## A_0(3) = 0
+
+   ODE{
+   CA = 1
+   CB = 1
+   K2INHIBITED = POP_K2*(1-CA/(CA+POP_IC50COMBO))
+   W = Z0+Z1+Z2+Z3
+      Z0=ode(deriv= (POP_LAMBDA0*Z0/((1+(W*POP_LAMBDA0/POP_LAMBDA1)^ POP_PSI)^ (1/POP_PSI)))*(1-POP_EMAX*CA/(CA+POP_IC50))-K2INHIBITED*CB*Z0)
+      Z1=ode(deriv= K2INHIBITED*CB*Z0-POP_K1*Z1)
+      Z2=ode(deriv= POP_K1*Z1-POP_K1*Z2)
+      Z3=ode(deriv= POP_K1*Z2-POP_K1*Z3)
+   }# end ODE
+   
+   IRES = DV-W
+   IWRES = IRES/POP_CV
+   #Y = W+W*THETA(16)*EPS(1)
+   }# end MODEL_PREDICTION
+
+} # end of model object
+
