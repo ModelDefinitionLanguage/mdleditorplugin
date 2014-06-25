@@ -35,12 +35,8 @@ public class NMTranFormatter {
     public String endline() {
         return "\n";
     }
-    
+	
     public String rename(String name) {
-        if (!name.contains(PREFIX)) {
-            return PREFIX + name;
-        } else {
-            return name;
-        }
+		return (!name.contains(PREFIX))?PREFIX + name:name;
     }
 }
