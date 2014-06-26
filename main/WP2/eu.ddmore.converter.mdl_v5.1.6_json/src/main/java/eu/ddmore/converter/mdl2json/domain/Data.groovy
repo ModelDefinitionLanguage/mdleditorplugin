@@ -15,8 +15,14 @@ import eu.ddmore.converter.mdlprinting.MdlPrinter;
 import groovy.util.Expando;
 
 public class Data extends Expando {
-	
+	static final String IDENTIFIER = "dataobj"
+	static final String SOURCE = "SOURCE"
+	static final String DATA_INPUT_VARIABLES = "DATA_INPUT_VARIABLES"
+	static final String TARGET_BLOCK = "TARGET_BLOCK"
+
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
+
+
 	private SourceBlock sourceBlock
 	private DataInputBlock dataInputBlock
 	private DataDerivedBlock dataDerivedBlock
@@ -25,6 +31,8 @@ public class Data extends Expando {
 	
 	public Data(DataObject dataObject) {
 
+		setProperty("identifier", IDENTIFIER )
+		
 		for( DataObjectBlock b :  dataObject.getBlocks() ) {
 			sourceBlock = b.getSourceBlock() ?: sourceBlock
 			dataInputBlock = b.getDataInputBlock() ?: dataInputBlock
@@ -34,15 +42,27 @@ public class Data extends Expando {
 		}
 
 		if(sourceBlock) {
-			setProperty("SOURCE", new Source(sourceBlock))
+			setProperty(SOURCE, new Source(sourceBlock))
 		}
 		
 		if(dataInputBlock) {
-			setProperty("DATA_INPUT_VARIABLES", new DataInputVariables(dataInputBlock))
+			setProperty(DATA_INPUT_VARIABLES, new DataInputVariables(dataInputBlock))
 		}
 		
 		if(targetBlock) {
-			setProperty("TARGET_BLOCK", mdlPrinter.toStr(targetBlock))
+			setProperty(TARGET_BLOCK, mdlPrinter.toStr(targetBlock))
 		}
+	}
+
+	public Data(Object json) {
+		setProperty("identifier", IDENTIFIER)
+		
+	}
+	
+	public String toMDL() {
+		return """${IDENTIFIER} {
+			}
+
+		"""
 	}
 }

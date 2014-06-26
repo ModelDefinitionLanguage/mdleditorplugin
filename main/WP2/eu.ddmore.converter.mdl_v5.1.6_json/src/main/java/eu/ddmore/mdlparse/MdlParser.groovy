@@ -23,20 +23,11 @@ class MdlParser {
 	}
 
 	public Mcl parse(String model) {
-
-        println("Model parameter: " + model);
-        println("Resource: " + Thread.currentThread().getContextClassLoader().getResource(model));
-        println("Path: " + Thread.currentThread().getContextClassLoader().getResource(model).getPath());
         File src = new File(Thread.currentThread().getContextClassLoader().getResource(model).getPath());
-        
         return parse(src);
 	}
 	
 	public Mcl parse(File mdlFile) {
-        println("Path: " + mdlFile.getPath());
-        println("Thread: " + Thread.currentThread());
-        println("Classloader: " + Thread.currentThread().getContextClassLoader());
-
         Resource resource = resourceSet.getResource(URI.createURI("file:///" + mdlFile.getAbsolutePath()), true);
 		return (Mcl) resource.getContents().get(0);
 	}

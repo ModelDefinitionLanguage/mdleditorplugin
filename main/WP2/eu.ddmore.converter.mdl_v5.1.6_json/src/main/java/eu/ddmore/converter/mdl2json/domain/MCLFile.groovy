@@ -23,4 +23,40 @@ public class MCLFile extends Expando {
 			}
 		}
 	}
+	
+	public MCLFile(Object json) {
+		// JSON is a list of Maps
+		json.each {
+			// "it" is a Map
+			it.each { key, value ->
+				// Each key/value pair is the object (e.g. ex_model7_prolactin_Jan2014_dat -> properties )
+				String type = value.identifier
+				switch( type ) {
+					case Task.IDENTIFIER: 
+						setProperty(key, new Task(value));
+						break;
+					case Model.IDENTIFIER: 
+						setProperty(key, new Model(value));
+						break;
+					case Parameter.IDENTIFIER: 
+						setProperty(key, new Parameter(value));
+						break;
+					case Data.IDENTIFIER: 
+						setProperty(key, new Data(value));
+						break;
+				} 
+			}
+		}
+	}
+	
+	public String toMDL() {
+		String retVal = ""
+		
+		getProperties().each{ key, value ->
+			if(key!=null) {
+				retVal += "${key} = ${value.toMDL()}"
+			} 
+		}
+		retVal
+	}
 }

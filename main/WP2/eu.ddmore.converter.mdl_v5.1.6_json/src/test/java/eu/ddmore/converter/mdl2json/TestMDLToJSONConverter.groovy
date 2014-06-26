@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.apache.log4j.Logger
 
 import eu.ddmore.convertertoolbox.api.response.ConversionReport
+import eu.ddmore.converter.mdl2json.domain.Parameter
+import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
@@ -34,16 +36,17 @@ class TestMDLToJSONConverter {
 			
 		def dataObject = json.ex_model7_prolactin_Jan2014_dat
 			
-		def source = dataObject.SOURCE
+		def source = dataObject[Data.SOURCE]
 		logger.debug(source)
 		
 		assertEquals("ex_data_prolactin.csv", source.file[0])
 		assertEquals("nonmemFormat", source.inputformat[0])
 		assertEquals("@", source.ignore[0])
 		
-		def dataInputVariables = dataObject.DATA_INPUT_VARIABLES
+		def dataInputVariables = dataObject[Data.DATA_INPUT_VARIABLES]
+				
+		logger.debug(dataInputVariables)
 		
-		println(dataInputVariables)
 		def STU = dataInputVariables.STU
 		assertEquals("continuous", STU.type[0])
 
@@ -51,20 +54,40 @@ class TestMDLToJSONConverter {
 		assertEquals("h", TIME.units[0])	
 		
 		def parameterObject = json.ex_model7_prolactin_Jan2014_par
-		def structuralModel = parameterObject.STRUCTURAL
+		def structuralModel = parameterObject[Parameter.STRUCTURAL]
 		
 		def POP_KOUT = structuralModel.POP_KOUT
 		assertEquals(".1", POP_KOUT.lo[0])
 		
 		def POP_AMP = structuralModel.POP_AMP
-		assertEquals("-.75", POP_AMP.lo[0])
-		
-		
-		
-			
+		assertEquals("-.75", POP_AMP.lo[0])			
 	}
 	
-    def getJson  = { String fileToConvert ->
+	@Test
+	public void testOGTTJun2014() {
+		def struc1 = 0
+		def PPV_IIV_CLG_FIX = 1
+		
+		def json = getJson("run_final_OGTT_04Jun2014_OAM.mdl")
+		
+		def paramObj = json.run_final_OGTT_par
+		
+		def variabilityBlock = paramObj[Parameter.VARIABILITY][0]
+		
+		assertEquals(19, variabilityBlock.size())
+		
+		struc1 = variabilityBlock[struc1]
+		def attributes = struc1["matrix"]
+		assertEquals("PPV_IIV_VG_FIX=.0887,\n-0.192,PPV_IIV_Q_FIX=.73,\n.0855,-0.12,PPV_IIV_VI_FIX=.165", attributes["content"])
+		
+		
+		PPV_IIV_CLG_FIX = variabilityBlock[PPV_IIV_CLG_FIX]
+		attributes = PPV_IIV_CLG_FIX["PPV_IIV_CLG_FIX"]
+		assertEquals("0.352", attributes["value"])
+			
+	}
+
+	def getJson  = { String fileToConvert ->
         File srcFile = getFile(fileToConvert)
 
 		MdlParser p = new MdlParser()
@@ -72,7 +95,7 @@ class TestMDLToJSONConverter {
 
         String jsonText = converter.toJSON(mcl)
 		
-		println jsonText
+		logger.debug(jsonText)
 		
 		JsonSlurper slurper = new JsonSlurper();
 		slurper.parseText(jsonText)
