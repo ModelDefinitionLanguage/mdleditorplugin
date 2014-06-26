@@ -42,8 +42,19 @@ public class Variable extends Expando{
 		}
 	}
 	
-	@Override
+	public Variable(Map json) {
+		getProperties().putAll(json)
+	}
+	
 	public String getName() {
 		return (String) getProperty("name");
+	}
+	
+	public String toMDL() {
+		List attributes = []
+		getProperties().each { k, v ->
+			if(k!="name") attributes.add("${k}=${v}")
+		}
+		"""list(${attributes.join(",")})"""
 	}
 }

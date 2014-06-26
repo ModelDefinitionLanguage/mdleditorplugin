@@ -13,30 +13,35 @@ import org.ddmore.mdl.mdl.SymbolDeclaration;
 
 public class DataInputVariables extends Expando {
 
-	private DataInputBlock dataInputBlock;
-
 	public DataInputVariables(DataInputBlock dataInputBlock) {
-		this.dataInputBlock = dataInputBlock;
-		
-		makeVariables();
+
+		makeVariables(dataInputBlock);
 	}
 	
-	private void makeVariables() {
+	public DataInputVariables(Map json) {
+		json.each{ k, v ->
+			setProperty(k, new Variable(v))
+		}
+	}
+	
+	private void makeVariables(DataInputBlock dataInputBlock) {
 		for( SymbolDeclaration sd : dataInputBlock.getVariables() ) {
 			Variable v = new Variable(sd);
 			setProperty(v.getName(), v);
 		}	
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Variable> getVariables() {
-		return new ArrayList<Variable>( getProperties().values() );
-	}
+	public String toMDL() {
+		List parameters = []
+		getProperties().each{ k, v ->
+			parameters.add("${k}=${v.toMDL()}")
+		}
 
-	@Override
-	public Variable getVariable(String variableName) {
-		return (Variable) getProperty(variableName);
+		"""
+    DATA_INPUT_VARIABLES {
+        ${parameters.join("\n        ")}
+    }
+"""
 	}
 
 }

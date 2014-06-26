@@ -18,6 +18,7 @@ import org.ddmore.mdl.mdl.SourceBlock;
  */
 public class Source extends Expando {
 
+	private static final String SOURCE = "SOURCE"
 	
 	/**
 	 * Constructor which unpacks all the content of the SourceBlock and adds them to the properties of this object
@@ -37,4 +38,33 @@ public class Source extends Expando {
 	}
 
 
+	/**
+	 * Constructor from a JSON object
+	 * @param json
+	 */
+	public Source(Map json) {
+		getProperties().putAll(json)
+	}
+	
+	/**
+	 * Returns the MDL equivalent of this object
+	 * 
+	 * @return
+	 */
+	public String toMDL() {
+		List properties = []
+		getProperties().each{ k, v ->
+			if(!k.equals("identifier") && !k.equals("symbolName")) { 
+				properties.add("${k}=${v}")
+			} 
+		}
+		
+		"""
+    ${SOURCE}{
+        ${getProperty("symbolName")}=list(
+            ${properties.join(",\n            ")}
+        )
+    }
+"""
+	}
 }

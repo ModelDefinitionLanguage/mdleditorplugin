@@ -56,13 +56,26 @@ public class Data extends Expando {
 
 	public Data(Object json) {
 		setProperty("identifier", IDENTIFIER)
-		
+		if(json[SOURCE]) {
+			setProperty(SOURCE, new Source(json[SOURCE]))
+		}
+		if(json[DATA_INPUT_VARIABLES]) {
+			setProperty(DATA_INPUT_VARIABLES, new DataInputVariables(json[DATA_INPUT_VARIABLES]))
+		}
+		if(json[TARGET_BLOCK]) {
+			setProperty(TARGET_BLOCK, json[TARGET_BLOCK])
+		}
 	}
 	
 	public String toMDL() {
+		Properties p = getProperties()
+		DataInputVariables div = p.get(DATA_INPUT_VARIABLES)
+		Source source = p.get(SOURCE)
+		
 		return """${IDENTIFIER} {
-			}
-
-		"""
+    ${(div==null? "" : div.toMDL())}
+    ${(source==null? "" : source.toMDL())}
+}
+"""
 	}
 }
