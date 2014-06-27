@@ -1,0 +1,34 @@
+{"ex_model7_prolactin_Jan2014_par":
+	{"VARIABILITY":[
+		{"matrix":{"name":"struc1","type":"VAR","content":"PPV_PRL0=.425,\n.758,PPV_KI=1.82"}},
+		{"PPV_KOUT":{"value":"0.589","type":"VAR"}},
+		{"PPV_AMP1":{"value":".0558","type":"VAR"}},
+		{"PPV_PHS2":{"value":"1.80","type":"VAR"}},
+		{"diag":{"name":"struc2","type":"VAR","content":"PPV_IOV_IN_PRL0_1=.0657"}},
+		{"same":{"name":"struc2","content":["PPV_IOV_IN_PRL0_2"]}},
+		{"same":{"name":"struc2","content":["PPV_IOV_IN_PRL0_3"]}},
+		{"same":{"name":"struc2","content":["PPV_IOV_IN_PRL0_4"]}},
+		{"RUV_EPS1":{"value":"1","type":"VAR","fix":"true"}}],
+	"identifier":"parobj",
+	"STRUCTURAL":
+		{
+			"POP_KOUT":{"value":"0.664","lo":".1","hi":"10"},
+			"POP_PRL0_IN_MALE_HV":{"value":"7.67","lo":"1","hi":"15"},
+			"POP_PRL0_IN_MALE_PAT":{"value":"16.1","lo":"1","hi":"30"},
+			"POP_PRL0_IN_FEMALES_PAT":{"value":"35.2","lo":"1","hi":"40"},
+			"POP_PRL0_IN_MALES_STUDY_101":{"value":"11.3","lo":"0"},
+			"POP_PRL0_IN_FEMALES_STUDY_101":{"value":"23.2","lo":"0"},
+			"POP_KDA":{"value":".156","lo":"0.001","hi":"50"},
+			"POP_UPDA":{"value":"1.44","lo":"0.001","hi":"10"},
+			"POP_AMP":{"value":"0.532","lo":"-.75","hi":"1.5"},
+			"POP_PHS1":{"value":"20.1","lo":"12","hi":"25"},
+			"POP_AMP2":{"value":"-.314","lo":"-.9","hi":"0.2"},
+			"POP_PHS2":{"value":"13.7","lo":"-2","hi":"15"},
+			"POP_KI":{"value":"1.96","lo":"0","hi":"100"},
+			"POP_PHASE_SHIFT_IN_PATIENTS":{"value":"-1.61","lo":"-5"},
+			"POP_RES_ERR_IN_MALE_HV":{"value":".290","lo":"0"},
+			"POP_RES_ERR_IN_MALE_PATIENTS":{"value":".422","lo":"0"},
+			"POP_RES_ERR_IN_FEMALE_PATIENTS":{"value":".571","lo":"0"}
+		}
+	}
+}

@@ -2,6 +2,7 @@ package eu.ddmore.converter.mdl2json.domain;
 
 import javax.management.MBeanAttributeInfo;
 
+import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.Arguments
 import org.ddmore.mdl.mdl.DiagBlock
@@ -24,6 +25,7 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
 import eu.ddmore.converter.mdlprinting.MdlPrinter;
 
 public class Parameter extends Expando {
+	private static Logger logger = Logger.getLogger(Parameter.class)
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
 	static final String IDENTIFIER = "parobj"
@@ -31,6 +33,8 @@ public class Parameter extends Expando {
 	static final String TARGET = "TARGET"
 	static final String STRUCTURAL = "STRUCTURAL"
 	static final String PRIOR = "PRIOR";
+	
+	static final String IDT = "    "
 
 	public Parameter(ParameterObject paramObject) {
 		this.setProperty("identifier", IDENTIFIER)
@@ -50,8 +54,17 @@ public class Parameter extends Expando {
 	
 	public Parameter(Object json) {
 		setProperty("identifier", IDENTIFIER)
+		if(json[VARIABILITY]) {
+			setProperty(VARIABILITY, json[VARIABILITY])
+		}
+		if(json[STRUCTURAL]) {
+			setProperty(STRUCTURAL, json[STRUCTURAL])
+		}
 	}
 	
+	/**
+	 * Parse the structural model block
+	 */
 	private Map makeStructuralModel(StructuralBlock sb) {
 		def retVal = [:]
 		for( SymbolDeclaration sd : sb.getParameters() ) {
@@ -61,6 +74,9 @@ public class Parameter extends Expando {
 		retVal
 	}
 	
+	/**
+	 * Parse the variability model block
+	 */
 	private List makeVariability(VariabilityBlock vb) {
 		List retVal = []
 		for(VariabilityBlockStatement s : vb.getStatements()) {
@@ -74,8 +90,7 @@ public class Parameter extends Expando {
 				retVal.add([ "${mb.getIdentifier()}" : matrixMap ])
 			}
 			if(s.getParameter()) {
-				Map symbols = makeSymbol(s.getParameter())
-				retVal.add(symbols)
+				retVal.add(makeSymbol(s.getParameter()))
 			}
 			if(s.getSameBlock()){
 				Map same = makeSame(s.getSameBlock())
@@ -85,42 +100,56 @@ public class Parameter extends Expando {
 		return retVal
 	}
 	
-	private Map makeSymbol(SymbolDeclaration symbolDeclaration) {
-		Map m = [:]
-		m[symbolDeclaration.getSymbolName().getName()] = XtextWrapper.unwrap(symbolDeclaration.getExpression())
-		m
+	/**
+	 * Parse the target block
+	 */
+	private Map makeTarget(TargetBlock tb) {
+		logger.warn("Target not supported yet")
+		return [:]
 	}
-
+	
+	/**
+	 * Parse the prior block
+	 */
+	private Map makePrior(PriorParametersBlock ppb) {
+		logger.warn("Prior not supported yet")
+		return [:]
+	}
+	
+	/*
+	 * Parse the MatrixBlock
+	 */
 	private Map makeMatrix(MatrixBlock mb) {
-		Map matrix = createVariabilityMatrix(mb.getIdentifier(), mb.getArguments())	
-		matrix.put("content", getContentFromParameters(mb.getParameters()) )
-
+		Map matrix = createVariabilityMatrix(mb.getArguments())	
+		matrix.put("content", getLowerTriangularMatrixFromSymbols(mb.getParameters()) )
 		return matrix
 	}
 
+	/**
+	 * Parse the DiagBlock
+	 */
 	private Map makeDiag(DiagBlock block) {
-		Map matrix = createVariabilityMatrix(block.getIdentifier(), block.getArguments())	
-		matrix.put("content", getContentFromParameters(block.getParameters()) )
+		Map matrix = createVariabilityMatrix(block.getArguments())	
+		matrix.put("content", getLowerTriangularMatrixFromSymbols(block.getParameters()) )
 		return matrix
 	}	
 	
+	/**
+	 * Parse the SameBlock
+	 */
 	private Map makeSame( SameBlock block ) {
-		Map matrix = createVariabilityMatrix(block.getIdentifier(), block.getArguments())	
+		Map matrix = createVariabilityMatrix(block.getArguments())	
 		matrix.put("content", getContentFromSymbolNames(block.getParameters()))
 		return matrix
 	}
 	
-	private Map makeTarget(TargetBlock tb) {
-		return [:]
-	}
-	
-	private Map makePrior(PriorParametersBlock ppb) {
-		
-		return [:]
-	}
-	
-	private Map createVariabilityMatrix( String identifier, Arguments arguments) {
-		
+	/**
+	 * Parses Arguments. 
+	 * 
+	 * @param arguments
+	 * @return Returns a Map containing, for each Argument, an entry for "argument = expression"
+	 */
+	private Map createVariabilityMatrix( Arguments arguments ) {
 		Map matrixArguments = [:]
 		for(Argument a : arguments.getArguments()) {
 			matrixArguments[a.getArgumentName().getName()] = mdlPrinter.toStr(a.getExpression())
@@ -128,7 +157,13 @@ public class Parameter extends Expando {
 		matrixArguments
 	}	
 
-	private String getContentFromParameters(Symbols symbols) {
+	/**
+	 * Extract the lower triangular matrix from a list of Symbol
+	 * 
+	 * @param symbols
+	 * @return A String, representing the lower triangular matrix, separated by newlines
+	 */
+	private String getLowerTriangularMatrixFromSymbols(Symbols symbols) {
 		StringBuffer content = new StringBuffer()
 		int rowLength = 1
 		int colNum = 1
@@ -150,6 +185,18 @@ public class Parameter extends Expando {
 		rows.join(",")
 	}
 		
+	/**
+	 * Turn a symbol declaration into a map of "name" = "expression"
+	 */
+	private Map makeSymbol(SymbolDeclaration symbolDeclaration) {
+		Map m = [:]
+		m[symbolDeclaration.getSymbolName().getName()] = XtextWrapper.unwrap(symbolDeclaration.getExpression())
+		m
+	}
+
+	/**
+	 * Returns a list of symbol names
+	 */
 	private List getContentFromSymbolNames(SymbolNames symbolNames) {
 		List symbols = []
 		for(SymbolName s : symbolNames.getSymbolNames()) {
@@ -158,11 +205,74 @@ public class Parameter extends Expando {
 		symbols
 	}
 
-	public String toMDL() {
-		return """ ${IDENTIFIER} {
+	/**
+	 * Create MDL from a Map of JSON that represents the structural model 
+	 * @param structural
+	 * @return
+	 */
+	public String makeStructuralMDL(Map structural) {
+		StringBuffer strucStr = new StringBuffer()
+		strucStr.append("\n${IDT}STRUCTURAL{\n")
+		structural.each {parameterName, parameterAttributes ->
+			// Sorry!
+			// v is a map of attributes - iterate over them and turn it into the format "x = y"
+			// then join them together with ","
+			strucStr.append("${IDT*2}${parameterName}=list(${parameterAttributes.collect{ key,value->"${key}=${value}"}.join(",")})\n")
+		}
+		strucStr.append("${IDT}}")
+		strucStr.toString()
+	}
+	
+	public String makeVariabilityMDL(List variability) {
+		StringBuffer strucStr = new StringBuffer()
+		strucStr.append("\n${IDT}VARIABILITY{\n")
+		variability.each { it ->
+			it.each { k,v ->
+				// block could be a matrix, a diag, a same or a named parameter
+				switch(k) {
+					case "matrix":
+						// matrix is lower triangular, example "matrix(name="struc2", type="VAR") { matrix }
+						String mx = v['content']
+						mx = mx.split("\n").join("\n${IDT*3}")
+						strucStr.append("${IDT*2}matrix(name=\"${v['name']}\", type=\"${v['type']}\"){\n${IDT*3}${mx}\n${IDT*2}}\n")
+						break;
+					case "diag":
+						// example "diag(name="struc2", type="VAR") { list of parameters }"
+						strucStr.append("${IDT*2}diag(name=\"${v['name']}\", type=\"${v['type']}\"){\n${IDT*3}${v['content']}\n${IDT*2}}\n")
+						break;
+					case "same":
+						// example "same(name="struc2") { PPV_IOV_IN_PRL0_2 }"
+						strucStr.append("${IDT*2}same(name=\"${v['name']}\"){\n${IDT*3}${v['content'].join(IDT*3+"\n")}\n${IDT*2}}\n")
+						break;
+					default:
+						// Otherwise 'key' is the variability parameter name
+						strucStr.append("${IDT*2}${k}=list(${v.collect{ key,value->"${key}=${value}"}.join(",")})\n")
+						break;	
+				}
 			}
+		}
+		strucStr.append("${IDT}}")
+		strucStr.toString()
+	}
+	
+	/**
+	 * Convert this parameter into MDL
+	 * @return
+	 */
+	public String toMDL() {
+		Properties p = getProperties()
 		
-		"""
+		StringBuffer mdl = new StringBuffer()
+		if(p.containsKey(STRUCTURAL)) {
+			mdl.append(makeStructuralMDL(p.get(STRUCTURAL)))
+		}
+		if(p.containsKey(VARIABILITY)) {
+			mdl.append(makeVariabilityMDL(p.get(VARIABILITY)))
+		}
+		
+		return """${IDENTIFIER} {${mdl.toString()}
+}
+"""
 	}
 
 }

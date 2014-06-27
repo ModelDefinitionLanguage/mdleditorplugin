@@ -1,0 +1,17 @@
+tumour_size_dat = dataobj{
+### Data object
+# The data object specifies a table of columns of data variables and the variable names which will be also used by the model object
+   DATA_INPUT_VARIABLES{
+      ID=list(type=categorical)
+      TIME=list(type=continuous,units="h")
+      AMT=list(type=continuous,units="mg")
+      DV=list(type=continuous)
+   }# end DATA_INPUT_VARIABLES
+
+   SOURCE{
+      myData=list(
+           file="tumour_exposure.csv",
+           inputformat=nonmemFormat,
+           ignore="@")
+   }# end SOURCE
+} # end data object
