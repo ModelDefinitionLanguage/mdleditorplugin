@@ -86,6 +86,50 @@ class TestParameterToJSONConverter {
 
 	}
 	
+	@Test
+	public void testComplexVariability() {
+		def struc1 = 0
+		def same1 = 2
+		def PPV_CVTTK0 = 11 
+		def RUV_SDCP = 20
+		def json = getJson("complexParameter.mdl")
+		
+		def paramObj = json["levodopa_variability_par"]
+		assertNotEquals(null, paramObj)
+		
+		def structuralModel = paramObj[Parameter.STRUCTURAL]
+		def POP_TTK0 = structuralModel["POP_TTK0"]
+		assertEquals("2", POP_TTK0.value[0])
+		assertEquals("true", POP_TTK0["fix"][0])
+
+	
+		def variabilityModel = paramObj[Parameter.VARIABILITY][0]
+		assertEquals(21, variabilityModel.size())
+					
+		struc1 = variabilityModel[struc1]
+		def attributes = struc1["matrix"]
+		String expectedStruc1Matrix = """BSVV1=0.015,
+0.00377,BSVCL=0.0158,
+0.0156,0.0127,BSVV2=0.0218,
+0.0273,0.0282,0.0411,BSVQ=0.0804"""
+		assertEquals(expectedStruc1Matrix, attributes["content"])
+		
+		same1 = variabilityModel[same1]
+		attributes = same1["same"]
+		assertEquals(["BOVCL2", "BOVV22", "BOVQ2" ], attributes["content"])
+	
+		PPV_CVTTK0 = variabilityModel[PPV_CVTTK0]
+		attributes = PPV_CVTTK0["PPV_CVTTK0"]
+		assertEquals("0", attributes.value)
+		assertEquals("true", attributes.fix)
+		
+		RUV_SDCP = variabilityModel[RUV_SDCP]
+		attributes = RUV_SDCP["RUV_SDCP"]
+		assertEquals("0.0249", attributes.value)
+		assertEquals("VAR", attributes.type)
+	}
+	
+	
 	def getJson  = { String fileToConvert ->
         File srcFile = getFile(fileToConvert)
 
