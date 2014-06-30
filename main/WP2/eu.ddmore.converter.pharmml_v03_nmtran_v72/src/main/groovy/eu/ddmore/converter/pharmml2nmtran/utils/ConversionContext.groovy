@@ -87,6 +87,7 @@ public class ConversionContext extends NMTranFormatter {
     private String fileBase
     private List<String> omegasInPrintOrder
 	private Map<String,String> simpleParameterToNmtran = new HashMap<String,String>()
+	private boolean isGaussianObsError
 	
 
     public ConversionContext(PharmML pmlDOM, File src) {
@@ -201,7 +202,7 @@ public class ConversionContext extends NMTranFormatter {
 	}
 
     public StringBuilder convert(FunctionCallType type) {
-        convert(type, simpleParameterToNmtran)
+        convert(type, simpleParameterToNmtran, false)
     }
 
     /**
@@ -210,10 +211,11 @@ public class ConversionContext extends NMTranFormatter {
      * @param inputNameToValue a string substitution map (inspired by the substitution evaluation strategy in lamda-calculus).
      * @return the NMTRAN representation of the type
      */
-    public StringBuilder convert(FunctionCallType type, Map<String, String> inputNameToValue) {
+    public StringBuilder convert(FunctionCallType type, Map<String, String> inputNameToValue, boolean isGaussianObsError) {
         StringBuilder sb = new StringBuilder();
         String functionName = type.symbRef.symbIdRef
         List<String> args = []
+		this.isGaussianObsError = isGaussianObsError
         type.functionArgument.each {
             if (it.constant) {
                 args.add(convert(it.constant))
@@ -222,7 +224,11 @@ public class ConversionContext extends NMTranFormatter {
             } else if (it.scalar) {
                 args.add(convert(it.scalar.value) )
             } else if (it.symbRef) {
-                args.add(toTheta(convert(it.symbRef).toString() ))
+				if(isGaussianObsError){
+					args.add(convert(it.symbRef, simpleParameterToNmtran).toString())
+				}else{
+                	args.add(toTheta(convert(it.symbRef).toString() ))
+				}
             }
         }
         sb << convert(functions.get(functionName), args)
@@ -522,8 +528,12 @@ public class ConversionContext extends NMTranFormatter {
         }
         sb
     }
-
-
+	
+	/**
+	 * 
+	 * @param type
+	 * @return
+	 */
     public StringBuilder convert(SymbolRefType type) {
         return convert(type, simpleParameterToNmtran)
     }
@@ -539,9 +549,12 @@ public class ConversionContext extends NMTranFormatter {
         String name = type.symbIdRef
 
         CommonVariableDefinitionType structVar = parameters.getStructuralVariable(name)
-        Theta theta = parameters.isTheta(name)
-        if (theta) {
-            sb.append(theta.toIndexString())
+		Theta theta
+		if(!isGaussianObsError){
+        	theta = parameters.isTheta(name)
+		}
+		if(theta){
+				sb.append(theta.toIndexString())
         } else if (parameters.etas.contains(name)) {
             sb << "ETA(${getOmegaIndex(name)})"
         } else if (epsilonToSigma.get(name)) {

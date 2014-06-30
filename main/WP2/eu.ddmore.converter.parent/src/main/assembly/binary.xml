@@ -13,6 +13,7 @@
    			<!-- Don't need to specify all the submodules here since some will be brought in transitively. -->
    			<include>eu.ddmore:converter-toolbox:jar</include>
    			<include>eu.ddmore:converter-mdl:jar</include>
+   			<include>eu.ddmore:converter-mdl_v5.1.6_json:jar</include>
 		</includes>
    		<binaries>
             <outputDirectory>lib</outputDirectory>

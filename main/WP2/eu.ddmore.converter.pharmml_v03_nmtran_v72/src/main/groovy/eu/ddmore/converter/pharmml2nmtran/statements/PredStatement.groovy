@@ -422,8 +422,8 @@ class PredStatement extends NMTranFormatter {
                 } else {
                     name = rename(name.toUpperCase())
                 }
-                def firstPart = "Y=${name}+"
-                def secondPart = "${conversionContext.convert(errorType.errorModel.assign.equation.functionCall, derivativeNames)}"
+                def firstPart = "Y=${name}+"				
+                def secondPart = "${conversionContext.convert(errorType.errorModel.assign.equation.functionCall, derivativeNames, true)}"
                 sb << indent(firstPart)
 
                 if (errorType.residualError) {
