@@ -1,0 +1,48 @@
+warfarin_PK_PRIOR_par = parobj{
+### Parameter object
+# The parameter object defines the numerical values of the parameters with optional constraints (lo and high values) and units.
+
+   STRUCTURAL{
+# The STRUCTURAL block define the structural model parameters.
+      #THETA
+      POP_CL=list(value=0.1,lo=0.001) # L/h/70kg
+      POP_V=list(value=8,lo=0.001) # L/70kg
+      POP_KA=list(value=2,lo=0.001) # h-1
+      POP_TLAG=list(value=1,lo=0.001) # h
+      POP_PRI_CL=list(value=0.1,lo=0.001 ,fix=true) # L/h/70kg
+      POP_PRI_V=list(value=8,lo=0.001 ,fix=true) # L/70kg
+      POP_PRI_KA=list(value=2,lo=0.001 ,fix=true) # h-1
+      POP_PRI_TLAG=list(value=1,lo=0.001 ,fix=true) # h
+   }# end STRUCTURAL
+
+   VARIABILITY{
+# The VARIABILITY block has a more complex structure because it needs to express a lower triangular matrix of parameters and how they are related to each other.
+# VARIABILITY parameters may be expressed with a type of "SD" which implies standard deviations on the diagonal and correlations
+# on the lower off diagonal elements or "VAR" which implies variances and covariances.
+      #OMEGA
+      matrix(name="struc1",type=VAR) {
+         PPV_CL=0.1,
+         0.01, PPV_V=0.1
+      } # end matrix struc1
+      PPV_KA=list(value=0.1 ,type=VAR)
+      PPV_TLAG=list(value=0.1 ,type=VAR)
+      diag(name="struc2",type=VAR,fix=true) {
+         PPV_UNC_CL=10000,
+         PPV_UNC_V=10000,
+         PPV_UNC_KA=10000,
+         PPV_UNC_TLAG=10000
+      } # end diag struc2
+      #SIGMA
+      RUV_PROP=list(value=0.01 ,type=VAR)
+      RUV_ADD=list(value=0.05 ,type=VAR) # mg/L
+
+   }# end VARIABILITY
+
+   PRIOR_PARAMETERS{
+      NWPRI=true
+      NTHETA=4
+      NTHP=4
+      NETA=4
+   }# end PRIOR_PARAMETERS
+
+} # end of parameter object

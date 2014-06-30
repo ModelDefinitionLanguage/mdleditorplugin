@@ -22,6 +22,7 @@ import org.ddmore.mdl.mdl.VariabilityBlock
 import org.ddmore.mdl.mdl.VariabilityBlockStatement
 
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
+import eu.ddmore.converter.mdl2json.utils.MDLUtils;
 import eu.ddmore.converter.mdlprinting.MdlPrinter;
 
 public class Parameter extends Expando {
@@ -66,12 +67,7 @@ public class Parameter extends Expando {
 	 * Parse the structural model block
 	 */
 	private Map makeStructuralModel(StructuralBlock sb) {
-		def retVal = [:]
-		for( SymbolDeclaration sd : sb.getParameters() ) {
-			String symbol = sd.getSymbolName().getName()
-			retVal[symbol] = XtextWrapper.unwrap(sd.getExpression())	
-		}	
-		retVal
+		MDLUtils.makeSymbolMap(sb.getParameters())
 	}
 	
 	/**
@@ -90,7 +86,7 @@ public class Parameter extends Expando {
 				retVal.add([ "${mb.getIdentifier()}" : matrixMap ])
 			}
 			if(s.getParameter()) {
-				retVal.add(makeSymbol(s.getParameter()))
+				retVal.add(MDLUtils.makeSymbol(s.getParameter()))
 			}
 			if(s.getSameBlock()){
 				Map same = makeSame(s.getSameBlock())
@@ -185,15 +181,6 @@ public class Parameter extends Expando {
 		rows.join(",")
 	}
 		
-	/**
-	 * Turn a symbol declaration into a map of "name" = "expression"
-	 */
-	private Map makeSymbol(SymbolDeclaration symbolDeclaration) {
-		Map m = [:]
-		m[symbolDeclaration.getSymbolName().getName()] = XtextWrapper.unwrap(symbolDeclaration.getExpression())
-		m
-	}
-
 	/**
 	 * Returns a list of symbol names
 	 */

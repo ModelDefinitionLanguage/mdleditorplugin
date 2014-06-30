@@ -1,0 +1,292 @@
+run_final_OGTT_mdl = mdlobj{
+### Model object
+# The model object receives a list of input data variables from the data object and parameters (constants)from the parameter object.
+# The parameter and variable names in the model object must be matched by a similar name in the parameter and data objects.
+# Note that variables in the data object and parameters may be defined in the parameter object that are not referenced in the model object.
+# Model variables are derived from the input data variables and parameters using algebraic expressions.
+
+   MODEL_INPUT_VARIABLES{
+# A name for each input data variable is required. Special uses of input data variables are indicated by the use attribute if the data variable name is not a standard name. Standard names may include ID, IDV, AMT, DV, MDV, etc. similar to standard data items recognized by NM-TRAN or Monolix. The type option is not required but may be useful as metadata. This kind of metadata (with an option to recode) could alternatively be specified in the data object.
+      ID=list(use=id,level=2)
+      TIME=list(use=idv,units="h")
+      AMT=list(use=amt,units="mg")
+      ODV=list(type=continuous,use=covariate)
+      DV=list(type=continuous,use=dv,level=1)
+      INSU=list(type=continuous,use=covariate)
+      TOTG=list(type=continuous,use=covariate)
+      CMT=list(use=cmt)
+      EVID=list(use=evid)
+      RATE=list(type=continuous,use=covariate)
+      BW=list(type=continuous,use=covariate,units="kg")
+      OCC=list(use=occ,level=2)
+   }# end MODEL_INPUT_VARIABLES
+
+# The STRUCTURAL_PARAMETERS Block defines the structural model parameters.
+   STRUCTURAL_PARAMETERS{
+# A name for each parameter is required. Other attributes such as units are optional.
+# Units may be used to achieve consistency between the parameter, data and model object values.
+# This could be implemented during the WP2 translation process.
+
+      #THETA
+      POP_VG_FIX
+      POP_Q_FIX
+      POP_VI_fFIX
+      POP_CLG_FIX
+      POP_CLGI_FIX
+      POP_CLGI_PO
+      POP_CLI_FIX
+      POP_VP_FIX
+      POP_KEOG_FIX
+      POP_KEOI_FIX
+      POP_IPRG_FIX
+      POP_BIOG
+      POP_MTT
+      POP_NN
+      POP_EMAX
+      POP_CA50
+      POP_RESG_FIX
+      POP_RESI_FIX
+      POP_RESH_FIX
+      POP_RESE_FIX
+      POP_SCALE_GSS_IV_FIX
+      POP_SCALE_ISS_IV_FIX
+      POP_RESG_PO
+   }# end STRUCTURAL_PARAMETERS
+
+   VARIABILITY_PARAMETERS{
+# The VARIABILITY_PARAMETERS Block defines the variability parameters.
+      #OMEGA
+      PPV_IIV_VG_FIX
+      PPV_IIV_Q_FIX
+      PPV_IIV_VI_FIX
+      PPV_IIV_CLG_FIX
+      PPV_IIV_CLGI
+      PPV_IIV_CLGI_PO
+      PPV_IIV_CLI_FIX
+      PPV_IIV_VP_FIX
+      PPV_IIV_KEOG_FIX
+      PPV_IIV_KEOI_FIX
+      PPV_IIV_IPRG_FIX
+      PPV_IIV_BIOG_FIX
+      PPV_IIV_MTT
+      PPV_IIV_NN_FIX
+      PPV_IIV_EMAX
+      PPV_IIV_CA50
+      PPV_IOV_VP
+      PPV_IIV_GSS_IV_FIX
+      PPV_IIV_GSS_PO_FIX
+      PPV_IIV_ISS_IV_FIX
+      PPV_IIV_ISS_PO_FIX
+      #SIGMA
+      RUV_RES_FIX
+   }# end VARIABILITY_PARAMETERS
+
+   GROUP_VARIABLES{
+# The GROUP_VARIABLES block is used to express covariate models i.e. the fixed effect differences in parameters predictable from data variables.
+# If there are no covariate effects to model then this block is not required.
+# NONMEM may be able to take advantage of knowing that variables defined in this block represent the central tendency
+# of the distribution of random effects defined in the INDIVIDUAL_VARIABLES block (known as MU referencing).
+# In this example the prefix "grp_" for a variable name could be a hint that this is a MU variable for NM-TRAN.
+# Other model variables may be defined in this block according to user preference.
+
+   
+   #=====Indicator variables=============================
+    OGTT  = OCC         #1 if OGTT, 0 if IVGTT
+    IVGTT = 1 - OCC     #0 if OGTT, 1 if IVGTT
+    IOV   =-(2*OCC - 1) #-1 if OGTT, 1 if IVGTT
+   #=====Residual error==================================
+    RESGIV = POP_RESG_FIX
+    RESGPO = POP_RESG_PO
+    RESG   = RESGIV*IVGTT + RESGPO*OGTT
+    RESI   = POP_RESI_FIX
+    RESH   = POP_RESH_FIX^ IVGTT  
+    RESE   = POP_RESE_FIX^ IVGTT
+   #=====Glucose sub-model===============================
+   #baseline
+    if (EVID>2) BASG = TOTG
+    GSCALE = POP_SCALE_GSS_IV_FIX
+   }# end GROUP_VARIABLES
+
+
+   RANDOM_VARIABLE_DEFINITION{
+# The RANDOM_VARIABLE_DEFINITION block is used to define the distribution of random variables.
+      eta_PPV_IIV_VG_FIX ~ (type=normal, mean=0, var=PPV_IIV_VG_FIX,level=ID)
+      eta_PPV_IIV_Q_FIX ~ (type=normal, mean=0, var=PPV_IIV_Q_FIX,level=ID)
+      eta_PPV_IIV_VI_FIX ~ (type=normal, mean=0, var=PPV_IIV_VI_FIX,level=ID)
+      eta_PPV_IIV_CLG_FIX ~ (type=normal, mean=0, var=PPV_IIV_CLG_FIX,level=ID)
+      eta_PPV_IIV_CLGI ~ (type=normal, mean=0, var=PPV_IIV_CLGI,level=ID)
+      eta_PPV_IIV_CLGI_PO ~ (type=normal, mean=0, var=PPV_IIV_CLGI_PO,level=ID)
+      eta_PPV_IIV_CLI_FIX ~ (type=normal, mean=0, var=PPV_IIV_CLI_FIX,level=ID)
+      eta_PPV_IIV_VP_FIX ~ (type=normal, mean=0, var=PPV_IIV_VP_FIX,level=ID)
+      eta_PPV_IIV_KEOG_FIX ~ (type=normal, mean=0, var=PPV_IIV_KEOG_FIX,level=ID)
+      eta_PPV_IIV_KEOI_FIX ~ (type=normal, mean=0, var=PPV_IIV_KEOI_FIX,level=ID)
+      eta_PPV_IIV_IPRG_FIX ~ (type=normal, mean=0, var=PPV_IIV_IPRG_FIX,level=ID)
+      eta_PPV_IIV_BIOG_FIX ~ (type=normal, mean=0, var=PPV_IIV_BIOG_FIX,level=ID)
+      eta_PPV_IIV_MTT ~ (type=normal, mean=0, var=PPV_IIV_MTT,level=ID)
+      eta_PPV_IIV_NN_FIX ~ (type=normal, mean=0, var=PPV_IIV_NN_FIX,level=ID)
+      eta_PPV_IIV_EMAX ~ (type=normal, mean=0, var=PPV_IIV_EMAX,level=ID)
+      eta_PPV_IIV_CA50 ~ (type=normal, mean=0, var=PPV_IIV_CA50,level=ID)
+      eta_PPV_IOV_VP ~ (type=normal, mean=0, var=PPV_IOV_VP,level=ID)
+      eta_PPV_IIV_GSS_IV_FIX ~ (type=normal, mean=0, var=PPV_IIV_GSS_IV_FIX,level=ID)
+      eta_PPV_IIV_GSS_PO_FIX ~ (type=normal, mean=0, var=PPV_IIV_GSS_PO_FIX,level=ID)
+      eta_PPV_IIV_ISS_IV_FIX ~ (type=normal, mean=0, var=PPV_IIV_ISS_IV_FIX,level=ID)
+      eta_PPV_IIV_ISS_PO_FIX ~ (type=normal, mean=0, var=PPV_IIV_ISS_PO_FIX,level=ID)
+      eps_RUV_RES_FIX ~ (type=normal, mean=0, var=RUV_RES_FIX,level=DV)
+   }# end RANDOM_VARIABLE_DEFINITION
+
+   INDIVIDUAL_VARIABLES{
+# The INDIVIDUAL_VARIABLES block is used to express the individual variables and their distribution.
+# If this is not a population model then this block is not required.
+
+    IIVG = eta_PPV_IIV_GSS_IV_FIX*IVGTT + eta_PPV_IIV_GSS_PO_FIX*OGTT
+    GSS  = BASG*exp(IIVG*RESGIV) * GSCALE^ IVGTT
+   #for simulation
+   #GSS = (THETA(21)*IVGTT + THETA(24)*OGTT)*exp(IIVG)
+   #absorption
+    BIOG= POP_BIOG*exp(eta_PPV_IIV_BIOG_FIX)          #biovailability glucose
+    MTT = POP_MTT*exp(eta_PPV_IIV_MTT)          #mean transit time glucose
+    NN  = POP_NN*exp(eta_PPV_IIV_NN_FIX)          #number of transit compartments for glucose
+    KTR  = NN/MTT
+    LNFAC = ln(2.5066)+(NN+0.5)*ln(NN)-NN+ln(1+1/(12*NN))
+   #distribution
+    VG  = POP_VG_FIX*exp(eta_PPV_IIV_VG_FIX)*BW/70      #central volume for glucose (in l)
+    Q   = POP_Q_FIX*exp(eta_PPV_IIV_Q_FIX)            #glucose flow central-peripheral
+    VP  = POP_VP_FIX*exp(eta_PPV_IIV_VP_FIX+eta_PPV_IOV_VP*IOV) #pripheral volume for glucose
+   #elimination
+    CLG   = POP_CLG_FIX*exp(eta_PPV_IIV_CLG_FIX)          #glucose CL from central comp
+    CLGIIV= POP_CLGI_FIX*exp(eta_PPV_IIV_CLGI)
+    CLGIPO= POP_CLGI_PO*exp(eta_PPV_IIV_CLGI_PO)
+    CLGI  = CLGIIV*IVGTT + CLGIPO*OGTT
+    K15 = Q/VG
+    K51 = Q/VP
+    KG  = CLG/VG                          #k10 for glucose dissappearance
+    KGI = CLGI/VG                         #2nd order rate constant for insulin-dep. glucose elimination
+   #unit conversion and dosing
+    GDOSE = 300*BW
+    if (ID==26) GDOSE  =  272.4771*BW
+    F1  = GDOSE/10                        #correction for glucose in mg/dl
+    F3  = GDOSE*0.26/10                   #correction for hot glucose
+   #initialization
+   #=====Insulin sub-model==============================
+   #baseline
+    if (EVID>2) BASI = INSU
+    ISCALE = POP_SCALE_ISS_IV_FIX
+    IIVI = eta_PPV_IIV_ISS_IV_FIX*IVGTT + eta_PPV_IIV_ISS_PO_FIX*OGTT
+    ISS = BASI*exp(IIVI*RESI) * ISCALE^ IVGTT
+   #for simulation
+   #ISS = (THETA(22)*IVGTT + THETA(25)*OGTT)*exp(IIVI)
+   #distribution
+    VI  = POP_VI_FIX*exp(eta_PPV_IIV_VI_FIX)*BW/70      #central volume for insulin
+   #elimination
+    CLI = POP_CLI_FIX*exp(eta_PPV_IIV_CLI_FIX)            #insulin CL
+    KI  = CLI/VI                          #k10 for insulin elimination
+   #unit conversion and dosing
+    IDOSE = 50*BW
+    F2  = IDOSE
+   #initialization
+   #=====Feed-back control==============================
+   #glucose on insulin secretion
+    KEOG= POP_KEOG_FIX*exp(eta_PPV_IIV_KEOG_FIX)          #keo for glucose 
+   #insulin on glucose elimination
+    KEOI= POP_KEOI_FIX*exp(eta_PPV_IIV_KEOI_FIX)          #keo for insulin
+    IPRG= POP_IPRG_FIX*exp(eta_PPV_IIV_IPRG_FIX)          #influence of glucose on insulin production
+   #incretin effect on insulin secretion
+    EMAX = POP_EMAX*exp(eta_PPV_IIV_EMAX)         #max effect of glucose abs on insulin prod
+    CA50 = POP_CA50*exp(eta_PPV_IIV_CA50)         #conc of 50% effect
+   #initialization
+   #=====Endogenous production/secretion================
+   #Glucose
+    GPRO= GSS*(KG+KGI*ISS)*VG             #baseline glucose production
+   #Insulin
+    IPRO= KI*ISS*VI                       #baseline insulin production
+
+   }# end INDIVIDUAL_VARIABLES
+
+   MODEL_PREDICTION{
+# The MODEL_PREDICTION block calculates model predictions based on model variables defined in the previous model object blocks.
+# Code in this block expresses the structural model after group and individual parameter differences have been included.
+# It can be considered as an expression of a deterministic prediction. It is the essential component of a shared sub-model.
+# This block should not contain any covariate computations expressing predictable or unpredictable (random) between subject differences.
+
+
+      ## COMPARTMENTS
+      ## 
+      ##  COMP  =  GLU_C   #1 central compartment glucose
+      ##  COMP  =  INS_C   #2 central compartment insulin
+      ##  COMP  =  HOT_C   #3 central compartment hot glucose
+      ##  COMP  =  GLU_E   #4 effect compartment for glucose on insulin
+      ##  COMP  =  GLU_P   #5 peripheral glucose compartment
+      ##  COMP  =  HOT_P   #6 peripheral hot glucose compartent
+      ##  COMP  =  INS_E   #7 effect compartment for insulin
+
+   ODE{
+   #=====Feed-back=======================================
+   #glucose absorption
+    TGLU   = exp(ln(75000*(BIOG/10))+ln(KTR)+NN*ln(KTR*T+.00001)-KTR*T-LNFAC)
+   #incretin
+    IGAPR  = 1 + TGLU*EMAX/(TGLU+CA50)*OGTT       #glucose absorption on insulin production
+   #glucose on insulin secretion
+    IGPR   = (GLU_E/GSS+.0001)^ IPRG        #glucose on insulin production
+   #=====Glucose=========================================
+    GPR   = GPRO                         #glucose production
+    PTOT   = K15*GLU_C-K51*GLU_P             #distribution of tot glucose
+    TELI   = (KG + KGI*INS_E)*GLU_C          #tot glucose elimination
+    PHOT   = K15*HOT_C-K51*HOT_P             #distribution of hot glucose
+    HELI   = (KG + KGI*INS_E)*HOT_C          #hot glucose elimination
+   #=====Insulin=========================================
+    IPRD   = IPRO*IGPR*IGAPR             #insulin production
+    IELI   =  KI*INS_C                      #insulin elimination
+      GLU_C=ode(deriv= GPR- TELI - PTOT + TGLU*OGTT,init= GSS*VG )
+      INS_C=ode(deriv= IPRD - IELI ,init= ISS*VI )
+      HOT_C=ode(deriv=- HELI - PHOT,init= 0)
+      GLU_E=ode(deriv= KEOG*(GLU_C/VG - GLU_E),init= GSS) #glucose effect compartment
+      GLU_P=ode(deriv= PTOT,init= K15*GSS*VG/K51 )
+      HOT_P=ode(deriv= PHOT,init= 0)
+      INS_E=ode(deriv= KEOI*(INS_C/VI - INS_E),init= ISS) #insulin effect-compartment
+   }# end ODE
+
+   LIBRARY{
+      ##  ADVAN6 TRANS1 TOL=5
+      ## #-----Comments on data----------------------
+      ## #ID    - individual no
+      ## #TIME  - time in minutes
+      ## #AMT   - amount of glucose ingested in mg
+      ## #ODV   - untransformed DV# glucose in mg/dL, insulin in mU/L
+      ## #DV    - log-transformed glucose, insulin & hot glucose
+      ## #INSBL - individual insulin at start of experiment
+      ## #GLUBL - individual glucose at start of experiment
+      ## #CMT   - compartment see below in $MODEL
+      ## #BW    - body weight in kg
+      ## #EVID  - event ID# 0-observation, 1-dosing
+      ## #OCC   - IVGTT=0, OGTT=1
+      amount=nmadvan(model=6,trans=1,output=list(A,F))
+   }# end LIBRARY
+   
+    GLUC    =GLU_C/VG
+    INSC    =INS_C/VI
+    HOTC    =HOT_C/VG
+    GLUE    =GLU_E
+    GLUP    =GLU_P
+    HOTP    =HOT_P
+    INSE    =INS_E
+    if (CMT==1) IPRED  =  GLUC+.00001
+    if (CMT==2) IPRED  =  INSC+.00001
+    if (CMT==3) IPRED  =  HOTC+.00001
+    if (CMT>=4) IPRED  =  1
+    if (CMT==1) W  =  RESG
+    if (CMT==2) W  =  RESI
+    if (CMT==3) W  =  RESH
+    if (CMT>=4) W  =  1
+    if (TIME<=2) W  =  W*RESE
+    #IRES  = DV - ln(IPRED)
+    #IWRES = IRES/W
+    #PRD   = IPRED
+    #IPRED = ln(IPRED)
+    #OBS = ODV
+   }# end MODEL_PREDICTION
+
+   OBSERVATION{
+      Y =  ln(IPRED)+eps_RUV_RES_FIX*W
+   }# end OBSERVATION
+
+} # end of model object

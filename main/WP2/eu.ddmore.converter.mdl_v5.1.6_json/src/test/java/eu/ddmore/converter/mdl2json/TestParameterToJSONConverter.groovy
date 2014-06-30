@@ -12,13 +12,9 @@ import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
 import org.junit.Test;
 
-class TestParameterToJSONConverter {
+class TestParameterToJSONConverter extends MDLToJSONTest {
 	private static Logger logger = Logger.getLogger(TestParameterToJSONConverter.class)
-	
-	final static String TEST_DATA_DIR = "./"
-	
-	private final MDLToJSONConverter converter = new MDLToJSONConverter();
-		
+			
 	@Test
 	public void testStructuralModel() {
 		def json = getJson("simpleParameter.mdl")
@@ -128,25 +124,4 @@ class TestParameterToJSONConverter {
 		assertEquals("0.0249", attributes.value)
 		assertEquals("VAR", attributes.type)
 	}
-	
-	
-	def getJson  = { String fileToConvert ->
-        File srcFile = getFile(fileToConvert)
-
-		MdlParser p = new MdlParser()
-		Mcl mcl = p.parse(srcFile)
-
-        String jsonText = converter.toJSON(mcl)
-		
-		logger.debug(jsonText)
-		
-		JsonSlurper slurper = new JsonSlurper();
-		slurper.parseText(jsonText)
-    }
-
-    private File getFile(final String pathToFile) {
-		String path = TEST_DATA_DIR + pathToFile
-		URL url = this.getClass().getResource(path)
-		new File(url.getFile())        
-    }
 }

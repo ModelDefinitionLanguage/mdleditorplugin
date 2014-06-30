@@ -11,6 +11,8 @@ import org.ddmore.mdl.mdl.AnyExpression;
 import org.ddmore.mdl.mdl.Argument;
 import org.ddmore.mdl.mdl.Arguments;
 import org.ddmore.mdl.mdl.ConditionalExpression;
+import org.ddmore.mdl.mdl.DistributionArgument
+import org.ddmore.mdl.mdl.DistributionArguments
 import org.ddmore.mdl.mdl.EnumType
 import org.ddmore.mdl.mdl.Expression;
 import org.ddmore.mdl.mdl.FunctionName;
@@ -28,6 +30,9 @@ public class XtextWrapper {
 	
 	public static Object unwrap(AnyExpression expression) {
 		
+		if(expression==null) {
+			return null
+		}
 		if(expression.getExpression()!=null) {
 			return unwrap(expression.getExpression());
 		} else if(expression.getList() !=null ) {
@@ -45,14 +50,6 @@ public class XtextWrapper {
 		return null;
 	}
 
-	private static Map argumentsToMap(Arguments args) {
-		Map m = [:]
-		for(Argument a : args.getArguments() ) {
-			m.put(a.getArgumentName().getName(), mdlPrinter.toStr(a.getExpression()));
-		}
-		return m
-	}
-	
 	public static Object unwrap(EnumType enumType) {
 		if(enumType.getInput()) {
 			return enumType.getInput().getIdentifier()
@@ -132,4 +129,30 @@ public class XtextWrapper {
 		return null;
 	}
 
+	public static Object unwrap(DistributionArguments distributionArgs) {
+		Map arguments = [:]
+		distributionArgs.getArguments().each { DistributionArgument da ->
+			if(da.getDistribution()!=null) {
+				arguments["type"] = da.getDistribution().getIdentifier()
+			} else if(da.getComponent()!=null) {
+			  	arguments[da.getArgumentName()] = unwrap(da.getComponent().getArguments())
+			} else if( da.getValue() != null ){
+				String val = ""
+				if( da.getValue().getNumber()!=null ) val = da.getValue().getNumber()
+				else if (da.getValue().getSymbol()!=null) val = da.getValue().getSymbol().getName()
+				else if(da.getValue().getVector()!=null) val = mdlPrinter.toStr(da.getValue().getVector())
+				arguments[da.getArgumentName().getName()] = val
+			}
+		}
+		arguments
+	}
+	
+	private static Map argumentsToMap(Arguments args) {
+		Map m = [:]
+		for(Argument a : args.getArguments() ) {
+			m.put(a.getArgumentName().getName(), mdlPrinter.toStr(a.getExpression()));
+		}
+		return m
+	}
+	
 }
