@@ -18,7 +18,7 @@ class Parameters2008ThamJCCRTest {
 
     @Before
     public void init() {
-        final URL urlToFile = Parameters2008ThamJCCRTest.class.getResource(TEST_DATA_DIR + V_0_3_SUBDIR + "2008ThamCCR/2008ThamJCCR.xml");
+        final URL urlToFile = Parameters2008ThamJCCRTest.class.getResource(TEST_DATA_DIR + V_0_3_SUBDIR + "ThamCCR2008/2008ThamJCCR.xml");
 
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
