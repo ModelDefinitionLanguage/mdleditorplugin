@@ -15,7 +15,7 @@ import static eu.ddmore.converter.pharmml2nmtran.MainTest.V_0_3_SUBDIR
 
 class ParameterVariableSortHelperTest {
 
-	private final String prolactinModel = TEST_DATA_DIR + V_0_3_SUBDIR + "Friberg2009Prolactin/Friberg2009Prolactin_v20140523v14_NONMEM.xml"
+	private final String prolactinModel = TEST_DATA_DIR + V_0_3_SUBDIR + "FribergCPT2009/Friberg2009Prolactin_v20140523v14_NONMEM.xml"
 
     @Test	
     public void testArrangeParameterElements() {
