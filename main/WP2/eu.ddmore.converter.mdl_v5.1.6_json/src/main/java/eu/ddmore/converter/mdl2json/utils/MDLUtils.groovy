@@ -19,7 +19,7 @@ public class MDLUtils {
 	 */
 	public static Map makeSymbol(SymbolDeclaration symbolDeclaration) {
 		Map m = [:]
-		String val = ""
+		Map val = [:]
 		if(symbolDeclaration.getExpression()!= null) {
 			val = XtextWrapper.unwrap(symbolDeclaration.getExpression())	
 		} else if(symbolDeclaration.getRandomList()!=null) {
@@ -28,4 +28,13 @@ public class MDLUtils {
 		m[symbolDeclaration.getSymbolName().getName()] = val
 		m
 	}
+	
+	/**
+	 * Turn a symbol declaration into a map of "name" = "expression"
+	 */
+//	private Map makeSymbol(SymbolDeclaration symbolDeclaration) {
+//		Map m = [:]
+//		m[symbolDeclaration.getSymbolName().getName()] = XtextWrapper.unwrap(symbolDeclaration.getExpression())
+//		m
+//	}
 }

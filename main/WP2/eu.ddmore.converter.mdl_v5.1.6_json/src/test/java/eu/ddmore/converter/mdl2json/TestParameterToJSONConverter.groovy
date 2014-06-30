@@ -17,7 +17,7 @@ class TestParameterToJSONConverter extends MDLToJSONTest {
 			
 	@Test
 	public void testStructuralModel() {
-		def json = getJson("simpleParameter.mdl")
+		def json = getJsonFromMDLFile("simpleParameter.mdl")
 			
 		def parameterObject = json.tumour_size_par
 			
@@ -36,7 +36,7 @@ class TestParameterToJSONConverter extends MDLToJSONTest {
 	
 	@Test
 	public void testVariabilityModel() {
-		def json = getJson("simpleParameter.mdl")
+		def json = getJsonFromMDLFile("simpleParameter.mdl")
 			
 		def parameterObject = json.tumour_size_par
 			
@@ -56,7 +56,7 @@ class TestParameterToJSONConverter extends MDLToJSONTest {
 		def struc1 = 0
 		def PPV_KOUT = 1
 
-		def json = getJson("parameterWithMatrix.mdl")
+		def json = getJsonFromMDLFile("parameterWithMatrix.mdl")
 		def paramObj = json.ex_model7_prolactin_Jan2014_par
 		
 		def structuralModel = paramObj[Parameter.STRUCTURAL]
@@ -88,7 +88,7 @@ class TestParameterToJSONConverter extends MDLToJSONTest {
 		def same1 = 2
 		def PPV_CVTTK0 = 11 
 		def RUV_SDCP = 20
-		def json = getJson("complexParameter.mdl")
+		def json = getJsonFromMDLFile("complexParameter.mdl")
 		
 		def paramObj = json["levodopa_variability_par"]
 		assertNotEquals(null, paramObj)
@@ -116,7 +116,7 @@ class TestParameterToJSONConverter extends MDLToJSONTest {
 	
 		PPV_CVTTK0 = variabilityModel[PPV_CVTTK0]
 		attributes = PPV_CVTTK0["PPV_CVTTK0"]
-		assertEquals("0", attributes.value)
+		assertEquals("0", attributes['value'])
 		assertEquals("true", attributes.fix)
 		
 		RUV_SDCP = variabilityModel[RUV_SDCP]

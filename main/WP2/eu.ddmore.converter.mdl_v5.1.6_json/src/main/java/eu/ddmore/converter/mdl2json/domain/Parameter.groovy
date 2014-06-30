@@ -25,7 +25,7 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
 import eu.ddmore.converter.mdl2json.utils.MDLUtils;
 import eu.ddmore.converter.mdlprinting.MdlPrinter;
 
-public class Parameter extends Expando {
+public class Parameter extends Expando implements MDLPrintable {
 	private static Logger logger = Logger.getLogger(Parameter.class)
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
@@ -35,8 +35,6 @@ public class Parameter extends Expando {
 	static final String STRUCTURAL = "STRUCTURAL"
 	static final String PRIOR = "PRIOR";
 	
-	static final String IDT = "    "
-
 	public Parameter(ParameterObject paramObject) {
 		this.setProperty("identifier", IDENTIFIER)
 		

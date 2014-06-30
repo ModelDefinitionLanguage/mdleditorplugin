@@ -12,14 +12,9 @@ import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
 import org.junit.Test;
 
-class TestJSONDataObjectToMDL {
+class TestJSONDataObjectToMDL extends MDLToJSONTest {
 	private static Logger logger = Logger.getLogger(TestJSONDataObjectToMDL.class)
 	
-	final static String TEST_DATA_DIR = "./"
-	
-	private final MDLToJSONConverter converterToJson = new MDLToJSONConverter();
-	private final JSONToMDLConverter converter = new JSONToMDLConverter();
-
 	@Test
 	public void testSource() {
 		def json = getJson(jsonSource)
@@ -60,17 +55,6 @@ class TestJSONDataObjectToMDL {
 		//println data.toMDL()		
 	}
 	
-    def getJson  = { String jsonText ->
-		JsonSlurper slurper = new JsonSlurper();
-		slurper.parseText(jsonText)
-    }
-
-    private File getFile(final String pathToFile) {
-		String path = TEST_DATA_DIR + pathToFile
-		URL url = this.getClass().getResource(path)
-		new File(url.getFile())        
-    }
-
 	private String jsonSource = "{\"SOURCE\":{\"file\":\"ex_data_prolactin.csv\",\"symbolName\":\"myData\",\"identifier\":\"SOURCE\",\"ignore\":\"@\",\"inputformat\":\"nonmemFormat\"}}}"
 	private String jsonInputVars = "{\"DATA_INPUT_VARIABLES\":{\"II\":{\"name\":\"II\",\"type\":\"continuous\",\"units\":\"h\"},\"CMT\":{\"name\":\"CMT\",\"type\":\"categorical\"}}}"
 }

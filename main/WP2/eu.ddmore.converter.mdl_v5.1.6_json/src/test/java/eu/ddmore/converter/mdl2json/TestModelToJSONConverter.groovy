@@ -11,7 +11,7 @@ class TestModelToJSONConverter extends MDLToJSONTest {
 	
 	@Test
 	public void testTGIModel() {
-		def json = getJson("tgiModel.mdl")
+		def json = getJsonFromMDLFile("tgiModel.mdl")
 			
 		def modelObject = json.run_final_OGTT_mdl
 			
@@ -19,11 +19,16 @@ class TestModelToJSONConverter extends MDLToJSONTest {
 	}
 	
 	@Test void testProlactinModel() {
-		def json = getJson("prolactinModel.mdl")
+		def json = getJsonFromMDLFile("prolactinModel.mdl")
 		
 		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
 		
 		logger.debug(modelObject)
+		
+		def inputVariables = modelObject.MODEL_INPUT_VARIABLES
+		
+		def STU = inputVariables.STU
+		assertEquals("continuous", STU.type[0])
 		
 		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
 		assertEquals([ "POP_KOUT", "POP_PRL0_IN_MALE_HV", "POP_PRL0_IN_MALE_PAT", "POP_PRL0_IN_FEMALES_PAT",
@@ -31,6 +36,9 @@ class TestModelToJSONConverter extends MDLToJSONTest {
 			"POP_AMP", "POP_PHS1", "POP_AMP2", "POP_PHS2", "POP_KI", "POP_PHASE_SHIFT_IN_PATIENTS",
 			"POP_RES_ERR_IN_MALE_HV", "POP_RES_ERR_IN_MALE_PATIENTS", "POP_RES_ERR_IN_FEMALE_PATIENTS" ], structuralParameters[0])
 		
+		def modelPrediction = modelObject.MODEL_PREDICTION
+		
+		logger.debug(modelPrediction)
 		
 		def modelOutputVariables = modelObject.MODEL_OUTPUT_VARIABLES
 		assertEquals(["ID", "TIME", "IPRED", "IWRES", "STU"], modelOutputVariables[0])

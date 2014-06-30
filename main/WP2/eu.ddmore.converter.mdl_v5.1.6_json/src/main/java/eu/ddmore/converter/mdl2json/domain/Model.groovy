@@ -1,5 +1,7 @@
 package eu.ddmore.converter.mdl2json.domain;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.BlockStatement
 import org.ddmore.mdl.mdl.FunctionCallStatement
@@ -19,9 +21,9 @@ import org.ddmore.mdl.mdl.SymbolName
 import org.ddmore.mdl.mdl.VariabilityParametersBlock
 
 import eu.ddmore.converter.mdl2json.utils.MDLUtils
-import eu.ddmore.converter.mdlprinting.MdlPrinter;
+import eu.ddmore.converter.mdlprinting.MdlPrinter
 
-public class Model extends Expando {
+public class Model extends Expando implements MDLPrintable {
 
 	public static final Logger logger = Logger.getLogger(Model.class)
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
@@ -81,6 +83,10 @@ public class Model extends Expando {
 		}			
 	}
 
+	public Model(Object json) {
+		getProperties().putAll(json)
+	}
+	
 	private Map makeModelInputVariables(InputVariablesBlock inputVariables) {
 		MDLUtils.makeSymbolMap (inputVariables.getVariables() )
 	}
@@ -106,10 +112,8 @@ public class Model extends Expando {
 		StringBuffer statements = new StringBuffer()
 		groupVariables.getStatements().each { GroupVariablesBlockStatement statement ->
 			if(statement.getMixtureBlock()) {
-				logger.debug(statement.getMixtureBlock())
 				statement.getMixtureBlock().getStatements().each { statements.append(mdlPrinter.print(it)) }
 			} else if (statement.getStatement()) {
-				logger.debug(statement.getStatement())
 				statements.append(mdlPrinter.print(statement.getStatement()))
 			}
 		}
@@ -128,18 +132,18 @@ public class Model extends Expando {
 		StringBuffer statements = new StringBuffer()
 		mpb.getStatements()each { ModelPredictionBlockStatement statement ->
 			if(statement.getStatement()!=null) {
-				 mdlPrinter.print(statement.getStatement())
+				 statements.append("${IDT*3}" + mdlPrinter.print(statement.getStatement()))
 			}
 			else if(statement.getOdeBlock()!=null) {
 				statements.append("ODE{\n")
-				statement.getOdeBlock().getStatements().each { statements.append(mdlPrinter.print(it)) }
-				statements.append("}\n")
+				statement.getOdeBlock().getStatements().each { statements.append("${IDT*2}").append(mdlPrinter.print(it)) }
+				statements.append("${IDT}}\n")
 			} else if(statement.getLibraryBlock()!=null) {
-				statements.append("LIBRARY{\n")
+				statements.append("${IDT*2}LIBRARY{\n")
 				statement.getLibraryBlock().getStatements().each { FunctionCallStatement fcs ->
-					statements.append("${fcs.getSymbolName().getName()}=${mdlPrinter.print(fcs.getExpression())}")
+					statements.append("${IDT*2}${fcs.getSymbolName().getName()}=${mdlPrinter.print(fcs.getExpression())}")
 				}
-				statements.append("\n}\n")
+				statements.append("\n${IDT}}\n")
 			}
 		}
 		statements.toString()
@@ -171,14 +175,69 @@ public class Model extends Expando {
 		symbols
 	}
 	
-	public Model(Object json) {
-		setProperty("identifier", IDENTIFIER)
+	public String makeModelInputVariablesString(Map variables) {
+		StringBuffer varStr = new StringBuffer()
+		variables.each {name, attributes ->
+			// Sorry!
+			// v is a map of attributes - iterate over them and turn it into the format "x = y"
+			// then join them together with ","
+			varStr.append("${name}=list(${attributes.collect{ key,value->"${key}=${value}"}.join(",")})\n${IDT*2}")
+		}
+		varStr.toString()
+	}
+	
+	public String makeRandomVariableMDL(List randomVariables) {
+		List varStrings = []
+		randomVariables.each {variable ->
+			// A variable is a map
+			// Key is variable name
+			// Value is the variable attributes
+			// Iterate over them and turn it into the format "x ~ y"
+			// Join attributes together with ","
+			variable.each { variableName, attributes ->
+				String vstr= "${variableName} ~ (${attributes.collect{ key,value->"${key}=${value}"}.join(",")})"
+				varStrings.add(vstr)
+			}
+		}
+		
+		varStrings.join("\n${IDT*2}")
+
 	}
 	
 	public String toMDL() {
-		return """${IDENTIFIER} {
+		StringBuffer mdl = new StringBuffer()
+		
+		getProperties().minus(["identifier":"mdlobj"]).each { block, content ->
+			mdl.append("\n${IDT}${block} {\n${IDT*2}")
+			switch(block) {
+				case "MODEL_INPUT_VARIABLES":
+					mdl.append(makeModelInputVariablesString(content))
+					break;
+				case "MODEL_OUTPUT_VARIABLES":
+				case "STRUCTURAL_PARAMETERS":
+				case "VARIABILITY_PARAMETERS":
+					mdl.append(content.join("\n${IDT*2}"))
+					mdl.append("\n${IDT}")
+					break;
+				case "MODEL_PREDICTION":
+				case "GROUP_VARIABLES":
+				case "INDIVIDUAL_VARIABLES":
+				case "OBSERVATION":
+					mdl.append(content)
+					mdl.append("${IDT}")
+					break;
+				case "RANDOM_VARIABLE_DEFINITION":
+					mdl.append(makeRandomVariableMDL(content))
+					mdl.append("\n${IDT}")
+					break;
+				default:
+					break;
 			}
-		 
-		"""
+			mdl.append("}")
+		}
+
+		return """${IDENTIFIER} {${mdl.toString()}
+}
+"""
 	}
 }
