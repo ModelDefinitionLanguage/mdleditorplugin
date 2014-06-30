@@ -20,6 +20,7 @@
 		<module>../eu.ddmore.converter.test.mdl2pharmml</module>
 		<module>../eu.ddmore.converter.test</module>
 		<module>../eu.ddmore.converter.mdl</module>
+		<module>../eu.ddmore.converter.mdl_v5.1.6_json</module>
 	</modules>
 	
 	<build>
