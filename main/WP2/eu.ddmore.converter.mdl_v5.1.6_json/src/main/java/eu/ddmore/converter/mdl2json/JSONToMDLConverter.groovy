@@ -105,12 +105,12 @@ public class JSONToMDLConverter implements ConverterProvider {
 
 	
     private String computeOutputFileName(String name) {
-        int dotIndex = name.lastIndexOf(MDL_FILE_EXTENSION)
+        int dotIndex = name.lastIndexOf(JSON_FILE_EXTENSION)
 
 		if (dotIndex == -1) {
-            return name + JSON_FILE_EXTENSION
+            return name + MDL_FILE_EXTENSION
         } else {
-            return name.substring(0, dotIndex) + JSON_FILE_EXTENSION
+            return name.substring(0, dotIndex) + MDL_FILE_EXTENSION
         }
     }
 
