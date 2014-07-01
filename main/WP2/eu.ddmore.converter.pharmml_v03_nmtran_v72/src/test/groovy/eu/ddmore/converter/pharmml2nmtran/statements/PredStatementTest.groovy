@@ -18,7 +18,7 @@ import static eu.ddmore.converter.pharmml2nmtran.statements.NMTranFormatter.PREF
 
 public class PredStatementTest {
 
-    private final String prolactinModel = TEST_DATA_DIR + V_0_3_SUBDIR + "Friberg2009Prolactin/Friberg2009Prolactin_v20140523v14_NONMEM.xml"
+    private final String prolactinModel = TEST_DATA_DIR + V_0_3_SUBDIR + "FribergCPT2009/Friberg2009Prolactin_v20140523v14_NONMEM.xml"
 
     @Test
     public void testSimpleAssignedParameters() {
@@ -28,7 +28,7 @@ public class PredStatementTest {
         PharmML pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
 
         ConversionContext conversionContext = new ConversionContext(
-            pmlDOM, new File("Friberg2009Prolactin/Friberg2009Prolactin_v20140523v14_NONMEM.xml")) // Second param -> Doesn't seem to need to be an actual file!
+            pmlDOM, new File("FribergCPT2009/Friberg2009Prolactin_v20140523v14_NONMEM.xml")) // Second param -> Doesn't seem to need to be an actual file!
 
         def commonParameters = pmlDOM.modelDefinition.parameterModel.collect{ it.commonParameterElement ?: [] }.flatten()
 
@@ -49,7 +49,7 @@ public class PredStatementTest {
 		PharmML pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
 
 		ConversionContext conversionContext = new ConversionContext(
-            pmlDOM, new File("Friberg2009Prolactin/Friberg2009Prolactin_v20140523v14_NONMEM.xml")) // Second param -> Doesn't seem to need to be an actual file!
+            pmlDOM, new File("FribergCPT2009/Friberg2009Prolactin_v20140523v14_NONMEM.xml")) // Second param -> Doesn't seem to need to be an actual file!
 
 		def commonParameters = pmlDOM.modelDefinition.parameterModel.collect{ it.commonParameterElement ?: [] }.flatten()
 
@@ -84,7 +84,7 @@ ENDIF
 		PharmML pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
 
 		ConversionContext conversionContext = new ConversionContext(
-            pmlDOM, new File("Friberg2009Prolactin/Friberg2009Prolactin_v20140523v14_NONMEM.xml")) // Second param -> Doesn't seem to need to be an actual file!
+            pmlDOM, new File("FribergCPT2009/Friberg2009Prolactin_v20140523v14_NONMEM.xml")) // Second param -> Doesn't seem to need to be an actual file!
 
 		// Required to set up omega count
 		conversionContext.getOmegasStatement()

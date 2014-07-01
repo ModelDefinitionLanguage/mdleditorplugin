@@ -61,31 +61,31 @@ class MainTest {
 
     @Test
     public void convert2008ThamJCCR() {
-        def conversionReport = performConversion_v_0_3('2008ThamCCR/2008ThamJCCR.xml')
+        def conversionReport = performConversion_v_0_3('ThamCCR2008/2008ThamJCCR.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
     @Test
     public void convert2008ThamJCCR_NONMEM() {
-        def conversionReport = performConversion_v_0_3('2008ThamCCR/2008ThamJCCR_NONMEM.xml')
+        def conversionReport = performConversion_v_0_3('ThamCCR2008/2008ThamJCCR_NONMEM.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
     @Test
     public void convert2008ThamCCR_v03_NONMEM() {
-        def conversionReport = performConversion_v_0_3('2008ThamCCR/2008ThamCCR_v03_NONMEM.xml')
+        def conversionReport = performConversion_v_0_3('ThamCCR2008/2008ThamCCR_v03_NONMEM.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
     @Test
     public void convertFriberg2009Prolactin_v20140506v11_03() {
-        def conversionReport = performConversion_v_0_3('Friberg2009Prolactin/Friberg2009Prolactin_v20140506v11_0.3.xml')
+        def conversionReport = performConversion_v_0_3('FribergCPT2009/Friberg2009Prolactin_v20140506v11_0.3.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
     @Test
     public void convertFriberg2009Prolactin_v20140506v13_NONMEM() {
-        def conversionReport = performConversion_v_0_3('Friberg2009Prolactin/Friberg2009Prolactin_v20140506v13_NONMEM.xml')
+        def conversionReport = performConversion_v_0_3('FribergCPT2009/Friberg2009Prolactin_v20140506v13_NONMEM.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 

@@ -18,7 +18,7 @@ class TrialDesignLoaderFriberg2009Prolactinev20140331v9Test {
 
     @Before
     public void init() {
-        final URL urlToFile = TrialDesignLoaderFriberg2009Prolactinev20140331v9Test.class.getResource(TEST_DATA_DIR + V_0_3_SUBDIR + "Friberg2009Prolactin/Friberg2009Prolactinev20140331v9.xml");
+        final URL urlToFile = TrialDesignLoaderFriberg2009Prolactinev20140331v9Test.class.getResource(TEST_DATA_DIR + V_0_3_SUBDIR + "FribergCPT2009/Friberg2009Prolactinev20140331v9.xml");
 
         def pmlAPI = PharmMlFactory.getInstance().createLibPharmML()
         def pmlDOM = pmlAPI.createDomFromResource(urlToFile.openStream()).getDom()
