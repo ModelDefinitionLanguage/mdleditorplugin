@@ -109,44 +109,44 @@ public class Model extends Expando implements MDLPrintable {
 	}
 
 	private makeGroupVariables(GroupVariablesBlock groupVariables) {
-		StringBuffer statements = new StringBuffer()
+		List statements = []
 		groupVariables.getStatements().each { GroupVariablesBlockStatement statement ->
 			if(statement.getMixtureBlock()) {
-				statement.getMixtureBlock().getStatements().each { statements.append(mdlPrinter.print(it)) }
+				statement.getMixtureBlock().getStatements().each { statements.add(mdlPrinter.print(it)) }
 			} else if (statement.getStatement()) {
-				statements.append(mdlPrinter.print(statement.getStatement()))
+				statements.add(mdlPrinter.print(statement.getStatement()))
 			}
 		}
-		statements.toString()
+		statements.join("${IDT*2}")
 	}
 	
 	private makeIndividualVariables(IndividualVariablesBlock indVariables) {
-		StringBuffer statements = new StringBuffer()
+		List statements = []
 		indVariables.getStatements().each { BlockStatement statement ->
-			statements.append(mdlPrinter.print(statement))
+			statements.add(mdlPrinter.print(statement))
 		}
-		statements.toString()
+		statements.join("${IDT*2}")
 	}
 	
 	private makeModelPredictionBlock(ModelPredictionBlock mpb) {
-		StringBuffer statements = new StringBuffer()
+		List statements = []
 		mpb.getStatements()each { ModelPredictionBlockStatement statement ->
 			if(statement.getStatement()!=null) {
-				 statements.append("${IDT*3}" + mdlPrinter.print(statement.getStatement()))
+				 statements.add(mdlPrinter.print(statement.getStatement()))
 			}
 			else if(statement.getOdeBlock()!=null) {
-				statements.append("ODE{\n")
-				statement.getOdeBlock().getStatements().each { statements.append("${IDT*2}").append(mdlPrinter.print(it)) }
-				statements.append("${IDT}}\n")
+				statements.add("ODE {\n")
+				statement.getOdeBlock().getStatements().each { statements.add("${IDT}"+mdlPrinter.print(it)) }
+				statements.add("}\n")
 			} else if(statement.getLibraryBlock()!=null) {
-				statements.append("${IDT*2}LIBRARY{\n")
+				statements.add("LIBRARY {\n")
 				statement.getLibraryBlock().getStatements().each { FunctionCallStatement fcs ->
-					statements.append("${IDT*2}${fcs.getSymbolName().getName()}=${mdlPrinter.print(fcs.getExpression())}")
+					statements.add("${IDT}${fcs.getSymbolName().getName()}=${mdlPrinter.print(fcs.getExpression())}")
 				}
-				statements.append("\n${IDT}}\n")
+				statements.add("\n${IDT*2}}\n")
 			}
 		}
-		statements.toString()
+		statements.join("${IDT*2}")
 	}
 	
 	private makeRandomBlock(RandomVariableDefinitionBlock randomVariables) {
