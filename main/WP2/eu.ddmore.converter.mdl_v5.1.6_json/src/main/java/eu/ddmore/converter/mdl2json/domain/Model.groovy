@@ -83,6 +83,11 @@ public class Model extends Expando implements MDLPrintable {
 		}			
 	}
 
+	/**
+	 * Constructor from a JSON object
+	 * 
+	 * @param json The json object to construct the Model with
+	 */
 	public Model(Object json) {
 		getProperties().putAll(json)
 	}
@@ -153,6 +158,13 @@ public class Model extends Expando implements MDLPrintable {
 		makeSymbols(randomVariables.getVariables())
 	}
 	
+	/**
+	 * MDL printing routines
+	 */
+	
+	/**
+	 * Make the observation block
+	 */
 	private makeObservationBlock(ObservationBlock observationBlock) {
 		StringBuffer statements = new StringBuffer()
 		observationBlock.getStatements().each { BlockStatement statement ->
@@ -175,6 +187,9 @@ public class Model extends Expando implements MDLPrintable {
 		symbols
 	}
 	
+	/**
+	 * Make model input variables block
+	 */
 	public String makeModelInputVariablesString(Map variables) {
 		StringBuffer varStr = new StringBuffer()
 		variables.each {name, attributes ->
@@ -206,6 +221,8 @@ public class Model extends Expando implements MDLPrintable {
 	
 	public String toMDL() {
 		StringBuffer mdl = new StringBuffer()
+		
+		// Possibly may need to do something about ordering here.
 		
 		getProperties().minus(["identifier":"mdlobj"]).each { block, content ->
 			mdl.append("\n${IDT}${block} {\n${IDT*2}")
