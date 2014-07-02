@@ -14,10 +14,8 @@
 	</parent>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<xtend.repo.url>http://build.eclipse.org/common/xtend/maven/</xtend.repo.url>
+ 		<xtend.repo.url>http://build.eclipse.org/common/xtend/maven/</xtend.repo.url>
 		<xtend.version>2.4.0</xtend.version>
-		<antlr.version>3.2</antlr.version>
 	</properties>
 
 	<repositories>
@@ -35,7 +33,7 @@
 			<artifactId>converter-toolbox</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.eclipse.xtend</groupId>
 			<artifactId>org.eclipse.xtend.standalone</artifactId>
@@ -47,43 +45,7 @@
 			<artifactId>org.eclipse.core.resources</artifactId>
 			<version>3.7.100</version>
 		</dependency>
-		
-  		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>pharmacometrics-model</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
-		</dependency>
 
-<!--   		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>parse-mdl</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
--->
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.11.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>xml-apis</groupId>
-			<artifactId>xml-apis</artifactId>
-			<version>1.4.01</version>
-		</dependency>
-
-		<dependency>
-			<groupId>xml-resolver</groupId>
-			<artifactId>xml-resolver</artifactId>
-			<version>1.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>net.sf.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>2.0</version>
-		</dependency>
-		
 		<dependency> 
  		   <groupId>eu.ddmore</groupId> 
  			<artifactId>org.ddmore.mdl</artifactId> 
@@ -94,38 +56,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/main/java</source>
-							</sources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>add-test-source</id>
-						<phase>generate-test-sources</phase>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/test/java</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
@@ -144,52 +74,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-				 <archive>
-					  <manifestEntries>
-						 <Main-Class>eu.ddmore.converter.mdl2json.MDLToJSONConverter</Main-Class>
-					  </manifestEntries>
-				   </archive>
-				</configuration>
-				<executions>
-				  <execution>
-					<id>default-jar</id>
-					<phase>package</phase>
-					<goals>
-					  <goal>jar</goal>
-					</goals>
-				  </execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Main-Class>eu.ddmore.converter.mdl2json.MDLToJSONConverter</Main-Class>
-						</manifestEntries>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-			</plugin>
 		</plugins>
-		
 		<pluginManagement>
 			<plugins>
 				<plugin>
