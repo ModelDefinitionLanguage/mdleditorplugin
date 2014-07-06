@@ -18,7 +18,7 @@ class TargetBlockTest {
 
 	@Test
     public void testGetTargetBlocks() {
-        File src = getFile('Ex_model7_prolactin_OAM/target/ex_model7_prolactin_25June2014_OAM.xml', V_0_3_SUBDIR)
+        File src = getFile('Ex_model7_prolactin_OAM/targetblock/ex_model7_prolactin_25June2014_OAM.xml', V_0_3_SUBDIR)
 		TargetBlockStatement targetblocks = new TargetBlockStatement()
 		List test = targetblocks.getTargetBlocks(src)
 		assertEquals("Should return correct size",2,test.size())

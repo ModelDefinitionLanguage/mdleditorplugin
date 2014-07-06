@@ -1,0 +1,32 @@
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$PROBLEM
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$PROB AGONIST-ANTAGONIST INTERACTION MODEL FOR PROLACTIN
+		; FRIBERG ET AL. CPT 2009
+	</code>
+</targetBlock>	
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$ESTIMATION
+</location>
+<sameline>
+	true
+</sameline>
+	<code>
+		
+		$EST PRINT=5 MAX=0 SIGDIG=3 METHOD=1
+		;$COV MATRIX=S
+	</code>
+</targetBlock>	

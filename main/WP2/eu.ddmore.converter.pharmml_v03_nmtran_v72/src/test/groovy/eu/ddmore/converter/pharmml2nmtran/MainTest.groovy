@@ -91,7 +91,7 @@ class MainTest {
 	
 	@Test
 	public void Ex_model7_prolactin_OAM_Test() {
-		File src = getFile('Ex_model7_prolactin_OAM/target/ex_model7_prolactin_25June2014_OAM.xml', V_0_3_SUBDIR)
+		File src = getFile('Ex_model7_prolactin_OAM/targetblock/ex_model7_prolactin_25June2014_OAM.xml', V_0_3_SUBDIR)
 		def conversionReport = performConversion_v_0_3('Ex_model7_prolactin_OAM/ex_model7_prolactin_25June2014_OAM.xml')
 		assertNotNull("ConversionReport should not be null", conversionReport)
 	}
