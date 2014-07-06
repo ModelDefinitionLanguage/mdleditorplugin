@@ -15,7 +15,7 @@ class SimulationStatement extends NMTranFormatter {
         def s = new StringBuilder()
         for (JAXBElement elem in pmlDOM.modellingSteps.commonModellingStep) {
             if (elem.value instanceof SimulationStepType) {
-                s << "\$SIM (20140331)"
+                s << "(20140331)"
             }
         }
         s

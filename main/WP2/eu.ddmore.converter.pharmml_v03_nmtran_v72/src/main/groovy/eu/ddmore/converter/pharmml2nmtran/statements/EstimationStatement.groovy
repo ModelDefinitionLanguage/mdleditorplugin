@@ -16,7 +16,6 @@ class EstimationStatement extends NMTranFormatter {
         boolean estFIMFound = false;
         for (JAXBElement elem in pmlDOM.modellingSteps.commonModellingStep) {
             if (elem.value instanceof EstimationStepType) {
-                sb << "\$EST "
                 EstimationStepType estStep = (EstimationStepType) elem.value
                 estStep.operation.each {
                     switch ( it.opType.value ) {
