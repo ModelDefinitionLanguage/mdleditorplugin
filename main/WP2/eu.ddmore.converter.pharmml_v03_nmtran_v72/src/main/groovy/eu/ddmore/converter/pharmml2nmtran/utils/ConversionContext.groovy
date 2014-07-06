@@ -11,6 +11,7 @@ import eu.ddmore.converter.pharmml2nmtran.equivalence.EquivalenceClass
 import eu.ddmore.converter.pharmml2nmtran.equivalence.EquivalenceClassesComputer;
 import eu.ddmore.converter.pharmml2nmtran.model.CorrelationKey
 import eu.ddmore.converter.pharmml2nmtran.model.Omega
+import eu.ddmore.converter.pharmml2nmtran.model.TargetBlock
 import eu.ddmore.converter.pharmml2nmtran.model.Theta;
 import eu.ddmore.converter.pharmml2nmtran.statements.EstimationStatement
 import eu.ddmore.converter.pharmml2nmtran.statements.NMTranFormatter
@@ -19,6 +20,7 @@ import eu.ddmore.converter.pharmml2nmtran.statements.PredStatement
 import eu.ddmore.converter.pharmml2nmtran.statements.SigmasStatement
 import eu.ddmore.converter.pharmml2nmtran.statements.SimulationStatement
 import eu.ddmore.converter.pharmml2nmtran.statements.TableStatement
+import eu.ddmore.converter.pharmml2nmtran.statements.TargetBlockStatement;
 import eu.ddmore.converter.pharmml2nmtran.statements.ThetasStatement;
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType
@@ -88,6 +90,7 @@ public class ConversionContext extends NMTranFormatter {
     private List<String> omegasInPrintOrder
 	private Map<String,String> simpleParameterToNmtran = new HashMap<String,String>()
 	private boolean isGaussianObsError
+	TargetBlockConverter targetBlockConverter = new TargetBlockConverter()
 	
 
     public ConversionContext(PharmML pmlDOM, File src) {
@@ -107,6 +110,21 @@ public class ConversionContext extends NMTranFormatter {
 		predStatement = new PredStatement(pmlDOM, parameters, this)
 		setupSimpleParameters()
     }
+	
+	/**
+	 * This method reads target block file and populates maps with code blocks for statements. 
+	 * 
+	 * @param targetSrc
+	 */
+	private void prepareTargetBlocks(File targetblockSrcFile){
+		targetBlockConverter.externalCodeStart = new HashMap<String, TargetBlock>() //external code per target language section,
+		targetBlockConverter.externalCodeEnd = new HashMap<String, TargetBlock>() //external code per target language section,
+   
+		TargetBlockStatement targetBlockStatement = new TargetBlockStatement()
+		targetBlockStatement.getTargetBlocks(targetblockSrcFile).each { targetblock ->			
+			targetBlockConverter.prepareExternalCode(targetblock)
+		}
+	}
 
     private void findFunctions() {
         pmlDOM.functionDefinition.each {
@@ -124,7 +142,17 @@ public class ConversionContext extends NMTranFormatter {
 	}
 	
     def getProblemStatement() {
-        "\$PROBLEM ${pmlDOM.name.value}\n"
+		def problemStatement = new StringBuilder();
+		def statementName = "\$PROBLEM";
+		def trimmedBlockName = targetBlockConverter.trimLocationName(statementName);
+		
+		if(targetBlockConverter.isTargetDefined(targetBlockConverter.trimLocationName(trimmedBlockName))){
+			problemStatement << targetBlockConverter.getExternalCodeStart(trimmedBlockName)
+			problemStatement << targetBlockConverter.getExternalCodeEnd(trimmedBlockName)
+		}else{
+        	problemStatement << statementName+" ${pmlDOM.name.value}\n"
+		}
+		problemStatement
     }
 
     def getInputStatement(List<String> headers) {
@@ -133,11 +161,33 @@ public class ConversionContext extends NMTranFormatter {
     }
 
     def getEstimationStatement() {
-        new EstimationStatement().getStatement(pmlDOM)
+		def estimateStatement = new StringBuilder();
+		def statementName = "\$EST";
+		def trimmedBlockName = targetBlockConverter.trimLocationName(statementName);
+		
+		if(targetBlockConverter.isTargetDefined(targetBlockConverter.trimLocationName(trimmedBlockName))){
+			estimateStatement << targetBlockConverter.getExternalCodeStart(trimmedBlockName)
+			estimateStatement << targetBlockConverter.getExternalCodeEnd(trimmedBlockName)
+		}else{
+			estimateStatement << statementName+" "
+			estimateStatement << new EstimationStatement().getStatement(pmlDOM)
+		}
+		estimateStatement
     }
 
     def getSimulationStatement() {
-        new SimulationStatement().getStatement(pmlDOM)
+		def simulationStatement = new StringBuilder();
+		def statementName = "\$SIM";
+		def trimmedBlockName = targetBlockConverter.trimLocationName(statementName);
+		
+		if(targetBlockConverter.isTargetDefined(targetBlockConverter.trimLocationName(trimmedBlockName))){
+			simulationStatement << targetBlockConverter.getExternalCodeStart(trimmedBlockName)
+			simulationStatement << targetBlockConverter.getExternalCodeEnd(trimmedBlockName)
+		}else{
+			simulationStatement << statementName+" "
+			simulationStatement << new SimulationStatement().getStatement(pmlDOM)
+		}
+		simulationStatement
     }
 
     def getPred() {
