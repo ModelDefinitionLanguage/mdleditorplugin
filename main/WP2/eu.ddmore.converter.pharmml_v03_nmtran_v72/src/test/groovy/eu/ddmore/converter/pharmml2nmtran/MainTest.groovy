@@ -88,6 +88,13 @@ class MainTest {
         def conversionReport = performConversion_v_0_3('FribergCPT2009/Friberg2009Prolactin_v20140506v13_NONMEM.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
+	
+	@Test
+	public void Ex_model7_prolactin_OAM_Test() {
+		File src = getFile('Ex_model7_prolactin_OAM/target/ex_model7_prolactin_25June2014_OAM.xml', V_0_3_SUBDIR)
+		def conversionReport = performConversion_v_0_3('Ex_model7_prolactin_OAM/ex_model7_prolactin_25June2014_OAM.xml')
+		assertNotNull("ConversionReport should not be null", conversionReport)
+	}
 
     @Test
     @Ignore
@@ -168,7 +175,7 @@ class MainTest {
 		assertEquals("Correct output name should be computed.", "test.Model.xml.5.ctl", computedName)
 	}
 
-		@Test
+	@Test
 	public void shouldComputeCorrectOutputNameDifferentExtension() {
 		def computedName = converter.computeOutputFileName("testModel6.mod")
 		assertEquals("Correct output name should be computed.", "testModel6.mod.ctl", computedName)

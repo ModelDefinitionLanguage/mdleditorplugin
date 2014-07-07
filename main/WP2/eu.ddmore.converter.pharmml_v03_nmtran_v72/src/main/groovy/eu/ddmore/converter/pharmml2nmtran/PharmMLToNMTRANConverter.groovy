@@ -71,6 +71,11 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
     public StringBuilder toNMTRAN(pmlDOM, src, outputDirectory) {
         StringBuilder nmtran = new StringBuilder();
         conversionContext = new ConversionContext(pmlDOM, src)
+		File targetBlocksFile = new File(outputDirectory.getAbsolutePath()+File.separator+"target"+File.separator+src.getName())
+		if(targetBlocksFile.exists()){
+			conversionContext.prepareTargetBlocks(targetBlocksFile)
+		}
+		
 
         nmtran.append(conversionContext.getProblemStatement())
         nmtran.append('\n')
