@@ -2,18 +2,24 @@
 
 SET home=%~dp0
 
-reg query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > nul
-if %errorlevel%==0 (
-    set TRAINING_JAVA_HOME=%home%..\MDL_IDE\x86\jre
+if "%PROCESSOR_ARCHITECTURE%" == "x86" ( 
+    if not defined PROCESSOR_ARCHITEW6432 (
+		set TRAINING_JAVA_HOME=%SERVICE_HOME%\..\MDL_IDE\x86\jre
+	) else (
+		set TRAINING_JAVA_HOME=%SERVICE_HOME%\..\MDL_IDE\x86_64\jre
+	)
 ) else (
-    set TRAINING_JAVA_HOME=%home%..\MDL_IDE\x86_64\jre
+	set TRAINING_JAVA_HOME=%SERVICE_HOME%\..\MDL_IDE\x86_64\jre
 )
 
-IF EXIST {%TRAINING_JAVA_HOME%\bin\java} (
+IF EXIST "%TRAINING_JAVA_HOME%\bin\java.exe" (
+    echo Using Java from SEE
     SET JAVA_CMD=%TRAINING_JAVA_HOME%\bin\java
-) ELSE IF EXIST {%JAVA_HOME%\bin\java} (
+) ELSE IF EXIST "%JAVA_HOME%\bin\java.exe" (
+    echo Using Java from JAVA_HOME environment variable
     SET JAVA_CMD=%JAVA_HOME%\bin\java
 ) ELSE (
+    echo Falling beck to using Java from path; it will fail if Java is not installed
     SET JAVA_CMD=java
 )
 
