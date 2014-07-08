@@ -48,7 +48,7 @@ class TestMDLToJSONConverter {
 		assertEquals("continuous", STU.type[0])
 
 		def TIME = dataInputVariables.TIME
-		assertEquals("h", TIME.units[0])	
+		assertEquals("\"h\"", TIME.units[0])	
 		
 		def paramObj = json.ex_model7_prolactin_Jan2014_par
 		assertEquals(Parameter.IDENTIFIER, paramObj.identifier[0])

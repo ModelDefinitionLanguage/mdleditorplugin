@@ -39,7 +39,7 @@ class TestDataToJSONConverter {
 		assertEquals("categorical", ID.type[0])
 
 		def TIME = dataInputVariables.TIME
-		assertEquals("h", TIME.units[0])	
+		assertEquals("\"h\"", TIME.units[0])	
 	}
 	
 	def getJson  = { String fileToConvert ->
