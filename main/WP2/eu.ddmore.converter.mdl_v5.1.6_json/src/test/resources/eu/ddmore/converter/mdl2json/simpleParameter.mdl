@@ -16,12 +16,12 @@ tumour_size_par = parobj{
 # VARIABILITY parameters may be expressed with a type of "SD" which implies standard deviations on the diagonal and correlations
 # on the lower off diagonal elements or "VAR" which implies variances and covariances.
       #OMEGA
-      PPV_SIZE0=list(value=0.317 ,type="VAR")
-      PPV_TOVER=list(value=0.082 ,type="VAR")
-      PPV_AE50=list(value=1.9 ,type="VAR")
+      PPV_SIZE0=list(value=0.317 ,type=VAR)
+      PPV_TOVER=list(value=0.082 ,type=VAR)
+      PPV_AE50=list(value=1.9 ,type=VAR)
       #SIGMA
-      RUV_CV=list(value=0.0358 ,type="VAR")
-      RUV_SD=list(value=0.0125 ,type="VAR") # cm^2
+      RUV_CV=list(value=0.0358 ,type=VAR)
+      RUV_SD=list(value=0.0125 ,type=VAR) # cm^2
 
    }# end VARIABILITY
 
