@@ -132,26 +132,40 @@ public class Model extends Expando implements MDLPrintable {
 		}
 		statements.join("${IDT*2}")
 	}
-	
-	private makeModelPredictionBlock(ModelPredictionBlock mpb) {
+
+    private makeModelPredictionBlock(ModelPredictionBlock mpb) {
+        LinkedHashMap modPredBlock = [:]
+        List odeStatements = []
+        List libraryStatements = []
 		List statements = []
-		mpb.getStatements()each { ModelPredictionBlockStatement statement ->
-			if(statement.getStatement()!=null) {
-				 statements.add(mdlPrinter.print(statement.getStatement()))
+        
+		mpb.getStatements().each { ModelPredictionBlockStatement statement ->
+            
+			if (statement.getStatement() != null) {
+                statements.add(mdlPrinter.print(statement.getStatement()))
 			}
-			else if(statement.getOdeBlock()!=null) {
-				statements.add("ODE {\n")
-				statement.getOdeBlock().getStatements().each { statements.add("${IDT}"+mdlPrinter.print(it)) }
-				statements.add("}\n")
-			} else if(statement.getLibraryBlock()!=null) {
-				statements.add("LIBRARY {\n")
+			else if (statement.getOdeBlock() != null) {
+				statement.getOdeBlock().getStatements().each {
+                    odeStatements.add("${IDT}"+mdlPrinter.print(it))
+                }
+			} else if (statement.getLibraryBlock() != null) {
 				statement.getLibraryBlock().getStatements().each { FunctionCallStatement fcs ->
-					statements.add("${IDT}${fcs.getSymbolName().getName()}=${mdlPrinter.print(fcs.getExpression())}")
+					libraryStatements.add("${IDT}${fcs.getSymbolName().getName()}=${mdlPrinter.print(fcs.getExpression())}")
 				}
-				statements.add("\n${IDT*2}}\n")
 			}
 		}
-		statements.join("${IDT*2}")
+        
+        if (!odeStatements.isEmpty()) {
+            modPredBlock.put("ODE", odeStatements.join("${IDT*2}"))
+        }
+
+		if (!libraryStatements.isEmpty()) {
+		    modPredBlock.put("LIBRARY", libraryStatements.join("${IDT*2}"))
+		}
+        
+		modPredBlock.put("content", "${IDT*2}" + statements.join("${IDT*2}"))
+        
+        modPredBlock
 	}
 	
 	private makeRandomBlock(RandomVariableDefinitionBlock randomVariables) {

@@ -18,7 +18,8 @@ class TestModelToJSONConverter extends MDLToJSONTest {
 		logger.debug(modelObject)
 	}
 	
-	@Test void testProlactinModel() {
+	@Test
+    void testProlactinModel() {
 		def json = getJsonFromMDLFile("prolactinModel.mdl")
 		
 		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
@@ -47,5 +48,63 @@ class TestModelToJSONConverter extends MDLToJSONTest {
 		assertEquals([ "PPV_PRL0", "PPV_KI", "PPV_KOUT", "PPV_AMP1", "PPV_PHS2", "PPV_IOV_IN_PRL0_1", "PPV_IOV_IN_PRL0_2",
       "PPV_IOV_IN_PRL0_3", "PPV_IOV_IN_PRL0_4", "RUV_EPS1"], variabilityParameters[0])
 	}
+    
+    @Test
+    public void testModelObjectModelPredictionObject() {
+        def json = getJsonFromMDLFile("prolactinModel.mdl")
+        
+        def modelObject = json.ex_model7_prolactin_Jan2014_mdl
+        
+        def modPred = modelObject.MODEL_PREDICTION
+        
+        logger.debug(modPred[0])
+        
+        def ode = modPred.ODE
+        def library = modPred.LIBRARY
+        def content = modPred.content
+        
+        logger.debug("Ode :- " + ode[0])
+        logger.debug("Library :- " + library[0])
+        logger.debug("content := " + content[0])
+        
+        def expectedOdeBlock = """    CP = 1000*CENT/V2
+            DIU1 = AMP1*cos(2*PI*(T-PHS1)/24)
+            DIU2 = AMP2*cos(2*PI*(T-PHS2)/12)
+            DIU = DIU1+DIU2
+            RSTR = 1
+            if (DA>0)
+        RSTR = DA/(1+CP/KI+DA)
+            KIN = KINM*(1-RSTR)+KINB*DIU
+            FEED = 1
+            if (PROL>0)
+        FEED = (PROL/PRL0)^UPDA
+            ABS = ode(deriv = -KA*ABS)
+            CENT = ode(deriv = KA*ABS-(K23+K)*CENT+K32*PERI)
+            PERI = ode(deriv = K23*CENT-K32*PERI)
+            PROL = ode(deriv = KIN-KOUT*PROL)
+            DA = ode(deriv = KDA*F5*FEED-KDA*DA)
+"""
+        // Note that we need to make the line endings and tabbing consistent between actual vs expected
+        assertEquals("Checking the ODE block", expectedOdeBlock, ode[0].replace("\r\n", "\n").replace("\t", "        "))
+        
+        assertEquals("Checking the LIBRARY block", "    amount=nmadvan(model = 6, output = list(A, F))", library[0])
+        
+        def expectedContentBlock = """        IPRED = 0
+        if (PROL>0)
+        IPRED = ln(PROL)
+        W = POP_RES_ERR_IN_MALE_HV
+        if (PAT==1)
+        W = POP_RES_ERR_IN_MALE_PATIENTS
+        if (SEX==1)
+        W = POP_RES_ERR_IN_FEMALE_PATIENTS
+        IRES = DV-IPRED
+        IWRES = IRES/W
+        STRT = TRT
+"""
+        
+        assertEquals("Checking the content block", expectedContentBlock, content[0].replace("\r\n", "\n").replace("\t", "        "))
+        
+    }
+    
 
 }
