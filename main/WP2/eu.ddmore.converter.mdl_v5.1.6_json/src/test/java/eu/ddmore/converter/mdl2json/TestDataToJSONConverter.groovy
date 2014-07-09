@@ -5,23 +5,24 @@ import static org.junit.Assert.*;
 import org.apache.log4j.Logger
 
 import eu.ddmore.convertertoolbox.api.response.ConversionReport
+import eu.ddmore.converter.mdl2json.domain.MCLFile
 import eu.ddmore.converter.mdl2json.domain.Parameter
 import eu.ddmore.converter.mdl2json.domain.Data
+import eu.ddmore.converter.mdl2json.domain.data.DataInputVariables
+
 import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
 import org.junit.Test;
 
-class TestDataToJSONConverter {
+class TestDataToJSONConverter extends MDLToJSONTest  {
 	private static Logger logger = Logger.getLogger(TestDataToJSONConverter.class)
-	
-	final static String TEST_DATA_DIR = "./"
 	
 	private final MDLToJSONConverter converter = new MDLToJSONConverter();
 		
 	@Test
 	public void testProlactinMay2014() {
-		def json = getJson("simpleData.mdl")
+		def json = getJsonFromMDLFile("simpleData.mdl")
 			
 		logger.debug(json)
 		
@@ -42,23 +43,27 @@ class TestDataToJSONConverter {
 		assertEquals("\"h\"", TIME.units[0])	
 	}
 	
-	def getJson  = { String fileToConvert ->
-        File srcFile = getFile(fileToConvert)
-
+	@Test 
+	void testTumourDataInputVariablesOrder() {
+		
+		File srcFile = getFile("tumourDataObject.mdl")
+		
 		MdlParser p = new MdlParser()
 		Mcl mcl = p.parse(srcFile)
-
-        String jsonText = converter.toJSON(mcl)
 		
-		logger.debug(jsonText)
+		MCLFile f = new MCLFile(mcl)
+			
+		Data dataObject = f.tumour_size_TABLES_ORG_dat	
 		
-		JsonSlurper slurper = new JsonSlurper();
-		slurper.parseText(jsonText)
-    }
-
-    private File getFile(final String pathToFile) {
-		String path = TEST_DATA_DIR + pathToFile
-		URL url = this.getClass().getResource(path)
-		new File(url.getFile())        
-    }
+		DataInputVariables divs = dataObject.DATA_INPUT_VARIABLES
+		
+		def vars = divs.entrySet().toArray()
+		
+		assertEquals("ID", vars[0].key)
+		assertEquals("TIME", vars[1].key)
+		assertEquals("AMT", vars[2].key)
+		assertEquals("DV", vars[3].key)
+	}
+	
+	
 }

@@ -18,32 +18,34 @@ class TestTaskToJSONConverter extends MDLToJSONTest {
 		
 		assertEquals( Task.IDENTIFIER, taskObject[Task.IDENTIFIER_PROPNAME][0])
 		
-		def expectedTaskStr = """TARGET_CODE(target=NMTRAN_CODE,location="\$PROBLEM",first=true){***\r
-\$PROB AGONIST-ANTAGONIST INTERACTION MODEL FOR PROLACTIN\r
-; FRIBERG ET AL. CPT 2009\r
+		def expectedTaskStr = """TARGET_CODE(target=NMTRAN_CODE,location="\$PROBLEM",first=true){***
+\$PROB AGONIST-ANTAGONIST INTERACTION MODEL FOR PROLACTIN
+; FRIBERG ET AL. CPT 2009
 ***}
 MODEL{
-tolrel = 5\r
+tolrel = 5
 }
 myEST=function(t,m,p,d) {
 EXECUTE{
-command = "call nmgo ex_model7_prolactin_Jan2014"\r
+command = "call nmgo ex_model7_prolactin_Jan2014"
 }
 ESTIMATE{
-target = t\r
-model = m\r
-parameter = p\r
-data = d\r
-TARGET_CODE(target=NMTRAN_CODE,location="\$ESTIMATION"){***\r
-\$EST PRINT=5 MAX=0 SIGDIG=3 METHOD=1\r
-;\$COV MATRIX=S\r
+target = t
+model = m
+parameter = p
+data = d
+TARGET_CODE(target=NMTRAN_CODE,location="\$ESTIMATION"){***
+\$EST PRINT=5 MAX=0 SIGDIG=3 METHOD=1
+;\$COV MATRIX=S
 ***}
-algo = list("FOCE ")\r
+algo = list("FOCE ")
 }
 
 }
 """
-		assertEquals(expectedTaskStr, taskObject.content[0])
+		String actual = taskObject.content[0]
+		
+		assertEquals(expectedTaskStr, actual.replaceAll("\r", ""))
 	}
 
 	@Test
@@ -55,7 +57,8 @@ algo = list("FOCE ")\r
 		assertEquals( Task.IDENTIFIER, taskObject[Task.IDENTIFIER_PROPNAME][0])
 		
 		Task taskFromJson = new Task(taskObject)
-		print taskFromJson.toMDL()
+		
+		logger.debug(taskFromJson.toMDL())
 		
 	}
 }

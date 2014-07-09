@@ -1,5 +1,6 @@
 package eu.ddmore.converter.mdl2json.domain.data;
 
+import eu.ddmore.converter.mdl2json.domain.MDLPrintable
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
 import groovy.util.Expando;
 
@@ -13,7 +14,7 @@ import org.ddmore.mdl.mdl.SymbolDeclaration;
 import org.ddmore.mdl.types.UseType;
 //import org.ddmore.mdl.mdl.SymbolModification;
 
-public class Variable extends Expando{
+public class Variable extends Expando implements MDLPrintable {
 
 	private static Logger logger = Logger.getLogger(Variable.class)
 	
