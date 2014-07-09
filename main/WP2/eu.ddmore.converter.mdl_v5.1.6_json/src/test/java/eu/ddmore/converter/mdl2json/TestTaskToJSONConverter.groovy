@@ -55,7 +55,8 @@ algo = list("FOCE ")\r
 		assertEquals( Task.IDENTIFIER, taskObject[Task.IDENTIFIER_PROPNAME][0])
 		
 		Task taskFromJson = new Task(taskObject)
-		print taskFromJson.toMDL()
+		
+		logger.debug(taskFromJson.toMDL())
 		
 	}
 }

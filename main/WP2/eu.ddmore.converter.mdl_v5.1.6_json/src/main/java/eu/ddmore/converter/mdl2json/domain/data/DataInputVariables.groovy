@@ -1,5 +1,6 @@
 package eu.ddmore.converter.mdl2json.domain.data;
 
+import eu.ddmore.converter.mdl2json.domain.MDLPrintable
 import groovy.util.Expando;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import org.ddmore.mdl.mdl.SymbolDeclaration;
 //import org.ddmore.mdl.mdl.HeaderBlock;
 //import org.ddmore.mdl.mdl.SymbolModification;
 
-public class DataInputVariables extends Expando {
+public class DataInputVariables extends LinkedHashMap implements MDLPrintable {
 
 	public DataInputVariables(DataInputBlock dataInputBlock) {
 
@@ -20,21 +21,21 @@ public class DataInputVariables extends Expando {
 	
 	public DataInputVariables(Map json) {
 		json.each{ k, v ->
-			setProperty(k, new Variable(v))
+			put(k, new Variable(v))
 		}
 	}
 	
 	private void makeVariables(DataInputBlock dataInputBlock) {
 		for( SymbolDeclaration sd : dataInputBlock.getVariables() ) {
 			Variable v = new Variable(sd);
-			setProperty(v.getName(), v);
+			put(v.getName(), v);
 		}	
 	}
 
 	public String toMDL() {
 		List parameters = []
-		getProperties().each{ k, v ->
-			parameters.add("${k}=${v.toMDL()}")
+		entrySet().each{ entry ->
+			parameters.add("${entry.key}=${entry.value.toMDL()}")
 		}
 
 		"""
