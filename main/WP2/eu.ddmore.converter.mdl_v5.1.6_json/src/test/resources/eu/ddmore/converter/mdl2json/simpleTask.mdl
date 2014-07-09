@@ -1,0 +1,47 @@
+ex_model7_prolactin_Jan2014_task = taskobj{
+### Task Properties object
+# Modelling tasks often have many options which the user may specify.
+# The task properties object provides a way to collect together options for commonly performed tasks.
+# The task properties object may define functions which behave like a function in R. It is called with a set of arguments and returns a result object.
+# Following the R language convention the last evaluated statement in a function is used as the default result object returned by the function.
+
+# A task function is defined with the Model Coding Language
+
+# TARGET specific code
+
+TARGET_CODE(target=NMTRAN_CODE,location="$PROBLEM",first=true){***
+$PROB AGONIST-ANTAGONIST INTERACTION MODEL FOR PROLACTIN
+; FRIBERG ET AL. CPT 2009
+***} # end TARGET_CODE
+
+# End TARGET specific code
+
+   MODEL{
+      tolrel=5
+   }# end MODEL
+
+   ## TABLE
+   #NOPRINT ONEHEADER FILE=sdtab7sim_exe 
+
+   myEST=function(t,m,p,d) { 
+      EXECUTE{
+         command="call nmgo ex_model7_prolactin_Jan2014"
+      }# end EXECUTE
+
+      # estimate (more options will typically be needed)
+      ESTIMATE {
+         target=t
+         model=m
+         parameter=p
+         data=d
+
+
+TARGET_CODE(target=NMTRAN_CODE,location="$ESTIMATION"){***
+$EST PRINT=5 MAX=0 SIGDIG=3 METHOD=1
+;$COV MATRIX=S
+***} # end TARGET_CODE
+            algo=list("FOCE ")
+      }# end ESTIMATE
+   }# end of myEST
+
+}# end of task object

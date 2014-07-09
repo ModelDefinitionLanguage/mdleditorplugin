@@ -14,7 +14,7 @@ import eu.ddmore.converter.mdl2json.domain.data.Source;
 import eu.ddmore.converter.mdlprinting.MdlPrinter;
 import groovy.util.Expando;
 
-public class Data extends Expando {
+public class Data extends Expando implements MDLPrintable, MDLAsJSON {
 	static final String IDENTIFIER = "dataobj"
 	static final String SOURCE = "SOURCE"
 	static final String DATA_INPUT_VARIABLES = "DATA_INPUT_VARIABLES"
@@ -31,7 +31,7 @@ public class Data extends Expando {
 	
 	public Data(DataObject dataObject) {
 
-		setProperty("identifier", IDENTIFIER )
+		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER )
 		
 		for( DataObjectBlock b :  dataObject.getBlocks() ) {
 			sourceBlock = b.getSourceBlock() ?: sourceBlock
@@ -55,7 +55,7 @@ public class Data extends Expando {
 	}
 
 	public Data(Object json) {
-		setProperty("identifier", IDENTIFIER)
+		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
 		if(json[SOURCE]) {
 			setProperty(SOURCE, new Source(json[SOURCE]))
 		}

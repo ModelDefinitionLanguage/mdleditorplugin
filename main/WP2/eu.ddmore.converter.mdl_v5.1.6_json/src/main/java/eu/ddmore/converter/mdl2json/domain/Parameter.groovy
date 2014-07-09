@@ -25,7 +25,7 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
 import eu.ddmore.converter.mdl2json.utils.MDLUtils;
 import eu.ddmore.converter.mdlprinting.MdlPrinter;
 
-public class Parameter extends Expando implements MDLPrintable {
+public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	private static Logger logger = Logger.getLogger(Parameter.class)
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
@@ -33,10 +33,10 @@ public class Parameter extends Expando implements MDLPrintable {
 	static final String VARIABILITY = "VARIABILITY"
 	static final String TARGET = "TARGET"
 	static final String STRUCTURAL = "STRUCTURAL"
-	static final String PRIOR = "PRIOR";
-	
+	static final String PRIOR = "PRIOR"
+
 	public Parameter(ParameterObject paramObject) {
-		this.setProperty("identifier", IDENTIFIER)
+		this.setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
 		
 		for( ParameterObjectBlock pob : paramObject.getBlocks()) {
 			if(pob.getPriorBlock()) {
@@ -52,7 +52,7 @@ public class Parameter extends Expando implements MDLPrintable {
 	}
 	
 	public Parameter(Object json) {
-		setProperty("identifier", IDENTIFIER)
+		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
 		if(json[VARIABILITY]) {
 			setProperty(VARIABILITY, json[VARIABILITY])
 		}
@@ -120,7 +120,7 @@ public class Parameter extends Expando implements MDLPrintable {
 	 */
 	private Map makeMatrix(MatrixBlock mb) {
 		Map matrix = createVariabilityMatrix(mb.getArguments())	
-		matrix.put("content", getLowerTriangularMatrixFromSymbols(mb.getParameters()) )
+		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromSymbols(mb.getParameters()) )
 		return matrix
 	}
 
@@ -129,7 +129,7 @@ public class Parameter extends Expando implements MDLPrintable {
 	 */
 	private Map makeDiag(DiagBlock block) {
 		Map matrix = createVariabilityMatrix(block.getArguments())	
-		matrix.put("content", getLowerTriangularMatrixFromSymbols(block.getParameters()) )
+		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromSymbols(block.getParameters()) )
 		return matrix
 	}	
 	
@@ -138,7 +138,7 @@ public class Parameter extends Expando implements MDLPrintable {
 	 */
 	private Map makeSame( SameBlock block ) {
 		Map matrix = createVariabilityMatrix(block.getArguments())	
-		matrix.put("content", getContentFromSymbolNames(block.getParameters()))
+		matrix.put(CONTENT_PROPNAME, getContentFromSymbolNames(block.getParameters()))
 		return matrix
 	}
 	
@@ -231,17 +231,17 @@ public class Parameter extends Expando implements MDLPrintable {
 				switch(k) {
 					case "matrix":
 						// matrix is lower triangular, example "matrix(name="struc2", type="VAR") { matrix }
-						String mx = v['content']
+						String mx = v[CONTENT_PROPNAME]
 						mx = mx.split("\n").join("\n${IDT*3}")
 						strucStr.append("${IDT*2}matrix(name=\"${v['name']}\", type=\"${v['type']}\"){\n${IDT*3}${mx}\n${IDT*2}}\n")
 						break;
 					case "diag":
 						// example "diag(name="struc2", type="VAR") { list of parameters }"
-						strucStr.append("${IDT*2}diag(name=\"${v['name']}\", type=\"${v['type']}\"){\n${IDT*3}${v['content']}\n${IDT*2}}\n")
+						strucStr.append("${IDT*2}diag(name=\"${v['name']}\", type=\"${v['type']}\"){\n${IDT*3}${v[CONTENT_PROPNAME]}\n${IDT*2}}\n")
 						break;
 					case "same":
 						// example "same(name="struc2") { PPV_IOV_IN_PRL0_2 }"
-						strucStr.append("${IDT*2}same(name=\"${v['name']}\"){\n${IDT*3}${v['content'].join(IDT*3+"\n")}\n${IDT*2}}\n")
+						strucStr.append("${IDT*2}same(name=\"${v['name']}\"){\n${IDT*3}${v[CONTENT_PROPNAME].join(IDT*3+"\n")}\n${IDT*2}}\n")
 						break;
 					default:
 						// Otherwise 'key' is the variability parameter name
