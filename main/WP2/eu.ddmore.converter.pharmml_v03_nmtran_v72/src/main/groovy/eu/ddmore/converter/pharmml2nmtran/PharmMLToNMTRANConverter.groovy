@@ -71,17 +71,13 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
     public StringBuilder toNMTRAN(pmlDOM, src, outputDirectory) {
         StringBuilder nmtran = new StringBuilder();
         conversionContext = new ConversionContext(pmlDOM, src)
-		File targetBlocksFile = new File(outputDirectory.getAbsolutePath()+File.separator+"target"+File.separator+src.getName())
-		if(targetBlocksFile.exists()){
-			conversionContext.prepareTargetBlocks(targetBlocksFile)
-		}
-		
 
+		nmtran.append(conversionContext.getSizeStatement())
         nmtran.append(conversionContext.getProblemStatement())
         nmtran.append('\n')
         if (pmlDOM.modellingSteps) {
             DataStatement dataStatement = new DataStatement(pmlDOM, outputDirectory.getAbsolutePath() + File.separator + src.getName().replace(".xml", ""))
-			String dataFilePointer = dataStatement.statement
+			String dataFilePointer = conversionContext.getDataStatement(dataStatement)
             List<String> headers = dataStatement.getHeaders()
             nmtran.append(conversionContext.getInputStatement(headers))
 
@@ -100,6 +96,9 @@ public class PharmMLToNMTRANConverter implements ConverterProvider {
             nmtran.append('\n')
             nmtran.append(conversionContext.getSigmasStatement())
             nmtran.append('\n')
+			nmtran.append(conversionContext.getPriorStatement())
+			nmtran.append('\n')
+			
         } else {
             //TODO: Conversion error should be thrown here
             throw new RuntimeException("Modelling steps missing. They are required by NMTRAN.")

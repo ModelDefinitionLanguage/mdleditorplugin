@@ -23,4 +23,22 @@ class TestJSONToMDLConverter extends MDLToJSONTest {
 		assertNotEquals(null, mclFile.toMDL() )			
 			
 	}
+
+		@Test
+	public void testRGeneratedMOG() {
+		
+		File jsonFile = getFile("myMog3.json")
+		
+		String content = jsonFile.getText()
+		
+		def json = getJson(content)
+
+		MCLFile mclFile = new MCLFile(json)
+		
+		String mdl = mclFile.toMDL()
+		
+		assertNotEquals(null, mdl )			
+		
+		logger.debug(mdl)
+	}
 }

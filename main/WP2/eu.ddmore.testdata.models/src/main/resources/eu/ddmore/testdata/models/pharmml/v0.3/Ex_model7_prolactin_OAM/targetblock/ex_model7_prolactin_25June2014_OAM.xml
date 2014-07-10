@@ -13,7 +13,296 @@
 		$PROB AGONIST-ANTAGONIST INTERACTION MODEL FOR PROLACTIN
 		; FRIBERG ET AL. CPT 2009
 	</code>
-</targetBlock>	
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$INPUT
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$INPUT TEST TARGET BLOCK
+	</code>
+</targetBlock>
+	
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$SIM
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$SIM TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$PRED
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$PRED TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$TABLE
+</location>
+<last>
+	true
+</last>
+	<code>
+$TABLE TEST TARGET BLOCK
+$TABLE TARGETBLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$THETA
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$THETA TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$OMEGA
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$OMEGA TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$SIGMA
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$SIGMA TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$DATA
+</location>
+<sameline>
+	true
+</sameline>
+	<code>
+		
+		$DATA TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$DES
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$DES TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$MODEL
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$MODEL TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$ERROR
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$ERR TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$MIX
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$MIX TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$PK
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$PK TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$COV
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$COV TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$PRIOR
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$PRIOR TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$SIZE
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$SIZ TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$ABB
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$ABB TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
+<targetBlock>
+<target>
+	NMTRAN_CODE
+</target>
+<location>
+	$AES
+</location>
+<first>
+	true
+</first>
+	<code>
+		
+		$AES TEST TARGET BLOCK
+	</code>
+</targetBlock>
+
 <targetBlock>
 <target>
 	NMTRAN_CODE
@@ -26,7 +315,6 @@
 </sameline>
 	<code>
 		
-		$EST PRINT=5 MAX=0 SIGDIG=3 METHOD=1
-		;$COV MATRIX=S
+		$EST PRINT=5 MAX=0 SIGDIG=3 METHOD=1		
 	</code>
 </targetBlock>	

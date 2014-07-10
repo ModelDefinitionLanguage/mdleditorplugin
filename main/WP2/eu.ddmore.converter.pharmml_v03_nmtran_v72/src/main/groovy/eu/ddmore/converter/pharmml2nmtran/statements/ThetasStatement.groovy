@@ -19,7 +19,7 @@ class ThetasStatement extends NMTranFormatter {
     private ConversionContext conversionContext
 
     def getStatement() {
-        def sb = new StringBuilder("\$THETA\n");
+        def sb = new StringBuilder();
         def thetaToNMTRAN = [:]
         for (JAXBElement elem in pmlDOM.modellingSteps.commonModellingStep) {
             if (elem.value instanceof EstimationStepType) {

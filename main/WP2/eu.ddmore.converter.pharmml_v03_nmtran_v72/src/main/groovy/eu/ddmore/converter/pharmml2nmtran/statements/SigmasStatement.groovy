@@ -24,7 +24,7 @@ class SigmasStatement extends NMTranFormatter {
     def getStatement() {
         computeSigmasToNMTRAN()
         
-        def sb = new StringBuilder("\$SIGMA\n");
+        def sb = new StringBuilder();
         boolean sigmaFound=false
         
         pmlDOM.modelDefinition.observationModel.each { type ->

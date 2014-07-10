@@ -5,15 +5,14 @@ package eu.ddmore.converter.pharmml2nmtran.statements
 
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.modellingsteps.EstimationStepType
-import eu.ddmore.libpharmml.dom.modellingsteps.SimulationStepType
 import javax.xml.bind.JAXBElement
 
 
 class EstimationStatement extends NMTranFormatter {
-
+	
+	def estFIMFound = false;
     def getStatement(PharmML pmlDOM) {
-        def sb = new StringBuilder()
-        boolean estFIMFound = false;
+        def sb = new StringBuilder()        
         for (JAXBElement elem in pmlDOM.modellingSteps.commonModellingStep) {
             if (elem.value instanceof EstimationStepType) {
                 EstimationStepType estStep = (EstimationStepType) elem.value
@@ -37,7 +36,7 @@ class EstimationStatement extends NMTranFormatter {
                 }
             }
         }
-        sb << "\n${estFIMFound ? "\$COV\n": "" }"
+        sb
     }
 
     def computeMethod(algorithm) {

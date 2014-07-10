@@ -11,6 +11,7 @@ import eu.ddmore.converter.pharmml2nmtran.model.Theta;
 import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext;
 import eu.ddmore.converter.pharmml2nmtran.utils.ParameterVariableSortHelper
 import eu.ddmore.converter.pharmml2nmtran.utils.Parameters;
+import eu.ddmore.converter.pharmml2nmtran.utils.TargetBlockConverter;
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType
 import eu.ddmore.libpharmml.dom.commontypes.DerivativeVariableType
@@ -51,15 +52,15 @@ class PredStatement extends NMTranFormatter {
 
     private final Map<String, String> derivativeNames = new HashMap<String, String>()
     private final Set<String> definedInDES = new HashSet<String>()
-
+	TargetBlockConverter targetBlockConverter
+	
     public PredStatement(PharmML pmlDOM, Parameters parameters, ConversionContext conversionContext) {
         this.pmlDOM = pmlDOM
         this.parameters = parameters
         this.conversionContext = conversionContext
         this.epsilonToSigma = conversionContext.epsilonToSigma
-		
+		targetBlockConverter = conversionContext.targetBlockConverter 
 		findCovariates()
-		
     }
 
     def findCovariates() {
@@ -88,12 +89,27 @@ class PredStatement extends NMTranFormatter {
     }
 
     def getStatement() {
-        def sb = new StringBuilder()
-        if (getDerivativeVariableTypes()) {
-            sb << getDerivativePredStatement()
-        } else {
-            sb << getNonDerivativePredStatement()
-        }
+		def statementName = "\$PRED";
+		def trimmedBlockName = targetBlockConverter.trimLocationName(statementName);
+
+		if (getDerivativeVariableTypes()) {
+			statementName = "\$SUB";
+			def targetBlockClosure={
+				getDerivativePredStatement()
+			}
+			def nonTargetBlockClosure={
+				"\$SUBS ADVAN13 TOL=9\n"+getDerivativePredStatement()
+			}
+			targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
+		} else {
+			def targetBlockClosure={
+				getNonDerivativePredStatement()
+			}
+			def nonTargetBlockClosure={
+				statementName+" \n"+ getNonDerivativePredStatement()
+			}
+			targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
+		}
     }
 
     private List<DerivativeVariableType> getDerivativeVariableTypes() {
@@ -113,16 +129,16 @@ class PredStatement extends NMTranFormatter {
     
     def getDerivativePredStatement() {
         StringBuilder sb = new StringBuilder()
-        sb << "\$SUBS ADVAN13 TOL=9\n"
-        sb << getModelStatement()
-
-        sb << pk(getPredCoreStatement().toString() + getDifferentialInitialConditions().toString())
+		
+		sb << getModelStatement()
+		sb << getAbbreviatedStatement()
+		sb << getPKStatement()
         sb << getDifferentialEquationsStatement()
-
-        sb << error(getErrorFormula().toString())
+		sb << getAESStatement()
+        sb << getErrorStatement()
         sb
     }
-
+	
     def getDifferentialInitialConditions() {
         StringBuilder sb = new StringBuilder();
         int i=1
@@ -152,7 +168,35 @@ class PredStatement extends NMTranFormatter {
 		"A_0(${i}) = ${initialCondition}"
 	}
 	
-    def getDifferentialEquationsStatement() {
+	/**
+	 * This will wrap error statement code block with target blocks if available and return it.
+	 *
+	 * @return
+	 */
+	def getErrorStatement(){
+		def statementName = "\$ERROR"
+		def targetBlockClosure={
+			"\n"+ getErrorFormula()
+		}
+		def nonTargetBlockClosure={
+			error(getErrorFormula().toString())
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
+	}
+	
+	def getDifferentialEquationsStatement(){
+		
+		def statementName = "\$DES"
+		def targetBlockClosure={
+			"\n"+ getDESCodeBlock()
+		}
+		def nonTargetBlockClosure={
+			des(getDESCodeBlock())
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
+	}
+	
+    def getDESCodeBlock() {
         StringBuilder sb = new StringBuilder();
         int i=1
 
@@ -167,15 +211,25 @@ class PredStatement extends NMTranFormatter {
         getDerivativeVariableTypes().each { var ->
             sb << conversionContext.convert(var, i++)
         }
-        des(sb.toString())
+        sb.toString()
     }
+	
+	def getAESStatement(){
+		
+		def statementName = "\$AES"
+
+		def nonTargetBlockClosure={
+			"\n"//Currently we dont handle AES block so this space is to handle it when target block is not there.
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure)
+	}
 
     def getNonDerivativePredStatement() {
         StringBuilder sb = new StringBuilder();
         sb << endline(indent("IF (AMT.GT.0) ${rename('DOSE')}=AMT"))
         sb << getPredCoreStatement()
-        sb << getErrorFormula()
-        pred(sb.toString())
+        sb << getErrorStatement()
+        sb
     }
 
     def getPredCoreStatement() {
@@ -188,14 +242,67 @@ class PredStatement extends NMTranFormatter {
         sb << getConditionalStatements().join("")
         sb
     }
+	
+	/**
+	 * This will wrap Abbreviated statement code block with target blocks if available ad return it.
+	 *
+	 * @return
+	 */
+	def getAbbreviatedStatement(){
+		def statementName = "\$ABBR";
+		
+		def nonTargetBlockClosure={
+			"\n"//Currently we don't handle AES block so this space is to handle it when target block is not there.
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure)
+	}
 
+	/**
+	 * This will wrap PK statement code block with target blocks if available and return it.
+	 *
+	 * @return
+	 */
+	def getPKStatement(){
+		def statementName = "\$PK"
+		
+		def targetBlockClosure={
+			"\n"+ getPredCoreStatement().toString() + getDifferentialInitialConditions().toString()
+		}
+		def nonTargetBlockClosure={
+			pk(getPredCoreStatement().toString() + getDifferentialInitialConditions().toString())
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
+	}
+
+	/**
+	 * This will wrap model statement code block with target blocks if available ad return it.
+	 * 
+	 * @return
+	 */
     def getModelStatement() {
-        StringBuilder sb = new StringBuilder();
-        getDerivativeVariableTypes().each { var ->
-            sb << endline(indent("COMP (${rename(var.symbId.toUpperCase())})"))
-        }
-        model(sb.toString())
+        def statementName = "\$MODEL";
+		
+		def targetBlockClosure={
+			"\n"+ getModelStatementCodeBlock()
+		}
+		def nonTargetBlockClosure={
+			model(getModelStatementCodeBlock().toString())
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
     }
+	
+	/**
+	 * This method adds model statement code block
+	 * 
+	 * @return
+	 */
+	def getModelStatementCodeBlock() {
+		StringBuilder sb = new StringBuilder();
+		getDerivativeVariableTypes().each { var ->
+			sb << endline(indent("COMP (${rename(var.symbId.toUpperCase())})"))
+		}
+		sb
+	}
 
     def getStructuralParameters() {
         StringBuilder sb = new StringBuilder();
@@ -319,13 +426,6 @@ class PredStatement extends NMTranFormatter {
 
     private StringBuilder getIndividualsFromModelType(JAXBElement elem) {
         StringBuilder ind = new StringBuilder();
-		
-		// DDMORE-702
-		// Write out parameters in the order they are defined in the PharmML
-		// This is not correct. The right way is to:
-		// - go through each parameter that is created (i.e. on the lhs of an equation)
-		// - order each  the iterator such that creation happens before it is referenced in the rhs of an equation
-		// This needs an each with a fairly complex sorting algorithm
 
             if (elem.value instanceof IndividualParameterType) {
                 ind = printIndividualParameter(elem, ind)

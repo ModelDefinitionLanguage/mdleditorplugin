@@ -13,6 +13,7 @@ import eu.ddmore.converter.pharmml2nmtran.model.CorrelationKey
 import eu.ddmore.converter.pharmml2nmtran.model.Omega
 import eu.ddmore.converter.pharmml2nmtran.model.TargetBlock
 import eu.ddmore.converter.pharmml2nmtran.model.Theta;
+import eu.ddmore.converter.pharmml2nmtran.statements.DataStatement
 import eu.ddmore.converter.pharmml2nmtran.statements.EstimationStatement
 import eu.ddmore.converter.pharmml2nmtran.statements.NMTranFormatter
 import eu.ddmore.converter.pharmml2nmtran.statements.OmegasStatement
@@ -84,7 +85,7 @@ public class ConversionContext extends NMTranFormatter {
     private Map<String, String> epsilonToSigma
     private Map<String, FunctionDefinitionType> functions
 	private PredStatement predStatement
-	SigmasStatement sigmasStatement
+	SigmasStatement sigmaStatement
     private String inputHeaders
     private String fileBase
     private List<String> omegasInPrintOrder
@@ -104,12 +105,19 @@ public class ConversionContext extends NMTranFormatter {
         parameters = new Parameters(pmlDOM)
         parameters.init()
         findFunctions()
-        sigmasStatement = new SigmasStatement("pmlDOM":pmlDOM, "conversionContext":this)
-        epsilonToSigma = sigmasStatement.epsilonToSigma
+        sigmaStatement = new SigmasStatement("pmlDOM":pmlDOM, "conversionContext":this)
+        epsilonToSigma = sigmaStatement.epsilonToSigma
 
 		predStatement = new PredStatement(pmlDOM, parameters, this)
 		setupSimpleParameters()
+		//Target block xml location is always 'target/'
+		File targetBlocksFile = new File(src.parentFile.path+File.separator+"targetblock"+File.separator+src.getName())
+		if(targetBlocksFile.exists()){
+			prepareTargetBlocks(targetBlocksFile)
+		}
     }
+	
+	
 	
 	/**
 	 * This method reads target block file and populates maps with code blocks for statements. 
@@ -117,9 +125,7 @@ public class ConversionContext extends NMTranFormatter {
 	 * @param targetSrc
 	 */
 	private void prepareTargetBlocks(File targetblockSrcFile){
-		targetBlockConverter.externalCodeStart = new HashMap<String, TargetBlock>() //external code per target language section,
-		targetBlockConverter.externalCodeEnd = new HashMap<String, TargetBlock>() //external code per target language section,
-   
+		targetBlockConverter.initExternalCodeMaps()
 		TargetBlockStatement targetBlockStatement = new TargetBlockStatement()
 		targetBlockStatement.getTargetBlocks(targetblockSrcFile).each { targetblock ->			
 			targetBlockConverter.prepareExternalCode(targetblock)
@@ -141,73 +147,171 @@ public class ConversionContext extends NMTranFormatter {
 		}
 	}
 	
-    def getProblemStatement() {
-		def problemStatement = new StringBuilder();
-		def statementName = "\$PROBLEM";
-		def trimmedBlockName = targetBlockConverter.trimLocationName(statementName);
+	def getSizeStatement(){
+		def statementName = "\$SIZE";
 		
-		if(targetBlockConverter.isTargetDefined(targetBlockConverter.trimLocationName(trimmedBlockName))){
-			problemStatement << targetBlockConverter.getExternalCodeStart(trimmedBlockName)
-			problemStatement << targetBlockConverter.getExternalCodeEnd(trimmedBlockName)
-		}else{
-        	problemStatement << statementName+" ${pmlDOM.name.value}\n"
+		def nonTargetBlockClosure={
+			"\n"//Currently we dont handle SIZE block so this space is to handle it when target block is not there.
 		}
-		problemStatement
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure)
+	}
+	
+    def getProblemStatement() {
+		def statementName = "\$PROBLEM";
+		
+		def nonTargetBlockClosure={
+			statementName+" ${pmlDOM.name.value}\n"
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure)
     }
-
+	
     def getInputStatement(List<String> headers) {
-        inputHeaders = headers.join(' ')
-        "\$INPUT ${inputHeaders}\n"
+		
+		def statementName = "\$INPUT";
+		inputHeaders = headers.join(' ')
+		
+		def targetBlockClosure={
+			"\n${inputHeaders}\n"
+		}
+		
+		def nonTargetBlockClosure={
+				statementName+" ${inputHeaders}\n"
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
     }
+	
+	def getDataStatement(DataStatement ds){
+		def statementName = "\$DATA";
+		def targetBlockClosure={
+			ds.getStatement()
+		}
+		def nonTargetBlockClosure={
+				statementName+ " "+ ds.getStatement()
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
+	}
 
     def getEstimationStatement() {
-		def estimateStatement = new StringBuilder();
 		def statementName = "\$EST";
-		def trimmedBlockName = targetBlockConverter.trimLocationName(statementName);
+		def estimStatement = new EstimationStatement()
+		def sb = new StringBuilder()
 		
-		if(targetBlockConverter.isTargetDefined(targetBlockConverter.trimLocationName(trimmedBlockName))){
-			estimateStatement << targetBlockConverter.getExternalCodeStart(trimmedBlockName)
-			estimateStatement << targetBlockConverter.getExternalCodeEnd(trimmedBlockName)
-		}else{
-			estimateStatement << statementName+" "
-			estimateStatement << new EstimationStatement().getStatement(pmlDOM)
+		def targetBlockClosure={
+			"\n" +estimStatement.getStatement(pmlDOM)			
 		}
-		estimateStatement
+		
+		def nonTargetBlockClosure={
+			statementName+" " +estimStatement.getStatement(pmlDOM)
+		}
+		sb << targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)+"\n"
+		
+		//after $EST, as cov statement depends upon estFIM flag output of estimation statement
+		sb << getCovStatement(estimStatement.estFIMFound)
     }
+	
+	/**
+	 * This method adds $COV block. 
+	 * 
+	 * @param estFIMFound
+	 * @return
+	 */
+	def getCovStatement(boolean estFIMFound){
+		def statementName = "\$COV";
 
-    def getSimulationStatement() {
-		def simulationStatement = new StringBuilder();
-		def statementName = "\$SIM";
-		def trimmedBlockName = targetBlockConverter.trimLocationName(statementName);
-		
-		if(targetBlockConverter.isTargetDefined(targetBlockConverter.trimLocationName(trimmedBlockName))){
-			simulationStatement << targetBlockConverter.getExternalCodeStart(trimmedBlockName)
-			simulationStatement << targetBlockConverter.getExternalCodeEnd(trimmedBlockName)
-		}else{
-			simulationStatement << statementName+" "
-			simulationStatement << new SimulationStatement().getStatement(pmlDOM)
+		// We don't have any code blocks to append for $COV. Not sure about the details though.
+		def targetBlockClosure={
+			"\n" 
 		}
-		simulationStatement
+		
+		def nonTargetBlockClosure={
+			"\n"+(estFIMFound)? statementName+"\n": ""
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
+	}
+	
+    def getSimulationStatement() {
+		def statementName = "\$SIM";
+		
+		def targetBlockClosure={
+			"\n"+new SimulationStatement().getStatement(pmlDOM)
+		}
+		
+		def nonTargetBlockClosure={
+			statementName+" "+new SimulationStatement().getStatement(pmlDOM)
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
     }
+	
+	def getPriorStatement(){
+		def statementName = "\$PRIOR";
+		
+		def nonTargetBlockClosure={
+			"\n"//Currently we dont handle PRIOR block so this space is to handle it when target block is not there.
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure)
+	}
 
     def getPred() {
-        predStatement.getStatement()
+		predStatement.getStatement()
     }
 
     def getTableStatement() {
-        new TableStatement("parameters":parameters, "inputHeaders":inputHeaders, conversionContext:this).getStatement(fileBase)
+		def statementName = "\$TABLE";
+		
+		def targetBlockClosure={
+			"\n"+ new TableStatement("parameters":parameters, "inputHeaders":inputHeaders, conversionContext:this).getStatement(fileBase)
+		}
+		
+		def nonTargetBlockClosure={
+				"\n"+ new TableStatement("parameters":parameters, "inputHeaders":inputHeaders, conversionContext:this).getStatement(fileBase)
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
+        
     }
 
     def getThetasStatement() {
-        new ThetasStatement("parameters":parameters, "pmlDOM":pmlDOM, conversionContext:this).getStatement()
+		def statementName = "\$THETA";
+		
+		def targetBlockClosure={
+			"\n"+ new ThetasStatement("parameters":parameters, "pmlDOM":pmlDOM, conversionContext:this).getStatement()
+		}
+		
+		def nonTargetBlockClosure={
+				statementName+"\n"+ new ThetasStatement("parameters":parameters, "pmlDOM":pmlDOM, conversionContext:this).getStatement()
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
     }
 
     def getOmegasStatement() {
-        new OmegasStatement("parameters":parameters, "pmlDOM":pmlDOM, "conversionContext":this).getStatement()
+		def statementName = "\$OMEGA";
+		OmegasStatement omegaStatement = new OmegasStatement("parameters":parameters, "pmlDOM":pmlDOM, "conversionContext":this)
+		
+		def targetBlockClosure={
+			def sb = new StringBuilder()
+			sb << omegaStatement.getCorrelatedEquivalenceClass()
+			sb << "\n"+ omegaStatement.getStatement()
+			sb
+		}
+		
+		def nonTargetBlockClosure={
+			def sb = new StringBuilder()
+			sb << omegaStatement.getCorrelatedEquivalenceClass()			
+			sb << statementName+"\n"+ omegaStatement.getStatement()
+			sb
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
     }
 
     public StringBuilder getSigmasStatement() {
-        sigmasStatement.getStatement()
+		
+		def statementName = "\$SIGMA";
+		def targetBlockClosure={
+			"\n"+ sigmaStatement.getStatement()
+		}
+		def nonTargetBlockClosure={
+			new StringBuilder(statementName+"\n"+ sigmaStatement.getStatement())
+		}
+		targetBlockConverter.addTargetBlockCode(statementName,nonTargetBlockClosure,targetBlockClosure)
     }
 
     public StringBuilder convert(VariableAssignmentType type) {
