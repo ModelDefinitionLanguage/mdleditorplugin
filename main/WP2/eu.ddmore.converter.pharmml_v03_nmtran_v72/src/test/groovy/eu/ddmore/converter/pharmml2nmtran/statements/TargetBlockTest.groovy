@@ -71,7 +71,7 @@ class TargetBlockTest {
 		"\n\$TABLE null FILE=ex_model7_prolactin_25June2014_OAM_data.tab\n"+
 		"\$TABLE NM_F2 NM_POP_PRL0 NM_D2 NM_POP_PHS2 NM_PHS1 \n"+
 		"ETA0 ETA0 ETA0 ETA0 ETA0 ETA0 Y FILE=ex_model7_prolactin_25June2014_OAM_params.tab NOAPPEND NOPRINT ONEHEADER\n"+
-		"\n\$TABLE TEST TARGET BLOCK\n		\$TABLE TARGETBLOCK\n")
+		"\n\$TABLE TEST TARGET BLOCK\n\$TABLE TARGETBLOCK\n")
 		
 		StringBuilder returned = conversionContext.getTableStatement()
 		assertEquals("Should return Code block for the statement specified",sb.toString(),returned.toString())
