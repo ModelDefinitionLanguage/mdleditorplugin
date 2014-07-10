@@ -23,7 +23,7 @@ import org.ddmore.mdl.mdl.VariabilityParametersBlock
 import eu.ddmore.converter.mdl2json.utils.MDLUtils
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
-public class Model extends Expando implements MDLPrintable {
+public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 
 	public static final Logger logger = Logger.getLogger(Model.class)
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
@@ -41,7 +41,7 @@ public class Model extends Expando implements MDLPrintable {
 	
 	public Model(ModelObject modelObject) {
 	
-		setProperty("identifier", IDENTIFIER)
+		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
 		for(ModelObjectBlock modelObjectBlock : modelObject.getBlocks()) {
 			if(modelObjectBlock.getInputVariablesBlock()) {
 				// Model Input Variables - note, getter is called InputVariables
