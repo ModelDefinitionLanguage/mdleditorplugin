@@ -7,6 +7,7 @@ import static org.junit.Assert.*
 import java.io.File;
 
 import org.apache.commons.io.FileUtils
+import org.junit.Before;
 import org.junit.Test
 
 import eu.ddmore.converter.pharmml2nmtran.utils.ConversionContext
@@ -16,25 +17,35 @@ import eu.ddmore.libpharmml.PharmMlFactory
 class DataStatementTest {
 
 	private static final String WORKING_DIR = "target/DataStatementTest_Working_Dir/"
+	private String example3location = "example3/example3.xml"
+	private String example3_nonmemlocation = "example3/example3_NONMEM.xml"
+	private String example5location = "example5/example5.xml"
+	ConversionContext conversionContext
+	private DataStatement ds
+	def pmlDOM
 
+	public void setupTest(String fileLocation){
+		File src = getFile(fileLocation, V_0_3_SUBDIR)
+		pmlDOM = getDom(src)
+		conversionContext = new ConversionContext(pmlDOM, src)
+		ds = new DataStatement(pmlDOM, src.toString().replace(".xml", ""))
+	}
+	
 	@Test
 	public void shouldBeCorrectDataStatementObjectiveDataSet() {
-		File src = getFile('example3/example3.xml', V_0_3_SUBDIR)
-		DataStatement ds = new DataStatement(getDom(src), src.toString().replace(".xml", ""))
-		assertEquals("Statement should be correct.", "\$DATA example3_data.csv IGNORE=@\n", ds.statement)
+		setupTest(example3location)
+		assertEquals("Statement should be correct.", "\$DATA  example3_data.csv IGNORE=@\n", conversionContext.getDataStatement(ds))
 	}
 	
 	@Test
 	public void shouldBeCorrectDataStatementNonmemDataSet() {
-		File src = getFile('example3/example3_NONMEM.xml', V_0_3_SUBDIR)
-		DataStatement ds = new DataStatement(getDom(src), src.toString().replace(".xml", ""))
-		assertEquals("Statement should be correct.", "\$DATA warfarin_conc_pca.csv IGNORE=@\n", ds.statement)
+		setupTest(example3_nonmemlocation)
+		assertEquals("Statement should be correct.", "\$DATA  warfarin_conc_pca.csv IGNORE=@\n", conversionContext.getDataStatement(ds))
 	}
 
 	@Test
 	public void shouldBeCorrectHeadersEx3() {
-		File src = getFile('example3/example3.xml', V_0_3_SUBDIR)
-		DataStatement ds = new DataStatement(getDom(src), src.toString().replace(".xml", ""))
+		setupTest(example3location)
 
 		List<String> headers = new ArrayList<String>()
 		headers.add("ID")
@@ -50,8 +61,7 @@ class DataStatementTest {
 
 	@Test
 	public void shouldBeCorrectHeadersEx5() {
-		File src = getFile('example5/example5.xml', V_0_3_SUBDIR)
-		DataStatement ds = new DataStatement(getDom(src), src.toString().replace(".xml", ""))
+		setupTest(example5location)
 		
 		List<String> headers = new ArrayList<String>()
 		headers.add("ID")
@@ -66,8 +76,7 @@ class DataStatementTest {
 
 	@Test
     public void testExample3() {
-        File src = getFile('example3/example3.xml', V_0_3_SUBDIR)
-        ConversionContext conversionContext = new ConversionContext(getDom(src), src)
+        setupTest(example3location)
         assertEquals("\$EST METHOD=COND INTER MAXEVALS=9999 PRINT=10 NOABORT\n\$COV\n", conversionContext.getEstimationStatement().toString())
     }
 

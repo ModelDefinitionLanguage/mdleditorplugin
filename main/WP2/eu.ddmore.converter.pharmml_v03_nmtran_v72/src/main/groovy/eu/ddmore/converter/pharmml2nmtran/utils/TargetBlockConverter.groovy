@@ -4,12 +4,18 @@
 package eu.ddmore.converter.pharmml2nmtran.utils
 
 import eu.ddmore.converter.pharmml2nmtran.model.TargetBlock
+import groovy.lang.Closure;
 
 public class TargetBlockConverter {
 	
-	 public Map externalCodeStart = new HashMap<String, TargetBlock>() //external code per target language section,
-	 public Map externalCodeEnd = new HashMap<String, TargetBlock>() //external code per target language section,
+	 public Map externalCodeStart = new HashMap<String, TargetBlock>() 
+	 public Map externalCodeEnd = new HashMap<String, TargetBlock>()
 	 public final static String NMTRAN_CODE = "NMTRAN_CODE";
+	 
+	 public void initExternalCodeMaps(){
+		 externalCodeStart = new HashMap<String, TargetBlock>()
+		 externalCodeEnd = new HashMap<String, TargetBlock>()
+	 }
 	 
 	 /**
 	  * Checks if statement type passed has any target block defined.
@@ -91,6 +97,43 @@ public class TargetBlockConverter {
 			}
 		}else{
 			throw new IllegalArgumentException("Empty or Not a valid target block location: "+ location);
+		}
+	}
+	
+	/**
+	 * Add targeblock details and execute closure if there is no targetblock specified
+	 *
+	 * @param statementName
+	 * @param nonTargetBlockClosure
+	 * @return
+	 */
+	def addTargetBlockCode(String statementName, Closure nonTargetBlockClosure){
+		addTargetBlockCode(statementName, nonTargetBlockClosure, {})
+	}
+	
+	/**
+	 * Add targeblock details along with some code to insert in between target block
+	 * and execute closure if there is no targetblock specified
+	 *
+	 * @param statementName
+	 * @param nonTargetBlockClosure
+	 * @param targetBlockClosure
+	 * @return
+	 */
+	def addTargetBlockCode(String statementName, Closure nonTargetBlockClosure, Closure targetBlockClosure){
+		def statement = new StringBuilder();
+		def trimmedBlockName = trimLocationName(statementName);
+		
+		if(isTargetDefined(trimLocationName(trimmedBlockName))){
+			statement << getExternalCodeStart(trimmedBlockName)
+			String state = targetBlockClosure()
+			if(state != null){
+				statement << state
+			}
+			statement << getExternalCodeEnd(trimmedBlockName)
+			statement
+		}else{
+			nonTargetBlockClosure()
 		}
 	}
 }

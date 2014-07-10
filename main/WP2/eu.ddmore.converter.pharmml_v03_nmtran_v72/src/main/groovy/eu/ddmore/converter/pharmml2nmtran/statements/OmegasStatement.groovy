@@ -24,18 +24,11 @@ class OmegasStatement extends NMTranFormatter {
     private Parameters parameters
     private PharmML pmlDOM
     private ConversionContext conversionContext
+	def omegasFoundInCorrelations = []
     
     def getStatement() {
         def sb = new StringBuilder();
-        def omegasFoundInCorrelations = []
-        EquivalenceClassesComputer eqClassesComputer = getCorrelations()
-        for (EquivalenceClass eqClass : eqClassesComputer.equivalenceClasses) {
-            eqClass.elements.each {
-                omegasFoundInCorrelations.add(parameters.etaToOmega[it])
-            }
-            sb << convert(eqClass)
-        }
-        sb << "\$OMEGA\n"
+        
         for (JAXBElement elem in pmlDOM.modellingSteps.commonModellingStep) {
             if (elem.value instanceof EstimationStepType) {
                 EstimationStepType estStep = (EstimationStepType) elem.value
@@ -54,6 +47,18 @@ class OmegasStatement extends NMTranFormatter {
         sb << considerFixedOmegasInParameterModel()
         sb
     }
+
+	def getCorrelatedEquivalenceClass() {
+		def sb = new StringBuilder()
+		EquivalenceClassesComputer eqClassesComputer = getCorrelations()
+		for (EquivalenceClass eqClass : eqClassesComputer.equivalenceClasses) {
+			eqClass.elements.each {
+				omegasFoundInCorrelations.add(parameters.etaToOmega[it])
+			}
+			sb<< convert(eqClass)
+		}
+		sb
+	}
     
     def considerOmegasInCovariates() {
         def sb = new StringBuilder()

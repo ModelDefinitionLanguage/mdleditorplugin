@@ -79,7 +79,7 @@ class DataStatement extends NMTranFormatter {
     }
 
 	public String getStatement() {
-		endline("\$DATA $fileName IGNORE=@")
+		endline(" $fileName IGNORE=@")
 	}
 
     public List<String> getHeaders() {
