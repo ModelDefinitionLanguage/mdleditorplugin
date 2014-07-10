@@ -233,6 +233,21 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 
 	}
 	
+	public String makeModelPredictionMDLBlock(Map content) {
+		StringBuffer buff = new StringBuffer()
+		content.each{ key, value ->
+			switch(key) {
+				case "content":
+					buff.append(value);
+					break;
+				default:
+					buff.append("${key} {\n").append(value).append("\n}")	
+			}
+		}
+		buff.append("\n")
+		buff.toString()
+	}
+	
 	public String toMDL() {
 		StringBuffer mdl = new StringBuffer()
 		
@@ -241,6 +256,14 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		getProperties().minus(["identifier":"mdlobj"]).each { block, content ->
 			mdl.append("\n${IDT}${block} {\n${IDT*2}")
 			switch(block) {
+				case "MODEL_PREDICTION":
+					mdl.append(makeModelPredictionMDLBlock(content));
+					break;
+				case "OBSERVATION":
+					if(content instanceof List) content.each{ mdl.append(it).append("\n") }
+					else mdl.append(content)
+					mdl.append("${IDT}")
+					break;
 				case "MODEL_INPUT_VARIABLES":
 					mdl.append(makeModelInputVariablesString(content))
 					break;
@@ -250,10 +273,8 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 					mdl.append(content.join("\n${IDT*2}"))
 					mdl.append("\n${IDT}")
 					break;
-				case "MODEL_PREDICTION":
 				case "GROUP_VARIABLES":
 				case "INDIVIDUAL_VARIABLES":
-				case "OBSERVATION":
 					mdl.append(content)
 					mdl.append("${IDT}")
 					break;
