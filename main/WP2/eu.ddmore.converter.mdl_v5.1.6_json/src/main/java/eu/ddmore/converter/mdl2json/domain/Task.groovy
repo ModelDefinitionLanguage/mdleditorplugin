@@ -188,7 +188,7 @@ ${functionBody}
 	 */
 	public String toMDL() {
 		return """ $IDENTIFIER {
-${IDT}${getProperty(CONTENT_PROPNAME)[0]}
+${IDT}${getProperty(CONTENT_PROPNAME)}
 }
 """
 	}
