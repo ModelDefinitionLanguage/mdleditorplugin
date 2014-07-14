@@ -38,9 +38,9 @@ class TestMDLToJSONConverter {
 			
 		def source = dataObject[Data.SOURCE]
 		
-		assertEquals("ex_data_prolactin.csv", source.file[0])
+		assertEquals("\"ex_data_prolactin.csv\"", source.file[0])
 		assertEquals("nonmemFormat", source.inputformat[0])
-		assertEquals("@", source.ignore[0])
+		assertEquals("\"@\"", source.ignore[0])
 		
 		def dataInputVariables = dataObject[Data.DATA_INPUT_VARIABLES]
 				
