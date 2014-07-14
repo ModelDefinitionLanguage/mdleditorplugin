@@ -17,8 +17,6 @@ import org.junit.Test;
 
 class TestDataToJSONConverter extends MDLToJSONTest  {
 	private static Logger logger = Logger.getLogger(TestDataToJSONConverter.class)
-	
-	private final MDLToJSONConverter converter = new MDLToJSONConverter();
 		
 	@Test
 	public void testProlactinMay2014() {
@@ -30,9 +28,9 @@ class TestDataToJSONConverter extends MDLToJSONTest  {
 			
 		def source = dataObject[Data.SOURCE]
 		
-		assertEquals("tumour_exposure.csv", source.file[0])
+		assertEquals("\"tumour_exposure.csv\"", source.file[0])
 		assertEquals("nonmemFormat", source.inputformat[0])
-		assertEquals("@", source.ignore[0])
+		assertEquals("\"@\"", source.ignore[0])
 		
 		def dataInputVariables = dataObject[Data.DATA_INPUT_VARIABLES]
 						
@@ -64,6 +62,5 @@ class TestDataToJSONConverter extends MDLToJSONTest  {
 		assertEquals("AMT", vars[2].key)
 		assertEquals("DV", vars[3].key)
 	}
-	
 	
 }

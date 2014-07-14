@@ -92,11 +92,14 @@ public class XtextWrapper {
 	}
 
 	public static Object unwrap(AdditiveExpression expression) {
-		if(expression.getExpression().size() != 0 && expression.getOperator() != null) {
+		if (expression.getExpression().size() != 0 && expression.getOperator() != null) {
 			logger.debug(expression)
 			return unwrap(expression.getExpression().get(0))
 		}
-		return expression.getString()	
+		if (expression.getString() != null) {
+            return "\"" + expression.getString() + "\"";
+		}
+        return "";
 	}
 	
 	public static Object unwrap(MultiplicativeExpression expression) {

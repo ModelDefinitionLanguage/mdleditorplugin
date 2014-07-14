@@ -25,8 +25,8 @@ class TestJSONDataObjectToMDL extends MDLToJSONTest {
     
     SOURCE{
         myData=list(
-            file=ex_data_prolactin.csv,
-            ignore=@,
+            file="ex_data_prolactin.csv",
+            ignore="@",
             inputformat=nonmemFormat
         )
     }
@@ -44,7 +44,7 @@ class TestJSONDataObjectToMDL extends MDLToJSONTest {
 		String expected = """dataobj {
     
     DATA_INPUT_VARIABLES {
-        II=list(type=continuous,units=h)
+        II=list(type=continuous,units="h")
         CMT=list(type=categorical)
     }
 
@@ -55,6 +55,6 @@ class TestJSONDataObjectToMDL extends MDLToJSONTest {
 		//println data.toMDL()		
 	}
 	
-	private String jsonSource = "{\"SOURCE\":{\"file\":\"ex_data_prolactin.csv\",\"symbolName\":\"myData\",\"identifier\":\"SOURCE\",\"ignore\":\"@\",\"inputformat\":\"nonmemFormat\"}}}"
-	private String jsonInputVars = "{\"DATA_INPUT_VARIABLES\":{\"II\":{\"name\":\"II\",\"type\":\"continuous\",\"units\":\"h\"},\"CMT\":{\"name\":\"CMT\",\"type\":\"categorical\"}}}"
+	private String jsonSource = '{"SOURCE":{"file":"\\"ex_data_prolactin.csv\\"","symbolName":"myData","identifier":"SOURCE","ignore":"\\"@\\"","inputformat":"nonmemFormat"}}}'
+	private String jsonInputVars = '{"DATA_INPUT_VARIABLES":{"II":{"name":"II","type":"continuous","units":"\\"h\\""},"CMT":{"name":"CMT","type":"categorical"}}}'
 }
