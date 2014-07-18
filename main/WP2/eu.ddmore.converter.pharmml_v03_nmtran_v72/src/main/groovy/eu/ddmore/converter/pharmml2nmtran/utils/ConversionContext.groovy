@@ -28,6 +28,7 @@ import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType
 import eu.ddmore.libpharmml.dom.commontypes.DerivativeVariableType
 import eu.ddmore.libpharmml.dom.commontypes.FuncParameterDefinitionType
 import eu.ddmore.libpharmml.dom.commontypes.FunctionDefinitionType
+import eu.ddmore.libpharmml.dom.commontypes.IdValueType;
 import eu.ddmore.libpharmml.dom.commontypes.IntValueType
 import eu.ddmore.libpharmml.dom.commontypes.RealValueType;
 import eu.ddmore.libpharmml.dom.commontypes.Rhs;
@@ -317,6 +318,17 @@ public class ConversionContext extends NMTranFormatter {
     public StringBuilder convert(VariableAssignmentType type) {
         return convert(type, true)
     }
+	
+	/**
+	 * This method should convert IDValuetypes but at this moment as we don't have details,
+	 * it just returns associated value.
+	 * @param type
+	 * @return
+	 */
+	public StringBuilder convert(IdValueType type) {
+		def sb = new StringBuilder()
+		sb << " \n\t${type.value}\n"
+	}
 
     /**
      * 
@@ -333,11 +345,22 @@ public class ConversionContext extends NMTranFormatter {
         sb
     }
 	
+	/**
+	 * Verifies if variable is not categorical covariate before renaming it.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public String verifyAndRename(String name){
-		
 		return (isCovariateVariableType(name))?name:rename(name)
 	}
 	
+	/**
+	 * Checks if variable name is of categorical covariates type or not.
+	 * 
+	 * @param variableTypeName
+	 * @return
+	 */
 	private boolean isCovariateVariableType(String variableTypeName){
 		boolean result
 		if(predStatement == null){
@@ -600,9 +623,10 @@ public class ConversionContext extends NMTranFormatter {
      */
     public StringBuilder convert(BinopType binopType, Map<String, String> inputNameToValue) {
         def sb = new StringBuilder()
-        String left = convert(binopType.content.get(0).value, inputNameToValue)
+		simpleParameterToNmtran = inputNameToValue
+        String left = convert(binopType.content.get(0).value)//, inputNameToValue)
         String operator = getMathRepresentationOf(binopType.op)
-        String right = convert(binopType.content.get(1).value, inputNameToValue)
+        String right = convert(binopType.content.get(1).value)//, inputNameToValue)
         switch(binopType.op) {
             case 'plus':
                 sb << sum(left, operator, right)
@@ -803,6 +827,10 @@ public class ConversionContext extends NMTranFormatter {
         
         sb
     }
+	
+	public StringBuilder convert(ConstantType type) {
+		return convert(type, simpleParameterToNmtran)
+	}
 
     /**
      * 
@@ -853,7 +881,7 @@ public class ConversionContext extends NMTranFormatter {
 			throw new RuntimeException("Cannot find eta ${etaName} in list ${parameters.etaToOmega.toMapString()}")
 		}
 		if(!omegasInPrintOrder.contains(omega)) {
-			throw new RuntimeException("Cannot find omega ${omega} in omegas ${omegasInPrintOrder.toString()}")
+			//throw new RuntimeException("Cannot find omega ${omega} in omegas ${omegasInPrintOrder.toString()}")
 		}
 		omegasInPrintOrder.indexOf(omega)+1
 	}
@@ -887,7 +915,10 @@ public class ConversionContext extends NMTranFormatter {
             return "OR";
         } else if (s.equals("log")) {
             return "log";
-        } else if (s.equals("power")) {
+        } else if (s.equals("ln")) {
+            return "ln";
+        } 
+		else if (s.equals("power")) {
             return "**";
         } else if (s.equals("cos")) {
             return "COS";

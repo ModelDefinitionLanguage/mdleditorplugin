@@ -15,9 +15,14 @@ import eu.ddmore.converter.pharmml2nmtran.utils.TargetBlockConverter;
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType
 import eu.ddmore.libpharmml.dom.commontypes.DerivativeVariableType
+import eu.ddmore.libpharmml.dom.commontypes.IntValueType
+import eu.ddmore.libpharmml.dom.commontypes.RealValueType;
 import eu.ddmore.libpharmml.dom.commontypes.SymbolRefType
 import eu.ddmore.libpharmml.dom.commontypes.VariableDefinitionType
+import eu.ddmore.libpharmml.dom.maths.BinopType
 import eu.ddmore.libpharmml.dom.maths.Equation
+import eu.ddmore.libpharmml.dom.maths.LogicBinOpType;
+import eu.ddmore.libpharmml.dom.maths.PieceType;
 import eu.ddmore.libpharmml.dom.maths.PiecewiseType
 import eu.ddmore.libpharmml.dom.maths.UniopType
 import eu.ddmore.libpharmml.dom.modeldefn.CovariateModelType
@@ -331,7 +336,9 @@ class PredStatement extends NMTranFormatter {
 
     def getCovariatesFromModel() {
         StringBuilder cov = new StringBuilder();
-        pmlDOM.modelDefinition.parameterModel.each { cov << endline(getCovariatesFromModelType(it).toString()) }
+        pmlDOM.modelDefinition.parameterModel.each {
+			 cov << endline(getCovariatesFromModelType(it).toString()) 
+			 }
         cov
     }
 
@@ -362,14 +369,18 @@ class PredStatement extends NMTranFormatter {
                     }
                 } else if (individualParameterType.assign) {
                     Equation equation = individualParameterType.assign.equation
-                    String name = equation.binop.content[0].value.symbIdRef
+					ParameterVariableSortHelper paramSortHelper = new ParameterVariableSortHelper();
+					String name = paramSortHelper.getSymbIdName(equation,true)
+					
                     Theta theta = parameters.isTheta(name)
                     if (theta) {
                         int thetaIndex = theta.index
                         visitedThetas.add(name)
                         cov << buildCovariateString(name.toUpperCase(), thetaIndex, null)
                     } else {
-                        cov << endline(indent({conversionContext.convert(parameters.getGroupVariable(name))}))
+						if(parameters.getGroupVariable(name)!=null)
+//                        	cov << "\t"+conversionContext.convert(parameters.getGroupVariable(name))+"\n"
+							endline(indent("${conversionContext.convert(parameters.getGroupVariable(name))}"))
                     }
                 }
             }
@@ -378,7 +389,55 @@ class PredStatement extends NMTranFormatter {
         cov << reportCovariate()
         cov
     }
+	
+	def getSymbIdName(Equation equation){
+		
+		if (equation.symbRef) {
+			equation.symbRef.symbIdRef
+		} else if (equation.binop) {
+			getSymbIdName(equation.binop)
+		} else if (equation.piecewise) {
+			for(PieceType nextPiece: equation.piecewise.piece){
+				getSymbIdName(nextPiece)
+			}
+		} else if (equation.uniop) {
+			getSymbIdName(equation.uniop)
+		}
+	}
 
+	def getSymbIdName(BinopType bt) {
+		getSymbIdName(bt.getContent()[0].value)
+	}
+	
+	def getSymbIdName(LogicBinOpType lbt) {
+		getSymbIdName(lbt.getContent()[0].value)
+	}
+	
+	def getSymbIdName(PieceType pt) {
+		if(pt.getCondition().getLogicBinop() !=null){
+			LogicBinOpType logicBinOpType = pt.getCondition().getLogicBinop()
+			getSymbIdName(logicBinOpType.getContent()[0].value)
+		}
+	}
+			
+	def getSymbIdName(UniopType ut) {
+		if(ut.symbRef != null){
+			ut.symbRef.symbIdRef
+		}
+	}
+	
+	def getSymbIdName(SymbolRefType srt) {
+		srt.symbIdRef
+	}
+
+	def getSymbIdName(RealValueType rvt) {
+		""
+	 }
+
+	def getSymbIdName(IntValueType ivt) {
+	   ""
+	}
+	
     def reportCovariate() {
         def sb = new StringBuilder();
         pmlDOM.modelDefinition.covariateModel.each {
