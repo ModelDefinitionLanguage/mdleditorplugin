@@ -379,7 +379,6 @@ class PredStatement extends NMTranFormatter {
                         cov << buildCovariateString(name.toUpperCase(), thetaIndex, null)
                     } else {
 						if(parameters.getGroupVariable(name)!=null)
-//                        	cov << "\t"+conversionContext.convert(parameters.getGroupVariable(name))+"\n"
 							endline(indent("${conversionContext.convert(parameters.getGroupVariable(name))}"))
                     }
                 }
@@ -389,54 +388,6 @@ class PredStatement extends NMTranFormatter {
         cov << reportCovariate()
         cov
     }
-	
-	def getSymbIdName(Equation equation){
-		
-		if (equation.symbRef) {
-			equation.symbRef.symbIdRef
-		} else if (equation.binop) {
-			getSymbIdName(equation.binop)
-		} else if (equation.piecewise) {
-			for(PieceType nextPiece: equation.piecewise.piece){
-				getSymbIdName(nextPiece)
-			}
-		} else if (equation.uniop) {
-			getSymbIdName(equation.uniop)
-		}
-	}
-
-	def getSymbIdName(BinopType bt) {
-		getSymbIdName(bt.getContent()[0].value)
-	}
-	
-	def getSymbIdName(LogicBinOpType lbt) {
-		getSymbIdName(lbt.getContent()[0].value)
-	}
-	
-	def getSymbIdName(PieceType pt) {
-		if(pt.getCondition().getLogicBinop() !=null){
-			LogicBinOpType logicBinOpType = pt.getCondition().getLogicBinop()
-			getSymbIdName(logicBinOpType.getContent()[0].value)
-		}
-	}
-			
-	def getSymbIdName(UniopType ut) {
-		if(ut.symbRef != null){
-			ut.symbRef.symbIdRef
-		}
-	}
-	
-	def getSymbIdName(SymbolRefType srt) {
-		srt.symbIdRef
-	}
-
-	def getSymbIdName(RealValueType rvt) {
-		""
-	 }
-
-	def getSymbIdName(IntValueType ivt) {
-	   ""
-	}
 	
     def reportCovariate() {
         def sb = new StringBuilder();
