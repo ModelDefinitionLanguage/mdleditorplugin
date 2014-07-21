@@ -77,7 +77,7 @@ class SigmasStatement extends NMTranFormatter {
     }
     
     private void collectSigmaParameters(EstimationStepType estStep) {
-        estStep.parametersToEstimate.parameterEstimation.each {
+        estStep.parametersToEstimate?.parameterEstimation.each {
             considerSigma(it)
         }
     }

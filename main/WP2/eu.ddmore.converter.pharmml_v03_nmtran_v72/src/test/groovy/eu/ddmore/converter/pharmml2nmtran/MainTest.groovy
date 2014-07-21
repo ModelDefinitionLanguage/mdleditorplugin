@@ -90,6 +90,12 @@ class MainTest {
     }
 	
 	@Test
+	public void convertTumour_size_25June2014_OAM() {
+		def conversionReport = performConversion_v_0_3('ThamCCR2008/tumour_size_25June2014_OAM.xml')
+		assertNotNull("ConversionReport should not be null", conversionReport)
+	}
+	
+	@Test
 	public void Ex_model7_prolactin_OAM_Test() {
 		File src = getFile('Ex_model7_prolactin_OAM/targetblock/ex_model7_prolactin_25June2014_OAM.xml', V_0_3_SUBDIR)
 		def conversionReport = performConversion_v_0_3('Ex_model7_prolactin_OAM/ex_model7_prolactin_25June2014_OAM.xml')
@@ -127,7 +133,7 @@ class MainTest {
     @Test
     @Ignore
     public void convertLledo_JPP_2013() {
-        def conversionReport = performConversion_v_0_3('Lledo/Lledo_JPP_2013.xml')
+        def conversionReport = performConversion_v_0_3('Lledo/lledo_OAM.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 
@@ -141,7 +147,7 @@ class MainTest {
     @Test
     @Ignore
     public void convertSimeoni() {
-        def conversionReport = performConversion_v_0_3('Simeoni/simeoni.xml')
+        def conversionReport = performConversion_v_0_3('Simeoni/Simeoni_OAM.xml')
         assertNotNull("ConversionReport should not be null", conversionReport)
     }
 

@@ -49,7 +49,7 @@ class ThetasStatement extends NMTranFormatter {
     }
     
     private void convertEstimationStep(EstimationStepType estStep, thetaToNMTRAN) {
-        estStep.parametersToEstimate.parameterEstimation.each {
+        estStep.parametersToEstimate?.parameterEstimation.each {
             String name = it.symbRef.symbIdRef
             Theta theta = parameters.isTheta(name)
             if (theta) {

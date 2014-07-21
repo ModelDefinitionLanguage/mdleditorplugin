@@ -1,0 +1,3 @@
+# Override the repository settings to allow the .classpath in this
+# project to be included under source control
+!.classpath

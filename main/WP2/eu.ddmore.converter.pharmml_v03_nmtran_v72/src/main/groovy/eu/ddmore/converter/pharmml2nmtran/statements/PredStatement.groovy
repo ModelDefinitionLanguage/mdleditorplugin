@@ -15,9 +15,14 @@ import eu.ddmore.converter.pharmml2nmtran.utils.TargetBlockConverter;
 import eu.ddmore.libpharmml.dom.PharmML;
 import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType
 import eu.ddmore.libpharmml.dom.commontypes.DerivativeVariableType
+import eu.ddmore.libpharmml.dom.commontypes.IntValueType
+import eu.ddmore.libpharmml.dom.commontypes.RealValueType;
 import eu.ddmore.libpharmml.dom.commontypes.SymbolRefType
 import eu.ddmore.libpharmml.dom.commontypes.VariableDefinitionType
+import eu.ddmore.libpharmml.dom.maths.BinopType
 import eu.ddmore.libpharmml.dom.maths.Equation
+import eu.ddmore.libpharmml.dom.maths.LogicBinOpType;
+import eu.ddmore.libpharmml.dom.maths.PieceType;
 import eu.ddmore.libpharmml.dom.maths.PiecewiseType
 import eu.ddmore.libpharmml.dom.maths.UniopType
 import eu.ddmore.libpharmml.dom.modeldefn.CovariateModelType
@@ -331,7 +336,9 @@ class PredStatement extends NMTranFormatter {
 
     def getCovariatesFromModel() {
         StringBuilder cov = new StringBuilder();
-        pmlDOM.modelDefinition.parameterModel.each { cov << endline(getCovariatesFromModelType(it).toString()) }
+        pmlDOM.modelDefinition.parameterModel.each {
+			 cov << endline(getCovariatesFromModelType(it).toString()) 
+			 }
         cov
     }
 
@@ -362,14 +369,17 @@ class PredStatement extends NMTranFormatter {
                     }
                 } else if (individualParameterType.assign) {
                     Equation equation = individualParameterType.assign.equation
-                    String name = equation.binop.content[0].value.symbIdRef
+					ParameterVariableSortHelper paramSortHelper = new ParameterVariableSortHelper();
+					String name = paramSortHelper.getSymbIdName(equation,true)
+					
                     Theta theta = parameters.isTheta(name)
                     if (theta) {
                         int thetaIndex = theta.index
                         visitedThetas.add(name)
                         cov << buildCovariateString(name.toUpperCase(), thetaIndex, null)
                     } else {
-                        cov << endline(indent({conversionContext.convert(parameters.getGroupVariable(name))}))
+						if(parameters.getGroupVariable(name)!=null)
+							endline(indent("${conversionContext.convert(parameters.getGroupVariable(name))}"))
                     }
                 }
             }
@@ -378,7 +388,7 @@ class PredStatement extends NMTranFormatter {
         cov << reportCovariate()
         cov
     }
-
+	
     def reportCovariate() {
         def sb = new StringBuilder();
         pmlDOM.modelDefinition.covariateModel.each {

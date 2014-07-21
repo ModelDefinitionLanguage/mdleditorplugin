@@ -32,7 +32,7 @@ class OmegasStatement extends NMTranFormatter {
         for (JAXBElement elem in pmlDOM.modellingSteps.commonModellingStep) {
             if (elem.value instanceof EstimationStepType) {
                 EstimationStepType estStep = (EstimationStepType) elem.value
-                estStep.parametersToEstimate.parameterEstimation.each {
+                estStep.parametersToEstimate?.parameterEstimation.each {
                     sb << considerOmega(it, omegasFoundInCorrelations)
                 }
             }

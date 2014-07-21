@@ -259,7 +259,7 @@ public class Parameters {
         for (JAXBElement elem in pmlDOM.modellingSteps.commonModellingStep) {
             if (elem.value instanceof EstimationStepType) {
                 EstimationStepType estStep = (EstimationStepType) elem.value
-                estStep.parametersToEstimate.parameterEstimation.each {
+                estStep.parametersToEstimate?.parameterEstimation.each {
                     registerParameter(it, omegasFromEtas, simpleParametersInParameterModel)
                 }
             }
