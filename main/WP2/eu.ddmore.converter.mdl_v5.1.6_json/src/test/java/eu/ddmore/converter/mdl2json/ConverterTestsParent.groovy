@@ -24,7 +24,7 @@ class ConverterTestsParent {
         new File(url.getFile())
     }
 
-    private File getFileFromModelsProject(final String relativePathToFile) {
+    public File getFileFromModelsProject(final String relativePathToFile) {
 
         final URL urlToFile = ConverterTestsParent.class.getResource(MODELS_PROJECT_TEST_DATA_DIR + relativePathToFile)
         File destFile = new File(WORKING_DIR + relativePathToFile)
