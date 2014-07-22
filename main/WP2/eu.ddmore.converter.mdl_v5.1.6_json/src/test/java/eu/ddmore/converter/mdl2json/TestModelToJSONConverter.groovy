@@ -9,16 +9,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestModelToJSONConverter.class)
 	
 	@Test
-	public void testTGIModel() {
-		def json = getJsonFromMDLFile("tgiModel.mdl")
-			
-		def modelObject = json.run_final_OGTT_mdl
-			
-		logger.debug(modelObject)
-	}
-	
-	@Test
-    void testProlactinModel() {
+    void testModelObject() {
 		def json = getJsonFromMDLFile("prolactinModel.mdl")
 		
 		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
