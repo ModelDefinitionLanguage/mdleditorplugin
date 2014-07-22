@@ -38,7 +38,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		
         def observation = modelObject.OBSERVATION
         
-        assertEquals("Y = IPRED+eps_RUV_EPS1*W\r\n", modelObject.OBSERVATION[0])
+        assertEquals("Y = IPRED+eps_RUV_EPS1*W\n", modelObject.OBSERVATION[0].replaceAll("\r\n", "\n")) // Make the line endings consistent between Linux and Windows so tests pass on both
 		
         def modelPrediction = modelObject.MODEL_PREDICTION
         
