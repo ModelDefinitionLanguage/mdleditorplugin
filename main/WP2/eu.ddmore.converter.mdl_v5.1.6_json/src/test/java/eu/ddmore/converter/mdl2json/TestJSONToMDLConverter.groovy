@@ -11,7 +11,7 @@ import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
 import org.junit.Test;
 
-class TestJSONToMDLConverter extends MDLToJSONTest {
+class TestJSONToMDLConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestJSONToMDLConverter.class)
 	
 	@Test
@@ -24,7 +24,7 @@ class TestJSONToMDLConverter extends MDLToJSONTest {
 			
 	}
 
-		@Test
+    @Test
 	public void testRGeneratedMOG() {
 		
 		File jsonFile = getFile("myMog3.json")

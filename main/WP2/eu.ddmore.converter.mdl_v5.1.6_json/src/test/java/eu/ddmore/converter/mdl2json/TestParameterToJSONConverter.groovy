@@ -12,7 +12,7 @@ import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
 import org.junit.Test;
 
-class TestParameterToJSONConverter extends MDLToJSONTest {
+class TestParameterToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestParameterToJSONConverter.class)
 			
 	@Test

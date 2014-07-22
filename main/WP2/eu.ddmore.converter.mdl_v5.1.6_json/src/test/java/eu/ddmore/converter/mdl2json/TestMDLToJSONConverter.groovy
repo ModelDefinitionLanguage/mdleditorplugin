@@ -12,16 +12,13 @@ import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
 import org.junit.Test;
 
-class TestMDLToJSONConverter {
+class TestMDLToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestMDLToJSONConverter.class)
-	
-	final static String TEST_DATA_DIR = "./"
-	
-	private final MDLToJSONConverter converter = new MDLToJSONConverter();
 
+    @Test
 	public void testExtractObjectNames() {
 		// This isn't a valid MDL file
-		def json = getJson("2008ThamJCCRFromMDLrepo.mdl")
+		def json = getJsonFromMDLFile("2008ThamJCCRFromMDLrepo.mdl")
 		
 		assert json.tumour_size_dat.file != null
 		assert json.tumour_size_par != null
@@ -32,7 +29,7 @@ class TestMDLToJSONConverter {
 		
 	@Test
 	public void testProlactinMay2014() {
-		def json = getJson("ex_model7_prolactin_May2014_OAM.mdl")
+		def json = getJsonFromMDLFile("ex_model7_prolactin_May2014_OAM.mdl")
 			
 		def dataObject = json.ex_model7_prolactin_Jan2014_dat
 			
@@ -56,30 +53,11 @@ class TestMDLToJSONConverter {
 	
 	@Test
 	public void testOGTTJun2014() {
-		def json = getJson("run_final_OGTT_04Jun2014_OAM.mdl")
+		def json = getJsonFromMDLFile("run_final_OGTT_04Jun2014_OAM.mdl")
 		
 		def paramObj = json.run_final_OGTT_par
 		assertEquals(Parameter.IDENTIFIER, paramObj.identifier[0])
 			
 	}
-
-	def getJson  = { String fileToConvert ->
-        File srcFile = getFile(fileToConvert)
-
-		MdlParser p = new MdlParser()
-		Mcl mcl = p.parse(srcFile)
-
-        String jsonText = converter.toJSON(mcl)
-		
-		logger.debug(jsonText)
-		
-		JsonSlurper slurper = new JsonSlurper();
-		slurper.parseText(jsonText)
-    }
-
-    private File getFile(final String pathToFile) {
-		String path = TEST_DATA_DIR + pathToFile
-		URL url = this.getClass().getResource(path)
-		new File(url.getFile())        
-    }
+    
 }

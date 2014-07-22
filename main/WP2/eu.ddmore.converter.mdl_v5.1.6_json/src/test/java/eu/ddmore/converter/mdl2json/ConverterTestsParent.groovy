@@ -1,19 +1,20 @@
 package eu.ddmore.converter.mdl2json
 
 import eu.ddmore.mdlparse.MdlParser
+
 import groovy.json.JsonSlurper
 import java.io.File;
 
 import org.apache.log4j.Logger;
 import org.ddmore.mdl.mdl.Mcl
 
-class MDLToJSONTest {
+class ConverterTestsParent {
 	final static String TEST_DATA_DIR = "./"
 	
-	private static Logger logger = Logger.getLogger(MDLToJSONTest.class)
+	private static Logger logger = Logger.getLogger(ConverterTestsParent.class)
+    
 	private static final MDLToJSONConverter converter = new MDLToJSONConverter();
 
-	
  	public Object getJsonFromMDLFile(String fileToConvert) {
         File srcFile = getFile(fileToConvert)
  
@@ -26,7 +27,7 @@ class MDLToJSONTest {
  		
  		JsonSlurper slurper = new JsonSlurper();
  		slurper.parseText(jsonText)
-     }
+    }
 
     public Object getJson(String jsonText) {
 		JsonSlurper slurper = new JsonSlurper();

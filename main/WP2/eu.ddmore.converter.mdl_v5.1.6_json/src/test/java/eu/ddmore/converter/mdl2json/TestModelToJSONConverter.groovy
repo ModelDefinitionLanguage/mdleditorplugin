@@ -5,8 +5,7 @@ import static org.junit.Assert.*;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-class TestModelToJSONConverter extends MDLToJSONTest {
-
+class TestModelToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestModelToJSONConverter.class)
 	
 	@Test
@@ -37,8 +36,12 @@ class TestModelToJSONConverter extends MDLToJSONTest {
 			"POP_AMP", "POP_PHS1", "POP_AMP2", "POP_PHS2", "POP_KI", "POP_PHASE_SHIFT_IN_PATIENTS",
 			"POP_RES_ERR_IN_MALE_HV", "POP_RES_ERR_IN_MALE_PATIENTS", "POP_RES_ERR_IN_FEMALE_PATIENTS" ], structuralParameters[0])
 		
-		def modelPrediction = modelObject.MODEL_PREDICTION
+        def observation = modelObject.OBSERVATION
+        
+        assertEquals("Y = IPRED+eps_RUV_EPS1*W\r\n", modelObject.OBSERVATION[0])
 		
+        def modelPrediction = modelObject.MODEL_PREDICTION
+        
 		logger.debug(modelPrediction)
 		
 		def modelOutputVariables = modelObject.MODEL_OUTPUT_VARIABLES
@@ -105,6 +108,5 @@ class TestModelToJSONConverter extends MDLToJSONTest {
         assertEquals("Checking the content block", expectedContentBlock, content[0].replace("\r\n", "\n").replace("\t", "        "))
         
     }
-    
 
 }

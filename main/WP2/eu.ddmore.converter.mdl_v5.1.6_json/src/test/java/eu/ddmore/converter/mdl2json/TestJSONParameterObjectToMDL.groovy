@@ -12,10 +12,8 @@ import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
 import org.junit.Test;
 
-class TestJSONParameterObjectToMDL extends MDLToJSONTest  {
-	
+class TestJSONParameterObjectToMDL extends ConverterTestsParent  {
 	private static Logger logger = Logger.getLogger(TestJSONParameterObjectToMDL.class)
-	
 
 	@Test
 	public void testProlactinMay2014() {
@@ -29,7 +27,6 @@ class TestJSONParameterObjectToMDL extends MDLToJSONTest  {
 		assertNotEquals(null, mdl)
 	}
 	
-
 	@Test
 	public void testStructuralModel() {
 		

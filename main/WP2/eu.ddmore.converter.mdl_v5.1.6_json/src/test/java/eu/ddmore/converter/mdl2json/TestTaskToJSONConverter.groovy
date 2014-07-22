@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import eu.ddmore.converter.mdl2json.domain.Task
 
-class TestTaskToJSONConverter extends MDLToJSONTest {
+class TestTaskToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestTaskToJSONConverter.class)
 	
 	@Test

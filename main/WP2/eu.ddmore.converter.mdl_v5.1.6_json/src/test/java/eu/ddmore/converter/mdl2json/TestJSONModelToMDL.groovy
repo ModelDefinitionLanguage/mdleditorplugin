@@ -7,9 +7,9 @@ import org.junit.Test
 
 import eu.ddmore.converter.mdl2json.domain.MCLFile
 
-class TestJSONModelToMDL extends MDLToJSONTest  {
 
-	static final Logger logger = Logger.getLogger(TestJSONModelToMDL.class)
+class TestJSONModelToMDL extends ConverterTestsParent {
+	private static final Logger logger = Logger.getLogger(TestJSONModelToMDL.class)
 	
 	@Test
 	public void testProlactin() {
