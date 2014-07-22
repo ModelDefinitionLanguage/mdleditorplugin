@@ -17,8 +17,8 @@ class TestMDLToJSONConverter extends ConverterTestsParent {
 
     @Test
 	public void testExtractObjectNames() {
-		// This isn't a valid MDL file
-		def json = getJsonFromMDLFile("2008ThamJCCRFromMDLrepo.mdl")
+        def File mdlFile = getFileFromModelsProject("ThamCCR2008/tumour_size_01July2014_OAM.mdl")
+        def json = getJsonFromMDLFile(mdlFile)
 		
 		assert json.tumour_size_dat.file != null
 		assert json.tumour_size_par != null
@@ -28,10 +28,12 @@ class TestMDLToJSONConverter extends ConverterTestsParent {
 	}
 		
 	@Test
-	public void testProlactinMay2014() {
-		def json = getJsonFromMDLFile("ex_model7_prolactin_May2014_OAM.mdl")
+	public void testProlactin01July2014() {
+        
+        def File mdlFile = getFileFromModelsProject("FribergCPT2009/ex_model7_prolactin_01July2014_OAM.mdl")
+		def json = getJsonFromMDLFile(mdlFile)
 			
-		def dataObject = json.ex_model7_prolactin_Jan2014_dat
+		def dataObject = json.ex_model7_prolactin_May2014_NMT_ORI_dat
 			
 		def source = dataObject[Data.SOURCE]
 		
@@ -47,13 +49,14 @@ class TestMDLToJSONConverter extends ConverterTestsParent {
 		def TIME = dataInputVariables.TIME
 		assertEquals("\"h\"", TIME.units[0])	
 		
-		def paramObj = json.ex_model7_prolactin_Jan2014_par
+		def paramObj = json.ex_model7_prolactin_May2014_NMT_ORI_par
 		assertEquals(Parameter.IDENTIFIER, paramObj.identifier[0])
 	}
 	
 	@Test
 	public void testOGTTJun2014() {
-		def json = getJsonFromMDLFile("run_final_OGTT_04Jun2014_OAM.mdl")
+		def File mdlFile = getFileFromModelsProject("JauslinCPT2007/run_final_OGTT_04Jun2014_OAM.mdl")
+        def json = getJsonFromMDLFile(mdlFile)
 		
 		def paramObj = json.run_final_OGTT_par
 		assertEquals(Parameter.IDENTIFIER, paramObj.identifier[0])

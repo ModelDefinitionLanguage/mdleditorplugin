@@ -1,12 +1,14 @@
 package eu.ddmore.converter.mdl2json
 
-import eu.ddmore.mdlparse.MdlParser
-
-import groovy.json.JsonSlurper
 import java.io.File;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.io.FileUtils;
+
+import groovy.json.JsonSlurper
+
 import org.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdlparse.MdlParser
 
 class ConverterTestsParent {
 

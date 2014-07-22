@@ -16,12 +16,14 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	
 	@Test
 	public void testProlactinMay2014() {
-		def json = getJsonFromMDLFile("ex_model7_prolactin_May2014_OAM.mdl")
+        
+        def File mdlFile = getFileFromModelsProject("FribergCPT2009/ex_model7_prolactin_01July2014_OAM.mdl")
+        def json = getJsonFromMDLFile(mdlFile)
 
 		MCLFile mclFile = new MCLFile(json)
 		
-		assertNotEquals(null, mclFile.toMDL() )			
-			
+		assertNotNull(mclFile.toMDL() )			
+
 	}
 
     @Test
