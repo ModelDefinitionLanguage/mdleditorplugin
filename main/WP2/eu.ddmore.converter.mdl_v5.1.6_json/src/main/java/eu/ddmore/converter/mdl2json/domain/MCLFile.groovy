@@ -54,7 +54,7 @@ public class MCLFile extends Expando {
 		
 		getProperties().each{ key, value ->
 			if(key!=null) {
-				retVal += "${key} = ${value.toMDL()}"
+				retVal += "\n${key} = ${value.toMDL()}"
 			} 
 		}
 		retVal
