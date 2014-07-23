@@ -105,4 +105,32 @@ class TestModelToJSONConverter extends ConverterTestsParent {
         
     }
 	
+	@Test
+	public void testThatConditionalStatementWrittenOutWithBraces() {
+		def json = getJsonFromMDLFile("conditionalStmtWithBraces.mdl")
+		
+		def modelObject = json.Hamren2008_mdl
+		
+		def expectedContentBlock = """if (SEX==2) {
+	POP_EC_50_FPG = POP_EC_50_FPG_F
+	POP_K_IN_RBC = POP_K_IN_RBC_F
+} else {
+	POP_EC_50_FPG = POP_EC_50_FPG_F+BETA_EC_50_FPG
+	POP_K_IN_RBC = POP_K_IN_RBC_F+BETA_K_IN_RBC
+}
+if (TREAT==1) {
+	POP_FPG_BASELINE = POP_FPG_BASELINE_N
+	if (TREAT==1) {
+		POP_FPG_WASHOUT = POP_FPG_WASHOUT_N
+	}
+} else {
+	POP_FPG_BASELINE = POP_FPG_BASELINE_N+BETA_FPG_BASELINE
+	POP_FPG_WASHOUT = POP_FPG_WASHOUT_N+BETA_FPG_WASHOUT
+}
+"""
+		
+		assertEquals("Checking the content of the block", expectedContentBlock, modelObject.GROUP_VARIABLES[0].replace("\r\n", "\n"))
+		
+	}
+
 }
