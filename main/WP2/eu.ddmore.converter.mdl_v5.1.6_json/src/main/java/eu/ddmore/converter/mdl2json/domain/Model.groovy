@@ -117,10 +117,10 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		groupVariables.getStatements().each { GroupVariablesBlockStatement statement ->
             def mixtureBlock = statement.getMixtureBlock()
             def stmt = statement.getStatement()
-			if(statement.getMixtureBlock()) {
-				statement.getMixtureBlock().getStatements().each { statements.add(mdlPrinter.print(it)) }
-			} else if (statement.getStatement()) {
-				statements.add(mdlPrinter.print(statement.getStatement()))
+			if (mixtureBlock) {
+				mixtureBlock.getStatements().each { statements.add(mdlPrinter.print(it)) }
+			} else if (stmt) {
+				statements.add(mdlPrinter.print(stmt))
 			}
 		}
 		statements.join()
