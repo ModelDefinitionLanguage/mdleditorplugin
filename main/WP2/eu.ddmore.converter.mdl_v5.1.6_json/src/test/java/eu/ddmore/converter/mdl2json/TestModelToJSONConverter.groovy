@@ -61,7 +61,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
         logger.debug("Library :- " + library[0])
         logger.debug("content := " + content[0])
         
-        def expectedOdeBlock = """    CP = 1000*CENT/V2
+        def expectedOdeBlock = """            CP = 1000*CENT/V2
             DIU1 = AMP1*cos(2*PI*(T-PHS1)/24)
             DIU2 = AMP2*cos(2*PI*(T-PHS2)/12)
             DIU = DIU1+DIU2
@@ -83,7 +83,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
         // Note that we need to make the line endings consistent between actual vs expected
         assertEquals("Checking the ODE block", expectedOdeBlock, ode[0].replace("\r\n", "\n"))
         
-        assertEquals("Checking the LIBRARY block", "    amount=nmadvan(model = 6, output = list(A, F))", library[0])
+        assertEquals("Checking the LIBRARY block", "            amount=nmadvan(model = 6, output = list(A, F))\n", library[0])
         
         def expectedContentBlock = """        IPRED = 0
         if (PROL>0) {
@@ -104,5 +104,5 @@ class TestModelToJSONConverter extends ConverterTestsParent {
         assertEquals("Checking the content block", expectedContentBlock, content[0].replace("\r\n", "\n"))
         
     }
-
+	
 }
