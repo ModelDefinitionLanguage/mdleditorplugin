@@ -37,7 +37,7 @@ public class PredStatementTest {
         String pieceWiseAsNmtran = conversionContext.convert( PHS1.value.assign.equation.piecewise, "PHS1")
 
         // Think this is ok - no simple parameters in structural model, so we can't name the thetas
-        String expected = "IF(PAT.EQ.HV) THEN \n	${PREFIX}PHS1=THETA(9)\nELSE\nIF(PAT.EQ.PAT) THEN \n	${PREFIX}PHS1=THETA(9)+THETA(8)\nENDIF\n"
+        String expected = "\tIF(PAT.EQ.HV) THEN \n	${PREFIX}PHS1=THETA(9)\n\tELSE\n\tIF(PAT.EQ.PAT) THEN \n	${PREFIX}PHS1=THETA(9)+THETA(8)\n\tENDIF\n"
         assertEquals(expected, pieceWiseAsNmtran )
  	}
 
@@ -57,21 +57,21 @@ public class PredStatementTest {
 
 		String pieceWiseAsNmtran = conversionContext.convert( POP_PRL0.value.assign.equation.piecewise, "POP_PRL0", conversionContext.simpleParameterToNmtran)
 
-String expected = """IF(PAT.EQ.HV) THEN 
+String expected = """	IF(PAT.EQ.HV) THEN 
 	${PREFIX}POP_PRL0=THETA(1)
-ELSE
-IF(((PAT.EQ.PAT).AND.(SEX.EQ.M)).AND.(STUDY.NE.STUD101)) THEN 
+	ELSE
+	IF(((PAT.EQ.PAT).AND.(SEX.EQ.M)).AND.(STUDY.NE.STUD101)) THEN 
 	${PREFIX}POP_PRL0=THETA(2)
-ELSE
-IF(((PAT.EQ.PAT).AND.(SEX.EQ.F)).AND.(STUDY.NE.STUD101)) THEN 
+	ELSE
+	IF(((PAT.EQ.PAT).AND.(SEX.EQ.F)).AND.(STUDY.NE.STUD101)) THEN 
 	${PREFIX}POP_PRL0=THETA(3)
-ELSE
-IF(((PAT.EQ.PAT).AND.(SEX.EQ.M)).AND.(STUDY.EQ.STUD101)) THEN 
+	ELSE
+	IF(((PAT.EQ.PAT).AND.(SEX.EQ.M)).AND.(STUDY.EQ.STUD101)) THEN 
 	${PREFIX}POP_PRL0=THETA(4)
-ELSE
-IF(((PAT.EQ.PAT).AND.(SEX.EQ.F)).AND.(STUDY.EQ.STUD101)) THEN 
+	ELSE
+	IF(((PAT.EQ.PAT).AND.(SEX.EQ.F)).AND.(STUDY.EQ.STUD101)) THEN 
 	${PREFIX}POP_PRL0=THETA(5)
-ENDIF
+	ENDIF
 """
 		assertEquals(expected, pieceWiseAsNmtran )
  	}

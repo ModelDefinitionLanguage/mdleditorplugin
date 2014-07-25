@@ -17,6 +17,7 @@ import eu.ddmore.libpharmml.dom.commontypes.CommonVariableDefinitionType
 import eu.ddmore.libpharmml.dom.commontypes.DerivativeVariableType
 import eu.ddmore.libpharmml.dom.commontypes.IntValueType
 import eu.ddmore.libpharmml.dom.commontypes.RealValueType;
+import eu.ddmore.libpharmml.dom.commontypes.Rhs;
 import eu.ddmore.libpharmml.dom.commontypes.SymbolRefType
 import eu.ddmore.libpharmml.dom.commontypes.VariableDefinitionType
 import eu.ddmore.libpharmml.dom.maths.BinopType
@@ -378,8 +379,10 @@ class PredStatement extends NMTranFormatter {
                         visitedThetas.add(name)
                         cov << buildCovariateString(name.toUpperCase(), thetaIndex, null)
                     } else {
-						if(parameters.getGroupVariable(name)!=null)
-							endline(indent("${conversionContext.convert(parameters.getGroupVariable(name))}"))
+                    	SimpleParameterType simpleParam = parameters.getGroupVariable(name);
+						if(simpleParam!=null){
+							cov << printParameter(simpleParam.assign,name)
+						}
                     }
                 }
             }
@@ -440,7 +443,7 @@ class PredStatement extends NMTranFormatter {
             if (elem.value instanceof IndividualParameterType) {
                 ind = printIndividualParameter(elem, ind)
 			} else if (!parameters.isOmega(elem.value.symbId) && (elem.value instanceof SimpleParameterType) && elem.value.assign) {
-                ind = printSimpleParameter(elem, ind)
+                ind = printParameter(elem.value.assign, elem.value.symbId)
 			}
 		ind
 	}
@@ -466,28 +469,36 @@ class PredStatement extends NMTranFormatter {
 				}
 				ind.append(buildIndividualString(symbolName.toUpperCase(), name.toUpperCase(), omegaIndices))
 			} else if (individualParameterType.gaussianModel.generalCovariate) {
-				ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.gaussianModel.generalCovariate.assign)}"))
+				ind << printParameter(individualParameterType.gaussianModel.generalCovariate.assign,symbolName)
 			}
 		} else if (individualParameterType.assign) {
-			ind << endline(indent("${rename(symbolName.toUpperCase())}${conversionContext.convert(individualParameterType.assign)}"))
+			ind << printParameter(individualParameterType.assign,symbolName)
 		}
 		return ind
 	}
-
-	private StringBuilder printSimpleParameter(JAXBElement elem, StringBuilder ind) {
+	
+	/**
+	 * When we come across individual or simple parameter we are passing variable symbol and RHS,
+	 * in order to parse RHS and to define the variable accordingly.
+	 * 
+	 * @param assign
+	 * @param symbId
+	 * @return
+	 */
+	private StringBuilder printParameter(Rhs assign, String symbId) {
+		StringBuilder ind = new StringBuilder();
 		String rightPart
-		if(elem.value.assign?.equation?.piecewise) {
-			String pieceWiseAsNmtran = conversionContext.convert(elem.value.assign.equation.piecewise,
-					elem.value.symbId)
+		if(assign?.equation?.piecewise) {
+			String pieceWiseAsNmtran = conversionContext.convert(assign.equation.piecewise,symbId)
 					.replaceAll("\\(t-tD\\)", "TIME").toUpperCase()
 			ind << endline(indent(pieceWiseAsNmtran))
-		} else if (elem.value.assign.equation) {
-			rightPart = conversionContext.convert(elem.value.assign.equation)
-		} else if (elem.value.assign.scalar) {
-			rightPart = elem.value.assign.scalar.value.value
+		} else if (assign.equation) {
+			rightPart = conversionContext.convert(assign.equation)
+		} else if (assign.scalar) {
+			rightPart = assign.scalar.value.value
 		}
 		if(rightPart) {
-			ind << endline(indent("${rename(elem.value.symbId.toUpperCase())}=${rightPart}"))
+			ind << endline(indent("${rename(symbId.toUpperCase())}=${rightPart}"))
 		}
 		return ind
 	}

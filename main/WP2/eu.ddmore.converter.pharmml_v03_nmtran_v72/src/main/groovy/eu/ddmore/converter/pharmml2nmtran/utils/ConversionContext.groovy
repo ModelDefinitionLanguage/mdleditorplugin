@@ -503,11 +503,15 @@ public class ConversionContext extends NMTranFormatter {
     public StringBuilder convert(PiecewiseType piecewise, String name) {
         convert(piecewise, name, simpleParameterToNmtran)
     }
+	
+	public StringBuilder convert(PiecewiseType piecewise, Map<String,String> simpleParameterToNmtran) {
+		convert(piecewise, null, simpleParameterToNmtran)
+	}
 
     /**
      * 
      * @param piecewise the PiecewiseType type to convert
-     * @param variableName the name of the variable that will be assigned to different values dependening on the condition 
+     * @param variableName the name of the variable that will be assigned to different values depending on the condition 
      * @param simpleParameterToNmtran a map of precomputed nmtran representations of parameters
      * @return the NMTRAN representation of the type
      */
@@ -516,7 +520,7 @@ public class ConversionContext extends NMTranFormatter {
         piecewise.piece.each {
             PieceType pieceIt = (PieceType)it
             if (sb) {
-                sb << endline("ELSE");
+                sb << endline(indent("ELSE"));
             }
             StringBuilder pieceBuilder = convert(pieceIt, variableName);
 
@@ -528,7 +532,7 @@ public class ConversionContext extends NMTranFormatter {
             }
             sb << pieceBuilder
         }
-        sb << endline("ENDIF");
+        sb << endline(indent("ENDIF"));
     }
 
     public StringBuilder convert(VariableDefinitionType type) {
@@ -557,17 +561,18 @@ public class ConversionContext extends NMTranFormatter {
      * @return the NMTRAN representation of the type
      */
     public StringBuilder convert(PieceType piece, String variableName) {
+		String variableLHS = (variableName)?"\t${rename(variableName)}=":""
         StringBuilder sb = new StringBuilder();
         if (piece.condition) {
             sb << convert(piece.condition) << "\n";
         }
         if (piece.scalar) {
-            sb << convert(piece.scalar.value, variableName) << "\n";
+            sb << endline(variableLHS+piece.scalar.value.value);
         }
         if (piece.binop) {
-            sb << endline("\t${rename(variableName)}=${convert(piece.binop)}")
+            sb << endline(variableLHS+"${convert(piece.binop)}")
         } else if(piece.symbRef) {
-			sb << endline("\t${rename(variableName)}=${convert(piece.symbRef)}")
+			sb << endline(variableLHS+"${convert(piece.symbRef)}")
         }
         sb
     }
@@ -595,7 +600,7 @@ public class ConversionContext extends NMTranFormatter {
         StringBuilder sb = new StringBuilder();
         if (condition.logicBinop) {
 			// IF only applied at the level of the conditional; logical operations are all within the same IF statement
-            sb << "IF${convert(condition.logicBinop)} THEN "
+            sb << indent("IF${convert(condition.logicBinop)} THEN ")
         }
         sb
     }
@@ -823,6 +828,10 @@ public class ConversionContext extends NMTranFormatter {
             sb << convert(type.symbRef, inputNameToValue)
         } else if(type.piecewise) {
         	sb << convert(type.piecewise, inputNameToValue)
+		} else if(type.scalar) {
+        	sb << type.scalar.value.value
+		}else if(type.uniop) {
+        	sb << convert(type.uniop, inputNameToValue)
 		}
         
         sb
