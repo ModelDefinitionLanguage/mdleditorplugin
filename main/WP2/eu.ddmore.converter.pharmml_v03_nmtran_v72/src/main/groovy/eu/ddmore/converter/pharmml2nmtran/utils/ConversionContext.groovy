@@ -926,6 +926,8 @@ public class ConversionContext extends NMTranFormatter {
             return "log";
         } else if (s.equals("ln")) {
             return "ln";
+        } else if (s.equals("sqrt")) {
+            return "SQRT";
         } 
 		else if (s.equals("power")) {
             return "**";
