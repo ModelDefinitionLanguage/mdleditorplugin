@@ -2,6 +2,7 @@ package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -24,8 +25,14 @@ public class ModelsDiscoverer {
         LOGGER.info("Discovering models with file extension ." + modelFileExtension + " within subdirectory \"" + this.modelsSubdirectory + "\" ...");
         final File rootDirectory = new File(PATH_TO_MODELS_DIR + this.modelsSubdirectory);
         final Collection<File> allModelFiles = FileUtils.listFiles(rootDirectory, new String[] {this.modelFileExtension}, true);
-        for (final File modelFile : allModelFiles) {
-            LOGGER.info("Found model file: " + modelFile);
+        Iterator<File> modelFilesItr = allModelFiles.iterator();
+        while (modelFilesItr.hasNext()) {
+        	File modelFile = modelFilesItr.next();
+        	if(modelFile.getParent().endsWith("targetblock")){
+        		modelFilesItr.remove();        		
+        	}else{
+        		LOGGER.info("Found model file: " + modelFile);
+        	}
         }
         return allModelFiles;
     }
