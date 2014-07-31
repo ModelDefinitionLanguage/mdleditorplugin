@@ -9,7 +9,7 @@ public class MDLUtils {
 		def retVal = [:]
 		for( SymbolDeclaration sd : symbolList ) {
 			String symbol = sd.getSymbolName().getName()
-			retVal[symbol] = XtextWrapper.unwrap(sd.getExpression())
+			retVal[symbol] = sd.getExpression() != null ? XtextWrapper.unwrap(sd.getExpression()) : null
 		}
 		retVal
 	}
