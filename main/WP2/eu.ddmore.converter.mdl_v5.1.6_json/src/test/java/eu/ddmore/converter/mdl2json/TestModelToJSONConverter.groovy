@@ -2,6 +2,8 @@ package eu.ddmore.converter.mdl2json;
 
 import static org.junit.Assert.*;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
@@ -22,10 +24,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		assertEquals("continuous", STU.type[0])
 		
 		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
-		assertEquals([ "POP_KOUT", "POP_PRL0_IN_MALE_HV", "POP_PRL0_IN_MALE_PAT", "POP_PRL0_IN_FEMALES_PAT",
-			"POP_PRL0_IN_MALES_STUDY_101", "POP_PRL0_IN_FEMALES_STUDY_101", "POP_KDA", "POP_UPDA",
-			"POP_AMP", "POP_PHS1", "POP_AMP2", "POP_PHS2", "POP_KI", "POP_PHASE_SHIFT_IN_PATIENTS",
-			"POP_RES_ERR_IN_MALE_HV", "POP_RES_ERR_IN_MALE_PATIENTS", "POP_RES_ERR_IN_FEMALE_PATIENTS" ], structuralParameters[0])
+		assertEquals(getExpectedStructuralParametersProlactinMap(), structuralParameters[0].sort())
 		
         def observation = modelObject.OBSERVATION
         
@@ -133,4 +132,52 @@ if (TREAT==1) {
 		
 	}
 
+	@Test
+	void shouldCorrectlyParseStructuralParametersAllTypes() {
+		def json = getJsonFromMDLFile("drugX_1stAbs_1Rep_EST001_ORG.mdl")
+		
+		def modelObject = json.drugX_mdl
+		
+		logger.debug(modelObject)
+		
+		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
+		assertEquals(getExpectedStructuralParametersDrugXMap(), structuralParameters[0].sort())
+	}
+
+	private Map getExpectedStructuralParametersDrugXMap() {
+		Map erm = [
+			POP_Vc : Map[units : "\"L\""],
+			POP_Vp : Map[units : "\"L\""],
+			POP_CL : Map[units : "\"L/h\""],
+			POP_ka : Map[units : "\"1/h\""],
+			POP_Q : Map[units : "\"L/h\""],
+			RUV_PROP : null
+		]
+		
+		erm.sort()
+	}
+
+	private Map getExpectedStructuralParametersProlactinMap() {
+		Map erm = [
+			POP_AMP : null,
+			POP_AMP2 : null,
+			POP_KDA : null,
+			POP_KI : null,
+			POP_KOUT : null,
+			POP_PHASE_SHIFT_IN_PATIENTS : null,
+			POP_PHS1 : null,
+			POP_PHS2 : null,
+			POP_PRL0_IN_FEMALES_PAT : null,
+			POP_PRL0_IN_FEMALES_STUDY_101 : null,
+			POP_PRL0_IN_MALES_STUDY_101 : null,
+			POP_PRL0_IN_MALE_HV : null,
+			POP_PRL0_IN_MALE_PAT : null,
+			POP_RES_ERR_IN_FEMALE_PATIENTS : null,
+			POP_RES_ERR_IN_MALE_HV : null,
+			POP_RES_ERR_IN_MALE_PATIENTS : null,
+			POP_UPDA : null
+		]
+		
+		erm.sort()
+	}
 }
