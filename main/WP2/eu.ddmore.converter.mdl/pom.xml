@@ -6,7 +6,7 @@
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>0.0.5-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<artifactId>converter-mdl</artifactId>
