@@ -5,7 +5,7 @@
 	
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-toolbox-api</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>Converter Toolbox API</name>
 	<packaging>jar</packaging>
 	

@@ -5,7 +5,7 @@
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-toolbox-bundle</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>Aggregator for Converter modules</name>
 
 	<modules>
