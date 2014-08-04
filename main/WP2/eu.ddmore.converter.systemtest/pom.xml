@@ -5,7 +5,7 @@
 
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-systemtest</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>Automated Converter Test Models Execution</name>
 	<description>
 Automated execution of converters over all models within the eu.ddmore.testdata.models project.
@@ -15,7 +15,7 @@ Note that the generated output models aren't verified in terms of content, just 
     <properties>
         <maven.compiler.source>1.6</maven.compiler.source> 
         <maven.compiler.target>1.6</maven.compiler.target>
-        <converter.toolbox.version>0.0.1-SNAPSHOT</converter.toolbox.version>
+        <converter.toolbox.version>1.0.0</converter.toolbox.version>
         <testdata.models.version>0.0.1-SNAPSHOT</testdata.models.version>
         <models.working.dir>${project.build.directory}/WorkingDir</models.working.dir>
     </properties> 
