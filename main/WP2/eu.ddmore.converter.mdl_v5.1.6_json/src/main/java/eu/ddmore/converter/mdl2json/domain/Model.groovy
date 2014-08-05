@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.BlockStatement
+import org.ddmore.mdl.mdl.EstimationBlock;
 import org.ddmore.mdl.mdl.FunctionCallStatement
 import org.ddmore.mdl.mdl.GroupVariablesBlock
 import org.ddmore.mdl.mdl.GroupVariablesBlockStatement
@@ -38,6 +39,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 	public static String INDIVIDUAL_VARIABLES = "INDIVIDUAL_VARIABLES"
 	public static String MODEL_PREDICTION = "MODEL_PREDICTION"
 	public static String OBSERVATION = "OBSERVATION"
+	public static String ESTIMATION = "ESTIMATION"
 	public static String MODEL_OUTPUT_VARIABLES = "MODEL_OUTPUT_VARIABLES"
 	
 	public Model(ModelObject modelObject) {
@@ -54,8 +56,6 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 			} else if(modelObjectBlock.getVariabilityParametersBlock()) {
 				// Variability Parameters Block
 				setProperty(VARIABILITY_PARAMETERS, makeVariabilityParameters(modelObjectBlock.getVariabilityParametersBlock()))
-			} else if(modelObjectBlock.getEstimationBlock()) {
-				// Estimation block
 			} else if(modelObjectBlock.getGroupVariablesBlock()) {
 				// Group Variables
 				setProperty(GROUP_VARIABLES, makeGroupVariables(modelObjectBlock.getGroupVariablesBlock()))
@@ -71,6 +71,9 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 			} else if(modelObjectBlock.getObservationBlock()) {
 				// Observations
 				setProperty(OBSERVATION, makeObservationBlock(modelObjectBlock.getObservationBlock()))
+			} else if(modelObjectBlock.getEstimationBlock()) {
+				// Estimation block
+				setProperty(ESTIMATION, makeEstimationBlock(modelObjectBlock.getEstimationBlock()))
 			} else if(modelObjectBlock.getOutputVariablesBlock()) {
 				// Output variables
 				setProperty(MODEL_OUTPUT_VARIABLES, makeModelOutputVariables(modelObjectBlock.getOutputVariablesBlock()))
@@ -118,8 +121,12 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
             def mixtureBlock = statement.getMixtureBlock()
             def stmt = statement.getStatement()
 			if (mixtureBlock) {
-				mixtureBlock.getStatements().each { statements.add(mdlPrinter.print(it)) }
+				mixtureBlock.getStatements().each {
+					// TODO: "it" is a BlockStatement; needs to be pretty-printed correctly
+					statements.add(mdlPrinter.print(it))
+				}
 			} else if (stmt) {
+				// TODO: "stmt" is a BlockStatement; needs to be pretty-printed correctly
 				statements.add(mdlPrinter.print(stmt))
 			}
 		}
@@ -174,15 +181,19 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 	}
 	
 	/**
-	 * MDL printing routines
-	 */
-	
-	/**
 	 * Make the observation block
 	 */
 	private makeObservationBlock(ObservationBlock observationBlock) {
 		StringBuffer statements = new StringBuffer()
 		observationBlock.getStatements().each { BlockStatement statement ->
+			statements.append(mdlPrinter.print(statement))
+		}
+		statements.toString()
+	}
+	
+	private makeEstimationBlock(EstimationBlock estimationBlock) {
+		StringBuffer statements = new StringBuffer()
+		estimationBlock.getStatements().each { BlockStatement statement ->
 			statements.append(mdlPrinter.print(statement))
 		}
 		statements.toString()

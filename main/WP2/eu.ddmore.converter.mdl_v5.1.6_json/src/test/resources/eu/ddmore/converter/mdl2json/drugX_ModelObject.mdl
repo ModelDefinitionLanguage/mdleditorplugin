@@ -1,0 +1,131 @@
+drugX_mdl = mdlobj{
+### Model object
+# The model object receives a list of input data variables from the data object and parameters (constants)from the parameter object.
+# The parameter and variable names in the model object must be matched by a similar name in the parameter and data objects.
+# Note that variables in the data object and parameters may be defined in the parameter object that are not referenced in the model object.
+# Model variables are derived from the input data variables and parameters using algebraic expressions.
+
+    MODEL_INPUT_VARIABLES{
+    # A name for each input data variable is required. Special uses of input data variables are indicated by the use attribute if the data variable name is not a standard name. Standard names may include ID, IDV, AMT, DV, MDV, etc. similar to standard data items recognized by NM-TRAN or Monolix. The type option is not required but may be useful as metadata. This kind of metadata (with an option to recode) could alternatively be specified in the data object.
+        ID=list(use=id,level=2)
+        DV=list(type=continuous,use=dv,level=1,units="mg/L")
+        TIME=list(use=idv,units="h")
+        MDV=list(use=mdv)
+        AMT=list(use=amt,units="mg")
+        RATE=list(type=continuous,use=covariate,units="mg/h")
+        WT=list(type=continuous,use=covariate,units="kg")
+    }# end MODEL_INPUT_VARIABLES
+
+    STRUCTURAL_PARAMETERS{
+    # The STRUCTURAL_PARAMETERS Block defines the structural model parameters.
+    # A name for each parameter is required. Other attributes such as units are optional.
+    # Units may be used to achieve consistency between the parameter, data and model object values.
+    # This could be implemented during the WP2 translation process.
+        POP_Vc=list(units="L")
+        POP_Vp=list(units="L")
+        POP_CL=list(units="L/h")
+        POP_ka=list(units="1/h")
+        POP_Q=list(units="L/h")
+        POP_MTT=list(units="h")
+        POP_n
+        RUV_PROP
+    }# end STRUCTURAL_PARAMETERS
+
+    VARIABILITY_PARAMETERS{
+    # The VARIABILITY_PARAMETERS Block defines the variability parameters.
+        #OMEGA
+        PPV_Vc
+        PPV_Vp
+        PPV_CL
+        #SIGMA
+        RUV_EPS
+    }# end VARIABILITY_PARAMETERS
+
+    GROUP_VARIABLES{
+    # The GROUP_VARIABLES block is used to express covariate models i.e. the fixed effect differences in parameters predictable from data variables.
+    # If there are no covariate effects to model then this block is not required.
+    # NONMEM may be able to take advantage of knowing that variables defined in this block represent the central tendency
+    # of the distribution of random effects defined in the INDIVIDUAL_VARIABLES block (known as MU referencing).
+    # In this example the prefix "grp_" for a variable name could be a hint that this is a MU variable for NM-TRAN.
+    # Other model variables may be defined in this block according to user preference.
+        # Covariate model
+        GRPVc = POP_Vc*(WT/70)
+        GRPVp = POP_Vp
+        GRPCL = POP_CL
+        GRPka = POP_ka
+        GRPQ = POP_Q
+        GRPMTT = POP_MTT
+        GRPn = POP_n
+    }# end GROUP_VARIABLES
+
+
+    RANDOM_VARIABLE_DEFINITION{
+    # The RANDOM_VARIABLE_DEFINITION block is used to define the distribution of random variables.
+        eta_PPV_Vc ~ (type=normal, mean=0, var=PPV_Vc,level=ID)
+        eta_PPV_Vp ~ (type=normal, mean=0, var=PPV_Vp,level=ID)
+        eta_PPV_CL ~ (type=normal, mean=0, var=PPV_CL,level=ID)
+        eps_RUV_EPS ~ (type=normal, mean=0, var=RUV_EPS,level=DV)
+    }# end RANDOM_VARIABLE_DEFINITION
+
+    INDIVIDUAL_VARIABLES{
+    # The INDIVIDUAL_VARIABLES block is used to express the individual variables and their distribution.
+    # If this is not a population model then this block is not required.
+        Vc = GRPVc*exp(eta_PPV_Vc)
+        Vp = GRPVp*exp(eta_PPV_Vp)
+        CL = GRPCL*exp(eta_PPV_CL)
+        ka = GRPka
+        Q = GRPQ
+        MTT = GRPMTT
+        n = GRPn
+        kcp = Q/Vc
+        kpc = Q/Vp
+        kel = CL/Vc
+        ktr = (n+1)/MTT
+        LNFAC = ln(2.5066)+(n+0.5)*ln(n)-n
+        F1 = 0
+        if (AMT>0) PODO  =  AMT
+    }# end INDIVIDUAL_VARIABLES
+
+    MODEL_PREDICTION{
+    # The MODEL_PREDICTION block calculates model predictions based on model variables defined in the previous model object blocks.
+    # Code in this block expresses the structural model after group and individual parameter differences have been included.
+    # It can be considered as an expression of a deterministic prediction. It is the essential component of a shared sub-model.
+    # This block should not contain any covariate computations expressing predictable or unpredictable (random) between subject differences.
+        ODE{
+            if (T==0) {
+                IN = 0
+            } else {
+                IN = exp(ln(PODO)+ln(ktr)+n*ln(ktr*T)-ktr*T-LNFAC)
+            }
+            DEPOT=ode(deriv= IN - ka*DEPOT,init=0)
+            CENTRAL = ode(deriv= ka*DEPOT - kel*CENTRAL - kcp*CENTRAL + kpc*PER,init=0)
+            PER = ode(deriv= kcp*CENTRAL - kpc*PER,init=0)
+        }# end ODE
+
+        LIBRARY{
+            amount=nmadvan(model=6)
+        }# end LIBRARY              
+    }# end MODEL_PREDICTION
+
+    ESTIMATION{
+        IPRED = CENTRAL/Vc
+        if (IPRED==0) IPRED = 0.0001
+        W = RUV_PROP*IPRED
+        IRES  = DV-IPRED
+        IWRES = IRES/W
+        Y = IPRED+W*eps_RUV_EPS
+    }# end ESTIMATION
+    
+    MODEL_OUTPUT_VARIABLES{
+    # The MODEL_OUTPUT_VARIABLES block specifies the model variables that may be exported from the model object.     
+        ID
+        TIME
+        IPRED
+        IWRES
+        eta_PPV_Vc
+        eta_PPV_Vp
+        eta_PPV_CL
+        WT
+    }# end MODEL_OUTPUT_VARIABLES
+
+} # end of model object

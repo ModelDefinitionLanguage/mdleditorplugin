@@ -11,7 +11,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestModelToJSONConverter.class)
 	
 	@Test
-    void testModelObject() {
+    void testModelObjectWithObservationBlock() {
 		def json = getJsonFromMDLFile("prolactinModel.mdl")
 		
 		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
@@ -20,8 +20,8 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		
 		def inputVariables = modelObject.MODEL_INPUT_VARIABLES
 		
-		def STU = inputVariables.STU
-		assertEquals("continuous", STU.type[0])
+		def invar_STU = inputVariables.STU
+		assertEquals("continuous", invar_STU.type[0])
 		
 		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
 		assertEquals(getExpectedStructuralParametersProlactinMap(), structuralParameters[0].sort())
@@ -34,12 +34,107 @@ class TestModelToJSONConverter extends ConverterTestsParent {
         
 		logger.debug(modelPrediction)
 		
+		// (Skip checking of Model Prediction block since is tested in separate test method)
+		
 		def modelOutputVariables = modelObject.MODEL_OUTPUT_VARIABLES
 		assertEquals(["ID", "TIME", "IPRED", "IWRES", "STU"], modelOutputVariables[0])
 
 		def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
 		assertEquals([ "PPV_PRL0", "PPV_KI", "PPV_KOUT", "PPV_AMP1", "PPV_PHS2", "PPV_IOV_IN_PRL0_1", "PPV_IOV_IN_PRL0_2",
       "PPV_IOV_IN_PRL0_3", "PPV_IOV_IN_PRL0_4", "RUV_EPS1"], variabilityParameters[0])
+	}
+	
+	@Test
+	void testModelObjectWithEstimationBlock() {
+		def json = getJsonFromMDLFile("drugX_ModelObject.mdl")
+		
+		def modelObject = json.drugX_mdl
+		
+		logger.debug(modelObject)
+		
+		def inputVariables = modelObject.MODEL_INPUT_VARIABLES
+		
+		def invar_WT = inputVariables.WT
+		assertEquals("continuous", invar_WT.type[0])
+		assertEquals("covariate", invar_WT.use[0])
+		assertEquals("\"kg\"", invar_WT.units[0])
+		
+		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
+		
+		def strcparm_POPMTT = structuralParameters.POP_MTT
+		assertEquals("\"h\"", strcparm_POPMTT.units[0])
+		
+		def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
+		assertEquals([ "PPV_Vc", "PPV_Vp", "PPV_CL", "RUV_EPS" ], variabilityParameters[0])
+
+		def groupVariables = modelObject.GROUP_VARIABLES
+		
+		def expectedGroupVariablesBlock = """GRPVc = POP_Vc*(WT/70)
+GRPVp = POP_Vp
+GRPCL = POP_CL
+GRPka = POP_ka
+GRPQ = POP_Q
+GRPMTT = POP_MTT
+GRPn = POP_n
+"""
+		// Note that we need to make the line endings consistent between actual vs expected
+		assertEquals("Checking the Group Variables block", expectedGroupVariablesBlock, groupVariables[0].replace("\r\n", "\n"))
+	
+		def randomVariableDefinitions = modelObject.RANDOM_VARIABLE_DEFINITION
+		
+		def randvardefn_EPSRUVEPS = randomVariableDefinitions.eps_RUV_EPS
+		assertEquals("normal", randvardefn_EPSRUVEPS[0].type[0])
+		assertEquals("0", randvardefn_EPSRUVEPS[0].mean[0])
+		assertEquals("RUV_EPS", randvardefn_EPSRUVEPS[0].var[0])
+		assertEquals("DV", randvardefn_EPSRUVEPS[0].level[0])
+		
+		def individualVariables = modelObject.INDIVIDUAL_VARIABLES
+		
+		def expectedIndividualVariablesBlock = """Vc = GRPVc*exp(eta_PPV_Vc)
+        Vp = GRPVp*exp(eta_PPV_Vp)
+        CL = GRPCL*exp(eta_PPV_CL)
+        ka = GRPka
+        Q = GRPQ
+        MTT = GRPMTT
+        n = GRPn
+        kcp = Q/Vc
+        kpc = Q/Vp
+        kel = CL/Vc
+        ktr = (n+1)/MTT
+        LNFAC = ln(2.5066)+(n+0.5)*ln(n)-n
+        F1 = 0
+        if (AMT>0) {
+	PODO = AMT
+}
+"""
+		// Note that we need to make the line endings consistent between actual vs expected
+		assertEquals("Checking the Individual Variables block", expectedIndividualVariablesBlock, individualVariables[0].replace("\r\n", "\n"))
+		
+        def modelPrediction = modelObject.MODEL_PREDICTION
+        
+		logger.debug(modelPrediction)
+		
+		// (Skip checking of Model Prediction block since is tested in separate test method)
+		
+		def estimationBlock = modelObject.ESTIMATION
+		
+		logger.debug(estimationBlock)
+		
+		def expectedEstimationBlock = """IPRED = CENTRAL/Vc
+if (IPRED==0) {
+	IPRED = 0.0001
+}
+W = RUV_PROP*IPRED
+IRES = DV-IPRED
+IWRES = IRES/W
+Y = IPRED+W*eps_RUV_EPS
+"""
+		// Note that we need to make the line endings consistent between actual vs expected
+		assertEquals("Checking the Estimation block", expectedEstimationBlock, estimationBlock[0].replace("\r\n", "\n"))
+		
+		def modelOutputVariables = modelObject.MODEL_OUTPUT_VARIABLES
+		assertEquals([ "ID", "TIME", "IPRED", "IWRES", "eta_PPV_Vc", "eta_PPV_Vp", "eta_PPV_CL", "WT" ], modelOutputVariables[0])
+		
 	}
     
     @Test
@@ -180,4 +275,5 @@ if (TREAT==1) {
 		
 		erm.sort()
 	}
+	
 }
