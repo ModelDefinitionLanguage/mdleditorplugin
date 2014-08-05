@@ -288,6 +288,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 					break;
 				case "GROUP_VARIABLES":
 				case "INDIVIDUAL_VARIABLES":
+				case "ESTIMATION":
 					mdl.append(content)
 					break;
 				case "RANDOM_VARIABLE_DEFINITION":
