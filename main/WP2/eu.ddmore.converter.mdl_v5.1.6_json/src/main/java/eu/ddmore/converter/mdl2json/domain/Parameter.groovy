@@ -241,7 +241,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 						break;
 					case "same":
 						// example "same(name="struc2") { PPV_IOV_IN_PRL0_2 }"
-						strucStr.append("${IDT*2}same(name=\"${v['name']}\"){\n${IDT*3}${v[CONTENT_PROPNAME][0]}\n${IDT*2}}\n")
+						strucStr.append("${IDT*2}same(name=\"${v['name']}\"){\n${IDT*3}${v[CONTENT_PROPNAME]}\n${IDT*2}}\n")
 						break;
 					default:
 						// Otherwise 'key' is the variability parameter name
