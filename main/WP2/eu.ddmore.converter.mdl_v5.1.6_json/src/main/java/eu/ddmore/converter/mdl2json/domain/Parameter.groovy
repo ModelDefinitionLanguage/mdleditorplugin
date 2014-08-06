@@ -233,15 +233,15 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 						// matrix is lower triangular, example "matrix(name="struc2", type="VAR") { matrix }
 						String mx = v[CONTENT_PROPNAME]
 						mx = mx.split("\n").join("\n${IDT*3}")
-						strucStr.append("${IDT*2}matrix(name=\"${v['name']}\", type=\"${v['type']}\"){\n${IDT*3}${mx}\n${IDT*2}}\n")
+						strucStr.append("${IDT*2}matrix(name=${v['name']}, type=${v['type']}) {\n${IDT*3}${mx}\n${IDT*2}}\n")
 						break;
 					case "diag":
 						// example "diag(name="struc2", type="VAR") { list of parameters }"
-						strucStr.append("${IDT*2}diag(name=\"${v['name']}\", type=\"${v['type']}\"){\n${IDT*3}${v[CONTENT_PROPNAME]}\n${IDT*2}}\n")
+						strucStr.append("${IDT*2}diag(name=${v['name']}, type=${v['type']}) {\n${IDT*3}${v[CONTENT_PROPNAME]}\n${IDT*2}}\n")
 						break;
 					case "same":
 						// example "same(name="struc2") { PPV_IOV_IN_PRL0_2 }"
-						strucStr.append("${IDT*2}same(name=\"${v['name']}\"){\n${IDT*3}${v[CONTENT_PROPNAME]}\n${IDT*2}}\n")
+						strucStr.append("${IDT*2}same(name=${v['name']}) {\n${IDT*3}${v[CONTENT_PROPNAME]}\n${IDT*2}}\n")
 						break;
 					default:
 						// Otherwise 'key' is the variability parameter name
@@ -255,7 +255,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	}
 	
 	/**
-	 * Convert this parameter into MDL
+	 * Convert this parameter into MDL.
 	 * @return
 	 */
 	public String toMDL() {
