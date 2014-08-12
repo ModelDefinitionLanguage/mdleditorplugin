@@ -19,18 +19,23 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 	public void testStructuralModel() {
 		def json = getJsonFromMDLFile("simpleParameter.mdl")
 			
-		def parameterObject = json.tumour_size_par
+		def parameterObject = json[0].tumour_size_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 			
 		def structuralModel = parameterObject[Parameter.STRUCTURAL]
 		
-		def POP_SIZE0 = structuralModel.POP_SIZE0
-		assertEquals("6.66", POP_SIZE0.value[0])
-		assertEquals("1", POP_SIZE0.lo[0])
-		assertEquals("10", POP_SIZE0.hi[0] )
+		assertEquals("Checking number of Structural parameters", 4, structuralModel.size())
 		
-		def POP_AE50 = structuralModel.POP_AE50
-		assertEquals("11700.", POP_AE50.value[0])			
-		assertEquals("-1", POP_AE50.lo[0])
+		def expected_POP_SIZE0 = [ 'name':'POP_SIZE0', 'value':'6.66', 'lo':'1', hi:'10' ]
+		assertEquals("Checking first Structural parameter", expected_POP_SIZE0, structuralModel[0])
+		
+		def expected_POP_TOVER = [ 'name':'POP_TOVER', 'value':'18.9', 'lo':'1', hi:'200' ]
+		assertEquals("Checking second Structural parameter", expected_POP_TOVER, structuralModel[1])
+		
+		def expected_POP_AE50 = [ 'name':'POP_AE50', 'value':'11700.', 'lo':'-1', hi:'100000' ]
+		assertEquals("Checking third Structural parameter", expected_POP_AE50, structuralModel[2])
+
+		def expected_POP_TEQ = [ 'name':'POP_TEQ', 'value':'8.27', 'lo':'1', hi:'100000' ]
+		assertEquals("Checking fourth Structural parameter", expected_POP_TEQ, structuralModel[3])
 		
 	}
 	
@@ -38,7 +43,7 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 	public void testVariabilityModel() {
 		def json = getJsonFromMDLFile("simpleParameter.mdl")
 			
-		def parameterObject = json.tumour_size_par
+		def parameterObject = json[0].tumour_size_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 			
 		def variabilityModel = parameterObject[Parameter.VARIABILITY]
 		
@@ -46,8 +51,8 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 
 		def val = PPV_SIZE0["value"]
 		
-		assertEquals("0.317", val[0][0])
-		assertEquals("VAR", PPV_SIZE0.type[0][0] )
+		assertEquals("0.317", val[0])
+		assertEquals("VAR", PPV_SIZE0.type[0] )
 		
 	}
 	
@@ -57,17 +62,18 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 		def PPV_KOUT = 1
 
 		def json = getJsonFromMDLFile("parameterWithMatrix.mdl")
-		def paramObj = json.ex_model7_prolactin_Jan2014_par
+		
+		def paramObj = json[0].ex_model7_prolactin_Jan2014_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def structuralModel = paramObj[Parameter.STRUCTURAL]
 		
-		def POP_KOUT = structuralModel.POP_KOUT
-		assertEquals(".1", POP_KOUT.lo[0])
+		def POP_KOUT = structuralModel[0]
+		assertEquals(".1", POP_KOUT.lo)
 		
-		def POP_AMP = structuralModel.POP_AMP
-		assertEquals("-.75", POP_AMP.lo[0])			
+		def POP_AMP = structuralModel[8]
+		assertEquals("-.75", POP_AMP.lo)			
 
-		def variabilityBlock = paramObj[Parameter.VARIABILITY][0]
+		def variabilityBlock = paramObj[Parameter.VARIABILITY]
 		
 		assertEquals(9, variabilityBlock.size())
 		
@@ -88,18 +94,18 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 		def same1 = 2
 		def PPV_CVTTK0 = 11 
 		def RUV_SDCP = 20
-		def json = getJsonFromMDLFile("complexParameter.mdl")
+		def json = getJsonFromMDLFile("complexParameter.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def paramObj = json["levodopa_variability_par"]
 		assertNotEquals(null, paramObj)
 		
 		def structuralModel = paramObj[Parameter.STRUCTURAL]
-		def POP_TTK0 = structuralModel["POP_TTK0"]
-		assertEquals("2", POP_TTK0.value[0])
-		assertEquals("true", POP_TTK0["fix"][0])
+		def POP_TTK0 = structuralModel[4]
+		assertEquals("2", POP_TTK0.value)
+		assertEquals("true", POP_TTK0["fix"])
 
 	
-		def variabilityModel = paramObj[Parameter.VARIABILITY][0]
+		def variabilityModel = paramObj[Parameter.VARIABILITY]
 		assertEquals(21, variabilityModel.size())
 					
 		struc1 = variabilityModel[struc1]

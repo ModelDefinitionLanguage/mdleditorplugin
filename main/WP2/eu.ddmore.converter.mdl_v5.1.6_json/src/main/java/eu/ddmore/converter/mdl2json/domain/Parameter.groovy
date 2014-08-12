@@ -64,13 +64,14 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	/**
 	 * Parse the structural model block
 	 */
-	private Map makeStructuralModel(StructuralBlock sb) {
-		def retVal = [:]
-		for( SymbolDeclaration sd : sb.getParameters() ) {
-			String symbol = sd.getSymbolName().getName()
-			retVal[symbol] = XtextWrapper.unwrap(sd.getExpression())	
-	}
-		retVal
+	private List makeStructuralModel(StructuralBlock sb) {
+		def structParams = []
+		for (SymbolDeclaration sd : sb.getParameters()) {
+			Map params = XtextWrapper.unwrap(sd.getExpression())
+			params.put("name", sd.getSymbolName().getName())
+			structParams.add(params)
+		}
+		structParams
 	}
 	
 	/**
@@ -205,18 +206,19 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	}
 
 	/**
-	 * Create MDL from a Map of JSON that represents the structural model 
-	 * @param structural
-	 * @return
+	 * Create MDL from a List of JSON that represents the structural model.
+	 * @param structural - the List of JSON
+	 * @return the MDL content
 	 */
-	public String makeStructuralMDL(Map structural) {
+	public String makeStructuralMDL(List structural) {
 		StringBuffer strucStr = new StringBuffer()
 		strucStr.append("\n${IDT}STRUCTURAL{\n")
-		structural.each {parameterName, parameterAttributes ->
+		structural.each {parameterAttributes ->
 			// Sorry!
-			// v is a map of attributes - iterate over them and turn it into the format "x = y"
-			// then join them together with ","
-			strucStr.append("${IDT*2}${parameterName}=list(${parameterAttributes.collect{ key,value->"${key}=${value}"}.join(",")})\n")
+			// Iterate over the Map of parameterAttributes, removing the 'name' attribute (which is put on the LHS
+			// of the written out MDL expression); turn it into the format "x = y"; then join them together with ","
+			def paramAttrName = parameterAttributes['name']
+			strucStr.append("${IDT*2}${paramAttrName}=list(${parameterAttributes.minus(['name':paramAttrName]).collect{ key,value -> "${key}=${value}" }.join(",")})\n")
 		}
 		strucStr.append("${IDT}}")
 		strucStr.toString()

@@ -20,7 +20,7 @@ class TestJSONParameterObjectToMDL extends ConverterTestsParent  {
 
 		MCLFile mclFile = new MCLFile(json)
 		
-		String mdl = mclFile.toMDL()			
+		String mdl = mclFile.toMDL()
 		logger.debug(mdl)
 		assertNotEquals(null, mdl)
 	}
@@ -28,11 +28,11 @@ class TestJSONParameterObjectToMDL extends ConverterTestsParent  {
 	@Test
 	public void testStructuralModel() {
 		
-		def simpleStructuralModel="""{\"STRUCTURAL\": {
-			\"POP_KOUT\":{\"value\":\"0.664\",\"lo\":\".1\",\"hi\":\"10\"},
-			\"POP_PRL0_IN_MALE_HV\":{\"value\":\"7.67\",\"lo\":\"1\",\"hi\":\"15\"},
-			\"POP_PRL0_IN_MALE_PAT\":{\"value\":\"16.1\",\"lo\":\"1\",\"hi\":\"30\"}
-		}}"""
+		def simpleStructuralModel="""{\"STRUCTURAL\": [
+			{\"name\":\"POP_KOUT\", \"value\":\"0.664\",\"lo\":\".1\",\"hi\":\"10\"},
+			{\"name\":\"POP_PRL0_IN_MALE_HV\",\"value\":\"7.67\",\"lo\":\"1\",\"hi\":\"15\"},
+			{\"name\":\"POP_PRL0_IN_MALE_PAT\",\"value\":\"16.1\",\"lo\":\"1\",\"hi\":\"30\"}
+		]}"""
 		
 		def json = new JsonSlurper().parseText(simpleStructuralModel)
 		
