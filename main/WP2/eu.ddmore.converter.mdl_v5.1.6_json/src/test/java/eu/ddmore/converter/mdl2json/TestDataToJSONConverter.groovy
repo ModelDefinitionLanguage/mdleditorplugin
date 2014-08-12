@@ -14,53 +14,57 @@ import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
 import org.junit.Test;
+import org.junit.Ignore;
 
 class TestDataToJSONConverter extends ConverterTestsParent  {
 	private static Logger logger = Logger.getLogger(TestDataToJSONConverter.class)
 		
 	@Test
-	public void testProlactinMay2014() {
+	public void testSourceBlock() {
 		def json = getJsonFromMDLFile("simpleData.mdl")
 			
 		logger.debug(json)
 		
-		def dataObject = json.tumour_size_dat
+		def dataObject = json[0].tumour_size_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 			
 		def source = dataObject[Data.SOURCE]
 		
-		assertEquals("\"tumour_exposure.csv\"", source.file[0])
-		assertEquals("nonmemFormat", source.inputformat[0])
-		assertEquals("\"@\"", source.ignore[0])
-		
-		def dataInputVariables = dataObject[Data.DATA_INPUT_VARIABLES]
-						
-		def ID = dataInputVariables.ID
-		assertEquals("categorical", ID.type[0])
-
-		def TIME = dataInputVariables.TIME
-		assertEquals("\"h\"", TIME.units[0])	
+		assertEquals("Checking file attribute of source block", "\"tumour_exposure.csv\"", source.file)
+		assertEquals("Checking inputFormat attribute of source block", "nonmemFormat", source.inputformat)
+		assertEquals("Checking ignoreChar attribute of source block", "\"@\"", source.ignore)
 	}
 	
-	@Test 
-	void testTumourDataInputVariablesOrder() {
+	@Test
+	public void testDataInputVariablesBlock() {
+		def json = getJsonFromMDLFile("tumourDataObject.mdl")
 		
-		File srcFile = getFile("tumourDataObject.mdl")
+		logger.debug(json)
+	
+		def dataObject = json[0].tumour_size_TABLES_ORG_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
-		MdlParser p = new MdlParser()
-		Mcl mcl = p.parse(srcFile)
+		def dataInputVars = dataObject.DATA_INPUT_VARIABLES
+
+		assertEquals("Checking the number of Data Input Variables", 4, dataInputVars.size())
 		
-		MCLFile f = new MCLFile(mcl)
-			
-		Data dataObject = f.tumour_size_TABLES_ORG_dat	
+		final var1 = dataInputVars[0]
+		assertEquals("Checking Data Input Variable 1/4 - Name", "ID", var1.name)
+		assertEquals("Checking Data Input Variable 1/4 - Type", "categorical", var1.type)
+		assertNull("Checking Data Input Variable 1/4 - Units", var1.units)
 		
-		DataInputVariables divs = dataObject.DATA_INPUT_VARIABLES
+		final var2 = dataInputVars[1]
+		assertEquals("Checking Data Input Variable 2/4 - Name", "TIME", var2.name)
+		assertEquals("Checking Data Input Variable 2/4 - Type", "continuous", var2.type)
+		assertEquals("Checking Data Input Variable 2/4 - Units", "\"h\"", var2.units)
 		
-		def vars = divs.entrySet().toArray()
+		final var3 = dataInputVars[2]
+		assertEquals("Checking Data Input Variable 3/4 - Name", "AMT", var3.name)
+		assertEquals("Checking Data Input Variable 3/4 - Type", "continuous", var3.type)
+		assertEquals("Checking Data Input Variable 3/4 - Units", "\"mg\"", var3.units)
 		
-		assertEquals("ID", vars[0].key)
-		assertEquals("TIME", vars[1].key)
-		assertEquals("AMT", vars[2].key)
-		assertEquals("DV", vars[3].key)
+		final var4 = dataInputVars[3]
+		assertEquals("Checking Data Input Variable 4/4 - Name", "DV", var4.name)
+		assertEquals("Checking Data Input Variable 4/4 - Type", "continuous", var4.type)
+		assertNull("Checking Data Input Variable 4/4 - Units", var4.units)
 	}
 	
 }

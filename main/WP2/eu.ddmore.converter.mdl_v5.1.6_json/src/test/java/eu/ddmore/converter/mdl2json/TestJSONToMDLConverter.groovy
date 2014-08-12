@@ -10,6 +10,7 @@ import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
 import org.junit.Test;
+import org.junit.Ignore;
 
 class TestJSONToMDLConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestJSONToMDLConverter.class)
@@ -27,6 +28,7 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	}
 
     @Test
+	@Ignore("Pending re-generation of MOG from R")
 	public void testRGeneratedMOG() {
 		
 		File jsonFile = getFile("myMog3.json")
@@ -43,4 +45,5 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 		
 		logger.debug(mdl)
 	}
+	
 }

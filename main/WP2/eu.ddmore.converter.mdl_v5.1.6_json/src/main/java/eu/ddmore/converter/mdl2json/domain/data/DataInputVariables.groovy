@@ -9,33 +9,24 @@ import java.util.List;
 import org.ddmore.mdl.mdl.DataInputBlock;
 import org.ddmore.mdl.mdl.SymbolDeclaration;
 
-//import org.ddmore.mdl.mdl.HeaderBlock;
-//import org.ddmore.mdl.mdl.SymbolModification;
-
-public class DataInputVariables extends LinkedHashMap implements MDLPrintable {
+public class DataInputVariables extends ArrayList implements MDLPrintable {
 
 	public DataInputVariables(DataInputBlock dataInputBlock) {
-
-		makeVariables(dataInputBlock);
-	}
-	
-	public DataInputVariables(Map json) {
-		json.each{ k, v ->
-			put(k, new Variable(v))
+		for (SymbolDeclaration sd : dataInputBlock.getVariables()) {
+			add(new Variable(sd));
 		}
 	}
 	
-	private void makeVariables(DataInputBlock dataInputBlock) {
-		for( SymbolDeclaration sd : dataInputBlock.getVariables() ) {
-			Variable v = new Variable(sd);
-			put(v.getName(), v);
-		}	
+	public DataInputVariables(List json) {
+		json.each{ v ->
+			add(new Variable(v))
+		}
 	}
-
+	
 	public String toMDL() {
 		List parameters = []
-		entrySet().each{ entry ->
-			parameters.add("${entry.key}=${entry.value.toMDL()}")
+		each{ v ->
+			parameters.add("${v.name}=${v.toMDL()}")
 		}
 
 		"""

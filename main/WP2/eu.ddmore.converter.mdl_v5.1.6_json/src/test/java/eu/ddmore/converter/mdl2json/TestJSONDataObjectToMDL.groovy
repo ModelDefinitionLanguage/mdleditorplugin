@@ -15,6 +15,9 @@ import org.junit.Test;
 class TestJSONDataObjectToMDL extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestJSONDataObjectToMDL.class)
 	
+	private static String jsonSource = '{"SOURCE":{"file":"\\"tumour_exposure.csv\\"","symbolName":"myData","identifier":"SOURCE","ignore":"\\"@\\"","inputformat":"nonmemFormat"}}'
+	private static String jsonInputVars = '{"DATA_INPUT_VARIABLES":[{"name":"ID","type":"categorical"},{"name":"TIME","type":"continuous","units":"\\"h\\""},{"name":"AMT","type":"continuous","units":"\\"mg\\""},{"name":"DV","type":"continuous"}]}'
+	
 	@Test
 	public void testSource() {
 		def json = getJson(jsonSource)
@@ -25,14 +28,14 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
     
     SOURCE{
         myData=list(
-            file="ex_data_prolactin.csv",
+            file="tumour_exposure.csv",
             ignore="@",
             inputformat=nonmemFormat
         )
     }
 
 }
-"""	
+"""
 		assertEquals(expected, data.toMDL())			
 	}
 	
@@ -44,17 +47,16 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
 		String expected = """dataobj {
     
     DATA_INPUT_VARIABLES {
-        II=list(type=continuous,units="h")
-        CMT=list(type=categorical)
+        ID=list(type=categorical)
+        TIME=list(type=continuous,units="h")
+        AMT=list(type=continuous,units="mg")
+        DV=list(type=continuous)
     }
 
     
 }
 """
-	assertEquals(expected, data.toMDL())
-		//println data.toMDL()		
+		assertEquals(expected, data.toMDL())
 	}
 	
-	private String jsonSource = '{"SOURCE":{"file":"\\"ex_data_prolactin.csv\\"","symbolName":"myData","identifier":"SOURCE","ignore":"\\"@\\"","inputformat":"nonmemFormat"}}}'
-	private String jsonInputVars = '{"DATA_INPUT_VARIABLES":{"II":{"name":"II","type":"continuous","units":"\\"h\\""},"CMT":{"name":"CMT","type":"categorical"}}}'
 }

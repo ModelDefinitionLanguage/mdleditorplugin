@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.apache.log4j.Logger
 
 import eu.ddmore.convertertoolbox.api.response.ConversionReport
+import eu.ddmore.converter.mdl2json.domain.MCLFile
 import eu.ddmore.converter.mdl2json.domain.Parameter
 import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.mdlparse.MdlParser
@@ -31,35 +32,35 @@ class TestMDLToJSONConverter extends ConverterTestsParent {
 	public void testProlactin01July2014() {
         
         def File mdlFile = getFileFromModelsProject("FribergCPT2009/ex_model7_prolactin_01July2014_OAM.mdl")
-		def json = getJsonFromMDLFile(mdlFile)
+		def json = getJsonFromMDLFile(mdlFile)[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 			
 		def dataObject = json.ex_model7_prolactin_May2014_NMT_ORI_dat
 			
 		def source = dataObject[Data.SOURCE]
 		
-		assertEquals("\"ex_data_prolactin.csv\"", source.file[0])
-		assertEquals("nonmemFormat", source.inputformat[0])
-		assertEquals("\"@\"", source.ignore[0])
+		assertEquals("\"ex_data_prolactin.csv\"", source.file)
+		assertEquals("nonmemFormat", source.inputformat)
+		assertEquals("\"@\"", source.ignore)
 		
 		def dataInputVariables = dataObject[Data.DATA_INPUT_VARIABLES]
 				
-		def STU = dataInputVariables.STU
-		assertEquals("continuous", STU.type[0])
+		def STU = dataInputVariables[0] // First D.I.V.
+		assertEquals("continuous", STU.type)
 
-		def TIME = dataInputVariables.TIME
-		assertEquals("\"h\"", TIME.units[0])	
+		def TIME = dataInputVariables[4] // Fifth D.I.V.
+		assertEquals("\"h\"", TIME.units)	
 		
 		def paramObj = json.ex_model7_prolactin_May2014_NMT_ORI_par
-		assertEquals(Parameter.IDENTIFIER, paramObj.identifier[0])
+		assertEquals(Parameter.IDENTIFIER, paramObj.identifier)
 	}
 	
 	@Test
 	public void testOGTTJun2014() {
 		def File mdlFile = getFileFromModelsProject("JauslinCPT2007/run_final_OGTT_04Jun2014_OAM.mdl")
-        def json = getJsonFromMDLFile(mdlFile)
+        def json = getJsonFromMDLFile(mdlFile)[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def paramObj = json.run_final_OGTT_par
-		assertEquals(Parameter.IDENTIFIER, paramObj.identifier[0])
+		assertEquals(Parameter.IDENTIFIER, paramObj.identifier)
 			
 	}
     
