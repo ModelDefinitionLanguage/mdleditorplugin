@@ -37,7 +37,6 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * Ultimately this would be an automated integration test... DDMORE-845.
 	 */
     @Test
-	@Ignore("Pending re-generation of MOG from R")
 	public void testRGeneratedMOG() {
 		
 		File jsonFile = getFile("prolactinOutputMog.json")
@@ -55,7 +54,6 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 		logger.debug(mdl)
 		
 		def dataInputVars = TestJSONModelToMDL.extractSpecificBlock(mdl, "DATA_INPUT_VARIABLES")
-			
 		assertEquals("Checking content of DATA_INPUT_VARIABLES block",
 """    DATA_INPUT_VARIABLES {
         STU=list(type=continuous)
@@ -83,6 +81,29 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
         II=list(type=continuous,units="h")
     }
 """, dataInputVars)
+
+		def structuralParams = TestJSONModelToMDL.extractSpecificBlock(mdl, "STRUCTURAL")
+		assertEquals("Checking content of STRUCTURAL block",
+"""    STRUCTURAL{
+        POP_KOUT=list(lo=.1,value=0.664,hi=10)
+        POP_PRL0_IN_MALE_HV=list(lo=1,value=7.67,hi=15)
+        POP_PRL0_IN_MALE_PAT=list(lo=1,value=16.1,hi=30)
+        POP_PRL0_IN_FEMALES_PAT=list(lo=1,value=35.2,hi=40)
+        POP_PRL0_IN_MALES_STUDY_101=list(lo=0,value=11.3)
+        POP_PRL0_IN_FEMALES_STUDY_101=list(lo=0,value=23.2)
+        POP_KDA=list(lo=0.001,value=.156,hi=50)
+        POP_UPDA=list(lo=0.001,value=1.44,hi=10)
+        POP_AMP=list(lo=-.75,value=0.532,hi=1.5)
+        POP_PHS1=list(lo=12,value=20.1,hi=25)
+        POP_AMP2=list(lo=-.9,value=-.314,hi=0.2)
+        POP_PHS2=list(lo=-2,value=13.7,hi=15)
+        POP_KI=list(lo=0,value=1.96,hi=100)
+        POP_PHASE_SHIFT_IN_PATIENTS=list(lo=-5,value=-1.61)
+        POP_RES_ERR_IN_MALE_HV=list(lo=0,value=.290)
+        POP_RES_ERR_IN_MALE_PATIENTS=list(lo=0,value=.422)
+        POP_RES_ERR_IN_FEMALE_PATIENTS=list(lo=0,value=.571)
+    }
+""", structuralParams)
 		
 		// TODO: Ideally we'd have similar tests for all the blocks
 		

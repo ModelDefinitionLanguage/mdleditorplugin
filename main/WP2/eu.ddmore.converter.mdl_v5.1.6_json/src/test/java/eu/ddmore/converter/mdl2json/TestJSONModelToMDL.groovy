@@ -15,6 +15,10 @@ import eu.ddmore.converter.mdl2json.domain.MCLFile
 class TestJSONModelToMDL extends ConverterTestsParent {
 	private static final Logger logger = Logger.getLogger(TestJSONModelToMDL.class)
 	
+	
+	// TODO: Check all other data blocks too (in other test classes)
+	
+	
 	@Test
 	public void testProlactin() {
 		def mdlFile = getFile("prolactinModel.mdl")
@@ -101,7 +105,7 @@ class TestJSONModelToMDL extends ConverterTestsParent {
 		def interestedIn = false
 		def nestingLevel = -1
 		mdlFileContent.eachLine { str ->
-			if (str.contains(blockName)) {
+			if (str.matches("^\\s*" + blockName + "\\s*\\{")) {
 				interestedIn = true
 				// There might be open curly brackets before the name of the block name; the '-' sign on the RHS is deliberate
 				nestingLevel = - StringUtils.countMatches(str.split(blockName)[0], "{")
