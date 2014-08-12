@@ -158,7 +158,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	}	
 
 	/**
-	 * Extract the lower triangular matrix from a list of Symbol
+	 * Extract the lower triangular matrix from a list of Symbols.
 	 * 
 	 * @param symbols
 	 * @return A String, representing the lower triangular matrix, separated by newlines
@@ -197,12 +197,12 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	/**
 	 * Returns a list of symbol names
 	 */
-	private List getContentFromSymbolNames(SymbolNames symbolNames) {
+	private String getContentFromSymbolNames(SymbolNames symbolNames) {
 		List symbols = []
 		for(SymbolName s : symbolNames.getSymbolNames()) {
 			symbols.add(s.getName())
 		}
-		symbols
+		symbols.join(",\n")
 	}
 
 	/**

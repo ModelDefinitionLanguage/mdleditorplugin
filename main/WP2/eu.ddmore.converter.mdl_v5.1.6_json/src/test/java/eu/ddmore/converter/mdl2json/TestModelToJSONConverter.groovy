@@ -12,7 +12,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	
 	@Test
     void testModelObjectWithObservationBlock() {
-		def json = getJsonFromMDLFile("prolactinModel.mdl")
+		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")
 		
 		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
 		
@@ -139,7 +139,7 @@ Y = IPRED+W*eps_RUV_EPS
     
     @Test
     public void testModelObjectModelPredictionObject() {
-        def json = getJsonFromMDLFile("prolactinModel.mdl")
+        def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")
         
         def modelObject = json.ex_model7_prolactin_Jan2014_mdl
         

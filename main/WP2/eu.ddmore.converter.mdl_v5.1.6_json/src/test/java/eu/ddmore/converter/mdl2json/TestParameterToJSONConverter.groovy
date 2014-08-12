@@ -58,8 +58,6 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	public void testParameterWithMatrix() {
-		def struc1 = 0
-		def PPV_KOUT = 1
 
 		def json = getJsonFromMDLFile("parameterWithMatrix.mdl")
 		
@@ -77,15 +75,31 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 		
 		assertEquals(9, variabilityBlock.size())
 		
-		struc1 = variabilityBlock[struc1]
+		def struc1 = variabilityBlock[0]
 		def attributes = struc1["matrix"]
+		assertEquals("\"struc1\"", attributes["name"])
+		assertEquals("VAR", attributes["type"])
 		assertEquals("PPV_PRL0=.425,\n.758,PPV_KI=1.82", attributes["content"])
 		
-		
-		PPV_KOUT = variabilityBlock[PPV_KOUT]
+		def PPV_KOUT = variabilityBlock[1]
 		attributes = PPV_KOUT["PPV_KOUT"]
+		assertEquals("VAR", attributes["type"])
 		assertEquals("0.589", attributes["value"])
 
+		def sameBlk = variabilityBlock[5]
+		attributes = sameBlk["same"]
+		assertEquals("\"struc2\"", attributes["name"])
+		assertEquals(
+"""PPV_IOV_IN_PRL0_2,
+PPV_IOV_IN_PRL0_2_copyfortesting""", attributes["content"])
+		
+		def diagBlk = variabilityBlock[4]
+		attributes = diagBlk["diag"]
+		assertEquals("\"struc2\"", attributes["name"])
+		assertEquals("VAR", attributes["type"])
+		assertEquals(
+"""PPV_IOV_IN_PRL0_1=.0657,
+PPV_IOV_IN_PRL0_1_copyfortesting=.0657""", attributes["content"])
 	}
 	
 	@Test
@@ -104,13 +118,13 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 		assertEquals("2", POP_TTK0.value)
 		assertEquals("true", POP_TTK0["fix"])
 
-	
 		def variabilityModel = paramObj[Parameter.VARIABILITY]
 		assertEquals(21, variabilityModel.size())
 					
 		struc1 = variabilityModel[struc1]
 		def attributes = struc1["matrix"]
-		String expectedStruc1Matrix = """BSVV1=0.015,
+		String expectedStruc1Matrix =
+"""BSVV1=0.015,
 0.00377,BSVCL=0.0158,
 0.0156,0.0127,BSVV2=0.0218,
 0.0273,0.0282,0.0411,BSVQ=0.0804"""
@@ -118,7 +132,10 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 		
 		same1 = variabilityModel[same1]
 		attributes = same1["same"]
-		assertEquals(["BOVCL2", "BOVV22", "BOVQ2" ], attributes["content"])
+		assertEquals(
+"""BOVCL2,
+BOVV22,
+BOVQ2""", attributes["content"])
 	
 		PPV_CVTTK0 = variabilityModel[PPV_CVTTK0]
 		attributes = PPV_CVTTK0["PPV_CVTTK0"]

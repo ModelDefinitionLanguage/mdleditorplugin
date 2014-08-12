@@ -37,10 +37,12 @@ ex_model7_prolactin_Jan2014_par = parobj{
       PPV_AMP1=list(value= .0558 ,type=VAR)
       PPV_PHS2=list(value= 1.80 ,type=VAR)
       diag(name="struc2",type=VAR) {
-         PPV_IOV_IN_PRL0_1=.0657
+         PPV_IOV_IN_PRL0_1=.0657,
+         PPV_IOV_IN_PRL0_1_copyfortesting=.0657
       } # end diag struc2
       same(name="struc2") {
-         PPV_IOV_IN_PRL0_2
+         PPV_IOV_IN_PRL0_2,
+         PPV_IOV_IN_PRL0_2_copyfortesting
       } # end same struc2
       same(name="struc2") {
          PPV_IOV_IN_PRL0_3
