@@ -1,16 +1,12 @@
 package eu.ddmore.converter.mdl2json;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
 import org.apache.log4j.Logger
+import org.junit.Test
+import org.junit.Ignore
 
 import eu.ddmore.converter.mdl2json.domain.MCLFile
-import eu.ddmore.convertertoolbox.api.response.ConversionReport
-import eu.ddmore.mdlparse.MdlParser
-import groovy.json.JsonSlurper
-import org.ddmore.mdl.mdl.Mcl
-import org.junit.Test;
-import org.junit.Ignore;
 
 class TestJSONToMDLConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestJSONToMDLConverter.class)
