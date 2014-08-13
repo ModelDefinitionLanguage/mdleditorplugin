@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>converter-mdl_v5.1.6_json</artifactId>
-	<name>Converter Provider for MDL 5.1.6 to JSON</name>
-	
 	<parent>
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>0.0.5-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>converter-mdl_v5.1.6_json</artifactId>
+	<version>0.0.5-SNAPSHOT</version>
+	<name>Converter Provider: MDL to JSON</name>
 
 	<properties>
  		<xtend.repo.url>http://build.eclipse.org/common/xtend/maven/</xtend.repo.url>
@@ -31,7 +32,7 @@
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>converter-toolbox</artifactId>
-			<version>${project.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
