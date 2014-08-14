@@ -47,6 +47,38 @@ class TestJSONModelToMDL extends ConverterTestsParent {
 				
 	}
 	
+	@Test
+	public void testVariabilityParametersBlock() {
+		File jsonFile = getFile("drugX_ModelObject_VariabilityParameters.json")
+		
+		String content = jsonFile.getText()
+		
+		def json = getJson(content)
+		
+		Model m = new Model(json)
+		
+		logger.debug(m.toMDL())
+		
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(getFile("drugX_ModelObject.mdl"), "VARIABILITY_PARAMETERS", m.toMDL());
+	}
+	
+	@Test
+	public void testRandomVariableDefinitionBlock() {
+
+		File jsonFile = getFile("drugX_ModelObject_RandomVariableDefinition.json")
+		
+		String content = jsonFile.getText()
+		
+		def json = getJson(content)
+		
+		Model m = new Model(json)
+		
+		logger.debug(m.toMDL())
+		
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(getFile("drugX_ModelObject.mdl"), "RANDOM_VARIABLE_DEFINITION", m.toMDL());
+				
+	}
+	
 	
 	// TODO: Check all other data blocks too (in other test classes)
 	

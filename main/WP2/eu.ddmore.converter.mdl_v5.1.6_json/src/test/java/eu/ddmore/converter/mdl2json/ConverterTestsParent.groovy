@@ -130,15 +130,17 @@ class ConverterTestsParent {
 	 * @return fragment of MDL that is identical save for the ordering of aforementioned lists of parameters
 	 */
 	private static String putParameterListsIntoKnownOrder(final String str) {
-
-		final Matcher matcher = ( str =~ /=list\((.+)\)/)
+		
+		final Matcher matcher = ( str =~ /(?:=list|\~)\s*\(\s*(.+)\s*\)/)
 		
 		def outStr = str
 		
 		while (matcher.find()) {
-			String[] params = matcher.group(1).split(",")
+			String[] params = matcher.group(1).split(/\s*,\s*/)
 			outStr = outStr.replace(matcher.group(1), params.sort().join(","))
 		}
+		
+		logger.debug("outStr = " + outStr)
 		
 		outStr
 	}

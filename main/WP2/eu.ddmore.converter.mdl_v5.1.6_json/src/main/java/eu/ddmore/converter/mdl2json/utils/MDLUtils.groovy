@@ -26,8 +26,10 @@ public class MDLUtils {
 		def symbList = []
 		for (SymbolDeclaration sd : symbolDeclList) {
 			Map params = [:]
-			if (null != sd.getExpression()) {
+			if (sd.getExpression() != null) {
 				params.putAll(XtextWrapper.unwrap(sd.getExpression()))
+			} else if (sd.getRandomList() != null) {
+				params.putAll(XtextWrapper.unwrap(sd.getRandomList().getArguments()))
 			}
 			params.put("name", sd.getSymbolName().getName())
 			symbList.add(params)
@@ -42,6 +44,9 @@ public class MDLUtils {
 	 * a list where each entry is of the required MDL form
 	 * <code>MYVAR=list(myparam1=myvalue1,myparam2=myvalue2,...)</code>).
 	 * Concatenate all these and return the resulting string.
+	 * <p>
+	 * For {@link SymbolDeclaration}s that have no parameters, the generated empty "=list()" is dropped,
+	 * so this method can be used for blocks whose variables don't accept parameters.
 	 * <p>
 	 * The "reverse" method is {@link #makeSymbolNamedList(List)}.
 	 * <p>
@@ -81,27 +86,4 @@ public class MDLUtils {
 		return "\n${IDT}${blockName} {\n${IDT*2}" + str + "\n${IDT}}"
 	}
 
-	/**
-	 * Turn a symbol declaration into a map of "name" = "expression"
-	 */
-	public static Map makeSymbol(SymbolDeclaration symbolDeclaration) {
-		Map m = [:]
-		Map val = [:]
-		if(symbolDeclaration.getExpression()!= null) {
-			val = XtextWrapper.unwrap(symbolDeclaration.getExpression())	
-		} else if(symbolDeclaration.getRandomList()!=null) {
-			val = XtextWrapper.unwrap(symbolDeclaration.getRandomList().getArguments())
-		}
-		m[symbolDeclaration.getSymbolName().getName()] = val
-		m
-	}
-	
-	/**
-	 * Turn a symbol declaration into a map of "name" = "expression"
-	 */
-//	private Map makeSymbol(SymbolDeclaration symbolDeclaration) {
-//		Map m = [:]
-//		m[symbolDeclaration.getSymbolName().getName()] = XtextWrapper.unwrap(symbolDeclaration.getExpression())
-//		m
-//	}
 }

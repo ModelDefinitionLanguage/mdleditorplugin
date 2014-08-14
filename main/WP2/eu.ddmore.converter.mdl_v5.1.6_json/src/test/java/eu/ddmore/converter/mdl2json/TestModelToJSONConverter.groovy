@@ -28,8 +28,6 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	void testStructuralParametersBlock() {
 		def json = getJsonFromMDLFile("drugX_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
-		logger.debug(json)
-		
 		def modelObject = json.drugX_mdl
 		
 		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
@@ -43,17 +41,37 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	}
 	
 	@Test
-	void testVariabilityParametersBLock() {
-		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")
+	void testVariabilityParametersBlock() {
+		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
 		
-		logger.debug(modelObject)
-
 		def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
+		
+		logger.debug(variabilityParameters)
+		
 		assertEquals("Checking the list of Variability Parameters",
-			[ "PPV_PRL0", "PPV_KI", "PPV_KOUT", "PPV_AMP1", "PPV_PHS2", "PPV_IOV_IN_PRL0_1", "PPV_IOV_IN_PRL0_2", "PPV_IOV_IN_PRL0_3", "PPV_IOV_IN_PRL0_4", "RUV_EPS1" ],
-			variabilityParameters[0])
+			[ "PPV_PRL0", "PPV_KI", "PPV_KOUT", "PPV_AMP1", "PPV_PHS2", "PPV_IOV_IN_PRL0_1", "PPV_IOV_IN_PRL0_2", "PPV_IOV_IN_PRL0_3", "PPV_IOV_IN_PRL0_4", "RUV_EPS1" ].collect{
+				[ 'name': it ]
+			}, variabilityParameters)
+	}
+	
+	@Test
+	void testRandomVariableDefinitionBlock() {
+		def json = getJsonFromMDLFile("drugX_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		
+		def modelObject = json.drugX_mdl
+	
+		def randomVariableDefinitions = modelObject.RANDOM_VARIABLE_DEFINITION
+		
+		logger.debug(randomVariableDefinitions)
+		
+		assertEquals("Checking the list of Random Variable Definitions", [
+			[ 'name':'eta_PPV_Vc', 'type':'normal', 'mean':'0', 'var':'PPV_Vc', 'level':'ID' ],
+			[ 'name':'eta_PPV_Vp', 'type':'normal', 'mean':'0', 'var':'PPV_Vp', 'level':'ID' ],
+			[ 'name':'eta_PPV_CL', 'type':'normal', 'mean':'0', 'var':'PPV_CL', 'level':'ID' ],
+			[ 'name':'eps_RUV_EPS', 'type':'normal', 'mean':'0', 'var':'RUV_EPS', 'level':'DV' ]
+			], randomVariableDefinitions)
 	}
 	
 	@Test
@@ -99,14 +117,6 @@ GRPn = POP_n
 		// Note that we need to make the line endings consistent between actual vs expected
 		assertEquals("Checking the Group Variables block", expectedGroupVariablesBlock, groupVariables[0].replace("\r\n", "\n"))
 	
-		def randomVariableDefinitions = modelObject.RANDOM_VARIABLE_DEFINITION
-		
-		def randvardefn_EPSRUVEPS = randomVariableDefinitions.eps_RUV_EPS
-		assertEquals("normal", randvardefn_EPSRUVEPS[0].type[0])
-		assertEquals("0", randvardefn_EPSRUVEPS[0].mean[0])
-		assertEquals("RUV_EPS", randvardefn_EPSRUVEPS[0].var[0])
-		assertEquals("DV", randvardefn_EPSRUVEPS[0].level[0])
-		
 		def individualVariables = modelObject.INDIVIDUAL_VARIABLES
 		
 		def expectedIndividualVariablesBlock = """Vc = GRPVc*exp(eta_PPV_Vc)

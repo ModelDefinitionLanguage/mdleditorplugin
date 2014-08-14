@@ -62,7 +62,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 				setProperty(GROUP_VARIABLES, makeGroupVariables(modelObjectBlock.getGroupVariablesBlock()))
 			} else if(modelObjectBlock.getRandomVariableDefinitionBlock()) {
 				// Random Variable Definition
-				setProperty(RANDOM_VARIABLE_DEFINITION, makeRandomBlock(modelObjectBlock.getRandomVariableDefinitionBlock()))
+				setProperty(RANDOM_VARIABLE_DEFINITION, makeRandomVariableDefinitionBlock(modelObjectBlock.getRandomVariableDefinitionBlock()))
 			} else if(modelObjectBlock.getIndividualVariablesBlock()) {
 				// Individual Variables
 				setProperty(INDIVIDUAL_VARIABLES, makeIndividualVariables(modelObjectBlock.getIndividualVariablesBlock()))
@@ -111,9 +111,8 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		MDLUtils.makeSymbolNamedList(structuralParametersBlock.getParameters())
 	}
 
-	private makeVariabilityParameters(VariabilityParametersBlock variabilityParameters) {
-		List symbolDeclarations = variabilityParameters.getParameters()
-		makeSymbols(symbolDeclarations)
+	private List makeVariabilityParameters(VariabilityParametersBlock variabilityParameters) {
+		MDLUtils.makeSymbolNamedList(variabilityParameters.getParameters())
 	}
 
 	private makeGroupVariables(GroupVariablesBlock groupVariables) {
@@ -140,6 +139,10 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 			statements.add(mdlPrinter.print(statement))
 		}
 		statements.join("${IDT*2}")
+	}
+	
+	private List makeRandomVariableDefinitionBlock(RandomVariableDefinitionBlock randomVariables) {
+		MDLUtils.makeSymbolNamedList(randomVariables.getVariables())
 	}
 
     private makeModelPredictionBlock(ModelPredictionBlock mpb) {
@@ -177,10 +180,6 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
         modPredBlock
 	}
 	
-	private makeRandomBlock(RandomVariableDefinitionBlock randomVariables) {
-		makeSymbols(randomVariables.getVariables())
-	}
-	
 	/**
 	 * Make the observation block
 	 */
@@ -199,33 +198,25 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		}
 		statements.toString()
 	}
-		
-	private List makeSymbols(symbolDeclarations) {
-		List symbols = []
-		for( SymbolDeclaration sd : symbolDeclarations ) {
-			if(sd.getExpression()!=null) {
-				symbols.add(MDLUtils.makeSymbol(sd))
-			} else if(sd.getRandomList() != null ) {
-				symbols.add(MDLUtils.makeSymbol(sd))
-			} else {
-				symbols.add(sd.getSymbolName().getName())
-			}
-		}
-		symbols
-	}
-	
-	public String makeRandomVariableMDL(List randomVariables) {
+
+	/**
+	 * Given JSON-format List of Maps representing Random Variable Definitions,
+	 * process each one: Extract the 'name' attribute and put this on the LHS of
+	 * a string expression; turn the remaining attributes in the Map into a
+	 * comma-separated list of "key=value", in one enclosing set of brackets,
+	 * and put this on the RHS of the string expression; put the operator in between
+	 * as "~". After processing all variable definitions in the list, join all the
+	 * generated string expressions together to produce the MDL fragment.
+	 * 
+	 * @param randomVariables - In JSON format, i.e. a List of Maps
+	 * @return the equivalent MDL fragment
+	 */
+	public String makeRandomVariableMDL(List<Map> randomVariables) {
 		List varStrings = []
-		randomVariables.each {variable ->
-			// A variable is a map
-			// Key is variable name
-			// Value is the variable attributes
-			// Iterate over them and turn it into the format "x ~ y"
-			// Join attributes together with ","
-			variable.each { variableName, attributes ->
-				String vstr = "${variableName} ~ (${attributes.collect{ key,value->"${key}=${value}"}.join(",")})"
-				varStrings.add(vstr)
-			}
+		randomVariables.each {randomVariable ->
+			def randomVarName = randomVariable['name']
+			def randomVarAttrs = randomVariable.minus(['name':randomVarName])
+			varStrings.add("${randomVarName} ~ (${randomVarAttrs.collect{ key,value->"${key}=${value}"}.join(",")})")
 		}
 		varStrings.join("\n${IDT*2}")
 	}
@@ -265,10 +256,10 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 					break;
 				case "MODEL_INPUT_VARIABLES":
 				case "STRUCTURAL_PARAMETERS":
+				case "VARIABILITY_PARAMETERS":
 					mdl.append(MDLUtils.makeMDLFromSymbolNamedList(content)).append("\n")
 					break;
 				case "MODEL_OUTPUT_VARIABLES":
-				case "VARIABILITY_PARAMETERS":
 					mdl.append(content.join("\n${IDT*2}")).append("\n")
 					break;
 				case "GROUP_VARIABLES":
