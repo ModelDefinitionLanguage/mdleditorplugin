@@ -6,6 +6,8 @@ import org.apache.log4j.Logger
 import org.junit.Test
 
 import eu.ddmore.converter.mdl2json.domain.MCLFile
+import eu.ddmore.converter.mdl2json.domain.Model
+import groovy.json.JsonSlurper
 
 
 class TestJSONModelToMDL extends ConverterTestsParent {
@@ -25,19 +27,17 @@ class TestJSONModelToMDL extends ConverterTestsParent {
 		
 		logger.debug(mclFile.toMDL())
 		
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "MODEL_INPUT_VARIABLES", mclFile.toMDL())
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "INDIVIDUAL_VARIABLES", mclFile.toMDL())
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "GROUP_VARIABLES", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "STRUCTURAL_PARAMETERS", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "VARIABILITY_PARAMETERS", mclFile.toMDL())
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "OBSERVATION", mclFile.toMDL())
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "ESTIMATION", mclFile.toMDL()) // Actually empty since it doesn't exist in the MDL file
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "MODEL_OUTPUT_VARIABLES", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "MODEL_PREDICTION", mclFile.toMDL())
 		// Other blocks to check:
-		//MODEL_INPUT_VARIABLEs
-		//STRUCTURAL_PARAMETERS
-		//VARIABILITY_PARAMETERS
 		//RANDOM_VARIABLE_DEFINITION
-		//MODEL_PREDICTION::ODE
-		//MODEL_PREDICTION::LIBRARY
-		//MODEL_PREDICTION::content
-		//MODEL_OUTPUT_VARIABLES
 		
 	}
 	
@@ -51,19 +51,17 @@ class TestJSONModelToMDL extends ConverterTestsParent {
 		
 		logger.debug(mclFile.toMDL())
 		
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "MODEL_INPUT_VARIABLES", mclFile.toMDL())
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "INDIVIDUAL_VARIABLES", mclFile.toMDL())
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "GROUP_VARIABLES", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "STRUCTURAL_PARAMETERS", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "VARIABILITY_PARAMETERS", mclFile.toMDL())
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "OBSERVATION", mclFile.toMDL()) // Actually empty since it doesn't exist in the MDL file
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "ESTIMATION", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "MODEL_OUTPUT_VARIABLES", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "MODEL_PREDICTION", mclFile.toMDL())
 		// Other blocks to check:
-		//MODEL_INPUT_VARIABLEs
-		//STRUCTURAL_PARAMETERS
-		//VARIABILITY_PARAMETERS
 		//RANDOM_VARIABLE_DEFINITION
-		//MODEL_PREDICTION::ODE
-		//MODEL_PREDICTION::LIBRARY
-		//MODEL_PREDICTION::content
-		//MODEL_OUTPUT_VARIABLES
 		
 	}
 	
