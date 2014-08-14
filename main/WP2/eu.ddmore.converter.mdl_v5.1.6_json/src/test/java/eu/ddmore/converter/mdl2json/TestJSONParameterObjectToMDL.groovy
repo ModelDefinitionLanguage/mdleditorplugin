@@ -42,7 +42,7 @@ class TestJSONParameterObjectToMDL extends ConverterTestsParent  {
 		Parameter p = new Parameter(json)
 		
 		String expected = """parobj {
-    STRUCTURAL{
+    STRUCTURAL {
         POP_KOUT=list(lo=.1,value=0.664,hi=10)
         POP_PRL0_IN_MALE_HV=list(lo=1,value=7.67,hi=15)
         POP_PRL0_IN_MALE_PAT=list(lo=1,value=16.1,hi=30)

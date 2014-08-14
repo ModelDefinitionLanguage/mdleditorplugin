@@ -1,7 +1,5 @@
 package eu.ddmore.converter.mdl2json.domain;
 
-import javax.management.MBeanAttributeInfo;
-
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.Arguments
@@ -21,9 +19,9 @@ import org.ddmore.mdl.mdl.TargetBlock
 import org.ddmore.mdl.mdl.VariabilityBlock
 import org.ddmore.mdl.mdl.VariabilityBlockStatement
 
-import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
-import eu.ddmore.converter.mdl2json.utils.MDLUtils;
-import eu.ddmore.converter.mdlprinting.MdlPrinter;
+import eu.ddmore.converter.mdl2json.utils.MDLUtils
+import eu.ddmore.converter.mdl2json.utils.XtextWrapper
+import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	private static Logger logger = Logger.getLogger(Parameter.class)
@@ -65,13 +63,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	 * Parse the structural model block
 	 */
 	private List makeStructuralModel(StructuralBlock sb) {
-		def structParams = []
-		for (SymbolDeclaration sd : sb.getParameters()) {
-			Map params = XtextWrapper.unwrap(sd.getExpression())
-			params.put("name", sd.getSymbolName().getName())
-			structParams.add(params)
-		}
-		structParams
+		MDLUtils.makeSymbolNamedList(sb.getParameters())
 	}
 	
 	/**
@@ -204,25 +196,6 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 		}
 		symbols.join(",\n")
 	}
-
-	/**
-	 * Create MDL from a List of JSON that represents the structural model.
-	 * @param structural - the List of JSON
-	 * @return the MDL content
-	 */
-	public String makeStructuralMDL(List structural) {
-		StringBuffer strucStr = new StringBuffer()
-		strucStr.append("\n${IDT}STRUCTURAL{\n")
-		structural.each {parameterAttributes ->
-			// Sorry!
-			// Iterate over the Map of parameterAttributes, removing the 'name' attribute (which is put on the LHS
-			// of the written out MDL expression); turn it into the format "x = y"; then join them together with ","
-			def paramAttrName = parameterAttributes['name']
-			strucStr.append("${IDT*2}${paramAttrName}=list(${parameterAttributes.minus(['name':paramAttrName]).collect{ key,value -> "${key}=${value}" }.join(",")})\n")
-		}
-		strucStr.append("${IDT}}")
-		strucStr.toString()
-	}
 	
 	public String makeVariabilityMDL(List variability) {
 		StringBuffer strucStr = new StringBuffer()
@@ -264,10 +237,10 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 		Properties p = getProperties()
 		
 		StringBuffer mdl = new StringBuffer()
-		if(p.containsKey(STRUCTURAL)) {
-			mdl.append(makeStructuralMDL(p.get(STRUCTURAL)))
+		if (p.containsKey(STRUCTURAL)) {
+			mdl.append(MDLUtils.makeMDLFromSymbolNamedList(p.get(STRUCTURAL), "STRUCTURAL"))
 		}
-		if(p.containsKey(VARIABILITY)) {
+		if (p.containsKey(VARIABILITY)) {
 			mdl.append(makeVariabilityMDL(p.get(VARIABILITY)))
 		}
 		
