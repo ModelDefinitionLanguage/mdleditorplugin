@@ -23,9 +23,8 @@ class TestJSONParameterObjectToMDL extends ConverterTestsParent  {
 		
 		logger.debug(mclFile.toMDL())
 
-		// TODO: Need to cater for the reordering of parameters within a Map before we can reinstate these checks
-		//extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "STRUCTURAL", mclFile.toMDL())
-		//extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "VARIABILITY", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "STRUCTURAL", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "VARIABILITY", mclFile.toMDL())
 		
 	}
 	

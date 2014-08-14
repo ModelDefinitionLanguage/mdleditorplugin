@@ -9,6 +9,7 @@ import org.ddmore.mdl.mdl.Mcl
 
 import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
+import java.util.regex.Matcher
 
 class ConverterTestsParent {
 
@@ -64,8 +65,8 @@ class ConverterTestsParent {
 	public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final String newMdlFileContent) {
 		def String origMdlFileContent = readInAndStripComments(origMdlFile)
 		
-		def String origMdlFileBlockContent = extractSpecificBlock(origMdlFileContent, blockName)
-		def String newMdlFileBlockContent = extractSpecificBlock(newMdlFileContent, blockName)
+		def String origMdlFileBlockContent = putParameterListsIntoKnownOrder(extractSpecificBlock(origMdlFileContent, blockName))
+		def String newMdlFileBlockContent = putParameterListsIntoKnownOrder(extractSpecificBlock(newMdlFileContent, blockName))
 		
 		// Trim off whitespace from both the expected and the actual
 		// Also drop any { } brackets around an "if" statement which are always added when writing out to MDL
@@ -116,6 +117,29 @@ class ConverterTestsParent {
 		}
 		
 		strBuf.toString()
+	}
+	
+	/**
+	 * Find all occurrences of lists of parameters (i.e. <code>use=covariate, type=continuous</code>
+	 * in the line of MDL <code>RATE=list(use=covariate,type=continuous)</code>), within the given
+	 * MDL fragment, and rewrite these lists to be alphabetically ordered by key in order to facilitate
+	 * comparison of the MDL fragment.
+	 * <p>
+	 * @param str - original fragment of MDL
+	 * @return fragment of MDL that is identical save for the ordering of aforementioned lists of parameters
+	 */
+	private static String putParameterListsIntoKnownOrder(final String str) {
+
+		final Matcher matcher = ( str =~ /=list\((.+)\)/)
+		
+		def outStr = str
+		
+		while (matcher.find()) {
+			String[] params = matcher.group(1).split(",")
+			outStr = outStr.replace(matcher.group(1), params.sort().join(","))
+		}
+		
+		outStr
 	}
 	
 }
