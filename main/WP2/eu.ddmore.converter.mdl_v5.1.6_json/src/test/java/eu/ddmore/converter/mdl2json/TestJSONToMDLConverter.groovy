@@ -33,7 +33,6 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * Ultimately this would be an automated integration test... DDMORE-845.
 	 */
     @Test
-	@Ignore("Pending update of the JSON data")
 	public void testRGeneratedMOG() {
 		
 		File jsonFile = getFile("prolactinOutputMog.json")
@@ -81,7 +80,7 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 
 		def structuralParams = TestJSONModelToMDL.extractSpecificBlock(mdl, "STRUCTURAL")
 		assertEquals("Checking content of STRUCTURAL block",
-"""    STRUCTURAL{
+"""    STRUCTURAL {
         POP_KOUT=list(lo=.1,value=0.664,hi=10)
         POP_PRL0_IN_MALE_HV=list(lo=1,value=7.67,hi=15)
         POP_PRL0_IN_MALE_PAT=list(lo=1,value=16.1,hi=30)
