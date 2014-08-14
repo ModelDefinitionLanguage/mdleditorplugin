@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
 
+	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-systemtest</artifactId>
 	<version>1.0.0</version>
 	<name>Automated Converter Test Models Execution</name>
+
 	<description>
 Automated execution of converters over all models within the eu.ddmore.testdata.models project.
 Note that the generated output models aren't verified in terms of content, just that they were produced and that the conversions didn't produce errors.
