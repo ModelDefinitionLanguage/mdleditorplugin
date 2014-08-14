@@ -33,6 +33,7 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * Ultimately this would be an automated integration test... DDMORE-845.
 	 */
     @Test
+	@Ignore("Pending update of the JSON data")
 	public void testRGeneratedMOG() {
 		
 		File jsonFile = getFile("prolactinOutputMog.json")

@@ -1,5 +1,6 @@
 package eu.ddmore.converter.mdl2json.domain;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger
@@ -48,7 +49,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		for(ModelObjectBlock modelObjectBlock : modelObject.getBlocks()) {
 			if(modelObjectBlock.getInputVariablesBlock()) {
 				// Model Input Variables - note, getter is called InputVariables
-				setProperty(MODEL_INPUT_VARIABLES,  makeModelInputVariables(modelObjectBlock.getInputVariablesBlock()) )
+				setProperty(MODEL_INPUT_VARIABLES, makeModelInputVariables(modelObjectBlock.getInputVariablesBlock()) )
 			}
 			else if(modelObjectBlock.getStructuralParametersBlock()) {
 				// Structural Parameters
@@ -96,8 +97,8 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		getProperties().putAll(json)
 	}
 	
-	private Map makeModelInputVariables(InputVariablesBlock inputVariables) {
-		MDLUtils.makeSymbolMap(inputVariables.getVariables())
+	private List makeModelInputVariables(InputVariablesBlock inputVariables) {
+		MDLUtils.makeSymbolNamedList(inputVariables.getVariables())
 	}
 
 	private List makeModelOutputVariables(OutputVariablesBlock outputVariables) {
@@ -106,8 +107,8 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		}
 	}
 
-	private Map makeStructuralParameters(StructuralParametersBlock structuralParametersBlock) {
-		MDLUtils.makeSymbolMap(structuralParametersBlock.getParameters())
+	private List makeStructuralParameters(StructuralParametersBlock structuralParametersBlock) {
+		MDLUtils.makeSymbolNamedList(structuralParametersBlock.getParameters())
 	}
 
 	private makeVariabilityParameters(VariabilityParametersBlock variabilityParameters) {
@@ -213,22 +214,6 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		symbols
 	}
 	
-	/**
-	 * Convert map of attributes to string
-	 */
-	public String makeMapAttributesString(Map variables) {
-		List varStrings = []
-		variables.each {name, attributes ->
-			// Sorry!
-			// v is a map of attributes - iterate over them and turn it into the format "x = y"
-			// then join them together with ","
-			// ... but if y is null then just return x  :-)
-			String vstr = attributes == null ? "${name}" : "${name}=list(${attributes.collect{ key,value->"${key}=${value}"}.join(",")})"
-			varStrings.add(vstr)
-		}
-		varStrings.join("\n${IDT*2}")
-	}
-	
 	public String makeRandomVariableMDL(List randomVariables) {
 		List varStrings = []
 		randomVariables.each {variable ->
@@ -267,7 +252,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		
 		getProperties().minus(["identifier":"mdlobj"]).each { block, content ->
 			mdl.append("\n${IDT}${block} {\n${IDT*2}")
-			switch(block) {
+			switch (block) {
 				case "MODEL_PREDICTION":
 					mdl.append(makeModelPredictionMDLBlock(content));
 					break;
@@ -280,7 +265,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 					break;
 				case "MODEL_INPUT_VARIABLES":
 				case "STRUCTURAL_PARAMETERS":
-					mdl.append(makeMapAttributesString(content)).append("\n")
+					mdl.append(MDLUtils.makeMDLFromSymbolNamedList(content)).append("\n")
 					break;
 				case "MODEL_OUTPUT_VARIABLES":
 				case "VARIABILITY_PARAMETERS":

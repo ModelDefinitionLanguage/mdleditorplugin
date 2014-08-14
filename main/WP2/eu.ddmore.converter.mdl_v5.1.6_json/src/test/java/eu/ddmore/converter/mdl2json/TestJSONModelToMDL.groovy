@@ -13,6 +13,40 @@ import groovy.json.JsonSlurper
 class TestJSONModelToMDL extends ConverterTestsParent {
 	private static final Logger logger = Logger.getLogger(TestJSONModelToMDL.class)
 	
+	@Test
+	public void testModelInputVariablesBlock() {
+
+		File jsonFile = getFile("prolactin_ModelObject_ModelInputVariables.json")
+		
+		String content = jsonFile.getText()
+		
+		def json = getJson(content)
+		
+		Model m = new Model(json)
+		
+		logger.debug(m.toMDL())
+		
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(getFile("prolactin_ModelObject.mdl"), "MODEL_INPUT_VARIABLES", m.toMDL());
+				
+	}
+	
+	@Test
+	public void testStructuralParametersBlock() {
+
+		File jsonFile = getFile("drugX_ModelObject_StructuralParameters.json")
+		
+		String content = jsonFile.getText()
+		
+		def json = getJson(content)
+		
+		Model m = new Model(json)
+		
+		logger.debug(m.toMDL())
+		
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(getFile("drugX_ModelObject.mdl"), "STRUCTURAL_PARAMETERS", m.toMDL());
+				
+	}
+	
 	
 	// TODO: Check all other data blocks too (in other test classes)
 	

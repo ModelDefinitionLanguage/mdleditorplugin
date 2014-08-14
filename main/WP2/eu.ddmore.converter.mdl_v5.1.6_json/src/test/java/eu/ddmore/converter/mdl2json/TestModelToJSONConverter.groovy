@@ -11,20 +11,46 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestModelToJSONConverter.class)
 	
 	@Test
+	void testModelInputVariablesBlock() {
+		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		
+		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
+		
+		def inputVariables = modelObject.MODEL_INPUT_VARIABLES
+		
+		logger.debug(inputVariables)
+		
+		assertEquals("Checking number of input variables", 23, inputVariables.size())
+		assertEquals("Checking variable \"STU\"", ['name':'STU','type':'continuous','use':'covariate'], inputVariables[0])
+		assertEquals("Checking variable \"ID\"", ['name':'ID','use':'id','level':'2'], inputVariables[1])
+		assertEquals("Checking variable \"AMT\"", ['name':'AMT','use':'amt','units':'\"mg\"'], inputVariables[6])
+	}
+	
+	@Test
+	void testStructuralParametersBlock() {
+		def json = getJsonFromMDLFile("drugX_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		
+		logger.debug(json)
+		
+		def modelObject = json.drugX_mdl
+		
+		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
+		
+		logger.debug(structuralParameters)
+
+		assertEquals("Checking number of structural parameters", 8, structuralParameters.size())
+		assertEquals("Checking parameter \"POP_Vc\"", ['name':'POP_Vc','units':'"L"'], structuralParameters[0])
+		assertEquals("Checking variable \"POP_CL\"", ['name':'POP_CL','units':'"L/h"'], structuralParameters[2])
+		assertEquals("Checking variable \"RUV_PROP\"", ['name':'RUV_PROP'], structuralParameters[7])
+	}
+	
+	@Test
     void testModelObjectWithObservationBlock() {
 		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")
 		
 		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
 		
 		logger.debug(modelObject)
-		
-		def inputVariables = modelObject.MODEL_INPUT_VARIABLES
-		
-		def invar_STU = inputVariables.STU
-		assertEquals("continuous", invar_STU.type[0])
-		
-		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
-		assertEquals(getExpectedStructuralParametersProlactinMap(), structuralParameters[0].sort())
 		
         def observation = modelObject.OBSERVATION
         
@@ -51,18 +77,6 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		def modelObject = json.drugX_mdl
 		
 		logger.debug(modelObject)
-		
-		def inputVariables = modelObject.MODEL_INPUT_VARIABLES
-		
-		def invar_WT = inputVariables.WT
-		assertEquals("continuous", invar_WT.type[0])
-		assertEquals("covariate", invar_WT.use[0])
-		assertEquals("\"kg\"", invar_WT.units[0])
-		
-		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
-		
-		def strcparm_POPMTT = structuralParameters.POP_MTT
-		assertEquals("\"h\"", strcparm_POPMTT.units[0])
 		
 		def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
 		assertEquals([ "PPV_Vc", "PPV_Vp", "PPV_CL", "RUV_EPS" ], variabilityParameters[0])
@@ -225,55 +239,6 @@ if (TREAT==1) {
 		
 		assertEquals("Checking the content of the block", expectedContentBlock, modelObject.GROUP_VARIABLES[0].replace("\r\n", "\n"))
 		
-	}
-
-	@Test
-	void shouldCorrectlyParseStructuralParametersAllTypes() {
-		def json = getJsonFromMDLFile("drugX_1stAbs_1Rep_EST001_ORG.mdl")
-		
-		def modelObject = json.drugX_mdl
-		
-		logger.debug(modelObject)
-		
-		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
-		assertEquals(getExpectedStructuralParametersDrugXMap(), structuralParameters[0].sort())
-	}
-
-	private Map getExpectedStructuralParametersDrugXMap() {
-		Map erm = [
-			POP_Vc : Map[units : "\"L\""],
-			POP_Vp : Map[units : "\"L\""],
-			POP_CL : Map[units : "\"L/h\""],
-			POP_ka : Map[units : "\"1/h\""],
-			POP_Q : Map[units : "\"L/h\""],
-			RUV_PROP : null
-		]
-		
-		erm.sort()
-	}
-
-	private Map getExpectedStructuralParametersProlactinMap() {
-		Map erm = [
-			POP_AMP : null,
-			POP_AMP2 : null,
-			POP_KDA : null,
-			POP_KI : null,
-			POP_KOUT : null,
-			POP_PHASE_SHIFT_IN_PATIENTS : null,
-			POP_PHS1 : null,
-			POP_PHS2 : null,
-			POP_PRL0_IN_FEMALES_PAT : null,
-			POP_PRL0_IN_FEMALES_STUDY_101 : null,
-			POP_PRL0_IN_MALES_STUDY_101 : null,
-			POP_PRL0_IN_MALE_HV : null,
-			POP_PRL0_IN_MALE_PAT : null,
-			POP_RES_ERR_IN_FEMALE_PATIENTS : null,
-			POP_RES_ERR_IN_MALE_HV : null,
-			POP_RES_ERR_IN_MALE_PATIENTS : null,
-			POP_UPDA : null
-		]
-		
-		erm.sort()
 	}
 	
 }
