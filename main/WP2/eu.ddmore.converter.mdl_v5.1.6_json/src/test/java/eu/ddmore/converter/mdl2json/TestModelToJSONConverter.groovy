@@ -1,11 +1,9 @@
 package eu.ddmore.converter.mdl2json;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.junit.Test;
+import org.apache.log4j.Logger
+import org.junit.Test
 
 class TestModelToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestModelToJSONConverter.class)
@@ -45,6 +43,20 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	}
 	
 	@Test
+	void testVariabilityParametersBLock() {
+		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")
+		
+		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
+		
+		logger.debug(modelObject)
+
+		def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
+		assertEquals("Checking the list of Variability Parameters",
+			[ "PPV_PRL0", "PPV_KI", "PPV_KOUT", "PPV_AMP1", "PPV_PHS2", "PPV_IOV_IN_PRL0_1", "PPV_IOV_IN_PRL0_2", "PPV_IOV_IN_PRL0_3", "PPV_IOV_IN_PRL0_4", "RUV_EPS1" ],
+			variabilityParameters[0])
+	}
+	
+	@Test
     void testModelObjectWithObservationBlock() {
 		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")
 		
@@ -64,10 +76,6 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		
 		def modelOutputVariables = modelObject.MODEL_OUTPUT_VARIABLES
 		assertEquals(["ID", "TIME", "IPRED", "IWRES", "STU"], modelOutputVariables[0])
-
-		def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
-		assertEquals([ "PPV_PRL0", "PPV_KI", "PPV_KOUT", "PPV_AMP1", "PPV_PHS2", "PPV_IOV_IN_PRL0_1", "PPV_IOV_IN_PRL0_2",
-      "PPV_IOV_IN_PRL0_3", "PPV_IOV_IN_PRL0_4", "RUV_EPS1"], variabilityParameters[0])
 	}
 	
 	@Test
@@ -77,9 +85,6 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		def modelObject = json.drugX_mdl
 		
 		logger.debug(modelObject)
-		
-		def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
-		assertEquals([ "PPV_Vc", "PPV_Vp", "PPV_CL", "RUV_EPS" ], variabilityParameters[0])
 
 		def groupVariables = modelObject.GROUP_VARIABLES
 		
