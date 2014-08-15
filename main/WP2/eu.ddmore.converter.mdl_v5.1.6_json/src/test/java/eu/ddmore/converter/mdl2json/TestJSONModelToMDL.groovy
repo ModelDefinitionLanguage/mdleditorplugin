@@ -79,6 +79,23 @@ class TestJSONModelToMDL extends ConverterTestsParent {
 				
 	}
 	
+	@Test
+	public void testModelOutputVariablesBlock() {
+
+		File jsonFile = getFile("drugX_ModelObject_ModelOutputVariables.json")
+		
+		String content = jsonFile.getText()
+		
+		def json = getJson(content)
+		
+		Model m = new Model(json)
+		
+		logger.debug(m.toMDL())
+		
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(getFile("drugX_ModelObject.mdl"), "MODEL_OUTPUT_VARIABLES", m.toMDL());
+				
+	}
+	
 	
 	// TODO: Check all other data blocks too (in other test classes)
 	

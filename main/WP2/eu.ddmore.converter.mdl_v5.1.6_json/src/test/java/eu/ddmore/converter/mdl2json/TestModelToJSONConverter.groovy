@@ -75,6 +75,23 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	}
 	
 	@Test
+	void testModelOutputVariablesBlock() {
+		
+		def json = getJsonFromMDLFile("drugX_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		
+		def modelObject = json.drugX_mdl
+		
+		def modelOutputVariables = modelObject.MODEL_OUTPUT_VARIABLES
+		
+		logger.debug(modelOutputVariables)
+		
+		assertEquals("Checking the list of Model Output Variables",
+			[ "ID", "TIME", "IPRED", "IWRES", "eta_PPV_Vc", "eta_PPV_Vp", "eta_PPV_CL", "WT" ].collect{
+				[ 'name': it ]
+		}, modelOutputVariables)
+	}
+	
+	@Test
     void testModelObjectWithObservationBlock() {
 		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")
 		
@@ -92,8 +109,6 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		
 		// (Skip checking of Model Prediction block since is tested in separate test method)
 		
-		def modelOutputVariables = modelObject.MODEL_OUTPUT_VARIABLES
-		assertEquals(["ID", "TIME", "IPRED", "IWRES", "STU"], modelOutputVariables[0])
 	}
 	
 	@Test
@@ -160,9 +175,6 @@ Y = IPRED+W*eps_RUV_EPS
 """
 		// Note that we need to make the line endings consistent between actual vs expected
 		assertEquals("Checking the Estimation block", expectedEstimationBlock, estimationBlock[0].replace("\r\n", "\n"))
-		
-		def modelOutputVariables = modelObject.MODEL_OUTPUT_VARIABLES
-		assertEquals([ "ID", "TIME", "IPRED", "IWRES", "eta_PPV_Vc", "eta_PPV_Vp", "eta_PPV_CL", "WT" ], modelOutputVariables[0])
 		
 	}
     

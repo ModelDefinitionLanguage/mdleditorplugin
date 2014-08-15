@@ -103,7 +103,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 
 	private List makeModelOutputVariables(OutputVariablesBlock outputVariables) {
 		outputVariables.getVariables().collect { SymbolName sn ->
-			sn.getName()
+			['name':sn.getName()]
 		}
 	}
 
@@ -257,10 +257,8 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 				case "MODEL_INPUT_VARIABLES":
 				case "STRUCTURAL_PARAMETERS":
 				case "VARIABILITY_PARAMETERS":
-					mdl.append(MDLUtils.makeMDLFromSymbolNamedList(content)).append("\n")
-					break;
 				case "MODEL_OUTPUT_VARIABLES":
-					mdl.append(content.join("\n${IDT*2}")).append("\n")
+					mdl.append(MDLUtils.makeMDLFromSymbolNamedList(content)).append("\n")
 					break;
 				case "GROUP_VARIABLES":
 				case "INDIVIDUAL_VARIABLES":
