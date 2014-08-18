@@ -43,7 +43,6 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: tumour_size_01July2014_OAM.output.json
 	 */
 	@Test
-	@Ignore("Absence of Ignore character gives \"ignore=[]\" in R->JSON conversion - this needs to be fixed")
 	public void testRGeneratedMOG_Tumour() {
 		testRGeneratedMOG(
 			"ThamCCR2008/tumour_size_01July2014_OAM.output.json",
@@ -56,12 +55,6 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: drugX_trAbs_1Rep_EST001_ORG.output.json
 	 */
 	@Test
-	@Ignore("Absence of RANDOM_VARIABLE_DEFINITION block (and possibly others) produces an empty list in the output JSON which gives rise to an empty block in the MDL - this needs to be fixed")
-	// Problematic empty blocks:-
-	// RANDOM_VARIABLE_DEFINITION
-	// LIBRARY
-	// OBSERVATION
-	// ESTIMATION
 	public void testRGeneratedMOG_DrugX() {
 		testRGeneratedMOG(
 			"drugX/drugX_trAbs_1Rep_EST001_ORG.output.json",
@@ -74,12 +67,6 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: warfarin_PK_PRED.output.json
 	 */
 	@Test
-	@Ignore("Problematic empty blocks: MODEL_PREDICTION, ODE, LIBRARY, ESTIMATION")
-	// Problematic empty blocks:-
-	// MODEL_PREDICTION
-	// ODE
-	// LIBRARY
-	// ESTIMATION
 	public void testRGeneratedMOG_Warfarin() {
 		testRGeneratedMOG(
 			"warfarin_PK_PRED/warfarin_PK_PRED.output.json",
