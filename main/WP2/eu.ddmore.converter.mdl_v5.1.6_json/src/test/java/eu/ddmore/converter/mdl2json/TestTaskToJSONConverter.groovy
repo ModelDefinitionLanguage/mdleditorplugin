@@ -47,18 +47,58 @@ algo = list("FOCE ")
 		
 		assertEquals(expectedTaskStr, actual.replaceAll("\r", ""))
 	}
+	
+	@Test
+	public void testWarfarinTask() {
+		def File origMdlFile = getFileFromModelsProject("warfarin_PK_PRED/warfarin_PK_PRED.mdl")
+		
+		def json = getJsonFromMDLFile(origMdlFile)[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		
+		def taskObject = json.warfarin_PK_PRED_task
+				
+		assertEquals(Task.IDENTIFIER, taskObject[Task.IDENTIFIER_PROPNAME])
+		
+		def Task taskFromJson = new Task(taskObject)
+		
+		assertTrue("Checking TARGET_CODE block", taskFromJson.toMDL().replace("\r\n","\n").contains(
+'''taskobj {
+    TARGET_CODE(target=NMTRAN_CODE,location="$PROBLEM",first=true){***
+$PROB WARFARIN PK
+;O'Reilly RA, Aggeler PM, Leong LS. Studies of the coumarin anticoagulant
+;drugs: The pharmacodynamics of warfarin in man.
+;Journal of Clinical Investigation 1963;42(10):1542-1551
+;O'Reilly RA, Aggeler PM. Studies on coumarin anticoagulant drugs
+;Initiation of warfarin therapy without a loading dose.
+;Circulation 1968;38:169-177
+***}'''))
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, "DATA", taskFromJson.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, "EXECUTE", taskFromJson.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, "ESTIMATE", taskFromJson.toMDL())
+		assertTrue("Checking estimation function is in the right place in the MDL", taskFromJson.toMDL().replace("\r\n","\n").contains(
+'''myEST=function(t,m,p,d) {
+EXECUTE{
+command = "call nmgo warfarin_PK_PRED"
+}
+ESTIMATE{'''))
 
+	}
+	
 	@Test
 	public void testTumourTask() {
-		def json = getJsonFromMDLFile("tumourTask.mdl")
+		def File origMdlFile = getFileFromModelsProject("ThamCCR2008/tumour_size_01July2014_OAM.mdl")
+		
+		def json = getJsonFromMDLFile(origMdlFile)[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def taskObject = json.tumour_size_TABLES_ORG_task
-				
-		assertEquals( Task.IDENTIFIER, taskObject[Task.IDENTIFIER_PROPNAME][0])
 		
-		Task taskFromJson = new Task(taskObject)
+		assertEquals(Task.IDENTIFIER, taskObject[Task.IDENTIFIER_PROPNAME])
 		
-		logger.debug(taskFromJson.toMDL())
+		def Task taskFromJson = new Task(taskObject)
+		
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, "MODEL", taskFromJson.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, "EXECUTE", taskFromJson.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, "ESTIMATE", taskFromJson.toMDL())
 		
 	}
+	
 }

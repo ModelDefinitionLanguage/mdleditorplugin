@@ -123,7 +123,7 @@ class ConverterTestsParent {
 		def interestedIn = false
 		def nestingLevel = -1
 		mdlFileContent.eachLine { str ->
-			if (str.matches("^\\s*" + blockName + "\\s*\\{")) {
+			if (str.matches("^\\s*" + blockName + "\\s*\\{.*")) {
 				found = true
 				interestedIn = true
 				// There might be open curly brackets before the name of the block name; the '-' sign on the RHS is deliberate

@@ -79,17 +79,17 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 	}
 	
 	/**
-	 * Print a block with an identifier that contains an expression
+	 * Print a block with an identifier that contains an IF expression
 	 *  
 	 * @param expressionHolder. Must have an attribute "expression"
 	 * 
 	 * @return
 	 */
-	String printExpressionHolder(expressionHolder) {
+	String printIfExpressionHolder(expressionHolder) {
 		StringBuffer b = new StringBuffer()
-		b.append(expressionHolder.getIdentifier()).append("{\n")
+		b.append(expressionHolder.getIdentifier()).append("=if(")
 		b.append(mdlPrinter.toStr(expressionHolder.getExpression()))
-		b.append("}\n")
+		b.append(")\n")
 		b.toString()
 	}
 	
@@ -150,9 +150,9 @@ ${functionBody}
 	def dataBlockPrinter = { DataBlock db ->
 		StringBuffer buff = new StringBuffer()
 		db.getStatements().each { statement ->
-			if(statement.getAcceptList()) buff.append(printExpressionHolder(statement.getAcceptList()))
+			if(statement.getAcceptList()) buff.append(printIfExpressionHolder(statement.getAcceptList()))
 			if(statement.getDropList()) buff.append(printSymbolList(statement.getDropList()))
-			if(statement.getIgnoreList()) buff.append(printExpressionHolder(statement.getIgnoreList()))
+			if(statement.getIgnoreList()) buff.append(printIfExpressionHolder(statement.getIgnoreList()))
 		}
 		buff.toString()
 	}
