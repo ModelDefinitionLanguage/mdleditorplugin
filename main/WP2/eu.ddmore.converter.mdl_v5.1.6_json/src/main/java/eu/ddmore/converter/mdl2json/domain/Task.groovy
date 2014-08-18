@@ -66,7 +66,7 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 	 * @return
 	 */
 	String printIdentifiedBlock(identifiedBlock, blockPrinter) {
-		StringBuffer buff = new StringBuffer()
+		StringBuffer buff = new StringBuffer("\n")
 		buff.append(identifiedBlock.getIdentifier())
 		if(identifiedBlock.metaClass.hasProperty(identifiedBlock, "arguments")) {
 			buff.append("(")
@@ -89,7 +89,7 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 		StringBuffer b = new StringBuffer()
 		b.append(expressionHolder.getIdentifier()).append("=if(")
 		b.append(mdlPrinter.toStr(expressionHolder.getExpression()))
-		b.append(")\n")
+		b.append(")")
 		b.toString()
 	}
 	
@@ -109,7 +109,8 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 			}
 		}
 		String functionSig = (fd.formalArguments?"=function(${fd.formalArguments.getArguments().collect{it.name}.join(",")})":"")
-		"""${fd.functionName.name}$functionSig {
+		"""
+${fd.functionName.name}$functionSig {
 ${functionBody}
 }
 """
@@ -148,11 +149,12 @@ ${functionBody}
 	 * Print the contents of a DataBlock
 	 */
 	def dataBlockPrinter = { DataBlock db ->
-		StringBuffer buff = new StringBuffer()
+		StringBuffer buff = new StringBuffer("\n")
 		db.getStatements().each { statement ->
 			if(statement.getAcceptList()) buff.append(printIfExpressionHolder(statement.getAcceptList()))
 			if(statement.getDropList()) buff.append(printSymbolList(statement.getDropList()))
 			if(statement.getIgnoreList()) buff.append(printIfExpressionHolder(statement.getIgnoreList()))
+			buff.append("\n")
 		}
 		buff.toString()
 	}
@@ -161,11 +163,10 @@ ${functionBody}
 	 * Print the contents of a ModelBlock
 	 */
 	def modelBlockPrinter = { ModelBlock mb ->
-		StringBuffer buff = new StringBuffer()
-		buff.append("\n")
+		StringBuffer buff = new StringBuffer("\n")
 		mb.getStatements().each { ModelBlockStatement mbs ->
-			if(mbs.getAddList()) buff.append(printSymbolList(mbs.getAddList().getList()))
-			if(mbs.getRemoveList()) buff.append(printSymbolList(mbs.getRemoveList().getList()))
+			if(mbs.getAddList()) buff.append(printSymbolList(mbs.getAddList().getList()) + "\n")
+			if(mbs.getRemoveList()) buff.append(printSymbolList(mbs.getRemoveList().getList()) + "\n")
 			if(mbs.getStatement()) buff.append(mdlPrinter.print(mbs.getStatement()))
 		}
 		buff.toString()

@@ -18,22 +18,28 @@ class TestTaskToJSONConverter extends ConverterTestsParent {
 		
 		assertEquals( Task.IDENTIFIER, taskObject[Task.IDENTIFIER_PROPNAME][0])
 		
-		def expectedTaskStr = """TARGET_CODE(target=NMTRAN_CODE,location="\$PROBLEM",first=true){***
+		def expectedTaskStr = """
+TARGET_CODE(target=NMTRAN_CODE,location="\$PROBLEM",first=true){***
 \$PROB AGONIST-ANTAGONIST INTERACTION MODEL FOR PROLACTIN
 ; FRIBERG ET AL. CPT 2009
 ***}
+
 MODEL{
 tolrel = 5
 }
+
 myEST=function(t,m,p,d) {
+
 EXECUTE{
 command = "call nmgo ex_model7_prolactin_Jan2014"
 }
+
 ESTIMATE{
 target = t
 model = m
 parameter = p
 data = d
+
 TARGET_CODE(target=NMTRAN_CODE,location="\$ESTIMATION"){***
 \$EST PRINT=5 MAX=0 SIGDIG=3 METHOD=1
 ;\$COV MATRIX=S
@@ -60,9 +66,12 @@ algo = list("FOCE ")
 		
 		def Task taskFromJson = new Task(taskObject)
 		
+		logger.debug(taskFromJson.toMDL())
+		
 		assertTrue("Checking TARGET_CODE block", taskFromJson.toMDL().replace("\r\n","\n").contains(
 '''taskobj {
-    TARGET_CODE(target=NMTRAN_CODE,location="$PROBLEM",first=true){***
+    
+TARGET_CODE(target=NMTRAN_CODE,location="$PROBLEM",first=true){***
 $PROB WARFARIN PK
 ;O'Reilly RA, Aggeler PM, Leong LS. Studies of the coumarin anticoagulant
 ;drugs: The pharmacodynamics of warfarin in man.
@@ -76,9 +85,11 @@ $PROB WARFARIN PK
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, "ESTIMATE", taskFromJson.toMDL())
 		assertTrue("Checking estimation function is in the right place in the MDL", taskFromJson.toMDL().replace("\r\n","\n").contains(
 '''myEST=function(t,m,p,d) {
+
 EXECUTE{
 command = "call nmgo warfarin_PK_PRED"
 }
+
 ESTIMATE{'''))
 
 	}
