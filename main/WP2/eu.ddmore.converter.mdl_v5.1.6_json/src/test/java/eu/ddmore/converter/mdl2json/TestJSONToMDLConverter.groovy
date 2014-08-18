@@ -124,7 +124,7 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 			"MODEL",
 			"EXECUTE",
 			"ESTIMATE",
-			"TARGET_CODE" // TODO: Not currently found
+			"TARGET_CODE\\(.+\\)"
 		].each { blockName ->
 			extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, mdl)
 		}
