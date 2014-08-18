@@ -31,8 +31,6 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: ex_model7_prolactin_01July2014_OAM.output.json
 	 */
     @Test
-	// Empty blocks:
-	@Ignore("Absence of ESTIMATION block (and possibly others) produces a map entry mapping to null in the output JSON which gives rise to an empty block in the MDL - this needs to be fixed")
 	public void testRGeneratedMOG_Prolactin() {
 		testRGeneratedMOG(
 			"FribergCPT2009/ex_model7_prolactin_01July2014_OAM.output.json",		
@@ -89,7 +87,6 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 		);
 	}
 	
-	
 	private void testRGeneratedMOG(final String pathToOutputJsonFile, final String pathToOrigMdlFile) {
 		
 		def File jsonFile = getFileFromModelsProject(pathToOutputJsonFile, "json")
@@ -123,6 +120,11 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 			"OBSERVATION",
 			"ESTIMATION",
 			"MODEL_OUTPUT_VARIABLES",
+			"DATA",
+			"MODEL",
+			"EXECUTE",
+			"ESTIMATE",
+			"TARGET_CODE" // TODO: Not currently found
 		].each { blockName ->
 			extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, mdl)
 		}
