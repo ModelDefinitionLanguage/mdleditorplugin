@@ -106,10 +106,24 @@ class ConverterTestsParent {
 		final BufferedReader rdr = new BufferedReader(new FileReader(origMdlFile));
 		final StringBuffer strBuf = new StringBuffer();
 		rdr.eachLine() { String str ->
-			str = str.substring(0, str.indexOf("#") >= 0 ? str.indexOf("#") : str.length()) // Trim off comments
-			if (!str.matches(~/\s*$/)) { // Not just whitespace
+			def hashCharPos = str.indexOf("#")
+			if (hashCharPos < 0) {
 				strBuf.append(str)
 				strBuf.append("\n")
+			} else {
+				// There is a # character somewhere in the line
+				if (str.substring(0, hashCharPos).count("\"") == 1) {
+					// Hash char is within a quoted string
+					strBuf.append(str)
+					strBuf.append("\n")
+				} else {
+					// Hash char is not within a quoted string so is most likely starting a comment
+    				str = str.substring(0, hashCharPos) // Trim off the comment
+    				if (!str.matches(~/\s*$/)) { // Not just whitespace
+    					strBuf.append(str)
+    					strBuf.append("\n")
+    				}
+				}
 			}
 		}
 		

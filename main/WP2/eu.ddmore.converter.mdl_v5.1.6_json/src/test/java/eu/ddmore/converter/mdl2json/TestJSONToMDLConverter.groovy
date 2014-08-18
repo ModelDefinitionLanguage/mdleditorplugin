@@ -74,7 +74,7 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: warfarin_PK_PRED.output.json
 	 */
 	@Test
-	@Ignore("Ignore char being hash character # -> everything after this treated as a comment so stripped off (in the verification code in the test) - this needs to be fixed")
+	@Ignore("Problematic empty blocks: MODEL_PREDICTION, ODE, LIBRARY, ESTIMATION")
 	// Problematic empty blocks:-
 	// MODEL_PREDICTION
 	// ODE
