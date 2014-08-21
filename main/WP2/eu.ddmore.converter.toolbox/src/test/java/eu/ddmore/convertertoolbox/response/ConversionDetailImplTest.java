@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
+import eu.ddmore.convertertoolbox.domain.ConversionDetailImpl;
 
 
 public class ConversionDetailImplTest {

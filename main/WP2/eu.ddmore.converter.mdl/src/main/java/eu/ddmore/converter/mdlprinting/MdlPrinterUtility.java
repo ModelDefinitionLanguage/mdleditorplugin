@@ -10,7 +10,7 @@ import org.apache.commons.io.FileUtils;
 
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
-import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
+import eu.ddmore.convertertoolbox.domain.ConversionReportImpl;
 
 /**
  * This class is created to model the common behaviour of eu.ddmore.converter.mdl2pharmml.MDLToPharmMLConverter and 

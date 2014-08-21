@@ -24,9 +24,9 @@ import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.conversion.ConverterManagerImpl;
+import eu.ddmore.convertertoolbox.domain.ConversionDetailImpl;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
-import eu.ddmore.convertertoolbox.response.ConversionDetailImpl;
 
 /**
  * Test for {@link ConverterManagerImpl}.

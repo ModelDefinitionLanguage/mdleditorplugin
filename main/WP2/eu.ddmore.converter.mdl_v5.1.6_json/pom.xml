@@ -28,13 +28,6 @@
 
 	<dependencies>
 
-		<!-- TODO: Remove this dependency! Should just depend on the API. -->
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-toolbox</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.eclipse.xtend</groupId>
 			<artifactId>org.eclipse.xtend.standalone</artifactId>

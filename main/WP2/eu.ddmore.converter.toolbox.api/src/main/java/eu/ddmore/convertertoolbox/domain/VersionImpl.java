@@ -8,7 +8,7 @@ import eu.ddmore.convertertoolbox.api.domain.Version;
 /**
  * Bean representing a version
  */
-public class VersionImpl implements Version {
+public final class VersionImpl implements Version {
 
     private final int major;
     private final int minor;

@@ -15,11 +15,5 @@
 	<name>Converter Toolbox Test-Mdl2Nonmem-Success</name>
 
 	<dependencies>
-		<!-- TODO: Remove this dependency! Should just depend on the API. -->
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-toolbox</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 	</dependencies>
 </project>

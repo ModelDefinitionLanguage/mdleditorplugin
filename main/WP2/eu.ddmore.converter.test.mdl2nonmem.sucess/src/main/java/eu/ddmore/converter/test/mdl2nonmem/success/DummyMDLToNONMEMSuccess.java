@@ -12,10 +12,10 @@ import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
+import eu.ddmore.convertertoolbox.domain.ConversionDetailImpl;
+import eu.ddmore.convertertoolbox.domain.ConversionReportImpl;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
-import eu.ddmore.convertertoolbox.response.ConversionDetailImpl;
-import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
 
 /**
  * Interface which Converter providers should implement to enable them to be

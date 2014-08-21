@@ -18,9 +18,9 @@ import eu.ddmore.convertertoolbox.api.domain.Version;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
+import eu.ddmore.convertertoolbox.domain.ConversionReportImpl;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl
 import eu.ddmore.convertertoolbox.domain.VersionImpl
-import eu.ddmore.convertertoolbox.response.ConversionReportImpl
 import eu.ddmore.libpharmml.PharmMlFactory
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper

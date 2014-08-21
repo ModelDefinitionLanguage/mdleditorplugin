@@ -6,8 +6,8 @@ import eu.ddmore.convertertoolbox.api.conversion.ConversionListener;
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
-import eu.ddmore.convertertoolbox.response.ConversionDetailImpl;
-import eu.ddmore.convertertoolbox.response.ConversionReportImpl;
+import eu.ddmore.convertertoolbox.domain.ConversionDetailImpl;
+import eu.ddmore.convertertoolbox.domain.ConversionReportImpl;
 
 /**
  * The FutureCallback inplementation for single report, i.e. single file conversion.

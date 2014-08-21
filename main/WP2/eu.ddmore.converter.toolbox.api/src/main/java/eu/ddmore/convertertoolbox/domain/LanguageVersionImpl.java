@@ -9,7 +9,7 @@ import eu.ddmore.convertertoolbox.api.domain.Version;
 /**
  * Bean representing a language and version of that language
  */
-public class LanguageVersionImpl implements LanguageVersion {
+public final class LanguageVersionImpl implements LanguageVersion {
 
     private final String language;
     private final Version version;

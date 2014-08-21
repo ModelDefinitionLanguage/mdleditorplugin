@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (C) 2013 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
-package eu.ddmore.convertertoolbox.response;
+package eu.ddmore.convertertoolbox.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 /**
  * A report which contains the outcome of a conversion
  */
-public class ConversionReportImpl implements ConversionReport {
+public final class ConversionReportImpl implements ConversionReport {
 
     private ConversionCode returnCode;
     private List<ConversionDetail> details;
