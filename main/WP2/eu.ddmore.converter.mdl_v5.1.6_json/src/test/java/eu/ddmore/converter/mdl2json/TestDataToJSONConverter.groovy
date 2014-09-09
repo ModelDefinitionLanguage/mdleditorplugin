@@ -36,7 +36,7 @@ class TestDataToJSONConverter extends ConverterTestsParent  {
 	
 	@Test
 	public void testDataInputVariablesBlock() {
-		def json = getJsonFromMDLFile("tumourDataObject.mdl")
+		def json = getJsonFromMDLFile("tumour_DataObject.mdl")
 		
 		logger.debug(json)
 	

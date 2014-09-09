@@ -1,11 +1,8 @@
 package eu.ddmore.converter.mdl2json.domain;
 
-import org.ddmore.mdl.mdl.AcceptList
 import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.DataBlock
 import org.ddmore.mdl.mdl.DataBlockStatement
-import org.ddmore.mdl.mdl.DropList
-import org.ddmore.mdl.mdl.IgnoreList
 import org.ddmore.mdl.mdl.ModelBlock
 import org.ddmore.mdl.mdl.ModelBlockStatement
 import org.ddmore.mdl.mdl.ParameterBlock
@@ -17,12 +14,16 @@ import org.ddmore.mdl.mdl.TaskFunctionDeclaration
 import org.ddmore.mdl.mdl.TaskObject
 import org.ddmore.mdl.mdl.TaskObjectBlock
 
-import eu.ddmore.converter.mdlprinting.MdlPrinter;
+import eu.ddmore.converter.mdl2json.domain.task.TaskSymbolDeclaration
+import eu.ddmore.converter.mdl2json.utils.XtextWrapper
+import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 
 public class Task extends Expando implements MDLPrintable, MDLAsJSON {
-	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
+	
 	static final String IDENTIFIER = "taskobj"
+	
+	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
 	/**
 	 * Create a Task from a TaskObject
@@ -70,7 +71,7 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 		buff.append(identifiedBlock.getIdentifier())
 		if(identifiedBlock.metaClass.hasProperty(identifiedBlock, "arguments")) {
 			buff.append("(")
-			buff.append(identifiedBlock.arguments.arguments.collect { Argument arg -> "${arg.argumentName.name}=${mdlPrinter.toStr(arg.expression)}" }.join(","))
+			buff.append(identifiedBlock.arguments.arguments.collect { Argument arg -> "${arg.argumentName.name}=${XtextWrapper.unwrap(arg.expression)}" }.join(","))
 			buff.append(")")
 		}
 		buff.append("{")
@@ -88,7 +89,7 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 	String printIfExpressionHolder(expressionHolder) {
 		StringBuffer b = new StringBuffer()
 		b.append(expressionHolder.getIdentifier()).append("=if(")
-		b.append(mdlPrinter.toStr(expressionHolder.getExpression()))
+		b.append(XtextWrapper.unwrap(expressionHolder.getExpression()))
 		b.append(")")
 		b.toString()
 	}
@@ -134,15 +135,19 @@ ${functionBody}
 	 * Prints each statement held in this list of statements 
 	 */
 	def statementPrinter = { statementHolder ->
-		"\n"+statementHolder.statements.collect{ 
-			if(it.targetBlock ) {
+		"\n" + statementHolder.statements.collect{
+			 
+			if (it.targetBlock) {
 				printIdentifiedBlock(it.targetBlock, targetCodeBlockPrinter)
-			} 
-			else {
-				mdlPrinter.print(it)
+			} else if (it.functionCall) {
+				mdlPrinter.print(it.functionCall)
+			} else if (it.statement) { // ConditionalStatement
+				mdlPrinter.print(it.statement)
+			} else if (it.symbol) {
+				new TaskSymbolDeclaration(it.symbol).toMDL()
 			}
+			
 		}.join("")
-		
 	}
 	
 	/**
