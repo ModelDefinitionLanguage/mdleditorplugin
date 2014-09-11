@@ -21,11 +21,9 @@ import org.ddmore.mdl.mdl.VariabilityBlockStatement
 
 import eu.ddmore.converter.mdl2json.utils.MDLUtils
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
-import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	private static Logger logger = Logger.getLogger(Parameter.class)
-	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
 	static final String IDENTIFIER = "parobj"
 	static final String VARIABILITY = "VARIABILITY"
@@ -144,7 +142,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	private Map createVariabilityMatrix( Arguments arguments ) {
 		Map matrixArguments = [:]
 		for(Argument a : arguments.getArguments()) {
-			matrixArguments[a.getArgumentName().getName()] = mdlPrinter.toStr(a.getExpression())
+			matrixArguments[a.getArgumentName().getName()] = XtextWrapper.unwrap(a.getExpression())
 		}
 		matrixArguments
 	}	
@@ -168,7 +166,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 				colNum=1
 			}
 			String symbol = s.getSymbolName()?.getName()
-			String expression = mdlPrinter.toStr(s.getExpression())
+			String expression = XtextWrapper.unwrap(s.getExpression())
 			symbolString += ( symbol ? "${symbol}=${expression}" : "${expression}" )
 
 			rows.add(symbolString)

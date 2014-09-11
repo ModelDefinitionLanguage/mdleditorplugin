@@ -10,6 +10,7 @@ import eu.ddmore.convertertoolbox.api.response.ConversionReport
 import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
 import org.ddmore.mdl.mdl.Mcl
+import org.junit.Ignore
 import org.junit.Test;
 
 class TestJSONDataObjectToMDL extends ConverterTestsParent {
@@ -57,6 +58,52 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
 }
 """
 		assertEquals(expected, data.toMDL())
+	}
+	
+	@Test
+	public void testWarfarin() {
+		def mdlFile = getFile("warfarin_DataObject.mdl")
+		
+		def json = getJsonFromMDLFile(mdlFile)
+		
+		MCLFile mclFile = new MCLFile(json)
+		
+		logger.debug(mclFile.toMDL())
+
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "SOURCE", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "DATA_INPUT_VARIABLES", mclFile.toMDL())
+		
+	}
+	
+	@Test
+	public void testTumour() {
+		def mdlFile = getFile("tumour_DataObject.mdl")
+		
+		def json = getJsonFromMDLFile(mdlFile)
+		
+		MCLFile mclFile = new MCLFile(json)
+		
+		logger.debug(mclFile.toMDL())
+
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "SOURCE", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "DATA_INPUT_VARIABLES", mclFile.toMDL())
+		
+	}
+	
+	@Test
+	@Ignore("This model redefines variables in the DATA_INPUT_VARIABLES block, which isn't properly supported at the moment")
+	public void testHamren() {
+		def mdlFile = getFile("hamren_DataObject.mdl")
+		
+		def json = getJsonFromMDLFile(mdlFile)
+		
+		MCLFile mclFile = new MCLFile(json)
+		
+		logger.debug(mclFile.toMDL())
+
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "SOURCE", mclFile.toMDL())
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "DATA_INPUT_VARIABLES", mclFile.toMDL())
+		
 	}
 	
 }

@@ -10,8 +10,8 @@ import eu.ddmore.converter.mdl2json.domain.Model
 import groovy.json.JsonSlurper
 
 
-class TestJSONModelToMDL extends ConverterTestsParent {
-	private static final Logger logger = Logger.getLogger(TestJSONModelToMDL.class)
+class TestJSONModelObjectToMDL extends ConverterTestsParent {
+	private static final Logger logger = Logger.getLogger(TestJSONModelObjectToMDL.class)
 	
 	@Test
 	public void testModelInputVariablesBlock() {
@@ -96,10 +96,6 @@ class TestJSONModelToMDL extends ConverterTestsParent {
 				
 	}
 	
-	
-	// TODO: Check all other data blocks too (in other test classes)
-	
-	
 	@Test
 	public void testProlactin() {
 		def mdlFile = getFile("prolactin_ModelObject.mdl")
@@ -119,9 +115,7 @@ class TestJSONModelToMDL extends ConverterTestsParent {
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "ESTIMATION", mclFile.toMDL()) // Actually empty since it doesn't exist in the MDL file
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "MODEL_OUTPUT_VARIABLES", mclFile.toMDL())
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "MODEL_PREDICTION", mclFile.toMDL())
-		// Other blocks to check:
-		//RANDOM_VARIABLE_DEFINITION
-		
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "RANDOM_VARIABLE_DEFINITION", mclFile.toMDL())
 	}
 	
 	@Test
@@ -143,9 +137,7 @@ class TestJSONModelToMDL extends ConverterTestsParent {
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "ESTIMATION", mclFile.toMDL())
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "MODEL_OUTPUT_VARIABLES", mclFile.toMDL())
 		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "MODEL_PREDICTION", mclFile.toMDL())
-		// Other blocks to check:
-		//RANDOM_VARIABLE_DEFINITION
-		
+		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "RANDOM_VARIABLE_DEFINITION", mclFile.toMDL())
 	}
 	
 }

@@ -1,0 +1,25 @@
+Hamren2008_data = dataobj{
+   DATA_INPUT_VARIABLES{
+      ID=list(type=categorical)
+      TIME=list(type=continuous,units="day")
+      DV=list(type=continuous)
+      AMT=list(type=continuous, units="micromole")
+      RATE=list(type=continuous, units="micromole/day")
+      CMT=list(type=categorical)
+      CL=list(type=continuous, units="L/day")
+      V=list(type=continuous, units="L")
+      SEX=list(type=categorical,define=list(male=1,female=2),recode=list("M","F"))
+      TREAT=list(type=categorical,define=list(yes=0,no=1),recode=list("Y","N"))
+      ORIG=list(type=categorical)
+      EVID=list(type=categorical)
+   }
+
+   SOURCE{
+      data=list(
+           file="hamren2008_data_DAY.csv",
+           ignore="@",
+           inputformat=nonmemFormat,
+           header=true
+           )
+   }
+}

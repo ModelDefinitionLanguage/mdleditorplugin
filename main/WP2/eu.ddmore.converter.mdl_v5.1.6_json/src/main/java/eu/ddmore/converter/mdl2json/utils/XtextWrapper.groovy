@@ -1,26 +1,24 @@
 package eu.ddmore.converter.mdl2json.utils;
 
-import eu.ddmore.converter.mdlprinting.MdlPrinter
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.log4j.Logger
-import org.ddmore.mdl.mdl.AdditiveExpression
-import org.ddmore.mdl.mdl.AndExpression
+import org.apache.log4j.Logger;
+import org.ddmore.mdl.mdl.AdditiveExpression;
+import org.ddmore.mdl.mdl.AndExpression;
 import org.ddmore.mdl.mdl.AnyExpression;
-import org.ddmore.mdl.mdl.Argument;
+import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.Arguments;
 import org.ddmore.mdl.mdl.ConditionalExpression;
 import org.ddmore.mdl.mdl.DistributionArgument
-import org.ddmore.mdl.mdl.DistributionArguments
-import org.ddmore.mdl.mdl.EnumType
+import org.ddmore.mdl.mdl.DistributionArguments;
+import org.ddmore.mdl.mdl.EnumType;
 import org.ddmore.mdl.mdl.Expression;
 import org.ddmore.mdl.mdl.FunctionName;
-import org.ddmore.mdl.mdl.LogicalExpression
-import org.ddmore.mdl.mdl.MultiplicativeExpression
+import org.ddmore.mdl.mdl.LogicalExpression;
+import org.ddmore.mdl.mdl.MultiplicativeExpression;
 import org.ddmore.mdl.mdl.OrExpression;
-import org.ddmore.mdl.mdl.PowerExpression
-import org.ddmore.mdl.mdl.UnaryExpression
+import org.ddmore.mdl.mdl.PowerExpression;
+import org.ddmore.mdl.mdl.UnaryExpression;
+
+import eu.ddmore.converter.mdlprinting.MdlPrinter;
 
 public class XtextWrapper {
 
@@ -29,21 +27,18 @@ public class XtextWrapper {
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
 	public static Object unwrap(AnyExpression expression) {
-		
-		if(expression==null) {
+		if (expression == null) {
 			return null
 		}
-		if(expression.getExpression()!=null) {
+		if (expression.getExpression() != null) {
 			return unwrap(expression.getExpression());
-		} else if(expression.getList() !=null ) {
-			Map m = argumentsToMap(expression.getList().getArguments())
-			return m;
-		} else if(expression.getOdeList()!=null) {
-			Map m = argumentsToMap(expression.getOdeList().getArguments())
-			return m
-		} else if(expression.getVector()!=null) {
+		} else if (expression.getList() != null) {
+			return argumentsToMapOrList(expression.getList().getArguments())
+		} else if (expression.getOdeList() != null) {
+			return argumentsToMapOrList(expression.getOdeList().getArguments())
+		} else if (expression.getVector() != null) {
 			return mdlPrinter.toStr(expression.getVector())
-		} else if(expression.getType()!=null) {
+		} else if (expression.getType() != null) {
 			return mdlPrinter.toStr(expression.getType())
 		}
 		logger.debug(expression)
@@ -57,6 +52,7 @@ public class XtextWrapper {
 		logger.debug(enumType)
 		return null
 	}
+	
 	public static Object unwrap(Expression expression) {
 		return unwrap(expression.getConditionalExpression());
 	}
@@ -82,8 +78,10 @@ public class XtextWrapper {
 	}
 	
 	public static Object unwrap(LogicalExpression expression) {
-		if(expression.getBoolean()) {
+		if (expression.getBoolean()) {
 			return expression.getBoolean()
+		} else if (expression.getOperator()) {
+			return unwrap(expression.getExpression1()) + expression.getOperator() + unwrap(expression.getExpression2())
 		} else if (expression.getExpression1()) {
 			return unwrap(expression.getExpression1())
 		}
@@ -111,12 +109,14 @@ public class XtextWrapper {
 	}
 	
 	public static Object unwrap(UnaryExpression expression) {
-		def ret
-		if(expression.getOperator()) {
-			ret = expression.getOperator() + unwrap(expression.getExpression())
-			return ret
+		if (expression.getOperator()) {
+			return expression.getOperator() + unwrap(expression.getExpression())
+		} else if (expression.getNumber()) {
+			return expression.getNumber()
+		} else if (expression.getSymbol()) {
+			return expression.getSymbol().getName()
 		}
-		return expression.getNumber();
+		throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content")
 	}
 	
 	public static Object unwrap(AndExpression expression) {
@@ -150,12 +150,26 @@ public class XtextWrapper {
 		arguments
 	}
 	
-	private static Map argumentsToMap(Arguments args) {
+	/**
+	 * Sometimes there is an argument name and sometimes there is not...
+	 * In the former case we will return a Map and in the latter we will return a List.
+	 */
+	private static argumentsToMapOrList(final Arguments args) {
 		Map m = [:]
-		for(Argument a : args.getArguments() ) {
-			m.put(a.getArgumentName().getName(), mdlPrinter.toStr(a.getExpression()));
+		List l = []
+		for (Argument a : args.getArguments() ) {
+			def unwrappedExpr = unwrap(a.getExpression())
+			if (a.getArgumentName()) {
+				m.put(a.getArgumentName().getName(), unwrappedExpr);
+			}
+			l.add(unwrappedExpr)
 		}
-		return m
+		if (m.size() == l.size()) {
+			// There are no unnamed arguments so return the populated Map
+			return m
+		}
+		// Unnamed arguments were encountered so we have to return the List instead
+		return l
 	}
 	
 }

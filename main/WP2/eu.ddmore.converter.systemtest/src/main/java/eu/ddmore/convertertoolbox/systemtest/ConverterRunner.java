@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 public class ConverterRunner {
     private final static Logger LOGGER = Logger.getLogger(ConverterRunner.class);
 
-    final static String CONVERTER_TOOLBOX_EXECUTABLE = "target/converter-toolbox-bundle/convert.bat";
+    final static String CONVERTER_TOOLBOX_EXECUTABLE = new File("target/converter-toolbox-bundle/convert.bat").getAbsolutePath();
     final static String OUTPUT_SUBDIRECTORY_BASENAME = "output-";
     
     private final File modelFile;
@@ -68,9 +68,7 @@ public class ConverterRunner {
         }
         
         // Build up the command line to execute
-        CommandLine cmdLine = new CommandLine("cmd");
-        cmdLine.addArgument("/c");
-        cmdLine.addArgument(new File(CONVERTER_TOOLBOX_EXECUTABLE).getName());
+        CommandLine cmdLine = new CommandLine(CONVERTER_TOOLBOX_EXECUTABLE);
         cmdLine.addArgument(this.modelFile.getAbsolutePath());
         cmdLine.addArgument(outputDir.getAbsolutePath());
         cmdLine.addArgument(this.sourceLang);
