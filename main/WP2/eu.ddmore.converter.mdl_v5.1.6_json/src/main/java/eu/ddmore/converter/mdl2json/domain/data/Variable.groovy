@@ -17,7 +17,9 @@ import org.ddmore.mdl.types.UseType;
 public class Variable extends Expando implements MDLPrintable {
 
 	private static Logger logger = Logger.getLogger(Variable.class)
-	
+
+	// Do not remove this property - it is not directly used in the class
+	// but the Expando-bean functionality of this class needs it
 	private SymbolDeclaration symbolDeclaration;
 
 	public Variable(SymbolDeclaration sd) {

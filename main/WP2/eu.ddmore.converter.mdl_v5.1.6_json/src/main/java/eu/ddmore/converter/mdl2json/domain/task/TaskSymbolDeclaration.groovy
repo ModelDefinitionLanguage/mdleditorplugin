@@ -21,6 +21,8 @@ public class TaskSymbolDeclaration extends Expando implements MDLPrintable {
 
 	private static Logger logger = Logger.getLogger(TaskSymbolDeclaration.class)
 	
+	// Do not remove this property - it is not directly used in the class
+	// but the Expando-bean functionality of this class needs it
 	private SymbolDeclaration symbolDeclaration;
 
 	public TaskSymbolDeclaration(SymbolDeclaration sd) {
