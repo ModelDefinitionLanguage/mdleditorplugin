@@ -115,8 +115,17 @@ public class XtextWrapper {
 			return expression.getNumber()
 		} else if (expression.getSymbol()) {
 			return expression.getSymbol().getName()
+		} else if (expression.getConstant()) {
+			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: constant=" + expression.getConstant())
+		} else if (expression.getFunctionCall()) {
+			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: functionCall=" + expression.getFunctionCall())
+		} else if (expression.getParExpression()) {
+			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: parExpression=" + expression.getParExpression())
+		} else if (expression.getAttribute()) {
+			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: attribute=" + expression.getAttribute())
+		} else {
+			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: expression=" + expression.getExpression())
 		}
-		throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content")
 	}
 	
 	public static Object unwrap(AndExpression expression) {
