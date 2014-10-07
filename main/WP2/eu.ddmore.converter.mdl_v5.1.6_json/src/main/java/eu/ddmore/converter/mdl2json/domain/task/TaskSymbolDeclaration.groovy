@@ -44,7 +44,7 @@ public class TaskSymbolDeclaration extends Expando implements MDLPrintable {
 		}		
 		
 		if(sd.getRandomList()!=null) {
-			
+			logger.debug(sd.getRandomList())
 		}
 		
 		if(sd.getArgumentName()!=null) {
