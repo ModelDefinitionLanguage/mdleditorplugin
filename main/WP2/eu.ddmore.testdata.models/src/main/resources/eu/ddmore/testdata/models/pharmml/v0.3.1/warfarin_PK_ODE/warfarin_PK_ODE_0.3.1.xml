@@ -499,7 +499,14 @@
                     <mstep:InitialEstimate fixed="false">
                         <ct:Real>1</ct:Real>
                     </mstep:InitialEstimate>
-                </ParameterEstimation>                
+                </ParameterEstimation>
+                <!-- R_CL_V -->
+                <ParameterEstimation>
+                    <ct:SymbRef blkIdRef="pm1" symbIdRef="R_CL_V"/>
+                    <mstep:InitialEstimate fixed="false">
+                        <ct:Real>.9</ct:Real>
+                    </mstep:InitialEstimate>
+                </ParameterEstimation>
                 <!-- RUV_ADD -->
                 <ParameterEstimation>
                     <ct:SymbRef blkIdRef="om1" symbIdRef="RUV_ADD"/>
