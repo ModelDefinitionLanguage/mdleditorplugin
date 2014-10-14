@@ -21,8 +21,9 @@ public class TaskSymbolDeclaration extends Expando implements MDLPrintable {
 
 	private static Logger logger = Logger.getLogger(TaskSymbolDeclaration.class)
 	
+	// Do not remove this property - it is not directly used in the class
+	// but the Expando-bean functionality of this class needs it
 	private SymbolDeclaration symbolDeclaration;
-	private boolean isList = false;
 
 	public TaskSymbolDeclaration(SymbolDeclaration sd) {
 		this.symbolDeclaration = sd;
@@ -34,7 +35,6 @@ public class TaskSymbolDeclaration extends Expando implements MDLPrintable {
 			def unwrappedExpr = XtextWrapper.unwrap(sd.getExpression())
 			
 			if (((AnyExpression) sd.getExpression()).getList()) { // Note that the top-level expression always seems to be an AnyExpression
-				this.isList = true
 				setProperty(sd.getSymbolName().getName(), "list(" + ((List)unwrappedExpr).join(",") + ")")
 			} else {
 				setProperty(sd.getSymbolName().getName(), unwrappedExpr)
@@ -46,7 +46,7 @@ public class TaskSymbolDeclaration extends Expando implements MDLPrintable {
 		}		
 		
 		if(sd.getRandomList()!=null) {
-			
+			logger.debug(sd.getRandomList())
 		}
 		
 		if(sd.getArgumentName()!=null) {

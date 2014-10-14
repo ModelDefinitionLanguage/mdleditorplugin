@@ -19,5 +19,5 @@ class CorrelationKey {
     @Override
     public String toString() {
         return "CorrelationKey [etas=" + etas + "]";
-    }
+    }
 }

@@ -136,7 +136,8 @@ ${functionBody}
 	 */
 	def statementPrinter = { statementHolder ->
 		"\n" + statementHolder.statements.collect{
-			 
+			
+			// Check each of the four possible components of a BlockStatement (the class of variable "it")
 			if (it.targetBlock) {
 				printIdentifiedBlock(it.targetBlock, targetCodeBlockPrinter)
 			} else if (it.functionCall) {
