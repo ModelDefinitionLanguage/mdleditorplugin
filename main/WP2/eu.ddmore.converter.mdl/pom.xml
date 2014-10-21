@@ -39,6 +39,15 @@
 			<artifactId>org.eclipse.xtend.standalone</artifactId>
 			<version>${xtend.version}</version>
 		</dependency>
+		
+		<!-- TODO: There is a dependency on org.eclipse.core.runtime.IPath ATM in the MDL -> PharmML converter.
+		     We don't want Eclipse classes referenced from Converter code.
+		     This dependency should be removed.	-->
+		<dependency>
+		    <groupId>org.eclipse.equinox</groupId>
+		    <artifactId>org.eclipse.equinox.common</artifactId>
+		    <version>3.6.0</version>
+		</dependency>
 
 	</dependencies>
 	
