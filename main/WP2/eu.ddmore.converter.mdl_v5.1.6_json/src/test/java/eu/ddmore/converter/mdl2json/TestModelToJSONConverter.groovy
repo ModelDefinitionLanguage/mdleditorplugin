@@ -4,115 +4,204 @@ import static org.junit.Assert.*
 
 import org.apache.log4j.Logger
 import org.junit.Test
+import org.junit.Ignore
 
 class TestModelToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestModelToJSONConverter.class)
 	
 	@Test
-	void testModelInputVariablesBlock() {
-		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
-		
-		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
-		
-		def inputVariables = modelObject.MODEL_INPUT_VARIABLES
-		
-		logger.debug(inputVariables)
-		
-		assertEquals("Checking number of input variables", 23, inputVariables.size())
-		assertEquals("Checking variable \"STU\"", ['name':'STU','type':'continuous','use':'covariate'], inputVariables[0])
-		assertEquals("Checking variable \"ID\"", ['name':'ID','use':'id','level':'2'], inputVariables[1])
-		assertEquals("Checking variable \"AMT\"", ['name':'AMT','use':'amt','units':'\"mg\"'], inputVariables[6])
-	}
-	
-	@Test
 	void testStructuralParametersBlock() {
-		def json = getJsonFromMDLFile("drugX_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
-		def modelObject = json.drugX_mdl
+		def modelObject = json.warfarin_PK_ODE_mdl
 		
 		def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
 		
 		logger.debug(structuralParameters)
 
-		assertEquals("Checking number of structural parameters", 8, structuralParameters.size())
-		assertEquals("Checking parameter \"POP_Vc\"", ['name':'POP_Vc','units':'"L"'], structuralParameters[0])
-		assertEquals("Checking variable \"POP_CL\"", ['name':'POP_CL','units':'"L/h"'], structuralParameters[2])
-		assertEquals("Checking variable \"RUV_PROP\"", ['name':'RUV_PROP'], structuralParameters[7])
+		assertEquals("Checking number of structural parameters", 6, structuralParameters.size())
+		assertEquals("Checking parameter 1/6", ['name':'POP_CL'], structuralParameters[0])
+		assertEquals("Checking parameter 2/6", ['name':'POP_V'], structuralParameters[1])
+		assertEquals("Checking parameter 3/6", ['name':'POP_KA'], structuralParameters[2])
+		assertEquals("Checking parameter 4/6", ['name':'POP_TLAG'], structuralParameters[3])
+		assertEquals("Checking parameter 5/6", ['name':'BETA_WT_CL'], structuralParameters[4])
+		assertEquals("Checking parameter 6/6", ['name':'BETA_WT_V'], structuralParameters[5])
 	}
 	
 	@Test
 	void testVariabilityParametersBlock() {
-		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
-		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
+		def modelObject = json.warfarin_PK_ODE_mdl
 		
 		def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
 		
 		logger.debug(variabilityParameters)
 		
-		assertEquals("Checking the list of Variability Parameters",
-			[ "PPV_PRL0", "PPV_KI", "PPV_KOUT", "PPV_AMP1", "PPV_PHS2", "PPV_IOV_IN_PRL0_1", "PPV_IOV_IN_PRL0_2", "PPV_IOV_IN_PRL0_3", "PPV_IOV_IN_PRL0_4", "RUV_EPS1" ].collect{
-				[ 'name': it ]
-			}, variabilityParameters)
+		assertEquals("Checking number of variability parameters", 7, variabilityParameters.size())
+		assertEquals("Checking parameter 1/7", ['name':'PPV_CL'], variabilityParameters[0])
+		assertEquals("Checking parameter 2/7", ['name':'PPV_V'], variabilityParameters[1])
+		assertEquals("Checking parameter 3/7", ['name':'PPV_KA'], variabilityParameters[2])
+		assertEquals("Checking parameter 4/7", ['name':'PPV_TLAG'], variabilityParameters[3])
+		assertEquals("Checking parameter 5/7", ['name':'CORR_PPV_CL_V'], variabilityParameters[4])
+		assertEquals("Checking parameter 6/7", ['name':'RUV_PROP'], variabilityParameters[5])
+		assertEquals("Checking parameter 6/7", ['name':'RUV_ADD'], variabilityParameters[6])
+	}
+	
+	@Test
+	void testIndividualVariablesBlock() {
+		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		
+		def modelObject = json.warfarin_PK_ODE_mdl
+		
+		def individualVars = modelObject.INDIVIDUAL_VARIABLES
+		
+		logger.debug(individualVars)
+		
+		assertEquals("Checking number of individual variables", 4, individualVars.size())
+		assertEquals("Checking variable 1/4",
+			[ 'name':'CL', 'type':'linear', 'trans':'log', 'pop':'POP_CL', 'fixEff':'[BETA_WT_CL]', 'cov':'[logtWT]', 'ranEff':'ETA_CL' ],
+			individualVars[0])
+		assertEquals("Checking variable 2/4",
+			[ 'name':'V', 'type':'linear', 'trans':'log', 'pop':'POP_V', 'fixEff':'[BETA_WT_V]', 'cov':'[logtWT]', 'ranEff':'ETA_V' ],
+			individualVars[1])
+		assertEquals("Checking variable 3/4",
+			[ 'name':'KA', 'type':'linear', 'trans':'log', 'pop':'POP_KA', 'ranEff':'ETA_KA' ],
+			individualVars[2])
+		assertEquals("Checking variable 4/4",
+			[ 'name':'TLAG', 'type':'linear', 'trans':'log', 'pop':'POP_TLAG', 'ranEff':'ETA_TLAG' ],
+			individualVars[3])
+
 	}
 	
 	@Test
 	void testRandomVariableDefinitionBlock() {
-		def json = getJsonFromMDLFile("drugX_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
-		def modelObject = json.drugX_mdl
+		def modelObject = json.warfarin_PK_ODE_mdl
 	
 		def randomVariableDefinitions = modelObject.RANDOM_VARIABLE_DEFINITION
 		
 		logger.debug(randomVariableDefinitions)
 		
-		assertEquals("Checking the list of Random Variable Definitions", [
-			[ 'name':'eta_PPV_Vc', 'type':'normal', 'mean':'0', 'var':'PPV_Vc', 'level':'ID' ],
-			[ 'name':'eta_PPV_Vp', 'type':'normal', 'mean':'0', 'var':'PPV_Vp', 'level':'ID' ],
-			[ 'name':'eta_PPV_CL', 'type':'normal', 'mean':'0', 'var':'PPV_CL', 'level':'ID' ],
-			[ 'name':'eps_RUV_EPS', 'type':'normal', 'mean':'0', 'var':'RUV_EPS', 'level':'DV' ]
-			], randomVariableDefinitions)
+		assertEquals("Checking number of random variable definitions", 5, randomVariableDefinitions.size())
+		
+		assertEquals("Checking name of distribution-variable 1/4", 'ETA_CL', randomVariableDefinitions[0]['name'])
+		assertEquals("Checking distribution-variable 1/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_CL', 'level':'ID' ], randomVariableDefinitions[0]['complexAttrs'])
+		assertEquals("Checking name of distribution-variable 2/4", 'ETA_V', randomVariableDefinitions[1]['name'])
+		assertEquals("Checking distribution-variable 2/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_V', 'level':'ID' ], randomVariableDefinitions[1]['complexAttrs'])
+		assertEquals("Checking name of distribution-variable 3/4", 'ETA_KA', randomVariableDefinitions[2]['name'])
+		assertEquals("Checking distribution-variable 3/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_KA', 'level':'ID' ], randomVariableDefinitions[2]['complexAttrs'])
+		assertEquals("Checking name of distribution-variable 4/4", 'ETA_TLAG', randomVariableDefinitions[3]['name'])
+		assertEquals("Checking distribution-variable 4/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_TLAG', 'level':'ID' ], randomVariableDefinitions[3]['complexAttrs'])
+		assertEquals("Checking name of variable-definition 1/1", 'CORR_PPV_CL_V', randomVariableDefinitions[4]['name'])
+		assertEquals("Checking variable-definition 1/1", [ 'type':'CORR', 'rv1':'ETA_CL', 'rv2':'ETA_V', 'level':'ID' ], randomVariableDefinitions[4]['attrs'])
 	}
 	
 	@Test
 	void testModelOutputVariablesBlock() {
 		
-		def json = getJsonFromMDLFile("drugX_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
-		def modelObject = json.drugX_mdl
-		
+		def modelObject = json.warfarin_PK_ODE_mdl
+				
 		def modelOutputVariables = modelObject.MODEL_OUTPUT_VARIABLES
 		
 		logger.debug(modelOutputVariables)
 		
 		assertEquals("Checking the list of Model Output Variables",
-			[ "ID", "TIME", "IPRED", "IWRES", "eta_PPV_Vc", "eta_PPV_Vp", "eta_PPV_CL", "WT" ].collect{
+			[ "ID", "TIME", "logtWT", "CL", "V", "KA", "TLAG", "Y" ].collect{
 				[ 'name': it ]
 		}, modelOutputVariables)
 	}
 	
 	@Test
-    void testModelObjectWithObservationBlock() {
-		def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")
+	void testModelInputVariablesBlock() {
+		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
-		def modelObject = json.ex_model7_prolactin_Jan2014_mdl
+		def modelObject = json.warfarin_PK_ODE_mdl
+		
+		def inputVariables = modelObject.MODEL_INPUT_VARIABLES
+		
+		logger.debug(inputVariables)
+		
+		assertEquals("Checking number of input variables", 6, inputVariables.size())
+		assertEquals("Checking variable 1/6", [ 'name':'ID', 'use':'id', 'level':'2' ], inputVariables[0])
+		assertEquals("Checking variable 2/6", [ 'name':'TIME', 'use':'idv' ], inputVariables[1])
+		assertEquals("Checking variable 3/6", [ 'name':'logtWT', 'use':'covariate', 'type':'continuous' ], inputVariables[2])
+		assertEquals("Checking variable 4/6", [ 'name':'AMT', 'use':'amt' ], inputVariables[3])
+		assertEquals("Checking variable 5/6", [ 'name':'DV', 'use':'dv', 'level':'1' ], inputVariables[4])
+		assertEquals("Checking variable 6/6", [ 'name':'MDV', 'use':'mdv' ], inputVariables[5])
+	}
+	
+	@Test
+    void testObservationBlock() {
+		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		
+		def modelObject = json.warfarin_PK_ODE_mdl
 		
 		logger.debug(modelObject)
 		
         def observation = modelObject.OBSERVATION
         
-        assertEquals("Y = IPRED+eps_RUV_EPS1*W\n", modelObject.OBSERVATION[0].replaceAll("\r\n", "\n")) // Make the line endings consistent between Linux and Windows so tests pass on both
+		assertEquals("Checking number of statements within the observation block", 2, observation.size())
+		assertEquals("Checking name of variable in observation statement 1/2", "EPS_Y", observation[0]['name'])
+		assertEquals("Checking variable in observation statement 1/2",
+			[ 'type':'normal', 'mean':'0', 'var':'1', 'level':'DV' ],
+			observation[0]['complexAttrs'])
+		assertEquals("Checking name of variable in observation statement 2/2", "Y", observation[1]['name'])
+		assertEquals("Checking variable in observation statement 2/2",
+			[ 'type':'continuous', 'error':'combined1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)', 'eps':'EPS_Y', 'prediction':'CC' ],
+			observation[1]['attrs'])
+	}
+	
+    @Test
+    public void testModelPredictionBlock() {
+		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
-        def modelPrediction = modelObject.MODEL_PREDICTION
+		def modelObject = json.warfarin_PK_ODE_mdl
         
-		logger.debug(modelPrediction)
-		
-		// (Skip checking of Model Prediction block since is tested in separate test method)
-		
+        def modPred = modelObject.MODEL_PREDICTION
+        
+        logger.debug('ModPred = ' + modPred)
+        
+        def ode = modPred.ODE
+        def library = modPred.LIBRARY
+        def content = modPred.content
+        
+        logger.debug("Ode :- " + ode)
+        logger.debug("Library :- " + library)
+        logger.debug("content := " + content)
+
+		def expectedOdeBlock = """            if (T>=TLAG) {
+	RATEIN = GUT*KA
+} else {
+	RATEIN = 0
+}
+            GUT : {deriv = (-RATEIN), init = 0, x0 = 0}
+            CENTRAL : {deriv = (RATEIN-CL*CENTRAL/V), init = 0, x0 = 0}
+"""
+        // Note that we need to make the line endings consistent between actual vs expected
+        assertEquals("Checking the ODE block", expectedOdeBlock, ode.replace("\r\n", "\n"))
+        
+		// TODO: Need to test the Library block
+
+		def expectedContentBlock = """        CC = CENTRAL/V
+"""
+		// Note that we need to make the line endings consistent between actual vs expected
+        assertEquals("Checking the content block", expectedContentBlock, content.replace("\r\n", "\n"))
+        
+    }
+	
+	@Test
+	@Ignore
+	void testGroupVariablesBlock() {
+		fail("Not implemented yet")
 	}
 	
 	@Test
-	void testModelObjectWithEstimationBlock() {
+	@Ignore
+	void testEstimationBlock() {
 		def json = getJsonFromMDLFile("drugX_ModelObject.mdl")
 		
 		def modelObject = json.drugX_mdl
@@ -154,8 +243,8 @@ GRPn = POP_n
 		// Note that we need to make the line endings consistent between actual vs expected
 		assertEquals("Checking the Individual Variables block", expectedIndividualVariablesBlock, individualVariables[0].replace("\r\n", "\n"))
 		
-        def modelPrediction = modelObject.MODEL_PREDICTION
-        
+		def modelPrediction = modelObject.MODEL_PREDICTION
+		
 		logger.debug(modelPrediction)
 		
 		// (Skip checking of Model Prediction block since is tested in separate test method)
@@ -177,68 +266,6 @@ Y = IPRED+W*eps_RUV_EPS
 		assertEquals("Checking the Estimation block", expectedEstimationBlock, estimationBlock[0].replace("\r\n", "\n"))
 		
 	}
-    
-    @Test
-    public void testModelObjectModelPredictionObject() {
-        def json = getJsonFromMDLFile("prolactin_ModelObject.mdl")
-        
-        def modelObject = json.ex_model7_prolactin_Jan2014_mdl
-        
-        def modPred = modelObject.MODEL_PREDICTION
-        
-        logger.debug(modPred[0])
-        
-        def ode = modPred.ODE
-        def library = modPred.LIBRARY
-        def content = modPred.content
-        
-        logger.debug("Ode :- " + ode[0])
-        logger.debug("Library :- " + library[0])
-        logger.debug("content := " + content[0])
-        
-        def expectedOdeBlock = """            CP = 1000*CENT/V2
-            DIU1 = AMP1*cos(2*PI*(T-PHS1)/24)
-            DIU2 = AMP2*cos(2*PI*(T-PHS2)/12)
-            DIU = DIU1+DIU2
-            RSTR = 1
-            if (DA>0) {
-	RSTR = DA/(1+CP/KI+DA)
-}
-            KIN = KINM*(1-RSTR)+KINB*DIU
-            FEED = 1
-            if (PROL>0) {
-	FEED = (PROL/PRL0)^UPDA
-}
-            ABS = ode(deriv = -KA*ABS)
-            CENT = ode(deriv = KA*ABS-(K23+K)*CENT+K32*PERI)
-            PERI = ode(deriv = K23*CENT-K32*PERI)
-            PROL = ode(deriv = KIN-KOUT*PROL)
-            DA = ode(deriv = KDA*F5*FEED-KDA*DA)
-"""
-        // Note that we need to make the line endings consistent between actual vs expected
-        assertEquals("Checking the ODE block", expectedOdeBlock, ode[0].replace("\r\n", "\n"))
-        
-        assertEquals("Checking the LIBRARY block", "            amount=nmadvan(model = 6, output = list(A, F))\n", library[0])
-        
-        def expectedContentBlock = """        IPRED = 0
-        if (PROL>0) {
-	IPRED = ln(PROL)
-}
-        W = POP_RES_ERR_IN_MALE_HV
-        if (PAT==1) {
-	W = POP_RES_ERR_IN_MALE_PATIENTS
-}
-        if (SEX==1) {
-	W = POP_RES_ERR_IN_FEMALE_PATIENTS
-}
-        IRES = DV-IPRED
-        IWRES = IRES/W
-        STRT = TRT
-"""
-		// Note that we need to make the line endings consistent between actual vs expected
-        assertEquals("Checking the content block", expectedContentBlock, content[0].replace("\r\n", "\n"))
-        
-    }
 	
 	@Test
 	public void testThatConditionalStatementWrittenOutWithBraces() {

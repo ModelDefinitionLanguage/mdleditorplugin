@@ -23,14 +23,60 @@ import eu.ddmore.converter.mdl2json.domain.MCLFile
  * <p>
  * Ultimately this would be an automated integration test... DDMORE-845.
  */
-class TestJSONToMDLConverter extends ConverterTestsParent {
-	private static Logger logger = Logger.getLogger(TestJSONToMDLConverter.class)
+class TestJSONToMDLFileConverter extends ConverterTestsParent {
+	private static Logger logger = Logger.getLogger(TestJSONToMDLFileConverter.class)
+	
+	
+	@Test
+	public void testMDLToJSONToMDL() {
+		
+		def File origMdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-latest.mdl", "mdl")
+		
+		def json = getJsonFromMDLFile(origMdlFile)
+		
+		def outputMdl = new MCLFile(json).toMDL()
+		
+		[
+			"DATA_INPUT_VARIABLES",
+			"DATA_DERIVED_VARIABLES",
+			"SOURCE",
+			"STRUCTURAL",
+			"VARIABILITY",
+			"MODEL_INPUT_VARIABLES",
+			"STRUCTURAL_PARAMETERS",
+			"VARIABILITY_PARAMETERS",
+			"RANDOM_VARIABLE_DEFINITION",
+			"INDIVIDUAL_VARIABLES",
+			"MODEL_PREDICTION",
+			"ODE", // actually redundant, should be verified by MODEL_PREDICTION block
+			"OBSERVATION",
+			"MODEL_OUTPUT_VARIABLES",
+			"ESTIMATE",
+			// "TARGET_CODE\\(.+\\)"
+		].each { blockName ->
+			extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, outputMdl)
+		}
+	}
+	
+	/**
+	 * Original MDL file: Warfarin-ODE-latest.mdl
+	 * File containing the dumped out JSON: Warfarin-ODE-latest.output.json
+	 */
+	@Test
+	@Ignore
+	public void testRGeneratedMOG_WarfarinODE() {
+		testRGeneratedMOG(
+			"warfarin_ODE/Warfarin-ODE-latest.output.json",
+			"warfarin_ODE/Warfarin-ODE-latest.mdl"
+		);
+	}
 
 	/**
 	 * Original MDL file: ex_model7_prolactin_01July2014_OAM.mdl
 	 * File containing the dumped out JSON: ex_model7_prolactin_01July2014_OAM.output.json
 	 */
     @Test
+	@Ignore
 	public void testRGeneratedMOG_Prolactin() {
 		testRGeneratedMOG(
 			"FribergCPT2009/ex_model7_prolactin_01July2014_OAM.output.json",		
@@ -43,6 +89,7 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: tumour_size_01July2014_OAM.output.json
 	 */
 	@Test
+	@Ignore
 	public void testRGeneratedMOG_Tumour() {
 		testRGeneratedMOG(
 			"ThamCCR2008/tumour_size_01July2014_OAM.output.json",
@@ -55,6 +102,7 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: drugX_trAbs_1Rep_EST001_ORG.output.json
 	 */
 	@Test
+	@Ignore
 	public void testRGeneratedMOG_DrugX() {
 		testRGeneratedMOG(
 			"drugX/drugX_trAbs_1Rep_EST001_ORG.output.json",
@@ -67,6 +115,7 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: warfarin_PK_PRED.output.json
 	 */
 	@Test
+	@Ignore
 	public void testRGeneratedMOG_Warfarin() {
 		testRGeneratedMOG(
 			"warfarin_PK_PRED/warfarin_PK_PRED.output.json",
@@ -92,26 +141,27 @@ class TestJSONToMDLConverter extends ConverterTestsParent {
 		
 		[
 			"DATA_INPUT_VARIABLES",
+			"DATA_DERIVED_VARIABLES",
 			"SOURCE",
 			"STRUCTURAL",
 			"VARIABILITY",
 			"MODEL_INPUT_VARIABLES",
 			"STRUCTURAL_PARAMETERS",
 			"VARIABILITY_PARAMETERS",
-			"GROUP_VARIABLES",
+			//"GROUP_VARIABLES",
 			"RANDOM_VARIABLE_DEFINITION",
 			"INDIVIDUAL_VARIABLES",
 			"MODEL_PREDICTION",
 			"ODE", // actually redundant, should be verified by MODEL_PREDICTION block
 			"LIBRARY", // actually redundant, should be verified by MODEL_PREDICTION block
 			"OBSERVATION",
-			"ESTIMATION",
+			//"ESTIMATION",
 			"MODEL_OUTPUT_VARIABLES",
-			"DATA",
-			"MODEL",
-			"EXECUTE",
+			//"DATA",
+			//"MODEL",
+			//"EXECUTE",
 			"ESTIMATE",
-			"TARGET_CODE\\(.+\\)"
+			//"TARGET_CODE\\(.+\\)"
 		].each { blockName ->
 			extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, mdl)
 		}

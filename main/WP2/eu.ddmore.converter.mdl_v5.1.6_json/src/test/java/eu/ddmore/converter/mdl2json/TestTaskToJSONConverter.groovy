@@ -4,13 +4,31 @@ import static org.junit.Assert.*;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.junit.Ignore;
 
 import eu.ddmore.converter.mdl2json.domain.Task
 
 class TestTaskToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestTaskToJSONConverter.class)
 	
+	
 	@Test
+	public void testEstimateBlock() {
+		def json = getJsonFromMDLFile("warfarinODE_TaskObject.mdl")
+		
+		def taskObj = json[0].warfarin_PK_ODE_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		
+		logger.debug(taskObj)
+		
+		def expectedEstimateStr = '''target=MLXTRAN_CODE
+version="4.3.2"
+algo=["SAEM"]'''
+		assertEquals("Checking the content of the Estimate block", expectedEstimateStr, taskObj[Task.ESTIMATE])
+		
+	}
+	
+	@Test
+	@Ignore
 	public void testReadSimpleTask() {
 		def json = getJsonFromMDLFile("simpleTask.mdl")
 
@@ -55,6 +73,7 @@ algo = list("FOCE ")
 	}
 	
 	@Test
+	@Ignore
 	public void testWarfarinTask() {
 		def File origMdlFile = getFileFromModelsProject("warfarin_PK_PRED/warfarin_PK_PRED.mdl")
 		
@@ -95,6 +114,7 @@ ESTIMATE{'''))
 	}
 	
 	@Test
+	@Ignore
 	public void testTumourTask() {
 		def File origMdlFile = getFileFromModelsProject("ThamCCR2008/tumour_size_01July2014_OAM.mdl")
 		

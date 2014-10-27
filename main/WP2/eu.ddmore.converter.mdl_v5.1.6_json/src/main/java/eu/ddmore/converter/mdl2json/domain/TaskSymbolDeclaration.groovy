@@ -1,6 +1,6 @@
-package eu.ddmore.converter.mdl2json.domain.task;
+package eu.ddmore.converter.mdl2json.domain;
 
-import eu.ddmore.converter.mdl2json.domain.MDLPrintable
+import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable;
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
 import groovy.util.Expando;
 
@@ -12,7 +12,6 @@ import org.ddmore.mdl.mdl.AnyExpression
 import org.ddmore.mdl.mdl.Argument;
 import org.ddmore.mdl.mdl.EnumType;
 import org.ddmore.mdl.mdl.SymbolDeclaration;
-import org.ddmore.mdl.types.UseType;
 
 /**
  * This is based on {@link Variable} - perhaps these should be consolidated.

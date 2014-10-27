@@ -16,78 +16,70 @@ import org.junit.Test;
 class TestJSONDataObjectToMDL extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestJSONDataObjectToMDL.class)
 	
-	private static String jsonSource = '{"SOURCE":{"file":"\\"tumour_exposure.csv\\"","symbolName":"myData","identifier":"SOURCE","ignore":"\\"@\\"","inputformat":"nonmemFormat"}}'
-	private static String jsonInputVars = '{"DATA_INPUT_VARIABLES":[{"name":"ID","type":"categorical"},{"name":"TIME","type":"continuous","units":"\\"h\\""},{"name":"AMT","type":"continuous","units":"\\"mg\\""},{"name":"DV","type":"continuous"}]}'
+	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes 
+	private String sourceBlockJson = / {"SOURCE":{"file":"\"warfarin_conc.csv\"","identifier":"SOURCE","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
+	private String dataInputVariablesJson = / {"DATA_INPUT_VARIABLES":[{"name":"ID","type":"categorical"},{"name":"TIME","type":"continuous","units":"\"h\""},{"name":"WT","type":"continuous"},{"name":"AMT","type":"continuous","units":"\"mg\""},{"name":"DV","type":"continuous"},{"name":"MDV","type":"categorical"}]} /
+	private String dataDerivedVariablesJson = / {"DATA_DERIVED_VARIABLES":[{"logtWT":"log(WT\/70)"}]} /
 	
 	@Test
 	public void testSource() {
-		def json = getJson(jsonSource)
+		
+		def json = getJson(sourceBlockJson)
 
-		Data data = new Data(json)
+		def dataObj = new Data(json)
+		
 		String expected = """dataobj {
-    
-    
-    SOURCE{
-        myData=list(
-            file="tumour_exposure.csv",
-            ignore="@",
-            inputformat=nonmemFormat
-        )
+
+    SOURCE {
+        file="warfarin_conc.csv"
+        ignore="#"
+        inputformat=nonmemFormat
     }
 
 }
 """
-		assertEquals(expected, data.toMDL())			
+		assertEquals(expected, dataObj.toMDL())
 	}
 	
 	@Test
 	public void testDataInputVariables() {
-		def json = getJson(jsonInputVars)
 		
-		Data data = new Data(json)
+		def json = getJson(dataInputVariablesJson)
+		
+		def dataObj = new Data(json)
+		
 		String expected = """dataobj {
-    
+
     DATA_INPUT_VARIABLES {
-        ID=list(type=categorical)
-        TIME=list(type=continuous,units="h")
-        AMT=list(type=continuous,units="mg")
-        DV=list(type=continuous)
+        ID : {type=categorical}
+        TIME : {type=continuous, units="h"}
+        WT : {type=continuous}
+        AMT : {type=continuous, units="mg"}
+        DV : {type=continuous}
+        MDV : {type=categorical}
     }
 
-    
 }
 """
-		assertEquals(expected, data.toMDL())
+		assertEquals(expected, dataObj.toMDL())
 	}
 	
 	@Test
-	public void testWarfarin() {
-		def mdlFile = getFile("warfarin_DataObject.mdl")
+	public void testDataDerivedVariables() {
 		
-		def json = getJsonFromMDLFile(mdlFile)
+		def json = getJson(dataDerivedVariablesJson)
 		
-		MCLFile mclFile = new MCLFile(json)
+		def dataObj = new Data(json)
 		
-		logger.debug(mclFile.toMDL())
+		String expected = """dataobj {
 
-		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "SOURCE", mclFile.toMDL())
-		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "DATA_INPUT_VARIABLES", mclFile.toMDL())
-		
-	}
-	
-	@Test
-	public void testTumour() {
-		def mdlFile = getFile("tumour_DataObject.mdl")
-		
-		def json = getJsonFromMDLFile(mdlFile)
-		
-		MCLFile mclFile = new MCLFile(json)
-		
-		logger.debug(mclFile.toMDL())
+    DATA_DERIVED_VARIABLES {
+        logtWT = log(WT/70)
+    }
 
-		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "SOURCE", mclFile.toMDL())
-		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "DATA_INPUT_VARIABLES", mclFile.toMDL())
-		
+}
+"""
+		assertEquals(expected, dataObj.toMDL())
 	}
 	
 	@Test

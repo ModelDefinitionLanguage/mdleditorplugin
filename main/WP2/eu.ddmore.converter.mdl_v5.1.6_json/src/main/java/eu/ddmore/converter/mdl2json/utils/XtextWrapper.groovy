@@ -1,22 +1,23 @@
 package eu.ddmore.converter.mdl2json.utils;
 
-import org.apache.log4j.Logger;
-import org.ddmore.mdl.mdl.AdditiveExpression;
-import org.ddmore.mdl.mdl.AndExpression;
-import org.ddmore.mdl.mdl.AnyExpression;
+import org.apache.log4j.Logger
+import org.ddmore.mdl.mdl.AdditiveExpression
+import org.ddmore.mdl.mdl.AndExpression
+import org.ddmore.mdl.mdl.AnyExpression
 import org.ddmore.mdl.mdl.Argument
-import org.ddmore.mdl.mdl.Arguments;
-import org.ddmore.mdl.mdl.ConditionalExpression;
-import org.ddmore.mdl.mdl.DistributionArgument
-import org.ddmore.mdl.mdl.DistributionArguments;
-import org.ddmore.mdl.mdl.EnumType;
-import org.ddmore.mdl.mdl.Expression;
-import org.ddmore.mdl.mdl.FunctionName;
-import org.ddmore.mdl.mdl.LogicalExpression;
-import org.ddmore.mdl.mdl.MultiplicativeExpression;
-import org.ddmore.mdl.mdl.OrExpression;
-import org.ddmore.mdl.mdl.PowerExpression;
-import org.ddmore.mdl.mdl.UnaryExpression;
+import org.ddmore.mdl.mdl.Arguments
+import org.ddmore.mdl.mdl.ConditionalExpression
+import org.ddmore.mdl.mdl.EnumType
+import org.ddmore.mdl.mdl.Expression
+import org.ddmore.mdl.mdl.FunctionCall
+import org.ddmore.mdl.mdl.FunctionName
+import org.ddmore.mdl.mdl.LogicalExpression
+import org.ddmore.mdl.mdl.MultiplicativeExpression
+import org.ddmore.mdl.mdl.OrExpression
+import org.ddmore.mdl.mdl.PowerExpression
+import org.ddmore.mdl.mdl.Primary
+import org.ddmore.mdl.mdl.UnaryExpression
+import org.ddmore.mdl.mdl.Vector
 
 import eu.ddmore.converter.mdlprinting.MdlPrinter;
 
@@ -34,10 +35,8 @@ public class XtextWrapper {
 			return unwrap(expression.getExpression());
 		} else if (expression.getList() != null) {
 			return argumentsToMapOrList(expression.getList().getArguments())
-		} else if (expression.getOdeList() != null) {
-			return argumentsToMapOrList(expression.getOdeList().getArguments())
 		} else if (expression.getVector() != null) {
-			return mdlPrinter.toStr(expression.getVector())
+			return unwrap(expression.getVector())
 		} else if (expression.getType() != null) {
 			return mdlPrinter.toStr(expression.getType())
 		}
@@ -90,18 +89,31 @@ public class XtextWrapper {
 	}
 
 	public static Object unwrap(AdditiveExpression expression) {
-		if (expression.getExpression().size() != 0 && expression.getOperator() != null) {
-			logger.debug(expression)
-			return unwrap(expression.getExpression().get(0))
-		}
 		if (expression.getString() != null) {
-            return "\"" + expression.getString() + "\"";
+			return "\"" + expression.getString() + "\"";
 		}
-        return "";
+		
+		final StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < expression.getExpression().size(); i++) {
+			sb.append(unwrap(expression.getExpression().get(i)))
+			if ( (!expression.getOperator().isEmpty()) && i < expression.getExpression().size()-1 ) {
+				sb.append(expression.getOperator().get(0))
+			}
+		}
+		logger.debug(sb)
+		return sb.toString()
 	}
 	
 	public static Object unwrap(MultiplicativeExpression expression) {
-		return unwrap(expression.getExpression().get(0))
+		final StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < expression.getExpression().size(); i++) {
+			sb.append(unwrap(expression.getExpression().get(i)))
+			if ( (!expression.getOperator().isEmpty()) && i < expression.getExpression().size()-1 ) {
+				sb.append(expression.getOperator().get(0))
+			}
+		}
+		logger.debug(sb)
+		return sb.toString()
 	}
 	
 	public static Object unwrap(PowerExpression expression) {
@@ -115,10 +127,10 @@ public class XtextWrapper {
 			return expression.getNumber()
 		} else if (expression.getSymbol()) {
 			return expression.getSymbol().getName()
+		} else if (expression.getFunctionCall()) {
+			return unwrap(expression.getFunctionCall())
 		} else if (expression.getConstant()) {
 			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: constant=" + expression.getConstant())
-		} else if (expression.getFunctionCall()) {
-			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: functionCall=" + expression.getFunctionCall())
 		} else if (expression.getParExpression()) {
 			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: parExpression=" + expression.getParExpression())
 		} else if (expression.getAttribute()) {
@@ -135,29 +147,48 @@ public class XtextWrapper {
 		return null;
 	}
 	
-	public static Object unwrap(FunctionName functionName) {
-		logger.debug(functionName)
-		// TODO Auto-generated method stub
-		return null;
+	public static Object unwrap(FunctionCall fc) {
+		final String functionName = fc.getIdentifier().getName()
+		final String argsStr = fc.getArguments().getArguments().collect { Argument a ->
+			if (a.getArgumentName()) {
+				a.getArgumentName().getName() + "=" + unwrap(a.getExpression())
+			} else {
+				unwrap(a.getExpression())
+			}
+		}.join(", ")
+		logger.debug(functionName + ":\t" + argsStr)
+		return(functionName + "(" + argsStr + ")")
+	}
+	
+	public static Object unwrap(Vector v) {
+		"[".concat(v.getValues().collect {Primary p ->
+			if (p.getNumber()) {
+				p.getNumber()
+			} else if (p.getString()) {
+				"\"" + p.getString() + "\""
+			} else if (p.getSymbol()) {
+				p.getSymbol().getName()
+			}
+		}.join(", ")).concat("]")
 	}
 
-	public static Object unwrap(DistributionArguments distributionArgs) {
-		Map arguments = [:]
-		distributionArgs.getArguments().each { DistributionArgument da ->
-			if(da.getDistribution()!=null) {
-				arguments["type"] = da.getDistribution().getIdentifier()
-			} else if(da.getComponent()!=null) {
-			  	arguments[da.getArgumentName()] = unwrap(da.getComponent().getArguments())
-			} else if( da.getValue() != null ){
-				String val = ""
-				if( da.getValue().getNumber()!=null ) val = da.getValue().getNumber()
-				else if (da.getValue().getSymbol()!=null) val = da.getValue().getSymbol().getName()
-				else if(da.getValue().getVector()!=null) val = mdlPrinter.toStr(da.getValue().getVector())
-				arguments[da.getArgumentName().getName()] = val
-			}
-		}
-		arguments
-	}
+//	public static Object unwrap(DistributionArguments distributionArgs) {
+//		Map arguments = [:]
+//		distributionArgs.getArguments().each { DistributionArgument da ->
+//			if(da.getDistribution()!=null) {
+//				arguments["type"] = da.getDistribution().getIdentifier()
+//			} else if(da.getComponent()!=null) {
+//			  	arguments[da.getArgumentName()] = unwrap(da.getComponent().getArguments())
+//			} else if( da.getValue() != null ){
+//				String val = ""
+//				if( da.getValue().getNumber()!=null ) val = da.getValue().getNumber()
+//				else if (da.getValue().getSymbol()!=null) val = da.getValue().getSymbol().getName()
+//				else if(da.getValue().getVector()!=null) val = mdlPrinter.toStr(da.getValue().getVector())
+//				arguments[da.getArgumentName().getName()] = val
+//			}
+//		}
+//		arguments
+//	}
 	
 	/**
 	 * Sometimes there is an argument name and sometimes there is not...

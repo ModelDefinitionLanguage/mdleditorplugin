@@ -11,6 +11,8 @@ import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
 import java.util.regex.Matcher
 
+import static eu.ddmore.converter.mdl2json.interfaces.MDLPrintable.IDT
+
 class ConverterTestsParent {
 
     final static String TEST_DATA_DIR = "./"
@@ -92,6 +94,13 @@ class ConverterTestsParent {
 		
 		if (!StringUtils.isEmpty(origMdlFileBlockContent) || !StringUtils.isEmpty(newMdlFileBlockContent)) { // Check that we actually have something to compare
 			logger.info("Verifying block " + blockName + "...")
+			
+			// Special additional preprocessing for the SOURCE block:
+			// The items within this block can be in any order so put the lines of the original and new blocks into a known order
+			if (blockName == 'SOURCE') {
+				origMdlFileBlockContent = putSOURCEBlockInKnownOrder(origMdlFileBlockContent)
+				newMdlFileBlockContent = putSOURCEBlockInKnownOrder(newMdlFileBlockContent)
+			}
 		
 			// Trim off whitespace from both the expected and the actual
 			// Also drop any { } brackets around an "if" statement which are always added when writing out to MDL
@@ -178,20 +187,45 @@ class ConverterTestsParent {
 		
 		// Some explanation of this regex needed!
 		// The (?s) is the "dot-all" instruction to the matcher to match newline characters,
-		// so "list(...)"s spread over multiple lines will match.
-		// "(?:=list|\~)" is for matching either "=list(...)" or "~ (...)"; the "?:" instructs
-		// the matcher to not actually capture this group.
-		// The remainder of the regex is to match the parameter list in the ( ) brackets; the
-		// "?" after the ".+" instructs the matcher to lazily match rather than greedily match,
-		// otherwise the matcher would keep going until it found the last closing bracket rather
-		// than the one that matched the opening bracket.
-		final Matcher matcher = ( str =~ /(?s)(?:=list|\~)\s*\(\s*(.+?)\s*\)/)
+		// so parameter definitions spread over multiple lines will match.
+		// The \{\s*(.+?)\s*\} is to match the list of attributes of the parameter, in the { }
+		// brackets; the "?" after the ".+" instructs the matcher to lazily match rather than
+		// greedily match, otherwise the matcher would keep going until it found the last closing
+		// bracket rather than the one that matched the opening bracket.
+		def outStr1 = sortParameterList(str, ( str =~ /(?s)[A-Za-z0-9]+\s*\:\s*\{\s*(.+?)\s*\}/ ))
+		// This regex is almost the same as the previous one but is to match the list of 'complex
+		// attributes' i.e. for a distribution parameter VAR ~ (...).
+		def outStr2 = sortParameterList(outStr1, ( outStr1 =~ /(?s)[A-Za-z0-9]+\s*\~\s*\(\s*(.+?)\s*\)/ ))
 		
+		outStr2
+	}
+	
+	private static sortParameterList(final String str, Matcher matcher) {
 		def outStr = str
 		
 		while (matcher.find()) {
 			String[] params = matcher.group(1).split(/\s*,\s*/)
 			outStr = outStr.replace(matcher.group(1), params.sort().join(","))
+		}
+		
+		outStr
+	}
+	
+	/**
+	 * Special additional preprocessing for the SOURCE block:
+	 * The items within this block can be in any order so put the lines of the original and new blocks into a known order.
+	 */ 
+	private static String putSOURCEBlockInKnownOrder(final String sourceBlockContent) {
+		
+		// Similar regex behaviour to those in putParameterListsIntoKnownOrder()
+		final Matcher matcher = ( sourceBlockContent =~ /(?s)SOURCE\s*\{\s*(.+?)\s*\}/ )
+		
+		def outStr = sourceBlockContent
+		
+		while (matcher.find()) {
+//			Collections.as List<String> attributes = new ArrayList<String>
+			List attributes = ( matcher.group(1).split(/\s*\n\s*/) )
+			outStr = outStr.replace(matcher.group(1), attributes.sort().join("\n${IDT*2}"))
 		}
 		
 		outStr

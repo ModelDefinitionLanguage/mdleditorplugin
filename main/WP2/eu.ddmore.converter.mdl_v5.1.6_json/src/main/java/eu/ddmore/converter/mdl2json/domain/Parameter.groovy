@@ -9,66 +9,71 @@ import org.ddmore.mdl.mdl.ParameterObject
 import org.ddmore.mdl.mdl.ParameterObjectBlock
 import org.ddmore.mdl.mdl.PriorParametersBlock
 import org.ddmore.mdl.mdl.SameBlock
-import org.ddmore.mdl.mdl.StructuralBlock
-import org.ddmore.mdl.mdl.Symbol
-import org.ddmore.mdl.mdl.SymbolDeclaration
 import org.ddmore.mdl.mdl.SymbolName
 import org.ddmore.mdl.mdl.SymbolNames
-import org.ddmore.mdl.mdl.Symbols
 import org.ddmore.mdl.mdl.TargetBlock
 import org.ddmore.mdl.mdl.VariabilityBlock
 import org.ddmore.mdl.mdl.VariabilityBlockStatement
 
-import eu.ddmore.converter.mdl2json.utils.MDLUtils
+import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON;
+import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable;
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	private static Logger logger = Logger.getLogger(Parameter.class)
 	
 	static final String IDENTIFIER = "parobj"
-	static final String VARIABILITY = "VARIABILITY"
-	static final String TARGET = "TARGET"
 	static final String STRUCTURAL = "STRUCTURAL"
-	static final String PRIOR = "PRIOR"
+	static final String VARIABILITY = "VARIABILITY"
+	static final String PRIOR = "PRIOR_PARAMETERS"
+	static final String TARGET_BLOCK = "TARGET_BLOCK"
 
 	public Parameter(ParameterObject paramObject) {
-		this.setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
 		
-		for( ParameterObjectBlock pob : paramObject.getBlocks()) {
-			if(pob.getPriorBlock()) {
-				setProperty(PRIOR, makePrior(pob.getPriorBlock()))
-			} else if(pob.getStructuralBlock()) {
-				setProperty(STRUCTURAL, makeStructuralModel(pob.getStructuralBlock()))
-			} else if(pob.getTargetBlock()) {
-				setProperty(TARGET, makeTarget(pob.getTargetBlock()))
-			} else if(pob.getVariabilityBlock()) {
-				setProperty(VARIABILITY, makeVariability(pob.getVariabilityBlock()))
+		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
+		
+		for (ParameterObjectBlock b : paramObject.getBlocks()) {
+			
+			if (b.getStructuralBlock()) {
+				setProperty(STRUCTURAL, VariablesList.buildFromSymbolDeclarations(b.getStructuralBlock().getParameters()))
 			}
+			if (b.getVariabilityBlock()) {
+				setProperty(VARIABILITY, makeVariability(b.getVariabilityBlock()))
+			}
+			if (b.getPriorBlock()) {
+				setProperty(PRIOR, makePrior(b.getPriorBlock()))
+			}
+			if (b.getTargetBlock()) {
+				setProperty(TARGET_BLOCK, makeTarget(b.getTargetBlock()))
+			}
+			
 		}
 	}
 	
-	public Parameter(Object json) {
+	public Parameter(Map json) {
+		
 		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
-		if(json[VARIABILITY]) {
+		
+		if (json[VARIABILITY]) {
 			setProperty(VARIABILITY, json[VARIABILITY])
 		}
-		if(json[STRUCTURAL]) {
-			setProperty(STRUCTURAL, json[STRUCTURAL])
+		if (json[STRUCTURAL]) {
+			setProperty(STRUCTURAL, VariablesList.buildFromJSON(json[STRUCTURAL]))
 		}
-	}
-	
-	/**
-	 * Parse the structural model block
-	 */
-	private List makeStructuralModel(StructuralBlock sb) {
-		MDLUtils.makeSymbolNamedList(sb.getParameters())
+		if (json[PRIOR]) {
+			throw new UnsupportedOperationException("Prior not supported yet")
+		}
+		if (json[TARGET_BLOCK]) {
+			throw new UnsupportedOperationException("Target block not supported yet")
+		}
+		
 	}
 	
 	/**
 	 * Parse the variability model block
 	 */
 	private List makeVariability(VariabilityBlock vb) {
-		List retVal = []
+		List<Map> retVal = []
 		for(VariabilityBlockStatement s : vb.getStatements()) {
 			if(s.getDiagBlock()) {
 				Map diag = makeDiag(s.getDiagBlock())
@@ -80,7 +85,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 				retVal.add([ "${mb.getIdentifier()}" : matrixMap ])
 			}
 			if(s.getParameter()) {
-				retVal.add(makeSymbol(s.getParameter()))
+				retVal.add(new Variable(s.getParameter()))
 			}
 			if(s.getSameBlock()){
 				Map same = makeSame(s.getSameBlock())
@@ -91,27 +96,25 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	}
 	
 	/**
-	 * Parse the target block
-	 */
-	private Map makeTarget(TargetBlock tb) {
-		logger.warn("Target not supported yet")
-		return [:]
-	}
-	
-	/**
 	 * Parse the prior block
 	 */
 	private Map makePrior(PriorParametersBlock ppb) {
-		logger.warn("Prior not supported yet")
-		return [:]
+		throw new UnsupportedOperationException("Prior not supported yet")
 	}
 	
-	/*
+	/**
+	 * Parse the target block
+	 */
+	private Map makeTarget(TargetBlock tb) {
+		throw new UnsupportedOperationException("Target block not supported yet")
+	}
+	
+	/**
 	 * Parse the MatrixBlock
 	 */
 	private Map makeMatrix(MatrixBlock mb) {
 		Map matrix = createVariabilityMatrix(mb.getArguments())	
-		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromSymbols(mb.getParameters()) )
+		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromParameters(mb.getParameters()) )
 		return matrix
 	}
 
@@ -120,14 +123,14 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	 */
 	private Map makeDiag(DiagBlock block) {
 		Map matrix = createVariabilityMatrix(block.getArguments())	
-		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromSymbols(block.getParameters()) )
+		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromParameters(block.getParameters()) )
 		return matrix
 	}	
 	
 	/**
 	 * Parse the SameBlock
 	 */
-	private Map makeSame( SameBlock block ) {
+	private Map makeSame(SameBlock block) {
 		Map matrix = createVariabilityMatrix(block.getArguments())	
 		matrix.put(CONTENT_PROPNAME, getContentFromSymbolNames(block.getParameters()))
 		return matrix
@@ -148,25 +151,27 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	}	
 
 	/**
-	 * Extract the lower triangular matrix from a list of Symbols.
+	 * Extract the lower triangular matrix from a list of Arguments.
 	 * 
-	 * @param symbols
+	 * @param parameters
 	 * @return A String, representing the lower triangular matrix, separated by newlines
 	 */
-	private String getLowerTriangularMatrixFromSymbols(Symbols symbols) {
+	private String getLowerTriangularMatrixFromParameters(Arguments parameters) {
 		StringBuffer content = new StringBuffer()
 		int rowLength = 1
 		int colNum = 1
 		List rows = []
-		for(Symbol s : symbols.getSymbols()) {
+		for (Argument p : parameters.getArguments()) {
 			String symbolString = ""
-			if(colNum > rowLength) {
+			if (colNum > rowLength) {
 				symbolString += "\n"
 				rowLength++
 				colNum=1
+			} else if (colNum > 1) {
+				symbolString += " "
 			}
-			String symbol = s.getSymbolName()?.getName()
-			String expression = XtextWrapper.unwrap(s.getExpression())
+			String symbol = p.getArgumentName()?.getName()
+			String expression = XtextWrapper.unwrap(p.getExpression())
 			symbolString += ( symbol ? "${symbol}=${expression}" : "${expression}" )
 
 			rows.add(symbolString)
@@ -174,16 +179,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 		}
 		rows.join(",")
 	}
-		
-	/**
-	 * Turn a symbol declaration into a map of "name" = "expression"
-	 */
-	private Map makeSymbol(SymbolDeclaration symbolDeclaration) {
-		Map m = [:]
-		m[symbolDeclaration.getSymbolName().getName()] = XtextWrapper.unwrap(symbolDeclaration.getExpression())
-		m
-	}
-
+	
 	/**
 	 * Returns a list of symbol names
 	 */
@@ -196,35 +192,40 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	}
 	
 	public String makeVariabilityMDL(List variability) {
-		StringBuffer strucStr = new StringBuffer()
-		strucStr.append("\n${IDT}VARIABILITY{\n")
-		variability.each { it ->
-			it.each { k,v ->
-				// block could be a matrix, a diag, a same or a named parameter
-				switch(k) {
-					case "matrix":
-						// matrix is lower triangular, example "matrix(name="struc2", type="VAR") { matrix }
-						String mx = v[CONTENT_PROPNAME]
-						mx = mx.split("\n").join("\n${IDT*3}")
-						strucStr.append("${IDT*2}matrix(name=${v['name']}, type=${v['type']}) {\n${IDT*3}${mx}\n${IDT*2}}\n")
-						break;
-					case "diag":
-						// example "diag(name="struc2", type="VAR") { list of parameters }"
-						strucStr.append("${IDT*2}diag(name=${v['name']}, type=${v['type']}) {\n${IDT*3}${v[CONTENT_PROPNAME]}\n${IDT*2}}\n")
-						break;
-					case "same":
-						// example "same(name="struc2") { PPV_IOV_IN_PRL0_2 }"
-						strucStr.append("${IDT*2}same(name=${v['name']}) {\n${IDT*3}${v[CONTENT_PROPNAME]}\n${IDT*2}}\n")
-						break;
-					default:
-						// Otherwise 'key' is the variability parameter name
-						strucStr.append("${IDT*2}${k}=list(${v.collect{ key,value->"${key}=${value}"}.join(",")})\n")
-						break;	
-				}
+		StringBuffer strBuf = new StringBuffer()
+		strBuf.append("\n${IDT}VARIABILITY {\n")
+		variability.each { Map m ->
+			
+			/*
+			 * Block could be a matrix, a diag, a same or a named parameter
+			 */
+			
+			def matrixParam = m['matrix']
+			def diagParam = m['diag']
+			def sameParam = m['same']
+			
+			strBuf.append("${IDT*2}")
+			if (matrixParam) {
+				// matrix is lower triangular, example "matrix(name="struc2", type="VAR") { matrix }
+				String content = matrixParam[CONTENT_PROPNAME].split("\n").join("\n${IDT*3}")
+				strBuf.append("matrix(name=${matrixParam['name']}, type=${matrixParam['type']}) {\n${IDT*3}${content}\n${IDT*2}}")
+			} else if (diagParam) {
+				// example "diag(name="struc2", type="VAR") { list of parameters }"
+				String content = diagParam[CONTENT_PROPNAME].split("\n").join("\n${IDT*3}")
+				strBuf.append("diag(name=${diagParam['name']}, type=${diagParam['type']}) {\n${IDT*3}${content}\n${IDT*2}}")
+			} else if (sameParam) {
+				// example "same(name="struc2") { PPV_IOV_IN_PRL0_2 }"
+				String content = sameParam[CONTENT_PROPNAME].split("\n").join("\n${IDT*3}")
+				strBuf.append("same(name=${sameParam['name']}) {\n${IDT*3}${content}\n${IDT*2}}")
+			} else {
+				// Otherwise is a named parameter
+				strBuf.append(new Variable(m).toMDL())
 			}
+			strBuf.append("\n")
+
 		}
-		strucStr.append("${IDT}}")
-		strucStr.toString()
+		strBuf.append("${IDT}}\n")
+		strBuf.toString()
 	}
 	
 	/**
@@ -232,19 +233,19 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	 * @return
 	 */
 	public String toMDL() {
-		Properties p = getProperties()
+		def p = getProperties()
 		
 		StringBuffer mdl = new StringBuffer()
 		if (p.containsKey(STRUCTURAL)) {
-			mdl.append(MDLUtils.makeMDLFromSymbolNamedList(p.get(STRUCTURAL), "STRUCTURAL"))
+			mdl.append("\n${IDT}STRUCTURAL {\n${IDT*2}${getProperty(STRUCTURAL).toMDL()}\n${IDT}}\n")
 		}
 		if (p.containsKey(VARIABILITY)) {
-			mdl.append(makeVariabilityMDL(p.get(VARIABILITY)))
+			mdl.append(makeVariabilityMDL(getProperty(VARIABILITY)))
 		}
-		
-		return """${IDENTIFIER} {${mdl.toString()}
+		return """${IDENTIFIER} {
+${mdl.toString()}
 }
-"""
+""" // TODO: Prior, Target Block
 	}
 
 }

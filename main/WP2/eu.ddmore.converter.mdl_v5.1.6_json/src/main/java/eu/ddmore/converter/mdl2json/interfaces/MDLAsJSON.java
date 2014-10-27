@@ -1,4 +1,4 @@
-package eu.ddmore.converter.mdl2json.domain;
+package eu.ddmore.converter.mdl2json.interfaces;
 
 public interface MDLAsJSON {
 	static final String IDENTIFIER_PROPNAME = "identifier";

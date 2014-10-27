@@ -3,15 +3,15 @@ levodopa_variability_par = parobj{
 # The parameter object defines the numerical values of the parameters with optional constraints (lo and high values) and units.
 
    STRUCTURAL{
-# The STRUCTURAL block define the structural model parameters.
+# The STRUCTURAL block defines the structural model parameters.
       #THETA
-      POP_V1=list(value=11.4,lo=0.02,hi=100) # 1 ;Central compartment volume
-      POP_CL=list(value=30.9,lo=0.02,hi=500) # 2 ;Elimination clearance
-      POP_V2=list(value=27.3,lo=0.02,hi=100) # 3 ;Tissue compartment volume
-      POP_Q=list(value=34.6,lo=0.02,hi=100) # 4 ;Intercompartmental clearance
-      POP_TTK0=list(value=2 ,fix=true) # 5 ;Duration of infusion
-      POP_RSYN=list(value=3.42,lo=0,hi=10) # 6 ;Endogenous ldopa input
-      POP_CSSOP=list(value=0.075,lo=0,hi=1) # 7 ;Css from previous dosing
+      POP_V1:{value=11.4,lo=0.02,hi=100} # 1 ;Central compartment volume
+      POP_CL:{value=30.9,lo=0.02,hi=500} # 2 ;Elimination clearance
+      POP_V2:{value=27.3,lo=0.02,hi=100} # 3 ;Tissue compartment volume
+      POP_Q:{value=34.6,lo=0.02,hi=100} # 4 ;Intercompartmental clearance
+      POP_TTK0:{value=2 ,fix=true} # 5 ;Duration of infusion
+      POP_RSYN:{value=3.42,lo=0,hi=10} # 6 ;Endogenous ldopa input
+      POP_CSSOP:{value=0.075,lo=0,hi=1} # 7 ;Css from previous dosing
    }# end STRUCTURAL
 
    VARIABILITY{
@@ -76,9 +76,9 @@ levodopa_variability_par = parobj{
          BOVV210, # 43
          BOVQ10 # 44
       } # end same struc2
-      PPV_CVTTK0=list(value= 0 ,type=VAR,fix=true) # 45
-      PPV_CVRSYN=list(value= 0.513 ,type=VAR) # 46
-      PPV_CVCSSOP=list(value= 1.53 ,type=VAR) # 47
+      PPV_CVTTK0:{value= 0 ,type=VAR,fix=true} # 45
+      PPV_CVRSYN:{value= 0.513 ,type=VAR} # 46
+      PPV_CVCSSOP:{value= 1.53 ,type=VAR} # 47
       matrix(name="struc12",type=VAR) {
          PPV_BTVV11=0.156, # 48
          0.0407, PPV_BTVCL1=0.0292, # 49
@@ -110,9 +110,13 @@ levodopa_variability_par = parobj{
          PPV_BTVQ5 # 67
       } # end same struc12
       #SIGMA
-      RUV_CVCP=list(value=0.0118     ,type=VAR) # 1
-      RUV_SDCP=list(value=0.0249     ,type=VAR) # 2
-
+      RUV_CVCP:{value=0.0118,type=VAR} # 1
+      RUV_SDCP:{value=0.0249,type=VAR} # 2
+      # Added for test purposes
+      diag(name="struc3",type=VAR) {
+         PPV_IOV_IN_PRL0_1=.0657,
+         PPV_IOV_IN_PRL0_2=.0757
+      }
    }# end VARIABILITY
 
 } # end of parameter object

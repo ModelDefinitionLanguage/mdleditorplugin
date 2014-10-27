@@ -1,8 +1,6 @@
-/**
- * 
- */
-package eu.ddmore.converter.mdl2json.domain.data;
+package eu.ddmore.converter.mdl2json.domain;
 
+import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable;
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
 import groovy.util.Expando;
 
@@ -11,12 +9,13 @@ import java.util.List;
 
 import org.ddmore.mdl.mdl.Argument;
 import org.ddmore.mdl.mdl.SourceBlock;
+import org.ddmore.mdl.mdl.PropertyDeclaration;
 
 /**
  * @author jchard
  *
  */
-public class Source extends Expando {
+public class Source extends Expando implements MDLPrintable {
 
 	private static final String SOURCE = "SOURCE"
 	
@@ -26,14 +25,13 @@ public class Source extends Expando {
 	 * @param sourceBlock
 	 */
 	public Source(SourceBlock sourceBlock) {
-	
 		setProperty("identifier", sourceBlock.getIdentifier() );
-		setProperty("symbolName", sourceBlock.getSymbolName().getName());
-		if(sourceBlock.getInlineBlock()!=null) {
-			setProperty("inlineBlock", sourceBlock.getInlineBlock());
+		sourceBlock.getStatements().each{ PropertyDeclaration pd ->
+			def expr = pd.getExpression()
+			setProperty(pd.getPropertyName().getName(), XtextWrapper.unwrap(expr))
 		}
-		for( Argument a : sourceBlock.getList().getArguments().getArguments() ) {
-			setProperty(a.getArgumentName().getName(), XtextWrapper.unwrap(a.getExpression()));
+		if (sourceBlock.getInlineBlock() != null) {
+			setProperty("inlineBlock", sourceBlock.getInlineBlock());
 		}
 	}
 
@@ -54,17 +52,11 @@ public class Source extends Expando {
 	public String toMDL() {
 		List properties = []
 		getProperties().each{ k, v ->
-			if(!k.equals("identifier") && !k.equals("symbolName")) { 
+			if(!k.equals("identifier")) { 
 				properties.add("${k}=${v}")
 			} 
 		}
 		
-		"""
-    ${SOURCE}{
-        ${getProperty("symbolName")}=list(
-            ${properties.join(",\n            ")}
-        )
-    }
-"""
+		"""${properties.join("\n        ")}"""
 	}
 }
