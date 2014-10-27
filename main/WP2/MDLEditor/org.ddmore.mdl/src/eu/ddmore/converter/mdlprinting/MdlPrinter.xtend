@@ -8,18 +8,14 @@ package eu.ddmore.converter.mdlprinting
 import org.ddmore.mdl.mdl.Mcl
 import org.ddmore.mdl.mdl.FunctionCall
 import org.ddmore.mdl.mdl.SymbolDeclaration
-import org.ddmore.mdl.mdl.Block
-import org.ddmore.mdl.mdl.BlockStatement
 import org.ddmore.mdl.mdl.List
 import org.ddmore.mdl.mdl.RandomList
 import org.ddmore.mdl.mdl.Primary
-import org.ddmore.mdl.mdl.ConditionalStatement
 import org.ddmore.mdl.mdl.Expression
 import org.ddmore.mdl.mdl.AnyExpression
 import org.ddmore.mdl.mdl.OrExpression
 import org.ddmore.mdl.mdl.AndExpression
 import org.ddmore.mdl.mdl.LogicalExpression
-import org.ddmore.mdl.mdl.ConditionalExpression
 import org.ddmore.mdl.mdl.AdditiveExpression
 import org.ddmore.mdl.mdl.MultiplicativeExpression
 import org.ddmore.mdl.mdl.PowerExpression
@@ -50,7 +46,7 @@ import org.ddmore.mdl.mdl.PropertyDeclaration
 
 class MdlPrinter {
 	
-	public var mdlVersion = "5.2.0";
+	public var mdlVersion = "6.0";
 	
 	private static val MdlPrinter mdlPrinter = new MdlPrinter();
 	protected new(){}
@@ -67,14 +63,12 @@ class MdlPrinter {
 	
 	def isTrue(AnyExpression e){
 		if (e.expression != null){
-			if (e.expression.conditionalExpression.expression != null){
-				val orExpr = e.expression.conditionalExpression.expression;
-				val andExpr = orExpr.expression.get(0);
-				val logicalExpr = andExpr.expression.get(0);	
-				if (logicalExpr.boolean != null){	
-					if ((logicalExpr.negation == null) && logicalExpr.boolean.equals("true")) return true;
-					if ((logicalExpr.negation != null) && logicalExpr.boolean.equals("false")) return true;
-				}
+			val orExpr = e.expression.expression;
+			val andExpr = orExpr.expression.get(0);
+			val logicalExpr = andExpr.expression.get(0);	
+			if (logicalExpr.boolean != null){	
+				if ((logicalExpr.negation == null) && logicalExpr.boolean.equals("true")) return true;
+				if ((logicalExpr.negation != null) && logicalExpr.boolean.equals("false")) return true;
 			}
 		}
 		return e.toStr.equals("true");
@@ -238,7 +232,7 @@ class MdlPrinter {
 	
 	def toStr(RandomList l){
 		if (l.arguments != null){
-			return "~" + "(" + l.arguments.toStr + ")";
+			return l.identifier + "(" + l.arguments.toStr + ")";
 		}
 		return "";
 	}
@@ -258,39 +252,51 @@ class MdlPrinter {
 	}
 	
 	def String toStr(Expression e){
-		return e.conditionalExpression.toStr
-	}
-	
-	def toStr(ConditionalExpression e){ 
 		var res = e.expression.toStr;
-		if (e.expression1 != null){
-			res  = res + "?" + e.expression1.toStr + ":" + e.expression2.toStr
+		if (e.condition != null){
+			res = res + ''' when «e.expression.toStr»'''
+			if (e.whenBranches != null)
+				for (b: e.whenBranches){
+						res = res + 
+						'''
+						, «b.expression.toStr» when «e.condition.toStr»
+						'''
+				}		
+			if (e.elseExpression != null)
+				res = res + 
+				'''
+				«e.elseExpression.toStr» otherwise
+				'''
 		}
 		return res;
 	}
-
+	
 	def toStr(OrExpression e){
 		var res = "";
-		var iterator = e.expression.iterator();
-		var operatorIterator = e.operator.iterator();
-		if (iterator.hasNext ) {
-			res = iterator.next.toStr;
-		}
-		while (iterator.hasNext && operatorIterator.hasNext){
-			res  = res + operatorIterator.next.convertOperator + iterator.next.toStr;
+		if (e.expression != null){
+			var iterator = e.expression.iterator();
+			var operatorIterator = e.operator.iterator();
+			if (iterator.hasNext ) {
+				res = iterator.next.toStr;
+			}
+			while (iterator.hasNext && operatorIterator.hasNext){
+				res  = res + operatorIterator.next.convertOperator + iterator.next.toStr;
+			}
 		}
 		return res;
 	}
 	
 	def toStr(AndExpression e){
 		var res = "";
-		var iterator = e.expression.iterator();
-		var operatorIterator = e.operator.iterator();
-		if (iterator.hasNext ) {
-			res = iterator.next.toStr;
-		}
-		while (iterator.hasNext && operatorIterator.hasNext){
-			res  = res + operatorIterator.next.convertOperator + iterator.next.toStr;
+		if (e.expression != null){
+			var iterator = e.expression.iterator();
+			var operatorIterator = e.operator.iterator();
+			if (iterator.hasNext ) {
+				res = iterator.next.toStr;
+			}
+			while (iterator.hasNext && operatorIterator.hasNext){
+				res  = res + operatorIterator.next.convertOperator + iterator.next.toStr;
+			}
 		}
 		return res;	
 	}
@@ -510,58 +516,24 @@ class MdlPrinter {
 	//Printing
     //////////////////////////////////////////////////////////////////////////		 
 	
-	def CharSequence print(Block b)'''
-		«FOR st: b.statements»
-			«st.print»
-		«ENDFOR»
-	'''
-	
 	def print(ObservationBlock b)'''
-		«FOR s: b.statements»
+		«FOR s: b.variables»
 			«s.print»
 		«ENDFOR»
 	'''		
 	
 	def print(SimulationBlock b)'''
-		«FOR s: b.statements»
+		«FOR s: b.variables»
 			«s.print»
 		«ENDFOR»
 	'''	
 
 	def print(EstimationBlock b)'''
-		«FOR s: b.statements»
+		«FOR s: b.variables»
 			«s.print»
 		«ENDFOR»
 	'''	
 		
-	def CharSequence print(BlockStatement st)'''
-		«IF st.symbol != null»«st.symbol.print»«ENDIF»
-		«IF st.functionCall != null»«st.functionCall.print»«ENDIF»
-		«IF st.statement != null»«st.statement.print»«ENDIF»
-		«IF st.targetBlock != null»«st.targetBlock.print»«ENDIF»
-	'''
-
-	def print(ConditionalStatement s)'''
-		«IF s.expression != null»
-			if («s.expression.print») {
-				«IF s.ifStatement != null»
-					«s.ifStatement.print»
-				«ENDIF»
-				«IF s.ifBlock != null»
-					«s.ifBlock.print»
-				«ENDIF»
-			}«IF s.elseStatement != null || s.elseBlock != null» else {
-				«IF s.elseStatement != null»
-					«s.elseStatement.print»
-				«ENDIF»
-				«IF s.elseBlock != null»
-					«s.elseBlock.print»
-				«ENDIF»
-			}
-			«ENDIF»
-		«ENDIF»
-	'''
-	
 	def print(TargetBlock b)'''«b.toStr»'''	
 		
 	def print(FunctionCall call)'''«call.toStr»'''
@@ -576,8 +548,6 @@ class MdlPrinter {
 	
 	def print(Expression e)'''«e.toStr»'''
 	
-	def print(ConditionalExpression e)'''«e.toStr»'''
-
 	def print(OrExpression e)'''«e.toStr»'''
 	
 	def print(AndExpression e)'''«e.toStr»'''

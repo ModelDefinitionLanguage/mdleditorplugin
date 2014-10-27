@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ddmore.mdl.mdl.*;
-import org.ddmore.mdl.mdl.impl.FullyQualifiedArgumentNameImpl;
 import org.ddmore.mdl.mdl.impl.FunctionCallStatementImpl;
 import org.ddmore.mdl.mdl.impl.SymbolDeclarationImpl;
 import org.ddmore.mdl.types.MdlDataType;
@@ -32,8 +31,8 @@ import eu.ddmore.converter.mdlprinting.MdlPrinter;
 		UnitValidator.class})
 public class MdlJavaValidator extends AbstractMdlJavaValidator {
 
-	public final static String MSG_SYMBOL_DEFINED  = "A variable or parameter with such name already exists";
-	public final static String MSG_SYMBOL_UNKNOWN  = "Unresolved reference: parameter, variable, object or formal argument not declared";
+	public final static String MSG_SYMBOL_DEFINED  = "A variable with such name already exists";
+	public final static String MSG_SYMBOL_UNKNOWN  = "Unresolved reference: variable not declared";
 		
 	public final static String MSG_UNRESOLVED_FUNC_ARGUMENT_REF = "Unresolved reference to a function output parameter";
 	public final static String MSG_UNRESOLVED_SAME_BLOCK_NAME = "No corresponding matrix or diag block found";
@@ -46,7 +45,8 @@ public class MdlJavaValidator extends AbstractMdlJavaValidator {
 	public final static String MSG_PARAM_OBJ_MISSING = "MOG should include a parameter object";
 	public final static String MSG_TASK_OBJ_MISSING  = "MOG should include a task object";
 	public final static String MSG_OBJ_DEFINED       = "Cannot create a MOG";
-
+	public final static String MSG_MODEL_DATA_MISMATCH = "Inconsistent sets of model/data variables";
+	
 	//List of objects
 	Map<String, MdlDataType> declaredObjects = new HashMap<String, MdlDataType>();	
 	
@@ -67,6 +67,11 @@ public class MdlJavaValidator extends AbstractMdlJavaValidator {
 	@Check
 	public void updateDeclaredVariableList(Mcl mcl){
 		declaredVariables = Utils.getDeclaredSymbols(mcl);
+	}
+	
+	@Check
+	public void updateLinkedObjects(Mcl mcl){
+		mogs = Utils.getMOGs(mcl);
 	}
 	
 	//Update the list of declared variability subblock names
@@ -97,11 +102,6 @@ public class MdlJavaValidator extends AbstractMdlJavaValidator {
 		}
 	}
 	
-	@Check
-	public void updateLinkedObjects(Mcl mcl){
-		mogs = Utils.getMOGs(mcl);
-	}
-	
 	//Match the name of the same block with the name of a matrix or a diag block
 	@Check
 	public void validateSameSubblockName(SameBlock b){
@@ -114,6 +114,16 @@ public class MdlJavaValidator extends AbstractMdlJavaValidator {
 						MSG_UNRESOLVED_SAME_BLOCK_NAME, b.getIdentifier());
 		}
 	}
+	
+	@Check
+	public void checkSymbolDeclarations(SymbolDeclaration s){
+		if (s.getSymbolName() != null)
+			if (Utils.isSymbolDeclaredMoreThanOnce(declaredVariables, s.getSymbolName())){
+				warning(MSG_SYMBOL_DEFINED, 
+						MdlPackage.Literals.SYMBOL_DECLARATION__SYMBOL_NAME,
+						MSG_UNRESOLVED_SAME_BLOCK_NAME, s.getSymbolName().getName());
+			}
+	} 
 
 	////////////////////////////////////////////////////////////////
 	//Check references
@@ -129,18 +139,11 @@ public class MdlJavaValidator extends AbstractMdlJavaValidator {
 		//Skip reference to a standard function
 		if (FunctionValidator.standardFunctions.containsKey(ref.getName())) return;
 		
-		if (container instanceof FullyQualifiedArgumentNameImpl){
-			if (!Utils.isSymbolDeclared(declaredVariables, ref))
-				warning(MSG_SYMBOL_UNKNOWN, MdlPackage.Literals.SYMBOL_NAME__NAME,
-						MSG_SYMBOL_UNKNOWN, ref.getName());
-		}
-		else {
-			//TODO: for MOG validation, collect declared variables for a given object name instead of all
-			if (!(Utils.isSymbolDeclared(declaredVariables, ref, mogs) ||
-					declaredObjects.containsKey(ref.getName()) )){
-				warning(MSG_SYMBOL_UNKNOWN, MdlPackage.Literals.SYMBOL_NAME__NAME,
-						MSG_SYMBOL_UNKNOWN, ref.getName());
-			}
+		//Check that each variable is in the local object or in the MOG
+		if (!(	Utils.isSymbolDeclared(declaredVariables, ref, mogs) 
+				|| declaredObjects.containsKey(ref.getName())) ){
+			warning(MSG_SYMBOL_UNKNOWN, MdlPackage.Literals.SYMBOL_NAME__NAME,
+					MSG_SYMBOL_UNKNOWN, ref.getName());
 		}
 	}
 
@@ -172,10 +175,42 @@ public class MdlJavaValidator extends AbstractMdlJavaValidator {
 	    		}
 	    	}
 	    }
-	    if ((args.size() > 0) && !AttributeValidator.checkAttributes(ref, args))
+	    if ((args.size() > 0) && !checkAttributes(ref, args))
 			warning(MSG_UNRESOLVED_ATTRIBUTE_REF, 
 				MdlPackage.Literals.FULLY_QUALIFIED_ARGUMENT_NAME__SELECTORS,
 					MSG_UNRESOLVED_ATTRIBUTE_REF, ref.getParent().getName());
+	}
+	
+	//Check references to list attributes
+	public boolean checkAttributes(FullyQualifiedArgumentName ref, List<Argument> arguments) {
+		//Skip 
+		if (ref.eContainer() instanceof SymbolDeclarationImpl) return true;
+		List <Argument> currArgs = arguments; 
+		for (Selector x: ref.getSelectors()){
+			if (currArgs != null){
+				int index = -1;
+				if (x.getSelector() != null){
+					index = Integer.parseInt(x.getSelector());
+					if (!((index >= 1) && (index < currArgs.size() + 1))) return false;
+					index = 1;	
+				}
+				if (x.getArgumentName() != null){
+					int i = 0;
+					for (Argument arg: currArgs){
+						if (arg.getArgumentName().getName().equals(x.getArgumentName().getName())){
+							index = i + 1; break;
+						}
+						i++; 
+					}
+				}
+				if (index > 0) {
+					if (currArgs.get(index - 1).getExpression().getList() != null)
+						if (arguments.get(index).getExpression().getList().getArguments() != null)
+							currArgs = arguments.get(index).getExpression().getList().getArguments().getArguments();
+				} else return false;
+			} 
+		}
+		return true;
 	}
 
 	//Validate a fully qualified argument whose parent refers to a variable declared as a function 
@@ -256,7 +291,44 @@ public class MdlJavaValidator extends AbstractMdlJavaValidator {
 					warning(MSG_OBJ_DEFINED + ": two or more " + names[i] + " objects selected!", 
 						MdlPackage.Literals.MCL_OBJECT__MOG_OBJECT,
 						MSG_OBJ_DEFINED,  mcl.getObjectName().getName());
+			}			
+			for (int i = 0; i < 4; i++)
+				if (params[i] != 1) return;
+			
+			/*Validate MOG with correct set of objects*/
+			MclObject dObj = null;
+			MclObject mObj = null;
+			for (ObjectName obj: mog.getObjects()){
+				MclObject mclObj = (MclObject)obj.eContainer();
+				if (mclObj.getModelObject() != null) mObj = mclObj;
+				if (mclObj.getDataObject() != null) dObj = mclObj;
+			}			
+			if (dObj != null && mObj != null){
+				List<String> dVars = declaredVariables.get(dObj.getObjectName().getName());
+				for (ModelObjectBlock b: mObj.getModelObject().getBlocks()){
+					if (b.getInputVariablesBlock() != null){
+						for (SymbolDeclaration s: b.getInputVariablesBlock().getVariables()){
+							String varName = "";
+							if (s.getSymbolName() != null) varName = s.getSymbolName().getName();
+							/*
+							if (s.getList() != null){
+								String alias = MdlPrinter.getInstance().getAttribute
+									(s.getList().getArguments(), AttributeValidator.attr_alias.getName());
+								if (alias.length() > 0){
+									varName = alias;
+								}
+							}*/
+							if (varName.length() > 0 && !dVars.contains(varName)){
+								warning(MSG_MODEL_DATA_MISMATCH + 
+									": no mapping for model variable " + varName + " found in " + 
+									dObj.getObjectName().getName() + " object", 
+									MdlPackage.Literals.MCL_OBJECT__OBJECT_NAME,
+									MSG_MODEL_DATA_MISMATCH,  mcl.getObjectName().getName());
+							}
+						}
+					}
+				}
 			}
 		}
-	}
+	}	
 }

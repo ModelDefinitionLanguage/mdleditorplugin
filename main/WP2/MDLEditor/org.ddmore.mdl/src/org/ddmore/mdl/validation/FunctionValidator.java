@@ -19,6 +19,7 @@ import org.ddmore.mdl.domain.FunctionSignature;
 import org.ddmore.mdl.domain.ParameterPassingMethod;
 import org.ddmore.mdl.domain.Variable;
 import org.ddmore.mdl.mdl.Argument;
+import org.ddmore.mdl.mdl.Arguments;
 import org.ddmore.mdl.mdl.FunctionCall;
 import org.ddmore.mdl.mdl.MdlPackage;
 import org.ddmore.mdl.types.MdlDataType;
@@ -91,7 +92,6 @@ public class FunctionValidator extends AbstractDeclarativeValidator{
 	final public static List<String> funct_standard2 = Arrays.asList("logx", "root", "min", "max", "rem");
 
 	final public static String funct_runif     = "runif";
-	final public static String funct_errorExit = "errorExit";
 	final public static String funct_pnorm     = "pnorm";
 	
 	final public static FunctionParameter param_n  = new FunctionParameter("n", MdlDataType.TYPE_INT);
@@ -155,7 +155,6 @@ public class FunctionValidator extends AbstractDeclarativeValidator{
 						new FunctionParameterSet(Arrays.asList(param_seq_start, param_seq_stepSize, param_seq_end))
 				), MdlDataType.TYPE_REAL, true));
 			put(funct_pnorm, new FunctionSignature(funct_pnorm, 1, MdlDataType.TYPE_REAL));
-			put(funct_errorExit, new FunctionSignature(funct_errorExit, 2, MdlDataType.TYPE_VOID));
 			put(funct_runif, new FunctionSignature(funct_runif, new FunctionParameterSet(param_n), MdlDataType.TYPE_REAL));
 			
 			/*Error models*/
@@ -225,7 +224,7 @@ public class FunctionValidator extends AbstractDeclarativeValidator{
 		FunctionSignature functSig = standardFunctions.get(call.getIdentifier().getName());
 		//TODO validate whether the function returns any value to enable/disable its use in expressions
 		//TODO instead of checking whether a parameter is known, match a list of actual parameters with one of valid sets!
-		if (Utils.isPassedByName(call.getArguments())){
+		if (isPassedByName(call.getArguments())){
 			if (functSig.isPassingByName()){
 				if (call.getArguments() != null){
 					for (Argument arg: call.getArguments().getArguments()){
@@ -264,7 +263,7 @@ public class FunctionValidator extends AbstractDeclarativeValidator{
 					call.getIdentifier().getName());					
 			}	
 		} else {
-			if (Utils.isPassedByPlace(call.getArguments())) {
+			if (isPassedByPlace(call.getArguments())) {
 				int expected = functSig.getNumberOfParams();
 				int actual = 0;
 				if (call.getArguments().getArguments() != null)
@@ -296,5 +295,28 @@ public class FunctionValidator extends AbstractDeclarativeValidator{
 						call.getIdentifier().getName());	
 			}
 		}
+	}
+	
+	public boolean isPassedByName(Arguments args){
+		if (args != null){
+			int nNames = 0; 
+			for (Argument arg: args.getArguments()){
+				if (arg.getArgumentName() != null) nNames++;
+			}
+			int count = args.getArguments().size();
+			return (nNames == count && count != 0);
+		}
+		return false;
+	}
+	
+	public boolean isPassedByPlace(Arguments args){
+		if (args != null){
+			int nNames = 0; 
+			for (Argument arg: args.getArguments()){
+				if (arg.getArgumentName() != null) nNames++;
+			}
+			return (nNames == 0);
+		}
+		return true;
 	}
 }

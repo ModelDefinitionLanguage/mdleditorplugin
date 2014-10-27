@@ -1,23 +1,18 @@
 package eu.ddmore.converter.mdl2pharmml
 
-import java.util.HashMap
 import java.util.HashSet
 import org.ddmore.mdl.mdl.Mcl
 import org.ddmore.mdl.mdl.ModelObject
 import org.ddmore.mdl.mdl.ParameterObject
-import org.ddmore.mdl.mdl.SymbolName
 import eu.ddmore.converter.mdlprinting.MdlPrinter
-import org.ddmore.mdl.mdl.Expression
 import org.ddmore.mdl.validation.AttributeValidator
 import org.ddmore.mdl.mdl.SymbolDeclaration
 import org.ddmore.mdl.mdl.DataDerivedBlock
-import org.ddmore.mdl.validation.Utils
 import org.ddmore.mdl.mdl.UseType
 import org.ddmore.mdl.mdl.MOGObject
 import org.ddmore.mdl.mdl.impl.MclObjectImpl
 import org.ddmore.mdl.mdl.MclObject
 import java.util.ArrayList
-import java.util.List
 
 class ReferenceResolver{
 	extension MdlPrinter mdlPrinter;
@@ -29,19 +24,18 @@ class ReferenceResolver{
 	
 	protected var deriv_vars = new HashSet<String>();	 
 	
-	//protected val LEVEL_UNprotected def = 0;	
 	protected var eps_vars = newHashMap   //EPSs   - Random variables, level 1
 	protected var eta_vars = newHashMap	  //ETAs   - Random variables, level 2
 	protected var level_vars = newHashMap //       - Input variables, level attribute			
 	
 	//List of PharmML declared symbols and corresponding blocks 
-	protected var ind_vars = new HashSet<String>();
-	protected var vm_err_vars = new HashMap<String, List<String>>(); 
-	protected var vm_mdl_vars = new HashMap<String, List<String>>();
-	protected var cm_vars = new HashMap<String, List<String>>();
-	protected var pm_vars = new HashMap<String, List<String>>();	  
-	protected var om_vars = new HashMap<String, List<String>>();	  
-	protected var sm_vars = new HashMap<String, List<String>>();	 
+	protected var ind_vars = new ArrayList<String>();
+	protected var vm_err_vars = new ArrayList<String>(); 
+	protected var vm_mdl_vars = new ArrayList<String>();
+	protected var cm_vars = new ArrayList<String>();
+	protected var pm_vars = new ArrayList<String>();	  
+	protected var om_vars = new ArrayList<String>();	  
+	protected var sm_vars = new ArrayList<String>();	 
 		
 	protected def prepareCollections(Mcl m){
 		for (o: m.objects){
@@ -51,45 +45,30 @@ class ReferenceResolver{
 	  			setRandomVariables(o.modelObject);
 
 				//Independent variables
-				var indVars = o.modelObject.getIndependentVars();
-				if (indVars.size > 0)
-					ind_vars.addAll(indVars);	
+				ind_vars = o.modelObject.getIndependentVars();
 			
 				//VariabilityModel definitions
-				var errorVars = o.modelObject.getLevelVars("1");
-				if (errorVars.size > 0)
-					vm_err_vars.put(o.objectName.name, errorVars);
-
-				var mdlVars = o.modelObject.getLevelVars("2")
-				if (mdlVars.size > 0)
-					vm_mdl_vars.put(o.objectName.name, mdlVars);
+				vm_err_vars = o.modelObject.getLevelVars("1");
+				vm_mdl_vars = o.modelObject.getLevelVars("2")
 
 				//CovariateModel				
-				var covariateVars = o.modelObject.getCovariateVars();
-				if (covariateVars.size > 0)
-					cm_vars.put(o.objectName.name, covariateVars);
+				cm_vars = o.modelObject.getCovariateVars();
 					
 				//StructuralModel
-				var structuralVars = o.modelObject.getStructuralVars;	
-				if (structuralVars.size > 0)
-					sm_vars.put(o.objectName.name, structuralVars);
+				sm_vars = o.modelObject.getStructuralVars;	
 					
 				//ParameterModel
-				var parameters = o.modelObject.getParameters;	
-				if (parameters.size > 0)
-					pm_vars.put(o.objectName.name, parameters);
+				pm_vars = o.modelObject.getParameters;	
 					
 				//ObservationModel
-				var observationVars = o.modelObject.getObservationVars;	
-				if (observationVars.size > 0)
-					sm_vars.put(o.objectName.name, observationVars);
-					
+				om_vars = o.modelObject.getObservationVars;	
 			}
 			if (o.parameterObject != null){
 				//ParameterModel
 				var parameters = o.parameterObject.getParameters;	
 				if (parameters.size > 0)
-					pm_vars.put(o.objectName.name, parameters);
+				for (p: parameters)
+					if (!pm_vars.contains(p)) pm_vars.add(p);
 			}
 		}
 	}
@@ -113,56 +92,20 @@ class ReferenceResolver{
 	    }
 	}
 	
-	protected def getDerivedVariables(DataDerivedBlock b){
-		var derivedVars = newArrayList;
-		for (st: b.statements)
-			Utils::addSymbolNoRepeat(derivedVars, st);
-		return derivedVars;
-	}
-	
 	protected def getReferenceBlock(String name){
 		//try to find by name
-		for (set: vm_err_vars.entrySet)
-			if (set.value.contains(name)) return "vm_err." + set.key;
-		for (set:vm_mdl_vars.entrySet)
-			if (set.value.contains(name)) return "vm_mdl." + set.key;
-		for (set: cm_vars.entrySet)
-			if (set.value.contains(name)) return "cm." + set.key;
-		for (set: om_vars.entrySet)
-			if (set.value.contains(name)) return "om." + set.key;	
-		for (set: sm_vars.entrySet)
-			if (set.value.contains(name)) return "sm." + set.key;	
-		for (set: pm_vars.entrySet)
-			if (set.value.contains(name)) return "pm." + set.key;	
-		return "";
-	}	
-	
-	protected def getReferenceBlock(String objName, String name){
-		//try to find by name
-		var source = vm_err_vars.get(objName);
-		if (source != null)
-			if (source.contains(name)) return "vm_err." + objName
-		source = vm_mdl_vars.get(name);
-		if (source != null)
-			if (source.contains(name)) return "vm_mdl." + objName
-		source = cm_vars.get(objName);
-		if (source != null)
-			if (source.contains(name)) return "cm." + objName
-		source = om_vars.get(objName);
-		if (source != null)
-			if (source.contains(name)) return "om." + objName	
-		source = sm_vars.get(objName);
-		if (source != null)
-			if (source.contains(name)) return "sm." + objName	
-		source = pm_vars.get(objName);
-		if (source != null)
-			if (source.contains(name)) return "pm." + objName	
+		if (vm_err_vars.contains(name)) return "vm_err";
+		if (vm_mdl_vars.contains(name)) return "vm_mdl";
+		if (cm_vars.contains(name)) return "cm";
+		if (om_vars.contains(name)) return "om";	
+		if (sm_vars.contains(name)) return "sm";	
+		if (pm_vars.contains(name)) return "pm";	
 		return "";
 	}	
 	
 	//+ Return input variables with use=idv (individual)
 	protected def getIndependentVars(ModelObject obj){
-		var independentVars = new HashSet<String>();
+		var independentVars = newArrayList;
 		for (block: obj.blocks){
 			if (block.inputVariablesBlock != null){
 				for (s: block.inputVariablesBlock.variables){
@@ -179,7 +122,7 @@ class ReferenceResolver{
 		
 	//+ Return a list of covariate variables per object
 	protected def getCovariateVars(ModelObject obj){
-		var covariateVars = new ArrayList<String>();
+		var covariateVars = newArrayList;
 		for (b: obj.blocks){
 			if (b.inputVariablesBlock != null){
 				for (s: b.inputVariablesBlock.variables){
@@ -196,15 +139,24 @@ class ReferenceResolver{
 		return covariateVars;		
 	}
 	
+	protected def getDerivedVariables(DataDerivedBlock b){
+		var derivedVars = newArrayList;
+		for (st: b.variables)
+			if (st.symbolName.name != null)
+				derivedVars.add(st.symbolName.name)
+		return derivedVars;
+	}
+	
 	//+Returns declarations for ParameterModel
 	protected def getParameters(ModelObject obj){		
-		var parameters = new ArrayList<String>();
+		var parameters = newArrayList;
 		for (b: obj.blocks){
 			//Model object, GROUP_VARIABLES (covariate parameters)
 			if (b.groupVariablesBlock != null){
 				for (st: b.groupVariablesBlock.statements){
-					if (st.statement != null){
-						Utils::addSymbolNoRepeat(parameters, st.statement)
+					if (st.variable != null){
+						if (st.variable.symbolName.name != null)
+							parameters.add(st.variable.symbolName.name)
 					}							
 				}
 			}	
@@ -218,8 +170,9 @@ class ReferenceResolver{
 	  		}
 	  		//Model object, INDIVIDUAL_VARIABLES
 			if (b.individualVariablesBlock != null){
-				for (s: b.individualVariablesBlock.statements){
-					Utils::addSymbolNoRepeat(parameters, s)
+				for (s: b.individualVariablesBlock.variables){
+					if (s.symbolName != null)
+						parameters.add(s.symbolName.name);
 				} 
 	  		}
 	  	}
@@ -228,7 +181,7 @@ class ReferenceResolver{
 	
 	//+Returns declarations for ParameterModel
 	protected def getParameters(ParameterObject obj){		
-		var parameters = new ArrayList<String>();
+		var parameters = newArrayList;
 		for (b: obj.blocks){
 			//Parameter object, STRUCTURAL
 			if (b.structuralBlock != null){
@@ -249,15 +202,12 @@ class ReferenceResolver{
 	
 	//+Returns declarations in ObservationModel
 	protected def getObservationVars(ModelObject obj){
-		var observationVars = new ArrayList<String>();
+		var observationVars = newArrayList;
 		for (b: obj.blocks){
 			if (b.observationBlock != null){
-				for (st: b.observationBlock.statements){
-					Utils::addSymbolNoRepeat(observationVars, st)
-					if (st.symbol.expression != null){
-						var classifiedVars = st.symbol.expression.getReferences;
-						observationVars.addAll(classifiedVars.keySet);
-					}
+				for (st: b.observationBlock.variables){
+					if (st.symbolName != null)
+						observationVars.add(st.symbolName.name);
 				}
 			}
 		}
@@ -266,16 +216,18 @@ class ReferenceResolver{
 	
 	//+ Return a list of structural variables per object
 	protected def getStructuralVars(ModelObject obj){
-		var structuralVars = new ArrayList<String>();
+		var structuralVars = newArrayList;
 		for (b: obj.blocks){
 			if (b.modelPredictionBlock != null){
 				for (st: b.modelPredictionBlock.statements){
-					if (st.statement != null) {
-						Utils::addSymbolNoRepeat(structuralVars, st.statement);
+					if (st.variable != null && st.variable.symbolName != null) {
+						structuralVars.add(st.variable.symbolName.name);
 					} else 
 						if (st.odeBlock != null){
-							for (s: st.odeBlock.statements){
-								Utils::addSymbolNoRepeat(structuralVars, s);
+							for (s: st.odeBlock.variables){
+								if (s.symbolName != null) {
+									structuralVars.add(s.symbolName.name);
+								}
 							}
 						}
 				}
@@ -284,24 +236,6 @@ class ReferenceResolver{
 		return structuralVars;
 	}
 	
-	//+ For each reference, define its purpose
-	protected def getReferences(Expression expr){
-		var classifiedVars = new HashMap<String, String>();
-		var iterator = expr.eAllContents();
-	    while (iterator.hasNext()){
-	    	var obj = iterator.next();
-	    	if (obj instanceof SymbolName){
-	    		var ref = obj as SymbolName;
-	    		if (classifiedVars.get(ref.name) == null)
-			    	if (eps_vars.get(ref.name) != null)
-			    		classifiedVars.put(ref.name, "random")
-			    	else 	
-			    		classifiedVars.put(ref.name, "other");
-	    	}
-	    }
-	    return classifiedVars;
-	}
-
 	protected def setLevelVars(ModelObject o){
 		var tmp = o.getLevelVars("1");
 		for (v: tmp){
@@ -316,7 +250,7 @@ class ReferenceResolver{
 	}
 		
 	protected def getLevelVars(ModelObject o, String levelId) {
-		var levelVars = new ArrayList<String>();
+		var levelVars = newArrayList;
 		for (b: o.blocks){
 			if(b.inputVariablesBlock != null){
 				for (s: b.inputVariablesBlock.variables){
@@ -354,8 +288,8 @@ class ReferenceResolver{
 									eps_vars.put(s.symbolName.name, j);
 									j = j + 1;
 								}	
-							}
 						}
+					}
 	  			}
 	  		}
   		}

@@ -61,7 +61,7 @@ public class MdlProposalProvider extends AbstractMdlProposalProvider {
 	@Override
 	public void completeArgument_ArgumentName(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		if (model.eContainer() instanceof ListImpl){
-			EObject container = Utils.findListContainer(model);
+			EObject container = AttributeValidator.findAttributeContainer(model);
 			if (container != null){
 				Image img = imageHelper.getImage(Images.getPath(Images.ATTRIBUTE));
 				List<String> attributes = Utils.getAllNames(AttributeValidator.getAllAttributes(container));
@@ -112,7 +112,7 @@ public class MdlProposalProvider extends AbstractMdlProposalProvider {
 			} else
 			//type			
 			if (arg.getArgumentName().getName().equals(AttributeValidator.attr_req_type.getName())){
-				EObject container = Utils.findListContainer(arg);
+				EObject container = AttributeValidator.findAttributeContainer(arg);
 				List<String> attributes = new ArrayList<String>();
 				if (container instanceof VariabilityBlockImpl || container instanceof MatrixBlockImpl || 
 					container instanceof DiagBlockImpl || container instanceof SameBlockImpl){
@@ -175,14 +175,13 @@ public class MdlProposalProvider extends AbstractMdlProposalProvider {
 			}
 		}
 	} 
-	
-	
+		
 	private void addProposals(ContentAssistContext context, ICompletionProposalAcceptor acceptor, 
 			List<String> attributes, Image img){
 		for (String proposal: attributes){
 			StyledString displayedString = new StyledString();
 			displayedString.append(proposal);
-			ConfigurableCompletionProposal p = doCreateProposal(proposal, displayedString, img, 1, context);
+			ConfigurableCompletionProposal p = doCreateProposal(proposal, displayedString, img, 1000, context);
 			acceptor.accept(p);
 		}
 	}
