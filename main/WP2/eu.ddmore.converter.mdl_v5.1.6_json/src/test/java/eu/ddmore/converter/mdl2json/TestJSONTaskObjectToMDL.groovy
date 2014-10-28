@@ -11,6 +11,7 @@ class TestJSONTaskObjectToMDL extends ConverterTestsParent  {
 	
 	private static Logger logger = Logger.getLogger(TestJSONTaskObjectToMDL.class)
 	
+	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
 	private static final String estimateBlockJson =
 		/ {"ESTIMATE":"target=MLXTRAN_CODE\nversion=\"4.3.2\"\nalgo=[\"SAEM\"]"} /
 

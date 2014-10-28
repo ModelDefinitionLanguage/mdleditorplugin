@@ -105,6 +105,7 @@ class ConverterTestsParent {
 			// Trim off whitespace from both the expected and the actual
 			// Also drop any { } brackets around an "if" statement which are always added when writing out to MDL
 			// TODO: Better way of dealing with this, since incorrect bracketing wouldn't be picked up as things stand
+			// TODO: Is this even still relevant?
 			assertEquals("Checking the content of the block " + blockName,
 				origMdlFileBlockContent.replaceAll(~/\s*/, "").replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/),
 				newMdlFileBlockContent.replaceAll(~/\s*/, "").replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/))
@@ -115,28 +116,55 @@ class ConverterTestsParent {
 		final BufferedReader rdr = new BufferedReader(new FileReader(origMdlFile));
 		final StringBuffer strBuf = new StringBuffer();
 		rdr.eachLine() { String str ->
-			def hashCharPos = str.indexOf("#")
-			if (hashCharPos < 0) {
-				strBuf.append(str)
-				strBuf.append("\n")
-			} else {
-				// There is a # character somewhere in the line
-				if (str.substring(0, hashCharPos).count("\"") == 1) {
-					// Hash char is within a quoted string
-					strBuf.append(str)
-					strBuf.append("\n")
-				} else {
-					// Hash char is not within a quoted string so is most likely starting a comment
-    				str = str.substring(0, hashCharPos) // Trim off the comment
-    				if (!str.matches(~/\s*$/)) { // Not just whitespace
-    					strBuf.append(str)
-    					strBuf.append("\n")
-    				}
-				}
-			}
+
+			processHashChars(str, 0, strBuf)
+			
+//			def hashCharPos = str.indexOf("#")
+//			if (hashCharPos < 0) {
+//				strBuf.append(str)
+//				strBuf.append("\n")
+//			} else {
+//				// There is a # character somewhere in the line
+//				if (str.substring(0, hashCharPos).count("\"") % 2 == 1) {
+//					// Hash char is within a quoted string (may be multiple quoted strings on a single line)
+//					strBuf.append(str)
+//					strBuf.append("\n")
+//				} else {
+//					// Hash char is not within a quoted string so is most likely starting a comment
+//    				str = str.substring(0, hashCharPos) // Trim off the comment
+//    				if (!str.matches(~/\s*$/)) { // Not just whitespace
+//    					strBuf.append(str)
+//    					strBuf.append("\n")
+//    				}
+//				}
+//			}
 		}
 		
 		strBuf.toString()
+	}
+	
+	private static void processHashChars(final String str, final int fromIndex, final StringBuffer strBuf) {
+		def hashCharPos = str.indexOf("#", fromIndex)
+		if (hashCharPos < 0) {
+			strBuf.append(str)
+			strBuf.append("\n")
+		} else {
+			// There is a # character somewhere in the line
+			String subStr = str.substring(fromIndex, hashCharPos)
+			if (subStr.count("\"") % 2 == 1) {
+				// Hash char is within a quoted string (may be multiple quoted strings on a single line)
+				strBuf.append(subStr)
+				def closingQuotePos = str.indexOf("\"", hashCharPos)
+				strBuf.append(str.substring(hashCharPos, closingQuotePos + 1)) // Ensure we include the closing quote
+				processHashChars(str, closingQuotePos + 1, strBuf) // Repeat until the end of the string is reached
+			} else {
+				// Hash char is not within a quoted string so is most likely starting a comment
+				if (!subStr.matches(~/\s*$/)) { // Not just whitespace
+					strBuf.append(subStr)
+					strBuf.append("\n")
+				}
+			}
+		}
 	}
 	
 	private static String extractSpecificBlock(final String mdlFileContent, final String blockName) {
@@ -195,7 +223,7 @@ class ConverterTestsParent {
 		def outStr1 = sortParameterList(str, ( str =~ /(?s)[A-Za-z0-9]+\s*\:\s*\{\s*(.+?)\s*\}/ ))
 		// This regex is almost the same as the previous one but is to match the list of 'complex
 		// attributes' i.e. for a distribution parameter VAR ~ (...).
-		def outStr2 = sortParameterList(outStr1, ( outStr1 =~ /(?s)[A-Za-z0-9]+\s*\~\s*\(\s*(.+?)\s*\)/ ))
+		def outStr2 = sortParameterList(outStr1, ( outStr1 =~ /(?s)[A-Za-z0-9]+\s*\~\s*\{\s*(.+?)\s*\}/ ))
 		
 		outStr2
 	}
@@ -204,8 +232,9 @@ class ConverterTestsParent {
 		def outStr = str
 		
 		while (matcher.find()) {
-			String[] params = matcher.group(1).split(/\s*,\s*/)
-			outStr = outStr.replace(matcher.group(1), params.sort().join(","))
+			final String paramsStr = matcher.group(1)
+			String[] params = paramsStr.split(/\s*,\s*/)
+			outStr = outStr.replace(paramsStr, params.sort().join(","))
 		}
 		
 		outStr
@@ -215,17 +244,19 @@ class ConverterTestsParent {
 	 * Special additional preprocessing for the SOURCE block:
 	 * The items within this block can be in any order so put the lines of the original and new blocks into a known order.
 	 */ 
-	private static String putSOURCEBlockInKnownOrder(final String sourceBlockContent) {
+	private static String putSOURCEBlockInKnownOrder(final String sourceBlock) {
 		
 		// Similar regex behaviour to those in putParameterListsIntoKnownOrder()
-		final Matcher matcher = ( sourceBlockContent =~ /(?s)SOURCE\s*\{\s*(.+?)\s*\}/ )
+		final Matcher matcher = ( sourceBlock =~ /(?s)SOURCE\s*\{\s*(.+?)\s*\}/ )
 		
-		def outStr = sourceBlockContent
+		def outStr = sourceBlock
 		
 		while (matcher.find()) {
-//			Collections.as List<String> attributes = new ArrayList<String>
-			List attributes = ( matcher.group(1).split(/\s*\n\s*/) )
-			outStr = outStr.replace(matcher.group(1), attributes.sort().join("\n${IDT*2}"))
+			final String sourceBlockContent = matcher.group(1)
+			
+			final Matcher attrMatcher = ( sourceBlockContent =~ /\s*\S+\s*=\s*\S+\s*/ )
+			
+			outStr = outStr.replace(sourceBlockContent, attrMatcher.collect().sort().join("\n${IDT*2}"))
 		}
 		
 		outStr

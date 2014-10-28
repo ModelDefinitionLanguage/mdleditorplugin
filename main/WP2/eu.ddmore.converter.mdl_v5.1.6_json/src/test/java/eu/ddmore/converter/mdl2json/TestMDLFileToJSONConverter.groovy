@@ -37,7 +37,7 @@ class TestMDLFileToJSONConverter extends ConverterTestsParent {
 		def json = getJsonFromMDLFile(mdlFile)
 		
 		assertNotNull("DATA_INPUT_VARIABLES block should be present", json.warfarin_PK_ODE_dat.DATA_INPUT_VARIABLES)
-		assertNotNull("DATA_DERIVED_VARIABLES block should be present", json.warfarin_PK_ODE_dat.DATA_DERIVED_VARIABLES)
+		//assertNotNull("DATA_DERIVED_VARIABLES block should be present", json.warfarin_PK_ODE_dat.DATA_DERIVED_VARIABLES)
 		assertNotNull("SOURCE block should be present", json.warfarin_PK_ODE_dat.SOURCE)
 	}
 	
@@ -60,7 +60,7 @@ class TestMDLFileToJSONConverter extends ConverterTestsParent {
 		assertNotNull("VARIABILITY_PARAMETERS block should be present", json.warfarin_PK_ODE_mdl.VARIABILITY_PARAMETERS)
 		assertNotNull("RANDOM_VARIABILITY_DEFINITION block should be present", json.warfarin_PK_ODE_mdl.RANDOM_VARIABILITY_DEFINITION)
 		assertNotNull("INDIVIDUAL_VARIABLES block should be present", json.warfarin_PK_ODE_mdl.INDIVIDUAL_VARIABLES)
-		assertNotNull("MODEL_PReDICTION block should be present", json.warfarin_PK_ODE_mdl.MODEL_PREDICTION)
+		assertNotNull("MODEL_PREDICTION block should be present", json.warfarin_PK_ODE_mdl.MODEL_PREDICTION)
 		assertNotNull("OBSERVATION block should be present", json.warfarin_PK_ODE_mdl.OBSERVATION)
 		assertNotNull("MODEL_OUTPUT_VARIABLES block should be present", json.warfarin_PK_ODE_mdl.MODEL_OUTPUT_VARIABLES)
 	}

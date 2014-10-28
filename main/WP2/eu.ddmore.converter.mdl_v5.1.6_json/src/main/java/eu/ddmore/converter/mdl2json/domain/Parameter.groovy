@@ -7,26 +7,26 @@ import org.ddmore.mdl.mdl.DiagBlock
 import org.ddmore.mdl.mdl.MatrixBlock
 import org.ddmore.mdl.mdl.ParameterObject
 import org.ddmore.mdl.mdl.ParameterObjectBlock
-import org.ddmore.mdl.mdl.PriorParametersBlock
 import org.ddmore.mdl.mdl.SameBlock
 import org.ddmore.mdl.mdl.SymbolName
 import org.ddmore.mdl.mdl.SymbolNames
-import org.ddmore.mdl.mdl.TargetBlock
 import org.ddmore.mdl.mdl.VariabilityBlock
 import org.ddmore.mdl.mdl.VariabilityBlockStatement
 
-import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON;
-import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable;
+import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
+import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
+	
 	private static Logger logger = Logger.getLogger(Parameter.class)
 	
 	static final String IDENTIFIER = "parobj"
+	
 	static final String STRUCTURAL = "STRUCTURAL"
 	static final String VARIABILITY = "VARIABILITY"
 	static final String PRIOR = "PRIOR_PARAMETERS"
-	static final String TARGET_BLOCK = "TARGET_BLOCK"
+	static final String TARGET_CODE = "TARGET_CODE"
 
 	public Parameter(ParameterObject paramObject) {
 		
@@ -41,10 +41,10 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 				setProperty(VARIABILITY, makeVariability(b.getVariabilityBlock()))
 			}
 			if (b.getPriorBlock()) {
-				setProperty(PRIOR, makePrior(b.getPriorBlock()))
+				throw new UnsupportedOperationException("Prior Parameters block not supported yet")
 			}
 			if (b.getTargetBlock()) {
-				setProperty(TARGET_BLOCK, makeTarget(b.getTargetBlock()))
+				throw new UnsupportedOperationException("Target Code block not supported yet")
 			}
 			
 		}
@@ -54,17 +54,17 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 		
 		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
 		
-		if (json[VARIABILITY]) {
-			setProperty(VARIABILITY, json[VARIABILITY])
-		}
 		if (json[STRUCTURAL]) {
 			setProperty(STRUCTURAL, VariablesList.buildFromJSON(json[STRUCTURAL]))
 		}
-		if (json[PRIOR]) {
-			throw new UnsupportedOperationException("Prior not supported yet")
+		if (json[VARIABILITY]) {
+			setProperty(VARIABILITY, json[VARIABILITY])
 		}
-		if (json[TARGET_BLOCK]) {
-			throw new UnsupportedOperationException("Target block not supported yet")
+		if (json[PRIOR]) {
+			throw new UnsupportedOperationException("Prior Parameters block not supported yet")
+		}
+		if (json[TARGET_CODE]) {
+			throw new UnsupportedOperationException("Target Code block not supported yet")
 		}
 		
 	}
@@ -93,20 +93,6 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 			} 
 		}
 		return retVal
-	}
-	
-	/**
-	 * Parse the prior block
-	 */
-	private Map makePrior(PriorParametersBlock ppb) {
-		throw new UnsupportedOperationException("Prior not supported yet")
-	}
-	
-	/**
-	 * Parse the target block
-	 */
-	private Map makeTarget(TargetBlock tb) {
-		throw new UnsupportedOperationException("Target block not supported yet")
 	}
 	
 	/**
@@ -245,7 +231,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 		return """${IDENTIFIER} {
 ${mdl.toString()}
 }
-""" // TODO: Prior, Target Block
+""" // TODO: Prior Parameters block, Target Code block
 	}
 
 }

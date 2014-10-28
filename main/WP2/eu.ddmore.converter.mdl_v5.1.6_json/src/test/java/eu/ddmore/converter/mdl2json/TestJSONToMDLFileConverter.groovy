@@ -7,6 +7,11 @@ import org.junit.Test
 import org.junit.Ignore
 
 import eu.ddmore.converter.mdl2json.domain.MCLFile
+import eu.ddmore.converter.mdl2json.domain.Data
+import eu.ddmore.converter.mdl2json.domain.Parameter
+import eu.ddmore.converter.mdl2json.domain.Model
+import eu.ddmore.converter.mdl2json.domain.ModelPrediction
+import eu.ddmore.converter.mdl2json.domain.Task
 
 /**
  * "Real" MDL files from the testdata models project were run through the
@@ -26,7 +31,42 @@ import eu.ddmore.converter.mdl2json.domain.MCLFile
 class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestJSONToMDLFileConverter.class)
 	
+	static List<String> allBlockNames = [
+			Data.SOURCE,
+			Data.DATA_INPUT_VARIABLES,
+			Data.DATA_DERIVED_VARIABLES,
+			Parameter.STRUCTURAL,
+			Parameter.VARIABILITY,
+			Parameter.PRIOR,
+			Model.STRUCTURAL_PARAMETERS,
+			Model.VARIABILITY_PARAMETERS,
+			Model.INDIVIDUAL_VARIABLES,
+			Model.RANDOM_VARIABLE_DEFINITION,
+			Model.MODEL_OUTPUT_VARIABLES,
+			Model.MODEL_INPUT_VARIABLES,
+			Model.OBSERVATION,
+			Model.MODEL_PREDICTION,
+			ModelPrediction.ODE, // actually redundant, should be verified by MODEL_PREDICTION block
+			ModelPrediction.LIBRARY, // actually redundant, should be verified by MODEL_PREDICTION block
+			Model.GROUP_VARIABLES,
+			Model.ESTIMATION,
+			Model.SIMULATION,
+			Task.ESTIMATE,
+			Task.SIMULATE,
+			Task.EVALUATE,
+			Task.OPTIMISE,
+			Task.DATA,
+			Task.MODEL,
+			//"TARGET_CODE\\(.+\\)" // note the regex matching for the parameters of the block name
+		]
 	
+	/**
+	 * Converting a MDL file to JSON then back to MDL should give rise to syntactically and
+	 * semantically equivalent blocks to those of the original MDL.
+	 * <p>
+	 * All the blocks of the MDL will be compared.
+	 * However not all blocks will be present for all models; comparisons of absent blocks will silently pass.
+	 */
 	@Test
 	public void testMDLToJSONToMDL() {
 		
@@ -36,24 +76,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 		
 		def outputMdl = new MCLFile(json).toMDL()
 		
-		[
-			"DATA_INPUT_VARIABLES",
-			"DATA_DERIVED_VARIABLES",
-			"SOURCE",
-			"STRUCTURAL",
-			"VARIABILITY",
-			"MODEL_INPUT_VARIABLES",
-			"STRUCTURAL_PARAMETERS",
-			"VARIABILITY_PARAMETERS",
-			"RANDOM_VARIABLE_DEFINITION",
-			"INDIVIDUAL_VARIABLES",
-			"MODEL_PREDICTION",
-			"ODE", // actually redundant, should be verified by MODEL_PREDICTION block
-			"OBSERVATION",
-			"MODEL_OUTPUT_VARIABLES",
-			"ESTIMATE",
-			// "TARGET_CODE\\(.+\\)"
-		].each { blockName ->
+		allBlockNames.each { blockName ->
 			extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, outputMdl)
 		}
 	}
@@ -123,6 +146,13 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 		);
 	}
 	
+	/**
+	 * All the blocks of the MDL will be compared.
+	 * However not all blocks will be present for all models; comparisons of absent blocks will silently pass.
+	 * <p>
+	 * @param pathToOutputJsonFile
+	 * @param pathToOrigMdlFile
+	 */
 	private void testRGeneratedMOG(final String pathToOutputJsonFile, final String pathToOrigMdlFile) {
 		
 		def File jsonFile = getFileFromModelsProject(pathToOutputJsonFile, "json")
@@ -139,30 +169,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 		
 		def File origMdlFile = getFileFromModelsProject(pathToOrigMdlFile, "mdl")
 		
-		[
-			"DATA_INPUT_VARIABLES",
-			"DATA_DERIVED_VARIABLES",
-			"SOURCE",
-			"STRUCTURAL",
-			"VARIABILITY",
-			"MODEL_INPUT_VARIABLES",
-			"STRUCTURAL_PARAMETERS",
-			"VARIABILITY_PARAMETERS",
-			//"GROUP_VARIABLES",
-			"RANDOM_VARIABLE_DEFINITION",
-			"INDIVIDUAL_VARIABLES",
-			"MODEL_PREDICTION",
-			"ODE", // actually redundant, should be verified by MODEL_PREDICTION block
-			"LIBRARY", // actually redundant, should be verified by MODEL_PREDICTION block
-			"OBSERVATION",
-			//"ESTIMATION",
-			"MODEL_OUTPUT_VARIABLES",
-			//"DATA",
-			//"MODEL",
-			//"EXECUTE",
-			"ESTIMATE",
-			//"TARGET_CODE\\(.+\\)"
-		].each { blockName ->
+		allBlockNames.each { blockName ->
 			extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, mdl)
 		}
 		

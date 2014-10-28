@@ -1,16 +1,11 @@
 package eu.ddmore.converter.mdl2json.domain;
 
-import org.ddmore.mdl.mdl.Argument
-import org.ddmore.mdl.mdl.DataBlock
-import org.ddmore.mdl.mdl.ModelBlock
-import org.ddmore.mdl.mdl.PropertyDeclaration
-import org.ddmore.mdl.mdl.SymbolName
 import org.ddmore.mdl.mdl.TargetBlock
 import org.ddmore.mdl.mdl.TaskObject
 import org.ddmore.mdl.mdl.TaskObjectBlock
 
-import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON;
-import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable;
+import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
+import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
@@ -19,13 +14,13 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 	
 	static final String IDENTIFIER = "taskobj"
 	
-	static final String DATA = "DATA"
 	static final String ESTIMATE = "ESTIMATE"
-	static final String EVALUATE = "EVALUATE"
-	static final String MODEL = "MODEL"
-	static final String OPTIMISE = "OPTIMISE"
 	static final String SIMULATE = "SIMULATE"
-	static final String TARGET_BLOCK = "TARGET_BLOCK"
+	static final String EVALUATE = "EVALUATE"
+	static final String OPTIMISE = "OPTIMISE"
+	static final String DATA = "DATA"
+	static final String MODEL = "MODEL"
+	static final String TARGET_CODE = "TARGET_CODE"
 	
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
@@ -39,25 +34,25 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 		for (TaskObjectBlock block : taskObj.blocks) {
 		
     		if (block.getEstimateBlock()) {
-				setProperty(ESTIMATE, printIdentifiedBlock(block.getEstimateBlock(), newStatementPrinter))
+				setProperty(ESTIMATE, printIdentifiedBlock(block.getEstimateBlock(), statementPrinter))
     		}
     		if (block.getSimulateBlock()) {
-				setProperty(SIMULATE, printIdentifiedBlock(block.getSimulateBlock(), newStatementPrinter))
+				setProperty(SIMULATE, printIdentifiedBlock(block.getSimulateBlock(), statementPrinter))
     		}
     		if (block.getEvaluateBlock()) {
-				setProperty(EVALUATE, printIdentifiedBlock(block.getEvaluateBlock(), newStatementPrinter))
+				setProperty(EVALUATE, printIdentifiedBlock(block.getEvaluateBlock(), statementPrinter))
     		}
     		if (block.getOptimiseBlock()) {
-				setProperty(OPTIMISE, printIdentifiedBlock(block.getOptimiseBlock(), newStatementPrinter))
+				setProperty(OPTIMISE, printIdentifiedBlock(block.getOptimiseBlock(), statementPrinter))
     		}
     		if (block.getDataBlock()) {
-				setProperty(DATA, printIdentifiedBlock(block.getDataBlock(), newStatementPrinter))
+				setProperty(DATA, printIdentifiedBlock(block.getDataBlock(), statementPrinter))
     		}
     		if (block.getModelBlock()) {
-				setProperty(MODEL, printIdentifiedBlock(block.getModelBlock(), newStatementPrinter))
+				setProperty(MODEL, printIdentifiedBlock(block.getModelBlock(), statementPrinter))
     		}
     		if (block.getTargetBlock()) {
-				setProperty(TARGET_BLOCK, printIdentifiedBlock(block.getTargetBlock(), newStatementPrinter))
+				setProperty(TARGET_CODE, printIdentifiedBlock(block.getTargetBlock(), statementPrinter))
     		}
 		
 		}
@@ -74,7 +69,6 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 		json.each { k, v ->
 			setProperty(k, v)
 		}
-
 	}
 	
 	/**
@@ -103,25 +97,10 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 	/**
 	 * Prints each statement held in this list of statements.
 	 */
-	def newStatementPrinter = { statementHolder ->
+	def statementPrinter = { statementHolder ->
 		statementHolder.statements.collect{
 			it.getPropertyName().getName() + "=" + XtextWrapper.unwrap(it.getExpression())
 		}.join("\n")
-	}
-	
-	/**
-	 * Print a block with an identifier that contains an IF expression
-	 *  
-	 * @param expressionHolder. Must have an attribute "expression"
-	 * 
-	 * @return
-	 */
-	String printIfExpressionHolder(expressionHolder) {
-		StringBuffer b = new StringBuffer()
-		b.append(expressionHolder.getIdentifier()).append("=if(")
-		b.append(XtextWrapper.unwrap(expressionHolder.getExpression()))
-		b.append(")")
-		b.toString()
 	}
 
 	/**
@@ -144,7 +123,7 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON {
 		return """${IDENTIFIER} {
 ${mdl.toString()}
 }
-""" // TODO: Target Block
+"""
 	}
 
 }

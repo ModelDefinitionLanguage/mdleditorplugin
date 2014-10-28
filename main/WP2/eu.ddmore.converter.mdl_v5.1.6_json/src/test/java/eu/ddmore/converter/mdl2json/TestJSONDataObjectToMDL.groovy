@@ -17,9 +17,12 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestJSONDataObjectToMDL.class)
 	
 	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes 
-	private String sourceBlockJson = / {"SOURCE":{"file":"\"warfarin_conc.csv\"","identifier":"SOURCE","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
-	private String dataInputVariablesJson = / {"DATA_INPUT_VARIABLES":[{"name":"ID","type":"categorical"},{"name":"TIME","type":"continuous","units":"\"h\""},{"name":"WT","type":"continuous"},{"name":"AMT","type":"continuous","units":"\"mg\""},{"name":"DV","type":"continuous"},{"name":"MDV","type":"categorical"}]} /
-	private String dataDerivedVariablesJson = / {"DATA_DERIVED_VARIABLES":[{"logtWT":"log(WT\/70)"}]} /
+	private String sourceBlockJson =
+		/ {"SOURCE":{"file":"\"warfarin_conc.csv\"","identifier":"SOURCE","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
+	private String dataInputVariablesJson =
+		/ {"DATA_INPUT_VARIABLES":[{"name":"ID","type":"categorical"},{"name":"TIME","type":"continuous","units":"\"h\""},{"name":"logtWT","type":"continuous"},{"name":"AMT","type":"continuous","units":"\"mg\""},{"name":"DVID","type":"categorical"},{"name":"DV","type":"continuous"},{"name":"MDV","type":"categorical"}]} /
+	private String dataDerivedVariablesJson =
+		/ {"DATA_DERIVED_VARIABLES":[{"logtWT":"log(WT\/70)"}]} /
 	
 	@Test
 	public void testSource() {
@@ -53,8 +56,9 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
     DATA_INPUT_VARIABLES {
         ID : {type=categorical}
         TIME : {type=continuous, units="h"}
-        WT : {type=continuous}
+        logtWT : {type=continuous}
         AMT : {type=continuous, units="mg"}
+        DVID : {type=categorical}
         DV : {type=continuous}
         MDV : {type=categorical}
     }

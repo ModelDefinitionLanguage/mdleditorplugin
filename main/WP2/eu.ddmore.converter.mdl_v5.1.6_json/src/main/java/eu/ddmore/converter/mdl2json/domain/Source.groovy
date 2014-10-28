@@ -1,15 +1,10 @@
 package eu.ddmore.converter.mdl2json.domain;
 
-import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable;
-import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
-import groovy.util.Expando;
+import org.ddmore.mdl.mdl.PropertyDeclaration
+import org.ddmore.mdl.mdl.SourceBlock
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.ddmore.mdl.mdl.Argument;
-import org.ddmore.mdl.mdl.SourceBlock;
-import org.ddmore.mdl.mdl.PropertyDeclaration;
+import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
+import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 /**
  * @author jchard
@@ -35,7 +30,6 @@ public class Source extends Expando implements MDLPrintable {
 		}
 	}
 
-
 	/**
 	 * Constructor from a JSON object
 	 * @param json
@@ -59,4 +53,5 @@ public class Source extends Expando implements MDLPrintable {
 		
 		"""${properties.join("\n        ")}"""
 	}
+	
 }

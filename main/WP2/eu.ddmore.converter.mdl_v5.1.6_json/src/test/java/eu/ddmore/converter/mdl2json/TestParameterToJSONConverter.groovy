@@ -29,8 +29,8 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 		def expected_POP_KA = [ 'name':'POP_KA', 'value':'0.362', 'lo':'0.001' ]
 		assertEquals("Checking Structural parameter 3/6", expected_POP_KA, structuralModel[2])
 
-		def expected_POP_TLAG1 = [ 'name':'POP_TLAG1', 'value':'1', 'lo':'0.001' ]
-		assertEquals("Checking Structural parameter 4/6", expected_POP_TLAG1, structuralModel[3])
+		def expected_POP_TLAG = [ 'name':'POP_TLAG', 'value':'1', 'lo':'0.001' ]
+		assertEquals("Checking Structural parameter 4/6", expected_POP_TLAG, structuralModel[3])
 
 		def expected_BETA_CL_WT = [ 'name':'BETA_CL_WT', 'value':'0.75', 'fix':'true' ]
 		assertEquals("Checking Structural parameter 5/6", expected_BETA_CL_WT, structuralModel[4])

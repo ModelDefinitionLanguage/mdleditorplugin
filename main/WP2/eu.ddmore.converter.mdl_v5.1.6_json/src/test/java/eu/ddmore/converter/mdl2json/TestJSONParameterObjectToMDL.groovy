@@ -15,8 +15,9 @@ class TestJSONParameterObjectToMDL extends ConverterTestsParent  {
 	
 	private static Logger logger = Logger.getLogger(TestJSONParameterObjectToMDL.class)
 	
+	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
 	private static final String structuralBlockJson =
-		/ {"STRUCTURAL":[{"lo":"0.001","name":"POP_CL","value":"0.1"},{"lo":"0.001","name":"POP_V","value":"8"},{"lo":"0.001","name":"POP_KA","value":"0.362"},{"lo":"0.001","name":"POP_TLAG1","value":"1"},{"fix":"true","name":"BETA_CL_WT","value":"0.75"},{"fix":"true","name":"BETA_V_WT","value":"1"}]} /
+		/ {"STRUCTURAL":[{"lo":"0.001","name":"POP_CL","value":"0.1"},{"lo":"0.001","name":"POP_V","value":"8"},{"lo":"0.001","name":"POP_KA","value":"0.362"},{"lo":"0.001","name":"POP_TLAG","value":"1"},{"fix":"true","name":"BETA_CL_WT","value":"0.75"},{"fix":"true","name":"BETA_V_WT","value":"1"}]} /
 	private static final String variabilityBlockJson =
 		/ {"VARIABILITY":[{"name":"PPV_CL","value":"0.1","type":"SD"},{"name":"PPV_V","value":"0.1","type":"SD"},{"name":"PPV_KA","value":"0.1","type":"SD"},{"name":"PPV_TLAG","value":"0.1","type":"SD"},{"name":"RUV_PROP","value":"0.1","type":"SD"},{"name":"RUV_ADD","value":"0.1","type":"SD"},{"lo":"-1.0","name":"CORR_PPV_CL_V","value":"0.01","hi":"1.0","type":"CORR"}]} /
 	private static final String complexVariabilityBlockJson = 
@@ -35,7 +36,7 @@ class TestJSONParameterObjectToMDL extends ConverterTestsParent  {
         POP_CL : {lo=0.001, value=0.1}
         POP_V : {lo=0.001, value=8}
         POP_KA : {lo=0.001, value=0.362}
-        POP_TLAG1 : {lo=0.001, value=1}
+        POP_TLAG : {lo=0.001, value=1}
         BETA_CL_WT : {fix=true, value=0.75}
         BETA_V_WT : {fix=true, value=1}
     }

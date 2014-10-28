@@ -1,17 +1,11 @@
 package eu.ddmore.converter.mdl2json.domain;
 
-import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable;
-import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
-import groovy.util.Expando;
-
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger
-import org.ddmore.mdl.mdl.Argument;
-import org.ddmore.mdl.mdl.EnumType;
-import org.ddmore.mdl.mdl.SymbolDeclaration;
-//import org.ddmore.mdl.mdl.SymbolModification;
+import org.ddmore.mdl.mdl.Argument
+import org.ddmore.mdl.mdl.SymbolDeclaration
+
+import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
+import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 /**
  * Used to represent variables from the mdlobj::RANDOM_VARIABLE_DEFINITION block
@@ -23,36 +17,8 @@ public class RandomVariable extends Expando implements MDLPrintable {
 	
 	final String ATTRIBUTES = "attrs" // A property of this name will be present for 'normal' parameters
 	final String COMPLEX_ATTRIBUTES = "complexAttrs" // A property of this name will be present for distribution parameters
-
-	// Do not remove this property - it is not directly used in the class
-	// but the Expando-bean functionality of this class needs it
-//	private SymbolDeclaration symbolDeclaration;
-
-//	public Variable(SymbolDeclaration sd) {
-//		this.symbolDeclaration = sd;
-//		
-//		setProperty("name", sd.getSymbolName().getName());
-//		
-//		if(sd.getExpression()!=null) {
-//			Map properties = XtextWrapper.unwrap(sd.getExpression())
-//			getProperties().putAll(properties)
-//		}
-//		
-//		if(sd.getFunctionName()!=null ) {
-//			setProperty("functionName", XtextWrapper.unwrap(sd.getFunctionName()));
-//		}		
-//		
-//		if(sd.getRandomList()!=null) {
-//			
-//		}
-//		
-//		if(sd.getArgumentName()!=null) {
-//			logger.debug(sd.getArgumentName())
-//		}
-//	}
 	
 	public RandomVariable(final SymbolDeclaration sd) {
-		//this.symbolDeclaration = sd;
 		
 		setProperty("name", sd.getSymbolName().getName())
 	
@@ -86,7 +52,7 @@ public class RandomVariable extends Expando implements MDLPrintable {
     		getProperty(COMPLEX_ATTRIBUTES).sort().each { k, v ->
     			attributes.add("${k}=${v}")
     		}
-    		return """${getName()} ~ (${attributes.join(", ")})"""
+    		return """${getName()} ~ {${attributes.join(", ")}}"""
 		} else {
     		// Note: sorting is only done so that we get predictable MDL strings that we can compare in the tests
     		getProperty(ATTRIBUTES).sort().each { k, v ->
@@ -95,4 +61,5 @@ public class RandomVariable extends Expando implements MDLPrintable {
     		return """${getName()} : {${attributes.join(", ")}}"""
 		}
 	}
+	
 }

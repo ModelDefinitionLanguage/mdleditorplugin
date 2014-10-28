@@ -1,10 +1,9 @@
 package eu.ddmore.converter.mdl2json.domain;
 
-import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable;
-
-import java.util.ArrayList;
 import org.ddmore.mdl.mdl.SymbolDeclaration
 import org.ddmore.mdl.mdl.SymbolName
+
+import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 
 
 /**

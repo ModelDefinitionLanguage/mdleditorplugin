@@ -1,16 +1,9 @@
 package eu.ddmore.converter.mdl2json.domain;
 
-import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable;
-import eu.ddmore.converter.mdl2json.utils.XtextWrapper;
-import groovy.util.Expando;
+import org.ddmore.mdl.mdl.DataInputBlock
+import org.ddmore.mdl.mdl.SymbolDeclaration
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.ddmore.mdl.mdl.Argument
-import org.ddmore.mdl.mdl.DataInputBlock;
-import org.ddmore.mdl.mdl.SymbolDeclaration;
-import org.ddmore.mdl.mdl.impl.ListImpl
+import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 
 public class DataInputVariables extends ArrayList implements MDLPrintable {
 

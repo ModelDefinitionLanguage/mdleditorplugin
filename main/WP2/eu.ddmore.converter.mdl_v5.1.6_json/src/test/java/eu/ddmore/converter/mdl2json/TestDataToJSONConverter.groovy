@@ -44,40 +44,46 @@ class TestDataToJSONConverter extends ConverterTestsParent  {
 		
 		def dataInputVars = dataObject.DATA_INPUT_VARIABLES
 
-		assertEquals("Checking the number of Data Input Variables", 6, dataInputVars.size())
+		assertEquals("Checking the number of Data Input Variables", 7, dataInputVars.size())
 		
 		final var1 = dataInputVars[0]
-		assertEquals("Checking Data Input Variable 1/6 - Name", "ID", var1.name)
-		assertEquals("Checking Data Input Variable 1/6 - Type", "categorical", var1.type)
-		assertNull("Checking Data Input Variable 1/6 - Units", var1.units)
+		assertEquals("Checking Data Input Variable 1/7 - Name", "ID", var1.name)
+		assertEquals("Checking Data Input Variable 1/7 - Type", "categorical", var1.type)
+		assertNull("Checking Data Input Variable 1/7 - Units", var1.units)
 		
 		final var2 = dataInputVars[1]
-		assertEquals("Checking Data Input Variable 2/6 - Name", "TIME", var2.name)
-		assertEquals("Checking Data Input Variable 2/6 - Type", "continuous", var2.type)
-		assertEquals("Checking Data Input Variable 2/6 - Units", "\"h\"", var2.units)
+		assertEquals("Checking Data Input Variable 2/7 - Name", "TIME", var2.name)
+		assertEquals("Checking Data Input Variable 2/7 - Type", "continuous", var2.type)
+		assertEquals("Checking Data Input Variable 2/7 - Units", "\"h\"", var2.units)
 		
 		final var3 = dataInputVars[2]
-		assertEquals("Checking Data Input Variable 3/6 - Name", "WT", var3.name)
-		assertEquals("Checking Data Input Variable 3/6 - Type", "continuous", var3.type)
-		assertNull("Checking Data Input Variable 3/6 - Units", var3.units)
+		assertEquals("Checking Data Input Variable 3/7 - Name", "logtWT", var3.name)
+		assertEquals("Checking Data Input Variable 3/7 - Type", "continuous", var3.type)
+		assertNull("Checking Data Input Variable 3/7 - Units", var3.units)
 		
 		final var4 = dataInputVars[3]
-		assertEquals("Checking Data Input Variable 4/6 - Name", "AMT", var4.name)
-		assertEquals("Checking Data Input Variable 4/6 - Type", "continuous", var4.type)
-		assertEquals("Checking Data Input Variable 4/6 - Units", "\"mg\"", var4.units)
+		assertEquals("Checking Data Input Variable 4/7 - Name", "AMT", var4.name)
+		assertEquals("Checking Data Input Variable 4/7 - Type", "continuous", var4.type)
+		assertEquals("Checking Data Input Variable 4/7 - Units", "\"mg\"", var4.units)
 		
 		final var5 = dataInputVars[4]
-		assertEquals("Checking Data Input Variable 5/6 - Name", "DV", var5.name)
-		assertEquals("Checking Data Input Variable 5/6 - Type", "continuous", var5.type)
-		assertNull("Checking Data Input Variable 5/6 - Units", var5.units)
+		assertEquals("Checking Data Input Variable 5/7 - Name", "DVID", var5.name)
+		assertEquals("Checking Data Input Variable 5/7 - Type", "categorical", var5.type)
+		assertNull("Checking Data Input Variable 5/7 - Units", var5.units)
 		
 		final var6 = dataInputVars[5]
-		assertEquals("Checking Data Input Variable 6/6 - Name", "MDV", var6.name)
-		assertEquals("Checking Data Input Variable 6/6 - Type", "categorical", var6.type)
-		assertNull("Checking Data Input Variable 6/6 - Units", var6.units)
+		assertEquals("Checking Data Input Variable 6/7 - Name", "DV", var6.name)
+		assertEquals("Checking Data Input Variable 6/7 - Type", "continuous", var6.type)
+		assertNull("Checking Data Input Variable 6/7 - Units", var6.units)
+		
+		final var7 = dataInputVars[6]
+		assertEquals("Checking Data Input Variable 7/7 - Name", "MDV", var7.name)
+		assertEquals("Checking Data Input Variable 7/7 - Type", "categorical", var7.type)
+		assertNull("Checking Data Input Variable 7/7 - Units", var7.units)
 	}
 	
 	@Test
+	@Ignore
 	public void testDataDerivedVariablesBlock() {
 		def json = getJsonFromMDLFile("warfarinODE_DataObject.mdl")
 		

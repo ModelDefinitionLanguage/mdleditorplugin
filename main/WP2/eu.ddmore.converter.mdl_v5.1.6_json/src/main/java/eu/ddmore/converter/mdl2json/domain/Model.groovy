@@ -1,18 +1,13 @@
 package eu.ddmore.converter.mdl2json.domain;
 
 import org.apache.log4j.Logger
-import org.ddmore.mdl.mdl.BlockStatement
 import org.ddmore.mdl.mdl.EstimationBlock
 import org.ddmore.mdl.mdl.GroupVariablesBlock
-import org.ddmore.mdl.mdl.GroupVariablesBlockStatement
-import org.ddmore.mdl.mdl.IndividualVariablesBlock
 import org.ddmore.mdl.mdl.ModelObject
 import org.ddmore.mdl.mdl.ModelObjectBlock
-import org.ddmore.mdl.mdl.ObservationBlock
-import org.ddmore.mdl.mdl.SymbolDeclaration
 
-import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON;
-import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable;
+import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
+import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Model extends Expando implements MDLPrintable, MDLAsJSON {
@@ -22,16 +17,19 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
 	static final String IDENTIFIER = "mdlobj"
-	public static String STRUCTURAL_PARAMETERS = "STRUCTURAL_PARAMETERS"
-	public static String VARIABILITY_PARAMETERS = "VARIABILITY_PARAMETERS"
-	public static String INDIVIDUAL_VARIABLES = "INDIVIDUAL_VARIABLES"
-	public static String RANDOM_VARIABLE_DEFINITION = "RANDOM_VARIABLE_DEFINITION"
-	public static String MODEL_OUTPUT_VARIABLES = "MODEL_OUTPUT_VARIABLES"
-	public static String MODEL_INPUT_VARIABLES = "MODEL_INPUT_VARIABLES"
-	public static String OBSERVATION = "OBSERVATION"
-	public static String MODEL_PREDICTION = "MODEL_PREDICTION"
-	public static String GROUP_VARIABLES = "GROUP_VARIABLES"
-	public static String ESTIMATION = "ESTIMATION"
+	
+	static String STRUCTURAL_PARAMETERS = "STRUCTURAL_PARAMETERS"
+	static String VARIABILITY_PARAMETERS = "VARIABILITY_PARAMETERS"
+	static String INDIVIDUAL_VARIABLES = "INDIVIDUAL_VARIABLES"
+	static String RANDOM_VARIABLE_DEFINITION = "RANDOM_VARIABLE_DEFINITION"
+	static String MODEL_OUTPUT_VARIABLES = "MODEL_OUTPUT_VARIABLES"
+	static String MODEL_INPUT_VARIABLES = "MODEL_INPUT_VARIABLES"
+	static String OBSERVATION = "OBSERVATION"
+	static String MODEL_PREDICTION = "MODEL_PREDICTION"
+	static String GROUP_VARIABLES = "GROUP_VARIABLES"
+	static String ESTIMATION = "ESTIMATION"
+	static String SIMULATION = "SIMULATION"
+	static String TARGET_CODE = "TARGET_CODE"
 	
 	public Model(ModelObject modelObject) {
 	
@@ -46,7 +44,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 				setProperty(VARIABILITY_PARAMETERS, VariablesList.buildFromSymbolDeclarations(b.getVariabilityParametersBlock().getParameters()))
 			}
 			if (b.getIndividualVariablesBlock()) {
-				setProperty(INDIVIDUAL_VARIABLES, makeIndividualVariables(b.getIndividualVariablesBlock()))
+				setProperty(INDIVIDUAL_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getIndividualVariablesBlock().getVariables()))
 			}
 			if (b.getRandomVariableDefinitionBlock()) {
 				setProperty(RANDOM_VARIABLE_DEFINITION, RandomVariablesList.buildFromSymbolDeclarations(b.getRandomVariableDefinitionBlock().getVariables()))
@@ -60,7 +58,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 				setProperty(MODEL_INPUT_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getInputVariablesBlock().getVariables()))
 			}
 			if (b.getObservationBlock()) {
-				setProperty(OBSERVATION, makeObservation(b.getObservationBlock()))
+				setProperty(OBSERVATION, RandomVariablesList.buildFromSymbolDeclarations(b.getObservationBlock().getVariables()))
 			}
 			if (b.getModelPredictionBlock()) {
 				setProperty(MODEL_PREDICTION, new ModelPrediction(b.getModelPredictionBlock()))
@@ -72,9 +70,9 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 				setProperty(ESTIMATION, makeEstimation(b.getEstimationBlock()))
 			}
 			if (b.getSimulationBlock()) {
-				throw new UnsupportedOperationException("Do not support simulation block yet")
+				throw new UnsupportedOperationException("Simulation block not supported yet")
 			} else if (b.getTargetBlock()) {
-				throw new UnsupportedOperationException("Do not support target block yet")
+				throw new UnsupportedOperationException("Target Code block not supported yet")
 			}
 			
 		}
@@ -113,53 +111,51 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		if (json[MODEL_PREDICTION]) {
 			setProperty(MODEL_PREDICTION, new ModelPrediction(json[MODEL_PREDICTION]))
 		}
-		
-	}
-	
-	private VariablesList makeIndividualVariables(IndividualVariablesBlock indVariables) {
-		List<SymbolDeclaration> symbolList = []
-		indVariables.getStatements().each { BlockStatement stmt ->
-			if (stmt.getSymbol()) {
-				symbolList.add(stmt.getSymbol())
-			}
+		if (json[GROUP_VARIABLES]) {
+			throw new UnsupportedOperationException("Group Variables block not supported yet")
 		}
-		VariablesList.buildFromSymbolDeclarations(symbolList)
-	}
-	
-	private RandomVariablesList makeObservation(ObservationBlock observationBlock) {
-		RandomVariablesList.buildFromSymbolDeclarations(
-			observationBlock.getStatements().collect { BlockStatement stmt ->
-				stmt.getSymbol()
-			}
-		)
+		if (json[ESTIMATION]) {
+			throw new UnsupportedOperationException("Estimation block not supported yet")
+		}
+		if (json[SIMULATION]) {
+			throw new UnsupportedOperationException("Simulation block not supported yet")
+		}
+		if (json[TARGET_CODE]) {
+			throw new UnsupportedOperationException("Target Code block not supported yet")
+		}
+		
 	}
 
 	// TODO: This needs to be revisited
 	private makeGroupVariables(GroupVariablesBlock groupVariables) {
-		List statements = []
-		groupVariables.getStatements().each { GroupVariablesBlockStatement statement ->
-			def mixtureBlock = statement.getMixtureBlock()
-			def stmt = statement.getStatement()
-			if (mixtureBlock) {
-				mixtureBlock.getStatements().each {
-					// TODO: "it" is a BlockStatement; needs to be pretty-printed correctly
-					statements.add(mdlPrinter.print(it))
-				}
-			} else if (stmt) {
-				// TODO: "stmt" is a BlockStatement; needs to be pretty-printed correctly
-				statements.add(mdlPrinter.print(stmt))
-			}
-		}
-		statements.join()
+		throw new UnsupportedOperationException("Group Variables block not supported yet")
+		
+//		List statements = []
+//		groupVariables.getStatements().each { GroupVariablesBlockStatement statement ->
+//			def mixtureBlock = statement.getMixtureBlock()
+//			def stmt = statement.getStatement()
+//			if (mixtureBlock) {
+//				mixtureBlock.getStatements().each {
+//					// TODO: "it" is a BlockStatement; needs to be pretty-printed correctly
+//					statements.add(mdlPrinter.print(it))
+//				}
+//			} else if (stmt) {
+//				// TODO: "stmt" is a BlockStatement; needs to be pretty-printed correctly
+//				statements.add(mdlPrinter.print(stmt))
+//			}
+//		}
+//		statements.join()
 	}
 	
 	// TODO: This needs to be revisited
 	private makeEstimation(EstimationBlock estimationBlock) {
-		StringBuffer statements = new StringBuffer()
-		estimationBlock.getStatements().each { BlockStatement statement ->
-			statements.append(mdlPrinter.print(statement))
-		}
-		statements.toString()
+		throw new UnsupportedOperationException("Estimation block not supported yet")
+		
+//		StringBuffer statements = new StringBuffer()
+//		estimationBlock.getStatements().each { BlockStatement statement ->
+//			statements.append(mdlPrinter.print(statement))
+//		}
+//		statements.toString()
 	}
 	
 	public String toMDL() {
@@ -173,7 +169,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		return """${IDENTIFIER} {
 ${mdl.toString()}
 }
-""" // TODO: Target Block
+"""
 	}
 	
 }

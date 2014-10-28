@@ -6,11 +6,9 @@ import org.ddmore.mdl.mdl.AndExpression
 import org.ddmore.mdl.mdl.AnyExpression
 import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.Arguments
-import org.ddmore.mdl.mdl.ConditionalExpression
 import org.ddmore.mdl.mdl.EnumType
 import org.ddmore.mdl.mdl.Expression
 import org.ddmore.mdl.mdl.FunctionCall
-import org.ddmore.mdl.mdl.FunctionName
 import org.ddmore.mdl.mdl.LogicalExpression
 import org.ddmore.mdl.mdl.MultiplicativeExpression
 import org.ddmore.mdl.mdl.OrExpression
@@ -19,7 +17,7 @@ import org.ddmore.mdl.mdl.Primary
 import org.ddmore.mdl.mdl.UnaryExpression
 import org.ddmore.mdl.mdl.Vector
 
-import eu.ddmore.converter.mdlprinting.MdlPrinter;
+import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class XtextWrapper {
 
@@ -31,49 +29,44 @@ public class XtextWrapper {
 		if (expression == null) {
 			return null
 		}
-		if (expression.getExpression() != null) {
+		if (expression.getExpression()) {
 			return unwrap(expression.getExpression());
-		} else if (expression.getList() != null) {
+		} else if (expression.getList()) {
+			logger.info("Calling argumentToMapOrList")
 			return argumentsToMapOrList(expression.getList().getArguments())
-		} else if (expression.getVector() != null) {
+		} else if (expression.getVector()) {
 			return unwrap(expression.getVector())
-		} else if (expression.getType() != null) {
+		} else if (expression.getType()) {
 			return mdlPrinter.toStr(expression.getType())
 		}
-		logger.debug(expression)
-		return null;
+		logger.error("Encountered an unhandled AnyExpression: " + expression)
+		return null
 	}
 
 	public static Object unwrap(EnumType enumType) {
-		if(enumType.getInput()) {
-			return enumType.getInput().getIdentifier()
-		}
-		logger.debug(enumType)
+		logger.error("Encountered an unhandled EnumType: " + enumType)
 		return null
 	}
 	
 	public static Object unwrap(Expression expression) {
-		return unwrap(expression.getConditionalExpression());
-	}
-
-	public static Object unwrap(ConditionalExpression conditionalExpression) {
-		if(conditionalExpression.getExpression()!=null) {
-			return unwrap(conditionalExpression.getExpression());
-		} else if(conditionalExpression.getExpression1()!=null) {
-			return unwrap(conditionalExpression.getExpression1());
-		} else if(conditionalExpression.getExpression2()!=null) {
-			return unwrap(conditionalExpression.getExpression2());
+		if (expression.getExpression()) {
+			return unwrap(expression.getExpression())
 		}
-		logger.debug(conditionalExpression)
-		return null;
+		else if (expression.getCondition()) {
+			logger.error("Encountered an unhandled Expression with a Condition: ")
+			logger.error(" condition = " + expression.getCondition())
+			logger.error(" else = " + expression.getElseExpression())
+		}
+		logger.error("Encountered an unhandled Expression: " + expression)
+		return null
 	}
 
 	public static Object unwrap(OrExpression expression) {
-		if(expression.getOperator().size() == 0 && expression.getExpression().size() == 1 ) {
+		if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
 			return unwrap(expression.getExpression().get(0))
 		}
-		logger.debug(expression)
-		return null;//expression.getOperator().get(0);
+		logger.error("Encountered an unhandled OrExpression: " + expression)
+		return null
 	}
 	
 	public static Object unwrap(LogicalExpression expression) {
@@ -84,12 +77,12 @@ public class XtextWrapper {
 		} else if (expression.getExpression1()) {
 			return unwrap(expression.getExpression1())
 		}
-		logger.debug(expression)
+		logger.error("Encountered an unhandled LogicalExpression: " + expression)
 		return null
 	}
 
 	public static Object unwrap(AdditiveExpression expression) {
-		if (expression.getString() != null) {
+		if (expression.getString()) {
 			return "\"" + expression.getString() + "\"";
 		}
 		
@@ -100,7 +93,6 @@ public class XtextWrapper {
 				sb.append(expression.getOperator().get(0))
 			}
 		}
-		logger.debug(sb)
 		return sb.toString()
 	}
 	
@@ -112,12 +104,11 @@ public class XtextWrapper {
 				sb.append(expression.getOperator().get(0))
 			}
 		}
-		logger.debug(sb)
 		return sb.toString()
 	}
 	
 	public static Object unwrap(PowerExpression expression) {
-		return unwrap(expression.getExpression().get(0))	
+		return unwrap(expression.getExpression().get(0))
 	}
 	
 	public static Object unwrap(UnaryExpression expression) {
@@ -130,21 +121,26 @@ public class XtextWrapper {
 		} else if (expression.getFunctionCall()) {
 			return unwrap(expression.getFunctionCall())
 		} else if (expression.getConstant()) {
-			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: constant=" + expression.getConstant())
+			logger.error("Encountered an unhandled UnaryExpression with unexpected content: Constant: " + expression.getConstant())
+			return null
 		} else if (expression.getParExpression()) {
-			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: parExpression=" + expression.getParExpression())
+			logger.error("Encountered an unhandled UnaryExpression with unexpected content: ParExpression: " + expression.getParExpression())
+			return null
 		} else if (expression.getAttribute()) {
-			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: attribute=" + expression.getAttribute())
+			logger.error("Encountered an unhandled UnaryExpression with unexpected content: Attribute: " + expression.getAttribute())
+			return null
 		} else {
-			throw new UnsupportedOperationException("Attempted to unwrap a UnaryExpression with unexpected content: expression=" + expression.getExpression())
+			logger.error("Encountered an unhandled UnaryExpression with unexpected content: Expression: " + expression.getExpression)
+			return null
 		}
 	}
 	
 	public static Object unwrap(AndExpression expression) {
-		if(expression.getOperator().size() == 0 && expression.getExpression().size() == 1 ) {
+		if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
 			return unwrap(expression.getExpression().get(0))
 		}
-		return null;
+		logger.error("Encountered an unhandled AndExpression: " + expression)
+		return null
 	}
 	
 	public static Object unwrap(FunctionCall fc) {
@@ -156,8 +152,7 @@ public class XtextWrapper {
 				unwrap(a.getExpression())
 			}
 		}.join(", ")
-		logger.debug(functionName + ":\t" + argsStr)
-		return(functionName + "(" + argsStr + ")")
+		return functionName + "(" + argsStr + ")"
 	}
 	
 	public static Object unwrap(Vector v) {

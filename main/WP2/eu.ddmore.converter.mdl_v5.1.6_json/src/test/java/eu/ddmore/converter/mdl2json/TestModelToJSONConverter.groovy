@@ -24,8 +24,8 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		assertEquals("Checking parameter 2/6", ['name':'POP_V'], structuralParameters[1])
 		assertEquals("Checking parameter 3/6", ['name':'POP_KA'], structuralParameters[2])
 		assertEquals("Checking parameter 4/6", ['name':'POP_TLAG'], structuralParameters[3])
-		assertEquals("Checking parameter 5/6", ['name':'BETA_WT_CL'], structuralParameters[4])
-		assertEquals("Checking parameter 6/6", ['name':'BETA_WT_V'], structuralParameters[5])
+		assertEquals("Checking parameter 5/6", ['name':'BETA_CL_WT'], structuralParameters[4])
+		assertEquals("Checking parameter 6/6", ['name':'BETA_V_WT'], structuralParameters[5])
 	}
 	
 	@Test
@@ -38,14 +38,13 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		
 		logger.debug(variabilityParameters)
 		
-		assertEquals("Checking number of variability parameters", 7, variabilityParameters.size())
+		assertEquals("Checking number of variability parameters", 6, variabilityParameters.size())
 		assertEquals("Checking parameter 1/7", ['name':'PPV_CL'], variabilityParameters[0])
 		assertEquals("Checking parameter 2/7", ['name':'PPV_V'], variabilityParameters[1])
 		assertEquals("Checking parameter 3/7", ['name':'PPV_KA'], variabilityParameters[2])
 		assertEquals("Checking parameter 4/7", ['name':'PPV_TLAG'], variabilityParameters[3])
-		assertEquals("Checking parameter 5/7", ['name':'CORR_PPV_CL_V'], variabilityParameters[4])
-		assertEquals("Checking parameter 6/7", ['name':'RUV_PROP'], variabilityParameters[5])
-		assertEquals("Checking parameter 6/7", ['name':'RUV_ADD'], variabilityParameters[6])
+		assertEquals("Checking parameter 6/7", ['name':'RUV_PROP'], variabilityParameters[4])
+		assertEquals("Checking parameter 6/7", ['name':'RUV_ADD'], variabilityParameters[5])
 	}
 	
 	@Test
@@ -60,10 +59,10 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		
 		assertEquals("Checking number of individual variables", 4, individualVars.size())
 		assertEquals("Checking variable 1/4",
-			[ 'name':'CL', 'type':'linear', 'trans':'log', 'pop':'POP_CL', 'fixEff':'[BETA_WT_CL]', 'cov':'[logtWT]', 'ranEff':'ETA_CL' ],
+			[ 'name':'CL', 'type':'linear', 'trans':'log', 'pop':'POP_CL', 'fixEff':'[BETA_CL_WT]', 'cov':'[logtWT]', 'ranEff':'ETA_CL' ],
 			individualVars[0])
 		assertEquals("Checking variable 2/4",
-			[ 'name':'V', 'type':'linear', 'trans':'log', 'pop':'POP_V', 'fixEff':'[BETA_WT_V]', 'cov':'[logtWT]', 'ranEff':'ETA_V' ],
+			[ 'name':'V', 'type':'linear', 'trans':'log', 'pop':'POP_V', 'fixEff':'[BETA_V_WT]', 'cov':'[logtWT]', 'ranEff':'ETA_V' ],
 			individualVars[1])
 		assertEquals("Checking variable 3/4",
 			[ 'name':'KA', 'type':'linear', 'trans':'log', 'pop':'POP_KA', 'ranEff':'ETA_KA' ],
@@ -129,8 +128,8 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		assertEquals("Checking variable 1/6", [ 'name':'ID', 'use':'id', 'level':'2' ], inputVariables[0])
 		assertEquals("Checking variable 2/6", [ 'name':'TIME', 'use':'idv' ], inputVariables[1])
 		assertEquals("Checking variable 3/6", [ 'name':'logtWT', 'use':'covariate', 'type':'continuous' ], inputVariables[2])
-		assertEquals("Checking variable 4/6", [ 'name':'AMT', 'use':'amt' ], inputVariables[3])
-		assertEquals("Checking variable 5/6", [ 'name':'DV', 'use':'dv', 'level':'1' ], inputVariables[4])
+		assertEquals("Checking variable 4/6", [ 'name':'AMT', 'use':'amt', 'level':'1', 'administration':'GUT' ], inputVariables[3])
+		assertEquals("Checking variable 5/6", [ 'name':'DV', 'use':'dv', 'level':'1', 'prediction':'Y' ], inputVariables[4])
 		assertEquals("Checking variable 6/6", [ 'name':'MDV', 'use':'mdv' ], inputVariables[5])
 	}
 	
@@ -151,7 +150,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 			observation[0]['complexAttrs'])
 		assertEquals("Checking name of variable in observation statement 2/2", "Y", observation[1]['name'])
 		assertEquals("Checking variable in observation statement 2/2",
-			[ 'type':'continuous', 'error':'combined1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)', 'eps':'EPS_Y', 'prediction':'CC' ],
+			[ 'type':'continuous', 'error':'combinedError1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)', 'eps':'EPS_Y', 'prediction':'CC' ],
 			observation[1]['attrs'])
 	}
 	
@@ -173,21 +172,15 @@ class TestModelToJSONConverter extends ConverterTestsParent {
         logger.debug("Library :- " + library)
         logger.debug("content := " + content)
 
-		def expectedOdeBlock = """            if (T>=TLAG) {
-	RATEIN = GUT*KA
-} else {
-	RATEIN = 0
-}
+		def expectedOdeBlock = """            RATEIN = GUT*KA when T>=TLAG otherwise 0
             GUT : {deriv = (-RATEIN), init = 0, x0 = 0}
-            CENTRAL : {deriv = (RATEIN-CL*CENTRAL/V), init = 0, x0 = 0}
-"""
+            CENTRAL : {deriv = (RATEIN-CL*CENTRAL/V), init = 0, x0 = 0}"""
         // Note that we need to make the line endings consistent between actual vs expected
         assertEquals("Checking the ODE block", expectedOdeBlock, ode.replace("\r\n", "\n"))
         
 		// TODO: Need to test the Library block
 
-		def expectedContentBlock = """        CC = CENTRAL/V
-"""
+		def expectedContentBlock = """        CC = CENTRAL/V"""
 		// Note that we need to make the line endings consistent between actual vs expected
         assertEquals("Checking the content block", expectedContentBlock, content.replace("\r\n", "\n"))
         
@@ -268,6 +261,7 @@ Y = IPRED+W*eps_RUV_EPS
 	}
 	
 	@Test
+	@Ignore
 	public void testThatConditionalStatementWrittenOutWithBraces() {
 		def json = getJsonFromMDLFile("conditionalStmtWithBraces.mdl")
 		
