@@ -40,6 +40,10 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 		
 	}
 	
+	/**
+	 * Note the extra layer of nesting in the 'simple' parameters; this is to be consistent with
+	 * the matrix/diag/same parameters and make the post-processing in R slightly simpler.
+	 */
 	@Test
 	public void testVariabilityModel() {
 		def json = getJsonFromMDLFile("warfarinODE_ParameterObject.mdl")
@@ -51,25 +55,25 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 		assertEquals("Checking the number of variables in the Variability model", 7, variabilityModel.size())
 		
 		def expected_PPV_CL = [ 'name':'PPV_CL', 'value':'0.1', 'type':'SD' ]
-		assertEquals("Checking Variability parameter 1/7", expected_PPV_CL, variabilityModel[0])
+		assertEquals("Checking Variability parameter 1/7", expected_PPV_CL, variabilityModel[0][0])
 
 		def expected_PPV_V = [ 'name':'PPV_V', 'value':'0.1', 'type':'SD' ]
-		assertEquals("Checking Variability parameter 2/7", expected_PPV_V, variabilityModel[1])
+		assertEquals("Checking Variability parameter 2/7", expected_PPV_V, variabilityModel[1][0])
 		
 		def expected_PPV_KA = [ 'name':'PPV_KA', 'value':'0.1', 'type':'SD' ]
-		assertEquals("Checking Variability parameter 3/7", expected_PPV_KA, variabilityModel[2])
+		assertEquals("Checking Variability parameter 3/7", expected_PPV_KA, variabilityModel[2][0])
 		
 		def expected_PPV_TLAG = [ 'name':'PPV_TLAG', 'value':'0.1', 'type':'SD' ]
-		assertEquals("Checking Variability parameter 4/7", expected_PPV_TLAG, variabilityModel[3])
+		assertEquals("Checking Variability parameter 4/7", expected_PPV_TLAG, variabilityModel[3][0])
 		
 		def expected_RUV_PROP = [ 'name':'RUV_PROP', 'value':'0.1', 'type':'SD' ]
-		assertEquals("Checking Variability parameter 5/7", expected_RUV_PROP, variabilityModel[4])
+		assertEquals("Checking Variability parameter 5/7", expected_RUV_PROP, variabilityModel[4][0])
 		
 		def expected_RUV_ADD = [ 'name':'RUV_ADD', 'value':'0.1', 'type':'SD' ]
-		assertEquals("Checking Variability parameter 6/7", expected_RUV_ADD, variabilityModel[5])
+		assertEquals("Checking Variability parameter 6/7", expected_RUV_ADD, variabilityModel[5][0])
 		
 		def expected_CORR_PPV_CL_V = [ 'hi':'1.0', 'lo':'-1.0', 'name':'CORR_PPV_CL_V', 'value':'0.01', 'type':'CORR' ]
-		assertEquals("Checking Variability parameter 7/7", expected_CORR_PPV_CL_V, variabilityModel[6])
+		assertEquals("Checking Variability parameter 7/7", expected_CORR_PPV_CL_V, variabilityModel[6][0])
 		
 	}
 	
@@ -108,11 +112,11 @@ BOVQ2"""
 		
 		def PPV_CVTTK0 = variabilityModel[11]
 		def expected_PPV_CVTTK0 = [ 'name':'PPV_CVTTK0', 'value':'0', 'type':'VAR', 'fix':'true' ]
-		assertEquals("Checking the first of the 'standard' variables", expected_PPV_CVTTK0, PPV_CVTTK0)
+		assertEquals("Checking the first of the 'standard' variables", expected_PPV_CVTTK0, PPV_CVTTK0[0])
 		
 		def RUV_SDCP = variabilityModel[20]
 		def expected_RUV_SDCP = [ 'name':'RUV_SDCP', 'value':'0.0249', 'type':'VAR' ]
-		assertEquals("Checking the last of the 'standard' variables", expected_RUV_SDCP, RUV_SDCP)
+		assertEquals("Checking the last of the 'standard' variables", expected_RUV_SDCP, RUV_SDCP[0])
 		
 		def diag1 = variabilityModel[21]["diag"]
 		assertEquals("Checking the name of the single Diag variable", "\"struc3\"", diag1["name"])

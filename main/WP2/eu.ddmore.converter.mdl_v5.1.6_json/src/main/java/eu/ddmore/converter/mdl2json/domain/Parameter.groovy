@@ -73,23 +73,25 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	 * Parse the variability model block
 	 */
 	private List makeVariability(VariabilityBlock vb) {
-		List<Map> retVal = []
-		for(VariabilityBlockStatement s : vb.getStatements()) {
-			if(s.getDiagBlock()) {
+		List retVal = []
+		for (VariabilityBlockStatement s : vb.getStatements()) {
+			if (s.getDiagBlock()) {
 				Map diag = makeDiag(s.getDiagBlock())
-				retVal.add(["${s.getDiagBlock().getIdentifier()}" : diag])
+				retVal.add([ "${s.getDiagBlock().getIdentifier()}" : diag ])
 			}
-			if(s.getMatrixBlock()) {
+			if (s.getMatrixBlock()) {
 				MatrixBlock mb = s.getMatrixBlock()
 				Map matrixMap = makeMatrix(mb) 
 				retVal.add([ "${mb.getIdentifier()}" : matrixMap ])
 			}
-			if(s.getParameter()) {
-				retVal.add(new Variable(s.getParameter()))
+			if (s.getParameter()) {
+				// Note the extra layer of nesting here; this is to be consistent with the
+				// matrix/diag/same parameters and make the post-processing in R slightly simpler
+				retVal.add([ new Variable(s.getParameter()) ])
 			}
-			if(s.getSameBlock()){
+			if (s.getSameBlock()){
 				Map same = makeSame(s.getSameBlock())
-				retVal.add(["${s.getSameBlock().getIdentifier()}" : same ])
+				retVal.add([ "${s.getSameBlock().getIdentifier()}" : same ])
 			} 
 		}
 		return retVal
