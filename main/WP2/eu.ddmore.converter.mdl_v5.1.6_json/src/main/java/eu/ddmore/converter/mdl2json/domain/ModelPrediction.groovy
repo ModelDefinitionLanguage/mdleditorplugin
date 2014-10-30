@@ -16,6 +16,7 @@ class ModelPrediction extends Expando implements MDLPrintable, MDLAsJSON {
 	
 	static final String ODE = "ODE"
 	static final String LIBRARY = "LIBRARY"
+	static final String CONTENT = "content"
 
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
@@ -52,7 +53,7 @@ class ModelPrediction extends Expando implements MDLPrintable, MDLAsJSON {
 		    setProperty(LIBRARY, libraryStatements.join("\n"))
 		}
         
-		setProperty("content", statements.join("\n"))
+		setProperty(CONTENT, statements.join("\n"))
 	}
 	
 	public ModelPrediction(Map json) {
@@ -69,8 +70,8 @@ class ModelPrediction extends Expando implements MDLPrintable, MDLAsJSON {
 		if (getProperties().containsKey(LIBRARY)) {
 			subBlocksAsStr.add("${LIBRARY} {\n${getProperty('LIBRARY')}\n${IDT*2}}")
 		}
-		if (getProperties().containsKey("content")) {
-			subBlocksAsStr.add(getProperty("content").trim())
+		if (getProperties().containsKey(CONTENT)) {
+			subBlocksAsStr.add(getProperty(CONTENT).trim())
 		}
 		
 		subBlocksAsStr.join("\n${IDT*2}")
