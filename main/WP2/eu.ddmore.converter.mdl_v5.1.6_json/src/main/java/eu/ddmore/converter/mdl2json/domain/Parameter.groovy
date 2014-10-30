@@ -85,9 +85,8 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 				retVal.add([ "${mb.getIdentifier()}" : matrixMap ])
 			}
 			if (s.getParameter()) {
-				// Note the extra layer of nesting here; this is to be consistent with the
-				// matrix/diag/same parameters and make the post-processing in R slightly simpler
-				retVal.add([ new Variable(s.getParameter()) ])
+				def v = new Variable(s.getParameter())
+				retVal.add([ "${v['name']}" : v.getProperties().minus('name':"${v['name']}") ])
 			}
 			if (s.getSameBlock()){
 				Map same = makeSame(s.getSameBlock())
@@ -182,7 +181,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 	public String makeVariabilityMDL(List variability) {
 		StringBuffer strBuf = new StringBuffer()
 		strBuf.append("\n${IDT}VARIABILITY {\n")
-		variability.each { Map m ->
+		variability.each { Map<String, Map> m ->
 			
 			/*
 			 * Block could be a matrix, a diag, a same or a named parameter
@@ -206,8 +205,11 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 				String content = sameParam[CONTENT_PROPNAME].split("\n").join("\n${IDT*3}")
 				strBuf.append("same(name=${sameParam['name']}) {\n${IDT*3}${content}\n${IDT*2}}")
 			} else {
-				// Otherwise is a named parameter
-				strBuf.append(new Variable(m).toMDL())
+				// Otherwise is a named parameter, example "RUV_CVCP : {value=0.0118, type=VAR}"
+				m.each{String varName, Map var -> // Only actually one entry in the map
+					var.put('name',varName)
+					strBuf.append(new Variable(var).toMDL())
+				}
 			}
 			strBuf.append("\n")
 
