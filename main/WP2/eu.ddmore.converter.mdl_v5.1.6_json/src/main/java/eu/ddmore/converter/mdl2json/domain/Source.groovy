@@ -20,8 +20,7 @@ public class Source extends Expando implements MDLPrintable {
 	 * @param sourceBlock
 	 */
 	public Source(SourceBlock sourceBlock) {
-		setProperty("identifier", sourceBlock.getIdentifier() );
-		sourceBlock.getStatements().each{ PropertyDeclaration pd ->
+		sourceBlock.getStatements().each { PropertyDeclaration pd ->
 			def expr = pd.getExpression()
 			setProperty(pd.getPropertyName().getName(), XtextWrapper.unwrap(expr))
 		}
@@ -46,9 +45,7 @@ public class Source extends Expando implements MDLPrintable {
 	public String toMDL() {
 		List properties = []
 		getProperties().each{ k, v ->
-			if(!k.equals("identifier")) { 
-				properties.add("${k}=${v}")
-			} 
+			properties.add("${k}=${v}")
 		}
 		
 		"""${properties.join("\n        ")}"""

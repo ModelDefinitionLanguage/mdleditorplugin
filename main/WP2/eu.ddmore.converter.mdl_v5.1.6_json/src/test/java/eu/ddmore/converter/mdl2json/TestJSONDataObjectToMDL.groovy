@@ -18,7 +18,7 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
 	
 	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes 
 	private String sourceBlockJson =
-		/ {"SOURCE":{"file":"\"warfarin_conc.csv\"","identifier":"SOURCE","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
+		/ {"SOURCE":{"file":"\"warfarin_conc.csv\"","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
 	private String dataInputVariablesJson =
 		/ {"DATA_INPUT_VARIABLES":[{"name":"ID","type":"categorical"},{"name":"TIME","type":"continuous","units":"\"h\""},{"name":"logtWT","type":"continuous"},{"name":"AMT","type":"continuous","units":"\"mg\""},{"name":"DVID","type":"categorical"},{"name":"DV","type":"continuous"},{"name":"MDV","type":"categorical"}]} /
 	private String dataDerivedVariablesJson =
