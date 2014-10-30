@@ -1,1 +1,0 @@
-{"RANDOM_VARIABLE_DEFINITION":[{"type":"normal","mean":"0","var":"PPV_Vc","level":"ID","name":"eta_PPV_Vc"},{"type":"normal","mean":"0","var":"PPV_Vp","level":"ID","name":"eta_PPV_Vp"},{"type":"normal","mean":"0","var":"PPV_CL","level":"ID","name":"eta_PPV_CL"},{"type":"normal","mean":"0","var":"RUV_EPS","level":"DV","name":"eps_RUV_EPS"}]}
