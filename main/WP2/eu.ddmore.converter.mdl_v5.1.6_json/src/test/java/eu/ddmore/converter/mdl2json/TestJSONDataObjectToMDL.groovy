@@ -20,7 +20,7 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
 	private String sourceBlockJson =
 		/ {"SOURCE":{"file":"\"warfarin_conc.csv\"","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
 	private String dataInputVariablesJson =
-		/ {"DATA_INPUT_VARIABLES":[{"name":"ID","type":"categorical"},{"name":"TIME","type":"continuous","units":"\"h\""},{"name":"logtWT","type":"continuous"},{"name":"AMT","type":"continuous","units":"\"mg\""},{"name":"DVID","type":"categorical"},{"name":"DV","type":"continuous"},{"name":"MDV","type":"categorical"}]} /
+		/ {"DATA_INPUT_VARIABLES":[{"name":"ID","type":"categorical"},{"name":"TIME","type":"continuous","units":"\"h\""},{"name":"WT","type":"continuous"},{"name":"AMT","type":"continuous","units":"\"mg\""},{"name":"DVID","type":"categorical"},{"name":"DV","type":"continuous"},{"name":"MDV","type":"categorical"},{"name":"logtWT","type":"continuous"}]} /
 	private String dataDerivedVariablesJson =
 		/ {"DATA_DERIVED_VARIABLES":[{"logtWT":"log(WT\/70)"}]} /
 	
@@ -56,11 +56,12 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
     DATA_INPUT_VARIABLES {
         ID : {type=categorical}
         TIME : {type=continuous, units="h"}
-        logtWT : {type=continuous}
+        WT : {type=continuous}
         AMT : {type=continuous, units="mg"}
         DVID : {type=categorical}
         DV : {type=continuous}
         MDV : {type=categorical}
+        logtWT : {type=continuous}
     }
 
 }

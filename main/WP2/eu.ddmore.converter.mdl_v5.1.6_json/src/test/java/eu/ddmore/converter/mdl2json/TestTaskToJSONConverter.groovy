@@ -14,7 +14,7 @@ class TestTaskToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	public void testEstimateBlock() {
-		def json = getJsonFromMDLFile("warfarinODE_TaskObject.mdl")
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_TaskObject.mdl")
 		
 		def taskObj = json[0].warfarin_PK_ODE_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		

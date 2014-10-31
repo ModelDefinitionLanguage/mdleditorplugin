@@ -12,7 +12,7 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 
 	@Test
 	public void testStructuralModel() {
-		def json = getJsonFromMDLFile("warfarinODE_ParameterObject.mdl")
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ParameterObject.mdl")
 		
 		def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
@@ -46,7 +46,7 @@ class TestParameterToJSONConverter extends ConverterTestsParent {
 	 */
 	@Test
 	public void testVariabilityModel() {
-		def json = getJsonFromMDLFile("warfarinODE_ParameterObject.mdl")
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ParameterObject.mdl")
 			
 		def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 			

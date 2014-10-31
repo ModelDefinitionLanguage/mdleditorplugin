@@ -18,14 +18,14 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 	
 	static final String IDENTIFIER = "mdlobj"
 	
+	static String MODEL_INPUT_VARIABLES = "MODEL_INPUT_VARIABLES"
 	static String STRUCTURAL_PARAMETERS = "STRUCTURAL_PARAMETERS"
 	static String VARIABILITY_PARAMETERS = "VARIABILITY_PARAMETERS"
-	static String INDIVIDUAL_VARIABLES = "INDIVIDUAL_VARIABLES"
 	static String RANDOM_VARIABLE_DEFINITION = "RANDOM_VARIABLE_DEFINITION"
-	static String MODEL_OUTPUT_VARIABLES = "MODEL_OUTPUT_VARIABLES"
-	static String MODEL_INPUT_VARIABLES = "MODEL_INPUT_VARIABLES"
-	static String OBSERVATION = "OBSERVATION"
+	static String INDIVIDUAL_VARIABLES = "INDIVIDUAL_VARIABLES"
 	static String MODEL_PREDICTION = "MODEL_PREDICTION"
+	static String OBSERVATION = "OBSERVATION"
+	static String MODEL_OUTPUT_VARIABLES = "MODEL_OUTPUT_VARIABLES"
 	static String GROUP_VARIABLES = "GROUP_VARIABLES"
 	static String ESTIMATION = "ESTIMATION"
 	static String SIMULATION = "SIMULATION"
@@ -37,31 +37,31 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 		
 		for (ModelObjectBlock b : modelObject.getBlocks()) {
 			
+			if (b.getInputVariablesBlock()) {
+				// Note the inconsistency in that the getter is called InputVariables not ModelInputVariables
+				setProperty(MODEL_INPUT_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getInputVariablesBlock().getVariables()))
+			}
 			if (b.getStructuralParametersBlock()) {
 				setProperty(STRUCTURAL_PARAMETERS, VariablesList.buildFromSymbolDeclarations(b.getStructuralParametersBlock().getParameters()))
 			}
 			if (b.getVariabilityParametersBlock()) {
 				setProperty(VARIABILITY_PARAMETERS, VariablesList.buildFromSymbolDeclarations(b.getVariabilityParametersBlock().getParameters()))
 			}
-			if (b.getIndividualVariablesBlock()) {
-				setProperty(INDIVIDUAL_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getIndividualVariablesBlock().getVariables()))
-			}
 			if (b.getRandomVariableDefinitionBlock()) {
 				setProperty(RANDOM_VARIABLE_DEFINITION, RandomVariablesList.buildFromSymbolDeclarations(b.getRandomVariableDefinitionBlock().getVariables()))
 			}
-			if (b.getOutputVariablesBlock()) {
-				// Note the inconsistency in that the getter is called OutputVariables not ModelOutputVariables
-				setProperty(MODEL_OUTPUT_VARIABLES, VariablesList.buildFromSymbolNames(b.getOutputVariablesBlock().getVariables()))
+			if (b.getIndividualVariablesBlock()) {
+				setProperty(INDIVIDUAL_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getIndividualVariablesBlock().getVariables()))
 			}
-			if (b.getInputVariablesBlock()) {
-				// Note the inconsistency in that the getter is called InputVariables not ModelInputVariables
-				setProperty(MODEL_INPUT_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getInputVariablesBlock().getVariables()))
+			if (b.getModelPredictionBlock()) {
+				setProperty(MODEL_PREDICTION, new ModelPrediction(b.getModelPredictionBlock()))
 			}
 			if (b.getObservationBlock()) {
 				setProperty(OBSERVATION, RandomVariablesList.buildFromSymbolDeclarations(b.getObservationBlock().getVariables()))
 			}
-			if (b.getModelPredictionBlock()) {
-				setProperty(MODEL_PREDICTION, new ModelPrediction(b.getModelPredictionBlock()))
+			if (b.getOutputVariablesBlock()) {
+				// Note the inconsistency in that the getter is called OutputVariables not ModelOutputVariables
+				setProperty(MODEL_OUTPUT_VARIABLES, VariablesList.buildFromSymbolNames(b.getOutputVariablesBlock().getVariables()))
 			}
 			if (b.getGroupVariablesBlock()) {
 				setProperty(GROUP_VARIABLES, makeGroupVariables(b.getGroupVariablesBlock()))

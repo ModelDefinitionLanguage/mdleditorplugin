@@ -3,9 +3,7 @@ warfarin_PK_ODE_task = taskobj{
     ESTIMATE {
         # We need the definition of algorithms and algorithm
         # properties before we can put anything meaningful here
-        target = MLXTRAN_CODE
-        version = "4.3.2"
-        algo = [ "SAEM" ]
+        target = MLXTRAN_CODE version = "4.3.2" algo = [ "SAEM" ]
     } #end ESTIMATE sub block
     
 }

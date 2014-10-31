@@ -70,7 +70,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	@Test
 	public void testMDLToJSONToMDL() {
 		
-		def File origMdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-latest.mdl", "mdl")
+		def File origMdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-28Oct2014.mdl", "mdl")
 		
 		def json = getJsonFromMDLFile(origMdlFile)
 		
@@ -87,10 +87,10 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	 */
 	@Test
 	@Ignore
-	public void testRGeneratedMOG_WarfarinODE() {
+	public void testRGeneratedMOG_WarfarinODE28Oct2014() {
 		testRGeneratedMOG(
-			"warfarin_ODE/Warfarin-ODE-latest.output.json",
-			"warfarin_ODE/Warfarin-ODE-latest.mdl"
+			"warfarin_ODE/Warfarin-ODE-28Oct2014.output.json",
+			"warfarin_ODE/Warfarin-ODE-28Oct2014.mdl"
 		);
 	}
 
@@ -99,7 +99,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: ex_model7_prolactin_01July2014_OAM.output.json
 	 */
     @Test
-	@Ignore
+	@Ignore("Out of date")
 	public void testRGeneratedMOG_Prolactin() {
 		testRGeneratedMOG(
 			"FribergCPT2009/ex_model7_prolactin_01July2014_OAM.output.json",		
@@ -112,7 +112,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: tumour_size_01July2014_OAM.output.json
 	 */
 	@Test
-	@Ignore
+	@Ignore("Out of date")
 	public void testRGeneratedMOG_Tumour() {
 		testRGeneratedMOG(
 			"ThamCCR2008/tumour_size_01July2014_OAM.output.json",
@@ -125,7 +125,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: drugX_trAbs_1Rep_EST001_ORG.output.json
 	 */
 	@Test
-	@Ignore
+	@Ignore("Out of date")
 	public void testRGeneratedMOG_DrugX() {
 		testRGeneratedMOG(
 			"drugX/drugX_trAbs_1Rep_EST001_ORG.output.json",
@@ -138,7 +138,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: warfarin_PK_PRED.output.json
 	 */
 	@Test
-	@Ignore
+	@Ignore("Out of date")
 	public void testRGeneratedMOG_Warfarin() {
 		testRGeneratedMOG(
 			"warfarin_PK_PRED/warfarin_PK_PRED.output.json",

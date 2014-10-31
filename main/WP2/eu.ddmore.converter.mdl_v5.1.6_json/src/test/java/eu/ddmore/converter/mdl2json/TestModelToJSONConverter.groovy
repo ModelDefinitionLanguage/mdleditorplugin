@@ -11,7 +11,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	void testStructuralParametersBlock() {
-		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def modelObject = json.warfarin_PK_ODE_mdl
 		
@@ -30,7 +30,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	void testVariabilityParametersBlock() {
-		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def modelObject = json.warfarin_PK_ODE_mdl
 		
@@ -49,7 +49,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	void testIndividualVariablesBlock() {
-		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def modelObject = json.warfarin_PK_ODE_mdl
 		
@@ -75,7 +75,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	void testRandomVariableDefinitionBlock() {
-		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def modelObject = json.warfarin_PK_ODE_mdl
 	
@@ -100,7 +100,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	@Test
 	void testModelOutputVariablesBlock() {
 		
-		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def modelObject = json.warfarin_PK_ODE_mdl
 				
@@ -116,7 +116,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	void testModelInputVariablesBlock() {
-		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def modelObject = json.warfarin_PK_ODE_mdl
 		
@@ -127,15 +127,15 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 		assertEquals("Checking number of input variables", 6, inputVariables.size())
 		assertEquals("Checking variable 1/6", [ 'name':'ID', 'use':'id', 'level':'2' ], inputVariables[0])
 		assertEquals("Checking variable 2/6", [ 'name':'TIME', 'use':'idv' ], inputVariables[1])
-		assertEquals("Checking variable 3/6", [ 'name':'logtWT', 'use':'covariate', 'type':'continuous' ], inputVariables[2])
-		assertEquals("Checking variable 4/6", [ 'name':'AMT', 'use':'amt', 'level':'1', 'administration':'GUT' ], inputVariables[3])
-		assertEquals("Checking variable 5/6", [ 'name':'DV', 'use':'dv', 'level':'1', 'prediction':'Y' ], inputVariables[4])
-		assertEquals("Checking variable 6/6", [ 'name':'MDV', 'use':'mdv' ], inputVariables[5])
+		assertEquals("Checking variable 3/6", [ 'name':'AMT', 'use':'amt', 'administration':'GUT' ], inputVariables[2])
+		assertEquals("Checking variable 4/6", [ 'name':'DV', 'use':'dv', 'level':'1', 'prediction':'Y' ], inputVariables[3])
+		assertEquals("Checking variable 5/6", [ 'name':'MDV', 'use':'mdv' ], inputVariables[4])
+		assertEquals("Checking variable 6/6", [ 'name':'logtWT', 'use':'covariate', 'type':'continuous' ], inputVariables[5])
 	}
 	
 	@Test
     void testObservationBlock() {
-		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def modelObject = json.warfarin_PK_ODE_mdl
 		
@@ -156,7 +156,7 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 	
     @Test
     public void testModelPredictionBlock() {
-		def json = getJsonFromMDLFile("warfarinODE_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
 		def modelObject = json.warfarin_PK_ODE_mdl
         

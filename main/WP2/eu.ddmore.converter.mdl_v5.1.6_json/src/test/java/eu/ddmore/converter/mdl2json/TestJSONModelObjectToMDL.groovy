@@ -26,7 +26,7 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
 	private final static String modelOutputVarsBlockJson =
 		/ {"MODEL_OUTPUT_VARIABLES":[{"name":"ID"},{"name":"TIME"},{"name":"logtWT"},{"name":"CL"},{"name":"V"},{"name":"KA"},{"name":"TLAG"},{"name":"Y"}]} /
 	private final static String modelInputVarsBlockJson =
-		/ {"MODEL_INPUT_VARIABLES":[{"level":"2","name":"ID","use":"id"},{"name":"TIME","use":"idv"},{"name":"logtWT","use":"covariate","type":"continuous"},{"level":"1","name":"AMT","use":"amt","administration":"GUT"},{"level":"1","name":"DV","prediction":"Y","use":"dv"},{"name":"MDV","use":"mdv"}]} /
+		/ {"MODEL_INPUT_VARIABLES":[{"level":"2","name":"ID","use":"id"},{"name":"TIME","use":"idv"},{"name":"AMT","use":"amt","administration":"GUT"},{"level":"1","name":"DV","prediction":"Y","use":"dv"},{"name":"MDV","use":"mdv"},{"name":"logtWT","use":"covariate","type":"continuous"}]} /
 	private final static String observationBlockJson =
 		/ {"OBSERVATION":[{"name":"EPS_Y","complexAttrs":{"type":"normal","mean":"0","var":"1","level":"DV"}},{"attrs":{"type":"continuous","error":"combinedError1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)","eps":"EPS_Y","prediction":"CC"},"name":"Y"}]} /
 	private final static String modelPredictionBlockJson =
@@ -156,10 +156,10 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
     MODEL_INPUT_VARIABLES {
         ID : {level=2, use=id}
         TIME : {use=idv}
-        logtWT : {type=continuous, use=covariate}
-        AMT : {administration=GUT, level=1, use=amt}
+        AMT : {administration=GUT, use=amt}
         DV : {level=1, prediction=Y, use=dv}
         MDV : {use=mdv}
+        logtWT : {type=continuous, use=covariate}
     }
 
 }

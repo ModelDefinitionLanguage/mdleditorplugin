@@ -116,47 +116,33 @@ class ConverterTestsParent {
 		final BufferedReader rdr = new BufferedReader(new FileReader(origMdlFile));
 		final StringBuffer strBuf = new StringBuffer();
 		rdr.eachLine() { String str ->
-
 			processHashChars(str, 0, strBuf)
-			
-//			def hashCharPos = str.indexOf("#")
-//			if (hashCharPos < 0) {
-//				strBuf.append(str)
-//				strBuf.append("\n")
-//			} else {
-//				// There is a # character somewhere in the line
-//				if (str.substring(0, hashCharPos).count("\"") % 2 == 1) {
-//					// Hash char is within a quoted string (may be multiple quoted strings on a single line)
-//					strBuf.append(str)
-//					strBuf.append("\n")
-//				} else {
-//					// Hash char is not within a quoted string so is most likely starting a comment
-//    				str = str.substring(0, hashCharPos) // Trim off the comment
-//    				if (!str.matches(~/\s*$/)) { // Not just whitespace
-//    					strBuf.append(str)
-//    					strBuf.append("\n")
-//    				}
-//				}
-//			}
 		}
-		
 		strBuf.toString()
 	}
 	
-	private static void processHashChars(final String str, final int fromIndex, final StringBuffer strBuf) {
-		def hashCharPos = str.indexOf("#", fromIndex)
+	/**
+	 * Strip off hash-character-commencing comment, if present, from the input string;
+	 * but ignore hash characters appearing within quoted strings.
+	 * <p>
+	 * @param fullStr - the full line of text read in from the MDL file
+	 * @param fromIndex - the zero-based index in the string at which to start processing
+	 * @param strBuf - the string buffer to which to append the processed line of text
+	 */
+	private static void processHashChars(final String fullStr, final int fromIndex, final StringBuffer strBuf) {
+		def hashCharPos = fullStr.indexOf("#", fromIndex)
 		if (hashCharPos < 0) {
-			strBuf.append(str)
+			strBuf.append(fullStr.substring(fromIndex))
 			strBuf.append("\n")
 		} else {
 			// There is a # character somewhere in the line
-			String subStr = str.substring(fromIndex, hashCharPos)
+			String subStr = fullStr.substring(fromIndex, hashCharPos)
 			if (subStr.count("\"") % 2 == 1) {
 				// Hash char is within a quoted string (may be multiple quoted strings on a single line)
 				strBuf.append(subStr)
-				def closingQuotePos = str.indexOf("\"", hashCharPos)
-				strBuf.append(str.substring(hashCharPos, closingQuotePos + 1)) // Ensure we include the closing quote
-				processHashChars(str, closingQuotePos + 1, strBuf) // Repeat until the end of the string is reached
+				def closingQuotePos = fullStr.indexOf("\"", hashCharPos)
+				strBuf.append(fullStr.substring(hashCharPos, closingQuotePos + 1)) // Ensure we include the closing quote
+				processHashChars(fullStr, closingQuotePos + 1, strBuf) // Repeat until the end of the string is reached
 			} else {
 				// Hash char is not within a quoted string so is most likely starting a comment
 				if (!subStr.matches(~/\s*$/)) { // Not just whitespace
@@ -247,16 +233,16 @@ class ConverterTestsParent {
 	private static String putSOURCEBlockInKnownOrder(final String sourceBlock) {
 		
 		// Similar regex behaviour to those in putParameterListsIntoKnownOrder()
-		final Matcher matcher = ( sourceBlock =~ /(?s)SOURCE\s*\{\s*(.+?)\s*\}/ )
+		final Matcher matcher = ( sourceBlock =~ /(?s)SOURCE\s*\{(\s*.+?\s*)\}/ )
 		
 		def outStr = sourceBlock
 		
-		while (matcher.find()) {
+		while (matcher.find()) { // Should only be one match
 			final String sourceBlockContent = matcher.group(1)
 			
 			final Matcher attrMatcher = ( sourceBlockContent =~ /\s*\S+\s*=\s*\S+\s*/ )
 			
-			outStr = outStr.replace(sourceBlockContent, attrMatcher.collect().sort().join("\n${IDT*2}"))
+			outStr = outStr.replace(sourceBlockContent, "\n${IDT*2}" + attrMatcher.collect{ attrStr -> attrStr.trim() }.sort().join("\n${IDT*2}") + "\n${IDT}" )
 		}
 		
 		outStr

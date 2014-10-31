@@ -18,7 +18,7 @@ class TestMDLFileToJSONConverter extends ConverterTestsParent {
 
     @Test
 	public void testTopLevelBlocksPresent() {
-        def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-latest.mdl")
+        def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-28Oct2014.mdl")
         def json = getJsonFromMDLFile(mdlFile)
 		
 		assertNotNull("Data object should be present", json.warfarin_PK_ODE_dat)
@@ -33,7 +33,7 @@ class TestMDLFileToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	public void testDataObjectBlocksPresent() {
-		def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-latest.mdl")
+		def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-28Oct2014.mdl")
 		def json = getJsonFromMDLFile(mdlFile)
 		
 		assertNotNull("DATA_INPUT_VARIABLES block should be present", json.warfarin_PK_ODE_dat.DATA_INPUT_VARIABLES)
@@ -43,7 +43,7 @@ class TestMDLFileToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	public void testParameterObjectBlocksPresent() {
-		def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-latest.mdl")
+		def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-28Oct2014.mdl")
 		def json = getJsonFromMDLFile(mdlFile)
 		
 		assertNotNull("STRUCTURAL block should be present", json.warfarin_PK_ODE_par.STRUCTURAL)
@@ -52,7 +52,7 @@ class TestMDLFileToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	public void testModelObjectBlocksPresent() {
-		def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-latest.mdl")
+		def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-28Oct2014.mdl")
 		def json = getJsonFromMDLFile(mdlFile)
 		
 		assertNotNull("MODEL_INPUT_VARIABLES block should be present", json.warfarin_PK_ODE_mdl.MODEL_INPUT_VARIABLES)
@@ -67,7 +67,7 @@ class TestMDLFileToJSONConverter extends ConverterTestsParent {
 	
 	@Test
 	public void testTaskObjectBlocksPresent() {
-		def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-latest.mdl")
+		def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-28Oct2014.mdl")
 		def json = getJsonFromMDLFile(mdlFile)
 		
 		assertNotNull("ESTIMATE block should be present", json.warfarin_PK_ODE_task.ESTIMATE)
