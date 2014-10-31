@@ -86,7 +86,6 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: Warfarin-ODE-latest.output.json
 	 */
 	@Test
-	@Ignore
 	public void testRGeneratedMOG_WarfarinODE28Oct2014() {
 		testRGeneratedMOG(
 			"warfarin_ODE/Warfarin-ODE-28Oct2014.output.json",
