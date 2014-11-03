@@ -15,9 +15,10 @@ import org.ddmore.mdl.mdl.VariabilityBlockStatement
 
 import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
+import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
-public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
+public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 	
 	private static Logger logger = Logger.getLogger(Parameter.class)
 	
@@ -236,6 +237,11 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON {
 ${mdl.toString()}
 }
 """ // TODO: Prior Parameters block, Target Code block
+	}
+	
+	@Override
+	public int getPrintedOrder() {
+		return 2;
 	}
 
 }

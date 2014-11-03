@@ -8,9 +8,10 @@ import org.ddmore.mdl.mdl.ModelObjectBlock
 
 import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
+import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
-public class Model extends Expando implements MDLPrintable, MDLAsJSON {
+public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
 	public static final Logger logger = Logger.getLogger(Model.class)
 	
@@ -170,6 +171,11 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON {
 ${mdl.toString()}
 }
 """
+	}
+	
+	@Override
+	public int getPrintedOrder() {
+		return 3;
 	}
 	
 }

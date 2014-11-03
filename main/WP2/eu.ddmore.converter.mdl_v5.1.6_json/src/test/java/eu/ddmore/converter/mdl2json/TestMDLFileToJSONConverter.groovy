@@ -1,17 +1,11 @@
 package eu.ddmore.converter.mdl2json;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
 import org.apache.log4j.Logger
+import org.junit.Test
 
-import eu.ddmore.convertertoolbox.api.response.ConversionReport
-import eu.ddmore.converter.mdl2json.domain.MCLFile
-import eu.ddmore.converter.mdl2json.domain.Parameter
-import eu.ddmore.converter.mdl2json.domain.Data
-import eu.ddmore.mdlparse.MdlParser
-import groovy.json.JsonSlurper
-import org.ddmore.mdl.mdl.Mcl
-import org.junit.Test;
+import eu.ddmore.converter.mdl2json.domain.Mog
 
 class TestMDLFileToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestMDLFileToJSONConverter.class)
@@ -71,6 +65,16 @@ class TestMDLFileToJSONConverter extends ConverterTestsParent {
 		def json = getJsonFromMDLFile(mdlFile)
 		
 		assertNotNull("ESTIMATE block should be present", json.warfarin_PK_ODE_task.ESTIMATE)
+	}
+	
+	@Test
+	public void testMogDefinition() {
+		def File mdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-28Oct2014.mdl")
+		def json = getJsonFromMDLFile(mdlFile)
+		def warf_mog = json[0].warf_mog // Remove the extra layer of nesting
+		assertNotNull("Warfarin MOG definition should be present", warf_mog)
+		assertEquals("Checking the identifier of the Mog Definition within the JSON", Mog.IDENTIFIER, warf_mog[Mog.IDENTIFIER_PROPNAME])
+		assertEquals("Checking the Warfarin MOG definition", ["warfarin_PK_ODE_mdl", "warfarin_PK_ODE_par", "warfarin_PK_ODE_dat", "warfarin_PK_ODE_task"], warf_mog[Mog.BLOCKNAMES_PROPNAME])
 	}
     
 }
