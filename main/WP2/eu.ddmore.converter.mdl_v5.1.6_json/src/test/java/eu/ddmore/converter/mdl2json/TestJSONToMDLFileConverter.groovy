@@ -90,7 +90,6 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: Warfarin-ODE-latest.output.json
 	 */
 	@Test
-	@Ignore("Until R code updated")
 	public void testRGeneratedMOG_WarfarinODE28Oct2014() {
 		testRGeneratedMOG(
 			"warfarin_ODE/Warfarin-ODE-28Oct2014.output.json",
@@ -106,7 +105,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	@Ignore("Out of date")
 	public void testRGeneratedMOG_Prolactin() {
 		testRGeneratedMOG(
-			"FribergCPT2009/ex_model7_prolactin_01July2014_OAM.output.json",		
+			"FribergCPT2009/ex_model7_prolactin_01July2014_OAM.output.json",
 			"FribergCPT2009/ex_model7_prolactin_01July2014_OAM.mdl"
 		);
 	}

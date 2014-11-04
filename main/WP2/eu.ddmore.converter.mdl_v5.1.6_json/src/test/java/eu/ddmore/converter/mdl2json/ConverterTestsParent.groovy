@@ -1,17 +1,19 @@
 package eu.ddmore.converter.mdl2json
 
+import static eu.ddmore.converter.mdl2json.interfaces.MDLPrintable.IDT
 import static org.junit.Assert.*
+
+import java.util.regex.Matcher
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Mcl
 
+import eu.ddmore.converter.mdl2json.domain.Mog
+import eu.ddmore.converter.mdl2json.domain.Source
 import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
-import java.util.regex.Matcher
-
-import static eu.ddmore.converter.mdl2json.interfaces.MDLPrintable.IDT
 
 class ConverterTestsParent {
 
@@ -95,11 +97,17 @@ class ConverterTestsParent {
 		if (!StringUtils.isEmpty(origMdlFileBlockContent) || !StringUtils.isEmpty(newMdlFileBlockContent)) { // Check that we actually have something to compare
 			logger.info("Verifying block " + blockName + "...")
 			
-			// Special additional preprocessing for the SOURCE block:
+			// Special additional preprocessing for the "SOURCE" block:
 			// The items within this block can be in any order so put the lines of the original and new blocks into a known order
-			if (blockName == 'SOURCE') {
-				origMdlFileBlockContent = putSOURCEBlockInKnownOrder(origMdlFileBlockContent)
-				newMdlFileBlockContent = putSOURCEBlockInKnownOrder(newMdlFileBlockContent)
+			if (blockName == Source.SOURCE) {
+				origMdlFileBlockContent = putSOURCEBlockContentInKnownOrder(origMdlFileBlockContent)
+				newMdlFileBlockContent = putSOURCEBlockContentInKnownOrder(newMdlFileBlockContent)
+			}
+			// Special additional preprocessing for the "mog" block:
+			// The items within this block can be in any order so put the lines of the original and new blocks into a known order
+			if (blockName.endsWith(Mog.IDENTIFIER)) {
+				origMdlFileBlockContent = putMogBlockContentInKnownOrderAndRenameMogToKnownName(blockName, origMdlFileBlockContent)
+				newMdlFileBlockContent = putMogBlockContentInKnownOrderAndRenameMogToKnownName(blockName, newMdlFileBlockContent)
 			}
 		
 			// Trim off whitespace from both the expected and the actual
@@ -227,22 +235,57 @@ class ConverterTestsParent {
 	}
 	
 	/**
-	 * Special additional preprocessing for the SOURCE block:
-	 * The items within this block can be in any order so put the lines of the original and new blocks into a known order.
+	 * Special additional preprocessing for the "SOURCE" block.
+	 * The <code>name = value</code> pairs within this block can be in any order so put the lines
+	 * of the original and new blocks into a known order.
+	 * <p>
+	 * @param blockText - the string comprising the block name and its unordered content
+	 * @return the string comprising the block name and its reordered content
+	 */
+	private static String putSOURCEBlockContentInKnownOrder(final String blockText) {
+		putSOURCEBlockOrMogBlockContentInKnownOrder(Source.SOURCE, blockText, /\s*\S+\s*=\s*\S+\s*/)
+	}
+	
+	/**
+	 * Special additional preprocessing for the "mog" top-level block:
+	 * <ol>
+	 * <li>The object identifiers within this block can be in any order so put the lines of the
+	 *     original and new blocks into a known order.
+	 * <li>The name of the MOG in the written out MDL will in general be different to the name
+	 *     of the MOG in the input MDL file, so replace the MOG name with a standard name
+	 *     "theMog" for the purposes of comparison of the block text.
+	 * </ol>
+	 * <p>
+	 * @param blockName - the name of the block, actually a regular expression
+	 * @param blockText - the string comprising the block name and its unordered content
+	 * @return the string comprising the block name and its reordered content
+	 */
+	private static String putMogBlockContentInKnownOrderAndRenameMogToKnownName(final String blockName, final String blockText) {
+		putSOURCEBlockOrMogBlockContentInKnownOrder(blockName, blockText, /\s*\S+\s*/).toString().replaceFirst(/\S+\s*=\s*mog\s*\{/, "theMog = mog {")
+	}
+	
+	/**
+	 * Special additional preprocessing for the "SOURCE" block and the "mog" top-level block.
+	 * The items within these blocks can be in any order so put the lines of the original and new blocks into a known order.
+	 * <p>
+	 * @param blockName - the name of the block, actually a regular expression
+	 * @param blockText - the string comprising the block name and its unordered content
+	 * @param itemsMatcher - the regular expression to extract the individual attributes / items within the content of the block
+	 * @return the string comprising the block name and its reordered content
 	 */ 
-	private static String putSOURCEBlockInKnownOrder(final String sourceBlock) {
+	private static String putSOURCEBlockOrMogBlockContentInKnownOrder(final String blockName, final String blockText, final String itemsRegex) {
 		
 		// Similar regex behaviour to those in putParameterListsIntoKnownOrder()
-		final Matcher matcher = ( sourceBlock =~ /(?s)SOURCE\s*\{(\s*.+?\s*)\}/ )
+		final Matcher outerMatcher = ( blockText =~ /(?s)/ + blockName + /\s*\{(\s*.+?\s*)\}/ )
 		
-		def outStr = sourceBlock
+		def outStr = blockText
 		
-		while (matcher.find()) { // Should only be one match
-			final String sourceBlockContent = matcher.group(1)
+		while (outerMatcher.find()) { // Should only be one match
+			final String blockContent = outerMatcher.group(1)
 			
-			final Matcher attrMatcher = ( sourceBlockContent =~ /\s*\S+\s*=\s*\S+\s*/ )
+			final Matcher itemsMatcher = ( blockContent =~ itemsRegex )
 			
-			outStr = outStr.replace(sourceBlockContent, "\n${IDT*2}" + attrMatcher.collect{ attrStr -> attrStr.trim() }.sort().join("\n${IDT*2}") + "\n${IDT}" )
+			outStr = outStr.replace(blockContent, "\n${IDT*2}" + itemsMatcher.collect{ attrStr -> attrStr.trim() }.sort().join("\n${IDT*2}") + "\n${IDT}" )
 		}
 		
 		outStr
