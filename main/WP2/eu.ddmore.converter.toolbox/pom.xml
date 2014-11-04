@@ -25,7 +25,7 @@
 		<dependency>
             <groupId>eu.ddmore.testdata</groupId>
             <artifactId>models</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.2-SNAPSHOT</version>
             <scope>test</scope>
 		</dependency>
 		

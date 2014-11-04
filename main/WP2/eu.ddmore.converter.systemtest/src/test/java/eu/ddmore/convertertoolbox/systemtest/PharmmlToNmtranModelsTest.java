@@ -16,7 +16,7 @@ public class PharmmlToNmtranModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(PharmmlToNmtranModelsTest.class);
     
-    private final static String MODELS_SUBDIRECTORY = "pharmml";
+    private final static String MODELS_SUBDIRECTORY = "PharmML";
     private final static String MODELS_FILE_EXTENSION = "xml";
     private final static String OUTPUT_FILE_EXTENSION = "ctl";
     

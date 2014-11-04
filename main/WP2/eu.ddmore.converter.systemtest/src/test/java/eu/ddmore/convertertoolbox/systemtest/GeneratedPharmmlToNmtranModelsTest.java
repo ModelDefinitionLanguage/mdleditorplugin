@@ -33,7 +33,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
     
     private final static String ORIGINAL_MDL_MODELS_SUBDIRECTORY = "mdl";
     private final static String ORIGINAL_MDL_MODELS_FILE_EXTENSION = "mdl";
-    private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY = "pharmml-generated-from-MDL";
+    private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY = "PharmML-generated-from-MDL";
     private final static String PHARMML_MODELS_FILE_EXTENSION = "xml";
     private final static String OUTPUT_FILE_EXTENSION = "ctl";
     
