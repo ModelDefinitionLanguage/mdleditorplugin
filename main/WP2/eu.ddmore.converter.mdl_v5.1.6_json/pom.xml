@@ -11,7 +11,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>converter-mdl_v5.1.6_json</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>0.0.6-SNAPSHOT</version>
 	<name>Converter Provider: MDL to JSON</name>
 
 	<properties>
@@ -43,7 +43,7 @@
 		<dependency> 
  		   <groupId>eu.ddmore</groupId> 
  			<artifactId>org.ddmore.mdl</artifactId> 
-			<version>1.0.2-SNAPSHOT</version> 
+			<version>1.0.3-SNAPSHOT</version> 
 		</dependency>
         
         <dependency>

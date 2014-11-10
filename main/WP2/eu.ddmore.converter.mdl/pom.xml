@@ -10,7 +10,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>converter-mdl</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>0.0.6-SNAPSHOT</version>
 	<name>Converter Providers: MDL to PharmML and NM-TRAN</name>
 
 	<properties>
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>org.ddmore.mdl</artifactId>
-			<version>1.0.2-SNAPSHOT</version>
+			<version>1.0.3-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

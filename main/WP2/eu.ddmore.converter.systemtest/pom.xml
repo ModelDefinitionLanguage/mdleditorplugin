@@ -16,7 +16,7 @@ Note that the generated output models aren't verified in terms of content, just 
     <properties>
         <maven.compiler.source>1.6</maven.compiler.source> 
         <maven.compiler.target>1.6</maven.compiler.target>
-        <converter.toolbox.bundle.version>1.0.0-SNAPSHOT</converter.toolbox.bundle.version>
+        <converter.toolbox.bundle.version>1.0.1-SNAPSHOT</converter.toolbox.bundle.version>
         <testdata.models.version>0.0.2-SNAPSHOT</testdata.models.version>
         <models.working.dir>${project.build.directory}/WorkingDir</models.working.dir>
     </properties> 

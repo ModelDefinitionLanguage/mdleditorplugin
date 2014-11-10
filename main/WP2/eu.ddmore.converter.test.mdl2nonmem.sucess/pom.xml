@@ -11,7 +11,7 @@
 
 	<modelVersion>4.0.0</modelVersion>	
 	<artifactId>test-mdl2nonmem-success</artifactId>
-	<version>0.0.5-SNAPSHOT</version>	
+	<version>0.0.6-SNAPSHOT</version>	
 	<name>Converter Toolbox Test-Mdl2Nonmem-Success</name>
 
 	<dependencies>
