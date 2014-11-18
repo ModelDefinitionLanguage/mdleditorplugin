@@ -50,8 +50,8 @@
 		<!-- "Optional" converters are specified as dependencies here. -->
 		<dependency>
 			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-pharmml_v03_nmtran_v72</artifactId>
-			<version>0.0.5-SNAPSHOT</version>
+			<artifactId>converter-nonmem</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
