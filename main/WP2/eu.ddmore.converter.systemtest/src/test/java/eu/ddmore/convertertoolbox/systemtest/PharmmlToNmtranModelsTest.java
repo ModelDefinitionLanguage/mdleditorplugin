@@ -60,7 +60,7 @@ public class PharmmlToNmtranModelsTest {
     @Test
     public void testPharmMLToNMTRANConversion() {
         new ConverterRunner(
-            this.model, OUTPUT_FILE_EXTENSION, "PharmML", "0.3.0", "NMTRAN", "7.2",
+            this.model, OUTPUT_FILE_EXTENSION, "PharmML", "0.3.1", "NMTRAN", "7.2",
             new ConverterOutputFailureCheckerImpl(NMTRAN_FILE_SIZE_THRESHOLD)
         ).run();
     }

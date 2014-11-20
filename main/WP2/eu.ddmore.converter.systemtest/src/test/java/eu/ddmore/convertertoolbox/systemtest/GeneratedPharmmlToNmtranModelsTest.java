@@ -174,7 +174,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
     @Test
     public void testPharmMLToNMTRANConversionForPharmMLGeneratedByMdlToPharmMLConversion() {
         new ConverterRunner(
-            this.generatedPharmmlModel, OUTPUT_FILE_EXTENSION, "PharmML", "0.3.0", "NMTRAN", "7.2",
+            this.generatedPharmmlModel, OUTPUT_FILE_EXTENSION, "PharmML", "0.3.1", "NMTRAN", "7.2",
             new ConverterOutputFailureCheckerImpl(NMTRAN_FILE_SIZE_THRESHOLD)
         ).run();
     }
