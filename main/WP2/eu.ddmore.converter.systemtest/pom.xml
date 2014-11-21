@@ -130,6 +130,7 @@ Note that the generated output models aren't verified in terms of content, just 
             <!-- There is no artifact produced by this build so turn off the jar creation and install processes -->
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
 				<executions>
 					<execution>
 						<id>default-jar</id>
@@ -139,6 +140,7 @@ Note that the generated output models aren't verified in terms of content, just 
 			</plugin>
             <plugin>
                 <artifactId>maven-install-plugin</artifactId>
+                <version>2.3.1</version>
                 <executions>
                     <execution>
                         <id>default-install</id>
