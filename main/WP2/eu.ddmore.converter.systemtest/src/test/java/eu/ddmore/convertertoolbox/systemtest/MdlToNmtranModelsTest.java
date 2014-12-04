@@ -15,7 +15,10 @@ import org.junit.runners.Parameterized;
 public class MdlToNmtranModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(MdlToNmtranModelsTest.class);
-    
+
+    private final static String MDL_VERSION = "5.0.8";
+    private final static String NMTRAN_VERSION = "7.2";
+
     private final static String MODELS_SUBDIRECTORY = "mdl";
     private final static String MODELS_FILE_EXTENSION = "mdl";
     private final static String OUTPUT_FILE_EXTENSION = "ctl";
@@ -60,7 +63,7 @@ public class MdlToNmtranModelsTest {
     @Test
     public void testMdlToNmtranConversion() {
         new ConverterRunner(
-            this.model, OUTPUT_FILE_EXTENSION, "MDL", "5.0.8", "NMTRAN", "7.2.0",
+            this.model, OUTPUT_FILE_EXTENSION, "MDL", MDL_VERSION, "NMTRAN", NMTRAN_VERSION,
             new ConverterOutputFailureCheckerImpl(NMTRAN_FILE_SIZE_THRESHOLD)
         ).run();
     }

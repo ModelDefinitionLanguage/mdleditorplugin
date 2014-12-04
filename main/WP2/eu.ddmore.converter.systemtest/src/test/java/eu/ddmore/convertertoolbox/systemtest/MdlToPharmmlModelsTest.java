@@ -15,8 +15,11 @@ import org.junit.runners.Parameterized;
 public class MdlToPharmmlModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(MdlToPharmmlModelsTest.class);
-    
-    private final static String MODELS_SUBDIRECTORY = "mdl";
+
+    private final static String MDL_VERSION = "5.1.6";
+    private final static String PHARMML_VERSION = "0.3.1";
+
+    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + MDL_VERSION;
     private final static String MODELS_FILE_EXTENSION = "mdl";
     private final static String OUTPUT_FILE_EXTENSION = "xml";
     
@@ -60,7 +63,7 @@ public class MdlToPharmmlModelsTest {
     @Test
     public void testMdlToPharmMLConversion() {
         new ConverterRunner(
-            this.model, OUTPUT_FILE_EXTENSION, "MDL", "5.1.6", "PharmML", "0.3.0",
+            this.model, OUTPUT_FILE_EXTENSION, "MDL", MDL_VERSION, "PharmML", PHARMML_VERSION,
             new ConverterOutputFailureCheckerImpl(PHARMML_FILE_SIZE_THRESHOLD)
         ).run();
     }

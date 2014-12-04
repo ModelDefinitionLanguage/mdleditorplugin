@@ -15,8 +15,11 @@ import org.junit.runners.Parameterized;
 public class PharmmlToNmtranModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(PharmmlToNmtranModelsTest.class);
-    
-    private final static String MODELS_SUBDIRECTORY = "PharmML";
+
+    private final static String PHARMML_VERSION = "0.3.1";
+    private final static String NMTRAN_VERSION = "7.2";
+
+    private final static String MODELS_SUBDIRECTORY = "PharmML" + File.separator + PHARMML_VERSION;
     private final static String MODELS_FILE_EXTENSION = "xml";
     private final static String OUTPUT_FILE_EXTENSION = "ctl";
     
@@ -60,7 +63,7 @@ public class PharmmlToNmtranModelsTest {
     @Test
     public void testPharmMLToNMTRANConversion() {
         new ConverterRunner(
-            this.model, OUTPUT_FILE_EXTENSION, "PharmML", "0.3.1", "NMTRAN", "7.2",
+            this.model, OUTPUT_FILE_EXTENSION, "PharmML", PHARMML_VERSION, "NMTRAN", NMTRAN_VERSION,
             new ConverterOutputFailureCheckerImpl(NMTRAN_FILE_SIZE_THRESHOLD)
         ).run();
     }

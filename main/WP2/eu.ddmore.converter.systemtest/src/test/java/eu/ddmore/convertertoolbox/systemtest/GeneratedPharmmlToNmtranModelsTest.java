@@ -1,5 +1,7 @@
 package eu.ddmore.convertertoolbox.systemtest;
 
+import static java.util.regex.Matcher.quoteReplacement;
+
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -30,10 +32,14 @@ import com.google.common.collect.Iterables;
 public class GeneratedPharmmlToNmtranModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(GeneratedPharmmlToNmtranModelsTest.class);
-    
-    private final static String ORIGINAL_MDL_MODELS_SUBDIRECTORY = "mdl";
+
+    private final static String MDL_VERSION = "5.1.6";
+    private final static String PHARMML_VERSION = "0.3.1";
+    private final static String NMTRAN_VERSION = "7.2";
+
+    private final static String ORIGINAL_MDL_MODELS_SUBDIRECTORY = quoteReplacement("mdl" + File.separator + MDL_VERSION);
     private final static String ORIGINAL_MDL_MODELS_FILE_EXTENSION = "mdl";
-    private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY = "PharmML-generated-from-MDL";
+    private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY = quoteReplacement("PharmML-generated-from-MDL" + File.separator + MDL_VERSION);
     private final static String PHARMML_MODELS_FILE_EXTENSION = "xml";
     private final static String OUTPUT_FILE_EXTENSION = "ctl";
     
@@ -174,7 +180,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
     @Test
     public void testPharmMLToNMTRANConversionForPharmMLGeneratedByMdlToPharmMLConversion() {
         new ConverterRunner(
-            this.generatedPharmmlModel, OUTPUT_FILE_EXTENSION, "PharmML", "0.3.1", "NMTRAN", "7.2",
+            this.generatedPharmmlModel, OUTPUT_FILE_EXTENSION, "PharmML", PHARMML_VERSION, "NMTRAN", NMTRAN_VERSION,
             new ConverterOutputFailureCheckerImpl(NMTRAN_FILE_SIZE_THRESHOLD)
         ).run();
     }
