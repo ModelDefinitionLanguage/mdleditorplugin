@@ -415,7 +415,7 @@
           <ds:Column columnId="MDV" columnType="mdv" valueType="real" columnNum="9"/>
         </ds:Definition>
         <ds:ImportData oid="NM_dataset">
-          <ds:path>claret_simuldata</ds:path>
+          <ds:path>claret_simuldata.csv</ds:path>
           <ds:format>CSV</ds:format>
           <ds:delimiter>COMMA</ds:delimiter>
         </ds:ImportData>
