@@ -5,13 +5,16 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.conversion.ConverterManagerImpl;
+import eu.ddmore.convertertoolbox.service.impl.ConversionServiceConfiguration;
 
 @ComponentScan
 @EnableAutoConfiguration
 @Configuration
+@Import(ConversionServiceConfiguration.class)
 public class Application {
 
     public static void main(String[] args) {
@@ -24,4 +27,5 @@ public class Application {
         converterManager.discoverConverters();
         return converterManager;
     }
+    
 }
