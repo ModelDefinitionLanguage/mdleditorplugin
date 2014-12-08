@@ -22,6 +22,7 @@ public class Conversion {
     private Date completionTime;
     private ConversionReport conversionReport;
     private transient File inputArchive;
+    private transient File outputArchive;
     
     /**
      * Empty constructor
@@ -45,6 +46,8 @@ public class Conversion {
         this.outputFileSize = other.outputFileSize;
         this.submissionTime = other.submissionTime;
         this.completionTime = other.completionTime;
+        this.inputArchive = other.inputArchive;
+        this.outputArchive = other.outputArchive;
         //FIXME we must ensure that this is immutable
         this.conversionReport = other.conversionReport;
         
@@ -138,5 +141,21 @@ public class Conversion {
     public Conversion setTo(LanguageVersion to) {
         this.to = to;
         return this;
+    }
+
+    public File getOutputArchive() {
+        return outputArchive;
+    }
+
+    public void setOutputArchive(File outputArchive) {
+        this.outputArchive = outputArchive;
+    }
+
+    public File getInputArchive() {
+        return inputArchive;
+    }
+
+    public void setInputArchive(File inputArchive) {
+        this.inputArchive = inputArchive;
     }
 }

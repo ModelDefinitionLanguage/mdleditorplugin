@@ -49,6 +49,9 @@ public class ConversionServiceWithTaskExecutorTest {
 
     @Mock
     private ConverterManager converterManager;
+
+    @Mock
+    private ConversionTaskFactory conversionTaskFactory;
     
     @Before
     public void setUp() throws Exception {

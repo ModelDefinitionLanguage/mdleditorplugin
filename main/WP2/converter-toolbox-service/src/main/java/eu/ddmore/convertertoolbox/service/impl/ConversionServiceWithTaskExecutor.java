@@ -32,6 +32,9 @@ public class ConversionServiceWithTaskExecutor implements ConversionService {
     private TaskExecutor conversionTaskExecutor;
     @Autowired(required=true)
     private ConversionRepository conversionRepository;
+    @Autowired(required=true)
+    @Qualifier("conversionTaskFactory")
+    private ConversionTaskFactory conversionTaskFactory;
     
     @Value("${cts.serviceCapacity}")
     private int serviceCapacity = -1;
@@ -39,7 +42,6 @@ public class ConversionServiceWithTaskExecutor implements ConversionService {
     @Override
     public synchronized Conversion schedule(Conversion conversion) throws ExceededCapacity {
         Preconditions.checkNotNull(conversion,"Conversion was null");
-
         if(isFull()) {
             throw new ExceededCapacity("Exceeded capacity.");
         }
@@ -54,15 +56,11 @@ public class ConversionServiceWithTaskExecutor implements ConversionService {
         
         Conversion persistedConversion = conversionRepository.save(conversion);
         
-        ConversionTask conversionTask = createConversionTask(persistedConversion, converter);
+        ConversionTask conversionTask = conversionTaskFactory.create(persistedConversion, converter);
         
         conversionTaskExecutor.execute(conversionTask);
         
         return persistedConversion;
-    }
-
-    private ConversionTask createConversionTask(Conversion conversion, Converter converter) {
-        return new ConversionTask(converter, conversion);
     }
 
     @Override
