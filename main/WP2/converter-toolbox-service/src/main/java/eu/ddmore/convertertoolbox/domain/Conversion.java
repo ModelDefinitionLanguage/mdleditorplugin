@@ -3,9 +3,6 @@ package eu.ddmore.convertertoolbox.domain;
 import java.io.File;
 import java.util.Date;
 
-import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
-import eu.ddmore.convertertoolbox.api.response.ConversionReport;
-
 
 /**
  * Represents a conversion
@@ -20,7 +17,7 @@ public class Conversion {
     private Long outputFileSize;
     private Date submissionTime;
     private Date completionTime;
-    private ConversionReport conversionReport;
+    private ConversionReportImpl conversionReport;
     private transient File inputArchive;
     private transient File outputArchive;
     
@@ -107,11 +104,11 @@ public class Conversion {
         return this;
     }
     
-    public ConversionReport getConversionReport() {
+    public ConversionReportImpl getConversionReport() {
         return conversionReport;
     }
     
-    public Conversion setConversionReport(ConversionReport conversionReport) {
+    public Conversion setConversionReport(ConversionReportImpl conversionReport) {
         this.conversionReport = conversionReport;
         return this;
     }

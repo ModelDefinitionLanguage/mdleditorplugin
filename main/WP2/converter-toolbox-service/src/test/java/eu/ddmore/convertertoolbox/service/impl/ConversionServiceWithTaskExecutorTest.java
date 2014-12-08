@@ -26,8 +26,8 @@ import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
 import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
-import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
-import eu.ddmore.convertertoolbox.domain.VersionImpl;
+import eu.ddmore.convertertoolbox.domain.LanguageVersion;
+import eu.ddmore.convertertoolbox.domain.Version;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
 
@@ -66,7 +66,7 @@ public class ConversionServiceWithTaskExecutorTest {
     @Test(expected=IllegalArgumentException.class)
     public void schedule_shouldThrowRuntimeExceptionIfConversionScheduledForUnsupportedConversion() throws ExceededCapacity, ConverterNotFoundException {
         Conversion conversion =createTestConversion("NON-EXISTING-FROM", "TO", "mock/input/file");
-        doThrow(ConverterNotFoundException.class).when(converterManager).getConverter(conversion.getFrom(), conversion.getTo());
+        doThrow(ConverterNotFoundException.class).when(converterManager).getConverter(conversion.getFrom().toOldAPI(), conversion.getTo().toOldAPI());
         instance.schedule(conversion);
     }
 
@@ -82,7 +82,7 @@ public class ConversionServiceWithTaskExecutorTest {
     public void schedule_shouldPersistConversionAndScheduleItForExecution() throws ExceededCapacity, ConverterNotFoundException {
         Conversion conversion = createTestConversion("FROM", "TO", "mock/input/file");
         
-        when(converterManager.getConverter(eq(conversion.getFrom()), eq(conversion.getTo()))).thenReturn(mock(Converter.class));
+        when(converterManager.getConverter(eq(conversion.getFrom().toOldAPI()), eq(conversion.getTo().toOldAPI()))).thenReturn(mock(Converter.class));
         when(conversionRepository.save(same(conversion))).thenReturn(conversion);
         
         Conversion result = instance.schedule(conversion);
@@ -132,6 +132,6 @@ public class ConversionServiceWithTaskExecutorTest {
     }
 
     private Conversion createTestConversion(String form, String to, String inputFile) {
-        return new Conversion().setFrom(new LanguageVersionImpl(form,new VersionImpl(1, 0, 0))).setTo(new LanguageVersionImpl(to,new VersionImpl(1, 0, 0))).setInputFileName(inputFile);
+        return new Conversion().setFrom(new LanguageVersion(form,new Version(1, 0, 0,"Q"))).setTo(new LanguageVersion(to,new Version(1, 0, 0,"Q"))).setInputFileName(inputFile);
     }
 }

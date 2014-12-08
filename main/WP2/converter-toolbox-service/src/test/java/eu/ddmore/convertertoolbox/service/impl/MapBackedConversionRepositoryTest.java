@@ -11,8 +11,8 @@ import com.google.common.base.Optional;
 
 import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
-import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
-import eu.ddmore.convertertoolbox.domain.VersionImpl;
+import eu.ddmore.convertertoolbox.domain.LanguageVersion;
+import eu.ddmore.convertertoolbox.domain.Version;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
 
 /**
@@ -57,7 +57,7 @@ public class MapBackedConversionRepositoryTest {
     }
 
     private Conversion createTestConversion(String form, String to, String inputFile, ConversionStatus status) {
-        Conversion conversion = new Conversion().setFrom(new LanguageVersionImpl(form,new VersionImpl(1, 0, 0))).setTo(new LanguageVersionImpl(to,new VersionImpl(1, 0, 0))).setInputFileName(inputFile);
+        Conversion conversion = new Conversion().setFrom(new LanguageVersion(form,new Version(1, 0, 0,"Q"))).setTo(new LanguageVersion(to,new Version(1, 0, 0,"Q"))).setInputFileName(inputFile);
         conversion.setStatus(status);
         return conversion;
     }

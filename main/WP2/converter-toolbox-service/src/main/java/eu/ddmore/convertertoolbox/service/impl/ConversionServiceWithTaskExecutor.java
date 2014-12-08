@@ -48,7 +48,7 @@ public class ConversionServiceWithTaskExecutor implements ConversionService {
         
         Converter converter = null;
         try {
-            converter = converterManager.getConverter(conversion.getFrom(), conversion.getTo());
+            converter = converterManager.getConverter(conversion.getFrom().toOldAPI(), conversion.getTo().toOldAPI());
         } catch (ConverterNotFoundException e) {
             throw new IllegalArgumentException("Conversion not supported", e);
         }
