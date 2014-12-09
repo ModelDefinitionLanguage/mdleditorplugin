@@ -1,29 +1,34 @@
 package eu.ddmore.convertertoolbox.rest;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
+import com.google.common.base.Preconditions;
+
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
-import eu.ddmore.convertertoolbox.domain.LanguageVersion;
-import eu.ddmore.convertertoolbox.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.domain.ServiceDescriptor;
+import eu.ddmore.convertertoolbox.domain.ServiceDescriptorResource;
+import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping(value = "/", produces={ "application/hal+json" })
+@EnableHypermediaSupport(type = { HypermediaType.HAL })
 public class HomeController {
-
-    private final ConverterManager converterManager;
+    private final ConversionCapabilitiesProvider capabilitiesProvider;
     
     @Value("${info.app.name}")
     private String name;
@@ -31,32 +36,20 @@ public class HomeController {
     @Value("${info.app.version}")
     private String version;
     
-    
     @Autowired(required=true)
-    public HomeController(ConverterManager converterManager) {
-        this.converterManager = converterManager;
+    public HomeController(ConversionCapabilitiesProvider capabilitiesProvider) {
+        this.capabilitiesProvider = capabilitiesProvider;
     }
     
-    @RequestMapping(method=RequestMethod.GET, produces={ MediaType.APPLICATION_JSON_VALUE })
-    public @ResponseBody ServiceDescriptor index() {
-        ServiceDescriptor serviceDescriptor = new ServiceDescriptor(name, version, getCapabilities());
+    @RequestMapping( method=RequestMethod.GET)
+    public @ResponseBody HttpEntity<ServiceDescriptorResource> index() {
+        Collection<ConversionCapability> capabilities = capabilitiesProvider.getCapabilities();
+        Preconditions.checkNotNull(capabilities,"Incorrect setup, capabilities should never be null");
+        ServiceDescriptor serviceDescriptor = new ServiceDescriptor(name, version, capabilities);
+        ServiceDescriptorResource resource = new ServiceDescriptorResource(serviceDescriptor);
         
-        return serviceDescriptor;
-    }
-
-    private Collection<ConversionCapability> getCapabilities() {
-        Map<eu.ddmore.convertertoolbox.api.domain.LanguageVersion, Collection<eu.ddmore.convertertoolbox.api.domain.LanguageVersion>> capabilities = converterManager.getCapabilities();
-        Collection<ConversionCapability> result = new HashSet<ConversionCapability>();
-        
-        for(Map.Entry<eu.ddmore.convertertoolbox.api.domain.LanguageVersion, Collection<eu.ddmore.convertertoolbox.api.domain.LanguageVersion>> en : capabilities.entrySet()) {
-            Collection<LanguageVersion> tos = new HashSet<LanguageVersion>();
-            
-            for(eu.ddmore.convertertoolbox.api.domain.LanguageVersion language : en.getValue()) {
-                tos.add(LanguageVersion.fromOldAPI(language));
-            }
-            
-            result.add(new ConversionCapability(LanguageVersion.fromOldAPI(en.getKey()), tos));
-        }
-        return result;
+        resource.add(linkTo(methodOn(HomeController.class).index()).withSelfRel());
+        resource.add(linkTo(methodOn(ConversionController.class).list()).withRel("conversions"));
+        return new ResponseEntity<ServiceDescriptorResource>(resource, HttpStatus.OK);
     }
 }

@@ -10,7 +10,7 @@ import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 
 /**
- * A report which contains the outcome of a conversion
+ * REST-friendly implementation of { @link ConversionReportImpl }
  */
 public final class ConversionReport {
 

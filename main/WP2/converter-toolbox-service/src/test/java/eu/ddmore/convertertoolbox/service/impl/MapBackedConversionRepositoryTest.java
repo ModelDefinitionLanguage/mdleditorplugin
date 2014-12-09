@@ -57,7 +57,7 @@ public class MapBackedConversionRepositoryTest {
     }
 
     private Conversion createTestConversion(String form, String to, String inputFile, ConversionStatus status) {
-        Conversion conversion = new Conversion().setFrom(new LanguageVersion(form,new Version(1, 0, 0,"Q"))).setTo(new LanguageVersion(to,new Version(1, 0, 0,"Q"))).setInputFileName(inputFile);
+        Conversion conversion = new Conversion().setFrom(new LanguageVersion(form,new Version(1, 0, 0, "Q"))).setTo(new LanguageVersion(to,new Version(1, 0, 0, "Q"))).setInputFileName(inputFile);
         conversion.setStatus(status);
         return conversion;
     }

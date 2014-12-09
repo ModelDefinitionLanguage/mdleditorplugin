@@ -8,19 +8,17 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eu.ddmore.convertertoolbox.domain.ServiceDescriptor;
-
+import eu.ddmore.convertertoolbox.domain.Conversion;
 
 @Component
-public class StringToLanguageVersionConverter implements Converter<String, ServiceDescriptor> {
+public class ConversionToStringConverter implements Converter<Conversion, String> {
     @Override
-    public ServiceDescriptor convert(String serviceDescriptor) {
+    public String convert(Conversion conversion) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            return mapper.readValue(serviceDescriptor,ServiceDescriptor.class);
+            return mapper.writeValueAsString(conversion);
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Couldn't parse json %s",serviceDescriptor), e);
+            throw new RuntimeException(String.format("Could not produce json for %s",conversion), e);
         }
     }
-
 }

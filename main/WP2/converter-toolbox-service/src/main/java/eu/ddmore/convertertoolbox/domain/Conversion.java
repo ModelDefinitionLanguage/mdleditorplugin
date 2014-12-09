@@ -3,11 +3,15 @@ package eu.ddmore.convertertoolbox.domain;
 import java.io.File;
 import java.util.Date;
 
+import org.springframework.hateoas.Identifiable;
+import org.springframework.hateoas.core.Relation;
+
 
 /**
  * Represents a conversion
  */
-public class Conversion {
+@Relation()
+public class Conversion implements Identifiable<String> {
     private String id;
     private ConversionStatus status = ConversionStatus.New;
     private LanguageVersion from;

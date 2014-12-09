@@ -5,7 +5,9 @@ import java.util.Collection;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
+/**
+ * Represents a supported conversions from given source {@link LanguageVersion} to target collection of {@link LanguageVersion}
+ */
 public final class ConversionCapability {
     private final LanguageVersion source;
     private final Collection<LanguageVersion> target;
