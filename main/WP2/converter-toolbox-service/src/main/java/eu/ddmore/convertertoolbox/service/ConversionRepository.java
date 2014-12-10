@@ -45,4 +45,10 @@ public interface ConversionRepository {
      * @return number of uncompleted conversions
      */
     int countUncompletedConversions();
+
+    /**
+     * Removes conversion
+     * @param conversion
+     */
+    void delete(Conversion conversion);
 }

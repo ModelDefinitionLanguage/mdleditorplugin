@@ -2,8 +2,11 @@ package eu.ddmore.convertertoolbox.rest;
 
 import static org.mockito.Mockito.mock;
 
+import javax.servlet.MultipartConfigElement;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.embedded.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -45,5 +48,13 @@ public class TestInstanceConfiguration {
     public CurieProvider curieProvider(@Value("${cts.linkRelation.prefix}") String prefix, @Value("${cts.linkRelation.template}") String template) {
         return new DefaultCurieProvider(prefix,
             new UriTemplate(template));
+    }
+    
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        factory.setMaxFileSize("128KB");
+        factory.setMaxRequestSize("128KB");
+        return factory.createMultipartConfig();
     }
 }

@@ -159,4 +159,15 @@ public class Conversion implements Identifiable<String> {
     public void setInputArchive(File inputArchive) {
         this.inputArchive = inputArchive;
     }
+
+    @Override
+    public String toString() {
+        return String
+                .format(
+                    "Conversion [id=%s, status=%s, from=%s, to=%s, inputFileName=%s, outputFileName=%s, outputFileSize=%s, submissionTime=%s, completionTime=%s, conversionReport=%s, inputArchive=%s, outputArchive=%s]",
+                    id, status, from, to, inputFileName, outputFileName, outputFileSize, submissionTime, completionTime, conversionReport,
+                    inputArchive, outputArchive);
+    }
+    
+    
 }

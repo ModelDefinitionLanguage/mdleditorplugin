@@ -14,6 +14,9 @@ import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 
 
+/**
+ * Tests { @link ConversionTask }
+ */
 @RunWith(MockitoJUnitRunner.class)
 @Ignore("Not implemented yet")
 public class ConversionTaskTest {

@@ -76,5 +76,10 @@ public class MapBackedConversionRepository implements ConversionRepository {
             }
         }).size();
     }
+
+    @Override
+    public void delete(Conversion conversion) {
+        conversions.remove(conversion.getId());
+    }
     
 }

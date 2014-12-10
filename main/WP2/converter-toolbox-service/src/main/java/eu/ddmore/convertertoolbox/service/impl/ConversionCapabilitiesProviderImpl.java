@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
@@ -21,6 +22,7 @@ public class ConversionCapabilitiesProviderImpl implements ConversionCapabilitie
 
     private final ConverterManager converterManager;
     
+    @Autowired(required=true)
     public ConversionCapabilitiesProviderImpl(ConverterManager converterManager) {
         this.converterManager = converterManager;
     }

@@ -39,28 +39,28 @@ public class ConversionServiceWithTaskExecutor implements ConversionService {
     @Value("${cts.serviceCapacity}")
     private int serviceCapacity = -1;
     
+    @Autowired(required=true)
+    @Qualifier("conversionRemover")
+    private ConversionRemover conversionRemover;
+    
     @Override
-    public synchronized Conversion schedule(Conversion conversion) throws ExceededCapacity {
+    public Conversion schedule(Conversion conversion) {
         Preconditions.checkNotNull(conversion,"Conversion was null");
-        if(isFull()) {
-            throw new ExceededCapacity("Exceeded capacity.");
-        }
         
-        Converter converter = null;
-        try {
-            converter = converterManager.getConverter(conversion.getFrom().toOldAPI(), conversion.getTo().toOldAPI());
-        } catch (ConverterNotFoundException e) {
-            throw new IllegalArgumentException("Conversion not supported", e);
+        Optional<Conversion> conversionCheck = conversionRepository.getConversion(conversion.getId());
+        
+        if(!conversionCheck.isPresent()) {
+            throw new IllegalStateException(String.format("Conversion with id %s has not been added first!", conversion.getId()));
         }
+
+        Converter converter = getConverter(conversion);
         Preconditions.checkNotNull(converter, "Converter returned by Converter Manager was null");
         
-        Conversion persistedConversion = conversionRepository.save(conversion);
-        
-        ConversionTask conversionTask = conversionTaskFactory.create(persistedConversion, converter);
-        
+        conversion.setStatus(ConversionStatus.Scheduled);
+        Conversion scheduledConversion = conversionRepository.save(conversion);
+        ConversionTask conversionTask = conversionTaskFactory.create(scheduledConversion, converter);
         conversionTaskExecutor.execute(conversionTask);
-        
-        return persistedConversion;
+        return scheduledConversion;
     }
 
     @Override
@@ -83,12 +83,37 @@ public class ConversionServiceWithTaskExecutor implements ConversionService {
         return conversionRepository.getConversion(id);
     }
 
-    void complete(Conversion conversion) {
-        
-    }
-    
     
     public void setServiceCapacity(int serviceCapacity) {
         this.serviceCapacity = serviceCapacity;
+    }
+
+    @Override
+    public synchronized Conversion add(Conversion conversion) throws ExceededCapacity {
+        Preconditions.checkNotNull(conversion,"Conversion was null");
+        if(isFull()) {
+            throw new ExceededCapacity("Exceeded capacity.");
+        }
+        
+        Converter converter = getConverter(conversion);
+        Preconditions.checkNotNull(converter, "Converter returned by Converter Manager was null");
+        
+        Conversion persistedConversion = conversionRepository.save(conversion);
+        return persistedConversion;
+    }
+
+    @Override
+    public void delete(Conversion conversion) {
+        conversionRemover.remove(conversion);
+    }
+
+    private Converter getConverter(Conversion conversion) {
+        Converter converter = null;
+        try {
+            converter = converterManager.getConverter(conversion.getFrom().toOldAPI(), conversion.getTo().toOldAPI());
+        } catch (ConverterNotFoundException e) {
+            throw new IllegalArgumentException("Conversion not supported", e);
+        }
+        return converter;
     }
 }

@@ -17,16 +17,31 @@ public interface ConversionService {
      * schedules a conversion
      * @param conversion that should be performed
      * @return a conversion that has been scheduled extended with execution metadata
+     * @throws IllegalArgumentException if conversion does not exist
+     */
+    Conversion schedule(Conversion conversion);
+
+    /**
+     * schedules a conversion
+     * @param conversion that should be performed
+     * @return a conversion that has been scheduled extended with execution metadata
      * @throws ExceededCapacity if the service reached its capacity
      * @throws IllegalArgumentException if conversion is invalid in any sense 
      */
-    Conversion schedule(Conversion conversion) throws ExceededCapacity;
+    Conversion add(Conversion conversion) throws ExceededCapacity;
     
     /**
      * 
      * @return true if the conversion service reached its capacity and will not accept any more conversions
      */
     boolean isFull();
+    
+    /**
+     * Removes conversion and all its resources
+     * @param conversion conversion to be deleted
+     * @return deleted conversion
+     */
+    void delete(Conversion conversion);
     
     /**
      * 

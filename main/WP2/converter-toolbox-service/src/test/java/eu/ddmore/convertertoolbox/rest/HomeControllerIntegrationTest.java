@@ -1,12 +1,13 @@
 package eu.ddmore.convertertoolbox.rest;
 
+import static eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper.from;
+import static eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper.to;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -23,9 +24,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
-import eu.ddmore.convertertoolbox.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.domain.ServiceDescriptorResource;
-import eu.ddmore.convertertoolbox.domain.Version;
+import eu.ddmore.convertertoolbox.rest.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 
 /**
@@ -66,24 +66,14 @@ public class HomeControllerIntegrationTest {
 
         assertNotNull(response.getBody().getContent());
         assertNotNull(response.getBody().getLinks());
-        assertTrue(response.getBody().getLinks().size()==2);
+        assertEquals(3, response.getBody().getLinks().size());
+        assertEquals(LinkRelations.SELF, response.getBody().getLinks().get(0).getRel());
+        assertEquals(LinkRelations.CONVERSIONS, response.getBody().getLinks().get(1).getRel());
+        assertEquals(LinkRelations.SUBMIT, response.getBody().getLinks().get(2).getRel());
         
         assertTrue(response.getBody().getContent().getCapabilities().size()==2);
         assertTrue(StringUtils.isNotBlank(response.getBody().getContent().getName()));
         assertTrue(StringUtils.isNotBlank(response.getBody().getContent().getVersion()));
     }
 
-    private LanguageVersion from(String languageName) {
-        return to(languageName).iterator().next();
-    }
-
-    private Collection<LanguageVersion> to(String... languageNames) {
-        Collection<LanguageVersion> result = new ArrayList<LanguageVersion>();
-        for(String language : languageNames) {
-            result.add(new LanguageVersion(language, new Version(1,0,0,"Q")));
-        }
-        return result;
-    }
-    
-    
 }

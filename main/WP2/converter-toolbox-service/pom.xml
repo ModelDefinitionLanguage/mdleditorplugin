@@ -1,47 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<parent>
-		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
-		<groupId>eu.ddmore</groupId>
-		<artifactId>converter-parent</artifactId>
-		<version>1.0.0</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>converter-toolbox-service</artifactId>
-	<name>Converter Toolbox Service</name>
+    <parent>
+        <relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
+        <groupId>eu.ddmore</groupId>
+        <artifactId>converter-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>converter-toolbox-service</artifactId>
+    <name>Converter Toolbox Service</name>
     <packaging>jar</packaging>
 
     <properties>
         <start-class>eu.ddmore.convertertoolbox.Application</start-class>
         <spring-boot.version>1.1.9.RELEASE</spring-boot.version>
+
+        <powermock.version>1.5.2</powermock.version>
         <mockito.version>1.9.5</mockito.version>
     </properties>
 
 
-	<dependencies>
+    <dependencies>
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-toolbox</artifactId>
             <version>${project.version}</version>
         </dependency>
-		
-        
-        
+
+
+
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
-        
 
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -52,18 +66,18 @@
                 </exclusion>
             </exclusions>
         </dependency>
-		
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
         </dependency>
-        
-        
+
+
         <dependency>
             <groupId>org.springframework.plugin</groupId>
             <artifactId>spring-plugin-core</artifactId>
@@ -77,15 +91,15 @@
             <groupId>org.springframework.hateoas</groupId>
             <artifactId>spring-hateoas</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-	</dependencies>
+    </dependencies>
 
-	<build>
+    <build>
         <resources>
             <resource>
                 <directory>${basedir}/src/main/resources</directory>
@@ -103,7 +117,7 @@
                 </excludes>
             </resource>
         </resources>
-        
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -128,8 +142,8 @@
                 </executions>
             </plugin>
         </plugins>
-        
-            
+
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -223,7 +237,8 @@
                         <layout>ZIP</layout>
                     </configuration>
                 </plugin>
-                <!-- Support shade packaging (if the user does not want to use spring-boot-maven-plugin -->
+                <!-- Support shade packaging (if the user does not want to 
+                    use spring-boot-maven-plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
@@ -257,17 +272,22 @@
                             </goals>
                             <configuration>
                                 <transformers>
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                         <resource>META-INF/spring.handlers</resource>
                                     </transformer>
-                                    <transformer implementation="org.springframework.boot.maven.PropertiesMergingResourceTransformer">
+                                    <transformer
+                                        implementation="org.springframework.boot.maven.PropertiesMergingResourceTransformer">
                                         <resource>META-INF/spring.factories</resource>
                                     </transformer>
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                         <resource>META-INF/spring.schemas</resource>
                                     </transformer>
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                    <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                         <mainClass>${start-class}</mainClass>
                                     </transformer>
                                 </transformers>
@@ -277,7 +297,7 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-	</build>
+    </build>
 
     <dependencyManagement>
         <dependencies>
@@ -288,7 +308,7 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-          </dependency>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
