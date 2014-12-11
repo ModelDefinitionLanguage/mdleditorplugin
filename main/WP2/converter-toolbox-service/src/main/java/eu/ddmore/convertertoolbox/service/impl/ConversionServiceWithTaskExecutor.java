@@ -1,6 +1,7 @@
 package eu.ddmore.convertertoolbox.service.impl;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,6 +20,7 @@ import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 import eu.ddmore.convertertoolbox.service.ConversionService;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
+import eu.ddmore.convertertoolbox.service.impl.conversion.ConversionTask;
 
 /**
  * ConversionService implementation that uses a TaskExecutor for executing conversions
@@ -97,7 +99,7 @@ public class ConversionServiceWithTaskExecutor implements ConversionService {
         
         Converter converter = getConverter(conversion);
         Preconditions.checkNotNull(converter, "Converter returned by Converter Manager was null");
-        
+        conversion.setSubmissionTime(new Date().getTime());
         Conversion persistedConversion = conversionRepository.save(conversion);
         return persistedConversion;
     }

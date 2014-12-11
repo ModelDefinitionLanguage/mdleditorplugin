@@ -43,8 +43,8 @@ public class DefaultConversionRemover implements ConversionRemover {
         }
         
         try {
-            if(conversion.getInputArchive()!=null && conversion.getInputArchive().getParentFile().exists()) {
-                FileUtils.deleteDirectory(conversion.getInputArchive().getParentFile());
+            if(conversion.getWorkingDirectory()!=null && conversion.getWorkingDirectory().exists()) {
+                FileUtils.deleteDirectory(conversion.getWorkingDirectory().getParentFile());
             }
         } catch (IOException e) {
             throw new RuntimeException(String.format("Could not delete conversion %s resources", conversion.getId()));

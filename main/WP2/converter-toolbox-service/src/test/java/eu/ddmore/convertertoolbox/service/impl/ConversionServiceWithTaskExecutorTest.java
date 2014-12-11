@@ -32,6 +32,7 @@ import eu.ddmore.convertertoolbox.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.domain.Version;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
+import eu.ddmore.convertertoolbox.service.impl.conversion.ConversionTask;
 
 
 /**

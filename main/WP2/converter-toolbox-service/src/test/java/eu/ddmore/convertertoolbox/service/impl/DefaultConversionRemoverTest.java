@@ -80,7 +80,7 @@ public class DefaultConversionRemoverTest {
         
         Conversion conversion = createTestConversion("From","To","input.file", ConversionStatus.Completed);
         conversion.setId("MOCK_ID");
-        conversion.setInputArchive(new File(folder.newFolder("MOCK_ID"),"mockArchive.zip"));
+        conversion.setWorkingDirectory(folder.newFolder("MOCK_ID"));
         Optional<Conversion> existing = Optional.of(conversion);
         when(conversionRepository.getConversion(eq("MOCK_ID"))).thenReturn(existing);
         
@@ -94,7 +94,7 @@ public class DefaultConversionRemoverTest {
         
         Conversion conversion = createTestConversion("From","To","input.file", ConversionStatus.Completed);
         conversion.setId("MOCK_ID");
-        conversion.setInputArchive(new File(new File(folder.getRoot(),"myFolder"), "mockArchive"));
+        conversion.setWorkingDirectory(new File(folder.getRoot(),"myFolder"));
         Optional<Conversion> existing = Optional.of(conversion);
         when(conversionRepository.getConversion(eq("MOCK_ID"))).thenReturn(existing);
         
@@ -109,7 +109,7 @@ public class DefaultConversionRemoverTest {
         
         Conversion conversion = createTestConversion("From","To","input.file", ConversionStatus.Completed);
         conversion.setId("MOCK_ID");
-        conversion.setInputArchive(new File(folder.newFolder("MOCK_ID"),"mockArchive.zip"));
+        conversion.setWorkingDirectory(folder.newFolder("MOCK_ID"));
         Optional<Conversion> existing = Optional.of(conversion);
         when(conversionRepository.getConversion(eq("MOCK_ID"))).thenReturn(existing);
         

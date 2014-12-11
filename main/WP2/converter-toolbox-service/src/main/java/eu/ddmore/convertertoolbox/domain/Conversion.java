@@ -1,7 +1,6 @@
 package eu.ddmore.convertertoolbox.domain;
 
 import java.io.File;
-import java.util.Date;
 
 import org.springframework.hateoas.Identifiable;
 import org.springframework.hateoas.core.Relation;
@@ -17,13 +16,13 @@ public class Conversion implements Identifiable<String> {
     private LanguageVersion from;
     private LanguageVersion to;
     private String inputFileName;
-    private String outputFileName;
     private Long outputFileSize;
-    private Date submissionTime;
-    private Date completionTime;
-    private ConversionReportImpl conversionReport;
+    private Long submissionTime;
+    private Long completionTime;
+    private ConversionReport conversionReport;
     private transient File inputArchive;
     private transient File outputArchive;
+    private transient File workingDirectory;
     
     /**
      * Empty constructor
@@ -43,12 +42,12 @@ public class Conversion implements Identifiable<String> {
         this.from = other.from;
         this.to = other.to;
         this.inputFileName = other.inputFileName;
-        this.outputFileName = other.outputFileName;
         this.outputFileSize = other.outputFileSize;
         this.submissionTime = other.submissionTime;
         this.completionTime = other.completionTime;
         this.inputArchive = other.inputArchive;
         this.outputArchive = other.outputArchive;
+        this.workingDirectory = other.workingDirectory;
         //FIXME we must ensure that this is immutable
         this.conversionReport = other.conversionReport;
         
@@ -72,15 +71,6 @@ public class Conversion implements Identifiable<String> {
         return this;
     }
     
-    public String getOutputFileName() {
-        return outputFileName;
-    }
-    
-    public Conversion setOutputFileName(String outputFileName) {
-        this.outputFileName = outputFileName;
-        return this;
-    }
-    
     public Long getOutputFileSize() {
         return outputFileSize;
     }
@@ -90,29 +80,29 @@ public class Conversion implements Identifiable<String> {
         return this;
     }
     
-    public Date getSubmissionTime() {
+    public Long getSubmissionTime() {
         return submissionTime;
     }
     
-    public Conversion setSubmissionTime(Date submissionTime) {
+    public Conversion setSubmissionTime(Long submissionTime) {
         this.submissionTime = submissionTime;
         return this;
     }
     
-    public Date getCompletionTime() {
+    public Long getCompletionTime() {
         return completionTime;
     }
     
-    public Conversion setCompletionTime(Date completionTime) {
+    public Conversion setCompletionTime(Long completionTime) {
         this.completionTime = completionTime;
         return this;
     }
     
-    public ConversionReportImpl getConversionReport() {
+    public ConversionReport getConversionReport() {
         return conversionReport;
     }
     
-    public Conversion setConversionReport(ConversionReportImpl conversionReport) {
+    public Conversion setConversionReport(ConversionReport conversionReport) {
         this.conversionReport = conversionReport;
         return this;
     }
@@ -160,14 +150,21 @@ public class Conversion implements Identifiable<String> {
         this.inputArchive = inputArchive;
     }
 
+    public void setWorkingDirectory(File workingDirectory) {
+        this.workingDirectory = workingDirectory;
+    }
+    
+    public File getWorkingDirectory() {
+        return workingDirectory;
+    }
+
     @Override
     public String toString() {
         return String
                 .format(
-                    "Conversion [id=%s, status=%s, from=%s, to=%s, inputFileName=%s, outputFileName=%s, outputFileSize=%s, submissionTime=%s, completionTime=%s, conversionReport=%s, inputArchive=%s, outputArchive=%s]",
-                    id, status, from, to, inputFileName, outputFileName, outputFileSize, submissionTime, completionTime, conversionReport,
-                    inputArchive, outputArchive);
+                    "Conversion [id=%s, status=%s, from=%s, to=%s, inputFileName=%s, outputFileSize=%s, submissionTime=%s, completionTime=%s, conversionReport=%s, inputArchive=%s, outputArchive=%s, workingDirectory=%s]",
+                    id, status, from, to, inputFileName, outputFileSize, submissionTime, completionTime, conversionReport, inputArchive,
+                    outputArchive, workingDirectory);
     }
-    
     
 }

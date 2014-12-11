@@ -49,6 +49,7 @@ import eu.ddmore.convertertoolbox.rest.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 import eu.ddmore.convertertoolbox.service.ConversionService;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
+import eu.ddmore.convertertoolbox.service.impl.ConversionResourcesConvention;
 
 @RestController
 @RequestMapping(value="/conversion", produces={ "application/hal+json" })
@@ -107,8 +108,8 @@ public class ConversionController {
         } catch (ExceededCapacity e) {
             return new ResponseEntity<ConversionResource>(HttpStatus.TOO_MANY_REQUESTS);
         }
-        
-        persistedConversion.setInputArchive(persistInputFile(persistedConversion, fileName, file));
+        persistedConversion.setWorkingDirectory(prepareConversionWorkingDirectory(persistedConversion));
+        persistedConversion.setInputArchive(persistInputFile(persistedConversion, ConversionResourcesConvention.INPUTS_ARCHIVE_NAME, file));
         
         conversionService.schedule(persistedConversion);
         
@@ -160,14 +161,16 @@ public class ConversionController {
         
         return new ResponseEntity<ConversionResource>(conversionResourceAssembler.toResource(conversion.get()),HttpStatus.NO_CONTENT);
     }
-    
-    private File persistInputFile(Conversion persistedConversion, String fileName, MultipartFile file) {
-       File workingDir = new File(workingDirectory, persistedConversion.getId());
-       workingDir.mkdirs();
-       if(!workingDir.exists()) {
-           throw new IllegalStateException(String.format("Could not create working directory for request %s in %s",persistedConversion.getId(),workingDirectory) );
-       }
-       File outputFile = new File(workingDir, fileName);
+    private File prepareConversionWorkingDirectory(Conversion conversion) {
+        File workingDir = new File(workingDirectory, conversion.getId());
+        workingDir.mkdirs();
+        if(!workingDir.exists()) {
+            throw new IllegalStateException(String.format("Could not create working directory for request %s in %s",conversion.getId(),workingDirectory) );
+        }
+        return workingDir;
+    }
+    private File persistInputFile(Conversion conversion, String fileName, MultipartFile file) {
+       File outputFile = new File(conversion.getWorkingDirectory(), fileName);
        try {
             byte[] bytes = file.getBytes();
             BufferedOutputStream stream =
@@ -176,7 +179,7 @@ public class ConversionController {
             stream.close();
             return outputFile;
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Could not upload input file for request %s to %s",persistedConversion.getId(),workingDir),e);
+            throw new RuntimeException(String.format("Could not upload input file for request %s to %s",conversion.getId(),conversion.getWorkingDirectory()),e);
         }
     }
 
