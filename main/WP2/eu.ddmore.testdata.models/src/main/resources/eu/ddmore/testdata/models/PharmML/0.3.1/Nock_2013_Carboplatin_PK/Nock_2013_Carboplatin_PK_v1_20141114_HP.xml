@@ -263,7 +263,7 @@
 				<ct:InitialCondition>
 					<ct:InitialValue>
 						<ct:Assign>
-							<ct:Int>0</ct:Int>
+							<ct:Real>22</ct:Real>
 						</ct:Assign>
 					</ct:InitialValue>
 				</ct:InitialCondition>
@@ -292,7 +292,7 @@
 				<ct:InitialCondition>
 					<ct:InitialValue>
 						<ct:Assign>
-							<ct:Int>0</ct:Int>
+							<ct:Real>0</ct:Real>
 						</ct:Assign>
 					</ct:InitialValue>
 				</ct:InitialCondition>	
@@ -474,7 +474,7 @@
 					<Column columnId="TRT" columnType="covariate" valueType="id" columnNum="16"/>
 				</Definition>
 				<ImportData oid="NM_dataset">
-					<path>"Carbo_DDMoRe</path>
+					<path>Carbo_DDMoRe.csv</path>
 					<format>CSV</format>
 					<delimiter>COMMA</delimiter>
 				</ImportData>

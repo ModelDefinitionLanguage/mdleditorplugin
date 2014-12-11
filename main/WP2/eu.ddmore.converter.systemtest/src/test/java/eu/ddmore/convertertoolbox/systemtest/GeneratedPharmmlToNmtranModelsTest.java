@@ -33,13 +33,13 @@ public class GeneratedPharmmlToNmtranModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(GeneratedPharmmlToNmtranModelsTest.class);
 
-    private final static String MDL_VERSION = "5.1.6";
+    private final static String MDL_VERSION = "5.1.6-interop";
     private final static String PHARMML_VERSION = "0.3.1";
     private final static String NMTRAN_VERSION = "7.2";
 
-    private final static String ORIGINAL_MDL_MODELS_SUBDIRECTORY = quoteReplacement("mdl" + File.separator + MDL_VERSION);
+    private final static String ORIGINAL_MDL_MODELS_SUBDIRECTORY = quoteReplacement("mdl" + File.separator + MDL_VERSION.replace("-interop", "")); // TODO: remove the .replace() once MDL version numbering is sorted)
     private final static String ORIGINAL_MDL_MODELS_FILE_EXTENSION = "mdl";
-    private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY = quoteReplacement("PharmML-generated-from-MDL" + File.separator + MDL_VERSION);
+    private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY = quoteReplacement("PharmML-generated-from-MDL" + File.separator + MDL_VERSION.replace("-interop", "")); // TODO: remove the .replace() once MDL version numbering is sorted
     private final static String PHARMML_MODELS_FILE_EXTENSION = "xml";
     private final static String OUTPUT_FILE_EXTENSION = "ctl";
     

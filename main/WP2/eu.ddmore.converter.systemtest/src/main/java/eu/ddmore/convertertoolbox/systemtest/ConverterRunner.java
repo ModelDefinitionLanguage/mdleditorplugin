@@ -45,6 +45,10 @@ public class ConverterRunner {
         return this.modelFile;
     }
     
+    File getOutputDirectory() {
+    	return new File(this.modelFile.getParent(), OUTPUT_SUBDIRECTORY_BASENAME + this.outputFileExtension);
+    }
+    
     File getStandardOutputFile() {
         return new File(FilenameUtils.removeExtension(this.modelFile.getAbsolutePath()) + ".convert.stdout");
     }
@@ -56,7 +60,7 @@ public class ConverterRunner {
     void run() {
         
         // Initialise output directory and stdout and stderr files
-        final File outputDir = new File(this.modelFile.getParent(), OUTPUT_SUBDIRECTORY_BASENAME + this.outputFileExtension);
+        final File outputDir = getOutputDirectory();
         final File stdoutFile = getStandardOutputFile();
         final File stderrFile = getStandardErrorFile();
         outputDir.mkdir(); // Ideally we'd clear out the output dir here but there may be multiple model files within the same dir

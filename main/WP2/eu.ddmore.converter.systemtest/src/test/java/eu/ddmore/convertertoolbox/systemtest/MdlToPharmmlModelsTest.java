@@ -1,7 +1,10 @@
 package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,10 +19,10 @@ public class MdlToPharmmlModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(MdlToPharmmlModelsTest.class);
 
-    private final static String MDL_VERSION = "5.1.6";
+    private final static String MDL_VERSION = "5.1.6-interop";
     private final static String PHARMML_VERSION = "0.3.1";
 
-    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + MDL_VERSION;
+    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + MDL_VERSION.replace("-interop", ""); // TODO: remove the .replace() once MDL version numbering is sorted
     private final static String MODELS_FILE_EXTENSION = "mdl";
     private final static String OUTPUT_FILE_EXTENSION = "xml";
     
@@ -59,13 +62,23 @@ public class MdlToPharmmlModelsTest {
     /**
      * Test method that tests the conversion of a particular model file as provided by the
      * {@link File} parameter that was constructor-injected into this instance of the test class.
+     * <p>
+     * Also, specifically for this MDL -> PharmML conversion, copy any data file(s)
+     * (unintelligently, any *.csv) into the PharmML-generated-from-MDL output directory,
+     * since the subsequent MDL -> NMTRAN conversion tests will fail if models' data files
+     * are not present.
+     * <p>
+     * @throws IOException - if an error occurred trying to copy data files
      */
     @Test
-    public void testMdlToPharmMLConversion() {
-        new ConverterRunner(
+    public void testMdlToPharmMLConversion() throws IOException {
+        final ConverterRunner runner = new ConverterRunner(
             this.model, OUTPUT_FILE_EXTENSION, "MDL", MDL_VERSION, "PharmML", PHARMML_VERSION,
             new ConverterOutputFailureCheckerImpl(PHARMML_FILE_SIZE_THRESHOLD)
-        ).run();
+        );
+        runner.run();
+		// Copy the data file
+        FileUtils.copyDirectory(this.model.getParentFile(), runner.getOutputDirectory(), new SuffixFileFilter(".csv"));
     }
     
 }

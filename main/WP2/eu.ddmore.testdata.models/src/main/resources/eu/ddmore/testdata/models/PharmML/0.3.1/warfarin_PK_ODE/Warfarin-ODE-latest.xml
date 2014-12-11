@@ -368,14 +368,14 @@
 			</ColumnMapping>
 			<DataSet xmlns="http://www.pharmml.org/2013/08/Dataset">
 				<Definition>
-					<Column columnId="ID" columnType="id" valueType="id" columnNum="1"/>
-					<Column columnId="TIME" columnType="idv" valueType="id" columnNum="2"/>
-					<Column columnId="WT" columnType="undefined" valueType="id" columnNum="3"/>
-					<Column columnId="AMT" columnType="dose" valueType="id" columnNum="4"/>
-					<Column columnId="DVID" columnType="undefined" valueType="id" columnNum="5"/>
-					<Column columnId="DV" columnType="dv" valueType="id" columnNum="6"/>
-					<Column columnId="MDV" columnType="mdv" valueType="id" columnNum="7"/>
-					<Column columnId="logtWT" columnType="covariate" valueType="id" columnNum="8"/>
+					<Column columnId="ID" columnType="id" valueType="int" columnNum="1"/>
+					<Column columnId="TIME" columnType="idv" valueType="real" columnNum="2"/>
+					<Column columnId="WT" columnType="undefined" valueType="real" columnNum="3"/>
+					<Column columnId="AMT" columnType="dose" valueType="real" columnNum="4"/>
+					<Column columnId="DVID" columnType="undefined" valueType="int" columnNum="5"/>
+					<Column columnId="DV" columnType="dv" valueType="real" columnNum="6"/>
+					<Column columnId="MDV" columnType="mdv" valueType="int" columnNum="7"/>
+					<Column columnId="logtWT" columnType="covariate" valueType="real" columnNum="8"/>
 				</Definition>
 				<ImportData oid="id">
 					<path>warfarin_conc.csv</path>
@@ -394,24 +394,36 @@
 					<InitialEstimate fixed="false">
 						<ct:Real>0.1</ct:Real>
 					</InitialEstimate>
+					<LowerBound>
+						<ct:Real>0.001</ct:Real>
+					</LowerBound>
 				</ParameterEstimation>
 				<ParameterEstimation>
 					<ct:SymbRef blkIdRef="pm" symbIdRef="POP_V"/>
 					<InitialEstimate fixed="false">
 						<ct:Real>8</ct:Real>
 					</InitialEstimate>
+					<LowerBound>
+						<ct:Real>0.001</ct:Real>
+					</LowerBound>
 				</ParameterEstimation>
 				<ParameterEstimation>
 					<ct:SymbRef blkIdRef="pm" symbIdRef="POP_KA"/>
 					<InitialEstimate fixed="false">
 						<ct:Real>0.362</ct:Real>
 					</InitialEstimate>
+					<LowerBound>
+						<ct:Real>0.001</ct:Real>
+					</LowerBound>
 				</ParameterEstimation>
 				<ParameterEstimation>
 					<ct:SymbRef blkIdRef="pm" symbIdRef="POP_TLAG"/>
 					<InitialEstimate fixed="false">
 						<ct:Real>1</ct:Real>
 					</InitialEstimate>
+					<LowerBound>
+						<ct:Real>0.001</ct:Real>
+					</LowerBound>
 				</ParameterEstimation>
 				<ParameterEstimation>
 					<ct:SymbRef blkIdRef="pm" symbIdRef="BETA_CL_WT"/>
@@ -466,6 +478,12 @@
 					<InitialEstimate fixed="false">
 						<ct:Real>0.01</ct:Real>
 					</InitialEstimate>
+					<LowerBound>
+						<ct:Real>-1.0</ct:Real>
+					</LowerBound>
+					<UpperBound>
+						<ct:Real>1.0</ct:Real>
+					</UpperBound>
 				</ParameterEstimation>
 			</ParametersToEstimate>
 			<Operation order="1" opType="estPop">
