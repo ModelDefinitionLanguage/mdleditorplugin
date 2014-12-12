@@ -46,12 +46,12 @@ public class MapBackedConversionRepository implements ConversionRepository {
     
     @Override
     public Conversion save(Conversion conversion) {
-        Conversion persisted = copy(conversion);
+        Conversion persisted = copy(conversion); //don't modify input parameter
         if(conversion.getId()==null) {
             persisted.setId(generateId());
         }
         conversions.put(persisted.getId(),persisted);
-        return (Conversion)ObjectUtils.clone(persisted);
+        return copy(persisted); // don't return an internal entity
     }
 
     private String generateId() {

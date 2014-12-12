@@ -1,4 +1,4 @@
-package eu.ddmore.convertertoolbox.domain;
+package eu.ddmore.convertertoolbox.rest.hal;
 
 import java.util.Collection;
 

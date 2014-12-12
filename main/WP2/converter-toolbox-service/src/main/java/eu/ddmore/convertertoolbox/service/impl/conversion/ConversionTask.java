@@ -40,7 +40,7 @@ public class ConversionTask implements Runnable {
         try {
             main();
         } catch(Exception ex) {
-            LOG.error("Conversion [%s] Exception was thrown during conversion execution", ex);
+            LOG.error(String.format("Conversion [%s] Exception was thrown during conversion execution",conversionContext.getConversion().getId()), ex);
             conversionContext.getConversion().setConversionReport(generateFailedProcessingErrorReport(ex));
         } finally {
             Conversion conversion = conversionContext.getConversion();
@@ -69,11 +69,9 @@ public class ConversionTask implements Runnable {
         conversionDetail.setMessage(exception.getMessage());
         conversionDetail.setSeverity(Severity.ERROR);
         conversionReport.addDetail(conversionDetail);
-        
         if(exception.getCause()!=null && exception.getCause().getMessage()!=null) {
             conversionDetail.addInfo("error", exception.getCause().getMessage());
         }
-        
         return conversionReport;
     }
     

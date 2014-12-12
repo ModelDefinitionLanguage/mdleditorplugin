@@ -6,7 +6,6 @@ import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 import eu.ddmore.convertertoolbox.domain.Conversion;
-import eu.ddmore.convertertoolbox.domain.ConversionResource;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.rest.ConversionController;
 

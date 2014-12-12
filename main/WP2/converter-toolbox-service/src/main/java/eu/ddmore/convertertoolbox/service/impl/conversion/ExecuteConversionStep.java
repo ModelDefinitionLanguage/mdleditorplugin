@@ -16,7 +16,7 @@ import eu.ddmore.convertertoolbox.service.impl.ConversionResourcesConvention;
 /**
  * {@link ConversionStep} implementation responsible for executing a { @link Converter } 
  */
-@Order(Integer.MIN_VALUE)
+@Order(2)
 @Component
 public class ExecuteConversionStep implements ConversionStep {
     private static final Logger LOG = Logger.getLogger(ProcessOutputsStep.class);

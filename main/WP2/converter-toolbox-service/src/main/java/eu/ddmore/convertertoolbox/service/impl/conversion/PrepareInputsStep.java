@@ -69,13 +69,14 @@ public class PrepareInputsStep implements ConversionStep {
                 fos = new FileOutputStream(path);
                 IOUtils.copy(is, fos);
             } catch (IOException e) {
+                throw new RuntimeException(String.format("Could not unzip %s",path.getAbsolutePath()));
+            } finally {
                 if(is!=null) {
                     IOUtils.closeQuietly(is);
                 }
                 if(fos!=null) {
                     IOUtils.closeQuietly(fos);
                 }
-                throw new RuntimeException(String.format("Could not unzip %s",path.getAbsolutePath()));
             }
         }
     }

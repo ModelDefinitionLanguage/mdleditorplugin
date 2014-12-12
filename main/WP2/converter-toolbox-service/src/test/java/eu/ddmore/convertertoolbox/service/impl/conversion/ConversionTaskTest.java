@@ -6,8 +6,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
@@ -112,10 +114,10 @@ public class ConversionTaskTest {
         ConversionReport conversionReport = instance.generateFailedProcessingErrorReport(exception);
         
         assertEquals(ConversionCode.FAILURE,conversionReport.getReturnCode());
-        assertTrue(conversionReport.getDetails(Severity.ALL).size()>0);
-        assertTrue(conversionReport.getDetails(Severity.ALL).get(0).getServerity()==Severity.ERROR);
-        assertTrue(conversionReport.getDetails(Severity.ALL).get(0).getMessage().equals("Conversion failed"));
-        assertTrue(conversionReport.getDetails(Severity.ALL).get(0).getInfo().get("error").equals("Cause"));
+        assertTrue(conversionReport.getDetails().size()>0);
+        assertTrue(conversionReport.getDetails().get(0).getServerity()==Severity.ERROR);
+        assertTrue(conversionReport.getDetails().get(0).getMessage().equals("Conversion failed"));
+        assertTrue(conversionReport.getDetails().get(0).getInfo().get("error").equals("Cause"));
         
     }
 }

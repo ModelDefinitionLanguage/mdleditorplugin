@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.RelProvider;
+import org.springframework.hateoas.UriTemplate;
 import org.springframework.hateoas.core.AnnotationRelProvider;
 import org.springframework.hateoas.core.DefaultRelProvider;
 import org.springframework.hateoas.core.DelegatingRelProvider;
+import org.springframework.hateoas.hal.CurieProvider;
+import org.springframework.hateoas.hal.DefaultCurieProvider;
 import org.springframework.hateoas.hal.Jackson2HalModule;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -27,6 +31,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Configuration
 public class RestClientConfiguration {
+    @Autowired
+    private CurieProvider curieProvider;
     
     @Bean
     public RestTemplate restTemplate() {

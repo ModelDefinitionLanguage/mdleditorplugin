@@ -1,9 +1,11 @@
-package eu.ddmore.convertertoolbox.domain;
+package eu.ddmore.convertertoolbox.rest.hal;
 
 import org.springframework.hateoas.ResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import eu.ddmore.convertertoolbox.domain.ServiceDescriptor;
 
 /**
  * HAL-enabled { @link ServiceDescriptor }

@@ -44,10 +44,10 @@ public class DefaultConversionRemover implements ConversionRemover {
         
         try {
             if(conversion.getWorkingDirectory()!=null && conversion.getWorkingDirectory().exists()) {
-                FileUtils.deleteDirectory(conversion.getWorkingDirectory().getParentFile());
+                FileUtils.deleteDirectory(conversion.getWorkingDirectory());
             }
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Could not delete conversion %s resources", conversion.getId()));
+            throw new RuntimeException(String.format("Conversion [%s] Could not remove working directory %s", conversion.getId(), conversion.getWorkingDirectory().getAbsolutePath()),e);
         }
         
         conversionRepository.delete(conversion);

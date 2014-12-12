@@ -73,6 +73,10 @@ public class ServiceDescriptor {
             return false;
         return true;
     }
-    
+
+    @Override
+    public String toString() {
+        return String.format("ServiceDescriptor [name=%s, version=%s, capabilities=%s]", name, version, capabilities);
+    }
     
 }

@@ -6,6 +6,8 @@ package eu.ddmore.convertertoolbox.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 
@@ -29,17 +31,8 @@ public final class ConversionReport {
         this.returnCode = returnCode;
     }
 
-    public List<ConversionDetail> getDetails(Severity severity) {
-        if (severity == Severity.ALL) {
-            return details;
-        }
-        List<ConversionDetail> res = new ArrayList<ConversionDetail>();
-        for (ConversionDetail d : details) {
-            if (d.getServerity().getRank() <= severity.getRank()) {
-                res.add(d);
-            }
-        }
-        return res;
+    public List<ConversionDetail> getDetails() {
+        return Lists.newArrayList(details);
     }
 
     public void addDetail(ConversionDetail conversionDetail) {

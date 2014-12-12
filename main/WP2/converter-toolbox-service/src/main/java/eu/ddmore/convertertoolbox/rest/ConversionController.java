@@ -38,13 +38,13 @@ import com.google.common.collect.Collections2;
 
 import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
-import eu.ddmore.convertertoolbox.domain.ConversionResource;
-import eu.ddmore.convertertoolbox.domain.ConversionResources;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.rest.exceptions.ConversionInputsNotSpecified;
 import eu.ddmore.convertertoolbox.rest.exceptions.UnsupportedConversion;
+import eu.ddmore.convertertoolbox.rest.hal.ConversionResource;
 import eu.ddmore.convertertoolbox.rest.hal.ConversionResourceAssembler;
+import eu.ddmore.convertertoolbox.rest.hal.ConversionResources;
 import eu.ddmore.convertertoolbox.rest.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 import eu.ddmore.convertertoolbox.service.ConversionService;
@@ -148,18 +148,18 @@ public class ConversionController {
 
     @RequestMapping(value="/{id}", method=RequestMethod.DELETE)
     @Description("Removes conversion and all its resources")
-    public @ResponseBody HttpEntity<ConversionResource> delete(@PathVariable("id") String id) {
+    public @ResponseBody HttpEntity<String> delete(@PathVariable("id") String id) {
         Optional<Conversion> conversion = conversionService.getConversionForId(id);
         if(!conversion.isPresent()) {
-            return new ResponseEntity<ConversionResource>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
         if(!ConversionStatus.Completed.equals(conversion.get().getStatus())) {
-            return new ResponseEntity<ConversionResource>(HttpStatus.CONFLICT);
+            return new ResponseEntity<String>(HttpStatus.CONFLICT);
         }
         
         conversionService.delete(conversion.get());
         
-        return new ResponseEntity<ConversionResource>(conversionResourceAssembler.toResource(conversion.get()),HttpStatus.NO_CONTENT);
+        return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
     }
     private File prepareConversionWorkingDirectory(Conversion conversion) {
         File workingDir = new File(workingDirectory, conversion.getId());

@@ -4,6 +4,9 @@
 package eu.ddmore.converter.test.mdl2nonmem.success;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
@@ -28,10 +31,10 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
     private Version converterVersion;
 
     public DummyMDLToNONMEMSuccess() {
-        Version sourceVersion = new VersionImpl(5, 0, 8, "qualm");
+        Version sourceVersion = new VersionImpl(5, 0, 8, "succeeding");
         source = new LanguageVersionImpl("MDL", sourceVersion);
 
-        Version targetVersion = new VersionImpl(7, 2, 0, "qualn");
+        Version targetVersion = new VersionImpl(7, 2, 0, "succeeding");
         target = new LanguageVersionImpl("NMTRAN", targetVersion);
 
         converterVersion = new VersionImpl(1, 0, 2);
@@ -49,6 +52,12 @@ public class DummyMDLToNONMEMSuccess implements ConverterProvider {
         }
         if (src.getName().contains("d")) {
             report.addDetail(createConversionDetail(Severity.DEBUG));
+        }
+        File resultFile = new File(outputDirectory,"output-" + src.getName());
+        try {
+            FileUtils.writeStringToFile(resultFile, this.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("could not create result file %s",resultFile.getAbsolutePath()));
         }
         return report;
     }

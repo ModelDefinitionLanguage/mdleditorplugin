@@ -22,7 +22,7 @@ public class ValidateStep implements ConversionStep {
         Preconditions.checkState(conversion.getInputArchive()!=null,String.format("Input archive was not set for Conversion [%s]", conversion.getId()));
         Preconditions.checkState(conversion.getInputArchive().exists(),String.format("Input archive does not exist for Conversion [%s]", conversion.getId()));
         Preconditions.checkState(StringUtils.isNotBlank(conversion.getInputFileName()),String.format("Input file name not specified for Conversion [%s]", conversion.getId()));
-        Preconditions.checkState(ConversionStatus.Scheduled.equals(conversion.getStatus()),String.format("Conversion [%s] was in invalid state [%s] when reached ConversionTask ", conversion.getId(), conversion.getStatus()));
+        Preconditions.checkState(ConversionStatus.Running.equals(conversion.getStatus()),String.format("Conversion [%s] was in invalid state [%s] when reached ConversionTask ", conversion.getId(), conversion.getStatus()));
     }
 
 }

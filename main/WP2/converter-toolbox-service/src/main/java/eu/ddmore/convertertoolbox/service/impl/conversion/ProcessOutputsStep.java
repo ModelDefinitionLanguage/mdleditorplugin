@@ -79,6 +79,8 @@ public class ProcessOutputsStep implements ConversionStep {
                             zipOutput.write(buffer);
                     }
                 } catch (IOException e) {
+                    throw new RuntimeException(String.format("Could not add %s to archive",f),e);
+                } finally {
                     if(bis!=null) {
                         IOUtils.closeQuietly(bis);
                     } else if(fis!=null) {

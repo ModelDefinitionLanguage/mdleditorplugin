@@ -43,7 +43,7 @@ public class ValidateStepTest {
     @Test(expected=IllegalStateException.class)
     public void shouldThrowExceptionIfConversionHasNoArchiveSet() {
         when(conversion.getInputFileName()).thenReturn("input-file.txt");
-        when(conversion.getStatus()).thenReturn(ConversionStatus.Scheduled);
+        when(conversion.getStatus()).thenReturn(ConversionStatus.Running);
         instance.execute(conversionContext);
     }
 
@@ -51,7 +51,7 @@ public class ValidateStepTest {
     public void shouldThrowExceptionIfConversionArchiveDoesNotExist() {
         when(conversion.getInputArchive()).thenReturn(mock(File.class));
         when(conversion.getInputFileName()).thenReturn("input-file.txt");
-        when(conversion.getStatus()).thenReturn(ConversionStatus.Scheduled);
+        when(conversion.getStatus()).thenReturn(ConversionStatus.Running);
         instance.execute(conversionContext);
     }
 
@@ -59,12 +59,12 @@ public class ValidateStepTest {
     public void shouldThrowExceptionIfConversionHasNoInputFileSpecified() {
         File archive = FileUtils.toFile(ValidateStepTest.class.getResource("/mock-archives/test-input.zip"));
         when(conversion.getInputArchive()).thenReturn(archive);
-        when(conversion.getStatus()).thenReturn(ConversionStatus.Scheduled);
+        when(conversion.getStatus()).thenReturn(ConversionStatus.Running);
         instance.execute(conversionContext);
     }
 
     @Test(expected=IllegalStateException.class)
-    public void shouldThrowExceptionIfConversionIsNotInScheduledState() {
+    public void shouldThrowExceptionIfConversionIsNotInRunningState() {
         File archive = FileUtils.toFile(ValidateStepTest.class.getResource("/mock-archives/test-input.zip"));
         when(conversion.getInputArchive()).thenReturn(archive);
         when(conversion.getInputFileName()).thenReturn("input-file.txt");
@@ -77,7 +77,7 @@ public class ValidateStepTest {
         File archive = FileUtils.toFile(ValidateStepTest.class.getResource("/mock-archives/test-input.zip"));
         when(conversion.getInputArchive()).thenReturn(archive);
         when(conversion.getInputFileName()).thenReturn("input-file.txt");
-        when(conversion.getStatus()).thenReturn(ConversionStatus.Scheduled);
+        when(conversion.getStatus()).thenReturn(ConversionStatus.Running);
         instance.execute(conversionContext);
     }
 }
