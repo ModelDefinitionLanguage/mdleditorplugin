@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.service.impl;
 
 import java.io.IOException;
@@ -22,7 +25,7 @@ import eu.ddmore.convertertoolbox.service.ConversionRepository;
 public class DefaultConversionRemover implements ConversionRemover {
 
     private final ConversionRepository conversionRepository;
-
+    
     @Autowired(required=true)
     public DefaultConversionRemover(ConversionRepository conversionRepository) {
         super();

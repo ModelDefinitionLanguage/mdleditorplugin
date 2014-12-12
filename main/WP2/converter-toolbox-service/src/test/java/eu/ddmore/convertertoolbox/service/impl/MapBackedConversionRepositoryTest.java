@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.service.impl;
 
 import static org.junit.Assert.assertEquals;
@@ -23,12 +26,12 @@ public class MapBackedConversionRepositoryTest {
     private MapBackedConversionRepository instance = new MapBackedConversionRepository();
     @Before
     public void setUp() throws Exception {
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Completed));
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Completed));
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Completed));
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Scheduled));
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Scheduled));
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Scheduled));
+        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Completed,1));
+        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Completed,2));
+        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Completed,3));
+        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Scheduled,0));
+        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Scheduled,0));
+        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Scheduled,0));
     }
 
     @Test
@@ -55,10 +58,22 @@ public class MapBackedConversionRepositoryTest {
         Optional<Conversion> conversion = instance.getConversion("non-existing-conversion");
         assertFalse(conversion.isPresent());
     }
+    
 
-    private Conversion createTestConversion(String form, String to, String inputFile, ConversionStatus status) {
-        Conversion conversion = new Conversion().setFrom(new LanguageVersion(form,new Version(1, 0, 0, "Q"))).setTo(new LanguageVersion(to,new Version(1, 0, 0, "Q"))).setInputFileName(inputFile);
+    @Test
+    public void getConversionsCompletedEarlierThan_shouldReturnConversionsCompletedBeforeGivenDate() {
+        assertEquals(instance.getConversionsCompletedEarlierThan(3).size(),2);
+    }
+
+    private Conversion createTestConversion(String form, String to, String inputFile, ConversionStatus status, long completionTime) {
+        Conversion conversion = new Conversion().setFrom(new LanguageVersion(form,new Version(1, 0, 0, "Q"))).
+                setTo(new LanguageVersion(to,new Version(1, 0, 0, "Q"))).
+                setInputFileName(inputFile);
+        if(ConversionStatus.Completed.equals(status)) {
+                conversion.setCompletionTime(completionTime);
+        }
         conversion.setStatus(status);
         return conversion;
     }
+    
 }

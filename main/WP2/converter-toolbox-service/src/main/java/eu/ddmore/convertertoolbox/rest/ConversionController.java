@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.rest;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -163,7 +166,7 @@ public class ConversionController {
     }
     private File prepareConversionWorkingDirectory(Conversion conversion) {
         File workingDir = new File(workingDirectory, conversion.getId());
-        workingDir.mkdirs();
+        workingDir.mkdir();
         if(!workingDir.exists()) {
             throw new IllegalStateException(String.format("Could not create working directory for request %s in %s",conversion.getId(),workingDirectory) );
         }

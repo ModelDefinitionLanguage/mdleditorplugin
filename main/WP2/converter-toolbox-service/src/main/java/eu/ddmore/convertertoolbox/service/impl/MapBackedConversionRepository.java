@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.service.impl;
 
 import java.util.Collection;
@@ -5,10 +8,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -31,17 +34,13 @@ public class MapBackedConversionRepository implements ConversionRepository {
         if(conversion==null) {
             return Optional.absent();
         } else {
-            return Optional.of(conversion);
+            return Optional.of(copy(conversion));
         }
     }
 
     @Override
     public Collection<Conversion> getConversions() {
-        return conversions.values();
-    }
-
-    private Conversion copy(Conversion conversion) {
-        return new Conversion(conversion);
+        return copy(conversions.values());
     }
     
     @Override
@@ -54,18 +53,14 @@ public class MapBackedConversionRepository implements ConversionRepository {
         return copy(persisted); // don't return an internal entity
     }
 
-    private String generateId() {
-        return UUID.randomUUID().toString();
-    }
-
     @Override
     public Collection<Conversion> getConversionsWithStatus(final ConversionStatus status) {
         Preconditions.checkNotNull(status,"Conversion status should not be null");
-        return Collections2.filter(conversions.values(), new Predicate<Conversion>() {
+        return copy(Collections2.filter(conversions.values(), new Predicate<Conversion>() {
             public boolean apply(Conversion conversion) {
                 return status.equals(conversion.getStatus());
             }
-        });
+        }));
     }
 
     @Override
@@ -81,5 +76,30 @@ public class MapBackedConversionRepository implements ConversionRepository {
     public void delete(Conversion conversion) {
         conversions.remove(conversion.getId());
     }
+
+    @Override
+    public Collection<Conversion> getConversionsCompletedEarlierThan(final long date) {
+        Preconditions.checkNotNull(date,"Conversion status should not be null");
+        return copy(Collections2.filter(conversions.values(), new Predicate<Conversion>() {
+            public boolean apply(Conversion conversion) {
+                return ConversionStatus.Completed.equals(conversion.getStatus()) && date>conversion.getCompletionTime();
+            }
+        }));
+    }
+
+    private String generateId() {
+        return UUID.randomUUID().toString();
+    }
+
+    private Conversion copy(Conversion conversion) {
+        return new Conversion(conversion);
+    }
     
+    private Collection<Conversion> copy(Collection<Conversion> input) {
+        return Collections2.transform(input, new Function<Conversion,Conversion>() {
+            public Conversion apply(Conversion conversion) {
+                return copy(conversion);
+            }
+        });
+    }
 }

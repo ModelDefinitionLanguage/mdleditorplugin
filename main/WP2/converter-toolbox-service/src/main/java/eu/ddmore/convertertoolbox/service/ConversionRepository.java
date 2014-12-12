@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.service;
 
 import java.util.Collection;
@@ -39,6 +42,13 @@ public interface ConversionRepository {
      * @return all jobs with given conversion status
      */
     Collection<Conversion> getConversionsWithStatus(ConversionStatus status);
+
+    /**
+     * 
+     * @param date
+     * @return Conversions which have been completed before given date
+     */
+    Collection<Conversion> getConversionsCompletedEarlierThan(long date);
     
     /**
      * 

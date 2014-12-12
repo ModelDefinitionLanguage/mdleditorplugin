@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.rest;
 
 import static eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper.from;

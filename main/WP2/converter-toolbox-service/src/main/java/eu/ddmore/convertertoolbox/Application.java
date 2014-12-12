@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.UriTemplate;
 import org.springframework.hateoas.hal.CurieProvider;
 import org.springframework.hateoas.hal.DefaultCurieProvider;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.conversion.ConverterManagerImpl;
@@ -19,6 +23,7 @@ import eu.ddmore.convertertoolbox.service.impl.ConversionServiceConfiguration;
 @EnableAutoConfiguration
 @Configuration
 @Import(ConversionServiceConfiguration.class)
+@EnableScheduling
 public class Application {
 
     public static void main(String[] args) {
