@@ -48,11 +48,15 @@ public class ServiceWorkingDirectory {
             if(!workingDirectory.exists()) {
                 throw new RuntimeException(String.format("Could not create working directory %s", workingDirectory));
             }
-            try {
-                FileUtils.writeStringToFile(identityFile, "Converter toolbox identify file");
-            } catch (IOException e) {
-                throw new RuntimeException(String.format("Can't write to %s", workingDirectory));
-            }
+            createIdentityFile(identityFile);
+        }
+    }
+
+    private void createIdentityFile(File identityFile) {
+        try {
+            FileUtils.writeStringToFile(identityFile, "Converter toolbox identify file");
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Can't write to %s", workingDirectory));
         }
     }
 
@@ -73,6 +77,8 @@ public class ServiceWorkingDirectory {
         if(!identityFile.exists() && files.length>1) {
             throw new IllegalStateException(String.format("Invalid working directory structure, the %s file was not found in %s. "+
                                             "Make sure that the directory you specified is empty or doesn't exist.",identityFile,workingDirectory));
+        } else {
+            createIdentityFile(identityFile);
         }
         for(File f : files) {
             if(f.getName().equals(identityFileName)) {

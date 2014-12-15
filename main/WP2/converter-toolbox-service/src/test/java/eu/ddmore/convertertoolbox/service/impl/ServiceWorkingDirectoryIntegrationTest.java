@@ -110,7 +110,18 @@ public class ServiceWorkingDirectoryIntegrationTest {
         assertTrue(String.format("Directory %s should exist", workingDir),workingDir.exists());
         assertTrue(String.format("File %s should exist", identity),identity.exists());
     }
-    
+
+    @Test
+    public void shouldCreateIdentityFileForEmptyWorkingDirectory() throws IOException {
+        File workingDir = tempFolder.newFolder("shouldCreateIdentityFileForEmptyWorkingDirectory");
+        File identity = new File(workingDir, identityFile);
+        
+        instance.setWorkingDirectory(workingDir);
+        instance.initialise();
+
+        assertTrue(String.format("Directory %s should exist", workingDir),workingDir.exists());
+        assertTrue(String.format("File %s should exist", identity),identity.exists());
+    }
 
     @Test
     public void newDirectory_shouldCreateANewDirectory() {

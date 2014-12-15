@@ -1,63 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<parent>
-		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
-		<groupId>eu.ddmore</groupId>
-		<artifactId>converter-parent</artifactId>
-		<version>1.0.0</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	
-	<artifactId>converter-toolbox-distribution</artifactId>
-	<name>Distributions of Converter Toolbox Service</name>
-	<packaging>pom</packaging>
-	
-	<properties>
-		<converter-nonmem.version>0.0.1-SNAPSHOT</converter-nonmem.version>
+    <parent>
+        <relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
+        <groupId>eu.ddmore</groupId>
+        <artifactId>converter-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>converter-toolbox-distribution</artifactId>
+    <name>Distributions of Converter Toolbox Service</name>
+    <packaging>pom</packaging>
+
+    <properties>
+        <converter-nonmem.version>0.0.1-SNAPSHOT</converter-nonmem.version>
         <mdl-converters.version>0.0.6-SNAPSHOT</mdl-converters.version>
         <converter-toolbox-bundle.version>1.0.1-SNAPSHOT</converter-toolbox-bundle.version>
-        
-        
-	</properties>
-	
-	
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/full.xml</descriptor>
-							</descriptors>
-						</configuration>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	
-	<dependencies>
+        <test-converters.version>0.0.6-SNAPSHOT</test-converters.version>
+    </properties>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/full.xml</descriptor>
+                                <descriptor>src/main/assembly/acceptance-tests.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-toolbox-bundle</artifactId>
             <version>${converter-toolbox-bundle.version}</version>
             <type>zip</type>
         </dependency>
-        
+
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-mdl</artifactId>
             <version>${mdl-converters.version}</version>
         </dependency>
-        
+
+        <dependency>
+            <groupId>eu.ddmore</groupId>
+            <artifactId>converter-mdl_v5.1.6_json</artifactId>
+            <version>${mdl-converters.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-mdl_v5.1.6_json</artifactId>
@@ -71,12 +77,25 @@
             <classifier>binary</classifier>
             <type>zip</type>
         </dependency>
+
+        <dependency>
+            <groupId>eu.ddmore</groupId>
+            <artifactId>converter-nonmem</artifactId>
+            <version>${converter-nonmem.version}</version>
+            <scope>runtime</scope>
+        </dependency>
         
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-nonmem</artifactId>
-			<version>${converter-nonmem.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-	</dependencies>
+        <!-- Test converters included in acceptance tests assembly -->
+        <dependency>
+            <groupId>eu.ddmore</groupId>
+            <artifactId>test-mdl2nonmem-failure</artifactId>
+            <version>${test-converters.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.ddmore</groupId>
+            <artifactId>test-mdl2nonmem-success</artifactId>
+            <version>${test-converters.version}</version>
+        </dependency>
+    </dependencies>
 </project>

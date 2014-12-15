@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -40,6 +40,7 @@ import org.springframework.hateoas.hal.DefaultCurieProvider;
 import org.springframework.hateoas.hal.Jackson2HalModule;
 import org.springframework.plugin.core.OrderAwarePluginRegistry;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
@@ -47,7 +48,6 @@ import com.google.common.base.Preconditions;
 import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResource;
 import eu.ddmore.convertertoolbox.domain.hal.ServiceDescriptorResource;
-import eu.ddmore.convertertoolbox.rest.converter.ConversionToStringConverter;
 
 /**
  * HTTP REST client for interacting with Converter Toolbox Service REST services.
@@ -132,13 +132,20 @@ public class ConverterToolboxServiceHttpRestClient {
         Preconditions.checkNotNull(href, "Submission url can't be null");
         Preconditions.checkNotNull(conversion, "Conversion can't be null");
         Preconditions.checkNotNull(archive, "Conversion inputs archive can't be null");
+
+        String conversionString = "";
+        
+        try {
+            conversionString = objectMapper.writeValueAsString(conversion);
+        } catch (JsonProcessingException e1) {
+            throw new RuntimeException(String.format("Could not produce JSON for Conversion %s", conversion));
+        }
         
         HttpPost post = new HttpPost(href);
         post.addHeader("accept", MediaTypes.HAL_JSON.toString());
-        
         FileBody archivePart = new FileBody(archive);
         StringBody fileNamePart = new StringBody(archive.getName(), ContentType.TEXT_PLAIN);
-        StringBody conversionPart = new StringBody(new ConversionToStringConverter().convert(conversion), ContentType.APPLICATION_JSON);
+        StringBody conversionPart = new StringBody(conversionString, ContentType.APPLICATION_JSON);
 
         HttpEntity reqEntity = MultipartEntityBuilder.create()
                 .addPart("file", archivePart)

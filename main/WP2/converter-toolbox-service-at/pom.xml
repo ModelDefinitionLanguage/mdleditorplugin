@@ -23,9 +23,8 @@
     <dependencies>
         <dependency>
             <groupId>eu.ddmore</groupId>
-            <artifactId>converter-toolbox-service</artifactId>
+            <artifactId>converter-toolbox-service-domain</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -49,7 +48,19 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson-databind.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson-databind.version}</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.springframework.plugin</groupId>
+            <artifactId>spring-plugin-core</artifactId>
+            <version>1.1.0.RELEASE</version>
+        </dependency>
+        
     </dependencies>
     <url>http://ddmore.eu</url>
     <description>Acceptance Tests Harness for Converter Toolbox HTTP REST Service.</description>
