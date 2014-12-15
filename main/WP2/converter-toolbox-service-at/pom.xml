@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<parent>
-		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
-		<groupId>eu.ddmore</groupId>
-		<artifactId>converter-parent</artifactId>
-		<version>1.0.0</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>converter-toolbox-service-at</artifactId>
-	<name>Converter Toolbox Service Acceptance Tests</name>
+    <parent>
+        <relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
+        <groupId>eu.ddmore</groupId>
+        <artifactId>converter-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>converter-toolbox-service-at</artifactId>
+    <name>Converter Toolbox Service Acceptance Tests</name>
     <packaging>jar</packaging>
+
+    <properties>
+        <httpclient.version>4.3.6</httpclient.version>
+        <httpcore.version>4.3.3</httpcore.version>
+        <httpmime.version>${httpclient.version}</httpmime.version>
+        <jackson-databind.version>2.4.3</jackson-databind.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -20,39 +27,35 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.3.6</version>
+            <version>${httpclient.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.3.3</version>
+            <version>${httpcore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
-            <version>4.3.6</version>
+            <version>${httpmime.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.4.3</version>
+            <version>${jackson-databind.version}</version>
         </dependency>
-        
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-        </dependency>
-        </dependencies> 
+
+    </dependencies>
+    <url>http://ddmore.eu</url>
+    <description>Acceptance Tests Harness for Converter Toolbox HTTP REST Service.</description>
+    <organization>
+        <name>Mango Solutions</name>
+        <url>http://www.mango-solutions.com</url>
+    </organization>
+    <inceptionYear>2014</inceptionYear>
 </project>
