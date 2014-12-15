@@ -144,12 +144,10 @@ public class ConverterToolboxServiceHttpRestClient {
         HttpPost post = new HttpPost(href);
         post.addHeader("accept", MediaTypes.HAL_JSON.toString());
         FileBody archivePart = new FileBody(archive);
-        StringBody fileNamePart = new StringBody(archive.getName(), ContentType.TEXT_PLAIN);
         StringBody conversionPart = new StringBody(conversionString, ContentType.APPLICATION_JSON);
 
         HttpEntity reqEntity = MultipartEntityBuilder.create()
                 .addPart("file", archivePart)
-                .addPart("name", fileNamePart)
                 .addPart("conversion", conversionPart)
                 .build();
 

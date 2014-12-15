@@ -27,8 +27,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
+import eu.ddmore.convertertoolbox.domain.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.domain.hal.ServiceDescriptorResource;
-import eu.ddmore.convertertoolbox.rest.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 
 /**

@@ -11,6 +11,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResource;
+import eu.ddmore.convertertoolbox.domain.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.rest.ConversionController;
 
 /**

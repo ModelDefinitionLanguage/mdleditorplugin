@@ -26,7 +26,7 @@ import eu.ddmore.convertertoolbox.service.ConversionRepository;
  */
 @Repository
 public class MapBackedConversionRepository implements ConversionRepository {
-    private Map<String,Conversion> conversions = new ConcurrentHashMap<String, Conversion>();
+    private final Map<String,Conversion> conversions = new ConcurrentHashMap<String, Conversion>();
     @Override
     public Optional<Conversion> getConversion(String id) {
         Preconditions.checkArgument(StringUtils.isNotBlank(id), "Conversion id can't be blank");

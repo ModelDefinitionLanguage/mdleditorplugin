@@ -3,18 +3,25 @@
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.service.impl;
 
-import java.io.File;
 
-import eu.ddmore.convertertoolbox.domain.Conversion;
-
-
+/**
+ * Holds naming convention for Conversion resources
+ */
 public class ConversionResourcesConvention {
+    /**
+     * Name of the directory where converters are requested to put conversion outputs to
+     */
     public static final String OUTPUTS_DIRECTORY_NAME = "outputs";
+    /**
+     * Name of the directory where inputs for conversion are extracted to
+     */
     public static final String INPUTS_DIRECTORY_NAME = "inputs";
+    /**
+     * Name of the archive file received with the conversion request
+     */
     public static final String INPUTS_ARCHIVE_NAME = "inputs.zip";
+    /**
+     * Name of the archive file containing 'outputs' directory contents
+     */
     public static final String OUTPUTS_ARCHIVE_NAME = "outputs.zip";
-    
-    public File getConversionWorkingDirectory(Conversion conversion) {
-        return conversion.getWorkingDirectory();
-    }
 }

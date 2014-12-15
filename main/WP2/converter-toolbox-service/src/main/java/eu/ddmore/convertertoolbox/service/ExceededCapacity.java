@@ -10,15 +10,15 @@ public class ExceededCapacity extends Exception {
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param message
-     * @param cause
+     * @param error message
+     * @param causing exception
      */
     public ExceededCapacity(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * @param message
+     * @param error message
      */
     public ExceededCapacity(String message) {
         super(message);

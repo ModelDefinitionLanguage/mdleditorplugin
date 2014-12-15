@@ -72,7 +72,7 @@ public class ServiceWorkingDirectory {
             
         });
         if(files==null) {
-            throw new IllegalStateException(String.format("Could not list files in %s", workingDirectory));
+            throw new IllegalStateException(String.format("Could not list files in %s, please check permissions on directory.", workingDirectory));
         }
         if(!identityFile.exists() && files.length>1) {
             throw new IllegalStateException(String.format("Invalid working directory structure, the %s file was not found in %s. "+

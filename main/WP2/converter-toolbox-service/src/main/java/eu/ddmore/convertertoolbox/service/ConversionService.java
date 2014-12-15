@@ -58,10 +58,9 @@ public interface ConversionService {
     Collection<Conversion> getCompletedConversions();
     
     /**
-     * 
      * @param conversion id
      * @return conversion for given id
-     * @throws IllegalArgumentException if conversion 
+     * @throws IllegalArgumentException if conversion id is incorrect
      */
     Optional<Conversion> getConversionForId(String id);
 }

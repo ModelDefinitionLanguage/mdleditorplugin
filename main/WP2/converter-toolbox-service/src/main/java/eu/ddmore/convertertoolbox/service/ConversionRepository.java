@@ -18,7 +18,7 @@ public interface ConversionRepository {
     /**
      * 
      * @param id conversion id
-     * @return conversion with given id or unset optional
+     * @return conversion with given id or absent optional
      */
     Optional<Conversion> getConversion(String id);
     

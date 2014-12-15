@@ -59,8 +59,8 @@ import eu.ddmore.convertertoolbox.domain.ConversionCapability;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResource;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResources;
+import eu.ddmore.convertertoolbox.domain.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.rest.converter.ConversionToStringConverter;
-import eu.ddmore.convertertoolbox.rest.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 import eu.ddmore.convertertoolbox.service.ConversionService;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
@@ -230,7 +230,6 @@ public class ConversionControllerIntegrationTest {
         
         
         MultiValueMap<String,Object> requestParams = new LinkedMultiValueMap<String,Object>();
-        requestParams.add("name", inputFile.getName());
         requestParams.add("file", new FileSystemResource(inputFile));
         requestParams.add("conversion", new ConversionToStringConverter().convert(conversion));
         
@@ -247,7 +246,6 @@ public class ConversionControllerIntegrationTest {
         Conversion conversion = createTestConversion(null, "C", "D", "test-input.txt" /* resides in test-input.zip */, ConversionStatus.New);
         
         MultiValueMap<String,Object> requestParams = new LinkedMultiValueMap<String,Object>();
-        requestParams.add("name", inputFile.getName());
         requestParams.add("file", new FileSystemResource(inputFile));
         requestParams.add("conversion", new ConversionToStringConverter().convert(conversion));
 
@@ -271,7 +269,6 @@ public class ConversionControllerIntegrationTest {
         Conversion conversion = createTestConversion(null, "A", "D", "test-input.txt" /* resides in test-input.zip */, ConversionStatus.New);
         
         MultiValueMap<String,Object> requestParams = new LinkedMultiValueMap<String,Object>();
-        requestParams.add("name", inputFile.getName());
         requestParams.add("file", new FileSystemResource(inputFile));
         requestParams.add("conversion", new ConversionToStringConverter().convert(conversion));
 

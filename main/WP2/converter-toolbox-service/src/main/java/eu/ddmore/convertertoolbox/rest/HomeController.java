@@ -24,8 +24,8 @@ import com.google.common.base.Preconditions;
 
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
 import eu.ddmore.convertertoolbox.domain.ServiceDescriptor;
+import eu.ddmore.convertertoolbox.domain.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.domain.hal.ServiceDescriptorResource;
-import eu.ddmore.convertertoolbox.rest.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 
 @RestController

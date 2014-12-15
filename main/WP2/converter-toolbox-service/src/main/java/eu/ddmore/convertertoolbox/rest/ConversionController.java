@@ -44,10 +44,10 @@ import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResource;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResources;
+import eu.ddmore.convertertoolbox.domain.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.rest.exceptions.ConversionInputsNotSpecified;
 import eu.ddmore.convertertoolbox.rest.exceptions.UnsupportedConversion;
 import eu.ddmore.convertertoolbox.rest.hal.ConversionResourceAssembler;
-import eu.ddmore.convertertoolbox.rest.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 import eu.ddmore.convertertoolbox.service.ConversionService;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
@@ -93,11 +93,9 @@ public class ConversionController {
     @RequestMapping(method=RequestMethod.POST)
     @Description("Receives a new Conversion for processing")
     public @ResponseBody HttpEntity<ConversionResource> post(@RequestParam("conversion") @NotNull Conversion conversion, 
-                                                             @RequestParam("name") @NotNull String fileName,
                                                             @RequestParam("file") @NotNull MultipartFile file) throws UnsupportedConversion, ConversionInputsNotSpecified {
-        LOG.debug(conversion.toString());
-        LOG.debug(fileName);
-        LOG.debug(file.getSize());
+        LOG.debug(String.format("Received conversion %s",conversion.toString()));
+        LOG.debug(String.format("Conversion input file size is %sB",file.getSize()));
         
         if(!isConversionSupported(conversion.getFrom(), conversion.getTo())) {
             throw new UnsupportedConversion(String.format("Requested conversion from %s to %s is not supported",conversion.getFrom(), conversion.getTo()));
