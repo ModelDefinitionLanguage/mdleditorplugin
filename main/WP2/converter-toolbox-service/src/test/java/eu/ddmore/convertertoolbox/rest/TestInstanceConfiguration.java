@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.UriTemplate;
 import org.springframework.hateoas.hal.CurieProvider;
 import org.springframework.hateoas.hal.DefaultCurieProvider;
@@ -26,6 +27,7 @@ import eu.ddmore.convertertoolbox.service.impl.ServiceWorkingDirectory;
  */
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"eu.ddmore.convertertoolbox.rest","eu.ddmore.convertertoolbox.domain"})
+@Configuration
 public class TestInstanceConfiguration {
 
     @Bean
