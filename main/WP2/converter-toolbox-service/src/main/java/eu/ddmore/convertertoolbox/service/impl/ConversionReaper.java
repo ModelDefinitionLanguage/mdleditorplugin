@@ -38,6 +38,7 @@ public class ConversionReaper {
     public void performCleanup() {
         Collection<Conversion> forDeletion = conversionRepository.
                 getConversionsCompletedEarlierThan(new Date().getTime()-conversionResultsAvailabilityTimeout);
+        LOG.info(String.format("There are %s conversion candiates for removal", forDeletion.size()));
         for(Conversion conversion : forDeletion) {
             try {
                 conversionRemover.remove(conversion);

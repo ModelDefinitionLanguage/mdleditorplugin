@@ -6,6 +6,7 @@ package eu.ddmore.convertertoolbox.service.impl;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,8 @@ import eu.ddmore.convertertoolbox.service.ConversionRepository;
 @Qualifier("conversionRemover")
 public class DefaultConversionRemover implements ConversionRemover {
 
+    private static final Logger LOG = Logger.getLogger(DefaultConversionRemover.class);
+    
     private final ConversionRepository conversionRepository;
     
     @Autowired(required=true)
@@ -35,6 +38,8 @@ public class DefaultConversionRemover implements ConversionRemover {
     @Override
     public void remove(Conversion conversion) {
         Preconditions.checkNotNull(conversion, "Conversoin was null");
+        LOG.debug(String.format("Removing %s", conversion.getId()));
+        
         Optional<Conversion> internalConversion = conversionRepository.getConversion(conversion.getId());
         
         if(!internalConversion.isPresent()) {
@@ -44,7 +49,6 @@ public class DefaultConversionRemover implements ConversionRemover {
         if(!ConversionStatus.Completed.equals(internalConversion.get().getStatus())) {
             throw new IllegalStateException(String.format("Requested deletion of uncompleted conversion %s",conversion.getId()));
         }
-        
         try {
             if(conversion.getWorkingDirectory()!=null && conversion.getWorkingDirectory().exists()) {
                 FileUtils.deleteDirectory(conversion.getWorkingDirectory());

@@ -118,7 +118,7 @@ ConversionToolboxServiceAcceptanceTestParent {
         File resultFile = new File(tempFolder.getRoot(), "output.zip");
         restClient.downloadResultFile(submittedConversion.getLink("ddmore:result").getHref(),resultFile );
         assertTrue("Archive file with conversion outputs does not exist", resultFile.exists());
-        assertEquals("Downloaded and rempote result files differ", new Long(resultFile.length()),content.getOutputFileSize());
+        assertEquals("Downloaded and remote result files differ in size", new Long(resultFile.length()),content.getOutputFileSize());
 
         LOG.info(String.format("Deleting conversion [%s]", submittedConversion.getContent().getId()));
         restClient.deleteResource(submittedConversion.getLink("ddmore:delete").getHref());
