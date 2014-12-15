@@ -45,9 +45,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 
 import eu.ddmore.convertertoolbox.domain.Conversion;
+import eu.ddmore.convertertoolbox.domain.hal.ConversionResource;
+import eu.ddmore.convertertoolbox.domain.hal.ServiceDescriptorResource;
 import eu.ddmore.convertertoolbox.rest.converter.ConversionToStringConverter;
-import eu.ddmore.convertertoolbox.rest.hal.ConversionResource;
-import eu.ddmore.convertertoolbox.rest.hal.ServiceDescriptorResource;
 
 /**
  * HTTP REST client for interacting with Converter Toolbox Service REST services.

@@ -28,8 +28,8 @@ import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
-import eu.ddmore.convertertoolbox.rest.hal.ConversionResource;
-import eu.ddmore.convertertoolbox.rest.hal.ServiceDescriptorResource;
+import eu.ddmore.convertertoolbox.domain.hal.ConversionResource;
+import eu.ddmore.convertertoolbox.domain.hal.ServiceDescriptorResource;
 
 /**
  * An Acceptance Test presenting an integration workflow performed by clients when they request conversion

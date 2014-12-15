@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
-package eu.ddmore.convertertoolbox.rest.hal;
+package eu.ddmore.convertertoolbox.domain.hal;
 
 import java.util.Collection;
 

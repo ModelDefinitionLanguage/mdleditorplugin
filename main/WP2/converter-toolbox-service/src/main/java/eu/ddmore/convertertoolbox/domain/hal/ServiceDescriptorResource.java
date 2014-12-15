@@ -1,27 +1,27 @@
 /*******************************************************************************
  * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
-package eu.ddmore.convertertoolbox.rest.hal;
+package eu.ddmore.convertertoolbox.domain.hal;
 
 import org.springframework.hateoas.ResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import eu.ddmore.convertertoolbox.domain.Conversion;
+import eu.ddmore.convertertoolbox.domain.ServiceDescriptor;
 
 /**
- * HAL-enabled { @link Conversion }
+ * HAL-enabled { @link ServiceDescriptor }
  */
-public class ConversionResource extends ResourceSupport {
-    private final Conversion content;
-
+public class ServiceDescriptorResource extends ResourceSupport {
+    private final ServiceDescriptor content;
+    
     @JsonCreator
-    public ConversionResource(@JsonProperty("content") Conversion content) {
+    public ServiceDescriptorResource(@JsonProperty("content") ServiceDescriptor content) {
         this.content = content;
     }
     
-    public Conversion getContent() {
+    public ServiceDescriptor getContent() {
         return content;
     }
 }
