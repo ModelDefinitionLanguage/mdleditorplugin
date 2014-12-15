@@ -34,7 +34,7 @@ public class ConversionReaperTest {
     public void shouldTriggerRemovalForEachConversionReturnedFromRepository() {
         Collection<Conversion> conversions = Arrays.asList(
             mock(Conversion.class), mock(Conversion.class), mock(Conversion.class));
-        when(conversionRepository.getConversionsCompletedEarlierThan(eq(1000))).thenReturn(conversions);
+        when(conversionRepository.getConversionsCompletedEarlierThan(any(Long.class))).thenReturn(conversions);
         
         instance.setConversionResultsAvailabilityTimeout(1000);
         
@@ -45,4 +45,15 @@ public class ConversionReaperTest {
         }
     }
 
+    @Test
+    public void shouldNotRethrowConversionRemoverExceptions() {
+        Collection<Conversion> conversions = Arrays.asList(
+            mock(Conversion.class), mock(Conversion.class), mock(Conversion.class));
+        when(conversionRepository.getConversionsCompletedEarlierThan(any(Long.class))).thenReturn(conversions);
+        doThrow(Exception.class).when(conversionRemover).remove(any(Conversion.class));
+        
+        instance.setConversionResultsAvailabilityTimeout(1000);
+        
+        instance.performCleanup();
+    }
 }

@@ -15,10 +15,21 @@ import eu.ddmore.convertertoolbox.domain.Version;
  * Helper class used by REST endpoints Integration Tests
  */
 public class ConversionTestFixturesHelper {
+    
+    /**
+     * Creates a { @link LanguageVersion } instance with the given name
+     * @param languageName
+     * @return language version
+     */
     public static LanguageVersion from(String languageName) {
         return to(languageName).iterator().next();
     }
 
+    /**
+     * Creates a collection of { @link LanguageVersion } with given names
+     * @param languageNames
+     * @return
+     */
     public static Collection<LanguageVersion> to(String... languageNames) {
         Collection<LanguageVersion> result = new ArrayList<LanguageVersion>();
         for(String language : languageNames) {
@@ -27,6 +38,15 @@ public class ConversionTestFixturesHelper {
         return result;
     }
 
+    /**
+     * Creates a test conversion with the given:
+     * @param id
+     * @param form
+     * @param to
+     * @param inputFile
+     * @param status
+     * @return new conversion instance
+     */
     public static Conversion createTestConversion(String id, String form, String to, String inputFile, ConversionStatus status) {
         Conversion conversion = new Conversion().setId(id).
                 setFrom(new LanguageVersion(form,new Version(1, 0, 0,"Q"))).

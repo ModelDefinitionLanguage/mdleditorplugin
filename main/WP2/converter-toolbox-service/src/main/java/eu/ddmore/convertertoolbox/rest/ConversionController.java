@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Description;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.hateoas.ExposesResourceFor;
@@ -53,6 +52,7 @@ import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 import eu.ddmore.convertertoolbox.service.ConversionService;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
 import eu.ddmore.convertertoolbox.service.impl.ConversionResourcesConvention;
+import eu.ddmore.convertertoolbox.service.impl.ServiceWorkingDirectory;
 
 @RestController
 @RequestMapping(value="/conversion", produces={ "application/hal+json" })
@@ -64,14 +64,16 @@ public class ConversionController {
     private final ConversionService conversionService;
     private final ConversionResourceAssembler conversionResourceAssembler;
     
-    @Value("${cts.workingDirectory}")
-    private File workingDirectory;
+    private final ServiceWorkingDirectory serviceWorkingDirectory;
     
     @Autowired(required=true)
-    public ConversionController(ConversionCapabilitiesProvider capabilitiesProvider, ConversionService conversionService, ConversionResourceAssembler conversionResourceAssembler) {
+    public ConversionController(ConversionCapabilitiesProvider capabilitiesProvider, 
+            ConversionService conversionService, ConversionResourceAssembler conversionResourceAssembler,
+            ServiceWorkingDirectory serviceWorkingDirectory) {
         this.capabilitiesProvider = capabilitiesProvider;
         this.conversionService = conversionService;
         this.conversionResourceAssembler = conversionResourceAssembler;
+        this.serviceWorkingDirectory = serviceWorkingDirectory;
     }
     
     @RequestMapping(method=RequestMethod.GET)
@@ -165,10 +167,9 @@ public class ConversionController {
         return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
     }
     private File prepareConversionWorkingDirectory(Conversion conversion) {
-        File workingDir = new File(workingDirectory, conversion.getId());
-        workingDir.mkdir();
+        File workingDir = serviceWorkingDirectory.newDirectory(conversion.getId());
         if(!workingDir.exists()) {
-            throw new IllegalStateException(String.format("Could not create working directory for request %s in %s",conversion.getId(),workingDirectory) );
+            throw new IllegalStateException(String.format("Could not create working directory for request %s in %s",conversion.getId(),workingDir) );
         }
         return workingDir;
     }

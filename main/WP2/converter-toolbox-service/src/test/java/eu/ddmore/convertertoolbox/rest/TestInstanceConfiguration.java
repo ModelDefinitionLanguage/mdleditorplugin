@@ -12,7 +12,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.UriTemplate;
 import org.springframework.hateoas.hal.CurieProvider;
 import org.springframework.hateoas.hal.DefaultCurieProvider;
@@ -20,12 +19,12 @@ import org.springframework.hateoas.hal.DefaultCurieProvider;
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 import eu.ddmore.convertertoolbox.service.ConversionService;
+import eu.ddmore.convertertoolbox.service.impl.ServiceWorkingDirectory;
 
 /**
  * Configuration setting up mocks to be used by Rest Controllers during integration tests
  */
 @EnableAutoConfiguration
-@Configuration
 @ComponentScan(basePackages = {"eu.ddmore.convertertoolbox.rest","eu.ddmore.convertertoolbox.domain"})
 public class TestInstanceConfiguration {
 
@@ -45,6 +44,12 @@ public class TestInstanceConfiguration {
     public ConversionService mockConversionService() {
         ConversionService conversionService =  mock(ConversionService.class);
         return conversionService;
+    }
+
+    @Bean
+    public ServiceWorkingDirectory mockServiceWorkingDirectory() {
+        ServiceWorkingDirectory serviceWorkingDirectory =  mock(ServiceWorkingDirectory.class);
+        return serviceWorkingDirectory;
     }
     
     @Bean

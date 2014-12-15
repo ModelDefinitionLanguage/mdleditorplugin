@@ -32,6 +32,6 @@ IF NOT DEFINED JAVA_CMD (
     )
 )
 
-%JAVA_CMD% -DAPP_HOME="%SERVICE_HOME%" -Dloader.path=%CLASSPATH% -jar %SERVICE_BINARY%
+%JAVA_CMD% -DAPP_HOME="%SERVICE_HOME%" -Dcts.workingDirector="%SERVICE_HOME%\tmp" -Dloader.path=%CLASSPATH% -jar %SERVICE_BINARY%
 
 EXIT

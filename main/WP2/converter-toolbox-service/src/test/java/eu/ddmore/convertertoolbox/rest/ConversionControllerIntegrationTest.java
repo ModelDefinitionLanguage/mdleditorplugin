@@ -18,15 +18,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -62,9 +64,10 @@ import eu.ddmore.convertertoolbox.rest.hal.LinkRelations;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 import eu.ddmore.convertertoolbox.service.ConversionService;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
+import eu.ddmore.convertertoolbox.service.impl.ServiceWorkingDirectory;
 
 /**
- * Integration Tests the exposed REST service endpoints
+ * Integration Tests the exposed REST service end points
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {TestInstanceConfiguration.class, RestClientConfiguration.class})
@@ -73,7 +76,6 @@ import eu.ddmore.convertertoolbox.service.ExceededCapacity;
 public class ConversionControllerIntegrationTest {
     private static final String URL = "http://localhost";
     
-    private static final Logger LOG = Logger.getLogger(ConversionControllerIntegrationTest.class);
     @Autowired
     private EmbeddedWebApplicationContext server;
 
@@ -82,7 +84,6 @@ public class ConversionControllerIntegrationTest {
     
     @Autowired
     private RestTemplate restTemplate;
-    
 
     @Autowired
     private ConversionService conversionService;
@@ -90,13 +91,19 @@ public class ConversionControllerIntegrationTest {
     @Autowired
     private ConversionCapabilitiesProvider capabilitiesProvider;
     
+    @Autowired
+    private ServiceWorkingDirectory serviceWorkingDirectory;
+    
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+    
     /**
      * conversion registered in the mock ConversionService, exposed to tests in order to modify the entity
      */
     private Conversion a2conversion;
     
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         resetMocks();
         
         a2conversion = createTestConversion("A2","A","B","input/file", ConversionStatus.Scheduled);
@@ -115,6 +122,9 @@ public class ConversionControllerIntegrationTest {
         Optional<Conversion> emptyResponse = Optional.absent();
         when(conversionService.getConversionForId(eq("A2"))).thenReturn(response);
         when(conversionService.getConversionForId(not(eq("A2")))).thenReturn(emptyResponse);
+        
+        File temp = tempFolder.newFolder();
+        when(serviceWorkingDirectory.newDirectory(any(String.class))).thenReturn(temp);
     }
     /*
      * Tests share single spring context, we must make sure that mocks are reset beteween the tests
@@ -179,7 +189,7 @@ public class ConversionControllerIntegrationTest {
     @Test
     public void find_shouldResultIn_404_responseIfNoConversionFoundForGivenId() {
         try {
-            ResponseEntity<ConversionResource> response = restTemplate.getForEntity(generateEndpoint("/conversion/A3"), ConversionResource.class);
+            restTemplate.getForEntity(generateEndpoint("/conversion/A3"), ConversionResource.class);
         } catch (HttpClientErrorException ex ) {
             assertEquals(HttpStatus.NOT_FOUND,ex.getStatusCode());
         }
@@ -242,7 +252,7 @@ public class ConversionControllerIntegrationTest {
         requestParams.add("conversion", new ConversionToStringConverter().convert(conversion));
 
         try {
-            ResponseEntity<ConversionResource> response = restTemplate.postForEntity(generateEndpoint("/conversion"), requestParams, ConversionResource.class);
+            restTemplate.postForEntity(generateEndpoint("/conversion"), requestParams, ConversionResource.class);
         } catch(HttpClientErrorException ex) {
             assertEquals(HttpStatus.BAD_REQUEST,ex.getStatusCode());
             ObjectMapper mapper = new ObjectMapper();
@@ -267,7 +277,7 @@ public class ConversionControllerIntegrationTest {
 
         doThrow(ExceededCapacity.class).when(conversionService).add(any(Conversion.class));
         try {
-            ResponseEntity<ConversionResource> response = restTemplate.postForEntity(generateEndpoint("/conversion"), requestParams, ConversionResource.class);
+            restTemplate.postForEntity(generateEndpoint("/conversion"), requestParams, ConversionResource.class);
         } catch(HttpClientErrorException ex) {
             assertEquals(HttpStatus.TOO_MANY_REQUESTS,ex.getStatusCode());
         }
@@ -290,7 +300,7 @@ public class ConversionControllerIntegrationTest {
         a2conversion.setOutputArchive(outputArchive);
         a2conversion.setStatus(ConversionStatus.Completed);
         try {
-            ResponseEntity<FileSystemResource> response = restTemplate.getForEntity(generateEndpoint("/conversion/A100/result"), FileSystemResource.class);
+            restTemplate.getForEntity(generateEndpoint("/conversion/A100/result"), FileSystemResource.class);
         } catch(HttpClientErrorException ex) {
             assertEquals(HttpStatus.NOT_FOUND,ex.getStatusCode());
         }
@@ -303,7 +313,7 @@ public class ConversionControllerIntegrationTest {
         a2conversion.setOutputArchive(outputArchive);
         a2conversion.setStatus(ConversionStatus.Scheduled);
         try {
-            ResponseEntity<FileSystemResource> response = restTemplate.getForEntity(generateEndpoint("/conversion/A2/result"), FileSystemResource.class);
+            restTemplate.getForEntity(generateEndpoint("/conversion/A2/result"), FileSystemResource.class);
         } catch(HttpClientErrorException ex) {
             assertEquals(HttpStatus.CONFLICT,ex.getStatusCode());
         }
@@ -313,7 +323,7 @@ public class ConversionControllerIntegrationTest {
     public void getOutputs_shouldReturn_404_ifOutputArchiveNotAvailable() {
         a2conversion.setStatus(ConversionStatus.Completed);
         try {
-            ResponseEntity<FileSystemResource> response = restTemplate.getForEntity(generateEndpoint("/conversion/A2/result"), FileSystemResource.class);
+            restTemplate.getForEntity(generateEndpoint("/conversion/A2/result"), FileSystemResource.class);
         } catch(HttpClientErrorException ex) {
             assertEquals(HttpStatus.NOT_FOUND,ex.getStatusCode());
         }
@@ -325,7 +335,7 @@ public class ConversionControllerIntegrationTest {
         a2conversion.setOutputArchive(outputArchive);
         a2conversion.setStatus(ConversionStatus.Completed);
         try {
-            ResponseEntity<FileSystemResource> response = restTemplate.getForEntity(generateEndpoint("/conversion/A2/result"), FileSystemResource.class);
+            restTemplate.getForEntity(generateEndpoint("/conversion/A2/result"), FileSystemResource.class);
         } catch(HttpClientErrorException ex) {
             assertEquals(HttpStatus.NOT_FOUND,ex.getStatusCode());
         }
