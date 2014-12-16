@@ -3,13 +3,8 @@ package eu.ddmore.converter.mdl2json.domain;
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.Arguments
-import org.ddmore.mdl.mdl.DiagBlock
-import org.ddmore.mdl.mdl.MatrixBlock
 import org.ddmore.mdl.mdl.ParameterObject
 import org.ddmore.mdl.mdl.ParameterObjectBlock
-import org.ddmore.mdl.mdl.SameBlock
-import org.ddmore.mdl.mdl.SymbolName
-import org.ddmore.mdl.mdl.SymbolNames
 import org.ddmore.mdl.mdl.VariabilityBlock
 import org.ddmore.mdl.mdl.VariabilityBlockStatement
 
@@ -76,53 +71,57 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 	private List makeVariability(VariabilityBlock vb) {
 		List retVal = []
 		for (VariabilityBlockStatement s : vb.getStatements()) {
-			if (s.getDiagBlock()) {
-				Map diag = makeDiag(s.getDiagBlock())
-				retVal.add([ "${s.getDiagBlock().getIdentifier()}" : diag ])
-			}
-			if (s.getMatrixBlock()) {
-				MatrixBlock mb = s.getMatrixBlock()
-				Map matrixMap = makeMatrix(mb) 
-				retVal.add([ "${mb.getIdentifier()}" : matrixMap ])
-			}
+//			if (s.getDiagBlock()) {
+//				Map diag = makeDiag(s.getDiagBlock())
+//				retVal.add([ "${s.getDiagBlock().getIdentifier()}" : diag ])
+//			}
+//			if (s.getMatrixBlock()) {
+//				MatrixBlock mb = s.getMatrixBlock()
+//				Map matrixMap = makeMatrix(mb) 
+//				retVal.add([ "${mb.getIdentifier()}" : matrixMap ])
+//			}
 			if (s.getParameter()) {
 				def v = new Variable(s.getParameter())
 				retVal.add([ "${v['name']}" : v.getProperties().minus('name':"${v['name']}") ])
 			}
-			if (s.getSameBlock()){
-				Map same = makeSame(s.getSameBlock())
-				retVal.add([ "${s.getSameBlock().getIdentifier()}" : same ])
-			} 
+//			if (s.getSameBlock()){
+//				Map same = makeSame(s.getSameBlock())
+//				retVal.add([ "${s.getSameBlock().getIdentifier()}" : same ])
+//			} 
 		}
 		return retVal
 	}
 	
-	/**
-	 * Parse the MatrixBlock
-	 */
-	private Map makeMatrix(MatrixBlock mb) {
-		Map matrix = createVariabilityMatrix(mb.getArguments())	
-		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromParameters(mb.getParameters()) )
-		return matrix
-	}
-
-	/**
-	 * Parse the DiagBlock
-	 */
-	private Map makeDiag(DiagBlock block) {
-		Map matrix = createVariabilityMatrix(block.getArguments())	
-		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromParameters(block.getParameters()) )
-		return matrix
-	}	
+	//
+	// TODO: Rewrite the code for these blocks as per the new grammar, DDMORE-954
+	//
 	
-	/**
-	 * Parse the SameBlock
-	 */
-	private Map makeSame(SameBlock block) {
-		Map matrix = createVariabilityMatrix(block.getArguments())	
-		matrix.put(CONTENT_PROPNAME, getContentFromSymbolNames(block.getParameters()))
-		return matrix
-	}
+//	/**
+//	 * Parse the MatrixBlock
+//	 */
+//	private Map makeMatrix(MatrixBlock mb) {
+//		Map matrix = createVariabilityMatrix(mb.getArguments())	
+//		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromParameters(mb.getParameters()) )
+//		return matrix
+//	}
+
+//	/**
+//	 * Parse the DiagBlock
+//	 */
+//	private Map makeDiag(DiagBlock block) {
+//		Map matrix = createVariabilityMatrix(block.getArguments())	
+//		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromParameters(block.getParameters()) )
+//		return matrix
+//	}
+	
+//	/**
+//	 * Parse the SameBlock
+//	 */
+//	private Map makeSame(SameBlock block) {
+//		Map matrix = createVariabilityMatrix(block.getArguments())	
+//		matrix.put(CONTENT_PROPNAME, getContentFromSymbolNames(block.getParameters()))
+//		return matrix
+//	}
 	
 	/**
 	 * Parses Arguments. 
@@ -168,16 +167,16 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 		rows.join(",")
 	}
 	
-	/**
-	 * Returns a list of symbol names
-	 */
-	private String getContentFromSymbolNames(SymbolNames symbolNames) {
-		List symbols = []
-		for(SymbolName s : symbolNames.getSymbolNames()) {
-			symbols.add(s.getName())
-		}
-		symbols.join(",\n")
-	}
+//	/**
+//	 * Returns a list of symbol names
+//	 */
+//	private String getContentFromSymbolNames(SymbolNames symbolNames) {
+//		List symbols = []
+//		for(SymbolName s : symbolNames.getSymbolNames()) {
+//			symbols.add(s.getName())
+//		}
+//		symbols.join(",\n")
+//	}
 	
 	public String makeVariabilityMDL(List variability) {
 		StringBuffer strBuf = new StringBuffer()
