@@ -22,5 +22,12 @@
                 <include>**/*</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory></directory>
+            <outputDirectory>converter-toolbox-service</outputDirectory>
+            <includes>
+                <include>LICENSE</include>
+            </includes>
+        </fileSet>
 	</fileSets>
 </assembly>
