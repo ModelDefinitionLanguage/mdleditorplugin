@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -35,10 +37,15 @@ import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
  * Integration Tests the exposed REST service endpoints
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {TestInstanceConfiguration.class, RestClientConfiguration.class})
+@SpringApplicationConfiguration(classes = {HomeControllerIntegrationTest.HomeControllerIntegrationTestConfiguration.class, TestInstanceConfiguration.class, RestClientConfiguration.class})
 @WebAppConfiguration
 @IntegrationTest({"server.port=0", "management.port=0"}) //let the framework choose the port
 public class HomeControllerIntegrationTest {
+    @Configuration
+    @PropertySource("classpath:/eu/ddmore/convertertoolbox/rest/HomeControllerIntegrationTest.properties")
+    public static class HomeControllerIntegrationTestConfiguration {
+        
+    }
     private static final Logger LOG = Logger.getLogger(HomeControllerIntegrationTest.class);
 
     private static final String URL = "http://localhost";
@@ -53,7 +60,7 @@ public class HomeControllerIntegrationTest {
 
     @Autowired
     private ConversionCapabilitiesProvider capabilitiesProvider;
-
+    
     @Test
     public void shouldGetServiceDescriptorWithEmbeddedHypertextLinks() {
         
@@ -69,10 +76,11 @@ public class HomeControllerIntegrationTest {
 
         assertNotNull(response.getBody().getContent());
         assertNotNull(response.getBody().getLinks());
-        assertEquals(3, response.getBody().getLinks().size());
+        assertEquals(4, response.getBody().getLinks().size());
         assertEquals(LinkRelations.SELF, response.getBody().getLinks().get(0).getRel());
         assertEquals(LinkRelations.CONVERSIONS, response.getBody().getLinks().get(1).getRel());
         assertEquals(LinkRelations.SUBMIT, response.getBody().getLinks().get(2).getRel());
+        assertEquals(LinkRelations.SUPPORT, response.getBody().getLinks().get(3).getRel());
         
         assertTrue(response.getBody().getContent().getCapabilities().size()==2);
         assertTrue(StringUtils.isNotBlank(response.getBody().getContent().getName()));

@@ -31,4 +31,8 @@ public final class LinkRelations {
      * Relation for link representing a list of conversions being processed
      */
     public static final String CONVERSIONS = "conversions";
+    /**
+     * Relation for link to a support system
+     */
+    public static final String SUPPORT = "support";
 }

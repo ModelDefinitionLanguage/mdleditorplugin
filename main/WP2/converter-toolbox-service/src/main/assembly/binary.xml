@@ -23,6 +23,13 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>target/classes</directory>
+            <outputDirectory>converter-toolbox-service</outputDirectory>
+            <includes>
+                <include>application.properties</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory></directory>
             <outputDirectory>converter-toolbox-service</outputDirectory>
             <includes>

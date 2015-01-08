@@ -8,8 +8,10 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.Collection;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType;
 import org.springframework.http.HttpEntity;
@@ -39,6 +41,9 @@ public class HomeController {
 
     @Value("${info.app.version}")
     private String version;
+
+    @Value("${cts.support.url:}")
+    private String supportUrl;
     
     @Autowired(required=true)
     public HomeController(ConversionCapabilitiesProvider capabilitiesProvider) {
@@ -55,6 +60,9 @@ public class HomeController {
         resource.add(linkTo(methodOn(HomeController.class).index()).withSelfRel());
         resource.add(linkTo(methodOn(ConversionController.class).list()).withRel(LinkRelations.CONVERSIONS));
         resource.add(linkTo(ConversionController.class).withRel(LinkRelations.SUBMIT));
+        if(StringUtils.isNotBlank(supportUrl)) {
+            resource.add(new Link(supportUrl).withRel(LinkRelations.SUPPORT));
+        }
         return new ResponseEntity<ServiceDescriptorResource>(resource, HttpStatus.OK);
     }
 }
