@@ -62,6 +62,14 @@
         </dependency>
         
     </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}</directory>
+                <includes><include>LICENSE</include></includes>
+            </resource>
+        </resources>
+    </build>
     <url>http://ddmore.eu</url>
     <description>Acceptance Tests Harness for Converter Toolbox HTTP REST Service.</description>
     <organization>

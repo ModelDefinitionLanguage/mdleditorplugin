@@ -46,6 +46,14 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}</directory>
+                <includes><include>LICENSE</include></includes>
+            </resource>
+        </resources>
+    </build>
 
     <dependencyManagement>
         <dependencies>

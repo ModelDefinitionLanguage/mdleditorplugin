@@ -126,6 +126,10 @@
                     <exclude>**/application.properties</exclude>
                 </excludes>
             </resource>
+            <resource>
+                <directory>${basedir}</directory>
+                <includes><include>LICENSE</include></includes>
+            </resource>
         </resources>
 
         <plugins>
