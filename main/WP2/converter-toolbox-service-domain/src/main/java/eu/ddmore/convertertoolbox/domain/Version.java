@@ -108,13 +108,4 @@ public class Version implements Comparable<Version> {
         }
         return base;
     }
-
-    public eu.ddmore.convertertoolbox.api.domain.Version toOldAPI() {
-        return new VersionImpl(major, minor, patch, qualifier);
-    }
-
-    public static Version fromOldAPI(eu.ddmore.convertertoolbox.api.domain.Version version) {
-        return new Version(version.getMajor(),version.getMinor(),version.getPatch(), version.getQualifier());
-    }
-
 }

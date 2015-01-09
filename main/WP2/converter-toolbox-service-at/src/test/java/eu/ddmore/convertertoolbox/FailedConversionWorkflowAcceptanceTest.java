@@ -24,9 +24,9 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
 import eu.ddmore.convertertoolbox.ConverterToolboxServiceHttpRestClient.ResourceNotFound;
-import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
+import eu.ddmore.convertertoolbox.domain.ConversionReportOutcomeCode;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResource;
 import eu.ddmore.convertertoolbox.domain.hal.ServiceDescriptorResource;
@@ -110,7 +110,7 @@ ConversionToolboxServiceAcceptanceTestParent {
         }
         Conversion content = submittedConversion.getContent();
         assertNotNull(content.getConversionReport());
-        assertEquals(ConversionCode.FAILURE,content.getConversionReport().getReturnCode());
+        assertEquals(ConversionReportOutcomeCode.FAILURE,content.getConversionReport().getReturnCode());
         assertEquals(4,content.getConversionReport().getDetails().size());
         
         

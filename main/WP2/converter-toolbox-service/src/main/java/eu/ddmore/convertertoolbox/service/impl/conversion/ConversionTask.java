@@ -11,12 +11,12 @@ import org.apache.log4j.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
-import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
-import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
-import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionDetail;
+import eu.ddmore.convertertoolbox.domain.ConversionDetailSeverity;
 import eu.ddmore.convertertoolbox.domain.ConversionReport;
+import eu.ddmore.convertertoolbox.domain.ConversionReportOutcomeCode;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 
 /**
  * Represents a conversion being scheduled and ready to be assigned a working thread to perform conversion
@@ -66,11 +66,11 @@ public class ConversionTask implements Runnable {
     @VisibleForTesting
     ConversionReport generateFailedProcessingErrorReport(Exception exception) {
         ConversionReport conversionReport = new ConversionReport();
-        conversionReport.setReturnCode(ConversionCode.FAILURE);
+        conversionReport.setReturnCode(ConversionReportOutcomeCode.FAILURE);
         
         ConversionDetail conversionDetail = new ConversionDetail();
         conversionDetail.setMessage(exception.getMessage());
-        conversionDetail.setSeverity(Severity.ERROR);
+        conversionDetail.setSeverity(ConversionDetailSeverity.ERROR);
         conversionReport.addDetail(conversionDetail);
         if(exception.getCause()!=null && exception.getCause().getMessage()!=null) {
             conversionDetail.addInfo("error", exception.getCause().getMessage());

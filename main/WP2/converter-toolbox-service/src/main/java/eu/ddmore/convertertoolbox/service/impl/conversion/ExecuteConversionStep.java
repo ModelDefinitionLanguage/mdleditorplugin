@@ -13,7 +13,7 @@ import com.google.common.base.Preconditions;
 
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.domain.internal.Conversion;
-import eu.ddmore.convertertoolbox.domain.ConversionReport;
+import eu.ddmore.convertertoolbox.domain.internal.ConverterToolboxAPIObjectMapper;
 import eu.ddmore.convertertoolbox.service.impl.ConversionResourcesConvention;
 
 /**
@@ -45,7 +45,7 @@ public class ExecuteConversionStep implements ConversionStep {
         }
         Preconditions.checkNotNull(conversionReport, "Converter did not return conversion");
         
-        conversion.setConversionReport(ConversionReport.fromOldAPI(conversionReport));
+        conversion.setConversionReport(ConverterToolboxAPIObjectMapper.fromOldAPI(conversionReport));
     }
 
 }

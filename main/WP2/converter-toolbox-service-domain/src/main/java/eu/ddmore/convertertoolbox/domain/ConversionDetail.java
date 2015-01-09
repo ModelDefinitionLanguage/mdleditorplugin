@@ -7,14 +7,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
-
 /**
  * REST-friendly implementation of { @link ConversionDetailImpl }
  */
 public final class ConversionDetail {
 
-    private Severity severity;
+    private ConversionDetailSeverity severity;
     private Map<String, String> info;
     private String message;
 
@@ -22,11 +20,11 @@ public final class ConversionDetail {
         info = new HashMap<String, String>();
     }
 
-    public Severity getServerity() {
+    public ConversionDetailSeverity getSeverity() {
         return severity;
     }
 
-    public void setSeverity(Severity severity) {
+    public void setSeverity(ConversionDetailSeverity severity) {
         this.severity = severity;
     }
 
@@ -96,23 +94,5 @@ public final class ConversionDetail {
         }
         return true;
     }
-
-    public eu.ddmore.convertertoolbox.api.response.ConversionDetail toOldAPI() {
-        ConversionDetailImpl conversionDetail = new ConversionDetailImpl();
-        conversionDetail.setInfo(this.info);
-        conversionDetail.setMessage(this.message);
-        conversionDetail.setSeverity(severity);
-        return conversionDetail;
-    }
-
-    public static ConversionDetail fromOldAPI(eu.ddmore.convertertoolbox.api.response.ConversionDetail conversionDetail) {
-        ConversionDetail result = new ConversionDetail();
-        result.setInfo(conversionDetail.getInfo());
-        result.setMessage(conversionDetail.getMessage());
-        result.setSeverity(conversionDetail.getServerity());
-        return result;
-    }
-    
-
     
 }

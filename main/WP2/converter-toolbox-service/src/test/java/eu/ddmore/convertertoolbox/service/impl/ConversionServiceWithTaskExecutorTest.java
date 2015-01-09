@@ -31,6 +31,7 @@ import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.domain.internal.Conversion;
+import eu.ddmore.convertertoolbox.domain.internal.ConverterToolboxAPIObjectMapper;
 import eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
@@ -96,7 +97,7 @@ public class ConversionServiceWithTaskExecutorTest {
     public void add_shouldPersistConversion() throws ExceededCapacity, ConverterNotFoundException {
         Conversion conversion = createTestConversion("FROM", "TO", "mock/input/file");
         
-        when(converterManager.getConverter(eq(conversion.getFrom().toOldAPI()), eq(conversion.getTo().toOldAPI()))).thenReturn(mock(Converter.class));
+        when(converterManager.getConverter(eq(ConverterToolboxAPIObjectMapper.toOldAPI(conversion.getFrom())), eq(ConverterToolboxAPIObjectMapper.toOldAPI(conversion.getTo())))).thenReturn(mock(Converter.class));
         when(conversionRepository.save(same(conversion))).thenReturn(conversion);
         
         Conversion result = instance.add(conversion);
@@ -110,7 +111,7 @@ public class ConversionServiceWithTaskExecutorTest {
     public void schedule_shouldScheduleConversionForExecution() throws ConverterNotFoundException {
         Conversion conversion = createTestConversion("FROM", "TO", "mock/input/file");
         conversion.setId("MOCK-ID");
-        when(converterManager.getConverter(eq(conversion.getFrom().toOldAPI()), eq(conversion.getTo().toOldAPI()))).thenReturn(mock(Converter.class));
+        when(converterManager.getConverter(eq(ConverterToolboxAPIObjectMapper.toOldAPI(conversion.getFrom())), eq(ConverterToolboxAPIObjectMapper.toOldAPI(conversion.getTo())))).thenReturn(mock(Converter.class));
         when(conversionRepository.save(same(conversion))).thenReturn(conversion);
         when(conversionRepository.getConversion("MOCK-ID")).thenReturn(Optional.of(conversion));
         Conversion result = instance.schedule(conversion);

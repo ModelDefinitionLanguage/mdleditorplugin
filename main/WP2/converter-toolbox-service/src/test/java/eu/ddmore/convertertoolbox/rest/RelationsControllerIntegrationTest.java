@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2013 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.rest;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +32,7 @@ public class RelationsControllerIntegrationTest {
     private int port;
 
     @Test
-    public void shouldReturnRelationsPage() throws Exception {
+    public void shouldReturnRelationsPageWithAllRequiredRelations() throws Exception {
         ResponseEntity<String> entity = new TestRestTemplate().getForEntity(
             URL + ":" + port + "/relations", String.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
@@ -39,7 +42,6 @@ public class RelationsControllerIntegrationTest {
     }
 
     private void assertContainsRelation(ResponseEntity<String> entity, LinkRelation relation) {
-
         assertTrue(String.format("Required relation %s was not found in the page body %s", relation.getRelation(), entity.getBody()),
                 entity.getBody().contains(relation.getRelation()));
     }

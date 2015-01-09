@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
 import eu.ddmore.convertertoolbox.domain.LanguageVersion;
+import eu.ddmore.convertertoolbox.domain.internal.ConverterToolboxAPIObjectMapper;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 
 
@@ -39,10 +40,10 @@ public class ConversionCapabilitiesProviderImpl implements ConversionCapabilitie
             Collection<LanguageVersion> tos = new HashSet<LanguageVersion>();
             
             for(eu.ddmore.convertertoolbox.api.domain.LanguageVersion language : en.getValue()) {
-                tos.add(LanguageVersion.fromOldAPI(language));
+                tos.add(ConverterToolboxAPIObjectMapper.fromOldAPI(language));
             }
             
-            result.add(new ConversionCapability(LanguageVersion.fromOldAPI(en.getKey()), tos));
+            result.add(new ConversionCapability(ConverterToolboxAPIObjectMapper.fromOldAPI(en.getKey()), tos));
         }
         return result;
     }

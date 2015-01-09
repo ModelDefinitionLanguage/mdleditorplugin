@@ -24,11 +24,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
-import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
-import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
-import eu.ddmore.convertertoolbox.domain.internal.Conversion;
+import eu.ddmore.convertertoolbox.domain.ConversionDetailSeverity;
 import eu.ddmore.convertertoolbox.domain.ConversionReport;
+import eu.ddmore.convertertoolbox.domain.ConversionReportOutcomeCode;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 
 
@@ -116,9 +116,9 @@ public class ConversionTaskTest {
         
         ConversionReport conversionReport = instance.generateFailedProcessingErrorReport(exception);
         
-        assertEquals(ConversionCode.FAILURE,conversionReport.getReturnCode());
+        assertEquals(ConversionReportOutcomeCode.FAILURE,conversionReport.getReturnCode());
         assertTrue(conversionReport.getDetails().size()>0);
-        assertTrue(conversionReport.getDetails().get(0).getServerity()==Severity.ERROR);
+        assertTrue(conversionReport.getDetails().get(0).getSeverity()==ConversionDetailSeverity.ERROR);
         assertTrue(conversionReport.getDetails().get(0).getMessage().equals("Conversion failed"));
         assertTrue(conversionReport.getDetails().get(0).getInfo().get("error").equals("Cause"));
         

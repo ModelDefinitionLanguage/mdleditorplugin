@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2013 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.rest;
 
 import java.util.Map;

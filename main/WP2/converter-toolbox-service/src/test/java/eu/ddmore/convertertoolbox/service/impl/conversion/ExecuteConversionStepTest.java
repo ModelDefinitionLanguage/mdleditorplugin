@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
+import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionReport;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
@@ -64,8 +65,10 @@ public class ExecuteConversionStepTest {
         
         when(conversion.getInputFileName()).thenReturn(inputFileName);
         when(conversion.getWorkingDirectory()).thenReturn(tempFolder.getRoot());
+        eu.ddmore.convertertoolbox.api.response.ConversionReport conversionReport = mock(eu.ddmore.convertertoolbox.api.response.ConversionReport.class);
+        when(conversionReport.getReturnCode()).thenReturn(ConversionCode.SUCCESS);
         
-        when(converter.convert(any(File.class), any(File.class))).thenReturn(mock(eu.ddmore.convertertoolbox.api.response.ConversionReport.class));
+        when(converter.convert(any(File.class), any(File.class))).thenReturn(conversionReport);
         
         instance.execute(conversionContext);
         

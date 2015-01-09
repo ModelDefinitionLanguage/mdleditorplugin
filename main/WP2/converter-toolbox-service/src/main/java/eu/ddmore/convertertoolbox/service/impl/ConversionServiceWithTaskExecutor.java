@@ -18,8 +18,9 @@ import com.google.common.base.Preconditions;
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
-import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
+import eu.ddmore.convertertoolbox.domain.internal.ConverterToolboxAPIObjectMapper;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 import eu.ddmore.convertertoolbox.service.ConversionService;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
@@ -115,7 +116,7 @@ public class ConversionServiceWithTaskExecutor implements ConversionService {
     private Converter getConverter(Conversion conversion) {
         Converter converter = null;
         try {
-            converter = converterManager.getConverter(conversion.getFrom().toOldAPI(), conversion.getTo().toOldAPI());
+            converter = converterManager.getConverter(ConverterToolboxAPIObjectMapper.toOldAPI(conversion.getFrom()), ConverterToolboxAPIObjectMapper.toOldAPI(conversion.getTo()));
         } catch (ConverterNotFoundException e) {
             throw new IllegalArgumentException("Conversion not supported", e);
         }

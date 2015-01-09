@@ -23,11 +23,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>eu.ddmore</groupId>
-            <artifactId>converter-toolbox-api</artifactId>
-            <version>${converter-toolbox-api.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <version>${json-path.version}</version>

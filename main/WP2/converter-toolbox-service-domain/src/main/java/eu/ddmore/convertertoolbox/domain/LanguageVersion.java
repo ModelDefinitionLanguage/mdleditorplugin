@@ -68,13 +68,4 @@ public class LanguageVersion {
     public String toString() {
         return String.format("%s %s", language, version);
     }
-
-    public eu.ddmore.convertertoolbox.api.domain.LanguageVersion toOldAPI() {
-        return new LanguageVersionImpl(language, version.toOldAPI());
-    }
-    
-    public static LanguageVersion fromOldAPI(eu.ddmore.convertertoolbox.api.domain.LanguageVersion languageVersion) {
-        return new LanguageVersion(languageVersion.getLanguage(), Version.fromOldAPI(languageVersion.getVersion()));
-        
-    }
 }
