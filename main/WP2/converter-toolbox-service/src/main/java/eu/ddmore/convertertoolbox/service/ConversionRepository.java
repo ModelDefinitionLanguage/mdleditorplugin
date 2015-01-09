@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import com.google.common.base.Optional;
 
-import eu.ddmore.convertertoolbox.domain.Conversion;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 
 /**

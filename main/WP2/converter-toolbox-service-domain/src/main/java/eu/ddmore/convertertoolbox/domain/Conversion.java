@@ -3,8 +3,6 @@
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.domain;
 
-import java.io.File;
-
 import org.springframework.hateoas.Identifiable;
 import org.springframework.hateoas.core.Relation;
 
@@ -23,37 +21,12 @@ public class Conversion implements Identifiable<String> {
     private Long submissionTime;
     private Long completionTime;
     private ConversionReport conversionReport;
-    private transient File inputArchive;
-    private transient File outputArchive;
-    private transient File workingDirectory;
     
     /**
      * Empty constructor
      */
     public Conversion() {
         super();
-    }
-    
-    /**
-     * Creates a new instance by copying state of the other conversion instance
-     * @param other
-     */
-    public Conversion(Conversion other) {
-        super();
-        this.id = other.id;
-        this.status = other.status;
-        this.from = other.from;
-        this.to = other.to;
-        this.inputFileName = other.inputFileName;
-        this.outputFileSize = other.outputFileSize;
-        this.submissionTime = other.submissionTime;
-        this.completionTime = other.completionTime;
-        this.inputArchive = other.inputArchive;
-        this.outputArchive = other.outputArchive;
-        this.workingDirectory = other.workingDirectory;
-        //FIXME we must ensure that this is immutable
-        this.conversionReport = other.conversionReport;
-        
     }
 
     public String getId() {
@@ -137,37 +110,13 @@ public class Conversion implements Identifiable<String> {
         return this;
     }
 
-    public File getOutputArchive() {
-        return outputArchive;
-    }
-
-    public void setOutputArchive(File outputArchive) {
-        this.outputArchive = outputArchive;
-    }
-
-    public File getInputArchive() {
-        return inputArchive;
-    }
-
-    public void setInputArchive(File inputArchive) {
-        this.inputArchive = inputArchive;
-    }
-
-    public void setWorkingDirectory(File workingDirectory) {
-        this.workingDirectory = workingDirectory;
-    }
-    
-    public File getWorkingDirectory() {
-        return workingDirectory;
-    }
 
     @Override
     public String toString() {
         return String
                 .format(
-                    "Conversion [id=%s, status=%s, from=%s, to=%s, inputFileName=%s, outputFileSize=%s, submissionTime=%s, completionTime=%s, conversionReport=%s, inputArchive=%s, outputArchive=%s, workingDirectory=%s]",
-                    id, status, from, to, inputFileName, outputFileSize, submissionTime, completionTime, conversionReport, inputArchive,
-                    outputArchive, workingDirectory);
+                    "Conversion [id=%s, status=%s, from=%s, to=%s, inputFileName=%s, outputFileSize=%s, submissionTime=%s, completionTime=%s, conversionReport=%s]",
+                    id, status, from, to, inputFileName, outputFileSize, submissionTime, completionTime, conversionReport);
     }
 
     @Override

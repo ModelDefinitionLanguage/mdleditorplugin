@@ -3,7 +3,8 @@
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.rest;
 
-import static eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper.createTestConversion;
+import static eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper.createExternalTestConversion;
+import static eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper.createInternalTestConversion;
 import static eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper.from;
 import static eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper.to;
 import static org.junit.Assert.assertEquals;
@@ -59,7 +60,7 @@ import eu.ddmore.convertertoolbox.domain.ConversionCapability;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResource;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResources;
-import eu.ddmore.convertertoolbox.domain.hal.LinkRelations;
+import eu.ddmore.convertertoolbox.domain.hal.LinkRelation;
 import eu.ddmore.convertertoolbox.rest.converter.ConversionToStringConverter;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 import eu.ddmore.convertertoolbox.service.ConversionService;
@@ -100,26 +101,26 @@ public class ConversionControllerIntegrationTest {
     /**
      * conversion registered in the mock ConversionService, exposed to tests in order to modify the entity
      */
-    private Conversion a2conversion;
+    private eu.ddmore.convertertoolbox.domain.internal.Conversion a2conversion;
     
     @Before
     public void setUp() throws IOException {
         resetMocks();
         
-        a2conversion = createTestConversion("A2","A","B","input/file", ConversionStatus.Scheduled);
+        a2conversion = createInternalTestConversion("A2","A","B","input/file", ConversionStatus.Scheduled);
         when(conversionService.getConversions()).thenReturn(
             Arrays.asList(
-                createTestConversion("A1", "A","B","input/file", ConversionStatus.New),
+                createInternalTestConversion("A1", "A","B","input/file", ConversionStatus.New),
                 a2conversion,
-                createTestConversion("A3","A","B","input/file", ConversionStatus.Running),
-                createTestConversion("A4","A","B","input/file", ConversionStatus.Completed)));
+                createInternalTestConversion("A3","A","B","input/file", ConversionStatus.Running),
+                createInternalTestConversion("A4","A","B","input/file", ConversionStatus.Completed)));
         when(capabilitiesProvider.getCapabilities()).thenReturn(
             Arrays.asList(
                 new ConversionCapability(from("A"), to("B", "C", "D")),
                 new ConversionCapability(from("C"), to("B"))
                 ));
-        Optional<Conversion> response = Optional.of(a2conversion);
-        Optional<Conversion> emptyResponse = Optional.absent();
+        Optional<eu.ddmore.convertertoolbox.domain.internal.Conversion> response = Optional.of(a2conversion);
+        Optional<eu.ddmore.convertertoolbox.domain.internal.Conversion> emptyResponse = Optional.absent();
         when(conversionService.getConversionForId(eq("A2"))).thenReturn(response);
         when(conversionService.getConversionForId(not(eq("A2")))).thenReturn(emptyResponse);
         
@@ -152,7 +153,7 @@ public class ConversionControllerIntegrationTest {
         List<Link> links = response.getBody().getLinks();
         
         assertEquals(1,links.size());
-        assertEquals(links.get(0).getRel(),LinkRelations.SELF);
+        assertEquals(links.get(0).getRel(),LinkRelation.SELF.getRelation());
         
     }
 
@@ -165,8 +166,8 @@ public class ConversionControllerIntegrationTest {
         List<Link> links = response.getBody().getLinks();
         
         assertEquals(2,links.size());
-        assertEquals(links.get(0).getRel(),LinkRelations.SELF);
-        assertEquals(links.get(1).getRel(),LinkRelations.DELETE);
+        assertEquals(links.get(0).getRel(),LinkRelation.SELF.getRelation());
+        assertEquals(links.get(1).getRel(),LinkRelation.DELETE.getRelation());
     }
 
     @Test
@@ -181,9 +182,9 @@ public class ConversionControllerIntegrationTest {
         List<Link> links = response.getBody().getLinks();
         
         assertEquals(3, links.size());
-        assertEquals(links.get(0).getRel(),LinkRelations.SELF);
-        assertEquals(links.get(1).getRel(),LinkRelations.RESULT);
-        assertEquals(links.get(2).getRel(),LinkRelations.DELETE);
+        assertEquals(links.get(0).getRel(),LinkRelation.SELF.getRelation());
+        assertEquals(links.get(1).getRel(),LinkRelation.RESULT.getRelation());
+        assertEquals(links.get(2).getRel(),LinkRelation.DELETE.getRelation());
     }
     
     @Test
@@ -217,12 +218,12 @@ public class ConversionControllerIntegrationTest {
     @Test
     public void post_shouldAddConversionIfSupported() throws ExceededCapacity {
         File inputFile =FileUtils.toFile(ConversionControllerIntegrationTest.class.getResource("test-input.zip"));
-        Conversion conversion = createTestConversion(null, "A", "B", "test-input.txt" /* resides in test-input.zip */, ConversionStatus.New);
+        Conversion conversion = createExternalTestConversion(null, "A", "B", "test-input.txt" /* resides in test-input.zip */, ConversionStatus.New);
         
-        when(conversionService.add(any(Conversion.class))).thenAnswer(new Answer<Conversion>() {
+        when(conversionService.add(any(eu.ddmore.convertertoolbox.domain.internal.Conversion.class))).thenAnswer(new Answer<Conversion>() {
             @Override
             public Conversion answer(InvocationOnMock invocation) throws Throwable {
-                Conversion conversion = (Conversion)invocation.getArguments()[0];
+                eu.ddmore.convertertoolbox.domain.internal.Conversion conversion = (eu.ddmore.convertertoolbox.domain.internal.Conversion)invocation.getArguments()[0];
                 conversion.setId("MOCK-ID");
                 return conversion;
             }
@@ -235,7 +236,7 @@ public class ConversionControllerIntegrationTest {
         
         ResponseEntity<ConversionResource> response = restTemplate.postForEntity(generateEndpoint("/conversion"), requestParams, ConversionResource.class);
 
-        verify(conversionService).schedule(any(Conversion.class));
+        verify(conversionService).schedule(any(eu.ddmore.convertertoolbox.domain.internal.Conversion.class));
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
     }
@@ -243,7 +244,7 @@ public class ConversionControllerIntegrationTest {
     @Test
     public void post_shouldResultIn_400_IfConversionNotSupported() throws Exception {
         File inputFile =FileUtils.toFile(ConversionControllerIntegrationTest.class.getResource("test-input.zip"));
-        Conversion conversion = createTestConversion(null, "C", "D", "test-input.txt" /* resides in test-input.zip */, ConversionStatus.New);
+        Conversion conversion = createExternalTestConversion(null, "C", "D", "test-input.txt" /* resides in test-input.zip */, ConversionStatus.New);
         
         MultiValueMap<String,Object> requestParams = new LinkedMultiValueMap<String,Object>();
         requestParams.add("file", new FileSystemResource(inputFile));
@@ -266,13 +267,13 @@ public class ConversionControllerIntegrationTest {
     @Test
     public void post_shouldResultIn_429_IfTooManyRequests() throws ExceededCapacity {
         File inputFile =FileUtils.toFile(ConversionControllerIntegrationTest.class.getResource("test-input.zip"));
-        Conversion conversion = createTestConversion(null, "A", "D", "test-input.txt" /* resides in test-input.zip */, ConversionStatus.New);
+        Conversion conversion = createExternalTestConversion(null, "A", "D", "test-input.txt" /* resides in test-input.zip */, ConversionStatus.New);
         
         MultiValueMap<String,Object> requestParams = new LinkedMultiValueMap<String,Object>();
         requestParams.add("file", new FileSystemResource(inputFile));
         requestParams.add("conversion", new ConversionToStringConverter().convert(conversion));
 
-        doThrow(ExceededCapacity.class).when(conversionService).add(any(Conversion.class));
+        doThrow(ExceededCapacity.class).when(conversionService).add(any(eu.ddmore.convertertoolbox.domain.internal.Conversion.class));
         try {
             restTemplate.postForEntity(generateEndpoint("/conversion"), requestParams, ConversionResource.class);
         } catch(HttpClientErrorException ex) {

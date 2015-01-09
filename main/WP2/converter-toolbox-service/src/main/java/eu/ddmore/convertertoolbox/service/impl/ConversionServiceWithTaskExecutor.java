@@ -18,7 +18,7 @@ import com.google.common.base.Preconditions;
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
-import eu.ddmore.convertertoolbox.domain.Conversion;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 import eu.ddmore.convertertoolbox.service.ConversionService;

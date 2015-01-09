@@ -26,7 +26,7 @@ import com.google.common.base.Preconditions;
 
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
 import eu.ddmore.convertertoolbox.domain.ServiceDescriptor;
-import eu.ddmore.convertertoolbox.domain.hal.LinkRelations;
+import eu.ddmore.convertertoolbox.domain.hal.LinkRelation;
 import eu.ddmore.convertertoolbox.domain.hal.ServiceDescriptorResource;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 
@@ -58,10 +58,10 @@ public class HomeController {
         ServiceDescriptorResource resource = new ServiceDescriptorResource(serviceDescriptor);
         
         resource.add(linkTo(methodOn(HomeController.class).index()).withSelfRel());
-        resource.add(linkTo(methodOn(ConversionController.class).list()).withRel(LinkRelations.CONVERSIONS));
-        resource.add(linkTo(ConversionController.class).withRel(LinkRelations.SUBMIT));
+        resource.add(linkTo(methodOn(ConversionController.class).list()).withRel(LinkRelation.CONVERSIONS.getRelation()));
+        resource.add(linkTo(ConversionController.class).withRel(LinkRelation.SUBMIT.getRelation()));
         if(StringUtils.isNotBlank(supportUrl)) {
-            resource.add(new Link(supportUrl).withRel(LinkRelations.SUPPORT));
+            resource.add(new Link(supportUrl).withRel(LinkRelation.SUPPORT.getRelation()));
         }
         return new ResponseEntity<ServiceDescriptorResource>(resource, HttpStatus.OK);
     }

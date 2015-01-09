@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
-import eu.ddmore.convertertoolbox.domain.Conversion;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 import eu.ddmore.convertertoolbox.service.impl.conversion.ConversionContext;
 import eu.ddmore.convertertoolbox.service.impl.conversion.ConversionStep;

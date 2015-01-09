@@ -29,7 +29,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
-import eu.ddmore.convertertoolbox.domain.hal.LinkRelations;
+import eu.ddmore.convertertoolbox.domain.hal.LinkRelation;
 import eu.ddmore.convertertoolbox.domain.hal.ServiceDescriptorResource;
 import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
 
@@ -77,10 +77,10 @@ public class HomeControllerIntegrationTest {
         assertNotNull(response.getBody().getContent());
         assertNotNull(response.getBody().getLinks());
         assertEquals(4, response.getBody().getLinks().size());
-        assertEquals(LinkRelations.SELF, response.getBody().getLinks().get(0).getRel());
-        assertEquals(LinkRelations.CONVERSIONS, response.getBody().getLinks().get(1).getRel());
-        assertEquals(LinkRelations.SUBMIT, response.getBody().getLinks().get(2).getRel());
-        assertEquals(LinkRelations.SUPPORT, response.getBody().getLinks().get(3).getRel());
+        assertEquals(LinkRelation.SELF.getRelation(), response.getBody().getLinks().get(0).getRel());
+        assertEquals(LinkRelation.CONVERSIONS.getRelation(), response.getBody().getLinks().get(1).getRel());
+        assertEquals(LinkRelation.SUBMIT.getRelation(), response.getBody().getLinks().get(2).getRel());
+        assertEquals(LinkRelation.SUPPORT.getRelation(), response.getBody().getLinks().get(3).getRel());
         
         assertTrue(response.getBody().getContent().getCapabilities().size()==2);
         assertTrue(StringUtils.isNotBlank(response.getBody().getContent().getName()));

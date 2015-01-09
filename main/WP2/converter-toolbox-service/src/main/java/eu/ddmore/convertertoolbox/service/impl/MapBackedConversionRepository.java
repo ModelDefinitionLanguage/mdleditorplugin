@@ -17,7 +17,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
-import eu.ddmore.convertertoolbox.domain.Conversion;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 

@@ -4,7 +4,7 @@
 package eu.ddmore.convertertoolbox.service.impl;
 
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
-import eu.ddmore.convertertoolbox.domain.Conversion;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.service.impl.conversion.ConversionTask;
 
 

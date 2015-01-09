@@ -153,7 +153,7 @@ public class ConverterToolboxServiceHttpRestClient {
 
         post.setEntity(reqEntity);
         
-        log.info(String.format("Sending execution request: %s",conversionPart));
+        log.info(String.format("Sending execution request: %s",conversionString));
         
 
         String responseBody = null;

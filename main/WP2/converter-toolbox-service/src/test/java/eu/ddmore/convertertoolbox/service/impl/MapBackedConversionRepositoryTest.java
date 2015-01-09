@@ -12,10 +12,9 @@ import org.junit.Test;
 
 import com.google.common.base.Optional;
 
-import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
-import eu.ddmore.convertertoolbox.domain.LanguageVersion;
-import eu.ddmore.convertertoolbox.domain.Version;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
+import eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
 
 /**
@@ -26,12 +25,12 @@ public class MapBackedConversionRepositoryTest {
     private MapBackedConversionRepository instance = new MapBackedConversionRepository();
     @Before
     public void setUp() throws Exception {
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Completed,1));
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Completed,2));
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Completed,3));
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Scheduled,0));
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Scheduled,0));
-        instance.save(createTestConversion("FROM", "TO", "mock/input/file", ConversionStatus.Scheduled,0));
+        instance.save(createTestConversion("1", "FROM", "TO", "mock/input/file", ConversionStatus.Completed,1));
+        instance.save(createTestConversion("2", "FROM", "TO", "mock/input/file", ConversionStatus.Completed,2));
+        instance.save(createTestConversion("3", "FROM", "TO", "mock/input/file", ConversionStatus.Completed,3));
+        instance.save(createTestConversion("4", "FROM", "TO", "mock/input/file", ConversionStatus.Scheduled,0));
+        instance.save(createTestConversion("5", "FROM", "TO", "mock/input/file", ConversionStatus.Scheduled,0));
+        instance.save(createTestConversion("6", "FROM", "TO", "mock/input/file", ConversionStatus.Scheduled,0));
     }
 
     @Test
@@ -65,14 +64,11 @@ public class MapBackedConversionRepositoryTest {
         assertEquals(instance.getConversionsCompletedEarlierThan(3).size(),2);
     }
 
-    private Conversion createTestConversion(String form, String to, String inputFile, ConversionStatus status, long completionTime) {
-        Conversion conversion = new Conversion().setFrom(new LanguageVersion(form,new Version(1, 0, 0, "Q"))).
-                setTo(new LanguageVersion(to,new Version(1, 0, 0, "Q"))).
-                setInputFileName(inputFile);
+    private Conversion createTestConversion(String id, String form, String to, String inputFile, ConversionStatus status, long completionTime) {
+        Conversion conversion = ConversionTestFixturesHelper.createInternalTestConversion(id, form, to, inputFile, status);
         if(ConversionStatus.Completed.equals(status)) {
                 conversion.setCompletionTime(completionTime);
         }
-        conversion.setStatus(status);
         return conversion;
     }
     

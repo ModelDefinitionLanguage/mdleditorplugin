@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Preconditions;
 
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
-import eu.ddmore.convertertoolbox.domain.Conversion;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionReport;
 import eu.ddmore.convertertoolbox.service.impl.ConversionResourcesConvention;
 

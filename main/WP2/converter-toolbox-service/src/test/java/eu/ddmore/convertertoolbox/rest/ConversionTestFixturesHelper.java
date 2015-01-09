@@ -39,7 +39,7 @@ public class ConversionTestFixturesHelper {
     }
 
     /**
-     * Creates a test conversion with the given:
+     * Creates a test external representation of conversion with the given:
      * @param id
      * @param form
      * @param to
@@ -47,11 +47,30 @@ public class ConversionTestFixturesHelper {
      * @param status
      * @return new conversion instance
      */
-    public static Conversion createTestConversion(String id, String form, String to, String inputFile, ConversionStatus status) {
-        Conversion conversion = new Conversion().setId(id).
-                setFrom(new LanguageVersion(form,new Version(1, 0, 0,"Q"))).
-                setTo(new LanguageVersion(to,new Version(1, 0, 0,"Q"))).
-                setInputFileName(inputFile);
+    public static Conversion createExternalTestConversion(String id, String form, String to, String inputFile, ConversionStatus status) {
+        Conversion conversion = new Conversion();
+        conversion.setId(id);
+        conversion.setFrom(new LanguageVersion(form,new Version(1, 0, 0,"Q")));
+        conversion.setTo(new LanguageVersion(to,new Version(1, 0, 0,"Q")));
+        conversion.setInputFileName(inputFile);
+        conversion.setStatus(status);
+        return conversion;
+    }
+    /**
+     * Creates a test internal representation of conversion with the given:
+     * @param id
+     * @param form
+     * @param to
+     * @param inputFile
+     * @param status
+     * @return new conversion instance
+     */
+    public static eu.ddmore.convertertoolbox.domain.internal.Conversion createInternalTestConversion(String id, String form, String to, String inputFile, ConversionStatus status) {
+        eu.ddmore.convertertoolbox.domain.internal.Conversion conversion = new eu.ddmore.convertertoolbox.domain.internal.Conversion();
+        conversion.setId(id);
+        conversion.setFrom(new LanguageVersion(form,new Version(1, 0, 0,"Q")));
+        conversion.setTo(new LanguageVersion(to,new Version(1, 0, 0,"Q")));
+        conversion.setInputFileName(inputFile);
         conversion.setStatus(status);
         return conversion;
     }

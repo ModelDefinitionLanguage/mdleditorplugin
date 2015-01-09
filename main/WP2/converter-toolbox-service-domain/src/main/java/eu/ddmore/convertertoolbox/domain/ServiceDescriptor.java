@@ -27,7 +27,7 @@ public class ServiceDescriptor {
         this.version = version;
         this.capabilities = capabilities;
     }
-    
+
     public String getVersion() {
         return version;
     }

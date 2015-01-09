@@ -13,7 +13,7 @@ import com.google.common.base.Preconditions;
 
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
-import eu.ddmore.convertertoolbox.domain.Conversion;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionDetail;
 import eu.ddmore.convertertoolbox.domain.ConversionReport;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;

@@ -29,10 +29,9 @@ import com.google.common.base.Optional;
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
-import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
-import eu.ddmore.convertertoolbox.domain.LanguageVersion;
-import eu.ddmore.convertertoolbox.domain.Version;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
+import eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 import eu.ddmore.convertertoolbox.service.ExceededCapacity;
 import eu.ddmore.convertertoolbox.service.impl.conversion.ConversionTask;
@@ -169,6 +168,6 @@ public class ConversionServiceWithTaskExecutorTest {
     }
 
     private Conversion createTestConversion(String form, String to, String inputFile) {
-        return new Conversion().setFrom(new LanguageVersion(form,new Version(1, 0, 0,"Q"))).setTo(new LanguageVersion(to,new Version(1, 0, 0,"Q"))).setInputFileName(inputFile);
+        return ConversionTestFixturesHelper.createInternalTestConversion("TEST_CONVERSION", form, to, inputFile, ConversionStatus.New);
     }
 }

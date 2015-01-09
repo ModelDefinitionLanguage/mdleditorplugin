@@ -1,0 +1,61 @@
+body {
+    font-family: arial;
+}
+
+th {
+    font-weight: stronger;
+    text-align: left;
+    border-style: dotted;
+    border-width: 1px;
+}
+
+td {
+    text-align: left;
+    border-style: dotted;
+    border-width: 1px;
+}
+
+table {
+    border-style: dotted;
+    border-width: 1px;
+    width: 100%;
+    
+}
+
+h3, h4, h5 {
+    padding-left: 3px;
+}
+
+pre.example {
+    border: solid 1px;
+    margin: 20px;
+}
+
+div#relations {
+    margin-top:50px;
+}
+
+div#datatypes {
+    margin-top:50px;
+}
+
+.relation::before {
+    content:"'"
+}
+.relation::after {
+    content:"'"
+}
+
+.entry {
+    margin-top: 10px;
+    display: block;
+}
+
+.note::before {
+    content:"Info:: ";
+}
+.note {
+    margin: 20px;
+    border: solid 1px;
+    padding: 5px;
+}

@@ -38,13 +38,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
-import eu.ddmore.convertertoolbox.domain.Conversion;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResource;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResources;
-import eu.ddmore.convertertoolbox.domain.hal.LinkRelations;
+import eu.ddmore.convertertoolbox.domain.hal.LinkRelation;
+import eu.ddmore.convertertoolbox.domain.internal.ObjectMapper;
 import eu.ddmore.convertertoolbox.rest.exceptions.ConversionInputsNotSpecified;
 import eu.ddmore.convertertoolbox.rest.exceptions.UnsupportedConversion;
 import eu.ddmore.convertertoolbox.rest.hal.ConversionResourceAssembler;
@@ -85,28 +86,29 @@ public class ConversionController {
             conversionResouces.add(conversionResourceAssembler.toResource(conversion));
         }
         ConversionResources conversionResources = new ConversionResources(conversionResouces);
-        conversionResources.add(linkTo(HomeController.class).withRel(LinkRelations.HOME));
+        conversionResources.add(linkTo(HomeController.class).withRel(LinkRelation.HOME.getRelation()));
         conversionResources.add(linkTo(methodOn(ConversionController.class).list()).withSelfRel());
         return new ResponseEntity<ConversionResources>(conversionResources,HttpStatus.OK);
     }
 
     @RequestMapping(method=RequestMethod.POST)
     @Description("Receives a new Conversion for processing")
-    public @ResponseBody HttpEntity<ConversionResource> post(@RequestParam("conversion") @NotNull Conversion conversion, 
+    public @ResponseBody HttpEntity<ConversionResource> post(@RequestParam("conversion") @NotNull eu.ddmore.convertertoolbox.domain.Conversion inputConversion, 
                                                             @RequestParam("file") @NotNull MultipartFile file) throws UnsupportedConversion, ConversionInputsNotSpecified {
-        LOG.debug(String.format("Received conversion %s",conversion.toString()));
+        LOG.debug(String.format("Received conversion %s",inputConversion.toString()));
         LOG.debug(String.format("Conversion input file size is %sB",file.getSize()));
         
-        if(!isConversionSupported(conversion.getFrom(), conversion.getTo())) {
-            throw new UnsupportedConversion(String.format("Requested conversion from %s to %s is not supported",conversion.getFrom(), conversion.getTo()));
+        if(!isConversionSupported(inputConversion.getFrom(), inputConversion.getTo())) {
+            throw new UnsupportedConversion(String.format("Requested conversion from %s to %s is not supported",inputConversion.getFrom(), inputConversion.getTo()));
         }
         if(file.isEmpty()) {
             throw new ConversionInputsNotSpecified(String.format("File was not uploaded"));
         }
         
+        Conversion internalConversion = ObjectMapper.map(inputConversion);
         Conversion persistedConversion = null;
         try {
-            persistedConversion = conversionService.add(conversion);
+            persistedConversion = conversionService.add(internalConversion);
             Preconditions.checkNotNull(persistedConversion, "Conversion could not be accepted");
         } catch (ExceededCapacity e) {
             return new ResponseEntity<ConversionResource>(HttpStatus.TOO_MANY_REQUESTS);

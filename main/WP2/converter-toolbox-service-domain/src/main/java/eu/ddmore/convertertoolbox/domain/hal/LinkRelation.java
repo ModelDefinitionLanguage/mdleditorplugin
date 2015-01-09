@@ -6,33 +6,42 @@ package eu.ddmore.convertertoolbox.domain.hal;
 /**
  * Holds constants for relations used in links
  */
-public final class LinkRelations {
+public enum LinkRelation {
     /**
      * Relation for link which holds conversion's result resource
      */
-    public static final String RESULT = "result";
+    RESULT("result"),
     /**
      * Relation for link to delete a conversion
      */
-    public static final String DELETE = "delete";
+    DELETE("delete"),
     /**
      * Relation for link refering to resource's 'self' location
      */
-    public static final String SELF = "self";
+    SELF("self"),
     /**
      * Relation for link pointing to home location of the service
      */
-    public static final String HOME = "home";
+    HOME("home"),
     /**
      * Relation for link representing submission of a conversion
      */
-    public static final String SUBMIT = "submit";
+    SUBMIT("submit"),
     /**
      * Relation for link representing a list of conversions being processed
      */
-    public static final String CONVERSIONS = "conversions";
+    CONVERSIONS("conversions"),
     /**
-     * Relation for link to a support system
+     * Relation for link to a support team's system
      */
-    public static final String SUPPORT = "support";
+    SUPPORT("support");
+    
+    private final String relation;
+    private LinkRelation(String relation) {
+        this.relation = relation;
+    }
+    
+    public String getRelation() {
+        return relation;
+    }
 }

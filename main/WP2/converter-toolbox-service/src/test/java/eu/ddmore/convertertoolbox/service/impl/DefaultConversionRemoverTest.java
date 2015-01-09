@@ -25,10 +25,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.base.Optional;
 
-import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
-import eu.ddmore.convertertoolbox.domain.LanguageVersion;
-import eu.ddmore.convertertoolbox.domain.Version;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
+import eu.ddmore.convertertoolbox.rest.ConversionTestFixturesHelper;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 
 
@@ -124,8 +123,6 @@ public class DefaultConversionRemoverTest {
     
 
     private Conversion createTestConversion(String form, String to, String inputFile, ConversionStatus status) {
-        Conversion conversion = new Conversion().setFrom(new LanguageVersion(form,new Version(1, 0, 0, "Q"))).setTo(new LanguageVersion(to,new Version(1, 0, 0, "Q"))).setInputFileName(inputFile);
-        conversion.setStatus(status);
-        return conversion;
+        return ConversionTestFixturesHelper.createInternalTestConversion("TEST_CONVERSION", form, to, inputFile, status);
     }
 }
