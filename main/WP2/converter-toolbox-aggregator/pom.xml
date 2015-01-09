@@ -12,6 +12,7 @@
         <sonar.skippedModules>converter-toolbox-distribution</sonar.skippedModules>
     </properties>
 	<modules>
+		<module>../converter-toolbox-service-parent</module>
 		<module>../converter-toolbox-service-domain</module>
         <module>../converter-toolbox-service</module>
         <module>../converter-toolbox-distribution</module>
