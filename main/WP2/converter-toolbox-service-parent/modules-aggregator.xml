@@ -7,14 +7,18 @@
 	<artifactId>converter-toolbox-service-aggregator</artifactId>
 	<version>1.0.1</version>
 	<packaging>pom</packaging>
+    
+    <properties>
+        <sonar.skippedModules>converter-toolbox-service-parent,converter-toolbox-distribution</sonar.skippedModules>
+    </properties>
 	<modules>
-		<module>../converter-toolbox-service-parent</module>
+        <module>../converter-toolbox-service-parent</module>
 		<module>../converter-toolbox-service-domain</module>
         <module>../converter-toolbox-service</module>
         <module>../converter-toolbox-distribution</module>
 	</modules>
 
 	<url>http://ddmore.eu/</url>
-	<name>Converter Toolbox Service Aggregator Module</name>
+	<name>Converter Toolbox Service Aggregator</name>
     <description>Converter Toolbox Service Aggregator Module.</description>
 </project> 

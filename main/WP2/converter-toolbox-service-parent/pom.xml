@@ -6,7 +6,7 @@
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-toolbox-service-parent</artifactId>
 	<version>1.0.0</version>
-	<name>Parent POM for Converter Toolbox Service Modules</name>
+	<name>Converter Toolbox Service Parent</name>
 	<packaging>pom</packaging>
 	
 	<repositories>
@@ -20,13 +20,12 @@
 			<url>http://www.ebi.ac.uk/~maven/m2repo</url>
 		</repository>
 	</repositories>
-
+    
 	<properties>
         <java.version>1.6</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
 	</properties>
 	
 	<dependencies>
