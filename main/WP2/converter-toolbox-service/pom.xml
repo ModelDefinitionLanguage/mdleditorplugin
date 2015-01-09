@@ -3,9 +3,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
+        <relativePath>../converter-toolbox-service-parent/pom.xml</relativePath>
         <groupId>eu.ddmore</groupId>
-        <artifactId>converter-parent</artifactId>
+        <artifactId>converter-toolbox-service-parent</artifactId>
         <version>1.0.0</version>
     </parent>
 

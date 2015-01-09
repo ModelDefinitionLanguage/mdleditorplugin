@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eu.ddmore</groupId>
+	<artifactId>converter-toolbox-service-aggregator</artifactId>
+	<version>1.0.1</version>
+	<packaging>pom</packaging>
+	<modules>
+		<module>../converter-toolbox-service-parent</module>
+		<module>../converter-toolbox-service-domain</module>
+        <module>../converter-toolbox-service</module>
+        <module>../converter-toolbox-distribution</module>
+	</modules>
+
+	<url>http://ddmore.eu/</url>
+	<name>Converter Toolbox Service Aggregator Module</name>
+    <description>Converter Toolbox Service Aggregator Module.</description>
+</project> 
