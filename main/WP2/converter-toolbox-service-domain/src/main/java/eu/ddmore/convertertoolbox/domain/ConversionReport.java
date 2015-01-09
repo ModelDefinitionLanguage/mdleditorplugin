@@ -6,8 +6,6 @@ package eu.ddmore.convertertoolbox.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 
@@ -32,7 +30,9 @@ public final class ConversionReport {
     }
 
     public List<ConversionDetail> getDetails() {
-        return Lists.newArrayList(details);
+        List<ConversionDetail> result = new ArrayList<ConversionDetail>();
+        result.addAll(details);
+        return result;
     }
 
     public void addDetail(ConversionDetail conversionDetail) {

@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-    <parent>
-        <relativePath>../converter-toolbox-service-parent/pom.xml</relativePath>
-        <groupId>eu.ddmore</groupId>
-        <artifactId>converter-toolbox-service-parent</artifactId>
-        <version>1.0.0</version>
-    </parent>
+    <groupId>eu.ddmore</groupId>
+    <version>1.0.0</version>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>converter-toolbox-service-domain</artifactId>
@@ -15,34 +10,38 @@
     <packaging>jar</packaging>
 
     <properties>
-        <start-class>eu.ddmore.convertertoolbox.Application</start-class>
-        <spring-boot.version>1.1.9.RELEASE</spring-boot.version>
-        <powermock.version>1.5.2</powermock.version>
-        <mockito.version>1.9.5</mockito.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-compress.version>1.9</commons-compress.version>
-        <jackson-databind.version>2.4.3</jackson-databind.version>
+        <jackson-annotations.version>2.3.4</jackson-annotations.version>
+        <spring-hateoas.version>0.16.0.RELEASE</spring-hateoas.version>
+        <json-path.version>0.9.1</json-path.version>
+        <java.version>1.6</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <converter-toolbox-api.version>1.0.1</converter-toolbox-api.version>
     </properties>
 
 
     <dependencies>
         <dependency>
             <groupId>eu.ddmore</groupId>
-            <artifactId>converter-toolbox</artifactId>
-            <version>${project.version}</version>
+            <artifactId>converter-toolbox-api</artifactId>
+            <version>${converter-toolbox-api.version}</version>
         </dependency>
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
+            <version>${json-path.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.hateoas</groupId>
             <artifactId>spring-hateoas</artifactId>
+            <version>${spring-hateoas.version}</version>
         </dependency>
         
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+            <version>${jackson-annotations.version}</version>
         </dependency>
     </dependencies>
 
@@ -53,20 +52,21 @@
                 <includes><include>LICENSE</include></includes>
             </resource>
         </resources>
+        
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <url>http://ddmore.eu</url>
     <description>This module holds Domain Objects exposed via HTTP REST API.</description>
     <organization>
