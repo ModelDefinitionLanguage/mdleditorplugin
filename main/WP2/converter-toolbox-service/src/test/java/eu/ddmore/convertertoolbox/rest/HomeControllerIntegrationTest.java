@@ -21,13 +21,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.env.MockPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 
+import eu.ddmore.convertertoolbox.TestPropertyMockingApplicationContextInitializer;
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
 import eu.ddmore.convertertoolbox.domain.hal.LinkRelation;
 import eu.ddmore.convertertoolbox.domain.hal.ServiceDescriptorResource;
@@ -37,14 +37,20 @@ import eu.ddmore.convertertoolbox.service.ConversionCapabilitiesProvider;
  * Integration Tests the exposed REST service endpoints
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {HomeControllerIntegrationTest.HomeControllerIntegrationTestConfiguration.class, TestInstanceConfiguration.class, RestClientConfiguration.class})
+@SpringApplicationConfiguration(classes = {TestInstanceConfiguration.class, RestClientConfiguration.class}
+, initializers = HomeControllerIntegrationTest.ApplicationContextInitializer.class)
 @WebAppConfiguration
 @IntegrationTest({"server.port=0", "management.port=0"}) //let the framework choose the port
 public class HomeControllerIntegrationTest {
-    @Configuration
-    @PropertySource("classpath:/eu/ddmore/convertertoolbox/rest/HomeControllerIntegrationTest.properties")
-    public static class HomeControllerIntegrationTestConfiguration {
-        
+    /**
+     * Introduces test runtime properties
+     */
+    public static class ApplicationContextInitializer extends TestPropertyMockingApplicationContextInitializer {
+        @Override
+        protected MockPropertySource createPropertySource() {
+            return super.createPropertySource().
+                    withProperty("cts.support.url", "http://mock.host:mock.port");
+        }
     }
     private static final Logger LOG = Logger.getLogger(HomeControllerIntegrationTest.class);
 
@@ -60,7 +66,7 @@ public class HomeControllerIntegrationTest {
 
     @Autowired
     private ConversionCapabilitiesProvider capabilitiesProvider;
-    
+
     @Test
     public void shouldGetServiceDescriptorWithEmbeddedHypertextLinks() {
         

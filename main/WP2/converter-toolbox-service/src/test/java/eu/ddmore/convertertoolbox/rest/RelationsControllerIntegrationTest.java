@@ -18,10 +18,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import eu.ddmore.convertertoolbox.TestPropertyMockingApplicationContextInitializer;
 import eu.ddmore.convertertoolbox.domain.hal.LinkRelation;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {TestInstanceConfiguration.class, RestClientConfiguration.class})
+@SpringApplicationConfiguration(classes = {TestInstanceConfiguration.class, RestClientConfiguration.class}
+, initializers = TestPropertyMockingApplicationContextInitializer.class)
 @WebAppConfiguration
 @IntegrationTest("server.port=0")
 @DirtiesContext

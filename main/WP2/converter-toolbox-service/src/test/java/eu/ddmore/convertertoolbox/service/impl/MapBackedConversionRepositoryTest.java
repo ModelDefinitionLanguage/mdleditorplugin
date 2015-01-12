@@ -5,6 +5,7 @@ package eu.ddmore.convertertoolbox.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -33,9 +34,34 @@ public class MapBackedConversionRepositoryTest {
         instance.save(createTestConversion("6", "FROM", "TO", "mock/input/file", ConversionStatus.Scheduled,0));
     }
 
+    @Test(expected = NullPointerException.class)
+    public void delete_shouldThrowRuntimeExceptionForNullConversion() {
+        instance.delete(null);
+    }
+
+    @Test
+    public void delete_shouldDeleteConversionWithGivenId() {
+        Conversion conversion = new Conversion();
+        conversion.setId("2");
+        instance.delete(conversion);
+        assertFalse(instance.getConversion("2").isPresent());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void save_shouldThrowRuntimeExceptionForNullConversion() {
+        instance.save(null);
+    }
+
+    @Test
+    public void save_shouldPersistTheConversionAndReturnTheInstance() {
+        Conversion conversion = createTestConversion(null, "FROM", "TO", "mock/input/file", ConversionStatus.New, 0);
+        Conversion result = instance.save(conversion);
+        assertNotNull("Save should return not null Conversion instance", result);
+        assertNotNull("The result Conversion should have an id set", result.getId());
+    }
+    
     @Test
     public void getConversions_shouldReturnCollectionOfAllConversions() throws ExceededCapacity {
-        
         assertEquals(instance.getConversions().size(),6);
     }
 
@@ -62,6 +88,12 @@ public class MapBackedConversionRepositoryTest {
     @Test
     public void getConversionsCompletedEarlierThan_shouldReturnConversionsCompletedBeforeGivenDate() {
         assertEquals(instance.getConversionsCompletedEarlierThan(3).size(),2);
+    }
+    
+
+    @Test
+    public void countUncompletedConversions_shouldReturnTheNumberOfCompletedConversions() {
+        assertEquals(instance.countUncompletedConversions(),3);
     }
 
     private Conversion createTestConversion(String id, String form, String to, String inputFile, ConversionStatus status, long completionTime) {

@@ -35,8 +35,8 @@ public class ServiceWorkingDirectory {
      */
     @PostConstruct
     public void initialise() {
-        Preconditions.checkNotNull(workingDirectory, "Working directory can't be null");
-        Preconditions.checkState(StringUtils.isNotBlank(workingDirectory.getPath()),"Working directory can't be blank");
+        Preconditions.checkNotNull(workingDirectory, "Working directory can't be null, use 'cts.workingDirectory' property to set it.");
+        Preconditions.checkState(StringUtils.isNotBlank(workingDirectory.getPath()),"Working directory can't be blank, use 'cts.workingDirectory' property to set it");
         Preconditions.checkState(StringUtils.isNotBlank(identityFileName),"Identity file can't be blank");
         File identityFile = new File(workingDirectory,identityFileName);
         if(workingDirectory.exists()) {

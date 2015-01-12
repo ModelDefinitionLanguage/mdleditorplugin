@@ -27,7 +27,8 @@ import eu.ddmore.convertertoolbox.service.impl.ServiceWorkingDirectory;
  * This test is just to verify that the instance can be started up and the beans are correctly initialized
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {Application.class})
+@SpringApplicationConfiguration(classes = {Application.class}
+, initializers = TestPropertyMockingApplicationContextInitializer.class)
 @WebAppConfiguration
 @IntegrationTest({"server.port=0", "management.port=0"}) //let the framework choose the port
 public class ApplicationIntegrationTest {

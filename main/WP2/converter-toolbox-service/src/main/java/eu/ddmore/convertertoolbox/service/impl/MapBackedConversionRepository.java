@@ -45,6 +45,7 @@ public class MapBackedConversionRepository implements ConversionRepository {
     
     @Override
     public Conversion save(Conversion conversion) {
+        Preconditions.checkNotNull(conversion,"Conversion should not be null");
         Conversion persisted = copy(conversion); //don't modify input parameter
         if(conversion.getId()==null) {
             persisted.setId(generateId());
@@ -74,6 +75,7 @@ public class MapBackedConversionRepository implements ConversionRepository {
 
     @Override
     public void delete(Conversion conversion) {
+        Preconditions.checkNotNull(conversion,"Conversion should not be null");
         conversions.remove(conversion.getId());
     }
 

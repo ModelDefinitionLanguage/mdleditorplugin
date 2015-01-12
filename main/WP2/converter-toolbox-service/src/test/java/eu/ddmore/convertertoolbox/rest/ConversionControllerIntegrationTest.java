@@ -55,6 +55,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
+import eu.ddmore.convertertoolbox.TestPropertyMockingApplicationContextInitializer;
 import eu.ddmore.convertertoolbox.domain.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
@@ -71,7 +72,8 @@ import eu.ddmore.convertertoolbox.service.impl.ServiceWorkingDirectory;
  * Integration Tests the exposed REST service end points
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {TestInstanceConfiguration.class, RestClientConfiguration.class})
+@SpringApplicationConfiguration(classes = {TestInstanceConfiguration.class, RestClientConfiguration.class}
+, initializers = TestPropertyMockingApplicationContextInitializer.class)
 @WebAppConfiguration
 @IntegrationTest({"server.port=0", "management.port=0"}) //let the framework choose the port
 public class ConversionControllerIntegrationTest {
