@@ -19,7 +19,7 @@ public class StringToConversionConverter implements Converter<String, Conversion
         try {
             return mapper.readValue(conversion,Conversion.class);
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Couldn't parse json %s",conversion), e);
+            throw new IllegalArgumentException(String.format("Couldn't parse json %s",conversion), e);
         }
     }
 

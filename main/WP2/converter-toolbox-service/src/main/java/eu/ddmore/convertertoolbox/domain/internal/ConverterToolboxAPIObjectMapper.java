@@ -21,6 +21,13 @@ import eu.ddmore.convertertoolbox.domain.VersionImpl;
  */
 public class ConverterToolboxAPIObjectMapper {
 
+    /**
+     * Hidden constructor
+     */
+    private ConverterToolboxAPIObjectMapper() {
+        
+    }
+    
     public static eu.ddmore.convertertoolbox.api.domain.Version toOldAPI(Version version) {
         return new VersionImpl(version.getMajor(),version.getMinor(),version.getPatch(), version.getQualifier());
     }

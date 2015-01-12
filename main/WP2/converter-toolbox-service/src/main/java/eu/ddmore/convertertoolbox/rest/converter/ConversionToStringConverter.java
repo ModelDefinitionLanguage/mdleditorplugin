@@ -18,7 +18,7 @@ public class ConversionToStringConverter implements Converter<Conversion, String
         try {
             return mapper.writeValueAsString(conversion);
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Could not produce json for %s",conversion), e);
+            throw new IllegalArgumentException(String.format("Could not produce json for %s",conversion), e);
         }
     }
 }

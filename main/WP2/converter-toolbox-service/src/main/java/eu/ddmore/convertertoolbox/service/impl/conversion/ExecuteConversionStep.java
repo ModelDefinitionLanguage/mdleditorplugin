@@ -41,10 +41,9 @@ public class ExecuteConversionStep implements ConversionStep {
             LOG.debug(String.format("Conversion [%s] Executing conversion of %s with output directory %s",conversion.getId(), inputFile.getAbsolutePath(), outputDirectory.getAbsolutePath() ));
             conversionReport = converter.convert(inputFile, outputDirectory);
         } catch (Exception e) {
-            throw new RuntimeException("Converter execution failed with unexpected error.",e);
+            throw new IllegalStateException("Converter execution failed with unexpected error.",e);
         }
-        Preconditions.checkNotNull(conversionReport, "Converter did not return conversion");
-        
+        Preconditions.checkNotNull(conversionReport, "Converter did not return conversion report");
         conversion.setConversionReport(ConverterToolboxAPIObjectMapper.fromOldAPI(conversionReport));
     }
 

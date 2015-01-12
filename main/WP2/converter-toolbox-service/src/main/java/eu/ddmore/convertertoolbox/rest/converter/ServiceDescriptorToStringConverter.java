@@ -18,7 +18,7 @@ public class ServiceDescriptorToStringConverter implements Converter<ServiceDesc
         try {
             return mapper.writeValueAsString(serviceDescriptor);
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Could not produce json for %s",serviceDescriptor), e);
+            throw new IllegalArgumentException(String.format("Could not produce json for %s",serviceDescriptor), e);
         }
     }
 }

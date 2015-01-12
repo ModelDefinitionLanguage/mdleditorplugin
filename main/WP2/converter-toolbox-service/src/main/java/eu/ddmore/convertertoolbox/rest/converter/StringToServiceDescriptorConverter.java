@@ -19,7 +19,7 @@ public class StringToServiceDescriptorConverter implements Converter<String, Ser
         try {
             return mapper.readValue(serviceDescriptor,ServiceDescriptor.class);
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Couldn't parse json %s",serviceDescriptor), e);
+            throw new IllegalArgumentException(String.format("Couldn't parse json %s",serviceDescriptor), e);
         }
     }
 

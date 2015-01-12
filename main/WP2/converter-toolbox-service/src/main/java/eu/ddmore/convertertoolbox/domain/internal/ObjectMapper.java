@@ -7,6 +7,14 @@ package eu.ddmore.convertertoolbox.domain.internal;
  * A mapper object, converts domain objects representations from internal to external
  */
 public class ObjectMapper {
+    /**
+     * Hidden constructor
+     */
+    private ObjectMapper() {
+        
+    }
+    
+    
     public static eu.ddmore.convertertoolbox.domain.Conversion map(Conversion con) {
         eu.ddmore.convertertoolbox.domain.Conversion result = new eu.ddmore.convertertoolbox.domain.Conversion();
         result.setId(con.getId());
@@ -20,6 +28,7 @@ public class ObjectMapper {
         result.setConversionReport(con.getConversionReport());
         return result;
     }
+    
     public static Conversion map(eu.ddmore.convertertoolbox.domain.Conversion con) {
         Conversion result = new Conversion();
         result.setId(con.getId());

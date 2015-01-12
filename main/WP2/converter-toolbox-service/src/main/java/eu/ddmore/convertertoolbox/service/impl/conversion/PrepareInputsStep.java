@@ -52,7 +52,7 @@ public class PrepareInputsStep implements ConversionStep {
                 unzipEntry(zipFile, en,path);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Could not extract archive file.");
+            throw new IllegalStateException(String.format("Could not extract archive file %s.",inputArchive.getAbsolutePath()),e);
         } finally {
             if(zipFile!=null) {
                 ZipFile.closeQuietly(zipFile);
@@ -72,7 +72,7 @@ public class PrepareInputsStep implements ConversionStep {
                 fos = new FileOutputStream(path);
                 IOUtils.copy(is, fos);
             } catch (IOException e) {
-                throw new RuntimeException(String.format("Could not unzip %s",path.getAbsolutePath()));
+                throw new IllegalStateException(String.format("Could not unzip %s",path.getAbsolutePath()),e);
             } finally {
                 if(is!=null) {
                     IOUtils.closeQuietly(is);

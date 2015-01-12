@@ -24,8 +24,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
-import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionReport;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
 import eu.ddmore.convertertoolbox.service.impl.ConversionResourcesConvention;
 
@@ -76,7 +76,7 @@ public class ExecuteConversionStepTest {
         verify(conversion).setConversionReport(any(ConversionReport.class));
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test(expected=IllegalStateException.class)
     public void shouldWrapAnyExceptionInRuntimeExceptionAndRethrow() throws IOException {
         String inputFileName = "inputFile";
         File inputsDirectory = tempFolder.newFolder(ConversionResourcesConvention.INPUTS_DIRECTORY_NAME);

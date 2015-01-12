@@ -42,13 +42,13 @@ public class ProcessOutputsStep implements ConversionStep {
             zipOutput = new ZipArchiveOutputStream(outputArchive);
             addFilesToArchive(inputDir,"",zipOutput);
         } catch (IOException e) {
-            throw new RuntimeException("Could not create archive file.",e);
+            throw new IllegalStateException(String.format("Could not create archive file %s.",outputArchive.getAbsolutePath()),e);
         } finally {
             if(zipOutput!=null) {
                 try {
                     zipOutput.close();
                 } catch (IOException e) {
-                    throw new RuntimeException("Could not create archive file.",e);
+                    throw new IllegalStateException(String.format("Could not create archive file %s.",outputArchive.getAbsolutePath()),e);
                     
                 }
             }
@@ -82,7 +82,7 @@ public class ProcessOutputsStep implements ConversionStep {
                             zipOutput.write(buffer);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(String.format("Could not add %s to archive",f),e);
+                    throw new IllegalStateException(String.format("Could not add %s to archive",f),e);
                 } finally {
                     if(bis!=null) {
                         IOUtils.closeQuietly(bis);
