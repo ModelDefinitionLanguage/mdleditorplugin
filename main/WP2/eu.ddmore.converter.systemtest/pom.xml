@@ -17,7 +17,7 @@ Note that the generated output models aren't verified in terms of content, just 
         <maven.compiler.source>1.6</maven.compiler.source> 
         <maven.compiler.target>1.6</maven.compiler.target>
         <converter.toolbox.bundle.version>1.0.5-SNAPSHOT</converter.toolbox.bundle.version>
-        <testdata.models.version>0.0.2-SNAPSHOT</testdata.models.version>
+        <testdata.models.version>0.0.3-SNAPSHOT</testdata.models.version>
         <models.working.dir>${project.build.directory}/WorkingDir</models.working.dir>
     </properties> 
 	
@@ -27,7 +27,7 @@ Note that the generated output models aren't verified in terms of content, just 
         <dependency>
             <groupId>eu.ddmore.testdata</groupId>
             <artifactId>models</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>${testdata.models.version}</version>
             <scope>test</scope>
         </dependency>
         -->
