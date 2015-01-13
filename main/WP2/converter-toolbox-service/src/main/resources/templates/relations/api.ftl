@@ -14,7 +14,7 @@
     <ol>
     <li>Relations - description of link relations used by the service</li>
     <li>Data Types - description of data types returned by the service</li>
-    </ol>.
+    </ol>
     
     Converter Toolbox Service uses Hypermedia as the Engine of Application State (HATEOAS) RESTful application architecture. (see <a href="http://en.wikipedia.org/wiki/HATEOAS">Wikipedia</a> and <a href="http://stateless.co/hal_specification.html">HAL Specification</a> for more information).
     The chosen architecture style means that clients should make NO assumptions on service's endpoints naming conventions and should only use links attached to returned resource representations.
@@ -511,7 +511,7 @@
                   "warning1":"warning1"
                },
                "message":"WARNING message",
-               "serverity":"WARNING"
+               "severity":"WARNING"
             },
             {
                "info":{
@@ -519,7 +519,7 @@
                   "info2":"info2"
                },
                "message":"INFO message",
-               "serverity":"INFO"
+               "severity":"INFO"
             },
             {
                "info":{
@@ -527,7 +527,7 @@
                   "debug2":"debug2"
                },
                "message":"DEBUG message",
-               "serverity":"DEBUG"
+               "severity":"DEBUG"
             }
          ]
       }
