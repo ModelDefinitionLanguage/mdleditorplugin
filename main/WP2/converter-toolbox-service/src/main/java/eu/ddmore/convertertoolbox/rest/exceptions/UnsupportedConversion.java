@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.rest.exceptions;
 
@@ -7,13 +7,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
 
 
+/**
+ * Exception representing an error when client requested unsupported conversion.
+ */
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason="Unsupported conversion")
 public class UnsupportedConversion extends Exception {
+
+	private static final long serialVersionUID = 1L;
     /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    /**
+     * Creates a new instance of the exception with the given message and root exception
      * @param message
      * @param cause
      */
@@ -22,6 +24,7 @@ public class UnsupportedConversion extends Exception {
     }
 
     /**
+     * Creates a new instance of the exception with the given message
      * @param message
      */
     public UnsupportedConversion(String message) {

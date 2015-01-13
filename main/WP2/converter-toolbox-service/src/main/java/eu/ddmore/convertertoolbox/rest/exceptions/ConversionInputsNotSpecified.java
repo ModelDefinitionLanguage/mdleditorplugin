@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.rest.exceptions;
 
@@ -7,16 +7,16 @@ package eu.ddmore.convertertoolbox.rest.exceptions;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
 
-
-@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason="Conversion input file missing.")
+/**
+ * Exception representing an error when the conversion input archive was not uploaded.
+ */
+@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason="Conversion input archive missing.")
 public class ConversionInputsNotSpecified extends Exception {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     /**
+     * Creates a new instance of the exception with the given message
      * @param message
      */
     public ConversionInputsNotSpecified(String message) {
@@ -24,6 +24,7 @@ public class ConversionInputsNotSpecified extends Exception {
     }
 
     /**
+     * Creates a new instance of the exception with the given message and root exception
      * @param message
      * @param cause
      */

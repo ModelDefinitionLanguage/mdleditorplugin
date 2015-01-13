@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.service;
 
@@ -54,7 +54,7 @@ public interface ConversionRepository {
      * 
      * @return number of uncompleted conversions
      */
-    int countUncompletedConversions();
+    int countIncompleteConversions();
 
     /**
      * Removes conversion

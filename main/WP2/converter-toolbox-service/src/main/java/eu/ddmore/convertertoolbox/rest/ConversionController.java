@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.rest;
 
@@ -9,11 +9,13 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
@@ -38,13 +40,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
-import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.ConversionCapability;
 import eu.ddmore.convertertoolbox.domain.ConversionStatus;
 import eu.ddmore.convertertoolbox.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResource;
 import eu.ddmore.convertertoolbox.domain.hal.ConversionResources;
 import eu.ddmore.convertertoolbox.domain.hal.LinkRelation;
+import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.domain.internal.ObjectMapper;
 import eu.ddmore.convertertoolbox.rest.exceptions.ConversionInputsNotSpecified;
 import eu.ddmore.convertertoolbox.rest.exceptions.UnsupportedConversion;
@@ -173,19 +175,35 @@ public class ConversionController {
         }
         return workingDir;
     }
-    private File persistInputFile(Conversion conversion, String fileName, MultipartFile file) {
-       File outputFile = new File(conversion.getWorkingDirectory(), fileName);
-       try {
-            byte[] bytes = file.getBytes();
-            BufferedOutputStream stream =
-                    new BufferedOutputStream(new FileOutputStream(outputFile));
-            stream.write(bytes);
-            stream.close();
-            return outputFile;
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Could not upload input file for request %s to %s",conversion.getId(),conversion.getWorkingDirectory()),e);
-        }
-    }
+
+	private File persistInputFile(Conversion conversion, String fileName,
+			MultipartFile file) {
+		
+		File outputFile = new File(conversion.getWorkingDirectory(), fileName);
+		InputStream inputStream = null;
+		BufferedOutputStream bos = null;
+		FileOutputStream fos = null;
+		try {
+			inputStream = file.getInputStream();
+			fos = new FileOutputStream(outputFile);
+			bos = new BufferedOutputStream(fos);
+			IOUtils.copy(inputStream, bos);
+		} catch (Exception e) {
+			throw new RuntimeException(String.format(
+					"Could not upload input file for request %s to %s",
+					conversion.getId(), conversion.getWorkingDirectory()), e);
+		} finally {
+			if (inputStream != null) {
+				IOUtils.closeQuietly(inputStream);
+			}
+			if (bos != null) {
+				IOUtils.closeQuietly(bos);
+			} else if (fos != null) {
+				IOUtils.closeQuietly(fos);
+			}
+		}
+		return outputFile;
+	}
 
     private boolean isConversionSupported(final LanguageVersion from, final LanguageVersion to) {
         Collection<ConversionCapability> matchingCapabilities =  Collections2.filter(this.capabilitiesProvider.getCapabilities(), new Predicate<ConversionCapability>() {

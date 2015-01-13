@@ -7,7 +7,7 @@
         <relativePath>../converter-toolbox-service-parent/pom.xml</relativePath>
         <groupId>eu.ddmore</groupId>
         <artifactId>converter-toolbox-service-parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>converter-toolbox-distribution</artifactId>
     <name>Distributions of Converter Toolbox Service</name>
@@ -19,7 +19,6 @@
         <converter-toolbox-bundle.version>1.0.1-SNAPSHOT</converter-toolbox-bundle.version>
         <test-converters.version>0.0.6-SNAPSHOT</test-converters.version>
     </properties>
-
 
     <build>
         <plugins>
@@ -63,12 +62,6 @@
             <version>${mdl-converters.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>eu.ddmore</groupId>
-            <artifactId>converter-mdl_v5.1.6_json</artifactId>
-            <version>${mdl-converters.version}</version>
-        </dependency>
-        
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-toolbox-service</artifactId>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.service.impl;
 
@@ -26,7 +26,9 @@ import eu.ddmore.convertertoolbox.service.ConversionRepository;
  */
 @Repository
 public class MapBackedConversionRepository implements ConversionRepository {
-    private final Map<String,Conversion> conversions = new ConcurrentHashMap<String, Conversion>();
+    
+	private final Map<String,Conversion> conversions = new ConcurrentHashMap<String, Conversion>();
+    
     @Override
     public Optional<Conversion> getConversion(String id) {
         Preconditions.checkArgument(StringUtils.isNotBlank(id), "Conversion id can't be blank");
@@ -65,7 +67,7 @@ public class MapBackedConversionRepository implements ConversionRepository {
     }
 
     @Override
-    public int countUncompletedConversions() {
+    public int countIncompleteConversions() {
         return Collections2.filter(conversions.values(), new Predicate<Conversion>() {
             public boolean apply(Conversion conversion) {
                 return ConversionStatus.Completed.compareTo(conversion.getStatus())>0;

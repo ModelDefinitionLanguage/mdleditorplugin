@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.service.impl;
 
@@ -88,7 +88,7 @@ public class ConversionServiceWithTaskExecutorTest {
     @Test(expected = ExceededCapacity.class)
     public void add_shouldThrowExceededCapacityExceptionIfNoSpaceLeftOnTaskExecutor() throws ExceededCapacity {
         Conversion conversion = createTestConversion("FROM", "TO", "mock/input/file");
-        when(conversionRepository.countUncompletedConversions()).thenReturn(3);
+        when(conversionRepository.countIncompleteConversions()).thenReturn(3);
         instance.setServiceCapacity(3);
         instance.add(conversion);
     }
@@ -123,7 +123,7 @@ public class ConversionServiceWithTaskExecutorTest {
 
     @Test
     public void isFull_shouldReturn_TRUE_IfServiceIsAbleToAcceptConversions() {
-        when(conversionRepository.countUncompletedConversions()).thenReturn(3);
+        when(conversionRepository.countIncompleteConversions()).thenReturn(3);
         instance.setServiceCapacity(3);
         
         assertTrue(instance.isFull());
@@ -131,7 +131,7 @@ public class ConversionServiceWithTaskExecutorTest {
 
     @Test
     public void isFull_shouldReturn_FALSE_IfServiceIsAbleToAcceptConversions() {
-        when(conversionRepository.countUncompletedConversions()).thenReturn(2);
+        when(conversionRepository.countIncompleteConversions()).thenReturn(2);
         instance.setServiceCapacity(3);
         
         assertFalse(instance.isFull());

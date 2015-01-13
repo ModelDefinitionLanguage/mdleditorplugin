@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.rest.hal;
 
@@ -19,6 +19,10 @@ import eu.ddmore.convertertoolbox.rest.ConversionController;
 
 /**
  * Component responsible for facilitating wrapping of the { @link Conversion } into { @link ConversionResource }
+ * 
+ * This is in fact a helper class that Controllers should use to create HAL Representations of Resources.
+ * 
+ * Refer to Spring HATEOAS for details.
  */
 @Component
 public class ConversionResourceAssembler extends ResourceAssemblerSupport<eu.ddmore.convertertoolbox.domain.internal.Conversion, ConversionResource> {

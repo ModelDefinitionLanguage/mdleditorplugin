@@ -12,14 +12,13 @@ CD %SERVICE_HOME%
 
 SET SERVICE_BINARY=converter-toolbox-service-1.0.0.jar
 
-
 REM Converter Toolbox Service requires absolute path of the additional classpath entries
 REM if they reside outside its home directory
 pushd..
 SET CONVERTER_LIBS=%cd%
 popd
 
-SET CLASSPATH="./lib,%CONVERTER_LIBS%/lib"
+SET CTS_LIBS_PATH="./lib,%CONVERTER_LIBS%/lib"
 
 IF NOT DEFINED JAVA_CMD (
     echo FIS is executing in standalone mode, outside of SEE, which would have set JAVA_CMD
@@ -32,6 +31,6 @@ IF NOT DEFINED JAVA_CMD (
     )
 )
 
-%JAVA_CMD% -DAPP_HOME="%SERVICE_HOME%" -Dcts.workingDirectory="%SERVICE_HOME%\tmp" -Dloader.path=%CLASSPATH% -jar %SERVICE_BINARY%
+%JAVA_CMD% -DAPP_HOME="%SERVICE_HOME%" -Dcts.workingDirectory="%SERVICE_HOME%\tmp" -Dloader.path=%CTS_LIBS_PATH% -jar %SERVICE_BINARY%
 
 EXIT

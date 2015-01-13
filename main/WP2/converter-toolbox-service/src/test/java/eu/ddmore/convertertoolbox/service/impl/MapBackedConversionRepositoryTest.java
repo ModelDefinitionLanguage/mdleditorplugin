@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.service.impl;
 
@@ -8,6 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,6 +42,7 @@ public class MapBackedConversionRepositoryTest {
 
     @Test
     public void delete_shouldDeleteConversionWithGivenId() {
+    	assertTrue(instance.getConversion("2").isPresent());
         Conversion conversion = new Conversion();
         conversion.setId("2");
         instance.delete(conversion);
@@ -57,7 +59,7 @@ public class MapBackedConversionRepositoryTest {
         Conversion conversion = createTestConversion(null, "FROM", "TO", "mock/input/file", ConversionStatus.New, 0);
         Conversion result = instance.save(conversion);
         assertNotNull("Save should return not null Conversion instance", result);
-        assertNotNull("The result Conversion should have an id set", result.getId());
+        assertTrue("The result Conversion should have an id set", StringUtils.isNotBlank(result.getId()));
     }
     
     @Test
@@ -92,8 +94,8 @@ public class MapBackedConversionRepositoryTest {
     
 
     @Test
-    public void countUncompletedConversions_shouldReturnTheNumberOfCompletedConversions() {
-        assertEquals(instance.countUncompletedConversions(),3);
+    public void countIncompletedConversions_shouldReturnTheNumberOfNotCompletedConversions() {
+        assertEquals(instance.countIncompleteConversions(),3);
     }
 
     private Conversion createTestConversion(String id, String form, String to, String inputFile, ConversionStatus status, long completionTime) {

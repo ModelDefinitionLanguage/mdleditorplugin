@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox;
 
@@ -40,6 +40,9 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
+    /**
+     * Instantiates converter manager
+     */
     @Bean
     public ConverterManager converterManager() {
         ConverterManagerImpl converterManager =  new ConverterManagerImpl();
@@ -47,12 +50,22 @@ public class Application {
         return converterManager;
     }
     
+    /**
+     * Instantiates a Curie provider that is used by HATEOAS to generate link relations names
+     * @param prefix A prefix used by the curie.
+     * @param template A template of the URL where link relations documentation.
+     */
     @Bean
     public CurieProvider curieProvider(@Value("${cts.linkRelation.prefix}") String prefix, @Value("${cts.linkRelation.template}") String template) {
         return new DefaultCurieProvider(prefix,
             new UriTemplate(template));
     }
 
+    /**
+     * Instantiates Spring MVC configuration element for HTTP file upload support. 
+     * @param maxFileSize Maximum file size.
+     * @param maxRequestSize Maximum request size.
+     */
     @Bean
     public MultipartConfigElement multipartConfigElement(@Value("${cts.http.maxFileSize:8MB}") String maxFileSize, @Value("${cts.http.maxRequestSize:8MB}") String maxRequestSize) {
         MultipartConfigFactory factory = new MultipartConfigFactory();

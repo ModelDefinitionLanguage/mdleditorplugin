@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.service;
 
@@ -10,15 +10,15 @@ public class ExceededCapacity extends Exception {
     private static final long serialVersionUID = 1L;
 
     /**
-     * @param error message
-     * @param causing exception
+     * @param message The error message
+     * @param cause Root exception
      */
     public ExceededCapacity(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * @param error message
+     * @param message The error message
      */
     public ExceededCapacity(String message) {
         super(message);

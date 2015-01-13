@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2002 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.service.impl;
 
@@ -71,7 +71,7 @@ public class ConversionServiceWithTaskExecutor implements ConversionService {
 
     @Override
     public boolean isFull() {
-        return conversionRepository.countUncompletedConversions()>=serviceCapacity;
+        return conversionRepository.countIncompleteConversions()>=serviceCapacity;
     }
 
     @Override
