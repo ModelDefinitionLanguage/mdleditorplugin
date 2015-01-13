@@ -2,7 +2,7 @@
 
 SERVICE_HOME=$(pwd)
 
-SERVICE_BINARY="converter-toolbox-1.0.0.jar"
+SERVICE_BINARY="${project.build.finalName}.${project.packaging}"
 
 CTS_LIBS_PATH="./lib,$(cd ..)/lib"
 # This is a bit convoluted but this seemed to be the only way to get quoted paths with spaces in

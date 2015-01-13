@@ -35,7 +35,6 @@ public class ConverterToolboxAPIObjectMapper {
     public static Version fromOldAPI(eu.ddmore.convertertoolbox.api.domain.Version version) {
         return new Version(version.getMajor(),version.getMinor(),version.getPatch(), version.getQualifier());
     }
-    
 
     public static eu.ddmore.convertertoolbox.api.domain.LanguageVersion toOldAPI(LanguageVersion languageVersion) {
         return new LanguageVersionImpl(languageVersion.getLanguage(), toOldAPI(languageVersion.getVersion()));
@@ -43,7 +42,6 @@ public class ConverterToolboxAPIObjectMapper {
     
     public static LanguageVersion fromOldAPI(eu.ddmore.convertertoolbox.api.domain.LanguageVersion languageVersion) {
         return new LanguageVersion(languageVersion.getLanguage(), fromOldAPI(languageVersion.getVersion()));
-        
     }
 
     public static eu.ddmore.convertertoolbox.api.response.ConversionDetail toOldAPI(ConversionDetail fromConversionDetail) {
@@ -65,7 +63,6 @@ public class ConverterToolboxAPIObjectMapper {
         result.setSeverity(fromOldApi(conversionDetail.getServerity()));
         return result;
     }
-    
 
     private static ConversionDetailSeverity fromOldApi(Severity severity) {
         return ConversionDetailSeverity.valueOf(severity.name());

@@ -14,7 +14,6 @@ public class ObjectMapper {
         
     }
     
-    
     public static eu.ddmore.convertertoolbox.domain.Conversion map(Conversion con) {
         eu.ddmore.convertertoolbox.domain.Conversion result = new eu.ddmore.convertertoolbox.domain.Conversion();
         result.setId(con.getId());

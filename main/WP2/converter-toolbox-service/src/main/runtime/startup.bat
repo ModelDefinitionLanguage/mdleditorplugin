@@ -10,7 +10,7 @@ IF %SERVICE_HOME:~-1%==\ SET SERVICE_HOME=%SERVICE_HOME:~0,-1%
 
 CD %SERVICE_HOME%
 
-SET SERVICE_BINARY=converter-toolbox-service-1.0.0.jar
+SET SERVICE_BINARY=${project.build.finalName}.${project.packaging}
 
 REM Converter Toolbox Service requires absolute path of the additional classpath entries
 REM if they reside outside its home directory
