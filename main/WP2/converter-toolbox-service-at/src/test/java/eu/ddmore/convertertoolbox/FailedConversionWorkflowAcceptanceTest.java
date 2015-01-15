@@ -81,10 +81,11 @@ ConversionToolboxServiceAcceptanceTestParent {
         ConversionCapability alwaysFailingCapability = filteredCapabilities.iterator().next();
         File archive = FileUtils.toFile(FailedConversionWorkflowAcceptanceTest.class.getResource("/failure-wide.zip"));
         
-        Conversion conversion = new Conversion().
-                setFrom(alwaysFailingCapability.getSource()).
-                setTo(alwaysFailingCapability.getTarget().iterator().next()).
-                setInputFileName("failure-wide.txt"); // resides in failure-wide.zip
+        Conversion conversion = new Conversion();
+        
+        conversion.setFrom(alwaysFailingCapability.getSource());
+        conversion.setTo(alwaysFailingCapability.getTarget().iterator().next());
+        conversion.setInputFileName("failure-wide.txt"); // resides in failure-wide.zip
         
         ConversionResource submittedConversion = restClient.submitConversion(serviceDescriptorResource.getLink("ddmore:submit").getHref(), conversion, archive);
 

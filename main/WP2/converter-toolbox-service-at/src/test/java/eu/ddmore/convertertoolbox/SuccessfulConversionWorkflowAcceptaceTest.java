@@ -78,10 +78,10 @@ public class SuccessfulConversionWorkflowAcceptaceTest extends ConversionToolbox
         ConversionCapability alwaysFailingCapability = filteredCapabilities.iterator().next();
         File archive = FileUtils.toFile(FailedConversionWorkflowAcceptanceTest.class.getResource("/success-wid.zip"));
         
-        Conversion conversion = new Conversion().
-                setFrom(alwaysFailingCapability.getSource()).
-                setTo(alwaysFailingCapability.getTarget().iterator().next()).
-                setInputFileName("success-wid.txt"); // resides in success-wid.zip
+        Conversion conversion = new Conversion();
+        conversion.setFrom(alwaysFailingCapability.getSource());
+        conversion.setTo(alwaysFailingCapability.getTarget().iterator().next());
+        conversion.setInputFileName("success-wid.txt"); // resides in success-wid.zip
         
         ConversionResource submittedConversion = restClient.submitConversion(serviceDescriptorResource.getLink("ddmore:submit").getHref(), conversion, archive);
 

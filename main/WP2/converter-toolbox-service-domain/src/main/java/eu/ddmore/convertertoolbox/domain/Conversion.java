@@ -33,54 +33,48 @@ public class Conversion implements Identifiable<String> {
         return id;
     }
     
-    public Conversion setId(String id) {
+    public void setId(String id) {
         this.id = id;
-        return this;
     }
     
     public ConversionStatus getStatus() {
         return status;
     }
     
-    public Conversion setStatus(ConversionStatus status) {
+    public void setStatus(ConversionStatus status) {
         this.status = status;
-        return this;
     }
     
     public Long getOutputFileSize() {
         return outputFileSize;
     }
     
-    public Conversion setOutputFileSize(Long outputFileSize) {
+    public void setOutputFileSize(Long outputFileSize) {
         this.outputFileSize = outputFileSize;
-        return this;
     }
     
     public Long getSubmissionTime() {
         return submissionTime;
     }
     
-    public Conversion setSubmissionTime(Long submissionTime) {
+    public void setSubmissionTime(Long submissionTime) {
         this.submissionTime = submissionTime;
-        return this;
     }
     
     public Long getCompletionTime() {
         return completionTime;
     }
     
-    public Conversion setCompletionTime(Long completionTime) {
+    public void setCompletionTime(Long completionTime) {
         this.completionTime = completionTime;
-        return this;
     }
     
     public ConversionReport getConversionReport() {
         return conversionReport;
     }
     
-    public Conversion setConversionReport(ConversionReport conversionReport) {
+    public void setConversionReport(ConversionReport conversionReport) {
         this.conversionReport = conversionReport;
-        return this;
     }
     
     public LanguageVersion getFrom() {
@@ -95,19 +89,16 @@ public class Conversion implements Identifiable<String> {
         return inputFileName;
     }
     
-    public Conversion setFrom(LanguageVersion from) {
+    public void setFrom(LanguageVersion from) {
         this.from = from;
-        return this;
     }
     
-    public Conversion setInputFileName(String inputFileName) {
+    public void setInputFileName(String inputFileName) {
         this.inputFileName = inputFileName;
-        return this;
     }
     
-    public Conversion setTo(LanguageVersion to) {
+    public void setTo(LanguageVersion to) {
         this.to = to;
-        return this;
     }
 
 
