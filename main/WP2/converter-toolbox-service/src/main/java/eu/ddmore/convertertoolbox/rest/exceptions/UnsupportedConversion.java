@@ -16,8 +16,8 @@ public class UnsupportedConversion extends Exception {
 	private static final long serialVersionUID = 1L;
     /**
      * Creates a new instance of the exception with the given message and root exception
-     * @param message
-     * @param cause
+     * @param message Error message
+     * @param cause Root exception
      */
     public UnsupportedConversion(String message, Throwable cause) {
         super(message, cause);
@@ -25,7 +25,7 @@ public class UnsupportedConversion extends Exception {
 
     /**
      * Creates a new instance of the exception with the given message
-     * @param message
+     * @param message Error message
      */
     public UnsupportedConversion(String message) {
         super(message);

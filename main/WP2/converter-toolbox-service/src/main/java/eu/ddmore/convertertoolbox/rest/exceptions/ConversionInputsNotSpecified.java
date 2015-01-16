@@ -17,7 +17,7 @@ public class ConversionInputsNotSpecified extends Exception {
 
     /**
      * Creates a new instance of the exception with the given message
-     * @param message
+     * @param message Error message
      */
     public ConversionInputsNotSpecified(String message) {
         super(message);
@@ -25,8 +25,8 @@ public class ConversionInputsNotSpecified extends Exception {
 
     /**
      * Creates a new instance of the exception with the given message and root exception
-     * @param message
-     * @param cause
+     * @param message Error message
+     * @param cause Root exception
      */
     public ConversionInputsNotSpecified(String message, Throwable cause) {
         super(message, cause);
