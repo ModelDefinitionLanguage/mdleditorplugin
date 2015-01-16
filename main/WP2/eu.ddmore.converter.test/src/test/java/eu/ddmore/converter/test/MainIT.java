@@ -36,7 +36,7 @@ public class MainIT {
 
     @Test
     public void shouldConvertCLI() throws ConverterNotFoundException, IOException {
-        String[] args = new String[] { "-in", WORKING_DIRECTORY, "-out", WORKING_DIRECTORY + "output", "-sn", "MDL", "-sv", "5.0.8-qualm", "-tn", "NMTRAN", "-tv", "7.2.0-qualn" };
+        String[] args = new String[] { "-in", WORKING_DIRECTORY, "-out", WORKING_DIRECTORY + "output", "-sn", "MDL", "-sv", "5.0.8-succeeding", "-tn", "NMTRAN", "-tv", "7.2.0-succeeding" };
         Main cli = new Main();
         cli.parseArguments(args);
         ConversionReport[] reports = cli.runFromCommandLine();
@@ -46,7 +46,7 @@ public class MainIT {
 
     @Test
     public void shouldConvertCLI_AbsolutePath() throws ConverterNotFoundException, IOException {
-        String[] args = new String[] { "-in", new File(WORKING_DIRECTORY).getAbsolutePath(), "-out", new File(WORKING_DIRECTORY, "output").getAbsolutePath(), "-sn", "MDL", "-sv", "5.0.8-qualm", "-tn", "NMTRAN", "-tv", "7.2.0-qualn" };
+        String[] args = new String[] { "-in", new File(WORKING_DIRECTORY).getAbsolutePath(), "-out", new File(WORKING_DIRECTORY, "output").getAbsolutePath(), "-sn", "MDL", "-sv", "5.0.8-succeeding", "-tn", "NMTRAN", "-tv", "7.2.0-succeeding" };
         Main cli = new Main();
         cli.parseArguments(args);
         ConversionReport[] reports = cli.runFromCommandLine();
