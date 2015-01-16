@@ -28,10 +28,6 @@ public enum LinkRelation {
      */
     SUBMIT("submit"),
     /**
-     * Relation for link representing a list of conversions being processed
-     */
-    CONVERSIONS("conversions"),
-    /**
      * Relation for link to a support team's system
      */
     SUPPORT("support");

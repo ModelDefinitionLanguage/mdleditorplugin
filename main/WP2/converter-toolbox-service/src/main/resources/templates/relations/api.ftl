@@ -103,9 +103,6 @@
       "self":{
          "href":"http://localhost:9020/"
       },
-      "ddmore:conversions":{
-         "href":"http://localhost:9020/conversion"
-      },
       "ddmore:submit":{
          "href":"http://localhost:9020/conversion"
       },
@@ -276,24 +273,6 @@
         </div>
     </div>
     <div class="entry">
-        <h3><a id="conversions" class="relation">conversions</a></h3>
-        <h4>Description</h4>
-        <p>Clients should follow this link to retrieve the list of currently processed conversions.</p>
-        <h4>Methods</h4>
-        <p>There are the following HTTP verbs supported by the target resource.<p>
-        <div class="methods_list">
-            <div class="entry">
-            <h5>GET</h5>
-            <table><tr>
-            <th>Input Parameters</th><td>No input parameters are expected</td></tr>
-            <tr><th>Output MediaType</th><td>application/hal+json</td></tr>
-            <tr><th>Output Data Type</th><td>Collection of <a href="#conversion_type">Conversion</a> resources.</td></tr>
-            </table>
-            </div>
-            <div class="note">It should be assumed that other verbs are not supported by the target resource.</div>
-        </div>
-    </div>
-    <div class="entry">
         <h3><a id="support" class="relation">support</a></h3>
         <h4>Description</h4>
         <p>Clients should follow this link to submit issues to service support team.</p>
@@ -312,10 +291,6 @@
         </div>
     </div>
     </div>
-    
-    
-    
-    
     <div id="datatypes">
     <h2>Data Types</h2>
         <p>Converter Toolbox Service uses HAL MediaType (See <a href="http://stateless.co/hal_specification.html">HAL Specification</a> for details).

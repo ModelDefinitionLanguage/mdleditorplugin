@@ -82,11 +82,10 @@ public class HomeControllerIntegrationTest {
 
         assertNotNull(response.getBody().getContent());
         assertNotNull(response.getBody().getLinks());
-        assertEquals(4, response.getBody().getLinks().size());
+        assertEquals(3, response.getBody().getLinks().size());
         assertEquals(LinkRelation.SELF.getRelation(), response.getBody().getLinks().get(0).getRel());
-        assertEquals(LinkRelation.CONVERSIONS.getRelation(), response.getBody().getLinks().get(1).getRel());
-        assertEquals(LinkRelation.SUBMIT.getRelation(), response.getBody().getLinks().get(2).getRel());
-        assertEquals(LinkRelation.SUPPORT.getRelation(), response.getBody().getLinks().get(3).getRel());
+        assertEquals(LinkRelation.SUBMIT.getRelation(), response.getBody().getLinks().get(1).getRel());
+        assertEquals(LinkRelation.SUPPORT.getRelation(), response.getBody().getLinks().get(2).getRel());
         
         assertTrue(response.getBody().getContent().getCapabilities().size()==2);
         assertTrue(StringUtils.isNotBlank(response.getBody().getContent().getName()));
