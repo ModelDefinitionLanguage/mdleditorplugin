@@ -10,14 +10,14 @@
     <packaging>jar</packaging>
 
     <properties>
-        <commons-lang.version>2.6</commons-lang.version>
-        <commons-compress.version>1.9</commons-compress.version>
+        <!-- Maven Pugins' Properties -->
+        <java.version>1.6</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <!-- Dependencies' Versions -->
         <jackson-annotations.version>2.3.4</jackson-annotations.version>
         <spring-hateoas.version>0.16.0.RELEASE</spring-hateoas.version>
         <json-path.version>0.9.1</json-path.version>
-        <java.version>1.6</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <converter-toolbox-api.version>1.0.1</converter-toolbox-api.version>
     </properties>
 
 
