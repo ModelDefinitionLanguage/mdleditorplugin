@@ -1,0 +1,41 @@
+<assembly
+    xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+	<id>binary</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+        <fileSet>
+            <directory>target</directory>
+            <outputDirectory>converter-toolbox-service</outputDirectory>
+            <includes>
+                <include>converter-toolbox*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>target/../src/main/runtime</directory>
+            <outputDirectory>converter-toolbox-service</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <filtered>true</filtered>
+        </fileSet>
+        <fileSet>
+            <directory>target/classes</directory>
+            <outputDirectory>converter-toolbox-service</outputDirectory>
+            <includes>
+                <include>application.properties</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory></directory>
+            <outputDirectory>converter-toolbox-service</outputDirectory>
+            <includes>
+                <include>LICENSE</include>
+            </includes>
+        </fileSet>
+	</fileSets>
+</assembly>

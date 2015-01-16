@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly
+    xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <id>full</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <baseDirectory>${project.artifactId}</baseDirectory>
+	<dependencySets>
+        <dependencySet>
+            <includes>
+                <include>eu.ddmore:converter-toolbox-bundle:zip</include>
+                <include>eu.ddmore:converter-toolbox-service:zip:binary:*</include>
+            </includes>
+            <outputDirectory>.</outputDirectory>
+            <unpack>true</unpack>
+            <useStrictFiltering>true</useStrictFiltering>
+            <useProjectArtifact>false</useProjectArtifact>
+        </dependencySet>
+        <dependencySet>
+            <includes>
+                <include>eu.ddmore:converter-mdl_v5.1.6_json</include>
+                <include>eu.ddmore:converter-mdl</include>
+            </includes>
+            <outputDirectory>lib</outputDirectory>
+            <unpack>false</unpack>
+            <useStrictFiltering>true</useStrictFiltering>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory></directory>
+            <outputDirectory>.</outputDirectory>
+            <includes>
+                <include>LICENSE</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

@@ -4,9 +4,9 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.ddmore</groupId>
-	<artifactId>converter-parent</artifactId>
-	<version>1.0.0</version>
-	<name>Parent POM for Converter modules</name>
+	<artifactId>converter-toolbox-service-parent</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>Converter Toolbox Service Parent</name>
 	<packaging>pom</packaging>
 	
 	<repositories>
@@ -20,71 +20,37 @@
 			<url>http://www.ebi.ac.uk/~maven/m2repo</url>
 		</repository>
 	</repositories>
-
+    
 	<properties>
-        <libpharmml.version>0.3.1-b2</libpharmml.version>
-        <!-- Why do we need this? The same module (modules-aggregator-pom.xml) builds it! -->
-        <converter-toolbox-api.version>1.0.1</converter-toolbox-api.version>
-
         <java.version>1.6</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 	</properties>
 	
 	<dependencies>
-        <!-- DDMoRe project libraries -->
-
         <dependency>
-            <groupId>eu.ddmore.pharmml</groupId>
-            <artifactId>libPharmML</artifactId>
-            <version>${libpharmml.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
         </dependency>
-
         <dependency>
-            <groupId>eu.ddmore</groupId>
-            <artifactId>converter-toolbox-api</artifactId>
-            <version>${converter-toolbox-api.version}</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>15.0</version>
         </dependency>
-
-        <!-- Third-party libraries -->
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>2.1.5</version>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>15.0</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
-				
+        
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
-	
 	</dependencies>
 	
 	<build>
@@ -98,6 +64,12 @@
 						<target>${java.version}</target>
 					</configuration>
 				</plugin>
+                <plugin>
+                    <groupId>org.codehaus.sonar</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>4.2</version>
+                    <inherited>false</inherited>
+                </plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

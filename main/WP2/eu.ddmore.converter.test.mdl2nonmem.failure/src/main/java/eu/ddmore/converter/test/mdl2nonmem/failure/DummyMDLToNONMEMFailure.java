@@ -29,10 +29,10 @@ public class DummyMDLToNONMEMFailure implements ConverterProvider {
     private Version converterVersion;
 
     public DummyMDLToNONMEMFailure() {
-        Version sourceVersion = new VersionImpl(5, 0, 8, "qualm");
+        Version sourceVersion = new VersionImpl(5, 0, 8, "failing");
         source = new LanguageVersionImpl("MDL", sourceVersion);
 
-        Version targetVersion = new VersionImpl(7, 2, 0, "qualn");
+        Version targetVersion = new VersionImpl(7, 2, 0, "failing");
         target = new LanguageVersionImpl("NMTRAN", targetVersion);
 
         converterVersion = new VersionImpl(1, 0, 1);

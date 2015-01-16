@@ -26,6 +26,7 @@
 	<build>
 		<plugins>
 			<plugin>
+        <!-- FIXME this doesn't belong in here, this should be inside eu.ddmore.converter.toolbox module  -->
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>

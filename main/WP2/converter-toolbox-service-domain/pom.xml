@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <groupId>eu.ddmore</groupId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>converter-toolbox-service-domain</artifactId>
+    <name>Converter Toolbox Service Domain</name>
+    <packaging>jar</packaging>
+
+    <properties>
+        <!-- Maven Pugins' Properties -->
+        <java.version>1.6</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <!-- Dependencies' Versions -->
+        <jackson-annotations.version>2.3.4</jackson-annotations.version>
+        <spring-hateoas.version>0.16.0.RELEASE</spring-hateoas.version>
+        <json-path.version>0.9.1</json-path.version>
+    </properties>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${json-path.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.hateoas</groupId>
+            <artifactId>spring-hateoas</artifactId>
+            <version>${spring-hateoas.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson-annotations.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}</directory>
+                <includes><include>LICENSE</include></includes>
+            </resource>
+        </resources>
+        
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <url>http://ddmore.eu</url>
+    <description>This module holds Domain Objects exposed via HTTP REST API.</description>
+    <organization>
+        <name>Mango Solutions</name>
+        <url>http://www.mango-solutions.com</url>
+    </organization>
+    <inceptionYear>2014</inceptionYear>
+</project>
