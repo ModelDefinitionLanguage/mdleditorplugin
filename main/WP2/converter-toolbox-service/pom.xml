@@ -169,7 +169,6 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <finalName>converter-toolbox</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/src/main/assembly/binary.xml</descriptor>
                             </descriptors>
