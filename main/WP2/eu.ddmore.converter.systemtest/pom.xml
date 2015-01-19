@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.ddmore</groupId>
 	<artifactId>converter-systemtest</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>Automated Converter Test Models Execution</name>
 
 	<description>
@@ -16,33 +16,41 @@ Note that the generated output models aren't verified in terms of content, just 
     <properties>
         <maven.compiler.source>1.6</maven.compiler.source> 
         <maven.compiler.target>1.6</maven.compiler.target>
-        <converter.toolbox.bundle.version>1.0.5-SNAPSHOT</converter.toolbox.bundle.version>
+        <converter-parent.version>1.0.1-SNAPSHOT</converter-parent.version>
+        <converter-toolbox-distribution.version>1.0.0-SNAPSHOT</converter-toolbox-distribution.version>
         <testdata.models.version>0.0.3-SNAPSHOT</testdata.models.version>
         <models.working.dir>${project.build.directory}/WorkingDir</models.working.dir>
+        <commons-exec.version>1.1</commons-exec.version>
     </properties> 
 	
 	<dependencies>
-	
-        <!--
+	   <!-- These dependencies are listed here for fast validation purposes only -->
         <dependency>
             <groupId>eu.ddmore.testdata</groupId>
             <artifactId>models</artifactId>
             <version>${testdata.models.version}</version>
             <scope>test</scope>
         </dependency>
-        -->
+        
+        <dependency>
+            <groupId>eu.ddmore</groupId>
+            <artifactId>converter-toolbox-distribution</artifactId>
+            <version>${converter-toolbox-distribution.version}</version>
+            <scope>test</scope>
+            <type>zip</type>
+            <classifier>full</classifier>
+        </dependency>
+       <!-- End of validation dependencies -->
         
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
             <scope>test</scope>
         </dependency>
         
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4</version>
             <exclusions>
                 <exclusion>
                     <artifactId>org.slf4j</artifactId>
@@ -54,19 +62,17 @@ Note that the generated output models aren't verified in terms of content, just 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-exec</artifactId>
-            <version>1.1</version>
+            <version>${commons-exec.version}</version>
         </dependency>
         
 		<dependency>
 		    <groupId>com.google.guava</groupId>
 		    <artifactId>guava</artifactId>
-		    <version>17.0</version>
 		</dependency>
         
 		<dependency>
 		    <groupId>log4j</groupId>
 		    <artifactId>log4j</artifactId>
-		    <version>1.2.17</version>
 		</dependency>
         
 	</dependencies>
@@ -87,8 +93,9 @@ Note that the generated output models aren't verified in terms of content, just 
 							<artifactItems>
 								<artifactItem>
 						            <groupId>eu.ddmore</groupId>
-						            <artifactId>converter-toolbox-bundle</artifactId>
-						            <version>${converter.toolbox.bundle.version}</version>
+						            <artifactId>converter-toolbox-distribution</artifactId>
+						            <version>${converter-toolbox-distribution.version}</version>
+                                    <classifier>full</classifier>
 									<type>zip</type>
 									<outputDirectory>${project.build.directory}</outputDirectory>
 								</artifactItem>
@@ -121,6 +128,9 @@ Note that the generated output models aren't verified in terms of content, just 
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.17</version>
 				<configuration>
+                    <systemProperties>
+                        <converter-toolbox.executable>${project.build.directory}/converter-toolbox-distribution/converter-toolbox/convert.bat</converter-toolbox.executable>
+                    </systemProperties>
 					<includes>
 						<include>**/AllTests.java</include>
 					</includes>
@@ -188,4 +198,16 @@ Note that the generated output models aren't verified in terms of content, just 
 		</pluginManagement>
 	</build>
 	
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- Import dependency management from converter-parent module -->
+                <groupId>eu.ddmore</groupId>
+                <artifactId>converter-parent</artifactId>
+                <version>${converter-parent.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

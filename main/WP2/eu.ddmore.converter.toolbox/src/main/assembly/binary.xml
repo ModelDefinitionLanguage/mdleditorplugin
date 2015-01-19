@@ -8,37 +8,12 @@
         <format>zip</format>
     </formats>
     <baseDirectory>${project.artifactId}</baseDirectory>
-   	<moduleSets>
-   		<moduleSet>
-   		<includes>
-   			<!-- Don't need to specify all the submodules here since some will be brought in transitively. -->
-   			<include>eu.ddmore:converter-toolbox:jar</include>
-   			<include>eu.ddmore:converter-mdl:jar</include>
-   			<include>eu.ddmore:converter-mdl_v5.1.6_json:jar</include>
-		</includes>
-   		<binaries>
-            <outputDirectory>lib</outputDirectory>
-            <unpack>false</unpack>
-            <useStrictFiltering>true</useStrictFiltering>
-            <dependencySets>
-            	<dependencySet>
-            		<unpack>false</unpack>
-            	</dependencySet>
-            </dependencySets>
-   		</binaries>
-   		</moduleSet>
-   	</moduleSets>
 	<dependencySets>
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <unpack>false</unpack>
             <useStrictFiltering>true</useStrictFiltering>
-            <!-- Need (some of) converter-pharmml_v03_nmtran_v72's transitive dependencies too.
-            <includes>
-   				<include>eu.ddmore:converter-pharmml_v03_nmtran_v72:jar</include>
-            </includes>
-            -->
-            <useProjectArtifact>false</useProjectArtifact>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
         </dependencySet>
     </dependencySets>
     <fileSets>

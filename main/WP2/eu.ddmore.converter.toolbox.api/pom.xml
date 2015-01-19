@@ -39,4 +39,11 @@
 		</plugins>
 	</build>
 
+    <url>http://ddmore.eu</url>
+    <description>This module holds Converter Toolbox API and Converter's SPI.</description>
+    <organization>
+        <name>Mango Solutions</name>
+        <url>http://www.mango-solutions.com</url>
+    </organization>
+    <inceptionYear>2014</inceptionYear>
 </project>

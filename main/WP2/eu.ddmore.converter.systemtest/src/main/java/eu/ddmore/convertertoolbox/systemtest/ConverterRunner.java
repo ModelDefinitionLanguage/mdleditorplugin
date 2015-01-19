@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 public class ConverterRunner {
     private final static Logger LOGGER = Logger.getLogger(ConverterRunner.class);
 
-    final static String CONVERTER_TOOLBOX_EXECUTABLE = new File("target/converter-toolbox-bundle/convert.bat").getAbsolutePath();
+    final static String CONVERTER_TOOLBOX_EXECUTABLE = new File(System.getProperty("converter-toolbox.executable")).getAbsolutePath();
     final static String OUTPUT_SUBDIRECTORY_BASENAME = "output-";
     
     private final File modelFile;

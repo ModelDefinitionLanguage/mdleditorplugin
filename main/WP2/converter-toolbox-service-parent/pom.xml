@@ -74,4 +74,11 @@
 		</pluginManagement>
 	</build>
 	
+    <url>http://ddmore.eu</url>
+    <organization>
+        <name>Mango Solutions</name>
+        <url>http://www.mango-solutions.com</url>
+    </organization>
+    <inceptionYear>2014</inceptionYear>
+    <description>Holds common build configuration that is shared by various Converter Toolbox Service modules.</description>
 </project>
