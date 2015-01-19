@@ -157,13 +157,7 @@ public class XtextWrapper {
 	
 	public static Object unwrap(Vector v) {
 		"[".concat(v.getValues().collect {Primary p ->
-			if (p.getNumber()) {
-				p.getNumber()
-			} else if (p.getString()) {
-				"\"" + p.getString() + "\""
-			} else if (p.getSymbol()) {
-				p.getSymbol().getName()
-			}
+			return unwrap(p.getExpression())
 		}.join(", ")).concat("]")
 	}
 

@@ -72,7 +72,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	@Test
 	public void testMDLToJSONToMDL() {
 		
-		def File origMdlFile = getFileFromModelsProject("warfarin_ODE/Warfarin-ODE-28Oct2014.mdl", "mdl")
+		def File origMdlFile = getFileFromModelsProject("6.0.7/Warfarin_ODE/Warfarin-ODE-latest.mdl", "mdl")
 		
 		def json = getJsonFromMDLFile(origMdlFile)
 		
@@ -90,10 +90,10 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: Warfarin-ODE-latest.output.json
 	 */
 	@Test
-	public void testRGeneratedMOG_WarfarinODE28Oct2014() {
+	public void testRGeneratedMOG_WarfarinODE_MDL607() {
 		testRGeneratedMOG(
-			"warfarin_ODE/Warfarin-ODE-28Oct2014.output.json",
-			"warfarin_ODE/Warfarin-ODE-28Oct2014.mdl"
+			"6.0.7/Warfarin_ODE/Warfarin-ODE-latest.output.json",
+			"6.0.7/Warfarin_ODE/Warfarin-ODE-latest.mdl"
 		);
 	}
 
