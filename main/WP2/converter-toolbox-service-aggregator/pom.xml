@@ -21,4 +21,9 @@
     <url>http://ddmore.eu/</url>
     <name>Converter Toolbox Service Aggregator</name>
     <description>Converter Toolbox Service Aggregator Module.</description>
+    <organization>
+        <name>Mango Solutions</name>
+        <url>http://www.mango-solutions.com</url>
+    </organization>
+    <inceptionYear>2014</inceptionYear>
 </project> 

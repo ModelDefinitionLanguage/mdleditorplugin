@@ -11,7 +11,7 @@
 	<dependencySets>
         <dependencySet>
             <includes>
-                <include>eu.ddmore:converter-toolbox-bundle:zip</include>
+                <include>eu.ddmore:converter-toolbox:zip</include>
                 <include>eu.ddmore:converter-toolbox-service:zip:binary:*</include>
             </includes>
             <outputDirectory>.</outputDirectory>
@@ -20,10 +20,12 @@
             <useProjectArtifact>false</useProjectArtifact>
         </dependencySet>
         <dependencySet>
-            <includes>
-                <include>eu.ddmore:converter-mdl_v5.1.6_json</include>
-                <include>eu.ddmore:converter-mdl</include>
-            </includes>
+            <excludes>
+                <exclude>eu.ddmore:test-mdl2nonmem-failure</exclude>
+                <exclude>eu.ddmore:test-mdl2nonmem-success</exclude>
+                <exclude>eu.ddmore:converter-toolbox:*</exclude>
+                <exclude>eu.ddmore:converter-toolbox-service:*</exclude>
+            </excludes>
             <outputDirectory>lib</outputDirectory>
             <unpack>false</unpack>
             <useStrictFiltering>true</useStrictFiltering>

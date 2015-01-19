@@ -3,16 +3,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.ddmore</groupId>
-	<artifactId>converter-toolbox-bundle</artifactId>
+	<artifactId>converter-toolbox-aggregator</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.5-SNAPSHOT</version>
-	<name>Aggregator for Converter modules</name>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>Converter Toolbox Aggregator Module</name>
 
 	<modules>
 		<!-- Note that these are just the 'core' converter modules;
 		     the converter implementations themselves are generally
 		     built separately and brought in for the assembly of
 		     the Zip file. -->
+        <module>../eu.ddmore.converter.parent</module>
 		<module>../eu.ddmore.converter.toolbox.api</module>
 		<module>../eu.ddmore.converter.toolbox</module>
 		<module>../eu.ddmore.converter.test.mdl2nonmem.sucess</module>
@@ -22,39 +23,6 @@
 		<module>../eu.ddmore.converter.mdl</module>
 		<module>../eu.ddmore.converter.mdl_v5.1.6_json</module>
 	</modules>
-	
-	<build>
-		<plugins>
-			<plugin>
-        <!-- FIXME this doesn't belong in here, this should be inside eu.ddmore.converter.toolbox module  -->
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/binary.xml</descriptor>
-							</descriptors>
-							<appendAssemblyId>false</appendAssemblyId>
-						</configuration>
-						<id>binary</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	
-	<dependencies>
-		<!-- "Optional" converters are specified as dependencies here. -->
-		<dependency>
-			<groupId>eu.ddmore</groupId>
-			<artifactId>converter-nonmem</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
-			<scope>runtime</scope>
-		</dependency>
-	</dependencies>
-	
+	<description>This is an aggregator module, it is used to build multiple modules constituting Converter Toolbox in the right order.</description>
+	<url>http://ddmore.eu/</url>
 </project>

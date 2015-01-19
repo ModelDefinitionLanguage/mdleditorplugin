@@ -11,7 +11,7 @@
 	<dependencySets>
         <dependencySet>
             <includes>
-                <include>eu.ddmore:converter-toolbox-bundle:zip</include>
+                <include>eu.ddmore:converter-toolbox:zip</include>
                 <include>eu.ddmore:converter-toolbox-service:zip:binary:*</include>
             </includes>
             <outputDirectory>.</outputDirectory>
