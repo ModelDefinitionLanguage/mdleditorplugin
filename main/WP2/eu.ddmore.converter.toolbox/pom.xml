@@ -119,4 +119,11 @@
 		</plugins>
 	</build>
 
+    <url>http://ddmore.eu</url>
+    <description>This module is an implementation of the Converter Toolbox API.</description>
+    <organization>
+        <name>Mango Solutions</name>
+        <url>http://www.mango-solutions.com</url>
+    </organization>
+    <inceptionYear>2014</inceptionYear>
 </project>

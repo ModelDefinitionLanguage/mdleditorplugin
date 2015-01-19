@@ -25,4 +25,10 @@
 	</modules>
 	<description>This is an aggregator module, it is used to build multiple modules constituting Converter Toolbox in the right order.</description>
 	<url>http://ddmore.eu/</url>
+    
+    <organization>
+        <name>Mango Solutions</name>
+        <url>http://www.mango-solutions.com</url>
+    </organization>
+    <inceptionYear>2014</inceptionYear>
 </project>
