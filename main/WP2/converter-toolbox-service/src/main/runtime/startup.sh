@@ -1,8 +1,10 @@
 #!/bin/bash
 
-SERVICE_HOME=$(pwd)
+SERVICE_HOME="$( cd "$( dirname "$0" )" && pwd )"
 
 SERVICE_BINARY="${project.build.finalName}.${project.packaging}"
+
+cd $SERVICE_HOME
 
 CTS_LIBS_PATH="./lib,$(cd ..)/lib"
 # This is a bit convoluted but this seemed to be the only way to get quoted paths with spaces in
