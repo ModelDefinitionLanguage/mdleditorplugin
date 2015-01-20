@@ -21,7 +21,7 @@ popd
 SET CTS_LIBS_PATH="./lib,%CONVERTER_LIBS%/lib"
 
 IF NOT DEFINED JAVA_CMD (
-    echo FIS is executing in standalone mode, outside of SEE, which would have set JAVA_CMD
+    echo Software is executing in standalone mode, outside of SEE, which would have set JAVA_CMD
     IF EXIST "%JAVA_HOME%\bin\java.exe" (
         echo Using Java from JAVA_HOME environment variable
         SET JAVA_CMD="%JAVA_HOME%\bin\java"
