@@ -58,7 +58,7 @@
 
         <dependency>
             <groupId>eu.ddmore</groupId>
-            <artifactId>converter-mdl_v5.1.6_json</artifactId>
+            <artifactId>converter-mdl_json</artifactId>
             <version>${mdl-converters.version}</version>
         </dependency>
 

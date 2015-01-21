@@ -21,7 +21,7 @@
 		<module>../eu.ddmore.converter.test.mdl2pharmml</module>
 		<module>../eu.ddmore.converter.test</module>
 		<module>../eu.ddmore.converter.mdl</module>
-		<module>../eu.ddmore.converter.mdl_v5.1.6_json</module>
+		<module>../eu.ddmore.converter.mdl_json</module>
 	</modules>
 	<description>This is an aggregator module, it is used to build multiple modules constituting Converter Toolbox in the right order.</description>
 	<url>http://ddmore.eu/</url>
