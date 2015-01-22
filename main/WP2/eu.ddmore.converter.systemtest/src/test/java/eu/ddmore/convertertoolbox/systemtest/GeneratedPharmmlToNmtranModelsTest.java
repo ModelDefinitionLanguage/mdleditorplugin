@@ -37,9 +37,9 @@ public class GeneratedPharmmlToNmtranModelsTest {
     private final static String PHARMML_VERSION = "0.3.1";
     private final static String NMTRAN_VERSION = "7.2";
 
-    private final static String ORIGINAL_MDL_MODELS_SUBDIRECTORY = quoteReplacement("mdl" + File.separator + MDL_VERSION);
+    private final static String ORIGINAL_MDL_MODELS_SUBDIRECTORY = quoteReplacement("mdl" + File.separator + MDL_VERSION); // quoteReplacement() since the backslashes need to be escaped in this string
     private final static String ORIGINAL_MDL_MODELS_FILE_EXTENSION = "mdl";
-    private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY = quoteReplacement("PharmML-generated-from-MDL" + File.separator + MDL_VERSION);
+    private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY = quoteReplacement("PharmML-generated-from-MDL" + File.separator + MDL_VERSION); // quoteReplacement() since the backslashes need to be escaped in this string
     private final static String PHARMML_MODELS_FILE_EXTENSION = "xml";
     private final static String OUTPUT_FILE_EXTENSION = "ctl";
     
@@ -85,7 +85,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
     /**
      * @param mdlModelFilePath - file path to a MDL model file
      * @return file path to the corresponding generated PharmML model file (which may not actually exist yet),
-     *         within the "pharmml-generated-from-MDL" directory structure into which the generated PharmML
+     *         within the "PharmML-generated-from-MDL" directory structure into which the generated PharmML
      *         model files are copied by {@link #copyGeneratedPharmmlFiles()}
      */
     private static String getGeneratedPharrmlModelFilePathFromMdlModelFilePath(final String mdlModelFilePath) {
@@ -95,7 +95,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
     }
 
     /**
-     * Before the tests in this class are run, clean out the "pharmml-generated-from-MDL"
+     * Before the tests in this class are run, clean out the "PharmML-generated-from-MDL"
      * directory and copy the PharmML files and their data files, as output by the
      * MDL->PharmML conversion tests, into this directory structure.
      * <p>
@@ -106,12 +106,12 @@ public class GeneratedPharmmlToNmtranModelsTest {
      * Find all the actual PharmML files (i.e. with .xml extension) within these directories (there may be data files etc.
      * in there too), and copy each of their containing folders (i.e. including the associated data files), to a suitably
      * named directory (i.e. taken from the name of the model in the path to the PharmML file) under a
-     * "pharmml-generated-from-MDL" directory.
+     * "PharmML-generated-from-MDL" directory.
      * <p>
      * This is in preparation for the {@link ModelsDiscoverer} to be run over these PharmML files in the
-     * "pharmml-generated-from-MDL" directory.
+     * "PharmML-generated-from-MDL" directory.
      * <p>
-     * @throws IOException if unable to delete the "pharmml-generated-from-MDL" directory
+     * @throws IOException if unable to delete the "PharmML-generated-from-MDL" directory
      */
     @BeforeClass
     public static void copyGeneratedPharmmlFiles() throws IOException {
@@ -156,7 +156,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
      * provided as the constructor argument is the <b>original</b> MDL model {@link File} since
      * the generated PharmML model file hasn't been created yet at the time the {@link AllTests}
      * test suite is initialised, hence we derive and save away the generated PharmML model
-     * {@link File}, as copied to the appropriate structure under the "pharmml-generated-from-MDL"
+     * {@link File}, as copied to the appropriate structure under the "PharmML-generated-from-MDL"
      * directory structure in {@link #copyGeneratedPharmmlFiles()} and upon which the conversion
      * will be run, within this constructor.
      * <p>
