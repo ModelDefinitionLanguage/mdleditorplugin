@@ -19,10 +19,10 @@ public class MdlToPharmmlModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(MdlToPharmmlModelsTest.class);
 
-    private final static String MDL_VERSION = "5.1.6-interop";
+    private final static String MDL_VERSION = "6.0.7";
     private final static String PHARMML_VERSION = "0.3.1";
 
-    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + MDL_VERSION.replace("-interop", ""); // TODO: remove the .replace() once MDL version numbering is sorted
+    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + MDL_VERSION;
     private final static String MODELS_FILE_EXTENSION = "mdl";
     private final static String OUTPUT_FILE_EXTENSION = "xml";
     

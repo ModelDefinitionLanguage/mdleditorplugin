@@ -32,13 +32,13 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
     private Version converterVersion;
 
     public MDLToPharmMLConverter() {
-        Version sourceVersion = new VersionImpl(5, 1, 6, "interop");
+        Version sourceVersion = new VersionImpl(6, 0, 7);
         source = new LanguageVersionImpl("MDL", sourceVersion);
 
         Version targetVersion = new VersionImpl(0, 3, 1);
         target = new LanguageVersionImpl("PharmML", targetVersion);
 
-        converterVersion = new VersionImpl(1, 0, 4);
+        converterVersion = new VersionImpl(1, 0, 5);
     }
 
     @Override
