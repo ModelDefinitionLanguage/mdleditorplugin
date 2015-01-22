@@ -15,7 +15,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
     MdlToPharmmlModelsTest.class,
     PharmmlToNmtranModelsTest.class,
-    GeneratedPharmmlToNmtranModelsTest.class
-//	MdlToNmtranModelsTest.class not currently included as this translator is not currently being maintained. 
+    GeneratedPharmmlToNmtranModelsTest.class,
+//	MdlToNmtranModelsTest.class not currently included as this translator is not currently being maintained.
+    MdlToJsonModelsTest.class
 })
 public class AllTests {}
