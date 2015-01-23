@@ -21,10 +21,11 @@ Nock_2013_Carboplatin_PK_dat = dataobj{
       CREA : {type=continuous, units="mg/dL"}
       TRT : {type=categorical} 
       logtCLCR :{type=continuous}
-   }# end DATA_INPUT_VARIABLES 
+      logtKG :{type=continuous}
+      }# end DATA_INPUT_VARIABLES 
 
    SOURCE{
-   		file="Carbo_DDMoRe_log.csv"
+   		file="Carbo_DDMoRe_log2.csv"
         inputformat=nonmemFormat
         ignore="#"
    }
@@ -47,7 +48,8 @@ Nock_2013_Carboplatin_PK_par = parobj{
    }# end STRUCTURAL
 
    VARIABILITY{
-      OMCL: {value=0.019 ,type=VAR}
+      OMCL: {value=0.019, type=VAR}
+      OMV1: {value=0, type=VAR, fix=true}
             
       SIGMA: {value=1, type=VAR, fix=true}
    }# end VARIABILITY
@@ -63,11 +65,17 @@ Nock_2013_Carboplatin_PK_mdl = mdlobj{
       TALD: {type=continuous, units="h"} # time after last dose
       AMT: {type=continuous, use=amt, administration=Ac, units="mg"} 
       DV : {type=continuous, prediction=Y, use=dv,level=1, units="ug/mL"} # drug concentration
-      EVID : {type=categorical, use=evid}  
+      EVID : {type=categorical, use=evid} 
+      AGE : {type=continuous, units="y", use=covariate} 
+      HGT : {type=continuous, use=covariate, units="cm"} 
       KG : {type=continuous, use=covariate, units="kg"} 
+      BSA : {type=continuous, use=covariate, units="m2"} 
       CLCR : {type=continuous, use=covariate, units="mL/min"}
-      logtCLCR :{type=continuous, use=covariate} 
-   }# end MODEL_INPUT_VARIABLES
+      CREA : {type=continuous, use=covariate, units="mg/dL"}
+      TRT : {type=categorical, use=covariate} 
+      logtCLCR :{type=continuous, use=covariate}
+      logtKG :{type=continuous, use=covariate}
+    }# end MODEL_INPUT_VARIABLES
    
    
 
@@ -83,46 +91,36 @@ Nock_2013_Carboplatin_PK_mdl = mdlobj{
    }# end STRUCTURAL_PARAMETERS
 
    VARIABILITY_PARAMETERS{
-      OMCL
-      SIGMA
+     OMCL
+     OMV1
+     SIGMA
    }# end VARIABILITY_PARAMETERS
 
 
    RANDOM_VARIABLE_DEFINITION{
       eta_OMCL ~ {type=normal, mean=0, var=OMCL, level=ID}
-
+      eta_OMV1 ~ {type=normal, mean=0, var=OMV1, level=ID}
+      
    }# end RANDOM_VARIABLE_DEFINITION
    
-   GROUP_VARIABLES{
-   	  # define logtKG (normalised to 80 kg)
-   	  V1KG = (KG/80)^V1KG_COV
-   	  TVV1 = THV1*V1KG
-   	  # define logtCLCLCR (normalised to 114.48) 
-   	  
-   }
 
    INDIVIDUAL_VARIABLES{
 	   	#logtCLCR is not defined
 	   	#randEff -> ranEff
       CL : {type=linear, trans=log, pop = THCL, fixEff=[CLCLCR_COV], cov=[logtCLCR], ranEff=eta_OMCL}
-
-      #V1 : {type=linear, trans=log, pop = THV1, fixEff=[V1KG_COV], cov=[logtKG]}  # there is no IIV associated, is it OK this then?
-      V1= TVV1
+      V1 : {type=linear, trans=log, pop = THV1, fixEff=[V1KG_COV], cov=[logtKG], ranEff=eta_OMV1}  
+           
       Q = THQ
       V2 = THV2
-      VSS = V1+V2
-   
-      K = CL/V1
-      K12 = Q/V1
-      K21 = Q/V2
+
    }# end INDIVIDUAL_VARIABLES
 
 
    MODEL_PREDICTION{
     ODE{
         # Drug PK
-        Ac : {deriv=(-K12*Ac - K*Ac + K21*Ap), init=0, x0=0}
-        Ap : {deriv= (K12*Ac - K21*Ap), init=0, x0=0}
+        Ac : {deriv=(-(Q/V1)*Ac - (CL/V1)*Ac + (Q/V2)*Ap), init=0, x0=0}
+        Ap : {deriv= ((Q/V1)*Ac - (Q/V2)*Ap), init=0, x0=0}
         }
 	IPRED = Ac/V1
    }# end MODEL_PREDICTION
@@ -149,6 +147,7 @@ Nock_2013_Carboplatin_PK_task = taskobj{
  
       ESTIMATE {
          target=NMTRAN_CODE
+         cov=true
       }# end ESTIMATE
 
 }# end of task object

@@ -32,7 +32,7 @@ Friberg_JCO2002_Myelosuppression_par = parobj{
       pop_CIRC0: {value=7.21, lo=2, hi=13, units="leukocytes*10^9/L"}
       pop_MTT: {value=124, lo=0, units="h"}
       GAMMA: {value=0.239, lo=0}
-      SLOPu: {value=28.9, lo=0, units="L/umol"}
+      pop_SLOPu: {value=28.9, lo=0, units="L/umol"}
       prop_error: {value=0.286, lo=0}
    }# end STRUCTURAL
 
@@ -142,6 +142,7 @@ Friberg_JCO2002_Myelosuppression_task = taskobj{
 
       ESTIMATE {
          target=NMTRAN_CODE
+         cov=true
       }# end ESTIMATE
 }# end of task object
 

@@ -58,7 +58,7 @@ Hansson2013_mdl = mdlobj{
       TIME:{type=continuous, use=idv, units="h"}
       DAYS:{type=continuous,units="DAYS"}
       DVX:{type=continuous, units="mg/L"} 
-      DV:{type=continuous,units="mg/L",use=dv, prediction=sKIT_obs}
+      DV:{type=continuous,units="mg/L",use=dv, prediction=sKIT_obs, level=1}
       DOS:{type=continuous,units="mg", use=amt}
       CL:{type=continuous,units="L/h", use=covariate}
       EVID:{type=categorical, use=evid}
