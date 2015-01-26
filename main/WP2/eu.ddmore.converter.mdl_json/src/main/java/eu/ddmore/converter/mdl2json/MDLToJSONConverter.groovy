@@ -30,106 +30,105 @@ import groovy.json.JsonBuilder
  */
 public class MDLToJSONConverter implements ConverterProvider {
 
-	private static Logger logger = Logger.getLogger(this.getClass());
-	
-	private static final String MDL_FILE_EXTENSION = ".mdl"
-	private static final String JSON_FILE_EXTENSION = ".json"	
-	
-	private final LanguageVersion source = new LanguageVersionImpl("MDL", new VersionImpl(6, 0, 7))
+    private static Logger logger = Logger.getLogger(this.getClass());
+
+    private static final String MDL_FILE_EXTENSION = ".mdl"
+    private static final String JSON_FILE_EXTENSION = ".json"
+
+    private final LanguageVersion source = new LanguageVersionImpl("MDL", new VersionImpl(6, 0, 7))
     private final LanguageVersion target = new LanguageVersionImpl("JSON", new VersionImpl(6, 0, 7))
     private final Version converterVersion = new VersionImpl(1, 0, 5);
 
-	private String json 
-	
-	/**
-	 * Convert an MDL file into JSON
-	 * 
-	 * Accepts the MDL file as first argument, and optionally the output folder for the second argument
-	 * Default output folder is the same as the input MDL file
-	 *  
-	 * @param args
-	 */
-	static main(args) {
-	
-		String mdlFile = args[0]
-		File inputFile = new File(mdlFile)
-		
-		if(inputFile==null) {
-			println("Cannot open file " + mdlFile)
-			System.exit(0)
-		}
+    private String json
 
-		String outputDirectory = inputFile.getAbsoluteFile().getParent()
-		if(args.size() > 1 ) {
-			outputDirectory = args[1]
-		}
-		println "Writing json to " + outputDirectory
-		
-		File outputDir = new File(outputDirectory)
-		
-		MDLToJSONConverter converter = new MDLToJSONConverter()
-		converter.performConvert(inputFile, outputDir)	
-		
-		println(converter.json)
-	}
+    /**
+     * Convert an MDL file into JSON
+     * 
+     * Accepts the MDL file as first argument, and optionally the output folder for the second argument
+     * Default output folder is the same as the input MDL file
+     *  
+     * @param args
+     */
+    static main(args) {
 
-	/**
-	 * Converter toolbox required entry point
-	 */
+        String mdlFile = args[0]
+        File inputFile = new File(mdlFile)
+
+        if(inputFile==null) {
+            println("Cannot open file " + mdlFile)
+            System.exit(0)
+        }
+
+        String outputDirectory = inputFile.getAbsoluteFile().getParent()
+        if(args.size() > 1 ) {
+            outputDirectory = args[1]
+        }
+        println "Writing json to " + outputDirectory
+
+        File outputDir = new File(outputDirectory)
+
+        MDLToJSONConverter converter = new MDLToJSONConverter()
+        converter.performConvert(inputFile, outputDir)
+
+        println(converter.json)
+    }
+
+    /**
+     * Converter toolbox required entry point
+     */
     public ConversionReport performConvert(File src, File outputDirectory) throws IOException {
         String outputFileName = computeOutputFileName(src.getName())
 
 
-		MdlParser p = new MdlParser()
-		Mcl mcl = p.parse(src)
-		
-		ConversionReport report = new ConversionReportImpl();
+        MdlParser p = new MdlParser()
+        Mcl mcl = p.parse(src)
+
+        ConversionReport report = new ConversionReportImpl();
         json = toJSON(mcl)
-		if(json) {
-			def outputFile = new File(outputDirectory.getAbsolutePath() + File.separator + outputFileName);
-			
-			outputFile.write(json)
-			report.setReturnCode(ConversionCode.SUCCESS);
-		} else {
-			def errorMsg = "Could not parse " + src.getPath()
-			logger.error(errorMsg)
-			System.err.println(errorMsg)
-			report.setReturnCode(ConversionCode.FAILURE)
-		}
-		
+        if(json) {
+            def outputFile = new File(outputDirectory.getAbsolutePath() + File.separator + outputFileName);
+
+            outputFile.write(json)
+            report.setReturnCode(ConversionCode.SUCCESS);
+        } else {
+            def errorMsg = "Could not parse " + src.getPath()
+            logger.error(errorMsg)
+            System.err.println(errorMsg)
+            report.setReturnCode(ConversionCode.FAILURE)
+        }
+
         return report
     }
 
-	/**
-	 * 
-	 * Convert an Mcl object into JSON
-	 * 
-	 * @param mcl
-	 * @return
-	 */
-	String toJSON(Mcl mcl) {
-	
-		JsonBuilder jb = new JsonBuilder()
+    /**
+     * 
+     * Convert an Mcl object into JSON
+     * 
+     * @param mcl
+     * @return
+     */
+    String toJSON(Mcl mcl) {
 
-		String ret = null	
-		try {
-			MCLFile f = new MCLFile(mcl)
-			jb f
-			ret = jb.toString()
-		}	
-		catch(Exception e) {
-			logger.error("Could not turn MCL into JSON", e)
-			System.err.println("Could not turn MDL into JSON\n" + e.getMessage() )
-		}
-		
-		return ret;
-		
-	}
-	
+        JsonBuilder jb = new JsonBuilder()
+
+        String ret = null
+        try {
+            MCLFile f = new MCLFile(mcl)
+            jb f
+            ret = jb.toString()
+        }
+        catch(Exception e) {
+            logger.error("Could not turn MCL into JSON", e)
+            System.err.println("Could not turn MDL into JSON\n" + e.getMessage() )
+        }
+
+        return ret;
+    }
+
     private String computeOutputFileName(String name) {
         int dotIndex = name.lastIndexOf(MDL_FILE_EXTENSION)
 
-		if (dotIndex == -1) {
+        if (dotIndex == -1) {
             return name + JSON_FILE_EXTENSION
         } else {
             return name.substring(0, dotIndex) + JSON_FILE_EXTENSION
@@ -166,4 +165,5 @@ public class MDLToJSONConverter implements ConverterProvider {
     public String toString() {
         return String.format("MDLTOJSONConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion) ;
     }
+    
 }

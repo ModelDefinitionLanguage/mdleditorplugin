@@ -31,83 +31,83 @@ import groovy.json.JsonSlurper
  */
 public class JSONToMDLConverter implements ConverterProvider {
 
-	private static Logger logger = Logger.getLogger(this.getClass());
-	
-	private static final String MDL_FILE_EXTENSION = ".mdl"
-	private static final String JSON_FILE_EXTENSION = ".json"	
-	
-	private final LanguageVersion source = new LanguageVersionImpl("JSON", new VersionImpl(6, 0, 7))
-	private final LanguageVersion target = new LanguageVersionImpl("MDL", new VersionImpl(6, 0, 7))
+    private static Logger logger = Logger.getLogger(this.getClass());
+
+    private static final String MDL_FILE_EXTENSION = ".mdl"
+    private static final String JSON_FILE_EXTENSION = ".json"
+
+    private final LanguageVersion source = new LanguageVersionImpl("JSON", new VersionImpl(6, 0, 7))
+    private final LanguageVersion target = new LanguageVersionImpl("MDL", new VersionImpl(6, 0, 7))
     private final Version converterVersion = new VersionImpl(1, 0, 5);
 
-	private String mdl 
-	
-	/**
-	 * Convert an JSON file into MDL
-	 * 
-	 * Accepts the JSON file as first argument, and optionally the output folder for the second argument
-	 * Default output folder is the same as the input JSON file
-	 *  
-	 * @param args
-	 */
-	static main(args) {
-	
-		String mdlFile = args[0]
-		File inputFile = new File(mdlFile)
-		
-		if(inputFile==null) {
-			println("Cannot open file " + mdlFile)
-			System.exit(0)
-		}
+    private String mdl
 
-		String outputDirectory = inputFile.getAbsoluteFile().getParent()
-		if(args.size() > 1 ) {
-			outputDirectory = args[1]
-		}
-		println "Writing mdl to " + outputDirectory
-		
-		File outputDir = new File(outputDirectory)
-		
-		ConverterProvider converter = new MDLToJSONConverter()
-		converter.performConvert(inputFile, outputDir)	
-		
-		println(converter.mdl)
-	}
+    /**
+     * Convert an JSON file into MDL
+     * 
+     * Accepts the JSON file as first argument, and optionally the output folder for the second argument
+     * Default output folder is the same as the input JSON file
+     *  
+     * @param args
+     */
+    static main(args) {
 
-	/**
-	 * Converter toolbox required entry point
-	 */
+        String mdlFile = args[0]
+        File inputFile = new File(mdlFile)
+
+        if(inputFile==null) {
+            println("Cannot open file " + mdlFile)
+            System.exit(0)
+        }
+
+        String outputDirectory = inputFile.getAbsoluteFile().getParent()
+        if(args.size() > 1 ) {
+            outputDirectory = args[1]
+        }
+        println "Writing mdl to " + outputDirectory
+
+        File outputDir = new File(outputDirectory)
+
+        ConverterProvider converter = new MDLToJSONConverter()
+        converter.performConvert(inputFile, outputDir)
+
+        println(converter.mdl)
+    }
+
+    /**
+     * Converter toolbox required entry point
+     */
     public ConversionReport performConvert(File src, File outputDirectory) throws IOException {
         String outputFileName = computeOutputFileName(src.getName())
 
 
-		JsonSlurper jsonSlurper = new JsonSlurper();
-		MCLFile mclFile = new MCLFile(jsonSlurper.parseText(src.getText()))
-		
-		ConversionReport report = new ConversionReportImpl();
+        JsonSlurper jsonSlurper = new JsonSlurper();
+        MCLFile mclFile = new MCLFile(jsonSlurper.parseText(src.getText()))
 
-		mdl = mclFile.toMDL();
-		
-		if(mdl) {
-			def outputFile = new File(outputDirectory.getAbsolutePath() + File.separator + outputFileName);
-			
-			outputFile.write(mdl)
-			report.setReturnCode(ConversionCode.SUCCESS);
-		} else {
-			def errorMsg = "Could not parse " + src.getPath()
-			logger.error(errorMsg)
-			System.err.println(errorMsg)
-			report.setReturnCode(ConversionCode.FAILURE)
-		}
-		
+        ConversionReport report = new ConversionReportImpl();
+
+        mdl = mclFile.toMDL();
+
+        if(mdl) {
+            def outputFile = new File(outputDirectory.getAbsolutePath() + File.separator + outputFileName);
+
+            outputFile.write(mdl)
+            report.setReturnCode(ConversionCode.SUCCESS);
+        } else {
+            def errorMsg = "Could not parse " + src.getPath()
+            logger.error(errorMsg)
+            System.err.println(errorMsg)
+            report.setReturnCode(ConversionCode.FAILURE)
+        }
+
         return report
     }
 
-	
+
     private String computeOutputFileName(String name) {
         int dotIndex = name.lastIndexOf(JSON_FILE_EXTENSION)
 
-		if (dotIndex == -1) {
+        if (dotIndex == -1) {
             return name + MDL_FILE_EXTENSION
         } else {
             return name.substring(0, dotIndex) + MDL_FILE_EXTENSION
@@ -144,4 +144,5 @@ public class JSONToMDLConverter implements ConverterProvider {
     public String toString() {
         return String.format("MDLTOJSONConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion) ;
     }
+    
 }
