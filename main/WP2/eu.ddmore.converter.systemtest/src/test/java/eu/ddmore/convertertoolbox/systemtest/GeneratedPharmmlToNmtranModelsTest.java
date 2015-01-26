@@ -20,7 +20,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-
 /**
  * Run PharmML -> NMTRAN conversions, but on PharmML files that were output by MDL -> PharmML
  * conversions rather than on hand-crafted PharmML.
@@ -30,7 +29,7 @@ import com.google.common.collect.Iterables;
  */
 @RunWith(Parameterized.class)
 public class GeneratedPharmmlToNmtranModelsTest {
-    
+
     private final static Logger LOGGER = Logger.getLogger(GeneratedPharmmlToNmtranModelsTest.class);
 
     private final static String MDL_VERSION = "6.0.7";
@@ -39,13 +38,16 @@ public class GeneratedPharmmlToNmtranModelsTest {
 
     private final static String ORIGINAL_MDL_MODELS_SUBDIRECTORY = quoteReplacement("mdl" + File.separator + MDL_VERSION); // quoteReplacement() since the backslashes need to be escaped in this string
     private final static String ORIGINAL_MDL_MODELS_FILE_EXTENSION = "mdl";
-    private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY = quoteReplacement("PharmML-generated-from-MDL" + File.separator + MDL_VERSION); // quoteReplacement() since the backslashes need to be escaped in this string
+    private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY = quoteReplacement("PharmML-generated-from-MDL" + File.separator
+        + MDL_VERSION); // quoteReplacement() since the backslashes need to be escaped in this string
     private final static String PHARMML_MODELS_FILE_EXTENSION = "xml";
     private final static String OUTPUT_FILE_EXTENSION = "ctl";
-    
-    // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes
-    private final static int NMTRAN_FILE_SIZE_THRESHOLD = 30; // Required: $PROB $INPUT $DATA
-    
+
+    // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes.
+    // This is derived from the following minimal skeleton NMTRAN file:
+    // $PROB $INPUT $DATA
+    private final static int NMTRAN_FILE_SIZE_THRESHOLD = 30;
+
     /**
      * The method that produces the parameters to be passed to each construction of the test class.
      * In this case, the {@link File}s that are the <b>original</b> MDL models since the generated
@@ -66,22 +68,21 @@ public class GeneratedPharmmlToNmtranModelsTest {
      * <p>
      * @return the original MDL model files, as {@link File} objects
      */
-    @Parameterized.Parameters(name= "{index}: Model {1}")
+    @Parameterized.Parameters(name = "{index}: Model {1}")
     public static Iterable<Object[]> getModelsToTest() {
         return Iterables.transform(
             new ModelsDiscoverer(ORIGINAL_MDL_MODELS_SUBDIRECTORY, ORIGINAL_MDL_MODELS_FILE_EXTENSION).getAllModels(),
             new Function<File, Object[]>() {
+
                 public Object[] apply(final File input) {
-                    final String anticipatedGenPharmmlModelPath
-                        = getGeneratedPharrmlModelFilePathFromMdlModelFilePath(input.getPath());
-                    final String anticipatedGenPharmmlModelShortPath
-                        = anticipatedGenPharmmlModelPath.substring(ModelsDiscoverer.PATH_TO_MODELS_DIR.length());
+                    final String anticipatedGenPharmmlModelPath = getGeneratedPharrmlModelFilePathFromMdlModelFilePath(input.getPath());
+                    final String anticipatedGenPharmmlModelShortPath = anticipatedGenPharmmlModelPath
+                            .substring(ModelsDiscoverer.PATH_TO_MODELS_DIR.length());
                     return new Object[] { input, anticipatedGenPharmmlModelShortPath };
                 };
-            }
-        );
+            });
     }
-    
+
     /**
      * @param mdlModelFilePath - file path to a MDL model file
      * @return file path to the corresponding generated PharmML model file (which may not actually exist yet),
@@ -89,9 +90,8 @@ public class GeneratedPharmmlToNmtranModelsTest {
      *         model files are copied by {@link #copyGeneratedPharmmlFiles()}
      */
     private static String getGeneratedPharrmlModelFilePathFromMdlModelFilePath(final String mdlModelFilePath) {
-        return mdlModelFilePath
-                .replaceFirst(ORIGINAL_MDL_MODELS_SUBDIRECTORY, GENERATED_PHARMML_MODELS_SUBDIRECTORY)
-                .replace(ORIGINAL_MDL_MODELS_FILE_EXTENSION, PHARMML_MODELS_FILE_EXTENSION);
+        return mdlModelFilePath.replaceFirst(ORIGINAL_MDL_MODELS_SUBDIRECTORY, GENERATED_PHARMML_MODELS_SUBDIRECTORY).replace(
+            ORIGINAL_MDL_MODELS_FILE_EXTENSION, PHARMML_MODELS_FILE_EXTENSION);
     }
 
     /**
@@ -115,29 +115,29 @@ public class GeneratedPharmmlToNmtranModelsTest {
      */
     @BeforeClass
     public static void copyGeneratedPharmmlFiles() throws IOException {
-        
+
         FileUtils.deleteDirectory(new File(ModelsDiscoverer.PATH_TO_MODELS_DIR + GENERATED_PHARMML_MODELS_SUBDIRECTORY));
-        
-        final Iterable<File> generatedPharmmlModelFiles = Iterables.filter(
-            new ModelsDiscoverer(ORIGINAL_MDL_MODELS_SUBDIRECTORY, PHARMML_MODELS_FILE_EXTENSION).getAllModels(),
-            new Predicate<File>() {
-                /**
-                 * Since .xml is a generic file extension, need to filter out any XML files that are not within a "mdl/[modelname]/output-xml" subdirectory.
-                 */
-                public boolean apply(File input) {
-                    return input.getParentFile().getName().equals(ConverterRunner.OUTPUT_SUBDIRECTORY_BASENAME + PHARMML_MODELS_FILE_EXTENSION);
-                };
-            }
-        );
-        
-        for (final Iterator<File> it = generatedPharmmlModelFiles.iterator(); it.hasNext(); ) {
+
+        final Iterable<File> generatedPharmmlModelFiles = Iterables.filter(new ModelsDiscoverer(ORIGINAL_MDL_MODELS_SUBDIRECTORY,
+                PHARMML_MODELS_FILE_EXTENSION).getAllModels(), new Predicate<File>() {
+
+            /**
+             * Since .xml is a generic file extension, need to filter out any XML files that are not within a "mdl/[modelname]/output-xml" subdirectory.
+             */
+            public boolean apply(File input) {
+                return input.getParentFile().getName().equals(ConverterRunner.OUTPUT_SUBDIRECTORY_BASENAME + PHARMML_MODELS_FILE_EXTENSION);
+            };
+        });
+
+        for (final Iterator<File> it = generatedPharmmlModelFiles.iterator(); it.hasNext();) {
             final File srcDir = it.next().getParentFile();
-            
-            final File destDir = new File(srcDir.getParentFile().getAbsolutePath().replace(
-                new File(ModelsDiscoverer.PATH_TO_MODELS_DIR + ORIGINAL_MDL_MODELS_SUBDIRECTORY).getAbsolutePath(),
-                new File(ModelsDiscoverer.PATH_TO_MODELS_DIR + GENERATED_PHARMML_MODELS_SUBDIRECTORY).getPath()
-            ));
-            
+
+            final File destDir = new File(srcDir
+                    .getParentFile()
+                    .getAbsolutePath()
+                    .replace(new File(ModelsDiscoverer.PATH_TO_MODELS_DIR + ORIGINAL_MDL_MODELS_SUBDIRECTORY).getAbsolutePath(),
+                        new File(ModelsDiscoverer.PATH_TO_MODELS_DIR + GENERATED_PHARMML_MODELS_SUBDIRECTORY).getPath()));
+
             LOGGER.info("Copying from " + srcDir + " to " + destDir);
             try {
                 FileUtils.copyDirectory(srcDir, destDir);
@@ -145,11 +145,11 @@ public class GeneratedPharmmlToNmtranModelsTest {
                 fail("Unable to copy generated PharmML models from " + srcDir + " to " + destDir + " - Cause: " + ioe);
             }
         }
-        
+
     }
-    
+
     private final File generatedPharmmlModel;
-    
+
     /**
      * Construct an instance of this test class for a particular model as taken from the list
      * provided by the {@link #getModelsToTest()} parameter-provider method. The model that is
@@ -172,17 +172,15 @@ public class GeneratedPharmmlToNmtranModelsTest {
         assertTrue("Generated PharmML model \"" + this.generatedPharmmlModel + "\" was not found. Was MdlModelsTest run first?",
             this.generatedPharmmlModel.exists());
     }
-    
+
     /**
      * Test method that tests the conversion of a particular model file as provided by the
      * {@link File} parameter that was constructor-injected into this instance of the test class.
      */
     @Test
     public void testPharmMLToNMTRANConversionForPharmMLGeneratedByMdlToPharmMLConversion() {
-        new ConverterRunner(
-            this.generatedPharmmlModel, OUTPUT_FILE_EXTENSION, "PharmML", PHARMML_VERSION, "NMTRAN", NMTRAN_VERSION,
-            new ConverterOutputFailureCheckerImpl(NMTRAN_FILE_SIZE_THRESHOLD)
-        ).run();
+        new ConverterRunner(this.generatedPharmmlModel, OUTPUT_FILE_EXTENSION, "PharmML", PHARMML_VERSION, "NMTRAN", NMTRAN_VERSION,
+                new ConverterOutputFailureCheckerImpl(NMTRAN_FILE_SIZE_THRESHOLD)).run();
     }
-    
+
 }
