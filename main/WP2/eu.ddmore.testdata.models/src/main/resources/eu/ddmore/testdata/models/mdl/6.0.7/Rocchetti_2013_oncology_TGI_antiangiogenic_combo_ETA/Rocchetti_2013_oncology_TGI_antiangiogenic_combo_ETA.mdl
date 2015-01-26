@@ -24,7 +24,7 @@ rocchetti2013_par = parobj{
    STRUCTURAL{
       #PARAMETER VALUES TO USE FOR ESTIMATION:
       K2:{value=0.221, fix=true, units="L/umol/day"}
-      LAMBDA0:{value=0.14, fix=true, units="1/day"}
+      POP_LAMBDA0:{value=0.14, fix=true, units="1/day"}
       LAMBDA1:{value=0.129, fix=true, units="g/day"}
       K1:{value=3.54, fix=true, units="1/day"}
       IC50:{value=2.02, fix=true, units="umol/L"}
@@ -34,6 +34,7 @@ rocchetti2013_par = parobj{
    }
 
    VARIABILITY{
+      OMEGA_LAMBDA0:{value=0 ,type=VAR, fix=true}
       SIGMA_RES_W:{value=1 ,type=VAR,fix=true}
    }
    
@@ -53,7 +54,7 @@ rocchetti2013_mdl = mdlobj{
 	
 	STRUCTURAL_PARAMETERS{
       K2
-      LAMBDA0
+      POP_LAMBDA0
       LAMBDA1
       K1
       IC50
@@ -63,15 +64,17 @@ rocchetti2013_mdl = mdlobj{
 	}
 	
 	VARIABILITY_PARAMETERS{
+      OMEGA_LAMBDA0
       SIGMA_RES_W
 	}
 		
 	RANDOM_VARIABLE_DEFINITION{
-	}
+     eta_OMEGA_LAMBDA0 ~ {type=normal, mean=0, var=OMEGA_LAMBDA0, level=ID}
+     	}
 	
 	
 	INDIVIDUAL_VARIABLES{
-	  KA_A=24*ln(2)/24 #=2.69 1/day
+	  KA_A=24*ln(2)/6.19 #=2.69 1/day
       KE_A=ln(2)/6.05 #=0.115 1/day
       FV1_A=1/0.119 #8.4 kg/L
       KA_B=18.8 #1/day
@@ -81,6 +84,8 @@ rocchetti2013_mdl = mdlobj{
       FV1_B=1/2.13 #0.469 kg/L
       EMAX=1
       PSI=20
+      
+      LAMBDA0 : {type=linear, trans=log, pop = POP_LAMBDA0, ranEff=eta_LAMBDA0} 
 	}
 	
 	MODEL_PREDICTION{
@@ -126,7 +131,7 @@ rocchetti2013_task = taskobj{
   
     ESTIMATE { 
     	target = NMTRAN_CODE 
-    	algo = [ "FO" ] 
+    	algo = [ "FOCE" ] 
     	cov = true 
     }
     

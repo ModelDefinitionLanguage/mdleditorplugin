@@ -23,7 +23,7 @@ delbene2009_par = parobj{
 
    STRUCTURAL{
       #PARAMETER VALUES TO USE FOR ESTIMATION:
-      LAMBDA0: {value=0.1, lo=0, units="1/h"}
+      POP_LAMBDA0: {value=0.1, lo=0, units="1/h"}
       K1: {value=0.1, lo=0, units="1/h"}
       K2: {value=0.1, lo=0, units="L/h/umol"}
       N0: {value=1000, lo=0}
@@ -31,7 +31,8 @@ delbene2009_par = parobj{
    }
 
    VARIABILITY{
-      SIGMA_RES_W: {value=1 ,type=VAR, fix=true}
+       OMEGA_LAMBDA0:{value=0 ,type=VAR, fix=true}
+       SIGMA_RES_W: {value=1 ,type=VAR, fix=true}
    }
 }
 
@@ -46,7 +47,7 @@ delbene2009_mdl = mdlobj{
 	} 
 	
 	STRUCTURAL_PARAMETERS{
-	  LAMBDA0
+	    POP_LAMBDA0
       K1 
       K2
       N0
@@ -54,12 +55,18 @@ delbene2009_mdl = mdlobj{
 	}
 	
 	VARIABILITY_PARAMETERS{
+      OMEGA_LAMBDA0
       SIGMA_RES_W
 	}
 		
 	RANDOM_VARIABLE_DEFINITION{
-	  eps_RES_W ~ {type=normal, mean=0, var=SIGMA_RES_W, level=DV}
+      eta_OMEGA_LAMBDA0 ~ {type=normal, mean=0, var=OMEGA_LAMBDA0, level=ID}
+      eps_RES_W ~ {type=normal, mean=0, var=SIGMA_RES_W, level=DV}
 	}
+  
+  INDIVIDUAL_VARIABLES{
+      LAMBDA0 : {type=linear, trans=log, pop = POP_LAMBDA0, ranEff=eta_LAMBDA0}  
+  }
 	
 
 	MODEL_PREDICTION{
