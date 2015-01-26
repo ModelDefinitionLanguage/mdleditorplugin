@@ -95,7 +95,7 @@ public class MdlToJsonModelsTest {
                     + " was valid JSON i.e. was able to be parsed successfully", jsonAsTree);
                 MdlToJsonModelsTest.LOGGER.debug(jsonAsTree);
             } catch (Exception e) {
-                MdlToJsonModelsTest.LOGGER.error(
+                LOGGER.error(
                     "Exception \"" + e.getMessage() + "\" thrown parsing JSON from file " + expectedOutputFile, e);
                 fail("Error parsing JSON from file " + expectedOutputFile);
             }

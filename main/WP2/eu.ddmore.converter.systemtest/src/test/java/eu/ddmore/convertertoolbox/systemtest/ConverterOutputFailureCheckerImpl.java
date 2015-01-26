@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
  * Subclasses could extend this class to provide additional checks.
  */
 public class ConverterOutputFailureCheckerImpl implements ConverterOutputFailureChecker {
-    Logger LOGGER = Logger.getLogger(ConverterOutputFailureCheckerImpl.class);
+    private final static Logger LOGGER = Logger.getLogger(ConverterOutputFailureCheckerImpl.class);
 
     // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes
     private final int outputFileSizeThreshhold;
