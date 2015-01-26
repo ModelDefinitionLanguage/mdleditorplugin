@@ -3,6 +3,7 @@ package eu.ddmore.convertertoolbox.systemtest;
 import java.io.File;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -12,6 +13,7 @@ import org.junit.runners.Parameterized;
  * Run MDL direct to NMTRAN conversions over the testdata models within the "mdl" subdirectory.
  */
 @RunWith(Parameterized.class)
+@Ignore("The direct MDL->NMTRAN converter is no longer being being maintained; this conversion test should be deleted if it is decided that the converter will never be resurrected.")
 public class MdlToNmtranModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(MdlToNmtranModelsTest.class);
