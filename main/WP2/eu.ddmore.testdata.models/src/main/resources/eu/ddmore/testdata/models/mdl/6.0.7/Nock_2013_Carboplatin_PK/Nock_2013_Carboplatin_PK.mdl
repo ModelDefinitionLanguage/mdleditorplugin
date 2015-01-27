@@ -64,6 +64,8 @@ Nock_2013_Carboplatin_PK_mdl = mdlobj{
       TIME: {type=continuous, use=idv, units="h"}
       TALD: {type=continuous, units="h"} # time after last dose
       AMT: {type=continuous, use=amt, administration=Ac, units="mg"} 
+      DUR : {type= continuous, units="h", use=tinf}
+      RATE : {type= continuous, units="mg/h", use=rate}
       DV : {type=continuous, prediction=Y, use=dv,level=1, units="ug/mL"} # drug concentration
       EVID : {type=categorical, use=evid} 
       AGE : {type=continuous, units="y", use=covariate} 
@@ -72,7 +74,6 @@ Nock_2013_Carboplatin_PK_mdl = mdlobj{
       BSA : {type=continuous, use=covariate, units="m2"} 
       CLCR : {type=continuous, use=covariate, units="mL/min"}
       CREA : {type=continuous, use=covariate, units="mg/dL"}
-      TRT : {type=categorical, use=covariate} 
       logtCLCR :{type=continuous, use=covariate}
       logtKG :{type=continuous, use=covariate}
     }# end MODEL_INPUT_VARIABLES
