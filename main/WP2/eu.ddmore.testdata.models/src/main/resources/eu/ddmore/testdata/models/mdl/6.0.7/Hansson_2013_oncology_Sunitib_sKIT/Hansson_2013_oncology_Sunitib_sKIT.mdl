@@ -40,7 +40,7 @@ Hansson2013_par = parobj{
    }
 
    VARIABILITY{
-      OMEGA_BMS:{value=0.254,type=VAR}
+      OMEGA_BM0S:{value=0.254,type=VAR}
       OMEGA_MRT_sKIT:{value=0.0753, type=VAR}
       OMEGA_IC50S : { value=5.77, type=VAR }
       OMEGA_SLPS:{value=3.01, type=VAR}     

@@ -40,7 +40,7 @@ Hansson2013_par = parobj{
    }
 
    VARIABILITY{
-      OMEGA_BM3:{value=0.186,type=VAR}
+      OMEGA_BM03:{value=0.186,type=VAR}
       OMEGA_MRT_VEGFs:{value=0.060, type=VAR}
       OMEGA_IC503 : { value=0.398, type=VAR }
 
