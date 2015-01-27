@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>eu.ddmore</groupId>
-	<artifactId>converter-toolbox-aggregator</artifactId>
-	<packaging>pom</packaging>
-	<version>1.0.0-SNAPSHOT</version>
-	<name>Converter Toolbox Aggregator Module</name>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>eu.ddmore</groupId>
+    <artifactId>converter-toolbox-aggregator</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>Converter Toolbox Aggregator Module</name>
 
-	<modules>
-		<!-- Note that these are just the 'core' converter modules;
-		     the converter implementations themselves are generally
-		     built separately and brought in for the assembly of
-		     the Zip file. -->
+    <modules>
+        <!-- Note that these are just the 'core' converter modules; the converter 
+            implementations themselves are generally built separately and brought in 
+            for the assembly of the Zip file. -->
         <module>../eu.ddmore.converter.parent</module>
-		<module>../eu.ddmore.converter.toolbox.api</module>
-		<module>../eu.ddmore.converter.toolbox</module>
-		<module>../eu.ddmore.converter.test.mdl2nonmem.sucess</module>
-		<module>../eu.ddmore.converter.test.mdl2nonmem.failure</module>
-		<module>../eu.ddmore.converter.test.mdl2pharmml</module>
-		<module>../eu.ddmore.converter.test</module>
-		<module>../eu.ddmore.converter.mdl</module>
-		<module>../eu.ddmore.converter.mdl_json</module>
-	</modules>
-	<description>This is an aggregator module, it is used to build multiple modules constituting Converter Toolbox in the right order.</description>
-	<url>http://ddmore.eu/</url>
-    
+        <module>../eu.ddmore.converter.toolbox.api</module>
+        <module>../eu.ddmore.converter.toolbox</module>
+        <module>../eu.ddmore.converter.test.mdl2nonmem.sucess</module>
+        <module>../eu.ddmore.converter.test.mdl2nonmem.failure</module>
+        <module>../eu.ddmore.converter.test.mdl2pharmml</module>
+        <module>../eu.ddmore.converter.test</module>
+        <module>../eu.ddmore.converter.mdl</module>
+        <module>../eu.ddmore.converter.mdl_json</module>
+    </modules>
+    <description>This is an aggregator module, it is used to build multiple modules constituting Converter Toolbox in the right order.</description>
+    <url>http://ddmore.eu/</url>
+
     <organization>
         <name>Mango Solutions</name>
         <url>http://www.mango-solutions.com</url>
