@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<parent>
-		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
-		<groupId>eu.ddmore</groupId>
-		<artifactId>converter-parent</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
+        <groupId>eu.ddmore</groupId>
+        <artifactId>converter-parent</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </parent>
 
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>converter-mdl_json</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
-	<name>Converter Provider: MDL to JSON</name>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>converter-mdl_json</artifactId>
+    <version>0.0.7-SNAPSHOT</version>
+    <name>Converter Provider: MDL to JSON</name>
 
-	<properties>
- 		<xtend.repo.url>http://build.eclipse.org/common/xtend/maven/</xtend.repo.url>
-		<xtend.version>2.4.0</xtend.version>
-	</properties>
+    <properties>
+        <xtend.repo.url>http://build.eclipse.org/common/xtend/maven/</xtend.repo.url>
+        <xtend.version>2.4.0</xtend.version>
+    </properties>
 
-	<repositories>
-		<repository>
-			<id>xtend</id>
-			<url>${xtend.repo.url}</url>
-		</repository>
-	</repositories>
+    <repositories>
+        <repository>
+            <id>xtend</id>
+            <url>${xtend.repo.url}</url>
+        </repository>
+    </repositories>
 
-	<dependencies>
+    <dependencies>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -39,29 +39,29 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.eclipse.xtend</groupId>
-			<artifactId>org.eclipse.xtend.standalone</artifactId>
-			<version>${xtend.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.xtend</groupId>
+            <artifactId>org.eclipse.xtend.standalone</artifactId>
+            <version>${xtend.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.eclipse.core</groupId>
-			<artifactId>org.eclipse.core.resources</artifactId>
-			<version>3.7.100</version>
-		</dependency>
+        <dependency>
+            <groupId>org.eclipse.core</groupId>
+            <artifactId>org.eclipse.core.resources</artifactId>
+            <version>3.7.100</version>
+        </dependency>
 
-		<dependency> 
- 		   <groupId>eu.ddmore</groupId> 
- 			<artifactId>org.ddmore.mdl</artifactId> 
-			<version>1.0.5-SNAPSHOT</version> 
-		</dependency>
-        
+        <dependency>
+            <groupId>eu.ddmore</groupId>
+            <artifactId>org.ddmore.mdl</artifactId>
+            <version>1.0.5-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
-		
+
         <dependency>
             <groupId>eu.ddmore.testdata</groupId>
             <artifactId>models</artifactId>
@@ -69,65 +69,66 @@
             <scope>test</scope>
         </dependency>
 
-	</dependencies>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<compilerId>groovy-eclipse-compiler</compilerId>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.groovy</groupId>
-						<artifactId>groovy-eclipse-compiler</artifactId>
-						<version>2.8.0-01</version>
-					</dependency>
-					<dependency>
-						<groupId>org.codehaus.groovy</groupId>
-						<artifactId>groovy-eclipse-batch</artifactId>
-						<version>2.1.8-01</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-		</plugins>
-		
-		<pluginManagement>
-			<plugins>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.apache.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-compiler-plugin
-										</artifactId>
-										<versionRange>
-											[3.1,)
-										</versionRange>
-										<goals>
-											<goal>testCompile</goal>
-											<goal>compile</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>2.8.0-01</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.1.8-01</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse 
+                    m2e settings only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.apache.maven.plugins
+                                        </groupId>
+                                        <artifactId>
+                                            maven-compiler-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [3.1,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>testCompile</goal>
+                                            <goal>compile</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

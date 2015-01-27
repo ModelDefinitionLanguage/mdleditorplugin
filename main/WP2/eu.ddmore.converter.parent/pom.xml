@@ -24,7 +24,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
-	
     
     <dependencies>
         <dependency>
@@ -135,7 +134,6 @@
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
         </repository>
     </repositories>
-    
     
 	<url>http://ddmore.eu</url>
 	<description>This is a parent module for converters. This modules ensures that converters extending this use the common versions of dependencies</description>

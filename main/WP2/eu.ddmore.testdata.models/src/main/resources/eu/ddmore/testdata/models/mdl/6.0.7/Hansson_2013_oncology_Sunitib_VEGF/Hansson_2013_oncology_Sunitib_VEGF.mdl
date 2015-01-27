@@ -34,7 +34,7 @@ Hansson2013_par = parobj{
       POP_BM0:{value=59.7, lo=0, units="pg/mL"} # baseline VEGF
       POP_MRT:{value=91, lo=0, units="h"} 
       POP_HILL:{value=3.31, lo=0}
-      POP_SLP:{value=0.035, lo=-0.06, units="1/h"}
+      POP_TVSLP:{value=0.035, lo=-0.06, units="1/h"}
                 
       #Residual Error
       POP_RES_VEGF_ADD:{value=0.445, lo=0, units="pg/mL"} 
@@ -45,7 +45,7 @@ Hansson2013_par = parobj{
      OMEGA_BM0:{value=0.252,type=VAR}     
      OMEGA_MRT_VEGFs:{value=0.060, type=VAR}     
      OMEGA_IC50 : { value=0.253, type=VAR }
-     OMEGA_SLP:{value=2.95, type=VAR}
+     OMEGA_TVSLP:{value=2.95, type=VAR}
      SIGMA_RES_W:{value=1 ,type=VAR, fix=true}
    }
 }

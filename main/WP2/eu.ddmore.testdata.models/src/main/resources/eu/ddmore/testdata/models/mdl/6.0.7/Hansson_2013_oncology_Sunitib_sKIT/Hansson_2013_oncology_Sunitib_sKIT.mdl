@@ -34,7 +34,8 @@ Hansson2013_par = parobj{
       #sKIT
       POP_BM0S:{value=39200, lo=0, units="pg/mL"} # baseline sKIT
       POP_MRTS:{value=2430, lo=0, units="h"}
-      
+      POP_TVSLP:{value=0.035, lo=-0.06, units="1/h"}
+            
       #Residual Error
       POP_RES_sKIT_ADD:{value=0.224, lo=0, units="pg/mL"}    
    }
@@ -43,7 +44,7 @@ Hansson2013_par = parobj{
       OMEGA_BM0S:{value=0.254,type=VAR}
       OMEGA_MRT_sKIT:{value=0.0753, type=VAR}
       OMEGA_IC50S : { value=5.77, type=VAR }
-      OMEGA_SLPS:{value=3.01, type=VAR}     
+      OMEGA_TVSLPS:{value=3.01, type=VAR}     
           
       SIGMA_RES_W:{value=1 ,type=VAR, fix=true}
    }
