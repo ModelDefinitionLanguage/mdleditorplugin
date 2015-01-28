@@ -79,7 +79,7 @@ public class MdlToJsonModelsTest {
      * A Converter Output Failure Checker that enhances the standard Converter Output Failure Checker
      * to also check that the generated JSON is valid i.e. can be parsed successfully.
      */
-    private static class ConverterJsonOutputFailureCheckerImpl extends ConverterOutputFailureCheckerImpl {
+    private static class ConverterJsonOutputFailureCheckerImpl extends DefaultConverterOutputFailureChecker {
 
         ConverterJsonOutputFailureCheckerImpl(int outputFileSizeThreshhold) {
             super(outputFileSizeThreshhold);

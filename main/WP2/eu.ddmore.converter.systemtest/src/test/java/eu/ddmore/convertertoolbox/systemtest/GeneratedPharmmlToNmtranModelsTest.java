@@ -180,7 +180,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
     @Test
     public void testPharmMLToNMTRANConversionForPharmMLGeneratedByMdlToPharmMLConversion() {
         new ConverterRunner(this.generatedPharmmlModel, OUTPUT_FILE_EXTENSION, "PharmML", PHARMML_VERSION, "NMTRAN", NMTRAN_VERSION,
-                new ConverterOutputFailureCheckerImpl(NMTRAN_FILE_SIZE_THRESHOLD)).run();
+                new DefaultConverterOutputFailureChecker(NMTRAN_FILE_SIZE_THRESHOLD)).run();
     }
 
 }

@@ -74,7 +74,7 @@ public class MdlToPharmmlModelsTest {
     public void testMdlToPharmMLConversion() throws IOException {
         final ConverterRunner runner = new ConverterRunner(
             this.model, OUTPUT_FILE_EXTENSION, "MDL", MDL_VERSION, "PharmML", PHARMML_VERSION,
-            new ConverterOutputFailureCheckerImpl(PHARMML_FILE_SIZE_THRESHOLD)
+            new DefaultConverterOutputFailureChecker(PHARMML_FILE_SIZE_THRESHOLD)
         );
         runner.run();
 		// Copy the data file
