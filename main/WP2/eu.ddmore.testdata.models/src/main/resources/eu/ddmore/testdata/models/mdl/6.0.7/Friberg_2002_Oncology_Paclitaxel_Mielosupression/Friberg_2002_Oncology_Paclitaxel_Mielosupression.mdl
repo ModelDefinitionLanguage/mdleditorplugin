@@ -143,6 +143,7 @@ Friberg_JCO2002_Myelosuppression_task = taskobj{
       ESTIMATE {
          target=NMTRAN_CODE
          cov=true
+         algo=["FOCEI"] 
       }# end ESTIMATE
 }# end of task object
 

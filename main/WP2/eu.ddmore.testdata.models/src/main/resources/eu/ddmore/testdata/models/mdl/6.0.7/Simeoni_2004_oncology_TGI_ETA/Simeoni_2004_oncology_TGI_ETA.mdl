@@ -23,7 +23,7 @@ simeoni2004_par = parobj{
 
    STRUCTURAL{
       #PARAMETER VALUES TO USE FOR ESTIMATION:
-      LAMBDA0:{value=0.3, lo=0, units="1/day"}
+      POP_LAMBDA0:{value=0.3, lo=0, units="1/day"}
       LAMBDA1:{value=0.3, lo=0, units="g/day"}
       K1:{value=0.3, lo=0, units="1/day"}
       K2:{value=0.5, lo=0, units="L/mg/day"}
@@ -32,7 +32,8 @@ simeoni2004_par = parobj{
    }
    
    VARIABILITY{
-	SIGMA_RES_W:{value=1 ,type=VAR, fix=true}
+	OMEGA_LAMBDA0:{value=0 ,type=VAR, fix=true}
+  SIGMA_RES_W:{value=1 ,type=VAR, fix=true}
 	}
 
 }
@@ -40,7 +41,7 @@ simeoni2004_par = parobj{
 simeoni2004_mdl = mdlobj{
 
 	MODEL_INPUT_VARIABLES{
-	  ID:{use=id}
+	  ID:{use=id, level=2}
       TIME:{use=idv,units="day"}
       DV:{type=continuous,use=dv,level=1, prediction=Y}
       AMT:{use=amt,units="mg/kg", administration=Q1}
@@ -49,7 +50,7 @@ simeoni2004_mdl = mdlobj{
 	}
 	
 	STRUCTURAL_PARAMETERS{
-      LAMBDA0
+      POP_LAMBDA0
       LAMBDA1
       K1
       K2
@@ -58,16 +59,22 @@ simeoni2004_mdl = mdlobj{
 	}
 	
 	VARIABILITY_PARAMETERS{
+      OMEGA_LAMBDA0
       SIGMA_RES_W
 	}
-		
+	
+  RANDOM_VARIABLE_DEFINITION{
+      eta_OMEGA_LAMBDA0 ~ {type=normal, mean=0, var=OMEGA_LAMBDA0, level=ID}
+      }	
 	
 	INDIVIDUAL_VARIABLES{
 		K10=0.868*24 #20.832 1/day
 		K12=0.006*24 #0.144 1/day
-      	K21=0.0838*24 #2.011 1/day
-      	V1=0.81 #L/kg
-      	PSI=20
+    K21=0.0838*24 #2.011 1/day
+    V1=0.81 #L/kg
+    PSI=20
+    
+    LAMBDA0 : {type=linear, trans=log, pop = POP_LAMBDA0, ranEff=eta_OMEGA_LAMBDA0}    
    	}
 	
 	MODEL_PREDICTION{

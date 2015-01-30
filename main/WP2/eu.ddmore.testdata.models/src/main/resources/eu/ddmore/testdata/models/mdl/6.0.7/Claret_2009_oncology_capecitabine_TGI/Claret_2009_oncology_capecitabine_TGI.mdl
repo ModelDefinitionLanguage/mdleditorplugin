@@ -125,6 +125,7 @@ claret2009_task = taskobj{
         ESTIMATE { 
             target=NMTRAN_CODE 
             cov=true
+            algo=["FOCEI"] 
         }
 }
 
