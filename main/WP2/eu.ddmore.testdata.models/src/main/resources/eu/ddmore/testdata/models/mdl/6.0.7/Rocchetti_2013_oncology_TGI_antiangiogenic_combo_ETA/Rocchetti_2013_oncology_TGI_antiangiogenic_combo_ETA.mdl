@@ -85,7 +85,7 @@ rocchetti2013_mdl = mdlobj{
       EMAX=1
       PSI=20
       
-      LAMBDA0 : {type=linear, trans=log, pop = POP_LAMBDA0, ranEff=eta_LAMBDA0} 
+      LAMBDA0 : {type=linear, trans=log, pop = POP_LAMBDA0, ranEff=eta_OMEGA_LAMBDA0} 
 	}
 	
 	MODEL_PREDICTION{
@@ -94,17 +94,16 @@ rocchetti2013_mdl = mdlobj{
 		C1_A=Q1_A*FV1_A
 		C1_B=Q1_B*FV1_B
 		K2INH=K2*(1-C1_A/(C1_A+IC50COMBO))
-		W=Z0+Z1+Z2+Z3
+		WTOT=Z0+Z1+Z2+Z3
 		Q0_A:{deriv=-KA_A*Q0_A, init=0, wrt=T}
 		Q1_A:{deriv=KA_A*Q0_A-KE_A*Q1_A, init=0, wrt=T}
 		Q0_B:{deriv=-KA_B*Q0_B, init=0, wrt=TIME}
 		Q1_B:{deriv=KA_B*Q0_B-(K12+KE_B)*Q1_B+K21*Q2_B, init=0, wrt=T}
 		Q2_B:{deriv=K12*Q1_B-K21*Q2_B, init=0, wrt=T}
-		Z0:{deriv=(LAMBDA0*Z0/((1+(W*LAMBDA0/LAMBDA1)^PSI)^(1/PSI)))*(1-EMAX*C1_A/(C1_A+IC50))-K2INH*C1_B*Z0, init=W0, wrt=T}
+		Z0:{deriv=(LAMBDA0*Z0/((1+(WTOT*LAMBDA0/LAMBDA1)^PSI)^(1/PSI)))*(1-EMAX*C1_A/(C1_A+IC50))-K2INH*C1_B*Z0, init=W0, wrt=T}
 		Z1:{deriv=K2INH*C1_B*Z0-K1*Z1, init=0, wrt=T}
 		Z2:{deriv=K1*Z1-K1*Z2, init=0, wrt=T}
 		Z3:{deriv=K1*Z2-K1*Z3, init=0, wrt=T}
-		WTOT=Z0 + Z1 + Z2 + Z3
 	    }
    
    }

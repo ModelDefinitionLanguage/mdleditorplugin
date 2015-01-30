@@ -114,9 +114,9 @@ Hansson2013_mdl = mdlobj{
    OBSERVATION{
       eps_RES_W ~ {type=normal, mean=0, var=SIGMA_RES_W, level=DV}
                       
- 	  #sVEGFR3_obs : {type=continuous, trans=log, error=additiveError(additive=POP_RES_sVEGFR3_ADD), prediction=sVEGFR3, eps=eps_RES_W}
+ 	  logsVEGFR3= log(sVEGFR3)
+ 	  sVEGFR3_obs : {type=continuous, error=additiveError(additive=POP_RES_sVEGFR3_ADD), prediction=logsVEGFR3, eps=eps_RES_W}
  	  
- 	  sVEGFR3_obs= log(sVEGFR3) + POP_RES_sVEGFR3_ADD*eps_RES_W
  	  
   	  }# end OBSERVATION
 
