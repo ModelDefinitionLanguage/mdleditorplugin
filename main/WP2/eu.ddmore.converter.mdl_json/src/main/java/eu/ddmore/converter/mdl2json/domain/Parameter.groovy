@@ -5,8 +5,8 @@ import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.Arguments
 import org.ddmore.mdl.mdl.ParameterObject
 import org.ddmore.mdl.mdl.ParameterObjectBlock
+import org.ddmore.mdl.mdl.SymbolDeclaration
 import org.ddmore.mdl.mdl.VariabilityBlock
-import org.ddmore.mdl.mdl.VariabilityBlockStatement
 
 import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
@@ -69,8 +69,15 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 	 * Parse the variability model block
 	 */
 	private List makeVariability(VariabilityBlock vb) {
-		List retVal = []
-		for (VariabilityBlockStatement s : vb.getStatements()) {
+	    List retVal = []
+        
+        for (SymbolDeclaration s : vb.getParameters()) {
+            def v = new Variable(s)
+            retVal.add([ "${v['name']}" : v.getProperties().minus('name':"${v['name']}") ])
+        }
+        
+       // WAS:
+//		for (VariabilityBlockStatement s : vb.getStatements()) {
 //			if (s.getDiagBlock()) {
 //				Map diag = makeDiag(s.getDiagBlock())
 //				retVal.add([ "${s.getDiagBlock().getIdentifier()}" : diag ])
@@ -80,15 +87,15 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 //				Map matrixMap = makeMatrix(mb) 
 //				retVal.add([ "${mb.getIdentifier()}" : matrixMap ])
 //			}
-			if (s.getParameter()) {
-				def v = new Variable(s.getParameter())
-				retVal.add([ "${v['name']}" : v.getProperties().minus('name':"${v['name']}") ])
-			}
+//			if (s.getParameter()) {
+//				def v = new Variable(s.getParameter())
+//				retVal.add([ "${v['name']}" : v.getProperties().minus('name':"${v['name']}") ])
+//			}
 //			if (s.getSameBlock()){
 //				Map same = makeSame(s.getSameBlock())
 //				retVal.add([ "${s.getSameBlock().getIdentifier()}" : same ])
 //			} 
-		}
+//		}
 		return retVal
 	}
 	
