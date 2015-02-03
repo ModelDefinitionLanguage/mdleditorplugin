@@ -7,8 +7,8 @@ import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 
 
 /**
- * Class encapsulating a list of Variables.
- * Used tp aid conversion to MDL.
+ * Class encapsulating a list of {@link Variable}s.
+ * Used to aid conversion to MDL.
  */
 public class VariablesList extends ArrayList<Variable> implements MDLPrintable {
 	
