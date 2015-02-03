@@ -1,0 +1,77 @@
+Nock_2013_Carboplatin_PK_mdl = mdlobj{
+
+   MODEL_INPUT_VARIABLES{
+      ID: {type=categorical, use=id,level=2}
+      TIME: {type=continuous, use=idv, units="h"}
+      TALD: {type=continuous, units="h"} # time after last dose
+      AMT: {type=continuous, use=amt, administration=Ac, units="mg"} 
+      DV : {type=continuous, prediction=Y, use=dv,level=1, units="ug/mL"} # drug concentration
+      EVID : {type=categorical, use=evid}  
+      KG : {type=continuous, use=covariate, units="kg"} 
+      CLCR : {type=continuous, use=covariate, units="mL/min"}
+      logtCLCR :{type=continuous, use=covariate} 
+   }# end MODEL_INPUT_VARIABLES
+   
+   STRUCTURAL_PARAMETERS{
+      THCL
+      THV1
+      THQ
+      THV2
+      SDADD
+      SDPROP
+      CLCLCR_COV
+      V1KG_COV
+   }# end STRUCTURAL_PARAMETERS
+
+   VARIABILITY_PARAMETERS{
+      OMCL
+      SIGMA
+   }# end VARIABILITY_PARAMETERS
+
+   RANDOM_VARIABLE_DEFINITION{
+      eta_OMCL ~ {type=normal, mean=0, var=OMCL, level=ID}
+
+   }# end RANDOM_VARIABLE_DEFINITION
+   
+   GROUP_VARIABLES{
+      # define logtKG (normalised to 80 kg)
+      V1KG = (KG/80)^V1KG_COV
+      TVV1 = THV1*V1KG
+      # define logtCLCLCR (normalised to 114.48) 
+      
+   }
+
+   INDIVIDUAL_VARIABLES{
+        #logtCLCR is not defined
+        #randEff -> ranEff
+      CL : {type=linear, trans=log, pop = THCL, fixEff=[CLCLCR_COV], cov=[logtCLCR], ranEff=eta_OMCL}
+
+      #V1 : {type=linear, trans=log, pop = THV1, fixEff=[V1KG_COV], cov=[logtKG]}  # there is no IIV associated, is it OK this then?
+      V1= TVV1
+      Q = THQ
+      V2 = THV2
+      VSS = V1+V2
+   
+      K = CL/V1
+      K12 = Q/V1
+      K21 = Q/V2
+   }# end INDIVIDUAL_VARIABLES
+
+   MODEL_PREDICTION{
+    ODE{
+        # Drug PK
+        Ac : {deriv=(-K12*Ac - K*Ac + K21*Ap), init=0, x0=0}
+        Ap : {deriv= (K12*Ac - K21*Ap), init=0, x0=0}
+        }
+    IPRED = Ac/V1
+   }# end MODEL_PREDICTION
+
+   OBSERVATION{      
+      eps_SIGMA ~ {type=normal, mean=0, var=SIGMA, level=DV}
+      
+      Y : {type=continuous, error=combinedError2(additive=SDADD, proportional=SDPROP,f=IPRED),
+        eps=eps_SIGMA, prediction=IPRED}
+      #combinedError2 is undefined yet
+   }# end OBSERVATION
+
+} # end of model object

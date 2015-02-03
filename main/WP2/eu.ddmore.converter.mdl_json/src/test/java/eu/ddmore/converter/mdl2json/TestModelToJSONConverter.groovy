@@ -3,8 +3,8 @@ package eu.ddmore.converter.mdl2json;
 import static org.junit.Assert.*
 
 import org.apache.log4j.Logger
-import org.junit.Test
 import org.junit.Ignore
+import org.junit.Test
 
 class TestModelToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestModelToJSONConverter.class)
@@ -72,6 +72,30 @@ class TestModelToJSONConverter extends ConverterTestsParent {
 			individualVars[3])
 
 	}
+    
+    @Test
+    void testIndividualVariablesBlockContainingMixtureOfParameterListsAndExpressions() {
+        def json = getJsonFromMDLFile("Nock_2013_Carboplatin_PK_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.Nock_2013_Carboplatin_PK_mdl
+        
+        def individualVars = modelObject.INDIVIDUAL_VARIABLES
+        
+        logger.debug(individualVars)
+        
+        assertEquals("Checking number of individual variables", 8, individualVars.size())
+        
+        assertEquals("Checking variable 1/8",
+            [ 'name':'CL', 'type':'linear', 'trans':'log', 'pop':'THCL', 'fixEff':'[CLCLCR_COV]', 'cov':'[logtCLCR]', 'ranEff':'eta_OMCL' ],
+            individualVars[0])
+        assertEquals("Checking variable 2/8", [ 'name':'V1', '_expr':'TVV1' ], individualVars[1])
+        assertEquals("Checking variable 3/8", [ 'name':'Q', '_expr':'THQ' ], individualVars[2])
+        assertEquals("Checking variable 4/8", [ 'name':'V2', '_expr':'THV2' ], individualVars[3])
+        assertEquals("Checking variable 5/8", [ 'name':'VSS', '_expr':'V1+V2' ], individualVars[4])
+        assertEquals("Checking variable 6/8", [ 'name':'K', '_expr':'CL/V1' ], individualVars[5])
+        assertEquals("Checking variable 7/8", [ 'name':'K12', '_expr':'Q/V1' ], individualVars[6])
+        assertEquals("Checking variable 8/8", [ 'name':'K21', '_expr':'Q/V2' ], individualVars[7])
+    }
 	
 	@Test
 	void testRandomVariableDefinitionBlock() {
@@ -168,9 +192,9 @@ class TestModelToJSONConverter extends ConverterTestsParent {
         def library = modPred.LIBRARY
         def content = modPred.content
         
-        logger.debug("Ode :- " + ode)
-        logger.debug("Library :- " + library)
-        logger.debug("content := " + content)
+        logger.debug("Ode = " + ode)
+        logger.debug("Library = " + library)
+        logger.debug("content = " + content)
 
 		def expectedOdeBlock = """            RATEIN = GUT*KA when T>=TLAG otherwise 0
             GUT : {deriv = (-RATEIN), init = 0, x0 = 0}
@@ -187,23 +211,37 @@ class TestModelToJSONConverter extends ConverterTestsParent {
     }
 	
 	@Test
-	@Ignore
 	void testGroupVariablesBlock() {
-		fail("Not implemented yet")
+        def json = getJsonFromMDLFile("Nock_2013_Carboplatin_PK_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.Nock_2013_Carboplatin_PK_mdl
+        
+        def groupVars = modelObject.GROUP_VARIABLES
+        
+        logger.debug('Group Variables = ' + groupVars)
+        
+        assertEquals("Should be two Group Variables", 2, groupVars.size())
+        Map gv1 = groupVars[0]
+        Map gv2 = groupVars[1]
+        
+        assertEquals("Checking Group Variable variable name 1/2", "V1KG", gv1.keySet().toArray()[0])
+        assertEquals("Checking Group Variable variable name 2/2", "TVV1", gv2.keySet().toArray()[0])
+        assertEquals("Checking Group Variable expression 1/2", "(KG/80)^V1KG_COV", gv1.get("V1KG"))
+        assertEquals("Checking Group Variable expression 2/2", "THV1*V1KG", gv2.get("TVV1"))
 	}
 	
-	@Test
-	@Ignore
-	void testEstimationBlock() {
-		def json = getJsonFromMDLFile("drugX_ModelObject.mdl")
-		
-		def modelObject = json.drugX_mdl
-		
-		logger.debug(modelObject)
+    @Test
+    @Ignore
+    void testEstimationBlock() {
+        def json = getJsonFromMDLFile("drugX_ModelObject.mdl")
+        
+        def modelObject = json.drugX_mdl
+        
+        logger.debug(modelObject)
 
-		def groupVariables = modelObject.GROUP_VARIABLES
-		
-		def expectedGroupVariablesBlock = """GRPVc = POP_Vc*(WT/70)
+        def groupVariables = modelObject.GROUP_VARIABLES
+        
+        def expectedGroupVariablesBlock = """GRPVc = POP_Vc*(WT/70)
 GRPVp = POP_Vp
 GRPCL = POP_CL
 GRPka = POP_ka
@@ -211,12 +249,12 @@ GRPQ = POP_Q
 GRPMTT = POP_MTT
 GRPn = POP_n
 """
-		// Note that we need to make the line endings consistent between actual vs expected
-		assertEquals("Checking the Group Variables block", expectedGroupVariablesBlock, groupVariables[0].replace("\r\n", "\n"))
-	
-		def individualVariables = modelObject.INDIVIDUAL_VARIABLES
-		
-		def expectedIndividualVariablesBlock = """Vc = GRPVc*exp(eta_PPV_Vc)
+        // Note that we need to make the line endings consistent between actual vs expected
+        assertEquals("Checking the Group Variables block", expectedGroupVariablesBlock, groupVariables[0].replace("\r\n", "\n"))
+    
+        def individualVariables = modelObject.INDIVIDUAL_VARIABLES
+        
+        def expectedIndividualVariablesBlock = """Vc = GRPVc*exp(eta_PPV_Vc)
         Vp = GRPVp*exp(eta_PPV_Vp)
         CL = GRPCL*exp(eta_PPV_CL)
         ka = GRPka
@@ -230,63 +268,63 @@ GRPn = POP_n
         LNFAC = ln(2.5066)+(n+0.5)*ln(n)-n
         F1 = 0
         if (AMT>0) {
-	PODO = AMT
+    PODO = AMT
 }
 """
-		// Note that we need to make the line endings consistent between actual vs expected
-		assertEquals("Checking the Individual Variables block", expectedIndividualVariablesBlock, individualVariables[0].replace("\r\n", "\n"))
-		
-		def modelPrediction = modelObject.MODEL_PREDICTION
-		
-		logger.debug(modelPrediction)
-		
-		// (Skip checking of Model Prediction block since is tested in separate test method)
-		
-		def estimationBlock = modelObject.ESTIMATION
-		
-		logger.debug(estimationBlock)
-		
-		def expectedEstimationBlock = """IPRED = CENTRAL/Vc
+        // Note that we need to make the line endings consistent between actual vs expected
+        assertEquals("Checking the Individual Variables block", expectedIndividualVariablesBlock, individualVariables[0].replace("\r\n", "\n"))
+        
+        def modelPrediction = modelObject.MODEL_PREDICTION
+        
+        logger.debug(modelPrediction)
+        
+        // (Skip checking of Model Prediction block since is tested in separate test method)
+        
+        def estimationBlock = modelObject.ESTIMATION
+        
+        logger.debug(estimationBlock)
+        
+        def expectedEstimationBlock = """IPRED = CENTRAL/Vc
 if (IPRED==0) {
-	IPRED = 0.0001
+    IPRED = 0.0001
 }
 W = RUV_PROP*IPRED
 IRES = DV-IPRED
 IWRES = IRES/W
 Y = IPRED+W*eps_RUV_EPS
 """
-		// Note that we need to make the line endings consistent between actual vs expected
-		assertEquals("Checking the Estimation block", expectedEstimationBlock, estimationBlock[0].replace("\r\n", "\n"))
-		
-	}
-	
-	@Test
-	@Ignore
-	public void testThatConditionalStatementWrittenOutWithBraces() {
-		def json = getJsonFromMDLFile("conditionalStmtWithBraces.mdl")
-		
-		def modelObject = json.Hamren2008_mdl
-		
-		def expectedContentBlock = """if (SEX==2) {
-	POP_EC_50_FPG = POP_EC_50_FPG_F
-	POP_K_IN_RBC = POP_K_IN_RBC_F
+        // Note that we need to make the line endings consistent between actual vs expected
+        assertEquals("Checking the Estimation block", expectedEstimationBlock, estimationBlock[0].replace("\r\n", "\n"))
+        
+    }
+    
+    @Test
+    @Ignore
+    public void testThatConditionalStatementWrittenOutWithBraces() {
+        def json = getJsonFromMDLFile("conditionalStmtWithBraces.mdl")
+        
+        def modelObject = json.Hamren2008_mdl
+        
+        def expectedContentBlock = """if (SEX==2) {
+    POP_EC_50_FPG = POP_EC_50_FPG_F
+    POP_K_IN_RBC = POP_K_IN_RBC_F
 } else {
-	POP_EC_50_FPG = POP_EC_50_FPG_F+BETA_EC_50_FPG
-	POP_K_IN_RBC = POP_K_IN_RBC_F+BETA_K_IN_RBC
+    POP_EC_50_FPG = POP_EC_50_FPG_F+BETA_EC_50_FPG
+    POP_K_IN_RBC = POP_K_IN_RBC_F+BETA_K_IN_RBC
 }
 if (TREAT==1) {
-	POP_FPG_BASELINE = POP_FPG_BASELINE_N
-	if (TREAT==1) {
-		POP_FPG_WASHOUT = POP_FPG_WASHOUT_N
-	}
+    POP_FPG_BASELINE = POP_FPG_BASELINE_N
+    if (TREAT==1) {
+        POP_FPG_WASHOUT = POP_FPG_WASHOUT_N
+    }
 } else {
-	POP_FPG_BASELINE = POP_FPG_BASELINE_N+BETA_FPG_BASELINE
-	POP_FPG_WASHOUT = POP_FPG_WASHOUT_N+BETA_FPG_WASHOUT
+    POP_FPG_BASELINE = POP_FPG_BASELINE_N+BETA_FPG_BASELINE
+    POP_FPG_WASHOUT = POP_FPG_WASHOUT_N+BETA_FPG_WASHOUT
 }
 """
-		
-		assertEquals("Checking the content of the block", expectedContentBlock, modelObject.GROUP_VARIABLES[0].replace("\r\n", "\n"))
-		
-	}
-	
+        
+        assertEquals("Checking the content of the block", expectedContentBlock, modelObject.GROUP_VARIABLES[0].replace("\r\n", "\n"))
+        
+    }
+    
 }

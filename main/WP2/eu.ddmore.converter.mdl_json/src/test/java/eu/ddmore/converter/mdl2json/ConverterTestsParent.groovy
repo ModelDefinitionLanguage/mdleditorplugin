@@ -111,12 +111,10 @@ class ConverterTestsParent {
 			}
 		
 			// Trim off whitespace from both the expected and the actual
-			// Also drop any { } brackets around an "if" statement which are always added when writing out to MDL
-			// TODO: Better way of dealing with this, since incorrect bracketing wouldn't be picked up as things stand
-			// TODO: Is this even still relevant?
 			assertEquals("Checking the content of the block " + blockName,
-				origMdlFileBlockContent.replaceAll(~/\s*/, "").replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/),
-				newMdlFileBlockContent.replaceAll(~/\s*/, "").replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/))
+				origMdlFileBlockContent.replaceAll(~/\s*/, "") /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */ ,
+				newMdlFileBlockContent.replaceAll(~/\s*/, "") /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */
+            )
 		}
 	}
 	

@@ -21,6 +21,8 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
 		/ {"VARIABILITY_PARAMETERS":[{"name":"PPV_CL"},{"name":"PPV_V"},{"name":"PPV_KA"},{"name":"PPV_TLAG"},{"name":"RUV_PROP"},{"name":"RUV_ADD"}]} /
 	private final static String individualVarsBlockJson =
 		/ {"INDIVIDUAL_VARIABLES":[{"fixEff":"[BETA_CL_WT]","trans":"log","name":"CL","cov":"[logtWT]","ranEff":"ETA_CL","pop":"POP_CL","type":"linear"},{"fixEff":"[BETA_V_WT]","trans":"log","name":"V","cov":"[logtWT]","ranEff":"ETA_V","pop":"POP_V","type":"linear"},{"trans":"log","name":"KA","ranEff":"ETA_KA","pop":"POP_KA","type":"linear"},{"trans":"log","name":"TLAG","ranEff":"ETA_TLAG","pop":"POP_TLAG","type":"linear"}]} /
+    private final static String individualVarsBlockContainingMixOfParamListsAndExprsJson =
+        / {"INDIVIDUAL_VARIABLES":[{"fixEff":"[CLCLCR_COV]","trans":"log","name":"CL","cov":"[logtCLCR]","ranEff":"eta_OMCL","pop":"THCL","type":"linear"},{"name":"V1","_expr":"TVV1"},{"name":"Q","_expr":"THQ"},{"name":"V2","_expr":"THV2"},{"name":"VSS","_expr":"V1+V2"},{"name":"K","_expr":"CL\/V1"},{"name":"K12","_expr":"Q\/V1"},{"name":"K21","_expr":"Q\/V2"}]} /
 	private final static String randomVarDefinitionBlockJson =
 		/ {"RANDOM_VARIABLE_DEFINITION":[{"name":"ETA_CL","complexAttrs":{"type":"normal","mean":"0","sd":"PPV_CL","level":"ID"}},{"name":"ETA_V","complexAttrs":{"type":"normal","mean":"0","sd":"PPV_V","level":"ID"}},{"name":"ETA_KA","complexAttrs":{"type":"normal","mean":"0","sd":"PPV_KA","level":"ID"}},{"name":"ETA_TLAG","complexAttrs":{"type":"normal","mean":"0","sd":"PPV_TLAG","level":"ID"}},{"attrs":{"type":"CORR","rv1":"ETA_CL","rv2":"ETA_V","level":"ID"},"name":"CORR_PPV_CL_V"}]} /
 	private final static String modelOutputVarsBlockJson =
@@ -31,7 +33,9 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
 		/ {"OBSERVATION":[{"name":"EPS_Y","complexAttrs":{"type":"normal","mean":"0","var":"1","level":"DV"}},{"attrs":{"type":"continuous","error":"combinedError1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)","eps":"EPS_Y","prediction":"CC"},"name":"Y"}]} /
 	private final static String modelPredictionBlockJson =
 		/ {"MODEL_PREDICTION":{"content":"        CC = CENTRAL\/V","ODE":"            RATEIN = GUT*KA when T>=TLAG otherwise 0\n            GUT : {deriv = (-RATEIN), init = 0, x0 = 0}\n            CENTRAL : {deriv = (RATEIN-CL*CENTRAL\/V), init = 0, x0 = 0}"}} /
-	
+    private final static String groupVariablesBlockJson =
+        / {"GROUP_VARIABLES":[{"V1KG":"(KG\/80)^V1KG_COV"},{"TVV1":"THV1*V1KG"}]} /
+        	
 	@Test
 	public void testStructuralParametersBlock() {
 
@@ -96,6 +100,30 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
 """
 		assertEquals(expected, modelObj.toMDL())
 	}
+    
+    @Test
+    void testIndividualVariablesBlockContainingMixtureOfParameterListsAndExpressions() {
+        def json = getJson(individualVarsBlockContainingMixOfParamListsAndExprsJson)
+
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    INDIVIDUAL_VARIABLES {
+        CL : {cov=[logtCLCR], fixEff=[CLCLCR_COV], pop=THCL, ranEff=eta_OMCL, trans=log, type=linear}
+        V1 = TVV1
+        Q = THQ
+        V2 = THV2
+        VSS = V1+V2
+        K = CL/V1
+        K12 = Q/V1
+        K21 = Q/V2
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())
+    }
 	
 	@Test
 	public void testRandomVariableDefinitionBlock() {
@@ -209,9 +237,22 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
 	}
 	
 	@Test
-	@Ignore
 	void testGroupVariablesBlock() {
-		fail("Not implemented yet")
+        def json = getJson(groupVariablesBlockJson)
+        
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    GROUP_VARIABLES {
+        V1KG = (KG/80)^V1KG_COV
+        TVV1 = THV1*V1KG
+    }
+
+}
+"""
+        // Note: the replace makes the line endings consistent so text compare passes
+        assertEquals(expected, modelObj.toMDL().replace("\r\n", "\n"))
 	}
 	
 	@Test

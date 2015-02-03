@@ -70,7 +70,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	 * However not all blocks will be present for all models; comparisons of absent blocks will silently pass.
 	 */
 	@Test
-	public void testMDLToJSONToMDL() {
+	public void testMDLToJSONToMDL_Warfarin() {
 		
 		def File origMdlFile = getFileFromModelsProject("6.0.7/Warfarin_ODE/Warfarin-ODE-latest.mdl", "mdl")
 		
@@ -84,6 +84,29 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 			extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, outputMdl)
 		}
 	}
+    
+    /**
+     * Converting a MDL file to JSON then back to MDL should give rise to syntactically and
+     * semantically equivalent blocks to those of the original MDL.
+     * <p>
+     * All the blocks of the MDL will be compared.
+     * However not all blocks will be present for all models; comparisons of absent blocks will silently pass.
+     */
+    @Test
+    public void testMDLToJSONToMDL_Nock() {
+        
+        def File origMdlFile = getFileFromModelsProject("6.0.7/Nock_2013_Carboplatin_PK/Nock_2013_Carboplatin_PK.mdl", "mdl")
+        
+        def json = getJsonFromMDLFile(origMdlFile)
+        
+        def outputMdl = new MCLFile(json).toMDL()
+        
+        logger.debug(outputMdl)
+        
+        allBlockNames.each { blockName ->
+            extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, outputMdl)
+        }
+    }
 	
 	/**
 	 * Original MDL file: Warfarin-ODE-latest.mdl
@@ -96,6 +119,18 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 			"6.0.7/Warfarin_ODE/Warfarin-ODE-latest.mdl"
 		);
 	}
+    
+    /**
+     * Original MDL file: Nock_2013_Carboplatin_PK.mdl
+     * File containing the dumped out JSON: Nock_2013_Carboplatin_PK.output.json
+     */
+    @Test
+    public void testRGeneratedMOG_Nock2013Carboplatin_MDL607() {
+        testRGeneratedMOG(
+            "6.0.7/Nock_2013_Carboplatin_PK/Nock_2013_Carboplatin_PK.output.json",
+            "6.0.7/Nock_2013_Carboplatin_PK/Nock_2013_Carboplatin_PK.mdl"
+        );
+    }
 
 	/**
 	 * Original MDL file: ex_model7_prolactin_01July2014_OAM.mdl

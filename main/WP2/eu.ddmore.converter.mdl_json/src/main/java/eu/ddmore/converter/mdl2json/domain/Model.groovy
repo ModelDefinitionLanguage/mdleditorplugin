@@ -1,8 +1,11 @@
 package eu.ddmore.converter.mdl2json.domain;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.EstimationBlock
 import org.ddmore.mdl.mdl.GroupVariablesBlock
+import org.ddmore.mdl.mdl.GroupVariablesBlockStatement
 import org.ddmore.mdl.mdl.ModelObject
 import org.ddmore.mdl.mdl.ModelObjectBlock
 
@@ -65,7 +68,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 				setProperty(MODEL_OUTPUT_VARIABLES, VariablesList.buildFromSymbolNames(b.getOutputVariablesBlock().getVariables()))
 			}
 			if (b.getGroupVariablesBlock()) {
-				setProperty(GROUP_VARIABLES, makeGroupVariables(b.getGroupVariablesBlock()))
+				setProperty(GROUP_VARIABLES, DerivedVariablesList.buildFromGroupVariablesBlock(b.getGroupVariablesBlock()))
 			}
 			if (b.getEstimationBlock()) {
 				setProperty(ESTIMATION, makeEstimation(b.getEstimationBlock()))
@@ -113,7 +116,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 			setProperty(MODEL_PREDICTION, new ModelPrediction(json[MODEL_PREDICTION]))
 		}
 		if (json[GROUP_VARIABLES]) {
-			throw new UnsupportedOperationException("Group Variables block not supported yet")
+            setProperty(GROUP_VARIABLES, DerivedVariablesList.buildFromJSON(json[GROUP_VARIABLES]))
 		}
 		if (json[ESTIMATION]) {
 			throw new UnsupportedOperationException("Estimation block not supported yet")
@@ -127,27 +130,6 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 		
 	}
 
-	// TODO: This needs to be revisited
-	private makeGroupVariables(GroupVariablesBlock groupVariables) {
-		throw new UnsupportedOperationException("Group Variables block not supported yet")
-		
-//		List statements = []
-//		groupVariables.getStatements().each { GroupVariablesBlockStatement statement ->
-//			def mixtureBlock = statement.getMixtureBlock()
-//			def stmt = statement.getStatement()
-//			if (mixtureBlock) {
-//				mixtureBlock.getStatements().each {
-//					// TODO: "it" is a BlockStatement; needs to be pretty-printed correctly
-//					statements.add(mdlPrinter.print(it))
-//				}
-//			} else if (stmt) {
-//				// TODO: "stmt" is a BlockStatement; needs to be pretty-printed correctly
-//				statements.add(mdlPrinter.print(stmt))
-//			}
-//		}
-//		statements.join()
-	}
-	
 	// TODO: This needs to be revisited
 	private makeEstimation(EstimationBlock estimationBlock) {
 		throw new UnsupportedOperationException("Estimation block not supported yet")

@@ -16,6 +16,7 @@ import org.ddmore.mdl.mdl.PowerExpression
 import org.ddmore.mdl.mdl.Primary
 import org.ddmore.mdl.mdl.UnaryExpression
 import org.ddmore.mdl.mdl.Vector
+import org.eclipse.emf.common.util.EList
 
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
@@ -84,32 +85,32 @@ public class XtextWrapper {
 	public static Object unwrap(AdditiveExpression expression) {
 		if (expression.getString()) {
 			return "\"" + expression.getString() + "\"";
+		} else {
+            return unwrap(expression.getExpression(), expression.getOperator())
 		}
-		
-		final StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < expression.getExpression().size(); i++) {
-			sb.append(unwrap(expression.getExpression().get(i)))
-			if ( (!expression.getOperator().isEmpty()) && i < expression.getExpression().size()-1 ) {
-				sb.append(expression.getOperator().get(0))
-			}
-		}
-		return sb.toString()
 	}
 	
 	public static Object unwrap(MultiplicativeExpression expression) {
-		final StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < expression.getExpression().size(); i++) {
-			sb.append(unwrap(expression.getExpression().get(i)))
-			if ( (!expression.getOperator().isEmpty()) && i < expression.getExpression().size()-1 ) {
-				sb.append(expression.getOperator().get(0))
-			}
-		}
-		return sb.toString()
+        return unwrap(expression.getExpression(), expression.getOperator())
 	}
 	
 	public static Object unwrap(PowerExpression expression) {
-		return unwrap(expression.getExpression().get(0))
+        return unwrap(expression.getExpression(), expression.getOperator())
 	}
+    
+    // Would be good if EList could be parameterised by a common superclass of all expression classes but no such suitable class exists.
+    // TODO: This should be private but generates an Eclipse warning about mixing public and private methods of the same name
+    public static Object unwrap(EList<Object> expressionList, EList<String> operatorList) {
+        
+        final StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < expressionList.size(); i++) {
+            sb.append(unwrap(expressionList.get(i)))
+            if ( (!operatorList.isEmpty()) && i < expressionList.size()-1 ) {
+                sb.append(operatorList.get(0))
+            }
+        }
+        return sb.toString()
+    }
 	
 	public static Object unwrap(UnaryExpression expression) {
 		if (expression.getOperator()) {
@@ -120,11 +121,10 @@ public class XtextWrapper {
 			return expression.getSymbol().getName()
 		} else if (expression.getFunctionCall()) {
 			return unwrap(expression.getFunctionCall())
+        } else if (expression.getParExpression()) {
+            return "(" + XtextWrapper.unwrap(expression.getParExpression().getExpression()) + ")"
 		} else if (expression.getConstant()) {
 			logger.error("Encountered an unhandled UnaryExpression with unexpected content: Constant: " + expression.getConstant())
-			return null
-		} else if (expression.getParExpression()) {
-			logger.error("Encountered an unhandled UnaryExpression with unexpected content: ParExpression: " + expression.getParExpression())
 			return null
 		} else if (expression.getAttribute()) {
 			logger.error("Encountered an unhandled UnaryExpression with unexpected content: Attribute: " + expression.getAttribute())

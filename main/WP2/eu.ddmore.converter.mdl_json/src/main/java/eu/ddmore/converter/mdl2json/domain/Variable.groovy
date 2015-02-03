@@ -12,6 +12,8 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 public class Variable extends Expando implements MDLPrintable {
 
 	private static Logger logger = Logger.getLogger(Variable.class)
+    
+    private static final String EXPRESSION_KEY = "_expr"
 	
 	public Variable(final SymbolDeclaration sd) {
 		
@@ -22,6 +24,9 @@ public class Variable extends Expando implements MDLPrintable {
 				setProperty(a.getArgumentName().getName(), XtextWrapper.unwrap(a.getExpression()))
 			}
 		}
+        else if (sd.getExpression() != null) {
+            setProperty(EXPRESSION_KEY, XtextWrapper.unwrap(sd.getExpression()))
+        }
 	}
 	
 	public Variable(final SymbolName sn) {
@@ -35,14 +40,21 @@ public class Variable extends Expando implements MDLPrintable {
 	public String getName() {
 		return (String) getProperty("name")
 	}
+    
+    public String getExpression() {
+        return (String) getProperty(EXPRESSION_KEY)
+    }
 	
 	public String toMDL() {
 		List attributes = []
 		// Note: sorting is only done so that we get predictable MDL strings that we can compare in the tests
-		getProperties().minus(['name':getName()]).sort().each { k, v ->
+        // NB: EXPRESSION_KEY needs to be in parentheses to be treated as a string variable rather than a literal
+		getProperties().minus( ['name':getName(), (EXPRESSION_KEY):getExpression()] ).sort().each { k, v ->
 			attributes.add("${k}=${v}")
 		}
-		if (attributes.isEmpty()) {
+        if (getExpression()) {
+            """${getName()} = ${getExpression()}"""
+        } else if (attributes.isEmpty()) {
 			"""${getName()}"""
 		} else {
 			"""${getName()} : {${attributes.join(", ")}}"""
