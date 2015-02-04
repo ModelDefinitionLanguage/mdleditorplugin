@@ -3,8 +3,10 @@ package eu.ddmore.converter.mdl2json;
 import static org.junit.Assert.*
 
 import org.apache.log4j.Logger
-import org.junit.Ignore
 import org.junit.Test
+import org.junit.Ignore
+
+import eu.ddmore.converter.mdl2json.domain.Variable
 
 class TestModelObjectToJSON extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestModelObjectToJSON.class)
@@ -20,12 +22,12 @@ class TestModelObjectToJSON extends ConverterTestsParent {
 		logger.debug(structuralParameters)
 
 		assertEquals("Checking number of structural parameters", 6, structuralParameters.size())
-		assertEquals("Checking parameter 1/6", ['name':'POP_CL'], structuralParameters[0])
-		assertEquals("Checking parameter 2/6", ['name':'POP_V'], structuralParameters[1])
-		assertEquals("Checking parameter 3/6", ['name':'POP_KA'], structuralParameters[2])
-		assertEquals("Checking parameter 4/6", ['name':'POP_TLAG'], structuralParameters[3])
-		assertEquals("Checking parameter 5/6", ['name':'BETA_CL_WT'], structuralParameters[4])
-		assertEquals("Checking parameter 6/6", ['name':'BETA_V_WT'], structuralParameters[5])
+		assertEquals("Checking parameter 1/6", [(Variable.NAME_KEY):'POP_CL'], structuralParameters[0])
+		assertEquals("Checking parameter 2/6", [(Variable.NAME_KEY):'POP_V'], structuralParameters[1])
+		assertEquals("Checking parameter 3/6", [(Variable.NAME_KEY):'POP_KA'], structuralParameters[2])
+		assertEquals("Checking parameter 4/6", [(Variable.NAME_KEY):'POP_TLAG'], structuralParameters[3])
+		assertEquals("Checking parameter 5/6", [(Variable.NAME_KEY):'BETA_CL_WT'], structuralParameters[4])
+		assertEquals("Checking parameter 6/6", [(Variable.NAME_KEY):'BETA_V_WT'], structuralParameters[5])
 	}
 	
 	@Test
@@ -39,12 +41,12 @@ class TestModelObjectToJSON extends ConverterTestsParent {
 		logger.debug(variabilityParameters)
 		
 		assertEquals("Checking number of variability parameters", 6, variabilityParameters.size())
-		assertEquals("Checking parameter 1/7", ['name':'PPV_CL'], variabilityParameters[0])
-		assertEquals("Checking parameter 2/7", ['name':'PPV_V'], variabilityParameters[1])
-		assertEquals("Checking parameter 3/7", ['name':'PPV_KA'], variabilityParameters[2])
-		assertEquals("Checking parameter 4/7", ['name':'PPV_TLAG'], variabilityParameters[3])
-		assertEquals("Checking parameter 6/7", ['name':'RUV_PROP'], variabilityParameters[4])
-		assertEquals("Checking parameter 6/7", ['name':'RUV_ADD'], variabilityParameters[5])
+		assertEquals("Checking parameter 1/7", [(Variable.NAME_KEY):'PPV_CL'], variabilityParameters[0])
+		assertEquals("Checking parameter 2/7", [(Variable.NAME_KEY):'PPV_V'], variabilityParameters[1])
+		assertEquals("Checking parameter 3/7", [(Variable.NAME_KEY):'PPV_KA'], variabilityParameters[2])
+		assertEquals("Checking parameter 4/7", [(Variable.NAME_KEY):'PPV_TLAG'], variabilityParameters[3])
+		assertEquals("Checking parameter 6/7", [(Variable.NAME_KEY):'RUV_PROP'], variabilityParameters[4])
+		assertEquals("Checking parameter 6/7", [(Variable.NAME_KEY):'RUV_ADD'], variabilityParameters[5])
 	}
 	
 	@Test
@@ -59,16 +61,16 @@ class TestModelObjectToJSON extends ConverterTestsParent {
 		
 		assertEquals("Checking number of individual variables", 4, individualVars.size())
 		assertEquals("Checking variable 1/4",
-			[ 'name':'CL', 'type':'linear', 'trans':'log', 'pop':'POP_CL', 'fixEff':'[BETA_CL_WT]', 'cov':'[logtWT]', 'ranEff':'ETA_CL' ],
+			[ (Variable.NAME_KEY):'CL', 'type':'linear', 'trans':'log', 'pop':'POP_CL', 'fixEff':'[BETA_CL_WT]', 'cov':'[logtWT]', 'ranEff':'ETA_CL' ],
 			individualVars[0])
 		assertEquals("Checking variable 2/4",
-			[ 'name':'V', 'type':'linear', 'trans':'log', 'pop':'POP_V', 'fixEff':'[BETA_V_WT]', 'cov':'[logtWT]', 'ranEff':'ETA_V' ],
+			[ (Variable.NAME_KEY):'V', 'type':'linear', 'trans':'log', 'pop':'POP_V', 'fixEff':'[BETA_V_WT]', 'cov':'[logtWT]', 'ranEff':'ETA_V' ],
 			individualVars[1])
 		assertEquals("Checking variable 3/4",
-			[ 'name':'KA', 'type':'linear', 'trans':'log', 'pop':'POP_KA', 'ranEff':'ETA_KA' ],
+			[ (Variable.NAME_KEY):'KA', 'type':'linear', 'trans':'log', 'pop':'POP_KA', 'ranEff':'ETA_KA' ],
 			individualVars[2])
 		assertEquals("Checking variable 4/4",
-			[ 'name':'TLAG', 'type':'linear', 'trans':'log', 'pop':'POP_TLAG', 'ranEff':'ETA_TLAG' ],
+			[ (Variable.NAME_KEY):'TLAG', 'type':'linear', 'trans':'log', 'pop':'POP_TLAG', 'ranEff':'ETA_TLAG' ],
 			individualVars[3])
 
 	}
@@ -86,15 +88,15 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         assertEquals("Checking number of individual variables", 8, individualVars.size())
         
         assertEquals("Checking variable 1/8",
-            [ 'name':'CL', 'type':'linear', 'trans':'log', 'pop':'THCL', 'fixEff':'[CLCLCR_COV]', 'cov':'[logtCLCR]', 'ranEff':'eta_OMCL' ],
+            [ (Variable.NAME_KEY):'CL', 'type':'linear', 'trans':'log', 'pop':'THCL', 'fixEff':'[CLCLCR_COV]', 'cov':'[logtCLCR]', 'ranEff':'eta_OMCL' ],
             individualVars[0])
-        assertEquals("Checking variable 2/8", [ 'name':'V1', '_expr':'TVV1' ], individualVars[1])
-        assertEquals("Checking variable 3/8", [ 'name':'Q', '_expr':'THQ' ], individualVars[2])
-        assertEquals("Checking variable 4/8", [ 'name':'V2', '_expr':'THV2' ], individualVars[3])
-        assertEquals("Checking variable 5/8", [ 'name':'VSS', '_expr':'V1+V2' ], individualVars[4])
-        assertEquals("Checking variable 6/8", [ 'name':'K', '_expr':'CL/V1' ], individualVars[5])
-        assertEquals("Checking variable 7/8", [ 'name':'K12', '_expr':'Q/V1' ], individualVars[6])
-        assertEquals("Checking variable 8/8", [ 'name':'K21', '_expr':'Q/V2' ], individualVars[7])
+        assertEquals("Checking variable 2/8", [ (Variable.NAME_KEY):'V1', (Variable.EXPRESSION_KEY):'TVV1' ], individualVars[1])
+        assertEquals("Checking variable 3/8", [ (Variable.NAME_KEY):'Q', (Variable.EXPRESSION_KEY):'THQ' ], individualVars[2])
+        assertEquals("Checking variable 4/8", [ (Variable.NAME_KEY):'V2', (Variable.EXPRESSION_KEY):'THV2' ], individualVars[3])
+        assertEquals("Checking variable 5/8", [ (Variable.NAME_KEY):'VSS', (Variable.EXPRESSION_KEY):'V1+V2' ], individualVars[4])
+        assertEquals("Checking variable 6/8", [ (Variable.NAME_KEY):'K', (Variable.EXPRESSION_KEY):'CL/V1' ], individualVars[5])
+        assertEquals("Checking variable 7/8", [ (Variable.NAME_KEY):'K12', (Variable.EXPRESSION_KEY):'Q/V1' ], individualVars[6])
+        assertEquals("Checking variable 8/8", [ (Variable.NAME_KEY):'K21', (Variable.EXPRESSION_KEY):'Q/V2' ], individualVars[7])
     }
 	
 	@Test
@@ -109,15 +111,15 @@ class TestModelObjectToJSON extends ConverterTestsParent {
 		
 		assertEquals("Checking number of random variable definitions", 5, randomVariableDefinitions.size())
 		
-		assertEquals("Checking name of distribution-variable 1/4", 'ETA_CL', randomVariableDefinitions[0]['name'])
+		assertEquals("Checking name of distribution-variable 1/4", 'ETA_CL', randomVariableDefinitions[0][(Variable.NAME_KEY)])
 		assertEquals("Checking distribution-variable 1/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_CL', 'level':'ID' ], randomVariableDefinitions[0]['complexAttrs'])
-		assertEquals("Checking name of distribution-variable 2/4", 'ETA_V', randomVariableDefinitions[1]['name'])
+		assertEquals("Checking name of distribution-variable 2/4", 'ETA_V', randomVariableDefinitions[1][(Variable.NAME_KEY)])
 		assertEquals("Checking distribution-variable 2/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_V', 'level':'ID' ], randomVariableDefinitions[1]['complexAttrs'])
-		assertEquals("Checking name of distribution-variable 3/4", 'ETA_KA', randomVariableDefinitions[2]['name'])
+		assertEquals("Checking name of distribution-variable 3/4", 'ETA_KA', randomVariableDefinitions[2][(Variable.NAME_KEY)])
 		assertEquals("Checking distribution-variable 3/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_KA', 'level':'ID' ], randomVariableDefinitions[2]['complexAttrs'])
-		assertEquals("Checking name of distribution-variable 4/4", 'ETA_TLAG', randomVariableDefinitions[3]['name'])
+		assertEquals("Checking name of distribution-variable 4/4", 'ETA_TLAG', randomVariableDefinitions[3][(Variable.NAME_KEY)])
 		assertEquals("Checking distribution-variable 4/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_TLAG', 'level':'ID' ], randomVariableDefinitions[3]['complexAttrs'])
-		assertEquals("Checking name of variable-definition 1/1", 'CORR_PPV_CL_V', randomVariableDefinitions[4]['name'])
+		assertEquals("Checking name of variable-definition 1/1", 'CORR_PPV_CL_V', randomVariableDefinitions[4][(Variable.NAME_KEY)])
 		assertEquals("Checking variable-definition 1/1", [ 'type':'CORR', 'rv1':'ETA_CL', 'rv2':'ETA_V', 'level':'ID' ], randomVariableDefinitions[4]['attrs'])
 	}
 	
@@ -134,7 +136,7 @@ class TestModelObjectToJSON extends ConverterTestsParent {
 		
 		assertEquals("Checking the list of Model Output Variables",
 			[ "ID", "TIME", "logtWT", "CL", "V", "KA", "TLAG", "Y" ].collect{
-				[ 'name': it ]
+				[ (Variable.NAME_KEY): it ]
 		}, modelOutputVariables)
 	}
 	
@@ -149,12 +151,12 @@ class TestModelObjectToJSON extends ConverterTestsParent {
 		logger.debug(inputVariables)
 		
 		assertEquals("Checking number of input variables", 6, inputVariables.size())
-		assertEquals("Checking variable 1/6", [ 'name':'ID', 'use':'id', 'level':'2' ], inputVariables[0])
-		assertEquals("Checking variable 2/6", [ 'name':'TIME', 'use':'idv' ], inputVariables[1])
-		assertEquals("Checking variable 3/6", [ 'name':'AMT', 'use':'amt', 'administration':'GUT' ], inputVariables[2])
-		assertEquals("Checking variable 4/6", [ 'name':'DV', 'use':'dv', 'level':'1', 'prediction':'Y' ], inputVariables[3])
-		assertEquals("Checking variable 5/6", [ 'name':'MDV', 'use':'mdv' ], inputVariables[4])
-		assertEquals("Checking variable 6/6", [ 'name':'logtWT', 'use':'covariate', 'type':'continuous' ], inputVariables[5])
+		assertEquals("Checking variable 1/6", [ (Variable.NAME_KEY):'ID', 'use':'id', 'level':'2' ], inputVariables[0])
+		assertEquals("Checking variable 2/6", [ (Variable.NAME_KEY):'TIME', 'use':'idv' ], inputVariables[1])
+		assertEquals("Checking variable 3/6", [ (Variable.NAME_KEY):'AMT', 'use':'amt', 'administration':'GUT' ], inputVariables[2])
+		assertEquals("Checking variable 4/6", [ (Variable.NAME_KEY):'DV', 'use':'dv', 'level':'1', 'prediction':'Y' ], inputVariables[3])
+		assertEquals("Checking variable 5/6", [ (Variable.NAME_KEY):'MDV', 'use':'mdv' ], inputVariables[4])
+		assertEquals("Checking variable 6/6", [ (Variable.NAME_KEY):'logtWT', 'use':'covariate', 'type':'continuous' ], inputVariables[5])
 	}
 	
 	@Test
@@ -168,11 +170,11 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         def observation = modelObject.OBSERVATION
         
 		assertEquals("Checking number of statements within the observation block", 2, observation.size())
-		assertEquals("Checking name of variable in observation statement 1/2", "EPS_Y", observation[0]['name'])
+		assertEquals("Checking name of variable in observation statement 1/2", "EPS_Y", observation[0][Variable.NAME_KEY])
 		assertEquals("Checking variable in observation statement 1/2",
 			[ 'type':'normal', 'mean':'0', 'var':'1', 'level':'DV' ],
 			observation[0]['complexAttrs'])
-		assertEquals("Checking name of variable in observation statement 2/2", "Y", observation[1]['name'])
+		assertEquals("Checking name of variable in observation statement 2/2", "Y", observation[1][Variable.NAME_KEY])
 		assertEquals("Checking variable in observation statement 2/2",
 			[ 'type':'continuous', 'error':'combinedError1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)', 'eps':'EPS_Y', 'prediction':'CC' ],
 			observation[1]['attrs'])

@@ -20,7 +20,7 @@ public class RandomVariable extends Expando implements MDLPrintable {
 	
 	public RandomVariable(final SymbolDeclaration sd) {
 		
-		setProperty("name", sd.getSymbolName().getName())
+		setProperty(Variable.NAME_KEY, sd.getSymbolName().getName())
 	
 		if (sd.getRandomList()) {
 			final Map complexAttrs = [:]
@@ -42,7 +42,7 @@ public class RandomVariable extends Expando implements MDLPrintable {
 	}
 	
 	public String getName() {
-		return (String) getProperty("name")
+		return (String) getProperty(Variable.NAME_KEY)
 	}
 	
 	public String toMDL() {

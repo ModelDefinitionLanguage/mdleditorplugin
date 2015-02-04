@@ -73,7 +73,10 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
         
         for (SymbolDeclaration s : vb.getParameters()) {
             def v = new Variable(s)
-            retVal.add([ "${v['name']}" : v.getProperties().minus('name':"${v['name']}") ])
+            final String varName = v.getName()
+            
+            // Parentheses required around Variable.NAME_KEY so is treated as string variable not string literal
+            retVal.add([ "${varName}" : v.getProperties().minus((Variable.NAME_KEY) : "${varName}") ])
         }
         
        // WAS:
@@ -214,7 +217,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 			} else {
 				// Otherwise is a named parameter, example "RUV_CVCP : {value=0.0118, type=VAR}"
 				m.each{String varName, Map var -> // Only actually one entry in the map
-					var.put('name',varName)
+					var.put(Variable.NAME_KEY, varName)
 					strBuf.append(new Variable(var).toMDL())
 				}
 			}

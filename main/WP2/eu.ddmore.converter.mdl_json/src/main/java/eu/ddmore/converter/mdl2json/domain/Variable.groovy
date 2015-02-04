@@ -2,22 +2,26 @@ package eu.ddmore.converter.mdl2json.domain;
 
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Argument
-import org.ddmore.mdl.mdl.SymbolDeclaration
+
 import org.ddmore.mdl.mdl.SymbolName
 
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
-//import org.ddmore.mdl.mdl.SymbolModification;
 
+
+/**
+ * Class representing a {@link SymbolDeclaration} from the MDL grammar.
+ */
 public class Variable extends Expando implements MDLPrintable {
 
 	private static Logger logger = Logger.getLogger(Variable.class)
     
-    private static final String EXPRESSION_KEY = "_expr"
+    public static final String NAME_KEY = ".name"
+    public static final String EXPRESSION_KEY = ".expr"
 	
-	public Variable(final SymbolDeclaration sd) {
+	public Variable(final org.ddmore.mdl.mdl.SymbolDeclaration sd) {
 		
-		setProperty("name", sd.getSymbolName().getName())
+		setProperty(NAME_KEY, sd.getSymbolName().getName())
 	
 		if (sd.getList()) {
 			sd.getList().getArguments().getArguments().each {Argument a ->
@@ -30,7 +34,7 @@ public class Variable extends Expando implements MDLPrintable {
 	}
 	
 	public Variable(final SymbolName sn) {
-		setProperty("name", sn.getName())
+		setProperty(NAME_KEY, sn.getName())
 	}
 	
 	public Variable(final Map json) {
@@ -38,7 +42,7 @@ public class Variable extends Expando implements MDLPrintable {
 	}
 	
 	public String getName() {
-		return (String) getProperty("name")
+		return (String) getProperty(NAME_KEY)
 	}
     
     public String getExpression() {
@@ -46,10 +50,12 @@ public class Variable extends Expando implements MDLPrintable {
     }
 	
 	public String toMDL() {
+	    // NB: NAME_KEY and EXPRESSION_KEY need to be in parentheses to be treated as string variables rather than string literals
+        final Map specialAttributes = [(NAME_KEY):getName(), (EXPRESSION_KEY):getExpression()]
+        
 		List attributes = []
 		// Note: sorting is only done so that we get predictable MDL strings that we can compare in the tests
-        // NB: EXPRESSION_KEY needs to be in parentheses to be treated as a string variable rather than a literal
-		getProperties().minus( ['name':getName(), (EXPRESSION_KEY):getExpression()] ).sort().each { k, v ->
+		getProperties().minus(specialAttributes).sort().each { k, v ->
 			attributes.add("${k}=${v}")
 		}
         if (getExpression()) {

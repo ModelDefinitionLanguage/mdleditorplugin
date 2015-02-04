@@ -7,6 +7,7 @@ import org.junit.Ignore
 import org.junit.Test
 
 import eu.ddmore.converter.mdl2json.domain.Parameter
+import eu.ddmore.converter.mdl2json.domain.Variable
 
 class TestParameterObjectToJSON extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestParameterObjectToJSON.class)
@@ -21,22 +22,22 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 		
 		assertEquals("Checking number of Structural parameters", 6, structuralModel.size())
 		
-		def expected_POP_CL = [ 'name':'POP_CL', 'value':'0.1', 'lo':'0.001' ]
+		def expected_POP_CL = [ (Variable.NAME_KEY):'POP_CL', 'value':'0.1', 'lo':'0.001' ]
 		assertEquals("Checking Structural parameter 1/6", expected_POP_CL, structuralModel[0])
 		
-		def expected_POP_V = [ 'name':'POP_V', 'value':'8', 'lo':'0.001' ]
+		def expected_POP_V = [ (Variable.NAME_KEY):'POP_V', 'value':'8', 'lo':'0.001' ]
 		assertEquals("Checking Structural parameter 2/6", expected_POP_V, structuralModel[1])
 		
-		def expected_POP_KA = [ 'name':'POP_KA', 'value':'0.362', 'lo':'0.001' ]
+		def expected_POP_KA = [ (Variable.NAME_KEY):'POP_KA', 'value':'0.362', 'lo':'0.001' ]
 		assertEquals("Checking Structural parameter 3/6", expected_POP_KA, structuralModel[2])
 
-		def expected_POP_TLAG = [ 'name':'POP_TLAG', 'value':'1', 'lo':'0.001' ]
+		def expected_POP_TLAG = [ (Variable.NAME_KEY):'POP_TLAG', 'value':'1', 'lo':'0.001' ]
 		assertEquals("Checking Structural parameter 4/6", expected_POP_TLAG, structuralModel[3])
 
-		def expected_BETA_CL_WT = [ 'name':'BETA_CL_WT', 'value':'0.75', 'fix':'true' ]
+		def expected_BETA_CL_WT = [ (Variable.NAME_KEY):'BETA_CL_WT', 'value':'0.75', 'fix':'true' ]
 		assertEquals("Checking Structural parameter 5/6", expected_BETA_CL_WT, structuralModel[4])
 
-		def expected_BETA_V_WT = [ 'name':'BETA_V_WT', 'value':'1', 'fix':'true' ]
+		def expected_BETA_V_WT = [ (Variable.NAME_KEY):'BETA_V_WT', 'value':'1', 'fix':'true' ]
 		assertEquals("Checking Structural parameter 6/6", expected_BETA_V_WT, structuralModel[5])
 		
 	}
