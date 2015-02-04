@@ -29,10 +29,10 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
     			setProperty(SOURCE, new Source(b.getSourceBlock()))
     		}
     		if (b.getDataInputBlock()) {
-    			setProperty(DATA_INPUT_VARIABLES, new DataInputVariables(b.getDataInputBlock()))
+    			setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataInputBlock().getVariables()))
     		}
     		if (b.getDataDerivedBlock()) {
-    			setProperty(DATA_DERIVED_VARIABLES, new DataDerivedVariables(b.getDataDerivedBlock()))
+    			setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataDerivedBlock().getVariables()))
     		}
     		if (b.getTargetBlock()) {
     			setProperty(TARGET_CODE, mdlPrinter.toStr(b.getTargetBlock()))
@@ -48,10 +48,10 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
 			setProperty(SOURCE, new Source(json[SOURCE]))
 		}
 		if (json[DATA_INPUT_VARIABLES]) {
-			setProperty(DATA_INPUT_VARIABLES, new DataInputVariables(json[DATA_INPUT_VARIABLES]))
+			setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromJSON(json[DATA_INPUT_VARIABLES]))
 		}
 		if (json[DATA_DERIVED_VARIABLES]) {
-			setProperty(DATA_DERIVED_VARIABLES, new DataDerivedVariables(json[DATA_DERIVED_VARIABLES]))
+			setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromJSON(json[DATA_DERIVED_VARIABLES]))
 		}
 		if (json[TARGET_CODE]) {
 			setProperty(TARGET_CODE, json[TARGET_CODE])

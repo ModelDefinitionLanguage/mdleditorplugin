@@ -21,8 +21,6 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
 		/ {"SOURCE":{"file":"\"warfarin_conc.csv\"","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
 	private String dataInputVariablesJson =
 		/ {"DATA_INPUT_VARIABLES":[{".name":"ID","type":"categorical"},{".name":"TIME","type":"continuous","units":"\"h\""},{".name":"WT","type":"continuous"},{".name":"AMT","type":"continuous","units":"\"mg\""},{".name":"DVID","type":"categorical"},{".name":"DV","type":"continuous"},{".name":"MDV","type":"categorical"},{".name":"logtWT","type":"continuous"}]} /
-	private String dataDerivedVariablesJson =
-		/ {"DATA_DERIVED_VARIABLES":[{"logtWT":"log(WT\/70)"}]} /
 	
 	@Test
 	public void testSource() {
@@ -62,24 +60,6 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
         DV : {type=continuous}
         MDV : {type=categorical}
         logtWT : {type=continuous}
-    }
-
-}
-"""
-		assertEquals(expected, dataObj.toMDL())
-	}
-	
-	@Test
-	public void testDataDerivedVariables() {
-		
-		def json = getJson(dataDerivedVariablesJson)
-		
-		def dataObj = new Data(json)
-		
-		String expected = """dataobj {
-
-    DATA_DERIVED_VARIABLES {
-        logtWT = log(WT/70)
     }
 
 }

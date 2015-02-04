@@ -79,27 +79,5 @@ class TestDataObjectToJSON extends ConverterTestsParent  {
 		assertEquals("Checking Data Input Variable 8/8 - Type", "continuous", var8.type)
 		assertNull("Checking Data Input Variable 8/8 - Units", var8.units)
 	}
-	
-	@Test
-	@Ignore
-	public void testDataDerivedVariablesBlock() {
-		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_DataObject.mdl")
-		
-		logger.debug(json)
-	
-		def dataObject = json[0].warfarin_PK_ODE_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
-		
-		def dataDerivedVars = dataObject.DATA_DERIVED_VARIABLES
-
-		assertEquals("Checking the number of Data Derived Variables block statements", 1, dataDerivedVars.size())
-		
-		final derivVar1 = dataDerivedVars[0]
-		// There is only one entry in the Map
-		final k = derivVar1.keySet().toArray()[0]
-		final v = derivVar1.values()[0]
-		
-		assertEquals("Checking Data Input Variable 1/6 - Symbol Name", "logtWT", k)
-		assertEquals("Checking Data Input Variable 1/6 - RHS", "log(WT/70)", v)
-	}
-	
+    
 }
