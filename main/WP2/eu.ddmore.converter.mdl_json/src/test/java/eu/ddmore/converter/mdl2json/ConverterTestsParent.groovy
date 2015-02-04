@@ -10,12 +10,19 @@ import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Mcl
 
+import eu.ddmore.converter.mdl2json.domain.Data
+import eu.ddmore.converter.mdl2json.domain.Model
+import eu.ddmore.converter.mdl2json.domain.ModelPrediction
 import eu.ddmore.converter.mdl2json.domain.Mog
+import eu.ddmore.converter.mdl2json.domain.Parameter
 import eu.ddmore.converter.mdl2json.domain.Source
+import eu.ddmore.converter.mdl2json.domain.Task
 import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
 
-class ConverterTestsParent {
+
+// This class is public since some of its fields and methods are imported and used by the converter toolbox "systemtest" project.
+public class ConverterTestsParent {
 
     final static String TEST_DATA_DIR = "./"
     final static String MODELS_PROJECT_TEST_DATA_DIR = "/eu/ddmore/testdata/models/"
@@ -84,10 +91,47 @@ class ConverterTestsParent {
         slurper.parseText(jsonText)
     }
 	
+    
 	/*
-	 * The methods below are used in testing a MDL->JSON->MDL pipeline.
+	 * The fields and methods below are used in testing a MDL->JSON->MDL pipeline.
+	 * Some of these are imported and used by the converter toolbox "systemtest" project.
 	 */
+    
+    
+    public static List<String> allBlockNames = [
+        Data.SOURCE,
+        Data.DATA_INPUT_VARIABLES,
+        Data.DATA_DERIVED_VARIABLES,
+        Parameter.STRUCTURAL,
+        Parameter.VARIABILITY,
+        Parameter.PRIOR,
+        Model.STRUCTURAL_PARAMETERS,
+        Model.VARIABILITY_PARAMETERS,
+        Model.INDIVIDUAL_VARIABLES,
+        Model.RANDOM_VARIABLE_DEFINITION,
+        Model.MODEL_OUTPUT_VARIABLES,
+        Model.MODEL_INPUT_VARIABLES,
+        Model.OBSERVATION,
+        Model.MODEL_PREDICTION,
+        ModelPrediction.ODE, // actually redundant, should be verified by MODEL_PREDICTION block
+        ModelPrediction.LIBRARY, // actually redundant, should be verified by MODEL_PREDICTION block
+        Model.GROUP_VARIABLES,
+        Model.ESTIMATION,
+        Model.SIMULATION,
+        Task.ESTIMATE,
+        Task.SIMULATE,
+        Task.EVALUATE,
+        Task.OPTIMISE,
+        Task.DATA,
+        Task.MODEL,
+        /\S+\s*=\s*/ + Mog.IDENTIFIER
+        //"TARGET_CODE\\(.+\\)" // note the regex matching for the parameters of the block name
+    ]
 	
+    public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final File newMdlFile) {
+        extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, FileUtils.readFileToString(newMdlFile))
+    }
+    
 	public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final String newMdlFileContent) {
 		def String origMdlFileContent = readInAndStripComments(origMdlFile)
 		

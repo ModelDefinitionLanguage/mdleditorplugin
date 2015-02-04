@@ -7,12 +7,7 @@ import org.junit.Test
 import org.junit.Ignore
 
 import eu.ddmore.converter.mdl2json.domain.MCLFile
-import eu.ddmore.converter.mdl2json.domain.Data
-import eu.ddmore.converter.mdl2json.domain.Parameter
-import eu.ddmore.converter.mdl2json.domain.Model
-import eu.ddmore.converter.mdl2json.domain.ModelPrediction
-import eu.ddmore.converter.mdl2json.domain.Task
-import eu.ddmore.converter.mdl2json.domain.Mog
+import java.io.File;
 
 /**
  * "Real" MDL files from the testdata models project were run through the
@@ -31,36 +26,6 @@ import eu.ddmore.converter.mdl2json.domain.Mog
  */
 class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestJSONToMDLFileConverter.class)
-	
-	static List<String> allBlockNames = [
-			Data.SOURCE,
-			Data.DATA_INPUT_VARIABLES,
-			Data.DATA_DERIVED_VARIABLES,
-			Parameter.STRUCTURAL,
-			Parameter.VARIABILITY,
-			Parameter.PRIOR,
-			Model.STRUCTURAL_PARAMETERS,
-			Model.VARIABILITY_PARAMETERS,
-			Model.INDIVIDUAL_VARIABLES,
-			Model.RANDOM_VARIABLE_DEFINITION,
-			Model.MODEL_OUTPUT_VARIABLES,
-			Model.MODEL_INPUT_VARIABLES,
-			Model.OBSERVATION,
-			Model.MODEL_PREDICTION,
-			ModelPrediction.ODE, // actually redundant, should be verified by MODEL_PREDICTION block
-			ModelPrediction.LIBRARY, // actually redundant, should be verified by MODEL_PREDICTION block
-			Model.GROUP_VARIABLES,
-			Model.ESTIMATION,
-			Model.SIMULATION,
-			Task.ESTIMATE,
-			Task.SIMULATE,
-			Task.EVALUATE,
-			Task.OPTIMISE,
-			Task.DATA,
-			Task.MODEL,
-			/\S+\s*=\s*/ + Mog.IDENTIFIER
-			//"TARGET_CODE\\(.+\\)" // note the regex matching for the parameters of the block name
-		]
 	
 	/**
 	 * Converting a MDL file to JSON then back to MDL should give rise to syntactically and
