@@ -6,8 +6,8 @@ import org.apache.log4j.Logger
 import org.junit.Ignore
 import org.junit.Test
 
-class TestModelToJSONConverter extends ConverterTestsParent {
-	private static Logger logger = Logger.getLogger(TestModelToJSONConverter.class)
+class TestModelObjectToJSON extends ConverterTestsParent {
+	private static Logger logger = Logger.getLogger(TestModelObjectToJSON.class)
 	
 	@Test
 	void testStructuralParametersBlock() {

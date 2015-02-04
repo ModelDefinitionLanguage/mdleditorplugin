@@ -16,8 +16,8 @@ import org.ddmore.mdl.mdl.Mcl
 import org.junit.Test;
 import org.junit.Ignore;
 
-class TestDataToJSONConverter extends ConverterTestsParent  {
-	private static Logger logger = Logger.getLogger(TestDataToJSONConverter.class)
+class TestDataObjectToJSON extends ConverterTestsParent  {
+	private static Logger logger = Logger.getLogger(TestDataObjectToJSON.class)
 		
 	@Test
 	public void testSourceBlock() {
