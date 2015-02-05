@@ -11,6 +11,8 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 /**
  * Class representing a {@link SymbolDeclaration} from the MDL grammar.
+ * It can represent either an expression (= operator), an attribute
+ * list (: operator), or a random-variable attribute list (~ operator).
  */
 public class Variable extends Expando implements MDLPrintable {
 
@@ -78,8 +80,8 @@ public class Variable extends Expando implements MDLPrintable {
         if (getExpression()) {
             """${getName()} = ${getExpression()}"""
         }
-        else if (getRandomVarAttributes()?.isEmpty()) {
-            Map randomVarAttrs = [:]
+        else if (getRandomVarAttributes()) {
+            List randomVarAttrs = []
             // Note: sorting is only done so that we get predictable MDL strings that we can compare in the tests
             getRandomVarAttributes().sort().each { k, v ->
                 randomVarAttrs.add("${k}=${v}")
