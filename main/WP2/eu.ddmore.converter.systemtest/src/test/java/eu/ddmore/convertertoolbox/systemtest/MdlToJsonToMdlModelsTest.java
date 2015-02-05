@@ -70,6 +70,8 @@ public class MdlToJsonToMdlModelsTest {
                 new ConverterJsonOutputFailureChecker());
         runner1.run();
         
+        final File jsonModelFile = new File(new File(mdlModelFile.getParentFile(), "output-"+JSON_FILE_EXTENSION), mdlModelFile.getName().replace(MDL_FILE_EXTENSION, JSON_FILE_EXTENSION));
+        
         final ConverterRunner runner2 = new ConverterRunner(jsonModelFile, MDL_FILE_EXTENSION, "JSON", JSON_VERSION, "MDL", MDL_VERSION,
             new MdlFileEquivalenceChecker(mdlModelFile));
         runner2.run();
