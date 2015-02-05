@@ -106,7 +106,7 @@ public class XtextWrapper {
         for (int i = 0; i < expressionList.size(); i++) {
             sb.append(unwrap(expressionList.get(i)))
             if ( (!operatorList.isEmpty()) && i < expressionList.size()-1 ) {
-                sb.append(operatorList.get(0))
+                sb.append(operatorList.get(i))
             }
         }
         return sb.toString()

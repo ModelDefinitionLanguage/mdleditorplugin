@@ -1,0 +1,14 @@
+rocchetti2013_mdl = mdlobj{
+    INDIVIDUAL_VARIABLES{
+      KA_A=24*ln(2)/24 #=2.69 1/day
+      KE_A=ln(2)/6.05 #=0.115 1/day
+      FV1_A=1/0.119 #8.4 kg/L
+      KA_B=18.8 #1/day
+      KE_B=49.2 #1/day
+      K21=10.4 #1/day
+      K12=141.1 #1/day
+      FV1_B=1/2.13 #0.469 kg/L
+      EMAX=1
+      PSI=20
+    }
+}

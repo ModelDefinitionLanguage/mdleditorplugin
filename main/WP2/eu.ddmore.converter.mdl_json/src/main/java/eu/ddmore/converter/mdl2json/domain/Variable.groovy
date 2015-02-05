@@ -40,7 +40,7 @@ public class Variable extends Expando implements MDLPrintable {
             }
             setProperty(RANDOMVAR_ATTRS_KEY, randomVarAttrs)
         }
-        else if (sd.getExpression() != null) {
+        else if (sd.getExpression()) {
             setProperty(EXPRESSION_KEY, XtextWrapper.unwrap(sd.getExpression()))
         }
         

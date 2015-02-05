@@ -76,7 +76,7 @@ class TestModelObjectToJSON extends ConverterTestsParent {
 	}
     
     @Test
-    void testIndividualVariablesBlockContainingMixtureOfParameterListsAndExpressions() {
+    void testIndividualVariablesBlockContainingMixtureOfParameterListsAndSimpleExpressions() {
         def json = getJsonFromMDLFile("Nock_2013_Carboplatin_PK_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.Nock_2013_Carboplatin_PK_mdl
@@ -97,6 +97,33 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         assertEquals("Checking variable 6/8", [ (Variable.NAME_KEY):'K', (Variable.EXPRESSION_KEY):'CL/V1' ], individualVars[5])
         assertEquals("Checking variable 7/8", [ (Variable.NAME_KEY):'K12', (Variable.EXPRESSION_KEY):'Q/V1' ], individualVars[6])
         assertEquals("Checking variable 8/8", [ (Variable.NAME_KEY):'K21', (Variable.EXPRESSION_KEY):'Q/V2' ], individualVars[7])
+    }
+    
+    // This test specifically picked up a bug in XtextWrapper re a multi-part expression without brackets and having a mixture of operators
+    @Test
+    void testIndividualVariablesBlockContainingComplexExpressions() {
+        def json = getJsonFromMDLFile("Rocchetti2013_ModelObject_IndividualVariables.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.rocchetti2013_mdl
+        
+        def individualVars = modelObject.INDIVIDUAL_VARIABLES
+        
+        logger.debug(individualVars)
+        
+        assertEquals("Checking number of individual variables", 10, individualVars.size())
+        
+        assertEquals("Checking variable 1/10",
+            [ (Variable.EXPRESSION_KEY):'24*ln(2)/24', (Variable.NAME_KEY):'KA_A' ],
+            individualVars[0])
+        assertEquals("Checking variable 2/10",
+            [ (Variable.EXPRESSION_KEY):'ln(2)/6.05', (Variable.NAME_KEY):'KE_A' ],
+            individualVars[1])
+        assertEquals("Checking variable 3/10",
+            [ (Variable.EXPRESSION_KEY):'1/0.119', (Variable.NAME_KEY):'FV1_A' ],
+            individualVars[2])
+        assertEquals("Checking variable 4/10",
+            [ (Variable.EXPRESSION_KEY):'18.8', (Variable.NAME_KEY):'KA_B' ],
+            individualVars[3])
     }
 	
 	@Test
