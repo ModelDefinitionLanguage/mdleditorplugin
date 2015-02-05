@@ -112,15 +112,15 @@ class TestModelObjectToJSON extends ConverterTestsParent {
 		assertEquals("Checking number of random variable definitions", 5, randomVariableDefinitions.size())
 		
 		assertEquals("Checking name of distribution-variable 1/4", 'ETA_CL', randomVariableDefinitions[0][(Variable.NAME_KEY)])
-		assertEquals("Checking distribution-variable 1/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_CL', 'level':'ID' ], randomVariableDefinitions[0]['complexAttrs'])
+		assertEquals("Checking distribution-variable 1/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_CL', 'level':'ID' ], randomVariableDefinitions[0][Variable.RANDOMVAR_ATTRS_KEY])
 		assertEquals("Checking name of distribution-variable 2/4", 'ETA_V', randomVariableDefinitions[1][(Variable.NAME_KEY)])
-		assertEquals("Checking distribution-variable 2/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_V', 'level':'ID' ], randomVariableDefinitions[1]['complexAttrs'])
+		assertEquals("Checking distribution-variable 2/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_V', 'level':'ID' ], randomVariableDefinitions[1][Variable.RANDOMVAR_ATTRS_KEY])
 		assertEquals("Checking name of distribution-variable 3/4", 'ETA_KA', randomVariableDefinitions[2][(Variable.NAME_KEY)])
-		assertEquals("Checking distribution-variable 3/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_KA', 'level':'ID' ], randomVariableDefinitions[2]['complexAttrs'])
+		assertEquals("Checking distribution-variable 3/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_KA', 'level':'ID' ], randomVariableDefinitions[2][Variable.RANDOMVAR_ATTRS_KEY])
 		assertEquals("Checking name of distribution-variable 4/4", 'ETA_TLAG', randomVariableDefinitions[3][(Variable.NAME_KEY)])
-		assertEquals("Checking distribution-variable 4/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_TLAG', 'level':'ID' ], randomVariableDefinitions[3]['complexAttrs'])
+		assertEquals("Checking distribution-variable 4/4", [ 'type':'normal', 'mean':'0', 'sd':'PPV_TLAG', 'level':'ID' ], randomVariableDefinitions[3][Variable.RANDOMVAR_ATTRS_KEY])
 		assertEquals("Checking name of variable-definition 1/1", 'CORR_PPV_CL_V', randomVariableDefinitions[4][(Variable.NAME_KEY)])
-		assertEquals("Checking variable-definition 1/1", [ 'type':'CORR', 'rv1':'ETA_CL', 'rv2':'ETA_V', 'level':'ID' ], randomVariableDefinitions[4]['attrs'])
+		assertEquals("Checking variable-definition 1/1", [ (Variable.NAME_KEY):'CORR_PPV_CL_V', 'type':'CORR', 'rv1':'ETA_CL', 'rv2':'ETA_V', 'level':'ID' ], randomVariableDefinitions[4])
 	}
 	
 	@Test
@@ -173,11 +173,11 @@ class TestModelObjectToJSON extends ConverterTestsParent {
 		assertEquals("Checking name of variable in observation statement 1/2", "EPS_Y", observation[0][Variable.NAME_KEY])
 		assertEquals("Checking variable in observation statement 1/2",
 			[ 'type':'normal', 'mean':'0', 'var':'1', 'level':'DV' ],
-			observation[0]['complexAttrs'])
+			observation[0][Variable.RANDOMVAR_ATTRS_KEY])
 		assertEquals("Checking name of variable in observation statement 2/2", "Y", observation[1][Variable.NAME_KEY])
 		assertEquals("Checking variable in observation statement 2/2",
-			[ 'type':'continuous', 'error':'combinedError1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)', 'eps':'EPS_Y', 'prediction':'CC' ],
-			observation[1]['attrs'])
+			[ (Variable.NAME_KEY):'Y', 'type':'continuous', 'error':'combinedError1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)', 'eps':'EPS_Y', 'prediction':'CC' ],
+			observation[1])
 	}
 	
     @Test

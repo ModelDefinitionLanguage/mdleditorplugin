@@ -52,7 +52,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 				setProperty(VARIABILITY_PARAMETERS, VariablesList.buildFromSymbolDeclarations(b.getVariabilityParametersBlock().getParameters()))
 			}
 			if (b.getRandomVariableDefinitionBlock()) {
-				setProperty(RANDOM_VARIABLE_DEFINITION, RandomVariablesList.buildFromSymbolDeclarations(b.getRandomVariableDefinitionBlock().getVariables()))
+				setProperty(RANDOM_VARIABLE_DEFINITION, VariablesList.buildFromSymbolDeclarations(b.getRandomVariableDefinitionBlock().getVariables()))
 			}
 			if (b.getIndividualVariablesBlock()) {
 				setProperty(INDIVIDUAL_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getIndividualVariablesBlock().getVariables()))
@@ -61,7 +61,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 				setProperty(MODEL_PREDICTION, new ModelPrediction(b.getModelPredictionBlock()))
 			}
 			if (b.getObservationBlock()) {
-				setProperty(OBSERVATION, RandomVariablesList.buildFromSymbolDeclarations(b.getObservationBlock().getVariables()))
+				setProperty(OBSERVATION, VariablesList.buildFromSymbolDeclarations(b.getObservationBlock().getVariables()))
 			}
 			if (b.getOutputVariablesBlock()) {
 				// Note the inconsistency in that the getter is called OutputVariables not ModelOutputVariables
@@ -101,7 +101,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 			setProperty(INDIVIDUAL_VARIABLES, VariablesList.buildFromJSON(json[INDIVIDUAL_VARIABLES]))
 		}
 		if (json[RANDOM_VARIABLE_DEFINITION]) {
-			setProperty(RANDOM_VARIABLE_DEFINITION, RandomVariablesList.buildFromJSON(json[RANDOM_VARIABLE_DEFINITION]))
+			setProperty(RANDOM_VARIABLE_DEFINITION, VariablesList.buildFromJSON(json[RANDOM_VARIABLE_DEFINITION]))
 		}
 		if (json[MODEL_OUTPUT_VARIABLES]) {
 			setProperty(MODEL_OUTPUT_VARIABLES, VariablesList.buildFromJSON(json[MODEL_OUTPUT_VARIABLES]))
@@ -110,7 +110,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 			setProperty(MODEL_INPUT_VARIABLES, VariablesList.buildFromJSON(json[MODEL_INPUT_VARIABLES]))
 		}
 		if (json[OBSERVATION]) {
-			setProperty(OBSERVATION, RandomVariablesList.buildFromJSON(json[OBSERVATION]))
+			setProperty(OBSERVATION, VariablesList.buildFromJSON(json[OBSERVATION]))
 		}
 		if (json[MODEL_PREDICTION]) {
 			setProperty(MODEL_PREDICTION, new ModelPrediction(json[MODEL_PREDICTION]))

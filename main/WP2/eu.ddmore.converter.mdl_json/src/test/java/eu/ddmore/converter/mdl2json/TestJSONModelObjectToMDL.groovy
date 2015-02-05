@@ -24,13 +24,13 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
     private final static String individualVarsBlockContainingMixOfParamListsAndExprsJson =
         / {"INDIVIDUAL_VARIABLES":[{"fixEff":"[CLCLCR_COV]","trans":"log",".name":"CL","cov":"[logtCLCR]","ranEff":"eta_OMCL","pop":"THCL","type":"linear"},{".name":"V1",".expr":"TVV1"},{".name":"Q",".expr":"THQ"},{".name":"V2",".expr":"THV2"},{".name":"VSS",".expr":"V1+V2"},{".name":"K",".expr":"CL\/V1"},{".name":"K12",".expr":"Q\/V1"},{".name":"K21",".expr":"Q\/V2"}]} /
 	private final static String randomVarDefinitionBlockJson =
-		/ {"RANDOM_VARIABLE_DEFINITION":[{".name":"ETA_CL","complexAttrs":{"type":"normal","mean":"0","sd":"PPV_CL","level":"ID"}},{".name":"ETA_V","complexAttrs":{"type":"normal","mean":"0","sd":"PPV_V","level":"ID"}},{".name":"ETA_KA","complexAttrs":{"type":"normal","mean":"0","sd":"PPV_KA","level":"ID"}},{".name":"ETA_TLAG","complexAttrs":{"type":"normal","mean":"0","sd":"PPV_TLAG","level":"ID"}},{"attrs":{"type":"CORR","rv1":"ETA_CL","rv2":"ETA_V","level":"ID"},".name":"CORR_PPV_CL_V"}]} /
+		/ {"RANDOM_VARIABLE_DEFINITION":[{".name":"ETA_CL",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_CL","level":"ID"}},{".name":"ETA_V",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_V","level":"ID"}},{".name":"ETA_KA",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_KA","level":"ID"}},{".name":"ETA_TLAG",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_TLAG","level":"ID"}},{".name":"CORR_PPV_CL_V","type":"CORR","rv1":"ETA_CL","rv2":"ETA_V","level":"ID"}]} /
 	private final static String modelOutputVarsBlockJson =
 		/ {"MODEL_OUTPUT_VARIABLES":[{".name":"ID"},{".name":"TIME"},{".name":"logtWT"},{".name":"CL"},{".name":"V"},{".name":"KA"},{".name":"TLAG"},{".name":"Y"}]} /
 	private final static String modelInputVarsBlockJson =
 		/ {"MODEL_INPUT_VARIABLES":[{"level":"2",".name":"ID","use":"id"},{".name":"TIME","use":"idv"},{".name":"AMT","use":"amt","administration":"GUT"},{"level":"1",".name":"DV","prediction":"Y","use":"dv"},{".name":"MDV","use":"mdv"},{".name":"logtWT","use":"covariate","type":"continuous"}]} /
 	private final static String observationBlockJson =
-		/ {"OBSERVATION":[{".name":"EPS_Y","complexAttrs":{"type":"normal","mean":"0","var":"1","level":"DV"}},{"attrs":{"type":"continuous","error":"combinedError1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)","eps":"EPS_Y","prediction":"CC"},".name":"Y"}]} /
+		/ {"OBSERVATION":[{".name":"EPS_Y",".random_var_attrs":{"type":"normal","mean":"0","var":"1","level":"DV"}},{".name":"Y","type":"continuous","error":"combinedError1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)","eps":"EPS_Y","prediction":"CC"}]} /
 	private final static String modelPredictionBlockJson =
 		/ {"MODEL_PREDICTION":{"content":"        CC = CENTRAL\/V","ODE":"            RATEIN = GUT*KA when T>=TLAG otherwise 0\n            GUT : {deriv = (-RATEIN), init = 0, x0 = 0}\n            CENTRAL : {deriv = (RATEIN-CL*CENTRAL\/V), init = 0, x0 = 0}"}} /
     private final static String groupVariablesBlockJson =
