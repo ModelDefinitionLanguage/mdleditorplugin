@@ -78,7 +78,6 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
 	 * File containing the dumped out JSON: Warfarin-ODE-latest.output.json
 	 */
 	@Test
-    @Ignore("Needs updating after TEL.R changes made")
 	public void testRGeneratedMOG_WarfarinODE_MDL607() {
 		testRGeneratedMOG(
 			"6.0.7/Warfarin_ODE/Warfarin-ODE-latest.output.json",
@@ -91,65 +90,12 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
      * File containing the dumped out JSON: Nock_2013_Carboplatin_PK.output.json
      */
     @Test
-    @Ignore("Needs updating after TEL.R changes made")
     public void testRGeneratedMOG_Nock2013Carboplatin_MDL607() {
         testRGeneratedMOG(
             "6.0.7/Nock_2013_Carboplatin_PK/Nock_2013_Carboplatin_PK.output.json",
             "6.0.7/Nock_2013_Carboplatin_PK/Nock_2013_Carboplatin_PK.mdl"
         );
     }
-
-	/**
-	 * Original MDL file: ex_model7_prolactin_01July2014_OAM.mdl
-	 * File containing the dumped out JSON: ex_model7_prolactin_01July2014_OAM.output.json
-	 */
-    @Test
-	@Ignore("Out of date")
-	public void testRGeneratedMOG_Prolactin() {
-		testRGeneratedMOG(
-			"FribergCPT2009/ex_model7_prolactin_01July2014_OAM.output.json",
-			"FribergCPT2009/ex_model7_prolactin_01July2014_OAM.mdl"
-		);
-	}
-	
-	/**
-	 * Original MDL file: tumour_size_01July2014_OAM.mdl
-	 * File containing the dumped out JSON: tumour_size_01July2014_OAM.output.json
-	 */
-	@Test
-	@Ignore("Out of date")
-	public void testRGeneratedMOG_Tumour() {
-		testRGeneratedMOG(
-			"ThamCCR2008/tumour_size_01July2014_OAM.output.json",
-			"ThamCCR2008/tumour_size_01July2014_OAM.mdl"
-		);
-	}
-	
-	/**
-	 * Original MDL file: drugX_trAbs_1Rep_EST001_ORG.mdl
-	 * File containing the dumped out JSON: drugX_trAbs_1Rep_EST001_ORG.output.json
-	 */
-	@Test
-	@Ignore("Out of date")
-	public void testRGeneratedMOG_DrugX() {
-		testRGeneratedMOG(
-			"drugX/drugX_trAbs_1Rep_EST001_ORG.output.json",
-			"drugX/drugX_trAbs_1Rep_EST001_ORG.mdl"
-		);
-	}
-	
-	/**
-	 * Original MDL file: warfarin_PK_PRED.mdl
-	 * File containing the dumped out JSON: warfarin_PK_PRED.output.json
-	 */
-	@Test
-	@Ignore("Out of date")
-	public void testRGeneratedMOG_Warfarin() {
-		testRGeneratedMOG(
-			"warfarin_PK_PRED/warfarin_PK_PRED.output.json",
-			"warfarin_PK_PRED/warfarin_PK_PRED.mdl"
-		);
-	}
 	
 	/**
 	 * All the blocks of the MDL will be compared.
