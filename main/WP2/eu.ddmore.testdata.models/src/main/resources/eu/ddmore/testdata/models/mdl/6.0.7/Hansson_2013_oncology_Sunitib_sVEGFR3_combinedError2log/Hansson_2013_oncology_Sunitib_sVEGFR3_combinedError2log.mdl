@@ -8,7 +8,7 @@ Hansson2013_data = dataobj{
       CYCL:{type=categorical}
       TIME:{type=continuous,units="h"}
       DAYS:{type=continuous,units="DAYS"}
-      FLAG:{type=categorical} # 1=Dose ; 6=sVEGFR2 
+      FLAG:{type=categorical} # 1=Dose ; ; 7=sVEGFR3 
       DVX:{type=continuous, units="mg/L"}
       DV:{type=continuous,units="mg/L"} # log transform data
       DOS:{type=continuous,units="mg"}
@@ -18,7 +18,7 @@ Hansson2013_data = dataobj{
    }
    
    SOURCE{
-       file="BIOMARKER_exDATA_sVEGFR2.csv"
+       file="BIOMARKER_exDATA_sVEGFR3.csv"
        inputformat=nonmemFormat
        ignore="#"
    }
@@ -31,21 +31,20 @@ Hansson2013_par = parobj{
       POP_IMAX:{value=1, fix=true} 
       POP_IC50:{value=1, lo=0, units="mg/L*h"} 
 
-     #sVEGFR-2
-      POP_BM02:{value=8670, lo=0, units="pg/mL"} # baseline sVEGFR-2
-      POP_MRT2:{value=554, lo=0, units="h"} 
-      POP_HILL2:{value=1.54, lo=0}
-   
+      #sVEGFR-3
+      POP_BM03:{value=63900, lo=0, units="pg/mL"} # baseline sVEGFR-3
+      POP_MRT3:{value=401, lo=0, units="h"} 
+
       #Residual Error
-      POP_RES_sVEGFR2_ADD:{value=0.12, lo=0, units="pg/mL"} 
-      POP_RES_sVEGFR2_PROP:{value=583, lo=0}
+      POP_RES_sVEGFR3_ADD:{value=0.22, lo=0, units="pg/mL"} 
+      POP_RES_sVEGFR3_PROP:{value=0, fix=true}	  
    }
 
    VARIABILITY{
-      OMEGA_BM02:{value=0.0369,type=VAR}
+      OMEGA_BM03:{value=0.186,type=VAR}
       OMEGA_MRT_VEGFs:{value=0.060, type=VAR}
-      OMEGA_IC502 : { value=0.189, type=VAR }
-               
+      OMEGA_IC503 : { value=0.398, type=VAR }
+
       SIGMA_RES_W:{value=1 ,type=VAR, fix=true}
    }
 }
@@ -59,7 +58,7 @@ Hansson2013_mdl = mdlobj{
       TIME:{type=continuous, use=idv, units="h"}
       DAYS:{type=continuous,units="DAYS"}
       DVX:{type=continuous, units="mg/L"} 
-      DV:{type=continuous,units="mg/L",use=dv, prediction=sVEGFR2_obs, level=1}
+      DV:{type=continuous,units="mg/L",use=dv, prediction=sVEGFR3_obs, level=1}
       DOS:{type=continuous,units="mg", use=amt}
       CL:{type=continuous,units="L/h", use=covariate}
       EVID:{type=categorical, use=evid}
@@ -67,61 +66,60 @@ Hansson2013_mdl = mdlobj{
 
    STRUCTURAL_PARAMETERS{
       POP_IMAX
-      POP_IC50 # Common IC50 for the four biomarkers which were found to be highly correlated
-      POP_BM02
-      POP_MRT2 
-      POP_HILL2
-      
+      POP_IC50 
+      POP_BM03
+      POP_MRT3 
+
       #Residual Error
-      POP_RES_sVEGFR2_ADD 
-      POP_RES_sVEGFR2_PROP
+      POP_RES_sVEGFR3_ADD
+      POP_RES_sVEGFR3_PROP  	  
    }# end STRUCTURAL_PARAMETERS
 
    VARIABILITY_PARAMETERS{
-      OMEGA_BM02
+      OMEGA_BM03
       OMEGA_MRT_VEGFs
-      OMEGA_IC502
+      OMEGA_IC503
 
       SIGMA_RES_W
    }# end VARIABILITY_PARAMETERS
 
 
    RANDOM_VARIABLE_DEFINITION{
-      eta_BM02 ~ {type=normal, mean=0, var=OMEGA_BM02, level=ID}
+      eta_BM03 ~ {type=normal, mean=0, var=OMEGA_BM03, level=ID}
       eta_MRT_VEGFs ~ {type=normal, mean=0, var=OMEGA_MRT_VEGFs, level=ID}
-      eta_IC502 ~ {type=normal, mean=0, var=OMEGA_IC502, level=ID}
+      eta_IC503 ~ {type=normal, mean=0, var=OMEGA_IC503, level=ID}
 }# end RANDOM_VARIABLE_DEFINITION
 
-   INDIVIDUAL_VARIABLES{ 
-      BM02 : {type=linear, trans=log, pop = POP_BM02, ranEff=eta_BM02} 
-      IMAX2 = POP_IMAX
-      IC502 : {type=linear, trans=log, pop = POP_IC50, ranEff=eta_IC502} 
-      HILL2 = POP_HILL2     
-      MRT2 : {type=linear, trans=log, pop = POP_MRT2, ranEff=eta_MRT_VEGFs} 
+   INDIVIDUAL_VARIABLES{
+      BM03 : {type=linear, trans=log, pop = POP_BM03, ranEff=eta_BM03}
+      IMAX3 = POP_IMAX
+      IMAXS = POP_IMAX   
+      IC503 : {type=linear, trans=log, pop = POP_IC50, ranEff=eta_IC503}
+      MRT3 : {type=linear, trans=log, pop = POP_MRT3, ranEff=eta_MRT_VEGFs}
          
       # Derived parameters
-      KOUT2 = 1/MRT2
-      KIN2 = BM02*KOUT2     
+      KOUT3 = 1/MRT3
+      KIN3 = BM03*KOUT3     
       }# end INDIVIDUAL_VARIABLES
 
 
    MODEL_PREDICTION{
       AUC = DOS/CL
-      
+
        ODE{
-       EFF2 = IMAX2*AUC^HILL2/(IC502^HILL2+AUC^HILL2) # VEGFR2: sigmoid Imax drug effect relationship
-       sVEGFR2 : {deriv=KIN2*(1-EFF2)-KOUT2*sVEGFR2, init=BM02, wrt=T}
+       EFF3 = IMAX3*AUC/(IC503+AUC)                      # V EGFR3: Imax drug effect relationship
+       sVEGFR3 : {deriv=KIN3*(1-EFF3)-KOUT3*sVEGFR3, init=BM03, wrt=T}
     }
    }# end MODEL_PREDICTION
 
  
    OBSERVATION{
       eps_RES_W ~ {type=normal, mean=0, var=SIGMA_RES_W, level=DV}
-                           
-      sVEGFR2_obs : {type=continuous, error=combinedError3(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP,f=sVEGFR2),
-       prediction=sVEGFR2, eps=eps_RES_W}
-       
-   }# end OBSERVATION
+                      
+      sVEGFR3_obs : {type=continuous, error=combinedError2log(additive=POP_RES_sVEGFR3_ADD, proportional=POP_RES_sVEGFR3_PROP,f=sVEGFR3),
+       prediction=sVEGFR3, eps=eps_RES_W}
+ 	  
+  	  }# end OBSERVATION
 
 } # end of model object
        

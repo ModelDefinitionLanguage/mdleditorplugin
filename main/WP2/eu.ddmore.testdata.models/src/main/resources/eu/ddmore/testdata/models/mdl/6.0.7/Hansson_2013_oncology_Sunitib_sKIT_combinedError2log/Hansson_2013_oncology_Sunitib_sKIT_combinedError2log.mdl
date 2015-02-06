@@ -125,7 +125,7 @@ Hansson2013_mdl = mdlobj{
    OBSERVATION{
       eps_RES_W ~ {type=normal, mean=0, var=SIGMA_RES_W, level=DV}
 
-      sKIT_obs : {type=continuous, error=combinedError3(additive=POP_RES_sKIT_ADD, proportional=POP_RES_sKIT_PROP,f=sKIT),
+      sKIT_obs : {type=continuous, error=combinedError2log(additive=POP_RES_sKIT_ADD, proportional=POP_RES_sKIT_PROP,f=sKIT),
        prediction=sKIT, eps=eps_RES_W}
 	   
    }# end OBSERVATION
