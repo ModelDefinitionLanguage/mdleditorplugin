@@ -37,9 +37,8 @@ Hansson2013_par = parobj{
       POP_TVSLP:{value=0.035, lo=-0.06, units="1/h"}
                 
       #Residual Error
-      POP_RES_VEGF_ADD:{value=0.445, lo=0, units="pg/mL"} 
-      POP_RES_VEGF_PROP:{value=0, fix=true}
-     
+      POP_RES_VEGF_PROP:{value=0.445, lo=0} 
+      POP_RES_VEGF_ADD:{value=0, fix=true} 
    }
 
    VARIABILITY{
@@ -61,7 +60,7 @@ Hansson2013_mdl = mdlobj{
       DAYS:{type=continuous,units="DAYS"}
       DVX:{type=continuous, units="mg/L"} 
       DV:{type=continuous,units="mg/L",use=dv, prediction=VEGF_obs, level=1}
-      DOS:{type=continuous,units="mg", use=amt}
+      DOS:{type=continuous,units="mg"}
       CL:{type=continuous,units="L/h", use=covariate}
       EVID:{type=categorical, use=evid}
    }# end MODEL_INPUT_VARIABLES
@@ -77,8 +76,9 @@ Hansson2013_mdl = mdlobj{
       POP_TVSLP
       
       #Residual Error
+      POP_RES_VEGF_PROP
       POP_RES_VEGF_ADD 
-      POP_RES_VEGF_PROP	  
+           
    }# end STRUCTURAL_PARAMETERS
 
    VARIABILITY_PARAMETERS{
@@ -129,10 +129,9 @@ Hansson2013_mdl = mdlobj{
  
    OBSERVATION{
       eps_RES_W ~ {type=normal, mean=0, var=SIGMA_RES_W, level=DV}
-    
-      VEGF_obs : {type=continuous, error=combinedError2log(additive=POP_RES_VEGF_ADD, proportional=POP_RES_VEGF_PROP,f=VEGF),
-       prediction=VEGF, eps=eps_RES_W}
-	  
+                      
+   	  VEGF_obs : {type=continuous, error=combinedError2log(additive=POP_RES_VEGF_ADD, proportional=POP_RES_VEGF_PROP), prediction=VEGF, eps=eps_RES_W}
+      
 
    }# end OBSERVATION
 
@@ -145,7 +144,7 @@ Hansson2013_task = taskobj{
     ESTIMATE { 
     	target=NMTRAN_CODE 
         cov=true
-        algo= ["FOCE"] 
+        algo= ["FOCEI"] 
 	}
 }# end of task object
 

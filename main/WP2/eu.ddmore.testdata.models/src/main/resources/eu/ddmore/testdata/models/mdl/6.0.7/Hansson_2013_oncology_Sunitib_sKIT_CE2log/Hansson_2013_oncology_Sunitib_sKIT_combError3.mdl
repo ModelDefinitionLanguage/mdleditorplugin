@@ -37,8 +37,8 @@ Hansson2013_par = parobj{
       POP_TVSLP:{value=0.035, lo=-0.06, units="1/h"}
             
       #Residual Error
-      POP_RES_sKIT_ADD:{value=0.224, lo=0, units="pg/mL"}
-      POP_RES_sKIT_PROP:{value=0, fix=true}	  
+      POP_RES_sKIT_ADD:{value=0, fix=true} 
+      POP_RES_sKIT_PROP:{value=0.224, lo=0, units="pg/mL"}    
    }
 
    VARIABILITY{
@@ -61,7 +61,7 @@ Hansson2013_mdl = mdlobj{
       DAYS:{type=continuous,units="DAYS"}
       DVX:{type=continuous, units="mg/L"} 
       DV:{type=continuous,units="mg/L",use=dv, prediction=sKIT_obs, level=1}
-      DOS:{type=continuous,units="mg", use=amt}
+      DOS:{type=continuous,units="mg"}
       CL:{type=continuous,units="L/h", use=covariate}
       EVID:{type=categorical, use=evid}
    }# end MODEL_INPUT_VARIABLES
@@ -74,9 +74,9 @@ Hansson2013_mdl = mdlobj{
       POP_TVSLP
       
       #Residual Error
-      POP_RES_sKIT_ADD
-      POP_RES_sKIT_PROP  	  
-   }# end STRUCTURAL_PARAMETERS
+      POP_RES_sKIT_ADD        
+      POP_RES_sKIT_PROP 
+         }# end STRUCTURAL_PARAMETERS
 
    VARIABILITY_PARAMETERS{
       OMEGA_BM0S
@@ -125,9 +125,8 @@ Hansson2013_mdl = mdlobj{
    OBSERVATION{
       eps_RES_W ~ {type=normal, mean=0, var=SIGMA_RES_W, level=DV}
 
-      sKIT_obs : {type=continuous, error=combinedError2log(additive=POP_RES_sKIT_ADD, proportional=POP_RES_sKIT_PROP,f=sKIT),
-       prediction=sKIT, eps=eps_RES_W}
-	   
+  	  sKIT_obs : {type=continuous, error=combinedError2log(additive=POP_RES_sKIT_ADD, proportional=POP_RES_sKIT_PROP, f=sKIT), prediction=sKIT, eps=eps_RES_W}
+  
    }# end OBSERVATION
 
 } # end of model object
@@ -139,7 +138,7 @@ Hansson2013_task = taskobj{
     ESTIMATE { 
     	target=NMTRAN_CODE 
         cov=true
-        algo= ["FOCE"] 
+        algo= ["FOCEI"] 
 	}
 }# end of task object
 
