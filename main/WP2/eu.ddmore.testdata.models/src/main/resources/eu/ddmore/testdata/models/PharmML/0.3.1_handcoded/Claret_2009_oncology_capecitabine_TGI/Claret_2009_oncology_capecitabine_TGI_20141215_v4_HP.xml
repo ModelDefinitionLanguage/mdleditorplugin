@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PharmML 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns="http://www.pharmml.org/2013/03/PharmML"
+  xsi:schemaLocation="http://www.pharmml.org/2013/03/PharmML http://www.pharmml.org/2013/03/PharmML"
+  xmlns:math="http://www.pharmml.org/2013/03/Maths"
+  xmlns:ct="http://www.pharmml.org/2013/03/CommonTypes"
+  xmlns:ds="http://www.pharmml.org/2013/08/Dataset"
+  xmlns:mdef="http://www.pharmml.org/2013/03/ModelDefinition"
+  xmlns:mstep="http://www.pharmml.org/2013/03/ModellingSteps"
+  xmlns:design="http://www.pharmml.org/2013/03/TrialDesign"
+  writtenVersion="0.3.1">
+  
+  <ct:Name xmlns:ct="http://www.pharmml.org/2013/03/CommonTypes" id="i1">Claret_2009_oncology_capecitabine_TGI</ct:Name>
+  <ct:Description xmlns:ct="http://www.pharmml.org/2013/03/CommonTypes" id="i2">Model-Based Prediction of Phase III Overall Survival in Colorectal Cancer on the Basis of Phase II Tumour Dynamics
+  Laurent Claret, Pascal Girard, Paulo M Hoff, Eric Van Cutsem, Klaas P. Zuideveld, Karin Jorga, Jan Fagerberg and René Bruno, 2009, Volume 27, Issue 25, pages: 4103-4108 </ct:Description>
+  
+  <!-- independent variable -->
+  <IndependentVariable id="i3" symbId="t"/>
+  
+  <!-- SYMBOL DEFINITION - RESUIDUAL ERROR MODEL, i.e. combined error model here -->
+  <ct:FunctionDefinition symbId="CombinedError2" symbolType="real">
+    <ct:FunctionArgument symbId="additive" symbolType="real"/>
+    <ct:FunctionArgument symbolType="real" symbId="proportional"/>
+    <ct:FunctionArgument symbolType="real" symbId="f"/>
+    <ct:Definition>
+      <math:Equation>
+        <math:Uniop op="sqrt">
+          <math:Binop op="plus">
+            <math:Binop op="power">
+              <ct:SymbRef symbIdRef="additive"/>
+              <ct:Real>2</ct:Real>
+            </math:Binop>
+            <math:Binop op="times">
+              <math:Binop op="power">
+                <ct:SymbRef symbIdRef="proportional"/>
+                <ct:Real>2</ct:Real>
+              </math:Binop>
+              <math:Binop op="power">
+                <ct:SymbRef symbIdRef="f"/>
+                <ct:Real>2</ct:Real>
+              </math:Binop>
+            </math:Binop>
+          </math:Binop>
+        </math:Uniop>
+      </math:Equation>
+    </ct:Definition>
+  </ct:FunctionDefinition>
+  
+  <!-- MODEL DEFINITION -->
+  <ModelDefinition xmlns="http://www.pharmml.org/2013/03/ModelDefinition">
+
+    <!-- VARIABILITY MODEL -->
+    <VariabilityModel blkId="model" type="parameterVariability">
+      <Level symbId="indiv"/>
+    </VariabilityModel>
+    <VariabilityModel blkId="obsErr" type="residualError">
+      <Level symbId="residual"/>
+    </VariabilityModel>
+    
+    <!-- COVARIATE MODEL -->
+    
+    <!-- PARAMETER MODEL -->
+    <ParameterModel blkId="pm1">
+
+      <!-- Baseline Tumour size -->
+      <SimpleParameter symbId="POP_TS0"/>
+      <SimpleParameter symbId="OMEGA_TS0"/>
+      <RandomVariable symbId="eta_TS0">
+        <ct:VariabilityReference>
+          <ct:SymbRef blkIdRef="model" symbIdRef="indiv"/>
+        </ct:VariabilityReference>
+        <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
+          <mean>
+            <rVal>0</rVal>
+          </mean>
+          <variance>
+            <var varId="OMEGA_TS0"/>
+          </variance>
+        </NormalDistribution>
+      </RandomVariable>
+      <IndividualParameter symbId="TS0">
+        <GaussianModel>
+          <Transformation>log</Transformation>
+          <LinearCovariate>
+            <PopulationParameter>
+              <ct:Assign >
+                <ct:SymbRef symbIdRef="POP_TS0"/>
+              </ct:Assign>
+            </PopulationParameter>
+          </LinearCovariate>
+          <RandomEffects>
+            <ct:SymbRef symbIdRef="eta_TS0"/>
+          </RandomEffects>
+        </GaussianModel>
+      </IndividualParameter>
+      
+      <!-- Tumour growth rate -->    
+      <SimpleParameter symbId="POP_KL"/>
+      <SimpleParameter symbId="OMEGA_KL"/>
+      <RandomVariable symbId="eta_KL">
+        <ct:VariabilityReference>
+          <ct:SymbRef blkIdRef="model" symbIdRef="indiv"/>
+        </ct:VariabilityReference>
+        <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
+          <mean>
+            <rVal>0</rVal>
+          </mean>
+          <variance>
+            <var varId="OMEGA_KL"/>
+          </variance>
+        </NormalDistribution>
+      </RandomVariable>
+      <IndividualParameter symbId="KL">
+        <GaussianModel>
+          <Transformation>log</Transformation>
+          <LinearCovariate>
+            <PopulationParameter>
+              <ct:Assign>
+                <ct:SymbRef symbIdRef="POP_KL"/>
+              </ct:Assign>
+            </PopulationParameter>
+          </LinearCovariate>
+          <RandomEffects>
+            <ct:SymbRef symbIdRef="eta_KL"/>
+          </RandomEffects>
+        </GaussianModel>
+      </IndividualParameter>
+      
+      <!-- Drug-constant cell kill rate -->    
+      <SimpleParameter symbId="POP_KD"/>
+      <SimpleParameter symbId="OMEGA_KD"/>
+      <RandomVariable symbId="eta_KD">
+        <ct:VariabilityReference>
+          <ct:SymbRef blkIdRef="model" symbIdRef="indiv"/>
+        </ct:VariabilityReference>
+        <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
+          <mean>
+            <rVal>0</rVal>
+          </mean>
+          <variance>
+            <var varId="OMEGA_KD"/>
+          </variance>
+        </NormalDistribution>
+      </RandomVariable>
+      <IndividualParameter symbId="KD">
+        <GaussianModel>
+          <Transformation>log</Transformation>
+          <LinearCovariate>
+            <PopulationParameter>
+              <ct:Assign>
+                <ct:SymbRef symbIdRef="POP_KD"/>
+              </ct:Assign>
+            </PopulationParameter>
+          </LinearCovariate>
+          <RandomEffects>
+            <ct:SymbRef symbIdRef="eta_KD"/>
+          </RandomEffects>
+        </GaussianModel>
+      </IndividualParameter>
+      
+      <!-- Drug elimination constant rate (KPD model) -->    
+      <SimpleParameter symbId="POP_KE"/>
+      <SimpleParameter symbId="POP_KE_h">
+        <ct:Description> elimination constant rate in 1/hours</ct:Description>
+        <ct:Assign>
+          <math:Equation>
+            <math:Binop op="times">
+              <ct:SymbRef symbIdRef="POP_KE"/>
+              <ct:Real>168</ct:Real>
+            </math:Binop>
+          </math:Equation>
+        </ct:Assign>
+      </SimpleParameter>
+      <SimpleParameter symbId="OMEGA_KE"/>
+      <RandomVariable symbId="eta_KE">
+        <ct:VariabilityReference>
+          <ct:SymbRef blkIdRef="model" symbIdRef="indiv"/>
+        </ct:VariabilityReference>
+        <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
+          <mean>
+            <rVal>0</rVal>
+          </mean>
+          <variance>
+            <var varId="OMEGA_KE"/>
+          </variance>
+        </NormalDistribution>
+      </RandomVariable>
+      <IndividualParameter symbId="KE">
+        <GaussianModel>
+          <Transformation>log</Transformation>
+          <LinearCovariate>
+            <PopulationParameter>
+              <ct:Assign>
+                <ct:SymbRef symbIdRef="POP_KE_h"/>
+              </ct:Assign>
+            </PopulationParameter>
+          </LinearCovariate>
+          <RandomEffects>
+            <ct:SymbRef symbIdRef="eta_KE"/>
+          </RandomEffects>
+        </GaussianModel>
+      </IndividualParameter>
+      
+      <!-- Resistance parameter -->
+      <SimpleParameter symbId="POP_LAMBDA"/>
+      <SimpleParameter symbId="OMEGA_LAMBDA"/>
+      <RandomVariable symbId="eta_LAMBDA">
+        <ct:VariabilityReference>
+          <ct:SymbRef blkIdRef="model" symbIdRef="indiv"/>
+        </ct:VariabilityReference>
+        <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
+          <mean>
+            <rVal>0</rVal>
+          </mean>
+          <variance>
+            <var varId="OMEGA_LAMBDA"/>
+          </variance>
+        </NormalDistribution>
+      </RandomVariable>
+      <IndividualParameter symbId="LAMBDA">
+        <GaussianModel>
+          <Transformation>log</Transformation>
+          <LinearCovariate>
+            <PopulationParameter>
+              <ct:Assign>
+                <ct:SymbRef symbIdRef="POP_LAMBDA"/>
+              </ct:Assign>
+            </PopulationParameter>
+          </LinearCovariate>
+          <RandomEffects>
+            <ct:SymbRef symbIdRef="eta_LAMBDA"/>
+          </RandomEffects>
+        </GaussianModel>
+      </IndividualParameter>
+
+      <!-- residual error parameters in the sd scale -->
+      <SimpleParameter symbId = "PERR"/>
+      <SimpleParameter symbId = "AERR"/>
+      
+    </ParameterModel>
+    
+  
+    
+    <!-- STRUCTURAL MODEL -->    
+    <StructuralModel blkId="sm1" id="i6">
+      
+      <!-- resistance -->
+      <ct:Variable symbolType="real" symbId="RESISTANCE">
+        <ct:Assign>
+          <math:Equation>
+            <math:Uniop op="exp">
+              <math:Binop op="times">
+                <math:Uniop op="minus">
+                  <ct:SymbRef blkIdRef="pm1" symbIdRef="LAMBDA"/>
+                </math:Uniop>
+                <ct:SymbRef symbIdRef="t"></ct:SymbRef>
+              </math:Binop>
+            </math:Uniop>
+          </math:Equation>
+        </ct:Assign>
+      </ct:Variable>
+      
+      <!-- Capecitabine PK compartment (KPD) -->
+      <ct:DerivativeVariable symbolType="real" compartmentNo="1" symbId="CAPE">
+        <ct:Assign>
+          <math:Equation>
+            <math:Uniop op="minus">
+              <math:Binop op="times">
+                <ct:SymbRef blkIdRef="pm1" symbIdRef="KE"/>
+                <ct:SymbRef symbIdRef="CAPE"/>
+              </math:Binop>
+            </math:Uniop>
+          </math:Equation>
+        </ct:Assign>
+        <ct:IndependentVariable>
+          <ct:SymbRef symbIdRef="t"></ct:SymbRef>
+        </ct:IndependentVariable>
+        <ct:InitialCondition>
+          <ct:InitialValue>
+            <ct:Assign>
+              <ct:Int>0</ct:Int>
+            </ct:Assign>
+          </ct:InitialValue>
+        </ct:InitialCondition>
+      </ct:DerivativeVariable>
+      
+      <!-- Tumour size compartment -->
+      <ct:DerivativeVariable symbolType="real" symbId="TS" compartmentNo="2">
+        <ct:Assign>
+          <math:Equation>
+            <math:Binop op="minus">
+              <math:Binop op="times">
+                <ct:SymbRef blkIdRef="pm1" symbIdRef="KL"/>
+                <ct:SymbRef blkIdRef="pm1" symbIdRef="TS"/>
+              </math:Binop>
+              <math:Binop op="times">
+                <ct:SymbRef blkIdRef="pm1" symbIdRef="KD"/>
+                <math:Binop op="times">
+                  <ct:SymbRef symbIdRef="RESISTANCE"/>
+                  <math:Binop op="times">
+                    <ct:SymbRef symbIdRef="CAPE"/>
+                    <ct:SymbRef symbIdRef="TS"/>
+                  </math:Binop>
+                </math:Binop>
+              </math:Binop>
+            </math:Binop>
+          </math:Equation>
+        </ct:Assign>
+        <ct:IndependentVariable>
+          <ct:SymbRef symbIdRef="t"/>
+        </ct:IndependentVariable>
+        <ct:InitialCondition>
+          <ct:InitialValue>
+            <ct:Assign>
+              <ct:SymbRef blkIdRef="pm1" symbIdRef="TS0"/>
+            </ct:Assign>
+          </ct:InitialValue>
+        </ct:InitialCondition>
+      </ct:DerivativeVariable>
+
+    </StructuralModel>
+
+
+    <!-- OBSERVATIONAL MODEL -->
+    <ObservationModel blkId="om1">
+        
+      <SimpleParameter symbId = "SIGMA_RES_TS"/>    
+      <RandomVariable symbId="eps_RES_TS">
+        <ct:VariabilityReference>
+          <ct:SymbRef blkIdRef="obsErr" symbIdRef="residual"/>
+        </ct:VariabilityReference>
+        <NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
+          <mean>
+            <rVal>0</rVal>
+          </mean>
+          <variance>
+            <var varId="SIGMA_RES_TS"/>
+          </variance>
+        </NormalDistribution>
+      </RandomVariable>
+      <Standard symbId="Y" id="i9">
+        <Output>
+          <ct:SymbRef blkIdRef="sm1" symbIdRef="TS"/>
+        </Output>
+        <ErrorModel>
+          <ct:Assign xmlns:ct="http://www.pharmml.org/2013/03/CommonTypes">
+            <Equation xmlns="http://www.pharmml.org/2013/03/Maths">
+              <FunctionCall>
+                <ct:SymbRef symbIdRef="CombinedError2"/>
+                <FunctionArgument symbId="additive">
+                  <ct:SymbRef blkIdRef="pm1" symbIdRef="AERR"/>
+                </FunctionArgument>
+                <FunctionArgument symbId="proportional">
+                  <ct:SymbRef blkIdRef="pm1" symbIdRef="PERR"/>
+                </FunctionArgument>
+                <FunctionArgument symbId="f">
+                  <ct:SymbRef blkIdRef="pm1" symbIdRef="TS"></ct:SymbRef>
+                </FunctionArgument>
+              </FunctionCall>
+            </Equation>
+          </ct:Assign>
+        </ErrorModel>
+        <ResidualError>
+          <ct:SymbRef xmlns:ct="http://www.pharmml.org/2013/03/CommonTypes" symbIdRef="eps_RES_TS"/>
+        </ResidualError>
+      </Standard>
+
+    </ObservationModel>
+
+  </ModelDefinition>
+
+
+  <!-- MODELLING STEPS -->
+  <ModellingSteps xmlns="http://www.pharmml.org/2013/03/ModellingSteps">
+    <NONMEMdataSet oid="NMoid">
+      <ColumnMapping>
+        <ColumnRef xmlns="http://www.pharmml.org/2013/08/Dataset" columnIdRef="TIME"/>
+        <ct:SymbRef symbIdRef="t"/>
+      </ColumnMapping>
+      <ColumnMapping>
+        <ds:ColumnRef columnIdRef="AMT"></ds:ColumnRef>
+        <ct:SymbRef blkIdRef="sm1" symbIdRef="CAPE"></ct:SymbRef>
+      </ColumnMapping>
+      <ColumnMapping>
+        <ColumnRef xmlns="http://www.pharmml.org/2013/08/Dataset" columnIdRef="DV"/>
+        <ct:SymbRef blkIdRef="om1" symbIdRef="Y"/>
+      </ColumnMapping>  
+      <ds:DataSet>
+        <ds:Definition>
+          <ds:Column columnId="ID" columnType="id" valueType="int" columnNum="1"/>
+          <ds:Column columnId="TIME" columnType="idv" valueType="real" columnNum="2"/>
+          <ds:Column columnId="AMT" columnType="dose" valueType="real" columnNum="3"/>
+          <ds:Column columnId="II" columnType="ii" valueType="real" columnNum="4"/>
+          <ds:Column columnId="ADDL" columnType="addl" valueType="real" columnNum="5"/>
+          <ds:Column columnId="CMT" columnType="cmt" valueType="real" columnNum="6"/>
+          <ds:Column columnId="DV" columnType="dv" valueType="real" columnNum="7"/>
+          <ds:Column columnId="CYCLE" columnType="covariate" valueType="real" columnNum="8"/>
+          <ds:Column columnId="MDV" columnType="mdv" valueType="real" columnNum="9"/>
+        </ds:Definition>
+        <ds:ImportData oid="NM_dataset">
+          <ds:path>claret_simuldata</ds:path>
+          <ds:format>CSV</ds:format>
+          <ds:delimiter>COMMA</ds:delimiter>
+        </ds:ImportData>
+      </ds:DataSet>
+    </NONMEMdataSet>
+    
+    
+    <EstimationStep oid="estTask1" id="i10">
+      <!-- Initial parameter estimates -->
+      <ParametersToEstimate>
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="POP_TS0"/>
+          <InitialEstimate>
+            <ct:Real>71</ct:Real>
+          </InitialEstimate>
+          <LowerBound>
+            <ct:Real>0</ct:Real>
+          </LowerBound>
+        </ParameterEstimation>
+        
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="POP_KL"/>
+          <InitialEstimate>
+            <ct:Real>0.021</ct:Real>
+          </InitialEstimate>
+          <LowerBound>
+            <ct:Real>0</ct:Real>
+          </LowerBound>
+         </ParameterEstimation>
+          
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="POP_KD"/>
+          <InitialEstimate>
+            <ct:Real>0.025</ct:Real>
+          </InitialEstimate>
+          <LowerBound>
+            <ct:Real>0</ct:Real>
+          </LowerBound>
+        </ParameterEstimation>
+
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="POP_KE"/>
+          <InitialEstimate>
+            <ct:Real>0.05</ct:Real>
+          </InitialEstimate>
+          <LowerBound>
+            <ct:Real>0</ct:Real>
+          </LowerBound>
+        </ParameterEstimation>
+        
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="POP_LAMBDA"/>
+          <InitialEstimate>
+            <ct:Real>0.053</ct:Real>
+          </InitialEstimate>
+          <LowerBound>
+            <ct:Real>0</ct:Real>
+          </LowerBound>
+        </ParameterEstimation>
+
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="PERR"/>
+          <InitialEstimate fixed="true">
+            <ct:Real>0</ct:Real>
+          </InitialEstimate>
+        </ParameterEstimation>
+        
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="AERR"/>
+          <InitialEstimate>
+            <ct:Real>12</ct:Real>
+          </InitialEstimate>
+        </ParameterEstimation>
+            
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="OMEGA_TS0"/>
+          <InitialEstimate>
+            <ct:Real>0.40</ct:Real>
+          </InitialEstimate>
+        </ParameterEstimation>
+      
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="OMEGA_KL"/>
+          <InitialEstimate>
+            <ct:Real>0.499</ct:Real>
+          </InitialEstimate>
+        </ParameterEstimation>
+      
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="OMEGA_KD"/>
+          <InitialEstimate>
+            <ct:Real>0.388</ct:Real>
+          </InitialEstimate>
+        </ParameterEstimation>
+      
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="OMEGA_KE"/>
+          <InitialEstimate>
+            <ct:Real>0.04</ct:Real>
+          </InitialEstimate>
+        </ParameterEstimation>
+      
+        <ParameterEstimation>
+          <ct:SymbRef blkIdRef="pm1" symbIdRef="OMEGA_LAMBDA"/>
+          <InitialEstimate>
+            <ct:Real>1.260</ct:Real>
+          </InitialEstimate>
+        </ParameterEstimation>
+        
+      </ParametersToEstimate>
+      <Operation order="1" opType="estPop"/>
+      <Operation order="2" opType="estIndiv"/>
+    </EstimationStep>
+    <StepDependencies>
+      <Step>
+        <ct:OidRef xmlns:ct="http://www.pharmml.org/2013/03/CommonTypes" oidRef="estTask1"/>
+      </Step>
+    </StepDependencies>
+  </ModellingSteps>
+</PharmML>
