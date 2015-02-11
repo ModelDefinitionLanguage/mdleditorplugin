@@ -160,25 +160,7 @@ public class XtextWrapper {
 			return unwrap(p.getExpression())
 		}.join(", ")).concat("]")
 	}
-
-//	public static Object unwrap(DistributionArguments distributionArgs) {
-//		Map arguments = [:]
-//		distributionArgs.getArguments().each { DistributionArgument da ->
-//			if(da.getDistribution()!=null) {
-//				arguments["type"] = da.getDistribution().getIdentifier()
-//			} else if(da.getComponent()!=null) {
-//			  	arguments[da.getArgumentName()] = unwrap(da.getComponent().getArguments())
-//			} else if( da.getValue() != null ){
-//				String val = ""
-//				if( da.getValue().getNumber()!=null ) val = da.getValue().getNumber()
-//				else if (da.getValue().getSymbol()!=null) val = da.getValue().getSymbol().getName()
-//				else if(da.getValue().getVector()!=null) val = mdlPrinter.toStr(da.getValue().getVector())
-//				arguments[da.getArgumentName().getName()] = val
-//			}
-//		}
-//		arguments
-//	}
-	
+    
 	/**
 	 * Sometimes there is an argument name and sometimes there is not...
 	 * In the former case we will return a Map and in the latter we will return a List.
