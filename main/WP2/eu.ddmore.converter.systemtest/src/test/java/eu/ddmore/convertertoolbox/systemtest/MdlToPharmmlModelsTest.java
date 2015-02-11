@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import eu.ddmore.convertertoolbox.systemtest.FileType;
+
 
 /**
  * Run MDL -> PharmML conversions over the testdata models within the "mdl" subdirectory.
@@ -19,12 +21,7 @@ public class MdlToPharmmlModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(MdlToPharmmlModelsTest.class);
 
-    private final static String MDL_VERSION = "6.0.7";
-    private final static String PHARMML_VERSION = "0.3.1";
-
-    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + MDL_VERSION;
-    private final static String MODELS_FILE_EXTENSION = "mdl";
-    private final static String OUTPUT_FILE_EXTENSION = "xml";
+    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + FileType.MDL.getVersion();
     
     // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes
     private final static int PHARMML_FILE_SIZE_THRESHOLD = 638;
@@ -41,7 +38,7 @@ public class MdlToPharmmlModelsTest {
      */
     @Parameterized.Parameters(name= "{index}: Model {1}")
     public static Iterable<Object[]> getModelsToTest() {
-        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, MODELS_FILE_EXTENSION);
+        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.MDL.getExtension());
     }
     
     private final File model;
@@ -73,7 +70,7 @@ public class MdlToPharmmlModelsTest {
     @Test
     public void testMdlToPharmMLConversion() throws IOException {
         final ConverterRunner runner = new ConverterRunner(
-            this.model, OUTPUT_FILE_EXTENSION, "MDL", MDL_VERSION, "PharmML", PHARMML_VERSION,
+            this.model, FileType.PHARMML.getExtension(), "MDL", FileType.MDL.getVersion(), "PharmML", FileType.PHARMML.getVersion(),
             new DefaultConverterOutputFailureChecker(PHARMML_FILE_SIZE_THRESHOLD)
         );
         runner.run();

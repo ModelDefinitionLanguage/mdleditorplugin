@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import eu.ddmore.convertertoolbox.systemtest.FileType;
+
 
 /**
  * Run PharmML -> NMTRAN conversions over the testdata models within the "pharmml" subdirectory.
@@ -16,15 +18,7 @@ public class PharmmlToNmtranModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(PharmmlToNmtranModelsTest.class);
 
-    private final static String PHARMML_VERSION = "0.3.1";
-    private final static String NMTRAN_VERSION = "7.2";
-
-    private final static String MODELS_SUBDIRECTORY = "PharmML" + File.separator + PHARMML_VERSION;
-    private final static String MODELS_FILE_EXTENSION = "xml";
-    private final static String OUTPUT_FILE_EXTENSION = "ctl";
-    
-    // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes
-    private final static int NMTRAN_FILE_SIZE_THRESHOLD = 30; // Required: $PROB $INPUT $DATA
+    private final static String MODELS_SUBDIRECTORY = "PharmML" + File.separator + FileType.PHARMML.getVersion();
     
     /**
      * The method that produces the parameters to be passed to each construction of the test class.
@@ -38,7 +32,7 @@ public class PharmmlToNmtranModelsTest {
      */
     @Parameterized.Parameters(name= "{index}: Model {1}")
     public static Iterable<Object[]> getModelsToTest() {
-        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, MODELS_FILE_EXTENSION);
+        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.PHARMML.getExtension());
     }
     
     private final File model;
@@ -63,8 +57,8 @@ public class PharmmlToNmtranModelsTest {
     @Test
     public void testPharmMLToNMTRANConversion() {
         new ConverterRunner(
-            this.model, OUTPUT_FILE_EXTENSION, "PharmML", PHARMML_VERSION, "NMTRAN", NMTRAN_VERSION,
-            new DefaultConverterOutputFailureChecker(NMTRAN_FILE_SIZE_THRESHOLD)
+            this.model, FileType.NMTRAN.getExtension(), "PharmML", FileType.PHARMML.getVersion(), "NMTRAN", FileType.NMTRAN.getVersion(),
+            new ConverterNmTranOutputFailureChecker()
         ).run();
     }
     

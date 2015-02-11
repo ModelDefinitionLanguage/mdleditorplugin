@@ -15,13 +15,7 @@ import org.junit.runners.Parameterized;
 public class MdlToJsonModelsTest {
 
     private final static Logger LOGGER = Logger.getLogger(MdlToJsonModelsTest.class);
-
-    private final static String MDL_VERSION = "6.0.7";
-    private final static String JSON_VERSION = "6.0.7";
-
-    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + MDL_VERSION;
-    private final static String MODELS_FILE_EXTENSION = "mdl";
-    private final static String OUTPUT_FILE_EXTENSION = "json";
+    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + FileType.MDL.getVersion();
 
     /**
      * The method that produces the parameters to be passed to each construction of the test class.
@@ -35,7 +29,7 @@ public class MdlToJsonModelsTest {
      */
     @Parameterized.Parameters(name = "{index}: Model {1}")
     public static Iterable<Object[]> getModelsToTest() {
-        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, MODELS_FILE_EXTENSION);
+        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.MDL.getExtension());
     }
 
     private final File model;
@@ -59,7 +53,7 @@ public class MdlToJsonModelsTest {
      */
     @Test
     public void testMdlToJsonConversion() throws IOException {
-        final ConverterRunner runner = new ConverterRunner(this.model, OUTPUT_FILE_EXTENSION, "MDL", MDL_VERSION, "JSON", JSON_VERSION,
+        final ConverterRunner runner = new ConverterRunner(this.model, FileType.JSON.getExtension(), "MDL", FileType.MDL.getVersion(), "JSON", FileType.JSON.getVersion(),
                 new ConverterJsonOutputFailureChecker());
         runner.run();
     }
