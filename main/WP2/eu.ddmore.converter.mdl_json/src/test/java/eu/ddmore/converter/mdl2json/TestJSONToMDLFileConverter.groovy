@@ -60,7 +60,7 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
     @Test
     public void testMDLToJSONToMDL_Nock() {
         
-        def File origMdlFile = getFileFromModelsProject("6.0.7/Nock_2013_Carboplatin_PK/Nock_2013_Carboplatin_PK.mdl", "mdl")
+        def File origMdlFile = getFileFromModelsProject("6.0.7/Nock_2013_Carb_PK/Nock_2013_Carboplatin_PK.mdl", "mdl")
         
         def json = getJsonFromMDLFile(origMdlFile)
         
@@ -92,8 +92,8 @@ class TestJSONToMDLFileConverter extends ConverterTestsParent {
     @Test
     public void testRGeneratedMOG_Nock2013Carboplatin_MDL607() {
         testRGeneratedMOG(
-            "6.0.7/Nock_2013_Carboplatin_PK/Nock_2013_Carboplatin_PK.output.json",
-            "6.0.7/Nock_2013_Carboplatin_PK/Nock_2013_Carboplatin_PK.mdl"
+            "6.0.7/Nock_2013_Carb_PK/Nock_2013_Carboplatin_PK.output.json",
+            "6.0.7/Nock_2013_Carb_PK/Nock_2013_Carboplatin_PK.mdl"
         );
     }
 	

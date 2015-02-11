@@ -12,7 +12,7 @@ class TestMDLFileToJSONConverter extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestMDLFileToJSONConverter.class)
     
     private final static String MDL_FILE_WARFARIN = "6.0.7/Warfarin_ODE/Warfarin-ODE-latest.mdl"
-    private final static String MDL_FILE_NOCK_CARBOPLATIN = "6.0.7/Nock_2013_Carboplatin_PK/Nock_2013_Carboplatin_PK.mdl"
+    private final static String MDL_FILE_NOCK_CARBOPLATIN = "6.0.7/Nock_2013_Carb_PK/Nock_2013_Carboplatin_PK.mdl"
 
     @Test
 	public void testTopLevelBlocksPresent() {
