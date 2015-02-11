@@ -8,8 +8,8 @@ import org.junit.Ignore;
 
 import eu.ddmore.converter.mdl2json.domain.Task
 
-class TestTaskObjectToJSON extends ConverterTestsParent {
-	private static Logger logger = Logger.getLogger(TestTaskObjectToJSON.class)
+class TaskObjectToJSONTest extends ConverterTestsParent {
+	private static Logger logger = Logger.getLogger(TaskObjectToJSONTest.class)
 	
 	
 	@Test

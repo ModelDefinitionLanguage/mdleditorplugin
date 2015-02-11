@@ -4,15 +4,12 @@ import static org.junit.Assert.*
 
 import org.apache.log4j.Logger
 import org.junit.Test
-import org.junit.Ignore
 
-import eu.ddmore.converter.mdl2json.domain.MCLFile
 import eu.ddmore.converter.mdl2json.domain.Model
-import groovy.json.JsonSlurper
 
 
-class TestJSONModelObjectToMDL extends ConverterTestsParent {
-	private static final Logger logger = Logger.getLogger(TestJSONModelObjectToMDL.class)
+class JSONModelObjectToMDLTest extends ConverterTestsParent {
+	private static final Logger logger = Logger.getLogger(JSONModelObjectToMDLTest.class)
 	
 	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
 	private final static String structParamsBlockJson =
@@ -253,12 +250,6 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
 """
         // Note: the replace makes the line endings consistent so text compare passes
         assertEquals(expected, modelObj.toMDL().replace("\r\n", "\n"))
-	}
-	
-	@Test
-	@Ignore
-	void testEstimationBlock() {
-		fail("Not implemented yet")
 	}
 	
 }
