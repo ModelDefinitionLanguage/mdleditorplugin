@@ -10,6 +10,8 @@ import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Mcl
 
+import com.google.common.base.Preconditions;
+
 import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.converter.mdl2json.domain.Model
 import eu.ddmore.converter.mdl2json.domain.ModelPrediction
@@ -44,7 +46,7 @@ public class ConverterTestsParent {
 	 * @param relativePathToFile - the relative path to the MDL file within the directory /eu/ddmore/testdata/models/mdl/
 	 * 							   within the testdata models project
 	 * @return the MDL {@link File}
-	 * @throws <code>NullPointerException</code> if the referenced file does not exist
+	 * @throws <code>IllegalArgumentException</code> if the referenced file does not exist
 	 * @see #getFileFromModelsProject(String, String)
 	 */
     public File getFileFromModelsProject(final String relativePathToFile) {
@@ -58,11 +60,14 @@ public class ConverterTestsParent {
 	 * 							   within the testdata models project
 	 * @param modelType - the model-type subdirectory (e.g. "mdl", "ctl")
 	 * @return the {@link File}
-	 * @throws <code>NullPointerException</code> if the referenced file does not exist
+	 * @throws <code>IllegalArgumentException</code> if the referenced file does not exist
 	 */
 	public File getFileFromModelsProject(final String relativePathToFile, final String modelType) {
 		
 		final URL urlToFile = ConverterTestsParent.class.getResource(MODELS_PROJECT_TEST_DATA_DIR + modelType + "/" + relativePathToFile)
+        Preconditions.checkArgument(urlToFile != null,
+            "Model file at relative file path %s does not exist in the testdata models project", modelType + "/" + relativePathToFile)
+        
 		File destFile = new File(WORKING_DIR + relativePathToFile)
 		FileUtils.copyURLToFile(urlToFile, destFile)
 		
