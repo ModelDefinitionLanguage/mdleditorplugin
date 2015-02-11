@@ -9,8 +9,8 @@ import org.junit.Test
 import eu.ddmore.converter.mdl2json.domain.Parameter
 import eu.ddmore.converter.mdl2json.domain.Variable
 
-class TestParameterObjectToJSON extends ConverterTestsParent {
-	private static Logger logger = Logger.getLogger(TestParameterObjectToJSON.class)
+class ParameterObjectToJSONTest extends ConverterTestsParent {
+	private static Logger logger = Logger.getLogger(ParameterObjectToJSONTest.class)
 
 	@Test
 	public void testStructuralModel() {

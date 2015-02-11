@@ -11,9 +11,9 @@ import eu.ddmore.converter.mdl2json.domain.MCLFile
 import eu.ddmore.converter.mdl2json.domain.Parameter
 import groovy.json.JsonSlurper
 
-class TestJSONParameterObjectToMDL extends ConverterTestsParent  {
+class JSONParameterObjectToMDLTest extends ConverterTestsParent  {
 	
-	private static Logger logger = Logger.getLogger(TestJSONParameterObjectToMDL.class)
+	private static Logger logger = Logger.getLogger(JSONParameterObjectToMDLTest.class)
 	
 	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
 	private static final String structuralBlockJson =
