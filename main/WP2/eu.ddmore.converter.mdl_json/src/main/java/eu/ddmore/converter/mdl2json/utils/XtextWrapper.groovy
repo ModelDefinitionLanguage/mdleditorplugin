@@ -33,8 +33,8 @@ public class XtextWrapper {
 		if (expression.getExpression()) {
 			return unwrap(expression.getExpression());
 		} else if (expression.getList()) {
-			logger.info("Calling argumentToMapOrList")
-			return argumentsToMapOrList(expression.getList().getArguments())
+			logger.error("Encountered an unhandled AnyExpression containing a List: " + expression.getList())
+            return null
 		} else if (expression.getVector()) {
 			return unwrap(expression.getVector())
 		} else if (expression.getType()) {
@@ -159,28 +159,6 @@ public class XtextWrapper {
 		"[".concat(v.getValues().collect {Primary p ->
 			return unwrap(p.getExpression())
 		}.join(", ")).concat("]")
-	}
-    
-	/**
-	 * Sometimes there is an argument name and sometimes there is not...
-	 * In the former case we will return a Map and in the latter we will return a List.
-	 */
-	private static argumentsToMapOrList(final Arguments args) {
-		Map m = [:]
-		List l = []
-		for (Argument a : args.getArguments() ) {
-			def unwrappedExpr = unwrap(a.getExpression())
-			if (a.getArgumentName()) {
-				m.put(a.getArgumentName().getName(), unwrappedExpr);
-			}
-			l.add(unwrappedExpr)
-		}
-		if (m.size() == l.size()) {
-			// There are no unnamed arguments so return the populated Map
-			return m
-		}
-		// Unnamed arguments were encountered so we have to return the List instead
-		return l
 	}
 	
 }
