@@ -4,11 +4,8 @@ import static org.junit.Assert.*
 
 import org.apache.log4j.Logger
 import org.junit.Test
-import org.junit.Ignore
 
-import eu.ddmore.converter.mdl2json.domain.MCLFile
 import eu.ddmore.converter.mdl2json.domain.Model
-import groovy.json.JsonSlurper
 
 
 class JSONModelObjectToMDLTest extends ConverterTestsParent {
@@ -253,12 +250,6 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 """
         // Note: the replace makes the line endings consistent so text compare passes
         assertEquals(expected, modelObj.toMDL().replace("\r\n", "\n"))
-	}
-	
-	@Test
-	@Ignore
-	void testEstimationBlock() {
-		fail("Not implemented yet")
 	}
 	
 }
