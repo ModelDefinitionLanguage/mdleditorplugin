@@ -173,8 +173,10 @@ public class ConverterTestsParent {
             }
             
 			assertEquals("Checking the content of the block " + blockName,
-				 origMdlFileBlockContent /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */ ,
-				 newMdlFileBlockContent /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */
+                // TODO: Remove the "OBSOLETE" commented out code below once we are confident that "if"
+                // exprs/stmts won't reappear in the MDL, maybe appropriate towards end of Product 4
+                origMdlFileBlockContent /* OBSOLETE?: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */ ,
+                newMdlFileBlockContent /* OBSOLETE?: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */
             )
 		}
 	}
