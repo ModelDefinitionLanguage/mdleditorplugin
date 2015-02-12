@@ -13,23 +13,22 @@ import com.google.inject.Injector;
 
 class MdlParser {
 
-	static Injector injector;
-	static XtextResourceSet resourceSet;
-	
-	static {
+    static Injector injector;
+    static XtextResourceSet resourceSet;
+
+    static {
         injector = new MdlStandaloneSetup().createInjectorAndDoEMFRegistration();
         resourceSet = injector.getInstance(XtextResourceSet.class);
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-	}
+    }
 
-	public Mcl parse(String model) {
+    public Mcl parse(String model) {
         File src = new File(Thread.currentThread().getContextClassLoader().getResource(model).getPath());
         return parse(src);
-	}
-	
-	public Mcl parse(File mdlFile) {
-        Resource resource = resourceSet.getResource(URI.createURI("file:///" + mdlFile.getAbsolutePath()), true);
-		return (Mcl) resource.getContents().get(0);
-	}
+    }
 
+    public Mcl parse(File mdlFile) {
+        Resource resource = resourceSet.getResource(URI.createURI("file:///" + mdlFile.getAbsolutePath()), true);
+        return (Mcl) resource.getContents().get(0);
+    }
 }

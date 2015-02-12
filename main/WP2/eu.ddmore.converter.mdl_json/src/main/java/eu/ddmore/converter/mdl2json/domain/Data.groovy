@@ -9,70 +9,68 @@ import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
-	
-	static final String IDENTIFIER = "dataobj"
-	
-	static final String SOURCE = "SOURCE"
-	static final String DATA_INPUT_VARIABLES = "DATA_INPUT_VARIABLES"
-	static final String DATA_DERIVED_VARIABLES = "DATA_DERIVED_VARIABLES"
-	static final String TARGET_CODE = "TARGET_CODE"
 
-	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
+    static final String IDENTIFIER = "dataobj"
 
-	public Data(DataObject dataObject) {
+    static final String SOURCE = "SOURCE"
+    static final String DATA_INPUT_VARIABLES = "DATA_INPUT_VARIABLES"
+    static final String DATA_DERIVED_VARIABLES = "DATA_DERIVED_VARIABLES"
+    static final String TARGET_CODE = "TARGET_CODE"
 
-		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
-		
-		for (DataObjectBlock b : dataObject.getBlocks()) {
+    private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 
-    		if (b.getSourceBlock()) {
-    			setProperty(SOURCE, new Source(b.getSourceBlock()))
-    		}
-    		if (b.getDataInputBlock()) {
-    			setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataInputBlock().getVariables()))
-    		}
-    		if (b.getDataDerivedBlock()) {
-    			setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataDerivedBlock().getVariables()))
-    		}
-    		if (b.getTargetBlock()) {
-    			setProperty(TARGET_CODE, mdlPrinter.toStr(b.getTargetBlock()))
-    		}
-			
-		}
-	}
+    public Data(DataObject dataObject) {
 
-	public Data(Map json) {
-		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
-		
-		if (json[SOURCE]) {
-			setProperty(SOURCE, new Source(json[SOURCE]))
-		}
-		if (json[DATA_INPUT_VARIABLES]) {
-			setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromJSON(json[DATA_INPUT_VARIABLES]))
-		}
-		if (json[DATA_DERIVED_VARIABLES]) {
-			setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromJSON(json[DATA_DERIVED_VARIABLES]))
-		}
-		if (json[TARGET_CODE]) {
-			setProperty(TARGET_CODE, json[TARGET_CODE])
-		}
-	}
-	
-	public String toMDL() {
-		StringBuffer mdl = new StringBuffer()
-		def normalProperties = getProperties().minus([(IDENTIFIER_PROPNAME):(IDENTIFIER)])
-		normalProperties.each { String blockName, MDLPrintable obj ->
-			mdl.append("\n${IDT}${blockName} {\n${IDT*2}${obj.toMDL()}\n${IDT}}\n")
-		}
-		return """${IDENTIFIER} {
+        setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
+
+        for (DataObjectBlock b : dataObject.getBlocks()) {
+
+            if (b.getSourceBlock()) {
+                setProperty(SOURCE, new Source(b.getSourceBlock()))
+            }
+            if (b.getDataInputBlock()) {
+                setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataInputBlock().getVariables()))
+            }
+            if (b.getDataDerivedBlock()) {
+                setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataDerivedBlock().getVariables()))
+            }
+            if (b.getTargetBlock()) {
+                setProperty(TARGET_CODE, mdlPrinter.toStr(b.getTargetBlock()))
+            }
+        }
+    }
+
+    public Data(Map json) {
+        setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
+
+        if (json[SOURCE]) {
+            setProperty(SOURCE, new Source(json[SOURCE]))
+        }
+        if (json[DATA_INPUT_VARIABLES]) {
+            setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromJSON(json[DATA_INPUT_VARIABLES]))
+        }
+        if (json[DATA_DERIVED_VARIABLES]) {
+            setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromJSON(json[DATA_DERIVED_VARIABLES]))
+        }
+        if (json[TARGET_CODE]) {
+            setProperty(TARGET_CODE, json[TARGET_CODE])
+        }
+    }
+
+    public String toMDL() {
+        StringBuffer mdl = new StringBuffer()
+        def normalProperties = getProperties().minus([(IDENTIFIER_PROPNAME):(IDENTIFIER)])
+        normalProperties.each { String blockName, MDLPrintable obj ->
+            mdl.append("\n${IDT}${blockName} {\n${IDT*2}${obj.toMDL()}\n${IDT}}\n")
+        }
+        return """${IDENTIFIER} {
 ${mdl.toString()}
 }
 """
-	}
-	
-	@Override
-	public int getPrintedOrder() {
-	    return 1;
-	}
-	
+    }
+
+    @Override
+    public int getPrintedOrder() {
+        return 1;
+    }
 }

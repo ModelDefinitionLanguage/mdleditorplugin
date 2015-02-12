@@ -42,7 +42,7 @@ public class MDLToJSONConverter implements ConverterProvider {
     private String json
 
     /**
-     * Convert an MDL file into JSON
+     * Convert an MDL file into JSON.
      * 
      * Accepts the MDL file as first argument, and optionally the output folder for the second argument
      * Default output folder is the same as the input MDL file
@@ -159,5 +159,4 @@ public class MDLToJSONConverter implements ConverterProvider {
     public String toString() {
         return String.format("MDLTOJSONConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion) ;
     }
-    
 }
