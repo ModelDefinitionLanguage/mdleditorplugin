@@ -58,7 +58,7 @@ $DES
 VEGF = A(1)
 
 AUC =  (DOS/CL)
-DP1 =  (BM0*(1+(DPSLP*TIME)))
+DP1 =  (BM0*(1+(DPSLP*T)))
 KIN =  (DP1*KOUT)
 EFF =  ((IMAX1*(AUC**HILL))/((IC50**HILL)+(AUC**HILL)))
 DADT(1) = (KIN-((KOUT*(1-EFF))*VEGF))
