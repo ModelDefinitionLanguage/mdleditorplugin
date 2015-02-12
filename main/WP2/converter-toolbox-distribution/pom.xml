@@ -7,17 +7,17 @@
         <relativePath>../converter-toolbox-service-parent/pom.xml</relativePath>
         <groupId>eu.ddmore</groupId>
         <artifactId>converter-toolbox-service-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>converter-toolbox-distribution</artifactId>
     <name>Converter Toolbox - Distributions</name>
     <packaging>pom</packaging>
 
     <properties>
-        <converter-nonmem.version>0.0.2-SNAPSHOT</converter-nonmem.version>
-        <mdl-converters.version>0.0.7-SNAPSHOT</mdl-converters.version>
-        <converter-toolbox.version>1.0.1-SNAPSHOT</converter-toolbox.version>
-        <test-converters.version>0.0.6-SNAPSHOT</test-converters.version>
+        <converter-nonmem.version>0.1.0-SNAPSHOT</converter-nonmem.version>
+        <mdl-converters.version>0.1.0-SNAPSHOT</mdl-converters.version>
+        <converter-toolbox.version>1.1.0-SNAPSHOT</converter-toolbox.version>
+        <test-converters.version>0.1.0-SNAPSHOT</test-converters.version>
     </properties>
 
     <build>
