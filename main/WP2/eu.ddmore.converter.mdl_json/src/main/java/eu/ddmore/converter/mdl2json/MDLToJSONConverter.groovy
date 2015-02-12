@@ -112,15 +112,9 @@ public class MDLToJSONConverter implements ConverterProvider {
         JsonBuilder jb = new JsonBuilder()
 
         String ret = null
-        try {
-            MCLFile f = new MCLFile(mcl)
-            jb f
-            ret = jb.toString()
-        }
-        catch(Exception e) {
-            logger.error("Could not turn MCL into JSON", e)
-            System.err.println("Could not turn MDL into JSON\n" + e.getMessage() )
-        }
+        MCLFile f = new MCLFile(mcl)
+        jb f
+        ret = jb.toString()
 
         return ret;
     }
