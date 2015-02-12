@@ -82,9 +82,13 @@ public class ConverterTestsParent {
 
         MdlParser p = new MdlParser()
         Mcl mcl = p.parse(srcFile)
+        
+        Preconditions.checkArgument(mcl != null, "Unable to parse MDL file " + srcFile + "; check the log files for exceptions that might have been thrown")
 
         String jsonText = converter.toJSON(mcl)
 
+        Preconditions.checkArgument(StringUtils.isNotBlank(jsonText), "Unable to parse MDL file " + srcFile + " into JSON; check the log files for exceptions that might have been thrown")
+        
         logger.debug(jsonText)
 
         JsonSlurper slurper = new JsonSlurper();
