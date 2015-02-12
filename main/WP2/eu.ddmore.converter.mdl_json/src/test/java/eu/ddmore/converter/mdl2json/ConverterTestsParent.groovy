@@ -164,9 +164,17 @@ public class ConverterTestsParent {
 			}
 		
 			// Trim off whitespace from both the expected and the actual
+            origMdlFileBlockContent = origMdlFileBlockContent.replaceAll(~/\s*/, "")
+            newMdlFileBlockContent = newMdlFileBlockContent.replaceAll(~/\s*/, "")
+            
+            // If the original MDL file had an empty block for this blockName then this is treated the same as if the block is absent
+            if (origMdlFileBlockContent.equals(blockName + "{}")) {
+                origMdlFileBlockContent = "";
+            }
+            
 			assertEquals("Checking the content of the block " + blockName,
-				origMdlFileBlockContent.replaceAll(~/\s*/, "") /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */ ,
-				newMdlFileBlockContent.replaceAll(~/\s*/, "") /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */
+				 origMdlFileBlockContent /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */ ,
+				 newMdlFileBlockContent /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */
             )
 		}
 	}
