@@ -6,17 +6,17 @@
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.1</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>toolbox-integration-test</artifactId>
-	<version>0.0.6-SNAPSHOT</version>
+	<version>0.0.6</version>
 	<name>Converter Toolbox Integration Test</name>
 
 	<properties>
-        <converter-toolbox.version>1.0.1-SNAPSHOT</converter-toolbox.version>
-        <testdata-models.version>0.0.3-SNAPSHOT</testdata-models.version>
+        <converter-toolbox.version>1.0.1</converter-toolbox.version>
+        <testdata-models.version>0.0.3</testdata-models.version>
         
 		<jacoco.version>0.6.0.201210061924</jacoco.version>
 	</properties>

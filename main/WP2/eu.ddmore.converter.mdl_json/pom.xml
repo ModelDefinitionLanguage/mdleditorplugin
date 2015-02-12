@@ -6,12 +6,12 @@
         <relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
         <groupId>eu.ddmore</groupId>
         <artifactId>converter-parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>converter-mdl_json</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>0.0.7</version>
     <name>Converter Provider: MDL to JSON</name>
 
     <properties>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>org.ddmore.mdl</artifactId>
-            <version>1.0.5-SNAPSHOT</version>
+            <version>1.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>eu.ddmore.testdata</groupId>
             <artifactId>models</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <version>0.0.3</version>
             <scope>test</scope>
         </dependency>
 
