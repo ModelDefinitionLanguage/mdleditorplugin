@@ -1,11 +1,6 @@
 package eu.ddmore.converter.mdl2json.domain;
 
-import java.util.Map;
-
 import org.apache.log4j.Logger
-import org.ddmore.mdl.mdl.EstimationBlock
-import org.ddmore.mdl.mdl.GroupVariablesBlock
-import org.ddmore.mdl.mdl.GroupVariablesBlockStatement
 import org.ddmore.mdl.mdl.ModelObject
 import org.ddmore.mdl.mdl.ModelObjectBlock
 
@@ -71,11 +66,12 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 				setProperty(GROUP_VARIABLES, DerivedVariablesList.buildFromGroupVariablesBlock(b.getGroupVariablesBlock()))
 			}
 			if (b.getEstimationBlock()) {
-				setProperty(ESTIMATION, makeEstimation(b.getEstimationBlock()))
+                throw new UnsupportedOperationException("Estimation block not supported yet")
 			}
 			if (b.getSimulationBlock()) {
 				throw new UnsupportedOperationException("Simulation block not supported yet")
-			} else if (b.getTargetBlock()) {
+			}
+            if (b.getTargetBlock()) {
 				throw new UnsupportedOperationException("Target Code block not supported yet")
 			}
 			
@@ -128,17 +124,6 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 			throw new UnsupportedOperationException("Target Code block not supported yet")
 		}
 		
-	}
-
-	// TODO: This needs to be revisited
-	private makeEstimation(EstimationBlock estimationBlock) {
-		throw new UnsupportedOperationException("Estimation block not supported yet")
-		
-//		StringBuffer statements = new StringBuffer()
-//		estimationBlock.getStatements().each { BlockStatement statement ->
-//			statements.append(mdlPrinter.print(statement))
-//		}
-//		statements.toString()
 	}
 	
 	public String toMDL() {
