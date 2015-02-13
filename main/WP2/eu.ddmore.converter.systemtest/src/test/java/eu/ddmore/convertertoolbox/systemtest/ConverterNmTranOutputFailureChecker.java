@@ -24,6 +24,9 @@ import eu.ddmore.convertertoolbox.systemtest.FileType;
 class ConverterNmTranOutputFailureChecker extends DefaultConverterOutputFailureChecker {
 
     private static final Logger LOGGER = Logger.getLogger(ConverterNmTranOutputFailureChecker.class);
+    // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes.
+    // This is derived from the following minimal skeleton NMTRAN file:
+    // $PROB $INPUT $DATA
     private final static int NMTRAN_FILE_SIZE_THRESHOLD = 30;
     private final String NMTRAN_DIR = "NM-TRAN";
 
@@ -38,12 +41,12 @@ class ConverterNmTranOutputFailureChecker extends DefaultConverterOutputFailureC
             String outputFileName = expectedOutputNmTranFile.getName();
             File outputParentDir = expectedOutputNmTranFile.getParentFile().getParentFile();
             
-            File nmTranFile = new File(ModelsDiscoverer.PATH_TO_MODELS_DIR+File.separator+NMTRAN_DIR+File.separator+
+            File baselineNmTranFile = new File(ModelsDiscoverer.PATH_TO_MODELS_DIR+File.separator+NMTRAN_DIR+File.separator+
                 FileType.NMTRAN.getVersion()+File.separator+outputParentDir.getName()+File.separator+outputFileName);
 
-            if(nmTranFile.exists()){
+            if(baselineNmTranFile.exists()){
                 StringBuilder tempOutputFileContent = getFileContentWithoutComments(expectedOutputNmTranFile);
-                StringBuilder tempNmTranFileContent = getFileContentWithoutComments(nmTranFile);
+                StringBuilder tempNmTranFileContent = getFileContentWithoutComments(baselineNmTranFile);
                 
                 assertTrue("Files should match", StringUtils.equals(tempOutputFileContent.toString(), tempNmTranFileContent.toString()));
             }else{
@@ -59,8 +62,9 @@ class ConverterNmTranOutputFailureChecker extends DefaultConverterOutputFailureC
 
     /**
      * Returns file content without comments added at start which are file specific to each output file.
-     * @param expectedOutputNmTranFile
-     * @return
+     * 
+     * @param  expectedOutputNmTranFile
+     * @return StringBuilder file content 
      * @throws IOException
      */
     private StringBuilder getFileContentWithoutComments(File expectedOutputNmTranFile) throws IOException{
