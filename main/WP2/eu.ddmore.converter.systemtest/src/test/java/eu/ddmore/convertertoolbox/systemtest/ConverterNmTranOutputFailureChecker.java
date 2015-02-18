@@ -61,8 +61,8 @@ class ConverterNmTranOutputFailureChecker extends DefaultConverterOutputFailureC
             }
 
         } catch (Exception e) {
-            LOGGER.error(
-                "Exception \"" + e.getMessage() + "\" thrown parsing NmTran from file " + expectedOutputNmTranFile);
+            LOGGER.error("Exception thrown while parsing NmTran from file : " + expectedOutputNmTranFile);
+            LOGGER.error("Exception details : ", e);
             fail("Error parsing NmTran from file " + expectedOutputNmTranFile);
         }
     }
