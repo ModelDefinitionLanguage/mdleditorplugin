@@ -185,7 +185,7 @@ public class ConverterTestsParent {
 		final BufferedReader rdr = new BufferedReader(new FileReader(origMdlFile));
 		final StringBuffer strBuf = new StringBuffer();
 		rdr.eachLine() { String str ->
-			processHashChars(str, 0, strBuf)
+			removeCommentFromLineOfMDL(str, 0, strBuf)
 		}
 		strBuf.toString()
 	}
@@ -198,7 +198,7 @@ public class ConverterTestsParent {
 	 * @param fromIndex - the zero-based index in the string at which to start processing
 	 * @param strBuf - the string buffer to which to append the processed line of text
 	 */
-	private static void processHashChars(final String fullStr, final int fromIndex, final StringBuffer strBuf) {
+	private static void removeCommentFromLineOfMDL(final String fullStr, final int fromIndex, final StringBuffer strBuf) {
 		def hashCharPos = fullStr.indexOf("#", fromIndex)
 		if (hashCharPos < 0) {
 			strBuf.append(fullStr.substring(fromIndex))
@@ -211,7 +211,7 @@ public class ConverterTestsParent {
 				strBuf.append(subStr)
 				def closingQuotePos = fullStr.indexOf("\"", hashCharPos)
 				strBuf.append(fullStr.substring(hashCharPos, closingQuotePos + 1)) // Ensure we include the closing quote
-				processHashChars(fullStr, closingQuotePos + 1, strBuf) // Repeat until the end of the string is reached
+				removeCommentFromLineOfMDL(fullStr, closingQuotePos + 1, strBuf) // Repeat until the end of the string is reached
 			} else {
 				// Hash char is not within a quoted string so is most likely starting a comment
 				if (!subStr.matches(~/\s*$/)) { // Not just whitespace
