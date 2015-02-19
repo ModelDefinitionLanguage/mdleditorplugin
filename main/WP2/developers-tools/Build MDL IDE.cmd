@@ -54,7 +54,7 @@ call mvn -f %BUILD_FOLDER%/%DDMORE_CODE_REPO_DIR_NAME%/main/WP2/eu.ddmore.testda
 echo ===========================
 echo Building MDL IDE (core) ...
 echo ===========================
-call mvn -U -f %BUILD_FOLDER%/%DDMORE_CODE_REPO_DIR_NAME%/main/WP2/MDLEditor/eu.ddmore.mdleditor.build/modules-aggregator-corebuild.xml clean install -X > build-mdl-core-log.txt
+call mvn -U -f %BUILD_FOLDER%/%DDMORE_CODE_REPO_DIR_NAME%/main/WP2/MDLEditor/releng/mdl-core/pom.xml clean install -X > build-mdl-core-log.txt
 
 :: Check everything has worked!
 %FINDCMD% "BUILD SUCCESS" build-mdl-core-log.txt
@@ -84,7 +84,7 @@ if not %ERRORLEVEL%==0 goto :failed
 echo ===============================
 echo Building MDL IDE (complete) ...
 echo ===============================
-call mvn -U -f %BUILD_FOLDER%/%DDMORE_CODE_REPO_DIR_NAME%/main/WP2/MDLEditor/eu.ddmore.mdleditor.build/modules-aggregator-fullbuild.xml clean verify -X > build-mdl-complete-log.txt
+call mvn -U -f %BUILD_FOLDER%/%DDMORE_CODE_REPO_DIR_NAME%/main/WP2/MDLEditor/releng/mdl-full/pom.xml clean verify -X > build-mdl-complete-log.txt
 :: Check everything has worked!
 %FINDCMD% "BUILD SUCCESS" build-mdl-complete-log.txt
 if not %ERRORLEVEL%==0 goto :failed
