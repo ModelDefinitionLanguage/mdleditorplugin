@@ -54,8 +54,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
      * on which the conversion will be run.
      * <p>
      * NB: The JUnit {@link Parameterized} framework requires the parameter-providing method to
-     * return an {@link Iterable} of Arrays, even though we only have one parameter and hence
-     * would much prefer to return an {@link Iterable} of {@link File}s.
+     * return an {@link Iterable} of Arrays.
      * <p>
      * @return the original MDL model files, as {@link File} objects
      */

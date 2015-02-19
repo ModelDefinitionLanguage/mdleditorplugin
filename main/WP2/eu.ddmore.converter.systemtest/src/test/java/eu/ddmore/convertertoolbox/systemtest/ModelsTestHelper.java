@@ -17,8 +17,7 @@ public class ModelsTestHelper {
      * In this case, the {@link File}s that are the models for which to test the conversion.
      * <p>
      * NB: The JUnit {@link Parameterized} framework requires the parameter-providing method to
-     * return an {@link Iterable} of Arrays, even though we only have one parameter and hence
-     * would much prefer to return an {@link Iterable} of {@link File}s.
+     * return an {@link Iterable} of Arrays.
      * <p>
      * @param modelsSubdirectory - subdirectory of target/WorkingDir/eu/ddmore/testdata/models from which models will be discovered
      * @param modelsFileExtension - the file extension, excluding the dot, of the model files

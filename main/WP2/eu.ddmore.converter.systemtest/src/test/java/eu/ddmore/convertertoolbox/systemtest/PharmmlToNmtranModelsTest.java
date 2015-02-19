@@ -25,8 +25,7 @@ public class PharmmlToNmtranModelsTest {
      * In this case, the {@link File}s that are the models for which to test the conversion.
      * <p>
      * NB: The JUnit {@link Parameterized} framework requires the parameter-providing method to
-     * return an {@link Iterable} of Arrays, even though we only have one parameter and hence
-     * would much prefer to return an {@link Iterable} of {@link File}s.
+     * return an {@link Iterable} of Arrays.
      * <p>
      * @return the models to convert, as {@link File} objects
      */
