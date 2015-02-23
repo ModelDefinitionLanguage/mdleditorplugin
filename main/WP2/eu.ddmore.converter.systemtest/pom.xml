@@ -14,8 +14,8 @@ Note that the generated output models aren't verified in terms of content, just 
     </description>
 
     <properties>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <converter-parent.version>1.1.0-SNAPSHOT</converter-parent.version>
         <converter-toolbox-distribution.version>1.1.0-SNAPSHOT</converter-toolbox-distribution.version>
         <testdata.models.version>0.1.0-SNAPSHOT</testdata.models.version>
