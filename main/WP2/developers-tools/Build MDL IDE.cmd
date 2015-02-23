@@ -16,19 +16,25 @@ title Full MDL-IDE Build
 :: Make sure that BUILD_FOLDER points to the location where the DDMoRe repositories are checked out
 :: Mind that all checked out repositories should be direct children of the BUILD_FOLDER directory.
 ::
-:: set BUILD_FOLDER="%userprofile%\.git"
+set BUILD_FOLDER="%userprofile%\git"
 ::
 :: Location of Maven local repository
-:: set MVN_REPOSITORY_ROOT="%userprofile%\.m2"
+set MVN_REPOSITORY_ROOT="%userprofile%\.m2"
 
 :: name of the directory holding the ddmore-code repository
-SET DDMORE_CODE_REPO_DIR_NAME="ddmore-code"
+SET DDMORE_CODE_REPO_DIR_NAME="code"
 
 :: name of the directory holding the nmtranconverter repository
-SET NMTRANCONVERTER_REPO_DIR_NAME="nmtranconverter"
+SET NMTRANCONVERTER_REPO_DIR_NAME="nmtranconverter1"
 
-if not defined BUILD_FOLDER (ECHO BUILD_FOLDER IS NOT DEFINED YOU MUST EDIT THIS SCRIPT BEFORE RUNNING IT)
-if not defined MVN_REPOSITORY_ROOT (ECHO MVN_REPOSITORY_ROOT IS NOT DEFINED YOU MUST EDIT THIS SCRIPT BEFORE RUNNING IT)
+if not defined BUILD_FOLDER (
+	ECHO BUILD_FOLDER IS NOT DEFINED YOU MUST EDIT THIS SCRIPT BEFORE RUNNING IT
+	goto :failed
+	)
+if not defined MVN_REPOSITORY_ROOT (
+	ECHO MVN_REPOSITORY_ROOT IS NOT DEFINED YOU MUST EDIT THIS SCRIPT BEFORE RUNNING IT
+	goto :failed
+	)
 
 :: Clean out certain bits of the Maven Repo to avoid any unexpected build issues
 echo Cleaning up MVN Repository ...
