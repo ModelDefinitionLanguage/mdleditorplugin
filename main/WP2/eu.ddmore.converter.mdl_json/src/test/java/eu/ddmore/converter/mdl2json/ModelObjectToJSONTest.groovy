@@ -41,12 +41,12 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 		logger.debug(variabilityParameters)
 		
 		assertEquals("Checking number of variability parameters", 6, variabilityParameters.size())
-		assertEquals("Checking parameter 1/7", [(Variable.NAME_KEY):'PPV_CL'], variabilityParameters[0])
-		assertEquals("Checking parameter 2/7", [(Variable.NAME_KEY):'PPV_V'], variabilityParameters[1])
-		assertEquals("Checking parameter 3/7", [(Variable.NAME_KEY):'PPV_KA'], variabilityParameters[2])
-		assertEquals("Checking parameter 4/7", [(Variable.NAME_KEY):'PPV_TLAG'], variabilityParameters[3])
-		assertEquals("Checking parameter 6/7", [(Variable.NAME_KEY):'RUV_PROP'], variabilityParameters[4])
-		assertEquals("Checking parameter 6/7", [(Variable.NAME_KEY):'RUV_ADD'], variabilityParameters[5])
+		assertEquals("Checking parameter 1/6", [(Variable.NAME_KEY):'PPV_CL'], variabilityParameters[0])
+		assertEquals("Checking parameter 2/6", [(Variable.NAME_KEY):'PPV_V'], variabilityParameters[1])
+		assertEquals("Checking parameter 3/6", [(Variable.NAME_KEY):'PPV_KA'], variabilityParameters[2])
+		assertEquals("Checking parameter 4/6", [(Variable.NAME_KEY):'PPV_TLAG'], variabilityParameters[3])
+		assertEquals("Checking parameter 5/6", [(Variable.NAME_KEY):'RUV_PROP'], variabilityParameters[4])
+		assertEquals("Checking parameter 6/6", [(Variable.NAME_KEY):'RUV_ADD'], variabilityParameters[5])
 	}
 	
 	@Test
