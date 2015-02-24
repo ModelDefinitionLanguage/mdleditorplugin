@@ -20,7 +20,7 @@
         <commons-lang.version>2.6</commons-lang.version>
         <junit.version>4.11</junit.version>
         
-        <java.version>1.6</java.version>
+        <java.version>1.7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
