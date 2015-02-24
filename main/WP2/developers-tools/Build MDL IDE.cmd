@@ -22,10 +22,10 @@ set BUILD_FOLDER="%userprofile%\git"
 set MVN_REPOSITORY_ROOT="%userprofile%\.m2"
 
 :: name of the directory holding the ddmore-code repository
-SET DDMORE_CODE_REPO_DIR_NAME="code"
+SET DDMORE_CODE_REPO_DIR_NAME="ddmore-code"
 
 :: name of the directory holding the nmtranconverter repository
-SET NMTRANCONVERTER_REPO_DIR_NAME="nmtranconverter1"
+SET NMTRANCONVERTER_REPO_DIR_NAME="nmtranconverter"
 
 if not defined BUILD_FOLDER (
 	ECHO BUILD_FOLDER IS NOT DEFINED YOU MUST EDIT THIS SCRIPT BEFORE RUNNING IT
