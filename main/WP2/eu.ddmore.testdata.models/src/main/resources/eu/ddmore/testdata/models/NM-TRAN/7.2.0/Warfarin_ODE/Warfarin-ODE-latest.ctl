@@ -69,10 +69,10 @@ IRES = DV - IPRED
 IWRES = IRES/W
 
 $THETA
-( 0.0010 , 0.1 )	;POP_CL
-( 0.0010 , 8.0 )	;POP_V
-( 0.0010 , 0.362 )	;POP_KA
-( 0.0010 , 1.0 )	;POP_TLAG
+( 0.001 , 0.1 )	;POP_CL
+( 0.001 , 8.0 )	;POP_V
+( 0.001 , 0.362 )	;POP_KA
+( 0.001 , 1.0 )	;POP_TLAG
 ( 0.1 )	;RUV_PROP
 ( 0.1 )	;RUV_ADD
 ( 0.75  FIX )	;BETA_CL_WT
