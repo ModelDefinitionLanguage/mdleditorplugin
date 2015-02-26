@@ -14,22 +14,22 @@ import org.junit.Ignore
 import org.junit.Test;
 
 class JSONDataObjectToMDLTest extends ConverterTestsParent {
-	private static Logger logger = Logger.getLogger(JSONDataObjectToMDLTest.class)
-	
-	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes 
-	private String sourceBlockJson =
-		/ {"SOURCE":{"file":"\"warfarin_conc.csv\"","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
-	private String dataInputVariablesJson =
-		/ {"DATA_INPUT_VARIABLES":[{".name":"ID","type":"categorical"},{".name":"TIME","type":"continuous","units":"\"h\""},{".name":"WT","type":"continuous"},{".name":"AMT","type":"continuous","units":"\"mg\""},{".name":"DVID","type":"categorical"},{".name":"DV","type":"continuous"},{".name":"MDV","type":"categorical"},{".name":"logtWT","type":"continuous"}]} /
-	
-	@Test
-	public void testSource() {
-		
-		def json = getJson(sourceBlockJson)
+    private static Logger logger = Logger.getLogger(JSONDataObjectToMDLTest.class)
+    
+    // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes 
+    private String sourceBlockJson =
+        / {"SOURCE":{"file":"\"warfarin_conc.csv\"","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
+    private String dataInputVariablesJson =
+        / {"DATA_INPUT_VARIABLES":[{".name":"ID","type":"categorical"},{".name":"TIME","type":"continuous","units":"\"h\""},{".name":"WT","type":"continuous"},{".name":"AMT","type":"continuous","units":"\"mg\""},{".name":"DVID","type":"categorical"},{".name":"DV","type":"continuous"},{".name":"MDV","type":"categorical"},{".name":"logtWT","type":"continuous"}]} /
+    
+    @Test
+    public void testSource() {
+        
+        def json = getJson(sourceBlockJson)
 
-		def dataObj = new Data(json)
-		
-		String expected = """dataobj {
+        def dataObj = new Data(json)
+        
+        String expected = """dataobj {
 
     SOURCE {
         file="warfarin_conc.csv"
@@ -39,17 +39,17 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
 
 }
 """
-		assertEquals(expected, dataObj.toMDL())
-	}
-	
-	@Test
-	public void testDataInputVariables() {
-		
-		def json = getJson(dataInputVariablesJson)
-		
-		def dataObj = new Data(json)
-		
-		String expected = """dataobj {
+        assertEquals(expected, dataObj.toMDL())
+    }
+    
+    @Test
+    public void testDataInputVariables() {
+        
+        def json = getJson(dataInputVariablesJson)
+        
+        def dataObj = new Data(json)
+        
+        String expected = """dataobj {
 
     DATA_INPUT_VARIABLES {
         ID : {type=categorical}
@@ -64,23 +64,23 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
 
 }
 """
-		assertEquals(expected, dataObj.toMDL())
-	}
-	
-	@Test
-	@Ignore("This model redefines variables in the DATA_INPUT_VARIABLES block, which isn't properly supported at the moment")
-	public void testHamren() {
-		def mdlFile = getFile("hamren_DataObject.mdl")
-		
-		def json = getJsonFromMDLFile(mdlFile)
-		
-		MCLFile mclFile = new MCLFile(json)
-		
-		logger.debug(mclFile.toMDL())
+        assertEquals(expected, dataObj.toMDL())
+    }
+    
+    @Test
+    @Ignore("This model redefines variables in the DATA_INPUT_VARIABLES block, which isn't properly supported at the moment")
+    public void testHamren() {
+        def mdlFile = getFile("hamren_DataObject.mdl")
+        
+        def json = getJsonFromMDLFile(mdlFile)
+        
+        MCLFile mclFile = new MCLFile(json)
+        
+        logger.debug(mclFile.toMDL())
 
-		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "SOURCE", mclFile.toMDL())
-		extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "DATA_INPUT_VARIABLES", mclFile.toMDL())
-		
-	}
-	
+        extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "SOURCE", mclFile.toMDL())
+        extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "DATA_INPUT_VARIABLES", mclFile.toMDL())
+        
+    }
+    
 }

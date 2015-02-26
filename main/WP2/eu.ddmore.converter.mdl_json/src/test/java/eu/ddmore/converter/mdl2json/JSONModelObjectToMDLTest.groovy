@@ -9,38 +9,38 @@ import eu.ddmore.converter.mdl2json.domain.Model
 
 
 class JSONModelObjectToMDLTest extends ConverterTestsParent {
-	private static final Logger logger = Logger.getLogger(JSONModelObjectToMDLTest.class)
-	
-	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
-	private final static String structParamsBlockJson =
-		/ {"STRUCTURAL_PARAMETERS":[{".name":"POP_CL"},{".name":"POP_V"},{".name":"POP_KA"},{".name":"POP_TLAG"},{".name":"BETA_CL_WT"},{".name":"BETA_V_WT"}]} /
-	private final static String variabilityParamsBlockJson =
-		/ {"VARIABILITY_PARAMETERS":[{".name":"PPV_CL"},{".name":"PPV_V"},{".name":"PPV_KA"},{".name":"PPV_TLAG"},{".name":"RUV_PROP"},{".name":"RUV_ADD"}]} /
-	private final static String individualVarsBlockJson =
-		/ {"INDIVIDUAL_VARIABLES":[{"fixEff":"[BETA_CL_WT]","trans":"log",".name":"CL","cov":"[logtWT]","ranEff":"ETA_CL","pop":"POP_CL","type":"linear"},{"fixEff":"[BETA_V_WT]","trans":"log",".name":"V","cov":"[logtWT]","ranEff":"ETA_V","pop":"POP_V","type":"linear"},{"trans":"log",".name":"KA","ranEff":"ETA_KA","pop":"POP_KA","type":"linear"},{"trans":"log",".name":"TLAG","ranEff":"ETA_TLAG","pop":"POP_TLAG","type":"linear"}]} /
+    private static final Logger logger = Logger.getLogger(JSONModelObjectToMDLTest.class)
+    
+    // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
+    private final static String structParamsBlockJson =
+        / {"STRUCTURAL_PARAMETERS":[{".name":"POP_CL"},{".name":"POP_V"},{".name":"POP_KA"},{".name":"POP_TLAG"},{".name":"BETA_CL_WT"},{".name":"BETA_V_WT"}]} /
+    private final static String variabilityParamsBlockJson =
+        / {"VARIABILITY_PARAMETERS":[{".name":"PPV_CL"},{".name":"PPV_V"},{".name":"PPV_KA"},{".name":"PPV_TLAG"},{".name":"RUV_PROP"},{".name":"RUV_ADD"}]} /
+    private final static String individualVarsBlockJson =
+        / {"INDIVIDUAL_VARIABLES":[{"fixEff":"[BETA_CL_WT]","trans":"log",".name":"CL","cov":"[logtWT]","ranEff":"ETA_CL","pop":"POP_CL","type":"linear"},{"fixEff":"[BETA_V_WT]","trans":"log",".name":"V","cov":"[logtWT]","ranEff":"ETA_V","pop":"POP_V","type":"linear"},{"trans":"log",".name":"KA","ranEff":"ETA_KA","pop":"POP_KA","type":"linear"},{"trans":"log",".name":"TLAG","ranEff":"ETA_TLAG","pop":"POP_TLAG","type":"linear"}]} /
     private final static String individualVarsBlockContainingMixOfParamListsAndExprsJson =
         / {"INDIVIDUAL_VARIABLES":[{"fixEff":"[CLCLCR_COV]","trans":"log",".name":"CL","cov":"[logtCLCR]","ranEff":"eta_OMCL","pop":"THCL","type":"linear"},{".name":"V1",".expr":"TVV1"},{".name":"Q",".expr":"THQ"},{".name":"V2",".expr":"THV2"},{".name":"VSS",".expr":"V1+V2"},{".name":"K",".expr":"CL\/V1"},{".name":"K12",".expr":"Q\/V1"},{".name":"K21",".expr":"Q\/V2"}]} /
-	private final static String randomVarDefinitionBlockJson =
-		/ {"RANDOM_VARIABLE_DEFINITION":[{".name":"ETA_CL",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_CL","level":"ID"}},{".name":"ETA_V",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_V","level":"ID"}},{".name":"ETA_KA",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_KA","level":"ID"}},{".name":"ETA_TLAG",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_TLAG","level":"ID"}},{".name":"CORR_PPV_CL_V","type":"CORR","rv1":"ETA_CL","rv2":"ETA_V","level":"ID"}]} /
-	private final static String modelOutputVarsBlockJson =
-		/ {"MODEL_OUTPUT_VARIABLES":[{".name":"ID"},{".name":"TIME"},{".name":"logtWT"},{".name":"CL"},{".name":"V"},{".name":"KA"},{".name":"TLAG"},{".name":"Y"}]} /
-	private final static String modelInputVarsBlockJson =
-		/ {"MODEL_INPUT_VARIABLES":[{"level":"2",".name":"ID","use":"id"},{".name":"TIME","use":"idv"},{".name":"AMT","use":"amt","administration":"GUT"},{"level":"1",".name":"DV","prediction":"Y","use":"dv"},{".name":"MDV","use":"mdv"},{".name":"logtWT","use":"covariate","type":"continuous"}]} /
-	private final static String observationBlockJson =
-		/ {"OBSERVATION":[{".name":"EPS_Y",".random_var_attrs":{"type":"normal","mean":"0","var":"1","level":"DV"}},{".name":"Y","type":"continuous","error":"combinedError1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)","eps":"EPS_Y","prediction":"CC"}]} /
-	private final static String modelPredictionBlockJson =
-		/ {"MODEL_PREDICTION":{"content":"        CC = CENTRAL\/V","ODE":"            RATEIN = GUT*KA when T>=TLAG otherwise 0\n            GUT : {deriv = (-RATEIN), init = 0, x0 = 0}\n            CENTRAL : {deriv = (RATEIN-CL*CENTRAL\/V), init = 0, x0 = 0}"}} /
+    private final static String randomVarDefinitionBlockJson =
+        / {"RANDOM_VARIABLE_DEFINITION":[{".name":"ETA_CL",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_CL","level":"ID"}},{".name":"ETA_V",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_V","level":"ID"}},{".name":"ETA_KA",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_KA","level":"ID"}},{".name":"ETA_TLAG",".random_var_attrs":{"type":"normal","mean":"0","sd":"PPV_TLAG","level":"ID"}},{".name":"CORR_PPV_CL_V","type":"CORR","rv1":"ETA_CL","rv2":"ETA_V","level":"ID"}]} /
+    private final static String modelOutputVarsBlockJson =
+        / {"MODEL_OUTPUT_VARIABLES":[{".name":"ID"},{".name":"TIME"},{".name":"logtWT"},{".name":"CL"},{".name":"V"},{".name":"KA"},{".name":"TLAG"},{".name":"Y"}]} /
+    private final static String modelInputVarsBlockJson =
+        / {"MODEL_INPUT_VARIABLES":[{"level":"2",".name":"ID","use":"id"},{".name":"TIME","use":"idv"},{".name":"AMT","use":"amt","administration":"GUT"},{"level":"1",".name":"DV","prediction":"Y","use":"dv"},{".name":"MDV","use":"mdv"},{".name":"logtWT","use":"covariate","type":"continuous"}]} /
+    private final static String observationBlockJson =
+        / {"OBSERVATION":[{".name":"EPS_Y",".random_var_attrs":{"type":"normal","mean":"0","var":"1","level":"DV"}},{".name":"Y","type":"continuous","error":"combinedError1(additive=RUV_ADD, proportional=RUV_PROP, f=CC)","eps":"EPS_Y","prediction":"CC"}]} /
+    private final static String modelPredictionBlockJson =
+        / {"MODEL_PREDICTION":{"content":"        CC = CENTRAL\/V","ODE":"            RATEIN = GUT*KA when T>=TLAG otherwise 0\n            GUT : {deriv = (-RATEIN), init = 0, x0 = 0}\n            CENTRAL : {deriv = (RATEIN-CL*CENTRAL\/V), init = 0, x0 = 0}"}} /
     private final static String groupVariablesBlockJson =
         / {"GROUP_VARIABLES":[{"V1KG":"(KG\/80)^V1KG_COV"},{"TVV1":"THV1*V1KG"}]} /
-        	
-	@Test
-	public void testStructuralParametersBlock() {
 
-		def json = getJson(structParamsBlockJson)
+    @Test
+    public void testStructuralParametersBlock() {
 
-		def modelObj = new Model(json)
-		
-		String expected = """mdlobj {
+        def json = getJson(structParamsBlockJson)
+
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
 
     STRUCTURAL_PARAMETERS {
         POP_CL
@@ -53,16 +53,16 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 
 }
 """
-		assertEquals(expected, modelObj.toMDL())
-	}
-	
-	@Test
-	public void testVariabilityParametersBlock() {
-		def json = getJson(variabilityParamsBlockJson)
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    public void testVariabilityParametersBlock() {
+        def json = getJson(variabilityParamsBlockJson)
 
-		def modelObj = new Model(json)
-		
-		String expected = """mdlobj {
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
 
     VARIABILITY_PARAMETERS {
         PPV_CL
@@ -75,16 +75,16 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 
 }
 """
-		assertEquals(expected, modelObj.toMDL())
-	}
-	
-	@Test
-	void testIndividualVariablesBlock() {
-		def json = getJson(individualVarsBlockJson)
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    void testIndividualVariablesBlock() {
+        def json = getJson(individualVarsBlockJson)
 
-		def modelObj = new Model(json)
-		
-		String expected = """mdlobj {
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
 
     INDIVIDUAL_VARIABLES {
         CL : {cov=[logtWT], fixEff=[BETA_CL_WT], pop=POP_CL, ranEff=ETA_CL, trans=log, type=linear}
@@ -95,8 +95,8 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 
 }
 """
-		assertEquals(expected, modelObj.toMDL())
-	}
+        assertEquals(expected, modelObj.toMDL())
+    }
     
     @Test
     void testIndividualVariablesBlockContainingMixtureOfParameterListsAndExpressions() {
@@ -121,15 +121,15 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 """
         assertEquals(expected, modelObj.toMDL())
     }
-	
-	@Test
-	public void testRandomVariableDefinitionBlock() {
+    
+    @Test
+    public void testRandomVariableDefinitionBlock() {
 
-		def json = getJson(randomVarDefinitionBlockJson)
+        def json = getJson(randomVarDefinitionBlockJson)
 
-		def modelObj = new Model(json)
-		
-		String expected = """mdlobj {
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
 
     RANDOM_VARIABLE_DEFINITION {
         ETA_CL ~ {level=ID, mean=0, sd=PPV_CL, type=normal}
@@ -141,17 +141,17 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 
 }
 """
-		assertEquals(expected, modelObj.toMDL())
-	}
-	
-	@Test
-	public void testModelOutputVariablesBlock() {
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    public void testModelOutputVariablesBlock() {
 
-		def json = getJson(modelOutputVarsBlockJson)
+        def json = getJson(modelOutputVarsBlockJson)
 
-		def modelObj = new Model(json)
-		
-		String expected = """mdlobj {
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
 
     MODEL_OUTPUT_VARIABLES {
         ID
@@ -166,17 +166,17 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 
 }
 """
-		assertEquals(expected, modelObj.toMDL())
-	}
-	
-	@Test
-	public void testModelInputVariablesBlock() {
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    public void testModelInputVariablesBlock() {
 
-		def json = getJson(modelInputVarsBlockJson)
+        def json = getJson(modelInputVarsBlockJson)
 
-		def modelObj = new Model(json)
-		
-		String expected = """mdlobj {
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
 
     MODEL_INPUT_VARIABLES {
         ID : {level=2, use=id}
@@ -189,16 +189,16 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 
 }
 """
-		assertEquals(expected, modelObj.toMDL())
-	}
-	
-	@Test
-	void testObservationBlock() {
-		def json = getJson(observationBlockJson)
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    void testObservationBlock() {
+        def json = getJson(observationBlockJson)
 
-		def modelObj = new Model(json)
-		
-		String expected = """mdlobj {
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
 
     OBSERVATION {
         EPS_Y ~ {level=DV, mean=0, type=normal, var=1}
@@ -207,16 +207,16 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 
 }
 """
-		assertEquals(expected, modelObj.toMDL())
-	}
-	
-	@Test
-	public void testModelPredictionBlock() {
-		def json = getJson(modelPredictionBlockJson)
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    public void testModelPredictionBlock() {
+        def json = getJson(modelPredictionBlockJson)
 
-		def modelObj = new Model(json)
-		
-		String expected = """mdlobj {
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
 
     MODEL_PREDICTION {
         ODE {
@@ -229,12 +229,12 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 
 }
 """
-		// Note: the replace makes the line endings consistent so text compare passes
-		assertEquals(expected, modelObj.toMDL().replace("\r\n", "\n"))
-	}
-	
-	@Test
-	void testGroupVariablesBlock() {
+        // Note: the replace makes the line endings consistent so text compare passes
+        assertEquals(expected, modelObj.toMDL().replace("\r\n", "\n"))
+    }
+    
+    @Test
+    void testGroupVariablesBlock() {
         def json = getJson(groupVariablesBlockJson)
         
         def modelObj = new Model(json)
@@ -250,6 +250,6 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 """
         // Note: the replace makes the line endings consistent so text compare passes
         assertEquals(expected, modelObj.toMDL().replace("\r\n", "\n"))
-	}
-	
+    }
+    
 }

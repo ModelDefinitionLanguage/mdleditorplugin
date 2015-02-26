@@ -44,7 +44,7 @@ public class ConverterTestsParent {
      * Return a MDL {@link File} from the testdata models project.
      * <p>
      * @param relativePathToFile - the relative path to the MDL file within the directory /eu/ddmore/testdata/models/mdl/
-     * 							   within the testdata models project
+     *                             within the testdata models project
      * @return the MDL {@link File}
      * @throws <code>IllegalArgumentException</code> if the referenced file does not exist
      * @see #getFileFromModelsProject(String, String)
@@ -57,7 +57,7 @@ public class ConverterTestsParent {
      * Return a model {@link File} from the testdata models project.
      * <p>
      * @param relativePathToFile - the relative path to the file within the directory /eu/ddmore/testdata/models/[modelType]/
-     * 							   within the testdata models project
+     *                             within the testdata models project
      * @param modelType - the model-type subdirectory (e.g. "mdl", "ctl")
      * @return the {@link File}
      * @throws <code>IllegalArgumentException</code> if the referenced file does not exist

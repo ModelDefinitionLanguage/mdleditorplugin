@@ -123,7 +123,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 //		matrix.put(CONTENT_PROPNAME, getLowerTriangularMatrixFromParameters(block.getParameters()) )
 //		return matrix
 //	}
-	
+
 //	/**
 //	 * Parse the SameBlock
 //	 */
