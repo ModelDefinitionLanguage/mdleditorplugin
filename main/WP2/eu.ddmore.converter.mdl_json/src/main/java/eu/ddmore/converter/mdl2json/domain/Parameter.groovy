@@ -79,7 +79,11 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
             retVal.add([ "${varName}" : v.getProperties().minus((Variable.NAME_KEY) : "${varName}") ])
         }
         
-       // WAS:
+        
+        // TODO: This used to be the following. As of Product 4 development phase, the MDL grammar is still
+        // in development with more features being added, so it is quite possible that these Diag, Matrix and
+        // Same blocks will reappear in some form. Once MDL grammar has stabilised (Product 4 / Public Release ?)
+        // then we will know if we have to reinstate and rewrite this, or remove it.
 //		for (VariabilityBlockStatement s : vb.getStatements()) {
 //			if (s.getDiagBlock()) {
 //				Map diag = makeDiag(s.getDiagBlock())
@@ -103,7 +107,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
     }
     
     //
-    // TODO: Rewrite the code for these blocks as per the new grammar, DDMORE-957
+    // TODO: See above comment.
     //
     
 //	/**
@@ -176,17 +180,6 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
         }
         rows.join(",")
     }
-    
-//	/**
-//	 * Returns a list of symbol names
-//	 */
-//	private String getContentFromSymbolNames(SymbolNames symbolNames) {
-//		List symbols = []
-//		for(SymbolName s : symbolNames.getSymbolNames()) {
-//			symbols.add(s.getName())
-//		}
-//		symbols.join(",\n")
-//	}
     
     public String makeVariabilityMDL(List variability) {
         StringBuffer strBuf = new StringBuffer()
