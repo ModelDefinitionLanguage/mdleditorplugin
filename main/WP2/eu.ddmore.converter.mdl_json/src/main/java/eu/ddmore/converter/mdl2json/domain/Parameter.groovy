@@ -80,8 +80,8 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
         }
         
         
-        // TODO: This used to be the following. As of Product 4 development phase, the MDL grammar is still
-        // in development with more features being added, so it is quite possible that these Diag, Matrix and
+        // TODO: DDMORE-957: This used to be the following. As of Product 4 development phase, the MDL grammar is
+        // still in development with more features being added, so it is quite possible that these Diag, Matrix and
         // Same blocks will reappear in some form. Once MDL grammar has stabilised (Product 4 / Public Release ?)
         // then we will know if we have to reinstate and rewrite this, or remove it.
 //		for (VariabilityBlockStatement s : vb.getStatements()) {
@@ -107,7 +107,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
     }
     
     //
-    // TODO: See above comment.
+    // TODO: DDMORE-957: See above comment.
     //
     
 //	/**
