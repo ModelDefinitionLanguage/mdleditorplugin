@@ -15,6 +15,7 @@ import org.junit.runners.Parameterized;
 public class MdlToJsonModelsTest {
 
     private final static Logger LOGGER = Logger.getLogger(MdlToJsonModelsTest.class);
+    
     private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + FileType.MDL.getVersion();
 
     /**
@@ -52,7 +53,8 @@ public class MdlToJsonModelsTest {
      */
     @Test
     public void testMdlToJsonConversion() throws IOException {
-        final ConverterRunner runner = new ConverterRunner(this.model, FileType.JSON.getExtension(), "MDL", FileType.MDL.getVersion(), "JSON", FileType.JSON.getVersion(),
+        final ConverterRunner runner = new ConverterRunner(this.model, FileType.JSON.getExtension(),
+                FileType.MDL.name(), FileType.MDL.getVersion(), FileType.JSON.name(), FileType.JSON.getVersion(),
                 new ConverterJsonOutputFailureChecker());
         runner.run();
     }

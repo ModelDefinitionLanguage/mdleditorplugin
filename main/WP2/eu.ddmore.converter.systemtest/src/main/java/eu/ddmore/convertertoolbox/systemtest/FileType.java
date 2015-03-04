@@ -3,11 +3,10 @@ package eu.ddmore.convertertoolbox.systemtest;
 /**
  * File type information enum for file types used during conversion testing.
  * It contains filetype default extension and version associated with a file type.
- *   
  */
 public enum FileType {
     MDL("mdl","6.0.7"),
-    PHARMML("xml","0.3.1"),
+    PharmML("xml","0.3.1"),
     NMTRAN("ctl","7.2.0"),
     JSON("json","6.0.7");
     
@@ -26,4 +25,5 @@ public enum FileType {
     public String getVersion(){
         return this.version;
     }
+    
 }

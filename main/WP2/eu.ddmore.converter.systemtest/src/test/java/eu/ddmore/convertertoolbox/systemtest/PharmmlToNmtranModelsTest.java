@@ -18,7 +18,7 @@ public class PharmmlToNmtranModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(PharmmlToNmtranModelsTest.class);
 
-    private final static String MODELS_SUBDIRECTORY = "PharmML" + File.separator + FileType.PHARMML.getVersion();
+    private final static String MODELS_SUBDIRECTORY = "PharmML" + File.separator + FileType.PharmML.getVersion();
     
     /**
      * The method that produces the parameters to be passed to each construction of the test class.
@@ -31,7 +31,7 @@ public class PharmmlToNmtranModelsTest {
      */
     @Parameterized.Parameters(name= "{index}: Model {1}")
     public static Iterable<Object[]> getModelsToTest() {
-        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.PHARMML.getExtension());
+        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.PharmML.getExtension());
     }
     
     private final File model;
@@ -56,7 +56,7 @@ public class PharmmlToNmtranModelsTest {
     @Test
     public void testPharmMLToNMTRANConversion() {
         new ConverterRunner(
-            this.model, FileType.NMTRAN.getExtension(), "PharmML", FileType.PHARMML.getVersion(), "NMTRAN", FileType.NMTRAN.getVersion(),
+            this.model, FileType.NMTRAN.getExtension(), FileType.PharmML.name(), FileType.PharmML.getVersion(), FileType.NMTRAN.name(), FileType.NMTRAN.getVersion(),
             new ConverterNmTranOutputFailureChecker()
         ).run();
     }
