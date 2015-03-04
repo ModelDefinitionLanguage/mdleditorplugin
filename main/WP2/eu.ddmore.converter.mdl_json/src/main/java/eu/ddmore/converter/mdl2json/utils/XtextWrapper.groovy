@@ -26,6 +26,13 @@ public class XtextWrapper {
 
     private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 
+    /**
+     * Expand an {@link AnyExpression} expression into its string representation.
+     * <p>
+     * @param expression - {@link AnyExpression}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(AnyExpression expression) {
         if (expression.getExpression()) {
             return unwrap(expression.getExpression());
@@ -43,6 +50,13 @@ public class XtextWrapper {
         throw new UnsupportedOperationException("Encountered an unhandled EnumType: " + enumType)
     }
 
+    /**
+     * Expand an {@link Expression} expression into its string representation.
+     * <p>
+     * @param expression - {@link Expression}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(Expression expression) {
         if (expression.getExpression()) {
             return unwrap(expression.getExpression())
@@ -53,6 +67,13 @@ public class XtextWrapper {
         throw new UnsupportedOperationException("Encountered an unhandled Expression: " + expression)
     }
 
+    /**
+     * Expand an {@link OrExpression} expression into its string representation.
+     * <p>
+     * @param expression - {@link OrExpression}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(OrExpression expression) {
         if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
             return unwrap(expression.getExpression().get(0))
@@ -60,6 +81,13 @@ public class XtextWrapper {
         throw new UnsupportedOperationException("Encountered an unhandled OrExpression: " + expression)
     }
 
+    /**
+     * Expand a {@link LogicalExpression} expression into its string representation.
+     * <p>
+     * @param expression - {@link LogicalExpression}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(LogicalExpression expression) {
         if (expression.getBoolean()) {
             return expression.getBoolean()
@@ -71,6 +99,13 @@ public class XtextWrapper {
         throw new UnsupportedOperationException("Encountered an unhandled LogicalExpression: " + expression)
     }
 
+    /**
+     * Expand an {@link AdditiveExpression} expression into its string representation.
+     * <p>
+     * @param expression - {@link AdditiveExpression}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(AdditiveExpression expression) {
         if (expression.getString()) {
             return "\"" + expression.getString() + "\"";
@@ -79,10 +114,24 @@ public class XtextWrapper {
         }
     }
 
+    /**
+     * Expand a {@link MultiplicativeExpression} expression into its string representation.
+     * <p>
+     * @param expression - {@link MultiplicativeExpression}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(MultiplicativeExpression expression) {
         return unwrap(expression.getExpression(), expression.getOperator())
     }
 
+    /**
+     * Expand a {@link PowerExpression} expression into its string representation.
+     * <p>
+     * @param expression - {@link PowerExpression}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(PowerExpression expression) {
         return unwrap(expression.getExpression(), expression.getOperator())
     }
@@ -101,6 +150,13 @@ public class XtextWrapper {
         return sb.toString()
     }
 
+    /**
+     * Expand a {@link UnaryExpression} expression into its string representation.
+     * <p>
+     * @param expression - {@link UnaryExpression}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(UnaryExpression expression) {
         if (expression.getOperator()) {
             return expression.getOperator() + unwrap(expression.getExpression())
@@ -121,6 +177,13 @@ public class XtextWrapper {
         }
     }
 
+    /**
+     * Expand an {@link AndExpression} expression into its string representation.
+     * <p>
+     * @param expression - {@link AndExpression}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(AndExpression expression) {
         if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
             return unwrap(expression.getExpression().get(0))
@@ -128,6 +191,13 @@ public class XtextWrapper {
         throw new UnsupportedOperationException("Encountered an unhandled AndExpression: " + expression)
     }
 
+    /**
+     * Expand a {@link FunctionCall} expression into its string representation.
+     * <p>
+     * @param expression - {@link FunctionCall}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(FunctionCall fc) {
         final String functionName = fc.getIdentifier().getName()
         final String argsStr = fc.getArguments().getArguments().collect { Argument a ->
@@ -140,6 +210,13 @@ public class XtextWrapper {
         return functionName + "(" + argsStr + ")"
     }
 
+    /**
+     * Expand a {@link Vector} expression into its string representation.
+     * <p>
+     * @param expression - {@link Vector}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
     public static Object unwrap(Vector v) {
         "[".concat(v.getValues().collect {Primary p ->
             return unwrap(p.getExpression())
