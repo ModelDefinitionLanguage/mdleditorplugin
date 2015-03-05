@@ -18,6 +18,8 @@ import org.ddmore.mdl.mdl.UnaryExpression
 import org.ddmore.mdl.mdl.Vector
 import org.eclipse.emf.common.util.EList
 
+import com.google.common.base.Preconditions;
+
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class XtextWrapper {
@@ -34,6 +36,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(AnyExpression expression) {
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null AnyExpression");
         if (expression.getExpression()) {
             return unwrap(expression.getExpression());
         } else if (expression.getList()) {
@@ -58,6 +61,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(Expression expression) {
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null Expression");
         if (expression.getExpression()) {
             return unwrap(expression.getExpression())
         }
@@ -75,6 +79,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(OrExpression expression) {
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null OrExpression");
         if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
             return unwrap(expression.getExpression().get(0))
         }
@@ -89,6 +94,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(LogicalExpression expression) {
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null LogicalExpression");
         if (expression.getBoolean()) {
             return expression.getBoolean()
         } else if (expression.getOperator()) {
@@ -107,6 +113,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(AdditiveExpression expression) {
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null AdditiveExpression");
         if (expression.getString()) {
             return "\"" + expression.getString() + "\"";
         } else {
@@ -122,6 +129,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(MultiplicativeExpression expression) {
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null MultiplicativeExpression");
         return unwrap(expression.getExpression(), expression.getOperator())
     }
 
@@ -133,6 +141,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(PowerExpression expression) {
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null PowerExpression");
         return unwrap(expression.getExpression(), expression.getOperator())
     }
 
@@ -158,6 +167,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(UnaryExpression expression) {
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null UnaryExpression");
         if (expression.getOperator()) {
             return expression.getOperator() + unwrap(expression.getExpression())
         } else if (expression.getNumber()) {
@@ -185,6 +195,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(AndExpression expression) {
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null AndExpression");
         if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
             return unwrap(expression.getExpression().get(0))
         }
@@ -199,6 +210,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(FunctionCall fc) {
+        Preconditions.checkNotNull(fc, "Cannot unwrap a null FunctionCall expression");
         final String functionName = fc.getIdentifier().getName()
         final String argsStr = fc.getArguments().getArguments().collect { Argument a ->
             if (a.getArgumentName()) {
@@ -218,6 +230,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static Object unwrap(Vector v) {
+        Preconditions.checkNotNull(v, "Cannot unwrap a null Vector expression");
         "[".concat(v.getValues().collect {Primary p ->
             return unwrap(p.getExpression())
         }.join(", ")).concat("]")
