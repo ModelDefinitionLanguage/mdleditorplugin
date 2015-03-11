@@ -35,7 +35,7 @@ build/
 
 # eclipse #
 bin/
-.settings
+.settings/
 .project
 .classpath
 
