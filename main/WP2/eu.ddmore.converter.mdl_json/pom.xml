@@ -16,7 +16,7 @@
 
     <properties>
         <xtend.repo.url>http://build.eclipse.org/common/xtend/maven/</xtend.repo.url>
-        <xtend.version>2.4.0</xtend.version>
+        <xtend.version>2.7.3</xtend.version>
     </properties>
 
     <repositories>
@@ -41,10 +41,19 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.xtend</groupId>
-            <artifactId>org.eclipse.xtend.standalone</artifactId>
+            <artifactId>org.eclipse.xtend.lib</artifactId>
             <version>${xtend.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.xtext</groupId>
+            <artifactId>org.eclipse.xtext</artifactId>
+            <version>${xtend.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.xtext</groupId>
+            <artifactId>org.eclipse.xtext.common.types</artifactId>
+            <version>${xtend.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.core</groupId>
             <artifactId>org.eclipse.core.resources</artifactId>
