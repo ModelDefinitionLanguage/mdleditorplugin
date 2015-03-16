@@ -56,13 +56,6 @@ Note that the generated output models aren't verified in terms of content, just 
             <scope>test</scope>
             <type>zip</type>
             <classifier>full</classifier>
-            <exclusions> <!-- Since this is bringing in the uber-jar, don't need transitive deps (Cyprotex 
-                    JARs were causing resolution problems) -->
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- End of validation dependencies -->
 
