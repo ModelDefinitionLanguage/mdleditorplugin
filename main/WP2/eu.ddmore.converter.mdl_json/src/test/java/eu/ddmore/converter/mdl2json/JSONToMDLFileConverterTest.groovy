@@ -3,7 +3,8 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json;
 
-import static org.junit.Assert.*
+import static org.junit.Assert.*;
+import static eu.ddmore.converter.mdl2json.MdlTestUtils.*;
 
 import org.apache.log4j.Logger
 import org.junit.Test
