@@ -83,7 +83,7 @@ $THETA
 ( 0.0 , 0.02 )	;W0
 ( 0.0 , 0.1 )	;CV
 
-$OMEGA  0 FIX
+$OMEGA 0 FIX
 
 $SIGMA
 1.0 FIX	;SIGMA_RES_W
