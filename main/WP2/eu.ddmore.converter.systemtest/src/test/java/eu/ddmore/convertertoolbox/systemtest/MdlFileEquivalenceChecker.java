@@ -2,17 +2,13 @@ package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
-
-import eu.ddmore.converter.mdl2json.ConverterTestsParent;
+import eu.ddmore.converter.mdl2json.MdlTestUtils;
 
 /**
  * A Converter Output Failure Checker for JSON->MDL conversion; it enhances the standard Converter Output
  * Failure Checker to also check for syntactic and semantic equivalence against a baseline MDL file.
  */
 class MdlFileEquivalenceChecker extends DefaultConverterOutputFailureChecker {
-
-    private static final Logger LOGGER = Logger.getLogger(MdlFileEquivalenceChecker.class);
 
     // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes.
     // This is derived from the following minimal skeleton MDL file:
@@ -36,8 +32,8 @@ class MdlFileEquivalenceChecker extends DefaultConverterOutputFailureChecker {
     @Override
     public void check(File expectedOutputMdlFile, File stdoutFile, File stderrFile) {
         super.check(expectedOutputMdlFile, stdoutFile, stderrFile);
-        for (final String blockName : ConverterTestsParent.allBlockNames) {
-            ConverterTestsParent.extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(this.baselineMdlFile, blockName, expectedOutputMdlFile);
+        for (final String blockName : MdlTestUtils.allBlockNames) {
+            MdlTestUtils.extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(this.baselineMdlFile, blockName, expectedOutputMdlFile);
         }
     }
 
