@@ -13,6 +13,7 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
 	static final String IDENTIFIER = "dataobj"
 	
 	static final String SOURCE = "SOURCE"
+    static final String DECLARED_VARIABLES = "DECLARED_VARIABLES"
 	static final String DATA_INPUT_VARIABLES = "DATA_INPUT_VARIABLES"
 	static final String DATA_DERIVED_VARIABLES = "DATA_DERIVED_VARIABLES"
 	static final String TARGET_CODE = "TARGET_CODE"
@@ -25,18 +26,21 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
 		
 		for (DataObjectBlock b : dataObject.getBlocks()) {
 
-    		if (b.getSourceBlock()) {
-    			setProperty(SOURCE, new Source(b.getSourceBlock()))
-    		}
-    		if (b.getDataInputBlock()) {
-    			setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataInputBlock().getVariables()))
-    		}
-    		if (b.getDataDerivedBlock()) {
-    			setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataDerivedBlock().getVariables()))
-    		}
-    		if (b.getTargetBlock()) {
-    			setProperty(TARGET_CODE, mdlPrinter.toStr(b.getTargetBlock()))
-    		}
+            if (b.getSourceBlock()) {
+                setProperty(SOURCE, new Source(b.getSourceBlock()))
+            }
+            if (b.getDeclaredVariables()) {
+                setProperty(DECLARED_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDeclaredVariables().getVariables()))
+            }
+            if (b.getDataInputBlock()) {
+                setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataInputBlock().getVariables()))
+            }
+            if (b.getDataDerivedBlock()) {
+                setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataDerivedBlock().getVariables()))
+            }
+            if (b.getTargetBlock()) {
+                setProperty(TARGET_CODE, mdlPrinter.toStr(b.getTargetBlock()))
+            }
 			
 		}
 	}
@@ -47,12 +51,15 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
 		if (json[SOURCE]) {
 			setProperty(SOURCE, new Source(json[SOURCE]))
 		}
+        if (json[DECLARED_VARIABLES]) {
+            setProperty(DECLARED_VARIABLES, VariablesList.buildFromJSON(json[DECLARED_VARIABLES]))
+        }
 		if (json[DATA_INPUT_VARIABLES]) {
 			setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromJSON(json[DATA_INPUT_VARIABLES]))
 		}
-		if (json[DATA_DERIVED_VARIABLES]) {
-			setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromJSON(json[DATA_DERIVED_VARIABLES]))
-		}
+        if (json[DATA_DERIVED_VARIABLES]) {
+            setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromJSON(json[DATA_DERIVED_VARIABLES]))
+        }
 		if (json[TARGET_CODE]) {
 			setProperty(TARGET_CODE, json[TARGET_CODE])
 		}

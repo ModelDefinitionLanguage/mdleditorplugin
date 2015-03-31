@@ -74,7 +74,12 @@ public class Variable extends Expando implements MDLPrintable {
 		List attributes = []
 		// Note: sorting is only done so that we get predictable MDL strings that we can compare in the tests
 		getProperties().minus(specialAttributes).sort().each { k, v ->
-			attributes.add("${k}=${v}")
+            if (v instanceof Map) {
+                def subAttrsStr = "{" + v.collect { k2, v2 -> k2 + "=" + v2 }.join(", ") + "}"
+                attributes.add("${k}=${subAttrsStr}")
+            } else {
+			    attributes.add("${k}=${v}")
+            }
 		}
         
         if (getExpression()) {

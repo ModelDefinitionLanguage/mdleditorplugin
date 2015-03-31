@@ -8,12 +8,12 @@ import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.Arguments
 import org.ddmore.mdl.mdl.EnumType
 import org.ddmore.mdl.mdl.Expression
+import org.ddmore.mdl.mdl.ExpressionBranch
 import org.ddmore.mdl.mdl.FunctionCall
 import org.ddmore.mdl.mdl.LogicalExpression
 import org.ddmore.mdl.mdl.MultiplicativeExpression
 import org.ddmore.mdl.mdl.OrExpression
 import org.ddmore.mdl.mdl.PowerExpression
-import org.ddmore.mdl.mdl.Primary
 import org.ddmore.mdl.mdl.UnaryExpression
 import org.ddmore.mdl.mdl.Vector
 import org.eclipse.emf.common.util.EList
@@ -33,10 +33,10 @@ public class XtextWrapper {
 		if (expression.getExpression()) {
 			return unwrap(expression.getExpression());
 		} else if (expression.getList()) {
-			logger.info("Calling argumentToMapOrList")
+			logger.debug("Calling argumentsToMapOrList")
 			return argumentsToMapOrList(expression.getList().getArguments())
 		} else if (expression.getVector()) {
-			return unwrap(expression.getVector())
+            return unwrap(expression.getVector())
 		} else if (expression.getType()) {
 			return mdlPrinter.toStr(expression.getType())
 		}
@@ -50,16 +50,29 @@ public class XtextWrapper {
 	}
 	
 	public static Object unwrap(Expression expression) {
+        def StringBuffer strExpr = new StringBuffer()
 		if (expression.getExpression()) {
-			return unwrap(expression.getExpression())
+			strExpr.append(unwrap(expression.getExpression()))
 		}
-		else if (expression.getCondition()) {
-			logger.error("Encountered an unhandled Expression with a Condition: ")
-			logger.error(" condition = " + expression.getCondition())
-			logger.error(" else = " + expression.getElseExpression())
-		}
-		logger.error("Encountered an unhandled Expression: " + expression)
-		return null
+        if (expression.getCondition()) {
+            strExpr.append(" when ")
+            strExpr.append(unwrap(expression.getCondition()))
+            if (expression.getElseExpression()) {
+                strExpr.append(" otherwise ")
+                strExpr.append(unwrap(expression.getElseExpression()))
+            }
+            // Assumption: Can't have both an "else" expression and a set of "when" branches
+            else if (expression.getWhenBranches()) {
+                for (ExpressionBranch whenExpr : expression.getWhenBranches()) {
+                    strExpr.append(", ")
+                    strExpr.append(unwrap(whenExpr.getExpression()))
+                    strExpr.append(" when ")
+                    strExpr.append(unwrap(whenExpr.getCondition()))
+                }
+            }
+            strExpr.append(";")
+        }
+        return strExpr.toString()
 	}
 
 	public static Object unwrap(OrExpression expression) {
@@ -126,9 +139,6 @@ public class XtextWrapper {
 		} else if (expression.getConstant()) {
 			logger.error("Encountered an unhandled UnaryExpression with unexpected content: Constant: " + expression.getConstant())
 			return null
-		} else if (expression.getAttribute()) {
-			logger.error("Encountered an unhandled UnaryExpression with unexpected content: Attribute: " + expression.getAttribute())
-			return null
 		} else {
 			logger.error("Encountered an unhandled UnaryExpression with unexpected content: Expression: " + expression.getExpression)
 			return null
@@ -156,9 +166,7 @@ public class XtextWrapper {
 	}
 	
 	public static Object unwrap(Vector v) {
-		"[".concat(v.getValues().collect {Primary p ->
-			return unwrap(p.getExpression())
-		}.join(", ")).concat("]")
+		"[".concat(v.getExpression().getExpressions().collect { unwrap(it) }.join(", ")).concat("]")
 	}
 
 //	public static Object unwrap(DistributionArguments distributionArgs) {

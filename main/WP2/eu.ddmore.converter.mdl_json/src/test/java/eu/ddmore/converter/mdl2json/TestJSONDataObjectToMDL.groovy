@@ -19,9 +19,13 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
 	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes 
 	private String sourceBlockJson =
 		/ {"SOURCE":{"file":"\"warfarin_conc.csv\"","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
-	private String dataInputVariablesJson =
-		/ {"DATA_INPUT_VARIABLES":[{".name":"ID","type":"categorical"},{".name":"TIME","type":"continuous","units":"\"h\""},{".name":"WT","type":"continuous"},{".name":"AMT","type":"continuous","units":"\"mg\""},{".name":"DVID","type":"categorical"},{".name":"DV","type":"continuous"},{".name":"MDV","type":"categorical"},{".name":"logtWT","type":"continuous"}]} /
-	
+	private String dataInputVariablesJson_Warfarin =
+        / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{"use":"idv",".name":"TIME","units":"\"h\""},{"use":"covariate",".name":"WT","type":"continuous"},{"use":"covariate",".name":"AGE"},{"define":{"male":"0","female":"1"},"use":"covariate",".name":"SEX","type":"categorical(male, female)"},{"use":"amt",".name":"AMT","cmpt":"D"},{"use":"dvid",".name":"DVID"},{"prediction":"Y when DVID==1 otherwise N;","use":"dv",".name":"DV","units":"\"mg\/L\""},{"use":"mdv",".name":"MDV"}]} /
+    private String dataInputVariablesJson_Hansson =
+        / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{".name":"CYCL","type":"categorical"},{"use":"idv",".name":"TIME","units":"\"h\""},{".name":"DAYS","type":"continuous","units":"\"day\""},{"prediction":"VEGF_obs when FLAG==5, VEGFR2_obs when FLAG==6, VEGFR3_obs when FLAG==7, SKIT_obs when FLAG==8;","use":"dv",".name":"DV"},{".name":"FLAG","type":"categorical"},{".name":"DVX","type":"continuous","units":"\"mg\/L\""},{"use":"amt",".name":"DOS","units":"\"mg\""},{".name":"PLA","type":"categorical"},{"use":"covariate",".name":"CL","type":"continuous","units":"\"L\/h\""},{".name":"EVID","type":"categorical"}]} /
+    private String declaredVariablesJson =
+        / {"DECLARED_VARIABLES":[{".name":"VEGF_obs"},{".name":"VEGFR2_obs"},{".name":"VEGFR3_obs"},{".name":"SKIT_obs"}]} /
+        
 	@Test
 	public void testSource() {
 		
@@ -43,29 +47,79 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
 	}
 	
 	@Test
-	public void testDataInputVariables() {
+	public void testDataInputVariablesBlock_Warfarin() {
 		
-		def json = getJson(dataInputVariablesJson)
+		def json = getJson(dataInputVariablesJson_Warfarin)
 		
 		def dataObj = new Data(json)
 		
 		String expected = """dataobj {
 
     DATA_INPUT_VARIABLES {
-        ID : {type=categorical}
-        TIME : {type=continuous, units="h"}
-        WT : {type=continuous}
-        AMT : {type=continuous, units="mg"}
-        DVID : {type=categorical}
-        DV : {type=continuous}
-        MDV : {type=categorical}
-        logtWT : {type=continuous}
+        ID : {use=id}
+        TIME : {units="h", use=idv}
+        WT : {type=continuous, use=covariate}
+        AGE : {use=covariate}
+        SEX : {define={female=1, male=0}, type=categorical(male, female), use=covariate}
+        AMT : {cmpt=D, use=amt}
+        DVID : {use=dvid}
+        DV : {prediction=Y when DVID==1 otherwise N;, units="mg/L", use=dv}
+        MDV : {use=mdv}
     }
 
 }
 """
 		assertEquals(expected, dataObj.toMDL())
 	}
+    
+    @Test
+    public void testDataInputVariablesBlock_Hansson() {
+        
+        def json = getJson(dataInputVariablesJson_Hansson)
+        
+        def dataObj = new Data(json)
+        
+        String expected = """dataobj {
+
+    DATA_INPUT_VARIABLES {
+        ID : {use=id}
+        CYCL : {type=categorical}
+        TIME : {units="h", use=idv}
+        DAYS : {type=continuous, units="day"}
+        DV : {prediction=VEGF_obs when FLAG==5, VEGFR2_obs when FLAG==6, VEGFR3_obs when FLAG==7, SKIT_obs when FLAG==8;, use=dv}
+        FLAG : {type=categorical}
+        DVX : {type=continuous, units="mg/L"}
+        DOS : {units="mg", use=amt}
+        PLA : {type=categorical}
+        CL : {type=continuous, units="L/h", use=covariate}
+        EVID : {type=categorical}
+    }
+
+}
+"""
+        assertEquals(expected, dataObj.toMDL())
+    }
+    
+    @Test
+    public void testDeclaredVariablesBlock() {
+        
+        def json = getJson(declaredVariablesJson)
+        
+        def dataObj = new Data(json)
+        
+        String expected = """dataobj {
+
+    DECLARED_VARIABLES {
+        VEGF_obs
+        VEGFR2_obs
+        VEGFR3_obs
+        SKIT_obs
+    }
+
+}
+"""
+        assertEquals(expected, dataObj.toMDL())
+    }
 	
 	@Test
 	@Ignore("This model redefines variables in the DATA_INPUT_VARIABLES block, which isn't properly supported at the moment")
