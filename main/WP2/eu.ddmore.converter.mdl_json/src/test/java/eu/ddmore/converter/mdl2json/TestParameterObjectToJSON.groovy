@@ -41,6 +41,36 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 		assertEquals("Checking Structural parameter 6/6", expected_BETA_V_WT, structuralModel[5])
 		
 	}
+    
+    @Test
+    public void testStructuralModel_Hansson() {
+        def json = getJsonFromMDLFile("Hansson_ParameterObject.mdl")
+        
+        def parameterObject = json[0].Hansson2013_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def structuralModel = parameterObject[Parameter.STRUCTURAL]
+        
+        assertEquals("Checking number of Structural parameters", 18, structuralModel.size())
+        
+        def expected_POP_IMAX = [ (Variable.NAME_KEY):'POP_IMAX', 'value':'1', 'fix':'true' ]
+        assertEquals("Checking Structural parameter 1/18", expected_POP_IMAX, structuralModel[0])
+        
+        def expected_POP_IC50 = [ (Variable.NAME_KEY):'POP_IC50', 'value':'1', 'lo':'0', 'units':'\"mg/L*h\"' ]
+        assertEquals("Checking Structural parameter 2/18", expected_POP_IC50, structuralModel[1])
+        
+        def expected_POP_BM0 = [ (Variable.NAME_KEY):'POP_BM0', 'value':'59.7', 'lo':'0', 'units':'\"pg/mL\"' ]
+        assertEquals("Checking Structural parameter 3/18", expected_POP_BM0, structuralModel[2])
+        
+        def expected_POP_MRT = [ (Variable.NAME_KEY):'POP_MRT', 'value':'91', 'lo':'0', 'units':'\"h\"' ]
+        assertEquals("Checking Structural parameter 4/18", expected_POP_MRT, structuralModel[3])
+
+        def expected_POP_HILL = [ (Variable.NAME_KEY):'POP_HILL', 'value':'3.31', 'lo':'0' ]
+        assertEquals("Checking Structural parameter 5/18", expected_POP_HILL, structuralModel[4])
+
+        def expected_POP_SLP = [ (Variable.NAME_KEY):'POP_SLP', 'value':'0.035', 'lo':'-0.06', 'units':'\"1/h\"' ]
+        assertEquals("Checking Structural parameter 6/18", expected_POP_SLP, structuralModel[5])
+        
+    }
 	
 	/**
 	 * Note the extra layer of nesting in the 'simple' parameters; this is to be consistent with
@@ -78,6 +108,33 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 		assertEquals("Checking Variability parameter 7/7", expected_CORR_PPV_CL_V, variabilityModel[6])
 		
 	}
+    
+    @Test
+    public void testVariabilityModel_Hansson() {
+        def json = getJsonFromMDLFile("Hansson_ParameterObject.mdl")
+            
+        def parameterObject = json[0].Hansson2013_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+            
+        def variabilityModel = parameterObject[Parameter.VARIABILITY]
+        
+        assertEquals("Checking the number of variables in the Variability model", 13, variabilityModel.size())
+        
+        def expected_OMEGA_BM0 = [ 'OMEGA_BM0' : [ 'value':'0.252', 'type':'VAR' ] ]
+        assertEquals("Checking Variability parameter 1/13", expected_OMEGA_BM0, variabilityModel[0])
+
+        def expected_OMEGA_BM2 = [ 'OMEGA_BM2' : [ 'value':'0.0369', 'type':'VAR' ] ]
+        assertEquals("Checking Variability parameter 2/13", expected_OMEGA_BM2, variabilityModel[1])
+        
+        def expected_OMEGA_BM3 = [ 'OMEGA_BM3' : [ 'value':'0.186', 'type':'VAR' ] ]
+        assertEquals("Checking Variability parameter 3/13", expected_OMEGA_BM3, variabilityModel[2])
+
+        def expected_OMEGA_BMS = [ 'OMEGA_BMS' : [ 'value':'0.254', 'type':'VAR' ] ]
+        assertEquals("Checking Variability parameter 4/13", expected_OMEGA_BMS, variabilityModel[3])
+
+        def expected_SIGMA_RES_W = [ 'SIGMA_RES_W' : [ 'value':'1', 'type':'VAR', 'fix':'true' ] ]
+        assertEquals("Checking Variability parameter 13/13", expected_SIGMA_RES_W, variabilityModel[12])
+        
+    }
 	
 	@Test
 	@Ignore
