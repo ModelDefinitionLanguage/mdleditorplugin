@@ -28,14 +28,14 @@ public class Variable extends Expando implements MDLPrintable {
 	
 		if (sd.getList()) {
             // 'Normal' attributes, add them to the Map of properties directly
-			sd.getList().getArguments().getArguments().each {Argument a ->
+			sd.getList().getArguments().getNamedArguments().getArguments().each {Argument a ->
 				setProperty(a.getArgumentName().getName(), XtextWrapper.unwrap(a.getExpression()))
 			}
 		}
         else if (sd.getRandomList()) {
             // Create a nested Map of these attributes, to distinguish them from 'normal' attributes
             final Map randomVarAttrs = [:]
-            sd.getRandomList().getArguments().getArguments().each {Argument a ->
+            sd.getRandomList().getArguments().getNamedArguments().getArguments().each {Argument a ->
                 randomVarAttrs.put(a.getArgumentName().getName(), XtextWrapper.unwrap(a.getExpression()))
             }
             setProperty(RANDOMVAR_ATTRS_KEY, randomVarAttrs)

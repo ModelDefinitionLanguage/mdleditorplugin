@@ -5,16 +5,18 @@ import org.ddmore.mdl.mdl.AdditiveExpression
 import org.ddmore.mdl.mdl.AndExpression
 import org.ddmore.mdl.mdl.AnyExpression
 import org.ddmore.mdl.mdl.Argument
-import org.ddmore.mdl.mdl.Arguments
+import org.ddmore.mdl.mdl.ArgumentExpression
 import org.ddmore.mdl.mdl.EnumType
 import org.ddmore.mdl.mdl.Expression
 import org.ddmore.mdl.mdl.ExpressionBranch
 import org.ddmore.mdl.mdl.FunctionCall
 import org.ddmore.mdl.mdl.LogicalExpression
 import org.ddmore.mdl.mdl.MultiplicativeExpression
+import org.ddmore.mdl.mdl.NamedArguments
 import org.ddmore.mdl.mdl.OrExpression
 import org.ddmore.mdl.mdl.PowerExpression
 import org.ddmore.mdl.mdl.UnaryExpression
+import org.ddmore.mdl.mdl.UnnamedArguments
 import org.ddmore.mdl.mdl.Vector
 import org.eclipse.emf.common.util.EList
 
@@ -26,15 +28,15 @@ public class XtextWrapper {
 	
 	private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
-	public static Object unwrap(AnyExpression expression) {
+	public static unwrap(AnyExpression expression) {
 		if (expression == null) {
 			return null
 		}
 		if (expression.getExpression()) {
 			return unwrap(expression.getExpression());
 		} else if (expression.getList()) {
-			logger.debug("Calling argumentsToMapOrList")
-			return argumentsToMapOrList(expression.getList().getArguments())
+            // TODO: cater for unnamed arguments too?
+			return namedArgumentsToMap(expression.getList().getArguments().getNamedArguments())
 		} else if (expression.getVector()) {
             return unwrap(expression.getVector())
 		} else if (expression.getType()) {
@@ -44,12 +46,12 @@ public class XtextWrapper {
 		return null
 	}
 
-	public static Object unwrap(EnumType enumType) {
+	public static unwrap(EnumType enumType) {
 		logger.error("Encountered an unhandled EnumType: " + enumType)
 		return null
 	}
 	
-	public static Object unwrap(Expression expression) {
+	public static unwrap(Expression expression) {
         def StringBuffer strExpr = new StringBuffer()
 		if (expression.getExpression()) {
 			strExpr.append(unwrap(expression.getExpression()))
@@ -75,7 +77,7 @@ public class XtextWrapper {
         return strExpr.toString()
 	}
 
-	public static Object unwrap(OrExpression expression) {
+	public static unwrap(OrExpression expression) {
 		if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
 			return unwrap(expression.getExpression().get(0))
 		}
@@ -83,7 +85,7 @@ public class XtextWrapper {
 		return null
 	}
 	
-	public static Object unwrap(LogicalExpression expression) {
+	public static unwrap(LogicalExpression expression) {
 		if (expression.getBoolean()) {
 			return expression.getBoolean()
 		} else if (expression.getOperator()) {
@@ -95,7 +97,7 @@ public class XtextWrapper {
 		return null
 	}
 
-	public static Object unwrap(AdditiveExpression expression) {
+	public static unwrap(AdditiveExpression expression) {
 		if (expression.getString()) {
 			return "\"" + expression.getString() + "\"";
 		} else {
@@ -103,17 +105,17 @@ public class XtextWrapper {
 		}
 	}
 	
-	public static Object unwrap(MultiplicativeExpression expression) {
+	public static unwrap(MultiplicativeExpression expression) {
         return unwrap(expression.getExpression(), expression.getOperator())
 	}
 	
-	public static Object unwrap(PowerExpression expression) {
+	public static unwrap(PowerExpression expression) {
         return unwrap(expression.getExpression(), expression.getOperator())
 	}
     
     // Would be good if EList could be parameterised by a common superclass of all expression classes but no such suitable class exists.
     // TODO: This should be private but generates an Eclipse warning about mixing public and private methods of the same name
-    public static Object unwrap(EList<Object> expressionList, EList<String> operatorList) {
+    public static unwrap(EList<Object> expressionList, EList<String> operatorList) {
         
         final StringBuffer sb = new StringBuffer();
         for (int i = 0; i < expressionList.size(); i++) {
@@ -125,7 +127,7 @@ public class XtextWrapper {
         return sb.toString()
     }
 	
-	public static Object unwrap(UnaryExpression expression) {
+	public static unwrap(UnaryExpression expression) {
 		if (expression.getOperator()) {
 			return expression.getOperator() + unwrap(expression.getExpression())
 		} else if (expression.getNumber()) {
@@ -145,7 +147,7 @@ public class XtextWrapper {
 		}
 	}
 	
-	public static Object unwrap(AndExpression expression) {
+	public static unwrap(AndExpression expression) {
 		if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
 			return unwrap(expression.getExpression().get(0))
 		}
@@ -153,7 +155,7 @@ public class XtextWrapper {
 		return null
 	}
 	
-	public static Object unwrap(FunctionCall fc) {
+	public static unwrap(FunctionCall fc) {
 		final String functionName = fc.getIdentifier().getName()
 		final String argsStr = fc.getArguments().getArguments().collect { Argument a ->
 			if (a.getArgumentName()) {
@@ -165,11 +167,11 @@ public class XtextWrapper {
 		return functionName + "(" + argsStr + ")"
 	}
 	
-	public static Object unwrap(Vector v) {
+	public static unwrap(Vector v) {
 		"[".concat(v.getExpression().getExpressions().collect { unwrap(it) }.join(", ")).concat("]")
 	}
 
-//	public static Object unwrap(DistributionArguments distributionArgs) {
+//	public static unwrap(DistributionArguments distributionArgs) {
 //		Map arguments = [:]
 //		distributionArgs.getArguments().each { DistributionArgument da ->
 //			if(da.getDistribution()!=null) {
@@ -186,27 +188,30 @@ public class XtextWrapper {
 //		}
 //		arguments
 //	}
+    
+    public static unwrap(ArgumentExpression argExpr) {
+        if (argExpr.getExpression()) {
+            return unwrap(argExpr.getExpression())
+        } else {
+            logger.error("Encountered an unhandled RandomList of an ArgumentExpression: " + argExpr.getRandomList())
+            return null
+        }
+    }
 	
-	/**
-	 * Sometimes there is an argument name and sometimes there is not...
-	 * In the former case we will return a Map and in the latter we will return a List.
-	 */
-	private static argumentsToMapOrList(final Arguments args) {
-		Map m = [:]
+	private static List unnamedArgumentsToList(final UnnamedArguments args) {
 		List l = []
-		for (Argument a : args.getArguments() ) {
-			def unwrappedExpr = unwrap(a.getExpression())
-			if (a.getArgumentName()) {
-				m.put(a.getArgumentName().getName(), unwrappedExpr);
-			}
-			l.add(unwrappedExpr)
+		for (Argument a : args.getArguments()) {
+			l.add(unwrap(a.getExpression()))
 		}
-		if (m.size() == l.size()) {
-			// There are no unnamed arguments so return the populated Map
-			return m
-		}
-		// Unnamed arguments were encountered so we have to return the List instead
 		return l
 	}
+    
+    private static Map namedArgumentsToMap(final NamedArguments args) {
+        Map m = [:]
+        for (Argument a : args.getArguments()) {
+            m.put(a.getArgumentName().getName(), unwrap(a.getExpression()))
+        }
+        return m
+    }
 	
 }
