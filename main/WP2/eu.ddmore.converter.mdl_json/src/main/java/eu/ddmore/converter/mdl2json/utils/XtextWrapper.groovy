@@ -42,13 +42,11 @@ public class XtextWrapper {
 		} else if (expression.getType()) {
 			return mdlPrinter.toStr(expression.getType())
 		}
-		logger.error("Encountered an unhandled AnyExpression: " + expression)
-		return null
+		throw new UnsupportedOperationException("Encountered an unhandled AnyExpression: " + expression)
 	}
 
 	public static unwrap(EnumType enumType) {
-		logger.error("Encountered an unhandled EnumType: " + enumType)
-		return null
+		throw new UnsupportedOperationException("Encountered an unhandled EnumType: " + enumType)
 	}
 	
 	public static unwrap(Expression expression) {
@@ -81,8 +79,7 @@ public class XtextWrapper {
 		if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
 			return unwrap(expression.getExpression().get(0))
 		}
-		logger.error("Encountered an unhandled OrExpression: " + expression)
-		return null
+		throw new UnsupportedOperationException("Encountered an unhandled OrExpression: " + expression)
 	}
 	
 	public static unwrap(LogicalExpression expression) {
@@ -93,8 +90,7 @@ public class XtextWrapper {
 		} else if (expression.getExpression1()) {
 			return unwrap(expression.getExpression1())
 		}
-		logger.error("Encountered an unhandled LogicalExpression: " + expression)
-		return null
+		throw new UnsupportedOperationException("Encountered an unhandled LogicalExpression: " + expression)
 	}
 
 	public static unwrap(AdditiveExpression expression) {
@@ -139,11 +135,9 @@ public class XtextWrapper {
         } else if (expression.getParExpression()) {
             return "(" + XtextWrapper.unwrap(expression.getParExpression().getExpression()) + ")"
 		} else if (expression.getConstant()) {
-			logger.error("Encountered an unhandled UnaryExpression with unexpected content: Constant: " + expression.getConstant())
-			return null
+			throw new UnsupportedOperationException("Encountered an unhandled UnaryExpression with unexpected content: Constant: " + expression.getConstant())
 		} else {
-			logger.error("Encountered an unhandled UnaryExpression with unexpected content: Expression: " + expression.getExpression)
-			return null
+			throw new UnsupportedOperationException("Encountered an unhandled UnaryExpression with unexpected content: Expression: " + expression.getExpression)
 		}
 	}
 	
@@ -151,50 +145,33 @@ public class XtextWrapper {
 		if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
 			return unwrap(expression.getExpression().get(0))
 		}
-		logger.error("Encountered an unhandled AndExpression: " + expression)
-		return null
+		throw new UnsupportedOperationException("Encountered an unhandled AndExpression: " + expression)
 	}
 	
 	public static unwrap(FunctionCall fc) {
 		final String functionName = fc.getIdentifier().getName()
-		final String argsStr = fc.getArguments().getArguments().collect { Argument a ->
-			if (a.getArgumentName()) {
-				a.getArgumentName().getName() + "=" + unwrap(a.getExpression())
-			} else {
-				unwrap(a.getExpression())
-			}
-		}.join(", ")
+		final String argsStr
+        if (fc.getArguments().getUnnamedArguments()) {
+            argsStr = fc.getArguments().getUnnamedArguments().getArguments().collect { ArgumentExpression a ->
+                unwrap(a.getExpression())
+            }.join(", ")
+        } else if (fc.getArguments().getNamedArguments()) {
+            argsStr = fc.getArguments().getNamedArguments().getArguments().collect { Argument a ->
+                a.getArgumentName().getName() + "=" + unwrap(a.getExpression())
+            }.join(", ")
+        }
 		return functionName + "(" + argsStr + ")"
 	}
 	
 	public static unwrap(Vector v) {
 		"[".concat(v.getExpression().getExpressions().collect { unwrap(it) }.join(", ")).concat("]")
 	}
-
-//	public static unwrap(DistributionArguments distributionArgs) {
-//		Map arguments = [:]
-//		distributionArgs.getArguments().each { DistributionArgument da ->
-//			if(da.getDistribution()!=null) {
-//				arguments["type"] = da.getDistribution().getIdentifier()
-//			} else if(da.getComponent()!=null) {
-//			  	arguments[da.getArgumentName()] = unwrap(da.getComponent().getArguments())
-//			} else if( da.getValue() != null ){
-//				String val = ""
-//				if( da.getValue().getNumber()!=null ) val = da.getValue().getNumber()
-//				else if (da.getValue().getSymbol()!=null) val = da.getValue().getSymbol().getName()
-//				else if(da.getValue().getVector()!=null) val = mdlPrinter.toStr(da.getValue().getVector())
-//				arguments[da.getArgumentName().getName()] = val
-//			}
-//		}
-//		arguments
-//	}
     
     public static unwrap(ArgumentExpression argExpr) {
         if (argExpr.getExpression()) {
             return unwrap(argExpr.getExpression())
         } else {
-            logger.error("Encountered an unhandled RandomList of an ArgumentExpression: " + argExpr.getRandomList())
-            return null
+            throw new UnsupportedOperationException("Encountered an unhandled RandomList of an ArgumentExpression: " + argExpr.getRandomList())
         }
     }
 	
