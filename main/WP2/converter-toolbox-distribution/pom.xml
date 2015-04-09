@@ -28,6 +28,7 @@
                     <execution>
                         <configuration>
                             <descriptors>
+                                <descriptor>src/main/assembly/base.xml</descriptor>
                                 <descriptor>src/main/assembly/full.xml</descriptor>
                                 <descriptor>src/main/assembly/acceptance-tests.xml</descriptor>
                             </descriptors>

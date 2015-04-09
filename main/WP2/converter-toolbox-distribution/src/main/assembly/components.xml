@@ -1,0 +1,42 @@
+<component
+    xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2 http://maven.apache.org/xsd/component-1.1.2.xsd">
+    
+    <dependencySets>
+        <dependencySet>
+            <includes>
+                <include>eu.ddmore:converter-toolbox:zip</include>
+                <include>eu.ddmore:converter-toolbox-service:zip:binary:*</include>
+            </includes>
+            <outputDirectory>${project.artifactId}</outputDirectory>
+            <unpack>true</unpack>
+            <useStrictFiltering>true</useStrictFiltering>
+            <useProjectArtifact>false</useProjectArtifact>
+        </dependencySet>
+    </dependencySets>
+    
+
+    <fileSets>
+        <fileSet>
+            <directory></directory>
+            <outputDirectory>${project.artifactId}</outputDirectory>
+            <includes>
+                <include>LICENSE</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/runtime</directory>
+            <outputDirectory>.</outputDirectory>
+            <includes>
+                <include>cts-see-env-setup.bat</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/runtime</directory>
+            <outputDirectory>${project.artifactId}</outputDirectory>
+            <includes>
+                <include>see-service-startup.bat</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</component>

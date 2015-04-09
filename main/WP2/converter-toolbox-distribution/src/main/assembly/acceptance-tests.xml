@@ -7,37 +7,19 @@
     <formats>
         <format>zip</format>
     </formats>
-    <baseDirectory>${project.artifactId}</baseDirectory>
+    <includeBaseDirectory>false</includeBaseDirectory>
+	<componentDescriptors><componentDescriptor>src/main/assembly/components.xml</componentDescriptor></componentDescriptors>
 	<dependencySets>
-        <dependencySet>
-            <includes>
-                <include>eu.ddmore:converter-toolbox:zip</include>
-                <include>eu.ddmore:converter-toolbox-service:zip:binary:*</include>
-            </includes>
-            <outputDirectory>.</outputDirectory>
-            <unpack>true</unpack>
-            <useStrictFiltering>true</useStrictFiltering>
-            <useProjectArtifact>false</useProjectArtifact>
-        </dependencySet>
         <dependencySet>
             <includes>
                 <include>eu.ddmore:test-mdl2nonmem-failure</include>
                 <include>eu.ddmore:test-mdl2nonmem-success</include>
             </includes>
-            <outputDirectory>lib</outputDirectory>
+            <outputDirectory>${project.artifactId}/lib</outputDirectory>
             <unpack>false</unpack>
             <useStrictFiltering>true</useStrictFiltering>
             <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveFiltering>true</useTransitiveFiltering>
         </dependencySet>
     </dependencySets>
-    <fileSets>
-        <fileSet>
-            <directory></directory>
-            <outputDirectory>.</outputDirectory>
-            <includes>
-                <include>LICENSE</include>
-            </includes>
-        </fileSet>
-    </fileSets>
 </assembly>
