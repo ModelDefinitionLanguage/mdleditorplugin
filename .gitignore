@@ -13,6 +13,7 @@ Thumbs.db
 # Logs #
 ######################
 *.log
+*-log.txt	# MDL-IDE full (local) build logs
 
 ############################################################
 # Java
