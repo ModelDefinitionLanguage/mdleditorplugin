@@ -10,7 +10,7 @@ warfarin_dat = dataobj{
         SEX : { use=covariate, type=categorical(male, female), define={male = 0, female = 1} }
         AMT : { use = amt , cmpt = D}
         DVID : { use = dvid }
-        DV : { use = dv, units="mg/L", prediction=Y when DVID==1 otherwise N;}
+        DV : { use = dv, units="mg/L", prediction=Y when DVID==1 otherwise N}
         MDV : { use = mdv}
     }
     

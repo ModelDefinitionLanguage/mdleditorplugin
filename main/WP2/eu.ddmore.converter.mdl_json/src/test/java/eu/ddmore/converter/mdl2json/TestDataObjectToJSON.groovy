@@ -80,7 +80,7 @@ class TestDataObjectToJSON extends ConverterTestsParent  {
 		assertEquals("Checking Data Input Variable 8/9 - Name", "DV", var8.get(Variable.NAME_KEY))
 		assertEquals("Checking Data Input Variable 8/9 - Use", "dv", var8.use)
 		assertEquals("Checking Data Input Variable 8/9 - Units", "\"mg/L\"", var8.units)
-        assertEquals("Checking Data Input Variable 8/9 - Prediction", "Y when DVID==1 otherwise N;", var8.prediction)
+        assertEquals("Checking Data Input Variable 8/9 - Prediction", "Y when DVID==1 otherwise N", var8.prediction)
 
         final var9 = dataInputVars[8]
         assertEquals("Checking Data Input Variable 9/9 - Name", "MDV", var9.get(Variable.NAME_KEY))

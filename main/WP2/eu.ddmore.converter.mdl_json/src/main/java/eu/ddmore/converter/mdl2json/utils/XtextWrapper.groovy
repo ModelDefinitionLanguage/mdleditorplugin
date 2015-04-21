@@ -69,8 +69,11 @@ public class XtextWrapper {
                     strExpr.append(" when ")
                     strExpr.append(unwrap(whenExpr.getCondition()))
                 }
+                strExpr.append(";")
             }
-            strExpr.append(";")
+            else { // Neither an "otherwise" branch nor a set of "when" branches
+                strExpr.append(";")
+            }
         }
         return strExpr.toString()
 	}
@@ -135,7 +138,7 @@ public class XtextWrapper {
         } else if (expression.getParExpression()) {
             return "(" + XtextWrapper.unwrap(expression.getParExpression().getExpression()) + ")"
 		} else if (expression.getConstant()) {
-			throw new UnsupportedOperationException("Encountered an unhandled UnaryExpression with unexpected content: Constant: " + expression.getConstant())
+			return expression.getConstant()
 		} else {
 			throw new UnsupportedOperationException("Encountered an unhandled UnaryExpression with unexpected content: Expression: " + expression.getExpression)
 		}

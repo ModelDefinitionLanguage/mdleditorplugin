@@ -2,6 +2,7 @@ package eu.ddmore.converter.mdl2json.domain;
 
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Argument
+import org.ddmore.mdl.mdl.PkMacroStatement;
 
 import org.ddmore.mdl.mdl.SymbolName
 
@@ -10,9 +11,12 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 
 /**
- * Class representing a {@link SymbolDeclaration} from the MDL grammar.
- * It can represent either an expression (= operator), an attribute
- * list (: operator), or a random-variable attribute list (~ operator).
+ * Class representing a {@link org.ddmore.mdl.mdl.SymbolDeclaration} from the MDL grammar.
+ * Also doubles up as being able to represent a {@link org.ddmore.mdl.mdl.PkMacroStatement}.
+ * <p>
+ * It can represent either an expression (= operator), an attribute list (: operator),
+ * a random-variable attribute list (~ operator), or, for a
+ * {@link org.ddmore.mdl.mdl.PkMacroStatement}, an unnamed list (no operator).
  */
 public class Variable extends Expando implements MDLPrintable {
 
@@ -21,6 +25,7 @@ public class Variable extends Expando implements MDLPrintable {
     public static final String NAME_KEY = ".name"
     public static final String EXPRESSION_KEY = ".expr"
     public static final String RANDOMVAR_ATTRS_KEY = ".random_var_attrs"
+    public static final String RANDOMVAR_DISTRIBUTION_KEY = ".random_var_distribution"
 	
 	public Variable(final org.ddmore.mdl.mdl.SymbolDeclaration sd) {
 		
@@ -28,9 +33,7 @@ public class Variable extends Expando implements MDLPrintable {
 	
 		if (sd.getList()) {
             // 'Normal' attributes, add them to the Map of properties directly
-			sd.getList().getArguments().getNamedArguments().getArguments().each {Argument a ->
-				setProperty(a.getArgumentName().getName(), XtextWrapper.unwrap(a.getExpression()))
-			}
+			addNormalAttributes(sd.getList())
 		}
         else if (sd.getRandomList()) {
             // Create a nested Map of these attributes, to distinguish them from 'normal' attributes
@@ -39,12 +42,29 @@ public class Variable extends Expando implements MDLPrintable {
                 randomVarAttrs.put(a.getArgumentName().getName(), XtextWrapper.unwrap(a.getExpression()))
             }
             setProperty(RANDOMVAR_ATTRS_KEY, randomVarAttrs)
+            setProperty(RANDOMVAR_DISTRIBUTION_KEY, sd.getRandomList().getType().getName())
         }
         else if (sd.getExpression()) {
             setProperty(EXPRESSION_KEY, XtextWrapper.unwrap(sd.getExpression()))
         }
         
 	}
+    
+    private addNormalAttributes(final org.ddmore.mdl.mdl.List attrsList) {
+        attrsList.getArguments().getNamedArguments().getArguments().each {Argument a ->
+            setProperty(a.getArgumentName().getName(), XtextWrapper.unwrap(a.getExpression()))
+        }
+    }
+    
+    public static Variable buildFromPkMacroStatement(final PkMacroStatement pkMacroStmt) {
+        if (pkMacroStmt.getVariable()) {
+            return new Variable(pkMacroStmt.getVariable())
+        } else if (pkMacroStmt.getList()) {
+            final Variable var = new Variable([:])
+            var.addNormalAttributes(pkMacroStmt.getList())
+            return var
+        }
+    }
 	
 	public Variable(final SymbolName sn) {
 		setProperty(NAME_KEY, sn.getName())
@@ -64,6 +84,10 @@ public class Variable extends Expando implements MDLPrintable {
     
     public Map getRandomVarAttributes() {
         return (Map) getProperty(RANDOMVAR_ATTRS_KEY)
+    }
+    
+    public String getRandomVarDistributionType() {
+        return (String) getProperty(RANDOMVAR_DISTRIBUTION_KEY)
     }
 	
 	public String toMDL() {
@@ -91,13 +115,19 @@ public class Variable extends Expando implements MDLPrintable {
             getRandomVarAttributes().sort().each { k, v ->
                 randomVarAttrs.add("${k}=${v}")
             }
-            """${getName()} ~ {${randomVarAttrs.join(", ")}}"""
+            """${getName()} ~ ${getRandomVarDistributionType()}(${randomVarAttrs.join(", ")})"""
         }
-        else if (!attributes.isEmpty()) {
+        else if (getName() && !attributes.isEmpty()) {
             """${getName()} : {${attributes.join(", ")}}"""
 		}
-        else {
+        else if (!attributes.isEmpty()) {
+            """{${attributes.join(", ")}}"""
+		}
+        else if (getName()) {
             """${getName()}"""
+		}
+        else {
+            throw new UnsupportedOperationException("Attempting to print as MDL, a Variable having unrecognised format")
 		}
 	}
 	
