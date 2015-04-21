@@ -147,4 +147,20 @@ class TestDataObjectToJSON extends ConverterTestsParent  {
         
     }
     
+    @Test
+    public void testDataDerivedVariables() {
+        def json = getJsonFromMDLFile("WarfarinAnalyticSolution_DataObject.mdl")
+            
+        logger.debug(json)
+        
+        def dataObject = json[0].warfarin_PK_ODE_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+            
+        def dataDerivedVars = dataObject[Data.DATA_DERIVED_VARIABLES]
+        
+        assertEquals("Checking the number of Data Derived Variables", 1, dataDerivedVars.size())
+        
+        assertEquals("Checking Data Derived Variable 1/1", [(Variable.NAME_KEY):'DT', (Variable.EXPRESSION_KEY):"TIME when AMT>0;"], dataDerivedVars[0])
+        
+    }
+    
 }

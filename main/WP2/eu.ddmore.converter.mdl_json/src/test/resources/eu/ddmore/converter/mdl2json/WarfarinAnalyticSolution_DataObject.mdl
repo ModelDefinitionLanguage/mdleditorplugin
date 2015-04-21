@@ -1,0 +1,28 @@
+warfarin_PK_ODE_dat = dataobj{
+
+    DECLARED_VARIABLES{ Y D } 
+    
+    DATA_INPUT_VARIABLES {
+        ID : { use=id }
+        TIME : { use=idv }
+        WT : { use = covariate }
+        AGE : { use = covariate }
+        SEX : { use=covariate, type=categorical(male, female), define={male = 0, female = 1} }
+        AMT : { use = amt , cmpt = D}
+        DVID : { use = dvid }
+        DV : { use = dv, prediction=Y when DVID==1;}
+        MDV : { use = mdv}
+    }
+
+    DATA_DERIVED_VARIABLES {
+        DT = TIME when AMT > 0 ;
+        }
+    
+    SOURCE {
+        file = "warfarin_conc_pca.csv"
+        inputformat = nonmemFormat 
+        ignore = "#" ## ?? implementation ??
+#       header = true  # or false
+#       skip =  0  ##  << integer >>
+    } # end SOURCE
+} # end data object

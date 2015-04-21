@@ -25,6 +25,8 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
         / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{".name":"CYCL","type":"categorical"},{"use":"idv",".name":"TIME","units":"\"h\""},{".name":"DAYS","type":"continuous","units":"\"day\""},{"prediction":"VEGF_obs when FLAG==5, VEGFR2_obs when FLAG==6, VEGFR3_obs when FLAG==7, SKIT_obs when FLAG==8;","use":"dv",".name":"DV"},{".name":"FLAG","type":"categorical"},{".name":"DVX","type":"continuous","units":"\"mg\/L\""},{"use":"amt",".name":"DOS","units":"\"mg\""},{".name":"PLA","type":"categorical"},{"use":"covariate",".name":"CL","type":"continuous","units":"\"L\/h\""},{".name":"EVID","type":"categorical"}]} /
     private String declaredVariablesJson =
         / {"DECLARED_VARIABLES":[{".name":"VEGF_obs"},{".name":"VEGFR2_obs"},{".name":"VEGFR3_obs"},{".name":"SKIT_obs"}]} /
+    private String dataDerivedVariablesJson =
+        / {"DATA_DERIVED_VARIABLES":[{".expr":"TIME when AMT>0;",".name":"DT"}]} /
         
 	@Test
 	public void testSource() {
@@ -114,6 +116,24 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
         VEGFR2_obs
         VEGFR3_obs
         SKIT_obs
+    }
+
+}
+"""
+        assertEquals(expected, dataObj.toMDL())
+    }
+    
+    @Test
+    public void testDataDerivedVariablesBlock() {
+        
+        def json = getJson(dataDerivedVariablesJson)
+        
+        def dataObj = new Data(json)
+        
+        String expected = """dataobj {
+
+    DATA_DERIVED_VARIABLES {
+        DT = TIME when AMT>0;
     }
 
 }
