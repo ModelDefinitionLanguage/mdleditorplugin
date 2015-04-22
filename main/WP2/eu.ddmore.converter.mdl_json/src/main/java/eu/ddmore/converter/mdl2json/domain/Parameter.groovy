@@ -21,26 +21,27 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 	
 	static final String STRUCTURAL = "STRUCTURAL"
 	static final String VARIABILITY = "VARIABILITY"
-	static final String PRIOR = "PRIOR_PARAMETERS"
-	static final String TARGET_CODE = "TARGET_CODE"
 
 	public Parameter(ParameterObject paramObject) {
 		
 		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
 		
-		for (ParameterObjectBlock b : paramObject.getBlocks()) {
+		for (ParameterObjectBlock block : paramObject.getBlocks()) {
 			
-			if (b.getStructuralBlock()) {
-				setProperty(STRUCTURAL, VariablesList.buildFromSymbolDeclarations(b.getStructuralBlock().getParameters()))
+			if (block.getStructuralBlock()) {
+				setProperty(STRUCTURAL, VariablesList.buildFromSymbolDeclarations(block.getStructuralBlock().getParameters()))
 			}
-			if (b.getVariabilityBlock()) {
-				setProperty(VARIABILITY, makeVariability(b.getVariabilityBlock()))
+			if (block.getVariabilityBlock()) {
+				setProperty(VARIABILITY, makeVariability(block.getVariabilityBlock()))
 			}
-			if (b.getPriorBlock()) {
-				throw new UnsupportedOperationException("Prior Parameters block not supported yet")
+			if (block.getDeclaredVariables()) {
+                throw new UnsupportedOperationException("Declared Variables block within Parameter Object not supported")
+            }
+			if (block.getPriorBlock()) {
+				throw new UnsupportedOperationException("Prior Parameters block within Parameter Object not supported yet")
 			}
-			if (b.getTargetBlock()) {
-				throw new UnsupportedOperationException("Target Code block not supported yet")
+			if (block.getTargetBlock()) {
+				throw new UnsupportedOperationException("Target Code block within Parameter Object not supported yet")
 			}
 			
 		}
@@ -55,12 +56,6 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 		}
 		if (json[VARIABILITY]) {
 			setProperty(VARIABILITY, json[VARIABILITY])
-		}
-		if (json[PRIOR]) {
-			throw new UnsupportedOperationException("Prior Parameters block not supported yet")
-		}
-		if (json[TARGET_CODE]) {
-			throw new UnsupportedOperationException("Target Code block not supported yet")
 		}
 		
 	}
