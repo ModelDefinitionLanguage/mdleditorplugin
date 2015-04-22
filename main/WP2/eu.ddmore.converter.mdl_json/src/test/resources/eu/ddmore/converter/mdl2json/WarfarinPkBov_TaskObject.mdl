@@ -1,0 +1,8 @@
+warfarin_PK_BOV_task = taskobj{
+
+      ESTIMATE {
+        target = NMTRAN_CODE
+        version = "7.2"
+        algo = ["FOCE  INTER"]
+      }
+}# end of taskobj

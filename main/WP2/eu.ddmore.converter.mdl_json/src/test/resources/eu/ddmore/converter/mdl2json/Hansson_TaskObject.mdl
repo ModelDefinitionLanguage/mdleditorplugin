@@ -1,0 +1,9 @@
+Hansson2013_task = taskobj{
+### Task Properties object
+
+    ESTIMATE { 
+        target=NMTRAN_CODE 
+        cov=true
+        algo= ["FOCE"] 
+    }
+}# end of task object
