@@ -12,7 +12,6 @@ import org.ddmore.mdl.mdl.Mcl
 
 import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.converter.mdl2json.domain.Model
-import eu.ddmore.converter.mdl2json.domain.ModelPrediction
 import eu.ddmore.converter.mdl2json.domain.Mog
 import eu.ddmore.converter.mdl2json.domain.Parameter
 import eu.ddmore.converter.mdl2json.domain.Source
@@ -99,25 +98,21 @@ public class ConverterTestsParent {
     
     
     public static List<String> allBlockNames = [
-        Data.SOURCE,
+        Data.DECLARED_VARIABLES,
         Data.DATA_INPUT_VARIABLES,
         Data.DATA_DERIVED_VARIABLES,
+        Data.SOURCE,
         Parameter.STRUCTURAL,
         Parameter.VARIABILITY,
-        Parameter.PRIOR,
+        Model.COVARIATES,
+        Model.VARIABILITY_LEVELS,
         Model.STRUCTURAL_PARAMETERS,
         Model.VARIABILITY_PARAMETERS,
+        Model.RANDOM_VARIABLE_DEFINITION + /\(.+\)/, // note the regex matching for the parameters of the block name
         Model.INDIVIDUAL_VARIABLES,
-        Model.RANDOM_VARIABLE_DEFINITION,
-        Model.MODEL_OUTPUT_VARIABLES,
-        Model.MODEL_INPUT_VARIABLES,
-        Model.OBSERVATION,
         Model.MODEL_PREDICTION,
-        ModelPrediction.ODE, // actually redundant, should be verified by MODEL_PREDICTION block
-        ModelPrediction.LIBRARY, // actually redundant, should be verified by MODEL_PREDICTION block
+        Model.OBSERVATION,
         Model.GROUP_VARIABLES,
-        Model.ESTIMATION,
-        Model.SIMULATION,
         Task.ESTIMATE,
         Task.SIMULATE,
         Task.EVALUATE,
@@ -125,7 +120,6 @@ public class ConverterTestsParent {
         Task.DATA,
         Task.MODEL,
         /\S+\s*=\s*/ + Mog.IDENTIFIER
-        //"TARGET_CODE\\(.+\\)" // note the regex matching for the parameters of the block name
     ]
 	
     public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final File newMdlFile) {
