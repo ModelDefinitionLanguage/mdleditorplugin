@@ -21,18 +21,18 @@ import org.apache.log4j.Logger;
  * A Converter Output Failure Checker for nmTran output; it enhances the standard Converter Output Failure
  * Checker to also check that the generated nonmem file is valid by comparing it with base line output file.
  */
-class ConverterNmTranOutputFailureChecker extends DefaultConverterOutputFailureChecker {
+class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker {
 
     private static final String COMMENT_SYMBOL = ";";
     private static final String BLOCK_SYMBOL = "$";
-    private static final Logger LOGGER = Logger.getLogger(ConverterNmTranOutputFailureChecker.class);
+    private static final Logger LOGGER = Logger.getLogger(NmTranFileEquivalenceChecker.class);
     // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes.
     // This is derived from the following minimal skeleton NMTRAN file:
     // $PROB $INPUT $DATA
     private final static int NMTRAN_FILE_SIZE_THRESHOLD = 30;
     private final String NMTRAN_DIR = "NM-TRAN";
 
-    ConverterNmTranOutputFailureChecker() {
+    NmTranFileEquivalenceChecker() {
         super(NMTRAN_FILE_SIZE_THRESHOLD);
     }
 

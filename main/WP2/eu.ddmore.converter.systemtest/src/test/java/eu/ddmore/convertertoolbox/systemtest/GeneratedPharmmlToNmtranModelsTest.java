@@ -171,7 +171,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
     public void testPharmMLToNMTRANConversionForPharmMLGeneratedByMdlToPharmMLConversion() {
         final ConverterRunner runner = new ConverterRunner(this.generatedPharmmlModel, FileType.NMTRAN.getExtension(),
                 FileType.PharmML.name(), FileType.PharmML.getVersion(), FileType.NMTRAN.name(), FileType.NMTRAN.getVersion(),
-                new ConverterNmTranOutputFailureChecker());
+                new NmTranFileEquivalenceChecker());
         runner.run();
     }
 

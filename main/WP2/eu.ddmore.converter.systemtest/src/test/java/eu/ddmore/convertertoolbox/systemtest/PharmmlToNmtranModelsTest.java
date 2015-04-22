@@ -57,7 +57,7 @@ public class PharmmlToNmtranModelsTest {
     public void testPharmMLToNMTRANConversion() {
         new ConverterRunner(
             this.model, FileType.NMTRAN.getExtension(), FileType.PharmML.name(), FileType.PharmML.getVersion(), FileType.NMTRAN.name(), FileType.NMTRAN.getVersion(),
-            new ConverterNmTranOutputFailureChecker()
+            new NmTranFileEquivalenceChecker()
         ).run();
     }
     
