@@ -13,8 +13,8 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestParameterObjectToJSON.class)
 
 	@Test
-	public void testStructuralModel() {
-		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ParameterObject.mdl")
+	public void testStructuralBlock_Warfarin() {
+		def json = getJsonFromMDLFile("Warfarin_ParameterObject.mdl")
 		
 		def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 		
@@ -31,7 +31,7 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 		def expected_POP_KA = [ (Variable.NAME_KEY):'POP_KA', 'value':'0.362', 'lo':'0.001' ]
 		assertEquals("Checking Structural parameter 3/6", expected_POP_KA, structuralModel[2])
 
-		def expected_POP_TLAG = [ (Variable.NAME_KEY):'POP_TLAG', 'value':'1', 'lo':'0.001' ]
+		def expected_POP_TLAG = [ (Variable.NAME_KEY):'POP_TLAG', 'value':'1', 'lo':'0.001', 'hi':'10' ]
 		assertEquals("Checking Structural parameter 4/6", expected_POP_TLAG, structuralModel[3])
 
 		def expected_BETA_CL_WT = [ (Variable.NAME_KEY):'BETA_CL_WT', 'value':'0.75', 'fix':'true' ]
@@ -39,11 +39,11 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 
 		def expected_BETA_V_WT = [ (Variable.NAME_KEY):'BETA_V_WT', 'value':'1', 'fix':'true' ]
 		assertEquals("Checking Structural parameter 6/6", expected_BETA_V_WT, structuralModel[5])
-		
+        
 	}
     
     @Test
-    public void testStructuralModel_Hansson() {
+    public void testStructuralBlock_Hansson() {
         def json = getJsonFromMDLFile("Hansson_ParameterObject.mdl")
         
         def parameterObject = json[0].Hansson2013_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
@@ -77,8 +77,8 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 	 * the matrix/diag/same parameters and make the post-processing in R slightly simpler.
 	 */
 	@Test
-	public void testVariabilityModel() {
-		def json = getJsonFromMDLFile("warfarinODE_28Oct2014_ParameterObject.mdl")
+	public void testVariabilityBlock_Warfarin() {
+		def json = getJsonFromMDLFile("Warfarin_ParameterObject.mdl")
 			
 		def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 			
@@ -110,7 +110,7 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 	}
     
     @Test
-    public void testVariabilityModel_Hansson() {
+    public void testVariabilityBlock_Hansson() {
         def json = getJsonFromMDLFile("Hansson_ParameterObject.mdl")
             
         def parameterObject = json[0].Hansson2013_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
@@ -133,6 +133,27 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 
         def expected_SIGMA_RES_W = [ 'SIGMA_RES_W' : [ 'value':'1', 'type':'VAR', 'fix':'true' ] ]
         assertEquals("Checking Variability parameter 13/13", expected_SIGMA_RES_W, variabilityModel[12])
+        
+    }
+    
+    @Test
+    public void testVariabilityBlock_WarfarinPkBov() {
+        def json = getJsonFromMDLFile("WarfarinPkBov_ParameterObject.mdl")
+            
+        def parameterObject = json[0].warfarin_PK_BOV_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+            
+        def variabilityModel = parameterObject[Parameter.VARIABILITY]
+        
+        assertEquals("Checking the number of variables in the Variability model", 12, variabilityModel.size())
+        
+        def expected_BSV_CL = [ 'BSV_CL' : [ 'value':'0.1', 'type':'VAR' ] ]
+        assertEquals("Checking Variability parameter 1/12", expected_BSV_CL, variabilityModel[0])
+        
+        def expected_BOV_CL = [ 'BOV_CL' : [ 'fix':'true', 'value':'0.1', 'type':'VAR' ] ]
+        assertEquals("Checking Variability parameter 3/12", expected_BOV_CL, variabilityModel[2])
+
+        def expected_BOV_COV_CL_V = [ 'BOV_COV_CL_V' : [ 'fix':'true', 'value':'[0.01]', 'type':'COV' ] ]
+        assertEquals("Checking Variability parameter 5/12", expected_BOV_COV_CL_V, variabilityModel[4])
         
     }
 	
