@@ -2,12 +2,7 @@ package eu.ddmore.converter.mdl2json;
 
 import static org.junit.Assert.*
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.log4j.Logger
-import org.junit.Ignore
 import org.junit.Test
 
 import eu.ddmore.converter.mdl2json.domain.Data
