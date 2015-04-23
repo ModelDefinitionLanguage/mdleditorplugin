@@ -1,0 +1,28 @@
+# Note that the Mog Object needs the presence of the objects it references in order to be parsed by Xtext
+
+warfarin_PK_ODE_dat = dataobj {
+}
+
+warfarin_PK_ODE_par = parobj {
+}
+
+warfarin_PK_ODE_mdl = mdlobj {
+}
+
+warfarin_PK_ODE_task = taskobj {
+}
+
+warfarin_PK_ODE_mog = mogobj {
+        OBJECTS{
+        dObj = warfarin_PK_ODE_dat
+        mObj = warfarin_PK_ODE_mdl
+        pObj = warfarin_PK_ODE_par
+        tObj = warfarin_PK_ODE_task
+    }
+
+    MAPPING {
+        dObj.GUT = mObj.GUT
+        dObj.Y = mObj.Y
+        dObj.WT = mObj.WT
+    }
+}
