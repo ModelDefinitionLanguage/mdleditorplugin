@@ -66,8 +66,8 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
 	
 	public String toMDL() {
 		StringBuffer mdl = new StringBuffer()
-		def normalProperties = getProperties().minus([(IDENTIFIER_PROPNAME):(IDENTIFIER)])
-		normalProperties.each { String blockName, MDLPrintable obj ->
+		def blocks = getProperties().minus([(IDENTIFIER_PROPNAME):(IDENTIFIER)])
+		blocks.each { String blockName, MDLPrintable obj ->
 			mdl.append("\n${IDT}${blockName} {\n${IDT*2}${obj.toMDL()}\n${IDT}}\n")
 		}
 		return """${IDENTIFIER} {
