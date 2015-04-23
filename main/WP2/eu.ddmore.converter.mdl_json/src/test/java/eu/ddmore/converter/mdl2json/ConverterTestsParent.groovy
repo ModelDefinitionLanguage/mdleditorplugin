@@ -119,7 +119,8 @@ public class ConverterTestsParent {
         Task.OPTIMISE,
         Task.DATA,
         Task.MODEL,
-        /\S+\s*=\s*/ + Mog.IDENTIFIER
+        Mog.OBJECTS,
+        Mog.MAPPING
     ]
 	
     public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final File newMdlFile) {
