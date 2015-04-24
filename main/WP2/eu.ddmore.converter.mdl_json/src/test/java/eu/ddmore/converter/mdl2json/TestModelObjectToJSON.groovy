@@ -13,8 +13,22 @@ class TestModelObjectToJSON extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestModelObjectToJSON.class)
     
     @Test
+    public void testIndependentVariablesBlock() {
+        def json = getJsonFromMDLFile("Hansson_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.Hansson2013_mdl
+        
+        def independentVars = modelObject.IDV
+        
+        logger.debug(independentVars)
+
+        assertEquals("Checking number of covariates", 1, independentVars.size())
+        assertEquals("Checking covariate 1/1", [(Variable.NAME_KEY):'T'], independentVars[0])
+    }
+    
+    @Test
     public void testCovariatesBlock() {
-        def json = getJsonFromMDLFile("Warfarin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("WarfarinAnalyticSolution_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_ODE_mdl
         
@@ -380,7 +394,7 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         def modPred = modelObject.MODEL_PREDICTION
         
         assertEquals("Checking number of Model Prediction items", 6, modPred.size())
-        assertEquals("Checking Model Prediction item 1/6", [(Variable.NAME_KEY):'AUC', (Variable.EXPRESSION_KEY):'DOS/CL'], modPred[0])
+        assertEquals("Checking Model Prediction item 1/6", [(Variable.NAME_KEY):'AUC', (Variable.EXPRESSION_KEY):'DOSE/CL'], modPred[0])
         assertEquals("Checking Model Prediction item 2/6", [(Variable.NAME_KEY):'DP1', (Variable.EXPRESSION_KEY):'BM0*(1+DPSLP*T)'], modPred[1])
         assertEquals("Checking Model Prediction item 3/6", [(Variable.NAME_KEY):'DPS', (Variable.EXPRESSION_KEY):'BM0S*(1+DPSLPS*T)'], modPred[2])
         assertEquals("Checking Model Prediction item 4/6", [(Variable.NAME_KEY):'KIN', (Variable.EXPRESSION_KEY):'DP1*KOUT'], modPred[3])

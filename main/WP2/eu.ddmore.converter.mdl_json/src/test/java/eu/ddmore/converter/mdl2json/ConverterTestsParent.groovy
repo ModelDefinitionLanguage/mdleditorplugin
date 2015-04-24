@@ -119,7 +119,8 @@ public class ConverterTestsParent {
         Task.OPTIMISE,
         Task.DATA,
         Task.MODEL,
-        /\S+\s*=\s*/ + Mog.IDENTIFIER
+        Mog.OBJECTS,
+        Mog.MAPPING
     ]
 	
     public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final File newMdlFile) {
@@ -137,7 +138,7 @@ public class ConverterTestsParent {
 			
 			// Special additional preprocessing for the "SOURCE" block:
 			// The items within this block can be in any order so put the lines of the original and new blocks into a known order
-			if (blockName == Source.SOURCE) {
+			if (blockName == Data.SOURCE) {
 				origMdlFileBlockContent = putSOURCEBlockContentInKnownOrder(origMdlFileBlockContent)
 				newMdlFileBlockContent = putSOURCEBlockContentInKnownOrder(newMdlFileBlockContent)
 			}
@@ -279,7 +280,7 @@ public class ConverterTestsParent {
 	 * @return the string comprising the block name and its reordered content
 	 */
 	private static String putSOURCEBlockContentInKnownOrder(final String blockText) {
-		putSOURCEBlockOrMogBlockContentInKnownOrder(Source.SOURCE, blockText, /\s*\S+\s*=\s*\S+\s*/)
+		putSOURCEBlockOrMogBlockContentInKnownOrder(Data.SOURCE, blockText, /\s*\S+\s*=\s*\S+\s*/)
 	}
 	
 	/**

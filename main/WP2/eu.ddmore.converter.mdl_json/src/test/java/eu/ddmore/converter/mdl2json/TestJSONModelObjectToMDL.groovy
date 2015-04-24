@@ -12,6 +12,8 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
 	private static final Logger logger = Logger.getLogger(TestJSONModelObjectToMDL.class)
 	
 	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
+    private final static String independentVariablesBlockJson =
+        / {"IDV":[{".name":"T"}]} /
     private final static String covariatesBlockJson =
         / {"COVARIATES":[{".name":"WT"},{".expr":"log(WT\/70)",".name":"logtWT"}]} /
     private final static String variabilityLevelsBlockJson =
@@ -45,12 +47,30 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
     private final static String modelPredictionBlockJson_WarfarinAnalyticSolution =
         / {"MODEL_PREDICTION":[{".name":"D"},{".name":"TD"},{".expr":"CL\/V",".name":"k"},{".expr":"0 when T-TD<TLAG otherwise (D\/V)*(KA\/(KA-k)*(exp(-k*(T-TD-TLAG)-exp(-KA*(T-TD-TLAG)))))",".name":"CC"}]} /
     private final static String modelPredictionBlockJson_Hansson =
-        / {"MODEL_PREDICTION":[{".expr":"DOS\/CL",".name":"AUC"},{".expr":"BM0*(1+DPSLP*T)",".name":"DP1"},{".expr":"BM0S*(1+DPSLPS*T)",".name":"DPS"},{".expr":"DP1*KOUT",".name":"KIN"},{".expr":"DPS*KOUTS",".name":"KINS"},{".DEQ":[{".expr":"IMAX1*AUC^HILL\/(IC50^HILL+AUC^HILL)",".name":"EFF"},{".expr":"IMAX2*AUC^HILL2\/(IC502^HILL2+AUC^HILL2)",".name":"EFF2"},{".expr":"IMAX3*AUC\/(IC503+AUC)",".name":"EFF3"},{".expr":"IMAXS*AUC\/(IC50S+AUC)",".name":"EFFS"},{"wrt":"T","deriv":"KIN-KOUT*(1-EFF)*VEGF","init":"BM0",".name":"VEGF"},{"wrt":"T","deriv":"KIN2*(1-EFF2)-KOUT2*sVEGFR2","init":"BM02",".name":"sVEGFR2"},{"wrt":"T","deriv":"KIN3*(1-EFF3)-KOUT3*sVEGFR3","init":"BM03",".name":"sVEGFR3"},{"wrt":"T","deriv":"KINS*(1-EFFS)-KOUTS*sKIT","init":"BM0S",".name":"sKIT"}]}]} /
+        / {"MODEL_PREDICTION":[{".expr":"DOSE\/CL",".name":"AUC"},{".expr":"BM0*(1+DPSLP*T)",".name":"DP1"},{".expr":"BM0S*(1+DPSLPS*T)",".name":"DPS"},{".expr":"DP1*KOUT",".name":"KIN"},{".expr":"DPS*KOUTS",".name":"KINS"},{".DEQ":[{".expr":"IMAX1*AUC^HILL\/(IC50^HILL+AUC^HILL)",".name":"EFF"},{".expr":"IMAX2*AUC^HILL2\/(IC502^HILL2+AUC^HILL2)",".name":"EFF2"},{".expr":"IMAX3*AUC\/(IC503+AUC)",".name":"EFF3"},{".expr":"IMAXS*AUC\/(IC50S+AUC)",".name":"EFFS"},{"wrt":"T","deriv":"KIN-KOUT*(1-EFF)*VEGF","init":"BM0",".name":"VEGF"},{"wrt":"T","deriv":"KIN2*(1-EFF2)-KOUT2*sVEGFR2","init":"BM02",".name":"sVEGFR2"},{"wrt":"T","deriv":"KIN3*(1-EFF3)-KOUT3*sVEGFR3","init":"BM03",".name":"sVEGFR3"},{"wrt":"T","deriv":"KINS*(1-EFFS)-KOUTS*sKIT","init":"BM0S",".name":"sKIT"}]}]} /
     private final static String modelPredictionBlockJson_WarfarinPkBov =
         / {"MODEL_PREDICTION":[{".PKMACRO":[{".name":"DEP"},{"to":"Ac","macro":"oral","tlag":"ALAG1","ka":"KA"},{"macro":"compartment","volume":"V",".name":"Ac"},{"macro":"elimination","cl":"CL","from":"Ac"}]},{".expr":"Ac\/V",".name":"CONC"}]} /
     private final static String groupVariablesBlockJson =
         / {"GROUP_VARIABLES":[{".expr":"POP_CL*(WT\/70)^0.75",".name":"GRPCL"},{".expr":"POP_V*WT\/70",".name":"GRPV"},{".expr":"POP_KA",".name":"GRPKA"},{".expr":"POP_TLAG",".name":"GRPLG"}]} /
 
+    @Test
+    public void testIndependentVariablesBlock() {
+
+        def json = getJson(independentVariablesBlockJson)
+
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    IDV {
+        T
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
     @Test
     public void testCovariatesBlock() {
 
@@ -406,7 +426,7 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         String expected = """mdlobj {
 
     MODEL_PREDICTION {
-        AUC = DOS/CL
+        AUC = DOSE/CL
         DP1 = BM0*(1+DPSLP*T)
         DPS = BM0S*(1+DPSLPS*T)
         KIN = DP1*KOUT

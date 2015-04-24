@@ -6,13 +6,12 @@ import org.ddmore.mdl.mdl.SourceBlock
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
+
 /**
- * @author jchard
+ * Represents a SOURCE block within the Data Object.
  *
  */
 public class Source extends Expando implements MDLPrintable {
-
-	private static final String SOURCE = "SOURCE"
 	
 	/**
 	 * Constructor which unpacks all the content of the SourceBlock and adds them to the properties of this object

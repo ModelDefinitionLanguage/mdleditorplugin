@@ -1,11 +1,12 @@
 Hansson2013_mdl = mdlobj{
+   IDV{ T }
 
-    VARIABILITY_LEVELS{
-        ID : { level=2, type = model }
-        DV : { level=1 , type=observation}
+   VARIABILITY_LEVELS{
+    ID : { level=2, type = parameter }
+    DV : { level=1 , type = observation}
    }
-    COVARIATES{
-        CL
+   COVARIATES{
+    CL
    }
 
    STRUCTURAL_PARAMETERS{
@@ -120,7 +121,7 @@ Hansson2013_mdl = mdlobj{
 
 
    MODEL_PREDICTION{
-      AUC = DOS/CL
+      AUC = DOSE/CL
       DP1 = BM0*(1+DPSLP*T)        # Linear disease progression model for VEGF
       DPS = BM0S*(1+DPSLPS*T)      # Linear disease progression model for SKIT
 
