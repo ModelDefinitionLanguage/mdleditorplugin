@@ -20,6 +20,7 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 	
 	static final String IDENTIFIER = "mdlobj"
 	
+    static String IDV = "IDV"
     static String COVARIATES = "COVARIATES"
     static String VARIABILITY_LEVELS = "VARIABILITY_LEVELS"
 	static String STRUCTURAL_PARAMETERS = "STRUCTURAL_PARAMETERS"
@@ -36,6 +37,9 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 		
 		for (ModelObjectBlock block : modelObject.getBlocks()) {
 
+            if (block.getIndependentVariableBlock()) {
+                setProperty(IDV, VariablesList.buildFromSymbolDeclarations(block.getIndependentVariableBlock().getVariables()))
+            }
             if (block.getCovariateBlock()) {
                 setProperty(COVARIATES, VariablesList.buildFromSymbolDeclarations(block.getCovariateBlock().getVariables()))
             }
@@ -72,9 +76,6 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
             if (block.getEstimationBlock()) {
                 throw new UnsupportedOperationException("Estimation block within Model Object not supported")
             }
-            if (block.getIndependentVariableBlock()) {
-                throw new UnsupportedOperationException("Independent Variable block within Model Object not supported")
-            }
             if (block.getOutputVariablesBlock()) {
                 throw new UnsupportedOperationException("Output Variables block within Model Object not supported")
             }
@@ -95,7 +96,10 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 	public Model(Map json) {
 		
 		setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
-        
+
+        if (json[IDV]) {
+            setProperty(IDV, VariablesList.buildFromJSON(json[IDV]))
+        }
         if (json[COVARIATES]) {
             setProperty(COVARIATES, VariablesList.buildFromJSON(json[COVARIATES]))
         }
