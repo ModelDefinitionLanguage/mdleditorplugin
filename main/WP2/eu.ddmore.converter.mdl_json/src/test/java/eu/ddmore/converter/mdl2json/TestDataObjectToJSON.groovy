@@ -60,7 +60,7 @@ class TestDataObjectToJSON extends ConverterTestsParent  {
         assertEquals("Checking Data Input Variable 5/9 - Name", "SEX", var5.get(Variable.NAME_KEY))
         assertEquals("Checking Data Input Variable 5/9 - Use", "covariate", var5.use)
         assertEquals("Checking Data Input Variable 5/9 - Type", "categorical(male, female)", var5.type)
-        assertEquals("Checking Data Input Variable 5/9 - Define", new HashMap(["male": "0", "female": "1"]), var5.define)
+        assertEquals("Checking Data Input Variable 5/9 - Define", "{male=0, female=1}", var5.define)
         
         final var6 = dataInputVars[5]
         assertEquals("Checking Data Input Variable 6/9 - Name", "AMT", var6.get(Variable.NAME_KEY))
