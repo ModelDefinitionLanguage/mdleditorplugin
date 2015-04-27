@@ -36,7 +36,7 @@ public class XtextWrapper {
 			return unwrap(expression.getExpression());
 		} else if (expression.getList()) {
             // TODO: cater for unnamed arguments too?
-			return namedArgumentsToMap(expression.getList().getArguments().getNamedArguments())
+			return unwrap(expression.getList().getArguments().getNamedArguments())
 		} else if (expression.getVector()) {
             return unwrap(expression.getVector())
 		} else if (expression.getType()) {
@@ -170,28 +170,18 @@ public class XtextWrapper {
 		"[".concat(v.getExpression().getExpressions().collect { unwrap(it) }.join(", ")).concat("]")
 	}
     
+    public static unwrap(final NamedArguments args) {
+        "{".concat(args.getArguments().collect{ Argument a ->
+            a.getArgumentName().getName() + "=" + unwrap(a.getExpression())
+        }.join(", ")).concat("}")
+    }
+    
     public static unwrap(ArgumentExpression argExpr) {
         if (argExpr.getExpression()) {
             return unwrap(argExpr.getExpression())
         } else {
             throw new UnsupportedOperationException("Encountered an unhandled RandomList of an ArgumentExpression: " + argExpr.getRandomList())
         }
-    }
-	
-	private static List unnamedArgumentsToList(final UnnamedArguments args) {
-		List l = []
-		for (Argument a : args.getArguments()) {
-			l.add(unwrap(a.getExpression()))
-		}
-		return l
-	}
-    
-    private static Map namedArgumentsToMap(final NamedArguments args) {
-        Map m = [:]
-        for (Argument a : args.getArguments()) {
-            m.put(a.getArgumentName().getName(), unwrap(a.getExpression()))
-        }
-        return m
     }
 	
 }

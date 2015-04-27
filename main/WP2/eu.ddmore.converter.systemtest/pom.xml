@@ -30,14 +30,14 @@ Note that the generated output models aren't verified in terms of content, just 
         <dependency>
 	        <groupId>eu.ddmore</groupId>
 		    <artifactId>converter-mdl_json</artifactId>
-		    <version>0.0.7-SNAPSHOT</version>
+		    <version>0.0.8-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-mdl_json</artifactId>
-            <version>0.0.7-SNAPSHOT</version>
+            <version>0.0.8-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         

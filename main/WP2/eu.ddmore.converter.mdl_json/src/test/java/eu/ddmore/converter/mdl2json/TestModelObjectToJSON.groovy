@@ -95,28 +95,23 @@ class TestModelObjectToJSON extends ConverterTestsParent {
     }
     
     @Test
-    public void testVariabilityParametersBlock_WarfarinPkBov() {
-        def json = getJsonFromMDLFile("WarfarinPkBov_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+    public void testVariabilityParametersBlock_WarfarinPkSim() {
+        def json = getJsonFromMDLFile("WarfarinPkSim_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
-        def modelObject = json.warfarin_PK_BOV_mdl
+        def modelObject = json.warfarin_PK_SIM_mdl
         
         def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
         
         logger.debug(variabilityParameters)
         
-        assertEquals("Checking number of variability parameters", 12, variabilityParameters.size())
-        assertEquals("Checking variability parameter 1/12", [(Variable.NAME_KEY):'BSV_CL'], variabilityParameters[0])
-        assertEquals("Checking variability parameter 2/12", [(Variable.NAME_KEY):'BSV_V'], variabilityParameters[1])
-        assertEquals("Checking variability parameter 3/12", [(Variable.NAME_KEY):'BOV_CL'], variabilityParameters[2])
-        assertEquals("Checking variability parameter 4/12", [(Variable.NAME_KEY):'BOV_V'], variabilityParameters[3])
-        assertEquals("Checking variability parameter 5/12", [(Variable.NAME_KEY):'BOV_KA'], variabilityParameters[4])
-        assertEquals("Checking variability parameter 6/12", [(Variable.NAME_KEY):'BOV_TLAG'], variabilityParameters[5])
-        assertEquals("Checking variability parameter 7/12", [(Variable.NAME_KEY):'BSV_KA'], variabilityParameters[6])
-        assertEquals("Checking variability parameter 8/12", [(Variable.NAME_KEY):'BSV_TLAG'], variabilityParameters[7])
-        assertEquals("Checking variability parameter 9/12", [(Variable.NAME_KEY):'RUV_PROP'], variabilityParameters[8])
-        assertEquals("Checking variability parameter 10/12", [(Variable.NAME_KEY):'RUV_ADD'], variabilityParameters[9])
-        assertEquals("Checking variability parameter 11/12", [(Variable.NAME_KEY):'BOV_COV_CL_V', 'params':'[eta_BOV_CL, eta_BOV_V]', 'type':'COV'], variabilityParameters[10])
-        assertEquals("Checking variability parameter 12/12", [(Variable.NAME_KEY):'BOV_COV_KA_TLAG', 'params':'[eta_BOV_KA, eta_BOV_TLAG]', 'type':'COV'], variabilityParameters[11])
+        assertEquals("Checking number of variability parameters", 7, variabilityParameters.size())
+        assertEquals("Checking variability parameter 1/7", [(Variable.NAME_KEY):'PPV_CL'], variabilityParameters[0])
+        assertEquals("Checking variability parameter 2/7", [(Variable.NAME_KEY):'PPV_V'], variabilityParameters[1])
+        assertEquals("Checking variability parameter 3/7", [(Variable.NAME_KEY):'PPV_KA'], variabilityParameters[2])
+        assertEquals("Checking variability parameter 4/7", [(Variable.NAME_KEY):'PPV_TLAG'], variabilityParameters[3])
+        assertEquals("Checking variability parameter 5/7", [(Variable.NAME_KEY):'RUV_PROP'], variabilityParameters[4])
+        assertEquals("Checking variability parameter 6/7", [(Variable.NAME_KEY):'RUV_ADD'], variabilityParameters[5])
+        assertEquals("Checking variability parameter 7/7", [(Variable.NAME_KEY):'OMEGA', 'params':'[ETA_CL, ETA_V]', 'type':'CORR'], variabilityParameters[6])
     }
     
     @Test
@@ -198,13 +193,10 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         
         logger.debug("level=DV : " + randomVariableDefinitionsDV)
         
-        assertEquals("Checking number of random variable definitions for level=DV", 2, randomVariableDefinitionsDV.size())
-        assertEquals("[level=DV] Checking name of distribution-variable 1/2", 'eps_RUV_PROP', randomVariableDefinitionsDV[0][(Variable.NAME_KEY)])
-        assertEquals("[level=DV] Checking distribution-variable 1/2 parameters", ['mean':'0', 'var':'RUV_PROP'], randomVariableDefinitionsDV[0][Variable.RANDOMVAR_ATTRS_KEY])
-        assertEquals("[level=DV] Checking distribution-variable 1/2 type", 'Normal', randomVariableDefinitionsDV[0][Variable.RANDOMVAR_DISTRIBUTION_KEY])
-        assertEquals("[level=DV] Checking name of distribution-variable 2/2", 'eps_RUV_ADD', randomVariableDefinitionsDV[1][(Variable.NAME_KEY)])
-        assertEquals("[level=DV] Checking distribution-variable 2/2 parameters", ['mean':'0', 'var':'RUV_ADD'], randomVariableDefinitionsDV[1][Variable.RANDOMVAR_ATTRS_KEY])
-        assertEquals("[level=DV] Checking distribution-variable 2/2 type", 'Normal', randomVariableDefinitionsDV[1][Variable.RANDOMVAR_DISTRIBUTION_KEY])
+        assertEquals("Checking number of random variable definitions for level=DV", 1, randomVariableDefinitionsDV.size())
+        assertEquals("[level=DV] Checking name of distribution-variable 1/1", 'EPS_Y', randomVariableDefinitionsDV[0][(Variable.NAME_KEY)])
+        assertEquals("[level=DV] Checking distribution-variable 1/1 parameters", ['mean':'0', 'var':'1'], randomVariableDefinitionsDV[0][Variable.RANDOMVAR_ATTRS_KEY])
+        assertEquals("[level=DV] Checking distribution-variable 1/1 type", 'Normal', randomVariableDefinitionsDV[0][Variable.RANDOMVAR_DISTRIBUTION_KEY])
     }
     
     @Test
@@ -283,18 +275,17 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         logger.debug(individualVars)
         
         assertEquals("Checking number of individual variables", 4, individualVars.size())
-        
         assertEquals("Checking variable 1/4",
-            [ (Variable.NAME_KEY):'CL', (Variable.EXPRESSION_KEY):'GRPCL*exp(eta_BSV_CL+eta_BOV_CL)' ],
+            [ (Variable.NAME_KEY):'CL', 'type':'linear', 'trans':'log', 'pop':'POP_CL', 'fixEff':'{coeff=BETA_CL_WT, cov=logtWT}', 'ranEff':'[eta_BSV_CL, eta_BOV_CL]' ],
             individualVars[0])
         assertEquals("Checking variable 2/4",
-            [ (Variable.NAME_KEY):'V', (Variable.EXPRESSION_KEY):'GRPV*exp(eta_BSV_V+eta_BOV_V)' ],
+            [ (Variable.NAME_KEY):'V', 'type':'linear', 'trans':'log', 'pop':'POP_V', 'fixEff':'{coeff=BETA_V_WT, cov=logtWT}', 'ranEff':'[eta_BSV_V, eta_BOV_V]' ],
             individualVars[1])
         assertEquals("Checking variable 3/4",
-            [ (Variable.NAME_KEY):'KA', (Variable.EXPRESSION_KEY):'GRPKA*exp(eta_BSV_KA+eta_BOV_KA)' ],
+            [ (Variable.NAME_KEY):'KA', 'type':'linear', 'trans':'log', 'pop':'POP_KA', 'ranEff':'[eta_BSV_KA, eta_BOV_KA]' ],
             individualVars[2])
         assertEquals("Checking variable 4/4",
-            [ (Variable.NAME_KEY):'ALAG1', (Variable.EXPRESSION_KEY):'GRPLG*exp(eta_BSV_TLAG+eta_BOV_TLAG)' ],
+            [ (Variable.NAME_KEY):'TLAG', 'type':'linear', 'trans':'log', 'pop':'POP_TLAG', 'ranEff':'[eta_BSV_TLAG, eta_BOV_TLAG]' ],
             individualVars[3])
     }
     
@@ -351,8 +342,8 @@ class TestModelObjectToJSON extends ConverterTestsParent {
     }
     
     @Test
-    public void testObservationBlock_PkBov() {
-        def json = getJsonFromMDLFile("WarfarinPkBov_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+    public void testObservationBlock_WarfarinPkBovOAM() {
+        def json = getJsonFromMDLFile("WarfarinPkBovOAM_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_BOV_mdl
         
@@ -362,7 +353,23 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         
         assertEquals("Checking number of observations", 1, observation.size())
         assertEquals("Checking observation 1/1",
-            [ (Variable.NAME_KEY):'Y', (Variable.EXPRESSION_KEY):'CONC*(1+eps_RUV_PROP)+eps_RUV_ADD' ],
+            [ (Variable.NAME_KEY):'Y', (Variable.EXPRESSION_KEY):'CC*(1+eps_RUV_PROP)+eps_RUV_ADD' ],
+            observation[0])
+    }
+    
+    @Test
+    public void testObservationBlock_CategoricalDIST() {
+        def json = getJsonFromMDLFile("CategoricalDIST_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.Categorical_DIST_mdl
+        
+        logger.debug(modelObject)
+        
+        def observation = modelObject.OBSERVATION
+        
+        assertEquals("Checking number of observations", 1, observation.size())
+        assertEquals("Checking observation 1/1",
+            [ (Variable.NAME_KEY):'Y', 'type':'categorical', 'categories':'[0, 1, 2, 3]', 'probabilities':'[Prob0, Prob1, Prob2, Prob3]' ],
             observation[0])
     }
     
@@ -414,30 +421,34 @@ class TestModelObjectToJSON extends ConverterTestsParent {
     }
     
     @Test
-    public void testModelPredictionBlock_WarfarinPkBov() {
-        def json = getJsonFromMDLFile("WarfarinPkBov_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+    public void testModelPredictionBlockPkMacro() {
+        def json = getJsonFromMDLFile("WarfarinPkCompartments2_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
-        def modelObject = json.warfarin_PK_BOV_mdl
+        def modelObject = json.warfarin_PK_Compartments2_mdl
         
         logger.debug(modelObject)
         
         def modPred = modelObject.MODEL_PREDICTION
         
-        assertEquals("Checking number of Model Prediction items", 2, modPred.size())
+        assertEquals("Checking number of Model Prediction items", 3, modPred.size())
         final Map.Entry pkmacroSubblockMapEntry = modPred[0].entrySet().toArray()[0]
-        assertEquals("Checking that Model Prediction item 1/2 is a PKMACRO sub-block", '.PKMACRO', pkmacroSubblockMapEntry.getKey())
+        assertEquals("Checking that Model Prediction item 1/3 is a PKMACRO sub-block", '.PKMACRO', pkmacroSubblockMapEntry.getKey())
         final pkmacroSubblockItems = pkmacroSubblockMapEntry.getValue()
-        assertEquals("Checking number of Model Prediction PKMACRO sub-block items", 4, pkmacroSubblockItems.size())
-        assertEquals("Checking Model Prediction PKMACRO sub-block item 1/4", [(Variable.NAME_KEY):'DEP'], pkmacroSubblockItems[0])
-        assertEquals("Checking Model Prediction PKMACRO sub-block item 2/4", ['ka':'KA','macro':'oral','tlag':'ALAG1','to':'Ac'], pkmacroSubblockItems[1])
-        assertEquals("Checking Model Prediction PKMACRO sub-block item 3/4", [(Variable.NAME_KEY):'Ac','macro':'compartment','volume':'V'], pkmacroSubblockItems[2])
-        assertEquals("Checking Model Prediction PKMACRO sub-block item 4/4", ['cl':'CL','from':'Ac','macro':'elimination'], pkmacroSubblockItems[3])
-        assertEquals("Checking Model Prediction item 2/2", [(Variable.NAME_KEY):'CONC',(Variable.EXPRESSION_KEY):'Ac/V'], modPred[1])
+        assertEquals("Checking number of Model Prediction PKMACRO sub-block items", 7, pkmacroSubblockItems.size())
+        assertEquals("Checking Model Prediction PKMACRO sub-block item 1/7", [(Variable.NAME_KEY):'DEP1', 'macro':'iv', 'to':'CENTRAL'], pkmacroSubblockItems[0])
+        assertEquals("Checking Model Prediction PKMACRO sub-block item 2/7", [(Variable.NAME_KEY):'CENTRAL', 'macro':'compartment', 'volume':'V'], pkmacroSubblockItems[1])
+        assertEquals("Checking Model Prediction PKMACRO sub-block item 3/7", ['macro':'elimination', 'from':'CENTRAL', 'cl':'CL'], pkmacroSubblockItems[2])
+        assertEquals("Checking Model Prediction PKMACRO sub-block item 4/7", [(Variable.NAME_KEY):'GUT', 'macro':'oral', 'ka':'KA', 'p':'F1', 'to':'LATENT'], pkmacroSubblockItems[3])
+        assertEquals("Checking Model Prediction PKMACRO sub-block item 5/7", [(Variable.NAME_KEY):'LATENT', 'macro':'compartment', 'volume':'1'], pkmacroSubblockItems[4])
+        assertEquals("Checking Model Prediction PKMACRO sub-block item 6/7", ['macro':'transfer', 'from':'LATENT', 'to':'CENTRAL', 'kt':'KT'], pkmacroSubblockItems[5])
+        assertEquals("Checking Model Prediction PKMACRO sub-block item 7/7", ['macro':'elimination', 'from':'LATENT', 'k':'K1'], pkmacroSubblockItems[6])
+        assertEquals("Checking Model Prediction item 2/3", [(Variable.NAME_KEY):'SCALE',(Variable.EXPRESSION_KEY):'V'], modPred[1])
+        assertEquals("Checking Model Prediction item 3/3", [(Variable.NAME_KEY):'CC',(Variable.EXPRESSION_KEY):'CENTRAL/V'], modPred[2])
     }
 	
 	@Test
 	public void testGroupVariablesBlock() {
-        def json = getJsonFromMDLFile("WarfarinPkBov_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("WarfarinPkBovOAM_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_BOV_mdl
         

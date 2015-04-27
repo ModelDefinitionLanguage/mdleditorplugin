@@ -15,7 +15,7 @@
 
     <properties>
         <converter-nonmem.version>0.0.2-SNAPSHOT</converter-nonmem.version>
-        <mdl-converters.version>0.0.7-SNAPSHOT</mdl-converters.version>
+        <mdl-converters.version>0.0.8-SNAPSHOT</mdl-converters.version>
         <converter-toolbox.version>1.0.1-SNAPSHOT</converter-toolbox.version>
         <test-converters.version>0.0.6-SNAPSHOT</test-converters.version>
     </properties>
