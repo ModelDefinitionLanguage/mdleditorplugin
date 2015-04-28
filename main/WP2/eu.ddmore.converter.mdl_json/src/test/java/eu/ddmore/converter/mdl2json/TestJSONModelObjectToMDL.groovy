@@ -40,6 +40,8 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         / {"INDIVIDUAL_VARIABLES":[{"trans":"log","ranEff":"eta_BM0","pop":"POP_BM0",".name":"BM0","type":"linear"},{"trans":"log","ranEff":"eta_BM02","pop":"POP_BM02",".name":"BM02","type":"linear"},{"trans":"log","ranEff":"eta_BM03","pop":"POP_BM03",".name":"BM03","type":"linear"},{"trans":"log","ranEff":"eta_BM0S","pop":"POP_BM0S",".name":"BM0S","type":"linear"},{".expr":"POP_IMAX",".name":"IMAX1"},{".expr":"POP_IMAX",".name":"IMAX2"},{".expr":"POP_IMAX",".name":"IMAX3"},{".expr":"POP_IMAX",".name":"IMAXS"},{"trans":"log","ranEff":"eta_IC50","pop":"POP_IC50",".name":"IC50","type":"linear"},{"trans":"log","ranEff":"eta_IC502","pop":"POP_IC50",".name":"IC502","type":"linear"},{"trans":"log","ranEff":"eta_IC503","pop":"POP_IC50",".name":"IC503","type":"linear"},{"trans":"log","ranEff":"eta_IC50S","pop":"POP_IC50",".name":"IC50S","type":"linear"},{".expr":"POP_HILL",".name":"HILL"},{".expr":"POP_HILL2",".name":"HILL2"},{"trans":"log","ranEff":"eta_MRT_VEGFs","pop":"POP_MRT",".name":"MRT1","type":"linear"},{"trans":"log","ranEff":"eta_MRT_VEGFs","pop":"POP_MRT2",".name":"MRT2","type":"linear"},{"trans":"log","ranEff":"eta_MRT_VEGFs","pop":"POP_MRT3",".name":"MRT3","type":"linear"},{"trans":"log","ranEff":"eta_MRT_sKIT","pop":"POP_MRTS",".name":"MRTS","type":"linear"},{".expr":"POP_TVSLP\/1000",".name":"TVSLP"},{"trans":"log","ranEff":"eta_TVSLP","pop":"TVSLP",".name":"DPSLP","type":"linear"},{".expr":"POP_TVSLP\/1000",".name":"TVSLPS"},{"trans":"log","ranEff":"eta_TVSLPS","pop":"TVSLPS",".name":"DPSLPS","type":"linear"},{".expr":"1\/MRT1",".name":"KOUT"},{".expr":"1\/MRT2",".name":"KOUT2"},{".expr":"1\/MRT3",".name":"KOUT3"},{".expr":"1\/MRTS",".name":"KOUTS"},{".expr":"BM02*KOUT2",".name":"KIN2"},{".expr":"BM03*KOUT3",".name":"KIN3"}]} /
     private final static String individualVarsBlockJson_WarfarinPkBov =
         / {"INDIVIDUAL_VARIABLES":[{"fixEff":"{coeff=BETA_CL_WT, cov=logtWT}","trans":"log","ranEff":"[eta_BSV_CL, eta_BOV_CL]","pop":"POP_CL",".name":"CL","type":"linear"},{"fixEff":"{coeff=BETA_V_WT, cov=logtWT}","trans":"log","ranEff":"[eta_BSV_V, eta_BOV_V]","pop":"POP_V",".name":"V","type":"linear"},{"trans":"log","ranEff":"[eta_BSV_KA, eta_BOV_KA]","pop":"POP_KA",".name":"KA","type":"linear"},{"trans":"log","ranEff":"[eta_BSV_TLAG, eta_BOV_TLAG]","pop":"POP_TLAG",".name":"TLAG","type":"linear"}]} /
+    private final static String individualVarsBlockJson_CategoricalDIST =
+        / {"INDIVIDUAL_VARIABLES":[{".expr":"B0+EDRUG+eta_PPV_EVENT",".name":"A0"},{".expr":"B1+EDRUG+eta_PPV_EVENT",".name":"A1"},{".expr":"B2+EDRUG+eta_PPV_EVENT",".name":"A2"}]} /
     private final static String observationBlockJson_Hansson =
 		/ {"OBSERVATION":[{"eps":"eps_RES_W","trans":"log","error":"additiveError(additive=POP_RES_VEGF_ADD)","prediction":"VEGF",".name":"VEGF_obs","type":"continuous"},{"eps":"eps_RES_W","trans":"log","error":"combinedError2(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, f=sVEGFR2)","prediction":"sVEGFR2",".name":"sVEGFR2_obs","type":"continuous"},{"eps":"eps_RES_W","trans":"log","error":"additiveError(additive=POP_RES_sVEGFR3_ADD)","prediction":"sVEGFR3",".name":"sVEGFR3_obs","type":"continuous"},{"eps":"eps_RES_W","trans":"log","error":"additiveError(additive=POP_RES_sKIT_ADD)","prediction":"sKIT",".name":"sKIT_obs","type":"continuous"}]} /
     private final static String observationBlockJson_WarfarinPkBovOAM =
@@ -349,6 +351,25 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         V : {fixEff={coeff=BETA_V_WT, cov=logtWT}, pop=POP_V, ranEff=[eta_BSV_V, eta_BOV_V], trans=log, type=linear}
         KA : {pop=POP_KA, ranEff=[eta_BSV_KA, eta_BOV_KA], trans=log, type=linear}
         TLAG : {pop=POP_TLAG, ranEff=[eta_BSV_TLAG, eta_BOV_TLAG], trans=log, type=linear}
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    public void testIndividualVariablesBlock_CategoricalDIST() {
+        def json = getJson(individualVarsBlockJson_CategoricalDIST)
+
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    INDIVIDUAL_VARIABLES {
+        A0 = B0+EDRUG+eta_PPV_EVENT
+        A1 = B1+EDRUG+eta_PPV_EVENT
+        A2 = B2+EDRUG+eta_PPV_EVENT
     }
 
 }

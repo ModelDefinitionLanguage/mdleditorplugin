@@ -289,6 +289,28 @@ class TestModelObjectToJSON extends ConverterTestsParent {
             individualVars[3])
     }
     
+    @Test
+    public void testIndividualVariablesBlock_CategoricalDIST() {
+        def json = getJsonFromMDLFile("CategoricalDIST_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.Categorical_DIST_mdl
+        
+        def individualVars = modelObject.INDIVIDUAL_VARIABLES
+        
+        logger.debug(individualVars)
+        
+        assertEquals("Checking number of individual variables", 3, individualVars.size())
+        assertEquals("Checking variable 1/3",
+            [ (Variable.NAME_KEY):'A0', (Variable.EXPRESSION_KEY):'B0+EDRUG+eta_PPV_EVENT' ],
+            individualVars[0])
+        assertEquals("Checking variable 2/3",
+            [ (Variable.NAME_KEY):'A1', (Variable.EXPRESSION_KEY):'B1+EDRUG+eta_PPV_EVENT' ],
+            individualVars[1])
+        assertEquals("Checking variable 3/3",
+            [ (Variable.NAME_KEY):'A2', (Variable.EXPRESSION_KEY):'B2+EDRUG+eta_PPV_EVENT' ],
+            individualVars[2])
+    }
+    
     // This test specifically picked up a bug in XtextWrapper re a multi-part expression without brackets and having a mixture of operators
     @Test
     public void testIndividualVariablesBlockContainingComplexExpressions() {
