@@ -30,7 +30,7 @@ class TestModelObjectToJSON extends ConverterTestsParent {
     public void testCovariatesBlock() {
         def json = getJsonFromMDLFile("WarfarinAnalyticSolution_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
-        def modelObject = json.warfarin_PK_ODE_mdl
+        def modelObject = json.warfarin_PK_ANALYTIC_mdl
         
         def covariates = modelObject.COVARIATES
         
@@ -52,7 +52,7 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         logger.debug(variabilityLevels)
 
         assertEquals("Checking number of variability levels", 2, variabilityLevels.size())
-        assertEquals("Checking variability level 1/2", [(Variable.NAME_KEY):'ID', 'level':'2', 'type':'model'], variabilityLevels[0])
+        assertEquals("Checking variability level 1/2", [(Variable.NAME_KEY):'ID', 'level':'2', 'type':'parameter'], variabilityLevels[0])
         assertEquals("Checking variability level 2/2", [(Variable.NAME_KEY):'DV', 'level':'1', 'type':'observation'], variabilityLevels[1])
     }
     
@@ -66,13 +66,15 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         
         logger.debug(structuralParameters)
 
-        assertEquals("Checking number of structural parameters", 6, structuralParameters.size())
-        assertEquals("Checking structural parameter 1/6", [(Variable.NAME_KEY):'POP_CL'], structuralParameters[0])
-        assertEquals("Checking structural parameter 2/6", [(Variable.NAME_KEY):'POP_V'], structuralParameters[1])
-        assertEquals("Checking structural parameter 3/6", [(Variable.NAME_KEY):'POP_KA'], structuralParameters[2])
-        assertEquals("Checking structural parameter 4/6", [(Variable.NAME_KEY):'POP_TLAG'], structuralParameters[3])
-        assertEquals("Checking structural parameter 5/6", [(Variable.NAME_KEY):'BETA_CL_WT'], structuralParameters[4])
-        assertEquals("Checking structural parameter 6/6", [(Variable.NAME_KEY):'BETA_V_WT'], structuralParameters[5])
+        assertEquals("Checking number of structural parameters", 8, structuralParameters.size())
+        assertEquals("Checking structural parameter 1/8", [(Variable.NAME_KEY):'POP_CL'], structuralParameters[0])
+        assertEquals("Checking structural parameter 2/8", [(Variable.NAME_KEY):'POP_V'], structuralParameters[1])
+        assertEquals("Checking structural parameter 3/8", [(Variable.NAME_KEY):'POP_KA'], structuralParameters[2])
+        assertEquals("Checking structural parameter 4/8", [(Variable.NAME_KEY):'POP_TLAG'], structuralParameters[3])
+        assertEquals("Checking structural parameter 5/8", [(Variable.NAME_KEY):'BETA_CL_WT'], structuralParameters[4])
+        assertEquals("Checking structural parameter 6/8", [(Variable.NAME_KEY):'BETA_V_WT'], structuralParameters[5])
+        assertEquals("Checking structural parameter 7/8", [(Variable.NAME_KEY):'RUV_PROP'], structuralParameters[6])
+        assertEquals("Checking structural parameter 8/8", [(Variable.NAME_KEY):'RUV_ADD'], structuralParameters[7])
     }
     
     @Test
@@ -85,13 +87,11 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         
         logger.debug(variabilityParameters)
         
-        assertEquals("Checking number of variability parameters", 6, variabilityParameters.size())
-        assertEquals("Checking variability parameter 1/6", [(Variable.NAME_KEY):'PPV_CL'], variabilityParameters[0])
-        assertEquals("Checking variability parameter 2/6", [(Variable.NAME_KEY):'PPV_V'], variabilityParameters[1])
-        assertEquals("Checking variability parameter 3/6", [(Variable.NAME_KEY):'PPV_KA'], variabilityParameters[2])
-        assertEquals("Checking variability parameter 4/6", [(Variable.NAME_KEY):'PPV_TLAG'], variabilityParameters[3])
-        assertEquals("Checking variability parameter 5/6", [(Variable.NAME_KEY):'RUV_PROP'], variabilityParameters[4])
-        assertEquals("Checking variability parameter 6/6", [(Variable.NAME_KEY):'RUV_ADD'], variabilityParameters[5])
+        assertEquals("Checking number of variability parameters", 4, variabilityParameters.size())
+        assertEquals("Checking variability parameter 1/4", [(Variable.NAME_KEY):'PPV_CL'], variabilityParameters[0])
+        assertEquals("Checking variability parameter 2/4", [(Variable.NAME_KEY):'PPV_V'], variabilityParameters[1])
+        assertEquals("Checking variability parameter 3/4", [(Variable.NAME_KEY):'PPV_KA'], variabilityParameters[2])
+        assertEquals("Checking variability parameter 4/4", [(Variable.NAME_KEY):'PPV_TLAG'], variabilityParameters[3])
     }
     
     @Test
@@ -141,7 +141,7 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         
         logger.debug(randomVariableDefinitions)
         
-        assertEquals("Checking number of random variable definitions", 5, randomVariableDefinitions.size())
+        assertEquals("Checking number of random variable definitions", 4, randomVariableDefinitions.size())
         
         assertEquals("Checking name of distribution-variable 1/5", 'ETA_CL', randomVariableDefinitions[0][(Variable.NAME_KEY)])
         assertEquals("Checking distribution-variable 1/5 parameters", ['mean':'0', 'sd':'PPV_CL'], randomVariableDefinitions[0][Variable.RANDOMVAR_ATTRS_KEY])
@@ -155,8 +155,6 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         assertEquals("Checking name of distribution-variable 4/5", 'ETA_TLAG', randomVariableDefinitions[3][(Variable.NAME_KEY)])
         assertEquals("Checking distribution-variable 4/5 parameters", ['mean':'0', 'sd':'PPV_TLAG'], randomVariableDefinitions[3][Variable.RANDOMVAR_ATTRS_KEY])
         assertEquals("Checking distribution-variable 4/5 type", 'Normal', randomVariableDefinitions[3][Variable.RANDOMVAR_DISTRIBUTION_KEY])
-        assertEquals("Checking name of variable-definition 1/1", 'CORR_PPV_CL_V', randomVariableDefinitions[4][(Variable.NAME_KEY)])
-        assertEquals("Checking variable-definition 1/1", [(Variable.NAME_KEY):'CORR_PPV_CL_V', 'type':'CORR', 'rv1':'ETA_CL', 'rv2':'ETA_V'], randomVariableDefinitions[4])
     }
     
     @Test
@@ -212,10 +210,10 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         assertEquals("Checking number of individual variables", 4, individualVars.size())
         
         assertEquals("Checking variable 1/4",
-            [ (Variable.NAME_KEY):'CL', 'type':'linear', 'trans':'log', 'pop':'POP_CL', 'fixEff':'[BETA_CL_WT]', 'cov':'[logtWT]', 'ranEff':'ETA_CL' ],
+            [ (Variable.NAME_KEY):'CL', 'type':'linear', 'trans':'log', 'pop':'POP_CL', 'fixEff':'{coeff=BETA_CL_WT, cov=logtWT}', 'ranEff':'ETA_CL' ],
             individualVars[0])
         assertEquals("Checking variable 2/4",
-            [ (Variable.NAME_KEY):'V', 'type':'linear', 'trans':'log', 'pop':'POP_V', 'fixEff':'[BETA_V_WT]', 'cov':'[logtWT]', 'ranEff':'ETA_V' ],
+            [ (Variable.NAME_KEY):'V', 'type':'linear', 'trans':'log', 'pop':'POP_V', 'fixEff':'{coeff=BETA_V_WT, cov=logtWT}', 'ranEff':'ETA_V' ],
             individualVars[1])
         assertEquals("Checking variable 3/4",
             [ (Variable.NAME_KEY):'KA', 'type':'linear', 'trans':'log', 'pop':'POP_KA', 'ranEff':'ETA_KA' ],
@@ -399,7 +397,7 @@ class TestModelObjectToJSON extends ConverterTestsParent {
     public void testModelPredictionBlock_WarfarinAnalyticSolution() {
         def json = getJsonFromMDLFile("WarfarinAnalyticSolution_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
-        def modelObject = json.warfarin_PK_ODE_mdl
+        def modelObject = json.warfarin_PK_ANALYTIC_mdl
         
         logger.debug(modelObject)
         
@@ -407,9 +405,9 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         
         assertEquals("Checking number of Model Prediction items", 4, modPred.size())
         assertEquals("Checking Model Prediction item 1/4", [(Variable.NAME_KEY):'D'], modPred[0])
-        assertEquals("Checking Model Prediction item 2/4", [(Variable.NAME_KEY):'TD'], modPred[1])
+        assertEquals("Checking Model Prediction item 2/4", [(Variable.NAME_KEY):'DT'], modPred[1])
         assertEquals("Checking Model Prediction item 3/4", [(Variable.NAME_KEY):'k', (Variable.EXPRESSION_KEY):'CL/V'], modPred[2])
-        assertEquals("Checking Model Prediction item 4/4", [(Variable.NAME_KEY):'CC', (Variable.EXPRESSION_KEY):'0 when T-TD<TLAG otherwise (D/V)*(KA/(KA-k)*(exp(-k*(T-TD-TLAG)-exp(-KA*(T-TD-TLAG)))))'], modPred[3])
+        assertEquals("Checking Model Prediction item 4/4", [(Variable.NAME_KEY):'CC', (Variable.EXPRESSION_KEY):'0 when T-DT<TLAG otherwise (D/V)*(KA/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))'], modPred[3])
     }
     
     @Test

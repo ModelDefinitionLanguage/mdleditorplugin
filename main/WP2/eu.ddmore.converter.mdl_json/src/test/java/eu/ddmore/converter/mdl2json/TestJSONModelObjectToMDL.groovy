@@ -17,17 +17,17 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
     private final static String covariatesBlockJson =
         / {"COVARIATES":[{".name":"WT"},{".expr":"log(WT\/70)",".name":"logtWT"}]} /
     private final static String variabilityLevelsBlockJson =
-        / {"VARIABILITY_LEVELS":[{"level":"2",".name":"ID","type":"model"},{"level":"1",".name":"DV","type":"observation"}]} /
+        / {"VARIABILITY_LEVELS":[{"level":"2",".name":"ID","type":"parameter"},{"level":"1",".name":"DV","type":"observation"}]} /
 	private final static String structuralParametersBlockJson =
-        / {"STRUCTURAL_PARAMETERS":[{".name":"POP_CL"},{".name":"POP_V"},{".name":"POP_KA"},{".name":"POP_TLAG"},{".name":"BETA_CL_WT"},{".name":"BETA_V_WT"}]} /
+        / {"STRUCTURAL_PARAMETERS":[{".name":"POP_CL"},{".name":"POP_V"},{".name":"POP_KA"},{".name":"POP_TLAG"},{".name":"BETA_CL_WT"},{".name":"BETA_V_WT"},{".name":"RUV_PROP"},{".name":"RUV_ADD"}]} /
 	private final static String variabilityParametersBlockJson_Warfarin =
-		/ {"VARIABILITY_PARAMETERS":[{".name":"PPV_CL"},{".name":"PPV_V"},{".name":"PPV_KA"},{".name":"PPV_TLAG"},{".name":"RUV_PROP"},{".name":"RUV_ADD"}]} /
+		/ {"VARIABILITY_PARAMETERS":[{".name":"PPV_CL"},{".name":"PPV_V"},{".name":"PPV_KA"},{".name":"PPV_TLAG"}]} /
     private final static String variabilityParametersBlockJson_WarfarinPkSim =
         / {"VARIABILITY_PARAMETERS":[{".name":"PPV_CL"},{".name":"PPV_V"},{".name":"PPV_KA"},{".name":"PPV_TLAG"},{".name":"RUV_PROP"},{".name":"RUV_ADD"},{"params":"[ETA_CL, ETA_V]",".name":"OMEGA","type":"CORR"}]} /
     private final static String randomVarDefinitionBlockDVJson =
         / {"RANDOM_VARIABLE_DEFINITION(level=DV)":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"1"},".name":"EPS_Y"}]} /
     private final static String randomVarDefinitionBlockIDJson =
-        / {"RANDOM_VARIABLE_DEFINITION(level=ID)":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_CL"},".name":"ETA_CL"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_V"},".name":"ETA_V"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_KA"},".name":"ETA_KA"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_TLAG"},".name":"ETA_TLAG"},{"rv1":"ETA_CL","rv2":"ETA_V",".name":"CORR_PPV_CL_V","type":"CORR"}]} /
+        / {"RANDOM_VARIABLE_DEFINITION(level=ID)":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_CL"},".name":"ETA_CL"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_V"},".name":"ETA_V"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_KA"},".name":"ETA_KA"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_TLAG"},".name":"ETA_TLAG"}]} /
     private final static String randomVarDefinitionBlockJson_WarfarinPkBov_ID =
         / {"RANDOM_VARIABLE_DEFINITION(level=ID)":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_CL"},".name":"eta_BSV_CL"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_V"},".name":"eta_BSV_V"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_KA"},".name":"eta_BSV_KA"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_TLAG"},".name":"eta_BSV_TLAG"}]} /
     private final static String randomVarDefinitionBlockJson_WarfarinPkBov_OCC =
@@ -35,7 +35,7 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
     private final static String randomVarDefinitionBlockJson_WarfarinPkBov_DV =
         / {"RANDOM_VARIABLE_DEFINITION(level=DV)":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"1"},".name":"EPS_Y"}]} /
     private final static String individualVarsBlockJson_Warfarin =
-        / {"INDIVIDUAL_VARIABLES":[{"fixEff":"[BETA_CL_WT]","trans":"log","cov":"[logtWT]","ranEff":"ETA_CL","pop":"POP_CL",".name":"CL","type":"linear"},{"fixEff":"[BETA_V_WT]","trans":"log","cov":"[logtWT]","ranEff":"ETA_V","pop":"POP_V",".name":"V","type":"linear"},{"trans":"log","ranEff":"ETA_KA","pop":"POP_KA",".name":"KA","type":"linear"},{"trans":"log","ranEff":"ETA_TLAG","pop":"POP_TLAG",".name":"TLAG","type":"linear"}]} /
+        / {"INDIVIDUAL_VARIABLES":[{"fixEff":"{coeff=BETA_CL_WT, cov=logtWT}","trans":"log","ranEff":"ETA_CL","pop":"POP_CL",".name":"CL","type":"linear"},{"fixEff":"{coeff=BETA_V_WT, cov=logtWT}","trans":"log","ranEff":"ETA_V","pop":"POP_V",".name":"V","type":"linear"},{"trans":"log","ranEff":"ETA_KA","pop":"POP_KA",".name":"KA","type":"linear"},{"trans":"log","ranEff":"ETA_TLAG","pop":"POP_TLAG",".name":"TLAG","type":"linear"}]} /
     private final static String individualVarsBlockJson_Hansson =
         / {"INDIVIDUAL_VARIABLES":[{"trans":"log","ranEff":"eta_BM0","pop":"POP_BM0",".name":"BM0","type":"linear"},{"trans":"log","ranEff":"eta_BM02","pop":"POP_BM02",".name":"BM02","type":"linear"},{"trans":"log","ranEff":"eta_BM03","pop":"POP_BM03",".name":"BM03","type":"linear"},{"trans":"log","ranEff":"eta_BM0S","pop":"POP_BM0S",".name":"BM0S","type":"linear"},{".expr":"POP_IMAX",".name":"IMAX1"},{".expr":"POP_IMAX",".name":"IMAX2"},{".expr":"POP_IMAX",".name":"IMAX3"},{".expr":"POP_IMAX",".name":"IMAXS"},{"trans":"log","ranEff":"eta_IC50","pop":"POP_IC50",".name":"IC50","type":"linear"},{"trans":"log","ranEff":"eta_IC502","pop":"POP_IC50",".name":"IC502","type":"linear"},{"trans":"log","ranEff":"eta_IC503","pop":"POP_IC50",".name":"IC503","type":"linear"},{"trans":"log","ranEff":"eta_IC50S","pop":"POP_IC50",".name":"IC50S","type":"linear"},{".expr":"POP_HILL",".name":"HILL"},{".expr":"POP_HILL2",".name":"HILL2"},{"trans":"log","ranEff":"eta_MRT_VEGFs","pop":"POP_MRT",".name":"MRT1","type":"linear"},{"trans":"log","ranEff":"eta_MRT_VEGFs","pop":"POP_MRT2",".name":"MRT2","type":"linear"},{"trans":"log","ranEff":"eta_MRT_VEGFs","pop":"POP_MRT3",".name":"MRT3","type":"linear"},{"trans":"log","ranEff":"eta_MRT_sKIT","pop":"POP_MRTS",".name":"MRTS","type":"linear"},{".expr":"POP_TVSLP\/1000",".name":"TVSLP"},{"trans":"log","ranEff":"eta_TVSLP","pop":"TVSLP",".name":"DPSLP","type":"linear"},{".expr":"POP_TVSLP\/1000",".name":"TVSLPS"},{"trans":"log","ranEff":"eta_TVSLPS","pop":"TVSLPS",".name":"DPSLPS","type":"linear"},{".expr":"1\/MRT1",".name":"KOUT"},{".expr":"1\/MRT2",".name":"KOUT2"},{".expr":"1\/MRT3",".name":"KOUT3"},{".expr":"1\/MRTS",".name":"KOUTS"},{".expr":"BM02*KOUT2",".name":"KIN2"},{".expr":"BM03*KOUT3",".name":"KIN3"}]} /
     private final static String individualVarsBlockJson_WarfarinPkBov =
@@ -49,7 +49,7 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
     private final static String observationBlockJson_CategoricalDIST =
         / {"OBSERVATION":[{"categories":"[0, 1, 2, 3]","probabilities":"[Prob0, Prob1, Prob2, Prob3]",".name":"Y","type":"categorical"}]} /
     private final static String modelPredictionBlockJson_WarfarinAnalyticSolution =
-        / {"MODEL_PREDICTION":[{".name":"D"},{".name":"TD"},{".expr":"CL\/V",".name":"k"},{".expr":"0 when T-TD<TLAG otherwise (D\/V)*(KA\/(KA-k)*(exp(-k*(T-TD-TLAG)-exp(-KA*(T-TD-TLAG)))))",".name":"CC"}]} /
+        / {"MODEL_PREDICTION":[{".name":"D"},{".name":"DT"},{".expr":"CL\/V",".name":"k"},{".expr":"0 when T-DT<TLAG otherwise (D\/V)*(KA\/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))",".name":"CC"}]} /
     private final static String modelPredictionBlockJson_Hansson =
         / {"MODEL_PREDICTION":[{".expr":"DOSE\/CL",".name":"AUC"},{".expr":"BM0*(1+DPSLP*T)",".name":"DP1"},{".expr":"BM0S*(1+DPSLPS*T)",".name":"DPS"},{".expr":"DP1*KOUT",".name":"KIN"},{".expr":"DPS*KOUTS",".name":"KINS"},{".DEQ":[{".expr":"IMAX1*AUC^HILL\/(IC50^HILL+AUC^HILL)",".name":"EFF"},{".expr":"IMAX2*AUC^HILL2\/(IC502^HILL2+AUC^HILL2)",".name":"EFF2"},{".expr":"IMAX3*AUC\/(IC503+AUC)",".name":"EFF3"},{".expr":"IMAXS*AUC\/(IC50S+AUC)",".name":"EFFS"},{"wrt":"T","deriv":"KIN-KOUT*(1-EFF)*VEGF","init":"BM0",".name":"VEGF"},{"wrt":"T","deriv":"KIN2*(1-EFF2)-KOUT2*sVEGFR2","init":"BM02",".name":"sVEGFR2"},{"wrt":"T","deriv":"KIN3*(1-EFF3)-KOUT3*sVEGFR3","init":"BM03",".name":"sVEGFR3"},{"wrt":"T","deriv":"KINS*(1-EFFS)-KOUTS*sKIT","init":"BM0S",".name":"sKIT"}]}]} /
     private final static String modelPredictionBlockPkMacroJson =
@@ -104,7 +104,7 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         String expected = """mdlobj {
 
     VARIABILITY_LEVELS {
-        ID : {level=2, type=model}
+        ID : {level=2, type=parameter}
         DV : {level=1, type=observation}
     }
 
@@ -129,6 +129,8 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         POP_TLAG
         BETA_CL_WT
         BETA_V_WT
+        RUV_PROP
+        RUV_ADD
     }
 
 }
@@ -149,8 +151,6 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         PPV_V
         PPV_KA
         PPV_TLAG
-        RUV_PROP
-        RUV_ADD
     }
 
 }
@@ -213,7 +213,6 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         ETA_V ~ Normal(mean=0, sd=PPV_V)
         ETA_KA ~ Normal(mean=0, sd=PPV_KA)
         ETA_TLAG ~ Normal(mean=0, sd=PPV_TLAG)
-        CORR_PPV_CL_V : {rv1=ETA_CL, rv2=ETA_V, type=CORR}
     }
 
 }
@@ -283,8 +282,8 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         String expected = """mdlobj {
 
     INDIVIDUAL_VARIABLES {
-        CL : {cov=[logtWT], fixEff=[BETA_CL_WT], pop=POP_CL, ranEff=ETA_CL, trans=log, type=linear}
-        V : {cov=[logtWT], fixEff=[BETA_V_WT], pop=POP_V, ranEff=ETA_V, trans=log, type=linear}
+        CL : {fixEff={coeff=BETA_CL_WT, cov=logtWT}, pop=POP_CL, ranEff=ETA_CL, trans=log, type=linear}
+        V : {fixEff={coeff=BETA_V_WT, cov=logtWT}, pop=POP_V, ranEff=ETA_V, trans=log, type=linear}
         KA : {pop=POP_KA, ranEff=ETA_KA, trans=log, type=linear}
         TLAG : {pop=POP_TLAG, ranEff=ETA_TLAG, trans=log, type=linear}
     }
@@ -441,9 +440,9 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
 
     MODEL_PREDICTION {
         D
-        TD
+        DT
         k = CL/V
-        CC = 0 when T-TD<TLAG otherwise (D/V)*(KA/(KA-k)*(exp(-k*(T-TD-TLAG)-exp(-KA*(T-TD-TLAG)))))
+        CC = 0 when T-DT<TLAG otherwise (D/V)*(KA/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))
     }
 
 }
