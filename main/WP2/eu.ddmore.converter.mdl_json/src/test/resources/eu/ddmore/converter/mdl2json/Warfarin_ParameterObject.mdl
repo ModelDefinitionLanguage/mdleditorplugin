@@ -1,4 +1,6 @@
 warfarin_PK_ODE_par = parobj {
+    DECLARED_VARIABLES{ETA_CL ETA_V}
+
     # By default a parameter is to be estimated if fix is omitted
     STRUCTURAL {
         POP_CL : { value = 0.1, lo = 0.001 }
@@ -7,14 +9,14 @@ warfarin_PK_ODE_par = parobj {
         POP_TLAG : { value=1, lo=0.001, hi=10 }
         BETA_CL_WT : { value = 0.75, fix = true }
         BETA_V_WT : { value = 1, fix = true } 
+        RUV_PROP : { value = 0.1, lo = 0 }
+        RUV_ADD : { value = 0.1, lo = 0 } 
         } # end STRUCTURAL
     VARIABILITY {
         PPV_CL : { value = 0.1, type=SD }
         PPV_V : { value = 0.1, type=SD }
         PPV_KA : { value = 0.1, type=SD }
         PPV_TLAG : { value = 0.1, type=SD } 
-        RUV_PROP : { value = 0.1, type=SD }
-        RUV_ADD : { value = 0.1, type=SD } 
-        CORR_PPV_CL_V : { value = 0.01, type = CORR, lo = - 1.0, hi = 1.0 }
+        OMEGA : { params=[ETA_CL, ETA_V], value = [0.01], type = CORR }
     } # end VARIABILITY
 } # end of parameter object 

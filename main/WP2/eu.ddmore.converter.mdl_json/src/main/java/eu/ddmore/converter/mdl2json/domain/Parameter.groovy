@@ -21,6 +21,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 	
 	static final String STRUCTURAL = "STRUCTURAL"
 	static final String VARIABILITY = "VARIABILITY"
+    static final String DECLARED_VARIABLES = "DECLARED_VARIABLES"
 
 	public Parameter(ParameterObject paramObject) {
 		
@@ -35,7 +36,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 				setProperty(VARIABILITY, makeVariability(block.getVariabilityBlock()))
 			}
 			if (block.getDeclaredVariables()) {
-                throw new UnsupportedOperationException("Declared Variables block within Parameter Object not supported")
+                setProperty(DECLARED_VARIABLES, VariablesList.buildFromSymbolDeclarations(block.getDeclaredVariables().getVariables()))
             }
 			if (block.getPriorBlock()) {
 				throw new UnsupportedOperationException("Prior Parameters block within Parameter Object not supported yet")
@@ -57,6 +58,9 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 		if (json[VARIABILITY]) {
 			setProperty(VARIABILITY, json[VARIABILITY])
 		}
+        if (json[DECLARED_VARIABLES]) {
+            setProperty(DECLARED_VARIABLES, VariablesList.buildFromJSON(json[DECLARED_VARIABLES]))
+        }
 		
 	}
 	
@@ -231,6 +235,9 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 		def p = getProperties()
 		
 		StringBuffer mdl = new StringBuffer()
+        if (p.containsKey(DECLARED_VARIABLES)) {
+            mdl.append("\n${IDT}DECLARED_VARIABLES {\n${IDT*2}${getProperty(DECLARED_VARIABLES).toMDL()}\n${IDT}}\n")
+        }
 		if (p.containsKey(STRUCTURAL)) {
 			mdl.append("\n${IDT}STRUCTURAL {\n${IDT*2}${getProperty(STRUCTURAL).toMDL()}\n${IDT}}\n")
 		}

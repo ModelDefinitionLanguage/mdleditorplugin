@@ -11,6 +11,21 @@ import eu.ddmore.converter.mdl2json.domain.Variable
 
 class TestParameterObjectToJSON extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestParameterObjectToJSON.class)
+    
+    @Test
+    public void testDeclaredVariablesBlock() {
+        def json = getJsonFromMDLFile("Warfarin_ParameterObject.mdl")
+        
+        def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def declaredVars = parameterObject[Parameter.DECLARED_VARIABLES]
+        
+        assertEquals("Checking number of Declared Variables", 2, declaredVars.size())
+        
+        assertEquals("Checking Declared Variable 1/2", [(Variable.NAME_KEY):"ETA_CL"], declaredVars[0])
+        assertEquals("Checking Declared Variable 2/2", [(Variable.NAME_KEY):"ETA_V"], declaredVars[1])
+        
+    }
 
 	@Test
 	public void testStructuralBlock_Warfarin() {
@@ -20,25 +35,31 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 		
 		def structuralModel = parameterObject[Parameter.STRUCTURAL]
 		
-		assertEquals("Checking number of Structural parameters", 6, structuralModel.size())
+		assertEquals("Checking number of Structural parameters", 8, structuralModel.size())
 		
 		def expected_POP_CL = [ (Variable.NAME_KEY):'POP_CL', 'value':'0.1', 'lo':'0.001' ]
-		assertEquals("Checking Structural parameter 1/6", expected_POP_CL, structuralModel[0])
+		assertEquals("Checking Structural parameter 1/8", expected_POP_CL, structuralModel[0])
 		
 		def expected_POP_V = [ (Variable.NAME_KEY):'POP_V', 'value':'8', 'lo':'0.001' ]
-		assertEquals("Checking Structural parameter 2/6", expected_POP_V, structuralModel[1])
+		assertEquals("Checking Structural parameter 2/8", expected_POP_V, structuralModel[1])
 		
 		def expected_POP_KA = [ (Variable.NAME_KEY):'POP_KA', 'value':'0.362', 'lo':'0.001' ]
-		assertEquals("Checking Structural parameter 3/6", expected_POP_KA, structuralModel[2])
+		assertEquals("Checking Structural parameter 3/8", expected_POP_KA, structuralModel[2])
 
 		def expected_POP_TLAG = [ (Variable.NAME_KEY):'POP_TLAG', 'value':'1', 'lo':'0.001', 'hi':'10' ]
-		assertEquals("Checking Structural parameter 4/6", expected_POP_TLAG, structuralModel[3])
+		assertEquals("Checking Structural parameter 4/8", expected_POP_TLAG, structuralModel[3])
 
 		def expected_BETA_CL_WT = [ (Variable.NAME_KEY):'BETA_CL_WT', 'value':'0.75', 'fix':'true' ]
-		assertEquals("Checking Structural parameter 5/6", expected_BETA_CL_WT, structuralModel[4])
+		assertEquals("Checking Structural parameter 5/8", expected_BETA_CL_WT, structuralModel[4])
 
 		def expected_BETA_V_WT = [ (Variable.NAME_KEY):'BETA_V_WT', 'value':'1', 'fix':'true' ]
-		assertEquals("Checking Structural parameter 6/6", expected_BETA_V_WT, structuralModel[5])
+		assertEquals("Checking Structural parameter 6/8", expected_BETA_V_WT, structuralModel[5])
+        
+        def expected_RUV_PROP = [ (Variable.NAME_KEY):'RUV_PROP', 'value':'0.1', 'lo':'0' ]
+        assertEquals("Checking Structural parameter 7/8", expected_RUV_PROP, structuralModel[6])
+
+        def expected_RUV_ADD = [ (Variable.NAME_KEY):'RUV_ADD', 'value':'0.1', 'lo':'0' ]
+        assertEquals("Checking Structural parameter 8/8", expected_RUV_ADD, structuralModel[7])
         
 	}
     
@@ -84,28 +105,22 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
 			
 		def variabilityModel = parameterObject[Parameter.VARIABILITY]
 		
-		assertEquals("Checking the number of variables in the Variability model", 7, variabilityModel.size())
+		assertEquals("Checking the number of variables in the Variability model", 5, variabilityModel.size())
 		
 		def expected_PPV_CL = [ 'PPV_CL' : [ 'value':'0.1', 'type':'SD' ] ]
-		assertEquals("Checking Variability parameter 1/7", expected_PPV_CL, variabilityModel[0])
+		assertEquals("Checking Variability parameter 1/5", expected_PPV_CL, variabilityModel[0])
 
 		def expected_PPV_V = [ 'PPV_V' : [ 'value':'0.1', 'type':'SD' ] ]
-		assertEquals("Checking Variability parameter 2/7", expected_PPV_V, variabilityModel[1])
+		assertEquals("Checking Variability parameter 2/5", expected_PPV_V, variabilityModel[1])
 		
 		def expected_PPV_KA = [ 'PPV_KA' : [ 'value':'0.1', 'type':'SD' ] ]
-		assertEquals("Checking Variability parameter 3/7", expected_PPV_KA, variabilityModel[2])
+		assertEquals("Checking Variability parameter 3/5", expected_PPV_KA, variabilityModel[2])
 		
 		def expected_PPV_TLAG = [ 'PPV_TLAG' : [ 'value':'0.1', 'type':'SD' ] ]
-		assertEquals("Checking Variability parameter 4/7", expected_PPV_TLAG, variabilityModel[3])
+		assertEquals("Checking Variability parameter 4/5", expected_PPV_TLAG, variabilityModel[3])
 		
-		def expected_RUV_PROP = [ 'RUV_PROP' : [ 'value':'0.1', 'type':'SD' ] ]
-		assertEquals("Checking Variability parameter 5/7", expected_RUV_PROP, variabilityModel[4])
-		
-		def expected_RUV_ADD = [ 'RUV_ADD' : [ 'value':'0.1', 'type':'SD' ] ]
-		assertEquals("Checking Variability parameter 6/7", expected_RUV_ADD, variabilityModel[5])
-		
-		def expected_CORR_PPV_CL_V = [ 'CORR_PPV_CL_V' : [ 'hi':'1.0', 'lo':'-1.0', 'value':'0.01', 'type':'CORR' ] ]
-		assertEquals("Checking Variability parameter 7/7", expected_CORR_PPV_CL_V, variabilityModel[6])
+        def expected_OMEGA = [ 'OMEGA' : [ 'params':'[ETA_CL, ETA_V]', 'value':'[0.01]', 'type':'CORR' ] ]
+        assertEquals("Checking Variability parameter 5/5", expected_OMEGA, variabilityModel[4])
 		
 	}
     
@@ -152,9 +167,12 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
         def expected_BOV_CL = [ 'BOV_CL' : [ 'fix':'true', 'value':'0.1', 'type':'VAR' ] ]
         assertEquals("Checking Variability parameter 3/12", expected_BOV_CL, variabilityModel[2])
 
-        def expected_BOV_COV_CL_V = [ 'BOV_COV_CL_V' : [ 'fix':'true', 'value':'[0.01]', 'type':'COV' ] ]
-        assertEquals("Checking Variability parameter 5/12", expected_BOV_COV_CL_V, variabilityModel[4])
+        def expected_BOV_COV_CL_V = [ 'BOV_COV_CL_V' : [ 'params':'[eta_BOV_CL, eta_BOV_V]', 'type':'COV', 'value':'0.01' ] ]
+        assertEquals("Checking Variability parameter 11/12", expected_BOV_COV_CL_V, variabilityModel[10])
         
+        def expected_BOV_COV_KA_TLAG = [ 'BOV_COV_KA_TLAG' : [ 'params':'[eta_BOV_KA, eta_BOV_TLAG]', 'type':'COV', 'value':'0.01' ] ]
+        assertEquals("Checking Variability parameter 12/12", expected_BOV_COV_KA_TLAG, variabilityModel[11])
+
     }
 	
 	@Test

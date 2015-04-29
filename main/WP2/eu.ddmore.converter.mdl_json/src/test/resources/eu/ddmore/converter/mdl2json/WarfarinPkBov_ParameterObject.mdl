@@ -1,4 +1,5 @@
 warfarin_PK_BOV_par = parobj{
+DECLARED_VARIABLES{eta_BOV_CL eta_BOV_V eta_BOV_KA eta_BOV_TLAG }
 ### Parameter object
 # The parameter object defines the numerical values of the parameters with optional constraints (lo and high values) and units.
 
@@ -9,6 +10,8 @@ warfarin_PK_BOV_par = parobj{
       POP_V:{value=8, lo=0.001} # L/70kg
       POP_KA:{value=2, lo=0.001} # h-1
       POP_TLAG:{value=1, lo=0.001} # h
+      BETA_CL_WT : { value = 0.75, fix = true }
+      BETA_V_WT : { value = 1, fix = true } 
    }# end STRUCTURAL
 
    VARIABILITY{
@@ -20,19 +23,19 @@ warfarin_PK_BOV_par = parobj{
 
       BOV_CL : {type=VAR, value=0.1, fix=true}
       BOV_V : {type=VAR, value=0.1, fix=true}
-      #NK: value expects TYPE_REAL - I have not implemented yet the support for matrices
-      BOV_COV_CL_V : { type=COV, value=[0.01], fix=true }
 
       BSV_KA:{value=0.1, type=VAR}
       BSV_TLAG:{value=0.1, type=VAR}
 
       BOV_KA : {type=VAR, value=0.1}
       BOV_TLAG : {type=VAR, value=0.1}
-      BOV_COV_KA_TLAG : { type=COV, value=[0.01] }
 
       #SIGMA
       RUV_PROP:{value=0.01, type=VAR}
       RUV_ADD:{value=0.05, type=VAR} # mg/L
+
+      BOV_COV_CL_V : { type=COV, params=[eta_BOV_CL, eta_BOV_V], value=0.01} 
+      BOV_COV_KA_TLAG : { type=COV, params=[eta_BOV_KA, eta_BOV_TLAG], value=0.01 } 
 
    }# end VARIABILITY
 

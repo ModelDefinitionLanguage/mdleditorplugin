@@ -51,5 +51,4 @@ Hansson2013_par = parobj{
           
       SIGMA_RES_W:{value=1 ,type=VAR, fix=true}
    }
-   
 }
