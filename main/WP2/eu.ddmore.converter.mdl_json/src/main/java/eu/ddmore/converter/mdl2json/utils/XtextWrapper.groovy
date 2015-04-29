@@ -6,6 +6,7 @@ import org.ddmore.mdl.mdl.AndExpression
 import org.ddmore.mdl.mdl.AnyExpression
 import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.ArgumentExpression
+import org.ddmore.mdl.mdl.Arguments
 import org.ddmore.mdl.mdl.EnumType
 import org.ddmore.mdl.mdl.Expression
 import org.ddmore.mdl.mdl.ExpressionBranch
@@ -16,7 +17,6 @@ import org.ddmore.mdl.mdl.NamedArguments
 import org.ddmore.mdl.mdl.OrExpression
 import org.ddmore.mdl.mdl.PowerExpression
 import org.ddmore.mdl.mdl.UnaryExpression
-import org.ddmore.mdl.mdl.UnnamedArguments
 import org.ddmore.mdl.mdl.Vector
 import org.eclipse.emf.common.util.EList
 
@@ -35,18 +35,17 @@ public class XtextWrapper {
 		if (expression.getExpression()) {
 			return unwrap(expression.getExpression());
 		} else if (expression.getList()) {
-            // TODO: cater for unnamed arguments too?
-			return unwrap(expression.getList().getArguments().getNamedArguments())
+            return unwrap(expression.getList().getArguments())
 		} else if (expression.getVector()) {
             return unwrap(expression.getVector())
 		} else if (expression.getType()) {
 			return mdlPrinter.toStr(expression.getType())
 		}
-		throw new UnsupportedOperationException("Encountered an unhandled AnyExpression: " + expression)
+		throw new UnsupportedOperationException("Encountered an unhandled AnyExpression: " + mdlPrinter.toStr(expression))
 	}
 
 	public static unwrap(EnumType enumType) {
-		throw new UnsupportedOperationException("Encountered an unhandled EnumType: " + enumType)
+		throw new UnsupportedOperationException("Encountered an unhandled EnumType: " + mdlPrinter.toStr(enumType))
 	}
 	
 	public static unwrap(Expression expression) {
@@ -82,7 +81,7 @@ public class XtextWrapper {
 		if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
 			return unwrap(expression.getExpression().get(0))
 		}
-		throw new UnsupportedOperationException("Encountered an unhandled OrExpression: " + expression)
+		throw new UnsupportedOperationException("Encountered an unhandled OrExpression: " + mdlPrinter.toStr(expression))
 	}
 	
 	public static unwrap(LogicalExpression expression) {
@@ -93,7 +92,7 @@ public class XtextWrapper {
 		} else if (expression.getExpression1()) {
 			return unwrap(expression.getExpression1())
 		}
-		throw new UnsupportedOperationException("Encountered an unhandled LogicalExpression: " + expression)
+		throw new UnsupportedOperationException("Encountered an unhandled LogicalExpression: " + mdlPrinter.toStr(expression))
 	}
 
 	public static unwrap(AdditiveExpression expression) {
@@ -140,7 +139,7 @@ public class XtextWrapper {
 		} else if (expression.getConstant()) {
 			return expression.getConstant()
 		} else {
-			throw new UnsupportedOperationException("Encountered an unhandled UnaryExpression with unexpected content: Expression: " + expression.getExpression)
+			throw new UnsupportedOperationException("Encountered an unhandled UnaryExpression with unexpected content: " + mdlPrinter.toStr(expression))
 		}
 	}
 	
@@ -148,7 +147,7 @@ public class XtextWrapper {
 		if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
 			return unwrap(expression.getExpression().get(0))
 		}
-		throw new UnsupportedOperationException("Encountered an unhandled AndExpression: " + expression)
+		throw new UnsupportedOperationException("Encountered an unhandled AndExpression: " + mdlPrinter.toStr(expression))
 	}
 	
 	public static unwrap(FunctionCall fc) {
@@ -167,8 +166,24 @@ public class XtextWrapper {
 	}
 	
 	public static unwrap(Vector v) {
-		"[".concat(v.getExpression().getExpressions().collect { unwrap(it) }.join(", ")).concat("]")
+        if (v.getExpression().getExpressions()) {
+            return "[".concat(v.getExpression().getExpressions().collect { Expression expr ->
+                unwrap(expr)
+            }.join(", ")).concat("]")
+        } else {
+            return "[".concat(v.getExpression().getLists().collect {  org.ddmore.mdl.mdl.List lst ->
+                unwrap(lst.getArguments())
+            }.join(", ")).concat("]")
+        }
 	}
+    
+    public static unwrap(final Arguments args) {
+        if (args.getNamedArguments()) {
+            return unwrap(args.getNamedArguments())
+        } else {
+            throw new UnsupportedOperationException("Encountered unhandled UnnamedArguments: " + mdlPrinter.toStr(args))
+        }
+    }
     
     public static unwrap(final NamedArguments args) {
         "{".concat(args.getArguments().collect{ Argument a ->
@@ -180,7 +195,7 @@ public class XtextWrapper {
         if (argExpr.getExpression()) {
             return unwrap(argExpr.getExpression())
         } else {
-            throw new UnsupportedOperationException("Encountered an unhandled RandomList of an ArgumentExpression: " + argExpr.getRandomList())
+            throw new UnsupportedOperationException("Encountered an unhandled RandomList of an ArgumentExpression: " + mdlPrinter.toStr(argExpr.getRandomList()))
         }
     }
 	

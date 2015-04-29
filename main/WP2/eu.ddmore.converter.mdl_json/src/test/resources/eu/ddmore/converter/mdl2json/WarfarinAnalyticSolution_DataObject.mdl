@@ -1,16 +1,16 @@
-warfarin_PK_ODE_dat = dataobj{
-
-    DECLARED_VARIABLES{ Y D } 
+warfarin_PK_v2_dat = dataobj{
+    DECLARED_VARIABLES{ Y D }
     
     DATA_INPUT_VARIABLES {
         ID : { use=id }
         TIME : { use=idv }
         WT : { use = covariate }
         AGE : { use = covariate }
-        SEX : { use=covariate, type=categorical(male, female), define={male = 0, female = 1} }
-        AMT : { use = amt , cmpt = D}
+        SEX : { use=covariate, type=categorical(male, female), 
+                define=[{category=male, value=0}, {category=female,value=1}]}
+        AMT : { use = amt , define = D }
         DVID : { use = dvid }
-        DV : { use = dv, prediction=Y when DVID==1;}
+        DV : { use = dv, define = Y }
         MDV : { use = mdv}
     }
 
@@ -19,10 +19,10 @@ warfarin_PK_ODE_dat = dataobj{
         }
     
     SOURCE {
-        file = "warfarin_conc_pca.csv"
+        file = "warfarin_conc_v2.csv"
         inputformat = nonmemFormat 
-        ignore = "#" ## ?? implementation ??
+        ignore = "#" 
 #       header = true  # or false
-#       skip =  0  ##  << integer >>
+#       skip =  0  ##  << integer >> Skips number of rows before header / data
     } # end SOURCE
 } # end data object

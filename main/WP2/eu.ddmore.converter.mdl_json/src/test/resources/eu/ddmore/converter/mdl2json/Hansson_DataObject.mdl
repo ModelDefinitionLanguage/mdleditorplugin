@@ -1,25 +1,24 @@
 Hansson2013_data = dataobj{
-
     DECLARED_VARIABLES{
+        DOSE
         VEGF_obs
         VEGFR2_obs
         VEGFR3_obs 
         SKIT_obs
     } 
-    
+
    DATA_INPUT_VARIABLES{
       ID : { use=id }
-      CYCL : { type=categorical } 
+      CYCL : { type=categorical }
       TIME : { use=idv, units="h" }
       DAYS : { type=continuous, units="day" }
-      DV : { use=dv, prediction= VEGF_obs when FLAG==5,
-                                 VEGFR2_obs when FLAG==6,
-                                 VEGFR3_obs when FLAG==7,
-                                 SKIT_obs when FLAG==8 ; }
-      FLAG : { type=categorical } # 1=Dose ; 4=Tumor size (SLD); 5=VEGF ; 6=VEGFR2 ; 7=VEGFR3 ; 8=SKIT
-      
+      DV : { use=dv, define = [{pred=VEGF_obs, predID=5},
+                {pred=sVEGFR2_obs, predID=6},
+                {pred=sVEGFR3_obs, predID=7},
+                {pred=sKIT_obs, predID=8}]  }
+      FLAG : { use=dvid } # 1=Dose ; 4=Tumor size (SLD); 5=VEGF ; 6=VEGFR2 ; 7=VEGFR3 ; 8=SKIT
       DVX : { type=continuous, units="mg/L" }
-      DOS : { use=amt, units="mg" }
+      DOS : { use=amt, define=DOSE }
       PLA : { type=categorical } # placebo=1, treated=0
       CL : { use=covariate, type=continuous, units="L/h"}
       EVID : { type=categorical }
