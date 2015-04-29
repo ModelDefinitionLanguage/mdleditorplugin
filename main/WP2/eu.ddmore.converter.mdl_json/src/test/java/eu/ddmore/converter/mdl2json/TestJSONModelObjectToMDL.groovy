@@ -14,8 +14,10 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
 	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
     private final static String independentVariablesBlockJson =
         / {"IDV":[{".name":"T"}]} /
-    private final static String covariatesBlockJson =
+    private final static String covariatesBlockJson_WarfarinAnalyticSolution =
         / {"COVARIATES":[{".name":"WT"},{".expr":"log(WT\/70)",".name":"logtWT"}]} /
+    private final static String covariatesBlockJson_WarfarinPkSexage =
+        / {"COVARIATES":[{".name":"WT"},{".name":"AGE"},{".expr":"AGE-40",".name":"tAGE"},{".expr":"log(WT\/70)",".name":"logtWT"},{".name":"SEX","type":"categorical(female, male, MISSING)"}]} /
     private final static String variabilityLevelsBlockJson =
         / {"VARIABILITY_LEVELS":[{"level":"2",".name":"ID","type":"parameter"},{"level":"1",".name":"DV","type":"observation"}]} /
 	private final static String structuralParametersBlockJson =
@@ -42,6 +44,8 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         / {"INDIVIDUAL_VARIABLES":[{"fixEff":"{coeff=BETA_CL_WT, cov=logtWT}","trans":"log","ranEff":"[eta_BSV_CL, eta_BOV_CL]","pop":"POP_CL",".name":"CL","type":"linear"},{"fixEff":"{coeff=BETA_V_WT, cov=logtWT}","trans":"log","ranEff":"[eta_BSV_V, eta_BOV_V]","pop":"POP_V",".name":"V","type":"linear"},{"trans":"log","ranEff":"[eta_BSV_KA, eta_BOV_KA]","pop":"POP_KA",".name":"KA","type":"linear"},{"trans":"log","ranEff":"[eta_BSV_TLAG, eta_BOV_TLAG]","pop":"POP_TLAG",".name":"TLAG","type":"linear"}]} /
     private final static String individualVarsBlockJson_CategoricalDIST =
         / {"INDIVIDUAL_VARIABLES":[{".expr":"B0+EDRUG+eta_PPV_EVENT",".name":"A0"},{".expr":"B1+EDRUG+eta_PPV_EVENT",".name":"A1"},{".expr":"B2+EDRUG+eta_PPV_EVENT",".name":"A2"}]} /
+    private final static String individualVarsBlockJson_WarfarinPkSexage =
+        / {"INDIVIDUAL_VARIABLES":[{"fixEff":"[{coeff=BETA_CL_WT, cov=logtWT}, {coeff=POP_FCL_FEM, cov=FCLSEX}, {coeff=BETA_CL_AGE, cov=tAGE}]","trans":"log","ranEff":"ETA_CL","pop":"POP_CL",".name":"CL","type":"linear"},{"fixEff":"{coeff=BETA_V_WT, cov=logtWT}","trans":"log","ranEff":"ETA_V","pop":"POP_V",".name":"V","type":"linear"},{"trans":"log","ranEff":"ETA_KA","pop":"POP_KA",".name":"KA","type":"linear"},{"trans":"log","ranEff":"ETA_TLAG","pop":"POP_TLAG",".name":"TLAG","type":"linear"}]} /
     private final static String observationBlockJson_Hansson =
 		/ {"OBSERVATION":[{"eps":"eps_RES_W","trans":"log","error":"additiveError(additive=POP_RES_VEGF_ADD)","prediction":"VEGF",".name":"VEGF_obs","type":"continuous"},{"eps":"eps_RES_W","trans":"log","error":"combinedError2(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, f=sVEGFR2)","prediction":"sVEGFR2",".name":"sVEGFR2_obs","type":"continuous"},{"eps":"eps_RES_W","trans":"log","error":"additiveError(additive=POP_RES_sVEGFR3_ADD)","prediction":"sVEGFR3",".name":"sVEGFR3_obs","type":"continuous"},{"eps":"eps_RES_W","trans":"log","error":"additiveError(additive=POP_RES_sKIT_ADD)","prediction":"sKIT",".name":"sKIT_obs","type":"continuous"}]} /
     private final static String observationBlockJson_WarfarinPkBovOAM =
@@ -54,8 +58,10 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         / {"MODEL_PREDICTION":[{".expr":"DOSE\/CL",".name":"AUC"},{".expr":"BM0*(1+DPSLP*T)",".name":"DP1"},{".expr":"BM0S*(1+DPSLPS*T)",".name":"DPS"},{".expr":"DP1*KOUT",".name":"KIN"},{".expr":"DPS*KOUTS",".name":"KINS"},{".DEQ":[{".expr":"IMAX1*AUC^HILL\/(IC50^HILL+AUC^HILL)",".name":"EFF"},{".expr":"IMAX2*AUC^HILL2\/(IC502^HILL2+AUC^HILL2)",".name":"EFF2"},{".expr":"IMAX3*AUC\/(IC503+AUC)",".name":"EFF3"},{".expr":"IMAXS*AUC\/(IC50S+AUC)",".name":"EFFS"},{"wrt":"T","deriv":"KIN-KOUT*(1-EFF)*VEGF","init":"BM0",".name":"VEGF"},{"wrt":"T","deriv":"KIN2*(1-EFF2)-KOUT2*sVEGFR2","init":"BM02",".name":"sVEGFR2"},{"wrt":"T","deriv":"KIN3*(1-EFF3)-KOUT3*sVEGFR3","init":"BM03",".name":"sVEGFR3"},{"wrt":"T","deriv":"KINS*(1-EFFS)-KOUTS*sKIT","init":"BM0S",".name":"sKIT"}]}]} /
     private final static String modelPredictionBlockPkMacroJson =
         / {"MODEL_PREDICTION":[{".PKMACRO":[{"to":"CENTRAL","macro":"iv",".name":"DEP1"},{"macro":"compartment","volume":"V",".name":"CENTRAL"},{"macro":"elimination","cl":"CL","from":"CENTRAL"},{"to":"LATENT","macro":"oral","p":"F1","ka":"KA",".name":"GUT"},{"macro":"compartment","volume":"1",".name":"LATENT"},{"to":"CENTRAL","macro":"transfer","kt":"KT","from":"LATENT"},{"macro":"elimination","from":"LATENT","k":"K1"}]},{".expr":"V",".name":"SCALE"},{".expr":"CENTRAL\/V",".name":"CC"}]} /
-    private final static String groupVariablesBlockJson =
+    private final static String groupVariablesBlockJson_WarfarinPkBovOAM =
         / {"GROUP_VARIABLES":[{".expr":"POP_CL*(WT\/70)^0.75",".name":"GRPCL"},{".expr":"POP_V*WT\/70",".name":"GRPV"},{".expr":"POP_KA",".name":"GRPKA"},{".expr":"POP_TLAG",".name":"GRPLG"}]} /
+    private final static String groupVariablesBlockJson_WarfarinPkSexage =
+        / {"GROUP_VARIABLES":[{".expr":"1 when SEX==female otherwise 0",".name":"FCLSEX"}]} /
 
     @Test
     public void testIndependentVariablesBlock() {
@@ -76,9 +82,9 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
     }
     
     @Test
-    public void testCovariatesBlock() {
+    public void testCovariatesBlock_WarfarinAnalyticSolution() {
 
-        def json = getJson(covariatesBlockJson)
+        def json = getJson(covariatesBlockJson_WarfarinAnalyticSolution)
 
         def modelObj = new Model(json)
         
@@ -87,6 +93,28 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
     COVARIATES {
         WT
         logtWT = log(WT/70)
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    public void testCovariatesBlock_WarfarinPkSexage() {
+
+        def json = getJson(covariatesBlockJson_WarfarinPkSexage)
+
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    COVARIATES {
+        WT
+        AGE
+        tAGE = AGE-40
+        logtWT = log(WT/70)
+        SEX : {type=categorical(female, male, MISSING)}
     }
 
 }
@@ -376,6 +404,26 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
         assertEquals(expected, modelObj.toMDL())
     }
     
+    @Test
+    public void testIndividualVariablesBlock_WarfarinPkSexage() {
+        def json = getJson(individualVarsBlockJson_WarfarinPkSexage)
+
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    INDIVIDUAL_VARIABLES {
+        CL : {fixEff=[{coeff=BETA_CL_WT, cov=logtWT}, {coeff=POP_FCL_FEM, cov=FCLSEX}, {coeff=BETA_CL_AGE, cov=tAGE}], pop=POP_CL, ranEff=ETA_CL, trans=log, type=linear}
+        V : {fixEff={coeff=BETA_V_WT, cov=logtWT}, pop=POP_V, ranEff=ETA_V, trans=log, type=linear}
+        KA : {pop=POP_KA, ranEff=ETA_KA, trans=log, type=linear}
+        TLAG : {pop=POP_TLAG, ranEff=ETA_TLAG, trans=log, type=linear}
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
 	@Test
 	public void testObservationBlock_Hansson() {
 		def json = getJson(observationBlockJson_Hansson)
@@ -511,8 +559,8 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
     }
 	
 	@Test
-	public void testGroupVariablesBlock() {
-        def json = getJson(groupVariablesBlockJson)
+	public void testGroupVariablesBlock_WarfarinPkBovOAM() {
+        def json = getJson(groupVariablesBlockJson_WarfarinPkBovOAM)
         
         def modelObj = new Model(json)
         
@@ -529,5 +577,22 @@ class TestJSONModelObjectToMDL extends ConverterTestsParent {
 """
         assertEquals(expected, modelObj.toMDL())
 	}
+    
+    @Test
+    public void testGroupVariablesBlock_WarfarinPkSexage() {
+        def json = getJson(groupVariablesBlockJson_WarfarinPkSexage)
+        
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    GROUP_VARIABLES {
+        FCLSEX = 1 when SEX==female otherwise 0
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())
+    }
 	
 }

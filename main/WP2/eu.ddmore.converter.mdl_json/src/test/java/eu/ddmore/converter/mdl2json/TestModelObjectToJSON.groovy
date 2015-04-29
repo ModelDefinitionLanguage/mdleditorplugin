@@ -27,7 +27,7 @@ class TestModelObjectToJSON extends ConverterTestsParent {
     }
     
     @Test
-    public void testCovariatesBlock() {
+    public void testCovariatesBlock_WarfarinAnalyticSolution() {
         def json = getJsonFromMDLFile("WarfarinAnalyticSolution_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_ANALYTIC_mdl
@@ -39,6 +39,24 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         assertEquals("Checking number of covariates", 2, covariates.size())
         assertEquals("Checking covariate 1/2", [(Variable.NAME_KEY):'WT'], covariates[0])
         assertEquals("Checking covariate 2/2", [(Variable.NAME_KEY):'logtWT', (Variable.EXPRESSION_KEY):'log(WT/70)'], covariates[1])
+    }
+    
+    @Test
+    public void testCovariatesBlock_WarfarinPkSexage() {
+        def json = getJsonFromMDLFile("WarfarinPkSexage_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.warfarin_PK_SEXAGE_mdl
+        
+        def covariates = modelObject.COVARIATES
+        
+        logger.debug(covariates)
+
+        assertEquals("Checking number of covariates", 5, covariates.size())
+        assertEquals("Checking covariate 1/5", [(Variable.NAME_KEY):'WT'], covariates[0])
+        assertEquals("Checking covariate 2/5", [(Variable.NAME_KEY):'AGE'], covariates[1])
+        assertEquals("Checking covariate 3/5", [(Variable.NAME_KEY):'tAGE', (Variable.EXPRESSION_KEY):'AGE-40'], covariates[2])
+        assertEquals("Checking covariate 4/5", [(Variable.NAME_KEY):'logtWT', (Variable.EXPRESSION_KEY):'log(WT/70)'], covariates[3])
+        assertEquals("Checking covariate 5/5", [(Variable.NAME_KEY):'SEX', 'type':'categorical(female, male, MISSING)'], covariates[4])
     }
     
     @Test
@@ -309,6 +327,22 @@ class TestModelObjectToJSON extends ConverterTestsParent {
             individualVars[2])
     }
     
+    @Test
+    public void testIndividualVariablesBlock_WarfarinPkSexage() {
+        def json = getJsonFromMDLFile("WarfarinPkSexage_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.warfarin_PK_SEXAGE_mdl
+        
+        def individualVars = modelObject.INDIVIDUAL_VARIABLES
+        
+        logger.debug(individualVars)
+        
+        assertEquals("Checking number of individual variables", 4, individualVars.size())
+        assertEquals("Checking variable 1/4",
+            [ (Variable.NAME_KEY):'CL', 'type':'linear', 'trans':'log', 'pop':'POP_CL', 'fixEff':'[{coeff=BETA_CL_WT, cov=logtWT}, {coeff=POP_FCL_FEM, cov=FCLSEX}, {coeff=BETA_CL_AGE, cov=tAGE}]', 'ranEff':'ETA_CL'],
+            individualVars[0])
+    }
+    
     // This test specifically picked up a bug in XtextWrapper re a multi-part expression without brackets and having a mixture of operators
     @Test
     public void testIndividualVariablesBlockContainingComplexExpressions() {
@@ -467,7 +501,7 @@ class TestModelObjectToJSON extends ConverterTestsParent {
     }
 	
 	@Test
-	public void testGroupVariablesBlock() {
+	public void testGroupVariablesBlock_WarfarinPkBovOAM() {
         def json = getJsonFromMDLFile("WarfarinPkBovOAM_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_BOV_mdl
@@ -482,5 +516,19 @@ class TestModelObjectToJSON extends ConverterTestsParent {
         assertEquals("Checking Group Variable 3/4", [(Variable.NAME_KEY):'GRPKA', (Variable.EXPRESSION_KEY):'POP_KA'], groupVars[2])
         assertEquals("Checking Group Variable 4/4", [(Variable.NAME_KEY):'GRPLG', (Variable.EXPRESSION_KEY):'POP_TLAG'], groupVars[3])
 	}
+    
+    @Test
+    public void testGroupVariablesBlock_WarfarinPkSexage() {
+        def json = getJsonFromMDLFile("WarfarinPkSexage_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.warfarin_PK_SEXAGE_mdl
+        
+        logger.debug(modelObject)
+        
+        def groupVars = modelObject.GROUP_VARIABLES
+        
+        assertEquals("Checking number of Group Variables", 1, groupVars.size())
+        assertEquals("Checking Group Variable 1/1", [(Variable.NAME_KEY):'FCLSEX', (Variable.EXPRESSION_KEY):'1 when SEX==female otherwise 0'], groupVars[0])
+    }
 	
 }
