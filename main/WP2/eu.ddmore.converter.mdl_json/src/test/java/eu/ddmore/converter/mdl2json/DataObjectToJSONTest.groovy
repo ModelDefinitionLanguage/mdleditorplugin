@@ -8,8 +8,8 @@ import org.junit.Test
 import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.converter.mdl2json.domain.Variable
 
-class TestDataObjectToJSON extends ConverterTestsParent  {
-	private static Logger logger = Logger.getLogger(TestDataObjectToJSON.class)
+class DataObjectToJSONTest extends ConverterTestsParent  {
+	private static Logger logger = Logger.getLogger(DataObjectToJSONTest.class)
 		
 	@Test
 	public void testSourceBlock() {

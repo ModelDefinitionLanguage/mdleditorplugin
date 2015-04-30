@@ -13,8 +13,8 @@ import org.ddmore.mdl.mdl.Mcl
 import org.junit.Ignore
 import org.junit.Test;
 
-class TestJSONDataObjectToMDL extends ConverterTestsParent {
-	private static Logger logger = Logger.getLogger(TestJSONDataObjectToMDL.class)
+class JSONDataObjectToMDLTest extends ConverterTestsParent {
+	private static Logger logger = Logger.getLogger(JSONDataObjectToMDLTest.class)
 	
 	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes 
 	private String sourceBlockJson =

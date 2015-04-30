@@ -9,8 +9,8 @@ import org.junit.Test
 import eu.ddmore.converter.mdl2json.domain.Mog
 import eu.ddmore.converter.mdl2json.domain.Task
 
-class TestMogObjectToJSON extends ConverterTestsParent {
-	private static Logger logger = Logger.getLogger(TestMogObjectToJSON.class)
+class MogObjectToJSONTest extends ConverterTestsParent {
+	private static Logger logger = Logger.getLogger(MogObjectToJSONTest.class)
 	
     @Test
     public void testObjectsBlock() {

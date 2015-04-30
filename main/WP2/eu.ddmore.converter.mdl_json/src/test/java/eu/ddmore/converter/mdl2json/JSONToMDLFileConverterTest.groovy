@@ -24,8 +24,8 @@ import java.io.File;
  * <p>
  * Ultimately this would be an automated integration test... DDMORE-845.
  */
-class TestJSONToMDLFileConverter extends ConverterTestsParent {
-	private static Logger logger = Logger.getLogger(TestJSONToMDLFileConverter.class)
+class JSONToMDLFileConverterTest extends ConverterTestsParent {
+	private static Logger logger = Logger.getLogger(JSONToMDLFileConverterTest.class)
 	
 	/**
 	 * Converting a MDL file to JSON then back to MDL should give rise to syntactically and

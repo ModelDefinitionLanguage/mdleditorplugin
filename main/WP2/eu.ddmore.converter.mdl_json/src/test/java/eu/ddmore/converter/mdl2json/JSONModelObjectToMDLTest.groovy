@@ -8,8 +8,8 @@ import org.junit.Test
 import eu.ddmore.converter.mdl2json.domain.Model
 
 
-class TestJSONModelObjectToMDL extends ConverterTestsParent {
-	private static final Logger logger = Logger.getLogger(TestJSONModelObjectToMDL.class)
+class JSONModelObjectToMDLTest extends ConverterTestsParent {
+	private static final Logger logger = Logger.getLogger(JSONModelObjectToMDLTest.class)
 	
 	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
     private final static String independentVariablesBlockJson =
