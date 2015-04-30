@@ -1,4 +1,6 @@
 warfarin_PK_SEXAGE_mdl = mdlobj {
+    IDV { TIME }
+    
     COVARIATES{
         WT
         AGE
@@ -21,6 +23,8 @@ warfarin_PK_SEXAGE_mdl = mdlobj {
         BETA_CL_AGE
         BETA_V_WT
         POP_FCL_FEM
+        RUV_PROP
+        RUV_ADD
     } # end STRUCTURAL_PARAMETERS
     
     VARIABILITY_PARAMETERS {
@@ -28,8 +32,6 @@ warfarin_PK_SEXAGE_mdl = mdlobj {
         PPV_V
         PPV_KA
         PPV_TLAG
-        RUV_PROP
-        RUV_ADD
     } # end VARIABILITY_PARAMETERS 
 
     RANDOM_VARIABLE_DEFINITION(level=ID) {
@@ -57,7 +59,7 @@ warfarin_PK_SEXAGE_mdl = mdlobj {
     
     MODEL_PREDICTION {
         DEQ {  
-        RATEIN = GUT * KA when T >= TLAG otherwise 0
+        RATEIN = GUT * KA when TIME >= TLAG otherwise 0
         GUT : { deriv =(- RATEIN), init = 0, x0 = 0 }
             CENTRAL : { deriv =(RATEIN - CL * CENTRAL / V), init = 0, x0 = 0 } 
         } # end DEQ block
