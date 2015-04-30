@@ -1,5 +1,5 @@
 warfarin_PK_BOV_mdl = mdlobj{
-   IDV { T }
+   IDV { TIME }
 
    COVARIATES{
     WT
@@ -20,6 +20,8 @@ warfarin_PK_BOV_mdl = mdlobj{
       POP_TLAG
       BETA_CL_WT
       BETA_V_WT
+      RUV_PROP
+      RUV_ADD
    }# end STRUCTURAL_PARAMETERS
 
    VARIABILITY_PARAMETERS{
@@ -32,9 +34,6 @@ warfarin_PK_BOV_mdl = mdlobj{
       BOV_TLAG
       BSV_KA
       BSV_TLAG
-      #SIGMA
-      RUV_PROP
-      RUV_ADD
    }# end VARIABILITY_PARAMETERS
 
    RANDOM_VARIABLE_DEFINITION(level=ID){
@@ -53,15 +52,15 @@ warfarin_PK_BOV_mdl = mdlobj{
 
    INDIVIDUAL_VARIABLES{
       # Individual parameters
-      CL : { type = linear, trans = log, pop = POP_CL, fixEff = {coeff=BETA_CL_WT, cov=logtWT} , ranEff=[eta_BSV_CL,eta_BOV_CL]}
-      V : { type = linear, trans = log, pop = POP_V, fixEff = {coeff=BETA_V_WT, cov=logtWT} , ranEff=[eta_BSV_V,eta_BOV_V] }
-      KA : { type = linear, trans = log, pop = POP_KA, ranEff = [eta_BSV_KA,eta_BOV_KA] }
-      TLAG : { type = linear, trans = log, pop = POP_TLAG, ranEff = [eta_BSV_TLAG,eta_BOV_TLAG] } 
+      CL : { type = linear, trans = log, pop = POP_CL, fixEff = {coeff=BETA_CL_WT, cov=logtWT} , ranEff=[eta_BSV_CL, eta_BOV_CL]}
+      V : { type = linear, trans = log, pop = POP_V, fixEff = {coeff=BETA_V_WT, cov=logtWT} , ranEff=[eta_BSV_V, eta_BOV_V] }
+      KA : { type = linear, trans = log, pop = POP_KA, ranEff = [eta_BSV_KA, eta_BOV_KA] }
+      TLAG : { type = linear, trans = log, pop = POP_TLAG, ranEff = [eta_BSV_TLAG, eta_BOV_TLAG] } 
       }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{
         DEQ {  
-            RATEIN = GUT * KA when T >= TLAG otherwise 0
+            RATEIN = GUT * KA when TIME >= TLAG otherwise 0
             GUT : { deriv =(- RATEIN), init = 0, x0 = 0 }
             CENTRAL : { deriv =(RATEIN - CL * CENTRAL / V), init = 0, x0 = 0 } 
         } # end DEQ block
@@ -78,4 +77,3 @@ warfarin_PK_BOV_mdl = mdlobj{
     } # end OBSERVATION
 
 } # end of model object
-

@@ -1,5 +1,5 @@
 warfarin_PK_ANALYTIC_mdl = mdlobj {
-#   IDV { T }
+    IDV { T }
 
     VARIABILITY_LEVELS{
         ID : { level=2, type=parameter }
@@ -18,6 +18,8 @@ warfarin_PK_ANALYTIC_mdl = mdlobj {
         POP_TLAG
         BETA_CL_WT
         BETA_V_WT
+        RUV_PROP
+        RUV_ADD
     } # end STRUCTURAL_PARAMETERS
     
     VARIABILITY_PARAMETERS {
@@ -25,8 +27,6 @@ warfarin_PK_ANALYTIC_mdl = mdlobj {
         PPV_V
         PPV_KA
         PPV_TLAG
-        RUV_PROP
-        RUV_ADD
     } # end VARIABILITY_PARAMETERS 
     
     RANDOM_VARIABLE_DEFINITION(level=ID) {
@@ -37,8 +37,8 @@ warfarin_PK_ANALYTIC_mdl = mdlobj {
     } # end RANDOM_VARIABLE_DEFINITION 
     
     INDIVIDUAL_VARIABLES { # This maps to the "Type 3" individual parameter definition in PharmML
-        CL : { type = linear, trans = log, pop = POP_CL, fixEff = {coeff=BETA_CL_WT , covar = logtWT }, ranEff = ETA_CL }
-        V : { type = linear, trans = log, pop = POP_V, fixEff =  {coeff=BETA_V_WT , covar = logtWT } , ranEff = ETA_V }
+        CL : { type = linear, trans = log, pop = POP_CL, fixEff = {coeff=BETA_CL_WT , cov = logtWT }, ranEff = ETA_CL }
+        V : { type = linear, trans = log, pop = POP_V, fixEff =  {coeff=BETA_V_WT , cov = logtWT } , ranEff = ETA_V }
         KA : { type = linear, trans = log, pop = POP_KA, ranEff = ETA_KA }
         TLAG : { type = linear, trans = log, pop = POP_TLAG, ranEff = ETA_TLAG } 
     } # end INDIVIDUAL_VARIABLES

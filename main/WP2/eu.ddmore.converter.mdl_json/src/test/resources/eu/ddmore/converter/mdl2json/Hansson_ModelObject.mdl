@@ -151,7 +151,7 @@ Hansson2013_mdl = mdlobj{
                            prediction=VEGF, eps=eps_RES_W}
       
       sVEGFR2_obs : {type=continuous, trans=log,
-                   error=combinedError2(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP,f=sVEGFR2),
+                   error=combinedError3(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP,f=sVEGFR2),
                 prediction=sVEGFR2, eps=eps_RES_W}
 
       sVEGFR3_obs : {type=continuous, trans=log,

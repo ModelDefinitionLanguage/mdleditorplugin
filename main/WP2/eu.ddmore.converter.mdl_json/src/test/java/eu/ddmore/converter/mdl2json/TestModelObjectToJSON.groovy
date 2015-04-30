@@ -385,7 +385,7 @@ class TestModelObjectToJSON extends ConverterTestsParent {
             [ (Variable.NAME_KEY):'VEGF_obs', 'type':'continuous', 'trans':'log', 'error':'additiveError(additive=POP_RES_VEGF_ADD)', 'prediction':'VEGF', 'eps':'eps_RES_W' ],
             observation[0])
         assertEquals("Checking observation 2/4",
-            [ (Variable.NAME_KEY):'sVEGFR2_obs', 'type':'continuous', 'trans':'log', 'error':'combinedError2(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, f=sVEGFR2)', 'prediction':'sVEGFR2', 'eps':'eps_RES_W' ],
+            [ (Variable.NAME_KEY):'sVEGFR2_obs', 'type':'continuous', 'trans':'log', 'error':'combinedError3(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, f=sVEGFR2)', 'prediction':'sVEGFR2', 'eps':'eps_RES_W' ],
             observation[1])
         assertEquals("Checking observation 3/4",
             [ (Variable.NAME_KEY):'sVEGFR3_obs', 'type':'continuous', 'trans':'log', 'error':'additiveError(additive=POP_RES_sVEGFR3_ADD)', 'prediction':'sVEGFR3', 'eps':'eps_RES_W' ],
