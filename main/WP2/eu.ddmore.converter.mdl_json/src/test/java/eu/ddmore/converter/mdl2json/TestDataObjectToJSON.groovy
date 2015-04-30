@@ -118,6 +118,26 @@ class TestDataObjectToJSON extends ConverterTestsParent  {
     }
     
     @Test
+    public void testDataInputVariablesBlock_WarfarinPkBov() {
+        def json = getJsonFromMDLFile("WarfarinPkBov_DataObject.mdl")
+        
+        logger.debug(json)
+    
+        def dataObject = json[0].warfarin_PK_BOV_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def dataInputVars = dataObject.DATA_INPUT_VARIABLES
+
+        assertEquals("Checking the number of Data Input Variables", 9, dataInputVars.size())
+
+        final var5 = dataInputVars[4]
+        assertEquals("Checking Data Input Variable 5/9 - Name", "SEX", var5.get(Variable.NAME_KEY))
+        assertEquals("Checking Data Input Variable 5/9 - Use", "covariate", var5.use)
+        assertEquals("Checking Data Input Variable 5/9 - Type", "categorical(male, female, MISSING)", var5.type)
+        assertEquals("Checking Data Input Variable 5/9 - Define", "[{female, 1}, {male, 0}, {MISSING, -99}]", var5.define)
+        
+    }
+    
+    @Test
     public void testDeclaredVariablesBlock_OnSameLine() {
         def json = getJsonFromMDLFile("Warfarin_DataObject.mdl")
             

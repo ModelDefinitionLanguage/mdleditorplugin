@@ -17,6 +17,7 @@ import org.ddmore.mdl.mdl.NamedArguments
 import org.ddmore.mdl.mdl.OrExpression
 import org.ddmore.mdl.mdl.PowerExpression
 import org.ddmore.mdl.mdl.UnaryExpression
+import org.ddmore.mdl.mdl.UnnamedArguments
 import org.ddmore.mdl.mdl.Vector
 import org.eclipse.emf.common.util.EList
 
@@ -181,13 +182,19 @@ public class XtextWrapper {
         if (args.getNamedArguments()) {
             return unwrap(args.getNamedArguments())
         } else {
-            throw new UnsupportedOperationException("Encountered unhandled UnnamedArguments: " + mdlPrinter.toStr(args))
+            return unwrap(args.getUnnamedArguments())
         }
     }
     
     public static unwrap(final NamedArguments args) {
         "{".concat(args.getArguments().collect{ Argument a ->
             a.getArgumentName().getName() + "=" + unwrap(a.getExpression())
+        }.join(", ")).concat("}")
+    }
+    
+    public static unwrap(final UnnamedArguments args) {
+        "{".concat(args.getArguments().collect{ ArgumentExpression ae ->
+            unwrap(ae.getExpression())
         }.join(", ")).concat("}")
     }
     

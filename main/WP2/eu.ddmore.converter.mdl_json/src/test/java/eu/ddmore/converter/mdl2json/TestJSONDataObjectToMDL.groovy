@@ -23,6 +23,8 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
         / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{"use":"idv",".name":"TIME"},{"use":"covariate",".name":"WT"},{"use":"covariate",".name":"AGE"},{"define":"[{category=male, value=0}, {category=female, value=1}]","use":"covariate",".name":"SEX","type":"categorical(male, female)"},{"define":"D","use":"amt",".name":"AMT"},{"use":"dvid",".name":"DVID"},{"define":"Y","use":"dv",".name":"DV"},{"use":"mdv",".name":"MDV"}]} /
     private String dataInputVariablesJson_Hansson =
         / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{".name":"CYCL","type":"categorical"},{"use":"idv",".name":"TIME","units":"\"h\""},{".name":"DAYS","type":"continuous","units":"\"day\""},{"define":"[{pred=VEGF_obs, predID=5}, {pred=sVEGFR2_obs, predID=6}, {pred=sVEGFR3_obs, predID=7}, {pred=sKIT_obs, predID=8}]","use":"dv",".name":"DV"},{"use":"dvid",".name":"FLAG"},{".name":"DVX","type":"continuous","units":"\"mg\/L\""},{"define":"DOSE","use":"amt",".name":"DOS"},{".name":"PLA","type":"categorical"},{"use":"covariate",".name":"CL","type":"continuous","units":"\"L\/h\""},{".name":"EVID","type":"categorical"}]} /
+    private String dataInputVariablesJson_WarfarinPkBov =
+        / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{"use":"idv",".name":"TIME","units":"\"h\""},{"use":"covariate",".name":"WT","units":"\"kg\""},{"use":"covariate",".name":"AGE"},{"define":"[{female, 1}, {male, 0}, {MISSING, -99}]","use":"covariate",".name":"SEX","type":"categorical(male, female, MISSING)"},{"define":"INPUT_KA","use":"amt",".name":"AMT","units":"\"mg\""},{"use":"varlevel",".name":"OCC"},{"define":"Y","use":"dv",".name":"DV"},{"use":"mdv",".name":"MDV"}]} /
     private String declaredVariablesJson =
         / {"DECLARED_VARIABLES":[{".name":"DOSE"},{".name":"VEGF_obs"},{".name":"VEGFR2_obs"},{".name":"VEGFR3_obs"},{".name":"SKIT_obs"}]} /
     private String dataDerivedVariablesJson =
@@ -95,6 +97,32 @@ class TestJSONDataObjectToMDL extends ConverterTestsParent {
         PLA : {type=categorical}
         CL : {type=continuous, units="L/h", use=covariate}
         EVID : {type=categorical}
+    }
+
+}
+"""
+        assertEquals(expected, dataObj.toMDL())
+    }
+    
+    @Test
+    public void testDataInputVariablesBlock_WarfarinPkBov() {
+        
+        def json = getJson(dataInputVariablesJson_WarfarinPkBov)
+        
+        def dataObj = new Data(json)
+        
+        String expected = """dataobj {
+
+    DATA_INPUT_VARIABLES {
+        ID : {use=id}
+        TIME : {units="h", use=idv}
+        WT : {units="kg", use=covariate}
+        AGE : {use=covariate}
+        SEX : {define=[{female, 1}, {male, 0}, {MISSING, -99}], type=categorical(male, female, MISSING), use=covariate}
+        AMT : {define=INPUT_KA, units="mg", use=amt}
+        OCC : {use=varlevel}
+        DV : {define=Y, use=dv}
+        MDV : {use=mdv}
     }
 
 }
