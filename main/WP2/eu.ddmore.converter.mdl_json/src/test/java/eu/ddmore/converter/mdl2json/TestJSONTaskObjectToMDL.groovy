@@ -14,8 +14,8 @@ class TestJSONTaskObjectToMDL extends ConverterTestsParent  {
 	// Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
     private static final String estimateBlockJson_Hansson =
         / {"ESTIMATE":"target=NMTRAN_CODE\ncov=true\nalgo=[\"FOCE\"]"} /
-	private static final String estimateBlockJson_WarfarinPkBov =
-		/ {"ESTIMATE":"target=NMTRAN_CODE\nversion=\"7.2\"\nalgo=[\"FOCE  INTER\"]"} /
+	private static final String estimateBlockJson_WarfarinAnalyticSolution =
+		/ {"ESTIMATE":"target=MLXTRAN_CODE\nversion=\"4.3.2\"\nalgo=[\"SAEM\"]"} /
 
 	@Test
 	public void testEstimateBlock_Hansson() {
@@ -38,18 +38,18 @@ class TestJSONTaskObjectToMDL extends ConverterTestsParent  {
 	}
     
     @Test
-    public void testEstimateBlock_WarfarinPkBov() {
+    public void testEstimateBlock_WarfarinAnalyticSolution() {
         
-        def json = getJson(estimateBlockJson_WarfarinPkBov)
+        def json = getJson(estimateBlockJson_WarfarinAnalyticSolution)
         
         def taskObj = new Task(json)
                 
         String expected = """taskobj {
 
     ESTIMATE {
-        target=NMTRAN_CODE
-        version="7.2"
-        algo=["FOCE  INTER"]
+        target=MLXTRAN_CODE
+        version="4.3.2"
+        algo=["SAEM"]
     }
 
 }

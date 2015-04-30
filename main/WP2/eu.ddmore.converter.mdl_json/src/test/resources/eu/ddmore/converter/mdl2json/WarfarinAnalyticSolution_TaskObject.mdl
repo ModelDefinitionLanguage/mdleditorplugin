@@ -1,0 +1,7 @@
+warfarin_PK_ODE_task = taskobj {
+    ESTIMATE {
+        target = MLXTRAN_CODE
+        version = "4.3.2"
+        algo = [ "SAEM" ]
+    } #end ESTIMATE sub block
+} # end of task object

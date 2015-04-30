@@ -26,16 +26,16 @@ algo=["FOCE"]'''
     }
     
     @Test
-    public void testEstimateBlock_WarfarinPkBov() {
-        def json = getJsonFromMDLFile("WarfarinPkBov_TaskObject.mdl")
+    public void testEstimateBlock_WarfarinAnalyticSolution() {
+        def json = getJsonFromMDLFile("WarfarinAnalyticSolution_TaskObject.mdl")
         
-        def taskObj = json[0].warfarin_PK_BOV_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def taskObj = json[0].warfarin_PK_ODE_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         logger.debug(taskObj)
         
-        def expectedEstimateStr = '''target=NMTRAN_CODE
-version="7.2"
-algo=["FOCE  INTER"]'''
+        def expectedEstimateStr = '''target=MLXTRAN_CODE
+version="4.3.2"
+algo=["SAEM"]'''
         assertEquals("Checking the content of the Estimate block", expectedEstimateStr, taskObj[Task.ESTIMATE])
     }
 	
