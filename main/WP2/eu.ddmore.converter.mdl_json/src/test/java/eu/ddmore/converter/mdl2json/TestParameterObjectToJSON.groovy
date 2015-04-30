@@ -159,19 +159,19 @@ class TestParameterObjectToJSON extends ConverterTestsParent {
             
         def variabilityModel = parameterObject[Parameter.VARIABILITY]
         
-        assertEquals("Checking the number of variables in the Variability model", 12, variabilityModel.size())
+        assertEquals("Checking the number of variables in the Variability model", 10, variabilityModel.size())
         
         def expected_BSV_CL = [ 'BSV_CL' : [ 'value':'0.1', 'type':'VAR' ] ]
-        assertEquals("Checking Variability parameter 1/12", expected_BSV_CL, variabilityModel[0])
+        assertEquals("Checking Variability parameter 1/10", expected_BSV_CL, variabilityModel[0])
         
         def expected_BOV_CL = [ 'BOV_CL' : [ 'fix':'true', 'value':'0.1', 'type':'VAR' ] ]
-        assertEquals("Checking Variability parameter 3/12", expected_BOV_CL, variabilityModel[2])
+        assertEquals("Checking Variability parameter 3/10", expected_BOV_CL, variabilityModel[2])
 
         def expected_BOV_COV_CL_V = [ 'BOV_COV_CL_V' : [ 'params':'[eta_BOV_CL, eta_BOV_V]', 'type':'COV', 'value':'0.01' ] ]
-        assertEquals("Checking Variability parameter 11/12", expected_BOV_COV_CL_V, variabilityModel[10])
+        assertEquals("Checking Variability parameter 9/10", expected_BOV_COV_CL_V, variabilityModel[8])
         
         def expected_BOV_COV_KA_TLAG = [ 'BOV_COV_KA_TLAG' : [ 'params':'[eta_BOV_KA, eta_BOV_TLAG]', 'type':'COV', 'value':'0.01' ] ]
-        assertEquals("Checking Variability parameter 12/12", expected_BOV_COV_KA_TLAG, variabilityModel[11])
+        assertEquals("Checking Variability parameter 10/10", expected_BOV_COV_KA_TLAG, variabilityModel[9])
 
     }
 	
