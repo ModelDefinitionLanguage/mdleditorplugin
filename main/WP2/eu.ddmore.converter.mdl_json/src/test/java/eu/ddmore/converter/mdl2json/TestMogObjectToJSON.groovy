@@ -12,7 +12,7 @@ import eu.ddmore.converter.mdl2json.domain.Task
 class TestMogObjectToJSON extends ConverterTestsParent {
 	private static Logger logger = Logger.getLogger(TestMogObjectToJSON.class)
 	
-	@Test
+    @Test
     public void testObjectsBlock() {
         def json = getJsonFromMDLFile("Warfarin_MogObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
@@ -24,34 +24,51 @@ class TestMogObjectToJSON extends ConverterTestsParent {
         
         assertEquals("Checking number of imported objects", 4, objects.size())
         
-        assertTrue("Checking that data object is imported", objects.containsKey("dObj"))
-        assertEquals("Checking that the correct data object is imported", "warfarin_PK_ODE_dat", objects["dObj"])
-        assertTrue("Checking that model object is imported", objects.containsKey("mObj"))
-        assertEquals("Checking that the correct model object is imported", "warfarin_PK_ODE_mdl", objects["mObj"])
-        assertTrue("Checking that parameter object is imported", objects.containsKey("pObj"))
-        assertEquals("Checking that the correct parameter object is imported", "warfarin_PK_ODE_par", objects["pObj"])
-        assertTrue("Checking that task object is imported", objects.containsKey("tObj"))
-        assertEquals("Checking that the correct task object is imported", "warfarin_PK_ODE_task", objects["tObj"])
+        assertTrue("Checking that data object is imported", objects.containsKey("warfarin_PK_ODE_dat"))
+        assertTrue("Checking that model object is imported", objects.containsKey("warfarin_PK_ODE_mdl"))
+        assertTrue("Checking that parameter object is imported", objects.containsKey("warfarin_PK_ODE_par"))
+        assertTrue("Checking that task object is imported", objects.containsKey("warfarin_PK_ODE_task"))
+        
+    }
+    
+	@Test
+    @Ignore("Mappings block doesn't currently parse so WarfarinPkSim_MogObject.mdl is invalid and cannot be read")
+    public void testObjectsBlockWhereUsingAliasing() {
+        def json = getJsonFromMDLFile("WarfarinPkSim_MogObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def mogObject = json.warfarin_PK_SIM
+        
+        def objects = mogObject[Mog.OBJECTS]
+        
+        logger.debug(objects)
+        
+        assertEquals("Checking number of imported objects", 4, objects.size())
+        
+        assertTrue("Checking that data object is imported", objects.containsKey("warfarin_design"))
+        assertEquals("Checking the alias of the data object", "do", objects["warfarin_design"])
+        assertTrue("Checking that model object is imported", objects.containsKey("warfarin_PK_SIM_mdl"))
+        assertEquals("Checking the alias of the model object", "mo", objects["warfarin_PK_SIM_mdl"])
+        assertTrue("Checking that parameter object is imported", objects.containsKey("warfarin_PK_SIM_par"))
+        assertEquals("Checking the alias of the parameter object", "po", objects["warfarin_PK_SIM_par"])
+        assertTrue("Checking that task object is imported", objects.containsKey("warfarin_PK_SIM_task"))
+        assertEquals("Checking the alias of the task object", "to", objects["warfarin_PK_SIM_task"])
         
     }
     
     @Test
+    @Ignore("Mappings block doesn't currently parse so WarfarinPkSim_MogObject.mdl is invalid and cannot be read")
     public void testMappingBlock() {
-        def json = getJsonFromMDLFile("Warfarin_MogObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("WarfarinPkSim_MogObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
-        def mogObject = json.warfarin_PK_ODE_mog
+        def mogObject = json.warfarin_PK_SIM_mog
         
         def mappings = mogObject[Mog.MAPPING]
         
         logger.debug(mappings)
         
-        assertEquals("Checking number of mappings", 3, mappings.size())
-        assertTrue("Checking that data object's GUT variable is mapped", mappings.containsKey("dObj.GUT"))
-        assertEquals("Checking that data object's GUT variable is mapped correctly", "mObj.GUT", mappings["dObj.GUT"])
-        assertTrue("Checking that data object's Y variable is mapped", mappings.containsKey("dObj.Y"))
-        assertEquals("Checking that data object's Y variable is mapped correctly", "mObj.Y", mappings["dObj.Y"])
-        assertTrue("Checking that data object's WT variable is mapped", mappings.containsKey("dObj.WT"))
-        assertEquals("Checking that data object's WT variable is mapped correctly", "mObj.WT", mappings["dObj.WT"])
+        assertEquals("Checking number of mappings", 1, mappings.size())
+        assertTrue("Checking that data object's WT_MEAN variable is mapped", mappings.containsKey("do.WT_MEAN"))
+        assertEquals("Checking that data object's WT_MEAN variable is mapped correctly", "mo.MEAN_WT", mappings["do.WT_MEAN"])
 
     }
 	

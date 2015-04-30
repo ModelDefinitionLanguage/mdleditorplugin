@@ -29,11 +29,17 @@ public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlo
         for (MOGObjectBlock block : mogObject.getBlocks()) {
             
             if (block.getObjectBlock()) {
-                def objectsMap = [:]
+                def objectsReverseMap = [:]
                 for (ImportObjectStatement importObject : block.getObjectBlock().getObjects()) {
-                    objectsMap.put(importObject.getSymbolName().getName(), importObject.getObjectName().getName())
+                    if (importObject.getSymbolName()) {
+                        // Import Object is aliased
+                        objectsReverseMap.put(importObject.getObjectName().getName(), importObject.getSymbolName().getName())
+                    } else {
+                        // Import Object is not aliased
+                        objectsReverseMap.put(importObject.getObjectName().getName(), null)
+                    }
                 }
-                setProperty(OBJECTS, objectsMap)
+                setProperty(OBJECTS, objectsReverseMap)
             }
             if (block.getMappingBlock()) {
                 def mappingsMap = [:]
@@ -65,8 +71,14 @@ public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlo
         final StringBuffer mdl = new StringBuffer()
         
         if (getProperties().containsKey(OBJECTS)) {
-            final String objectsMdl = getProperty(OBJECTS).collect{ String id, String name ->
-                """${id} = ${name}"""
+            final String objectsMdl = getProperty(OBJECTS).collect{ String objName, String aliasName ->
+                if (aliasName) {
+                    // Import Object is aliased
+                    """${aliasName} = ${objName}"""
+                } else {
+                    // Import Object is not aliased
+                    """${objName}"""
+                }
             }.join("\n${IDT*2}")
             mdl.append("\n${IDT}OBJECTS {\n${IDT*2}${objectsMdl}\n${IDT}}\n")
         }
