@@ -12,8 +12,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.log4j.Logger;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 
@@ -24,8 +22,6 @@ import eu.ddmore.convertertoolbox.service.impl.ConversionResourcesConvention;
 /**
  * {@link ConversionStep} implementation responsible for archiving Conversion outputs 
  */
-@Order(Integer.MAX_VALUE)
-@Component
 public class ProcessOutputsStep implements ConversionStep {
     private static final Logger LOG = Logger.getLogger(ProcessOutputsStep.class);
     @Override

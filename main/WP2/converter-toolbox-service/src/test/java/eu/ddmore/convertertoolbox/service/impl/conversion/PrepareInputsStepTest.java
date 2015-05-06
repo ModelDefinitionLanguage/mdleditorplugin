@@ -20,6 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import eu.ddmore.convertertoolbox.api.conversion.Converter;
 import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.service.ConversionRepository;
+import eu.ddmore.convertertoolbox.service.impl.ConversionResourcesConvention;
 
 
 /**
@@ -56,10 +57,10 @@ public class PrepareInputsStepTest {
         
         instance.execute(conversionContext);
         
-        assertTrue(new File(tempFolder.getRoot(),"inputs/test-input.txt").exists());
-        assertTrue(new File(tempFolder.getRoot(),"inputs/test-input.zip").exists());
-        assertTrue(new File(tempFolder.getRoot(),"inputs/empty-directory").exists());
-        assertTrue(new File(tempFolder.getRoot(),"inputs/directory-with-contents").exists());
-        assertTrue(new File(tempFolder.getRoot(),"inputs/directory-with-contents/test-input.txt").exists());
+        assertTrue(new File(tempFolder.getRoot(),ConversionResourcesConvention.INPUTS_DIRECTORY_NAME + "/test-input.txt").exists());
+        assertTrue(new File(tempFolder.getRoot(),ConversionResourcesConvention.INPUTS_DIRECTORY_NAME + "/test-input.zip").exists());
+        assertTrue(new File(tempFolder.getRoot(),ConversionResourcesConvention.INPUTS_DIRECTORY_NAME + "/empty-directory").exists());
+        assertTrue(new File(tempFolder.getRoot(),ConversionResourcesConvention.INPUTS_DIRECTORY_NAME + "/directory-with-contents").exists());
+        assertTrue(new File(tempFolder.getRoot(),ConversionResourcesConvention.INPUTS_DIRECTORY_NAME + "/directory-with-contents/test-input.txt").exists());
     }
 }

@@ -23,7 +23,7 @@ public class Version implements Comparable<Version> {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
-        this.qualifier = qualifier;
+        this.qualifier = (qualifier==null)?"":qualifier;
     }
 
     public int getMajor() {
@@ -103,7 +103,7 @@ public class Version implements Comparable<Version> {
     @Override
     public String toString() {
         String base = String.format("%d.%d.%d", major, minor, patch);
-        if (qualifier!=null) {
+        if (qualifier!=null&&!"".equals(qualifier)) {
             base = String.format("%s-%s", base, qualifier);
         }
         return base;

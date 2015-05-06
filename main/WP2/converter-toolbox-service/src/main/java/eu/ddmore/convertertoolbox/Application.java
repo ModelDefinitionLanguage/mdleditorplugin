@@ -11,15 +11,16 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.UriTemplate;
 import org.springframework.hateoas.hal.CurieProvider;
 import org.springframework.hateoas.hal.DefaultCurieProvider;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import eu.ddmore.archive.ArchiveFactory;
 import eu.ddmore.convertertoolbox.api.conversion.ConverterManager;
 import eu.ddmore.convertertoolbox.conversion.ConverterManagerImpl;
 import eu.ddmore.convertertoolbox.service.impl.ConversionServiceConfiguration;
@@ -72,5 +73,13 @@ public class Application {
         factory.setMaxFileSize(maxFileSize);
         factory.setMaxRequestSize(maxRequestSize);
         return factory.createMultipartConfig();
+    }
+    
+    /**
+     * Creates PHEX Archive Factory Bean
+     */
+    @Bean
+    public ArchiveFactory archiveFactory() {
+        return new ArchiveFactory();
     }
 }

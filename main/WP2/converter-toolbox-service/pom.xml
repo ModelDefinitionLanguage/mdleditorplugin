@@ -52,8 +52,13 @@
             <artifactId>converter-toolbox-service-domain</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
-        
+
+        <dependency>
+            <groupId>eu.ddmore</groupId>
+            <artifactId>phex-archive</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!-- Third-Party Dependencies -->
         <dependency>
             <groupId>commons-lang</groupId>
@@ -155,7 +160,9 @@
             </resource>
             <resource>
                 <directory>${basedir}</directory>
-                <includes><include>LICENSE</include></includes>
+                <includes>
+                    <include>LICENSE</include>
+                </includes>
             </resource>
         </resources>
 
