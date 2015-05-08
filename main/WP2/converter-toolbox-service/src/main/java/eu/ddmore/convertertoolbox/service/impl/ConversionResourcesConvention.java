@@ -19,9 +19,9 @@ public class ConversionResourcesConvention {
     /**
      * Name of the archive file received with the conversion request
      */
-    public static final String INPUTS_ARCHIVE_NAME = "inputs.zip";
+    public static final String INPUTS_ARCHIVE_NAME = "inputs.phex";
     /**
      * Name of the archive file containing 'outputs' directory contents
      */
-    public static final String OUTPUTS_ARCHIVE_NAME = "outputs.zip";
+    public static final String OUTPUTS_ARCHIVE_NAME = "outputs.phex";
 }

@@ -32,7 +32,6 @@ public class ExecuteConversionStep implements ConversionStep {
         File inputFile = new File(new File(conversion.getWorkingDirectory(),ConversionResourcesConvention.INPUTS_DIRECTORY_NAME),conversion.getInputFileName());
         Preconditions.checkState(inputFile.exists(), String.format("Conversion [%s] input file %s does not exist", conversion.getId(), inputFile.getAbsolutePath()));
         
-        
         Converter converter = conversionContext.getConverter();
         eu.ddmore.convertertoolbox.api.response.ConversionReport conversionReport = null;
         try {

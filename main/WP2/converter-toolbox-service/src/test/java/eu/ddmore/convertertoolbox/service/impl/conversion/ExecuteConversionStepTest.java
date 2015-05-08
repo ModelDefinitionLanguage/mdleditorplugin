@@ -59,7 +59,7 @@ public class ExecuteConversionStepTest {
     public void shouldInvokeConverterWithConversionParameters() throws IOException {
         String inputFileName = "inputFile";
         File inputsDirectory = tempFolder.newFolder(ConversionResourcesConvention.INPUTS_DIRECTORY_NAME);
-        File outputsDirectory = tempFolder.newFolder(ConversionResourcesConvention.OUTPUTS_DIRECTORY_NAME);
+        File outputsDirectory = (!ConversionResourcesConvention.OUTPUTS_DIRECTORY_NAME.equals(ConversionResourcesConvention.INPUTS_DIRECTORY_NAME))?tempFolder.newFolder(ConversionResourcesConvention.OUTPUTS_DIRECTORY_NAME):inputsDirectory;
         File inputFile = new File(inputsDirectory,inputFileName);
         FileUtils.writeStringToFile(inputFile, "input");
         

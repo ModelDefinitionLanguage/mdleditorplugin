@@ -8,7 +8,6 @@ REM  Locations without trailing '\'
 SET SERVICE_HOME=%~dp0
 IF %SERVICE_HOME:~-1%==\ SET SERVICE_HOME=%SERVICE_HOME:~0,-1%
 
-REM Skipping startup for now, SEE uses Converter Toolbox CLI
-REM call %SERVICE_HOME%\converter-toolbox-service\startup.bat
+CALL %SERVICE_HOME%\converter-toolbox-service\startup.bat
 
 EXIT

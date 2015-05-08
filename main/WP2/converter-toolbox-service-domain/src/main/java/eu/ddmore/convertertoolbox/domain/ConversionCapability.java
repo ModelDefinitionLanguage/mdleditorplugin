@@ -63,6 +63,9 @@ public final class ConversionCapability {
             return false;
         return true;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return String.format("ConversionCapability [source=%s, target=%s]", source, target);
+    }
 }
