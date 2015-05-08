@@ -9,17 +9,16 @@ import org.ddmore.mdl.mdl.SourceBlock
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
+
 /**
- * @author jchard
+ * Represents a SOURCE block within the Data Object.
  *
  */
 public class Source extends Expando implements MDLPrintable {
 
-    private static final String SOURCE = "SOURCE"
-
     /**
      * Constructor which unpacks all the content of the SourceBlock and adds them to the properties of this object
-     * 
+     *
      * @param sourceBlock
      */
     public Source(SourceBlock sourceBlock) {
@@ -42,7 +41,7 @@ public class Source extends Expando implements MDLPrintable {
 
     /**
      * Returns the MDL equivalent of this object
-     * 
+     *
      * @return
      */
     public String toMDL() {
@@ -53,4 +52,5 @@ public class Source extends Expando implements MDLPrintable {
 
         """${properties.join("\n        ")}"""
     }
+
 }

@@ -1,0 +1,58 @@
+warfarin_PK_SIM_mdl = mdlobj{
+        # idv T
+    IDV { HOUR }
+
+    VARIABILITY_LEVELS {
+        bsv_lvl : { level = 2, type=parameter }
+        dv_lvl : { level = 1 , type=observation}
+    }
+    
+    COVARIATES{
+        WT
+        logtWT = log(WT/MEAN_WT)
+    }
+
+    STRUCTURAL_PARAMETERS {
+            MEAN_WT
+        POP_CL
+        POP_V
+        POP_KA
+        POP_TLAG
+        BETA_CL_WT
+        BETA_V_WT
+    } # end STRUCTURAL_PARAMETERS
+    
+    VARIABILITY_PARAMETERS {
+        PPV_CL
+        PPV_V
+        PPV_KA
+        PPV_TLAG
+        RUV_PROP
+        RUV_ADD
+        OMEGA : { type = CORR, params=[ETA_CL, ETA_V] } 
+    } # end VARIABILITY_PARAMETERS 
+    
+    RANDOM_VARIABLE_DEFINITION(level=bsv_lvl) {
+        ETA_CL ~ Normal(mean = 0, sd = PPV_CL)
+        ETA_V ~ Normal(mean = 0, sd = PPV_V)
+        ETA_KA ~ Normal(mean = 0, sd = PPV_KA)
+        ETA_TLAG ~ Normal(mean = 0, sd = PPV_TLAG) # We define correlation here
+    } # end RANDOM_VARIABLE_DEFINITION 
+    
+    INDIVIDUAL_VARIABLES { # This maps to the "Type 3" individual parameter definition in PharmML
+        CL : { type = linear, trans = log, pop = POP_CL, fixEff = [ BETA_CL_WT ], cov = [ logtWT ], ranEff = ETA_CL }
+        V : { type = linear, trans = log, pop = POP_V, fixEff = [ BETA_V_WT ], cov = [ logtWT ], ranEff = ETA_V }
+        KA : { type = linear, trans = log, pop = POP_KA, ranEff = ETA_KA }
+        TLAG : { type = linear, trans = log, pop = POP_TLAG, ranEff = ETA_TLAG } 
+    } # end INDIVIDUAL_VARIABLES
+    
+    MODEL_PREDICTION {
+        AMT
+        CC = AMT *exp(-HOUR*K)
+    } # end MODEL_PREDICTION
+    
+    OBSERVATION {
+        Y = CC
+    } # end OBSERVATION
+    
+} # end of model object

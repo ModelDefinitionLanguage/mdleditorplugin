@@ -16,7 +16,6 @@ import com.google.common.base.Preconditions;
 
 import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.converter.mdl2json.domain.Model
-import eu.ddmore.converter.mdl2json.domain.ModelPrediction
 import eu.ddmore.converter.mdl2json.domain.Mog
 import eu.ddmore.converter.mdl2json.domain.Parameter
 import eu.ddmore.converter.mdl2json.domain.Source

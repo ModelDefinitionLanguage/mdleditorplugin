@@ -3,22 +3,26 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json
 
+import groovy.json.JsonSlurper
+
 import java.util.regex.Matcher
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
-import org.apache.log4j.Logger;
+import org.apache.log4j.Logger
 
 import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.converter.mdl2json.domain.Model
-import eu.ddmore.converter.mdl2json.domain.ModelPrediction
 import eu.ddmore.converter.mdl2json.domain.Mog
 import eu.ddmore.converter.mdl2json.domain.Parameter
 import eu.ddmore.converter.mdl2json.domain.Source
 import eu.ddmore.converter.mdl2json.domain.Task
 import static eu.ddmore.converter.mdl2json.interfaces.MDLPrintable.IDT
 
-import static org.junit.Assert.*;
+import org.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdlparse.MdlParser
+
+import static org.junit.Assert.*
 
 /**
  * The fields and methods below are used in testing a MDL->JSON->MDL pipeline.
@@ -26,39 +30,35 @@ import static org.junit.Assert.*;
  *
  */
 class MdlTestUtils {
-    
+
     private static Logger logger = Logger.getLogger(MdlTestUtils.class)
-    
+
     public static List<String> allBlockNames = [
-        Data.SOURCE,
+        Data.DECLARED_VARIABLES,
         Data.DATA_INPUT_VARIABLES,
         Data.DATA_DERIVED_VARIABLES,
+        Data.SOURCE,
         Parameter.STRUCTURAL,
         Parameter.VARIABILITY,
-        Parameter.PRIOR,
+        Model.COVARIATES,
+        Model.VARIABILITY_LEVELS,
         Model.STRUCTURAL_PARAMETERS,
         Model.VARIABILITY_PARAMETERS,
+        Model.RANDOM_VARIABLE_DEFINITION + /\(.+\)/, // note the regex matching for the parameters of the block name
         Model.INDIVIDUAL_VARIABLES,
-        Model.RANDOM_VARIABLE_DEFINITION,
-        Model.MODEL_OUTPUT_VARIABLES,
-        Model.MODEL_INPUT_VARIABLES,
-        Model.OBSERVATION,
         Model.MODEL_PREDICTION,
-        ModelPrediction.ODE, // actually redundant, should be verified by MODEL_PREDICTION block
-        ModelPrediction.LIBRARY, // actually redundant, should be verified by MODEL_PREDICTION block
+        Model.OBSERVATION,
         Model.GROUP_VARIABLES,
-        Model.ESTIMATION,
-        Model.SIMULATION,
         Task.ESTIMATE,
         Task.SIMULATE,
         Task.EVALUATE,
         Task.OPTIMISE,
         Task.DATA,
         Task.MODEL,
-        /\S+\s*=\s*/ + Mog.IDENTIFIER
-        //"TARGET_CODE\\(.+\\)" // note the regex matching for the parameters of the block name
+        Mog.OBJECTS,
+        Mog.MAPPING
     ]
-
+	
     public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final File newMdlFile) {
         extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, FileUtils.readFileToString(newMdlFile))
     }
@@ -74,7 +74,7 @@ class MdlTestUtils {
 
             // Special additional preprocessing for the "SOURCE" block:
             // The items within this block can be in any order so put the lines of the original and new blocks into a known order
-            if (blockName == Source.SOURCE) {
+            if (blockName == Data.SOURCE) {
                 origMdlFileBlockContent = putSOURCEBlockContentInKnownOrder(origMdlFileBlockContent)
                 newMdlFileBlockContent = putSOURCEBlockContentInKnownOrder(newMdlFileBlockContent)
             }
@@ -86,8 +86,10 @@ class MdlTestUtils {
             }
 
             // Trim off whitespace from both the expected and the actual
-            origMdlFileBlockContent = origMdlFileBlockContent.replaceAll(~/\s*/, "")
-            newMdlFileBlockContent = newMdlFileBlockContent.replaceAll(~/\s*/, "")
+            assertEquals("Checking the content of the block " + blockName,
+                origMdlFileBlockContent.replaceAll(~/\s*/, "") /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */ ,
+                newMdlFileBlockContent.replaceAll(~/\s*/, "") /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */
+            )
 
             // If the original MDL file had an empty block for this blockName then this is treated the same as if the block is absent
             if (origMdlFileBlockContent.equals(blockName + "{}")) {
@@ -164,7 +166,6 @@ class MdlTestUtils {
                 // Update how deep in the { } nesting we are so we know when to escape eventually
                 nestingLevel = nestingLevel + StringUtils.countMatches(str, "{")
                 nestingLevel = nestingLevel - StringUtils.countMatches(str, "}")
-
             }
             if (nestingLevel <= 0) { // End of block we're interested in has been reached
                 interestedIn = false
@@ -226,7 +227,7 @@ class MdlTestUtils {
      * @return the string comprising the block name and its reordered content
      */
     private static String putSOURCEBlockContentInKnownOrder(final String blockText) {
-        putSOURCEBlockOrMogBlockContentInKnownOrder(Source.SOURCE, blockText, /\s*\S+\s*=\s*\S+\s*/)
+        putSOURCEBlockOrMogBlockContentInKnownOrder(Data.SOURCE, blockText, /\s*\S+\s*=\s*\S+\s*/)
     }
 
     /**

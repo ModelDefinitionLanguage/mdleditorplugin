@@ -1,0 +1,20 @@
+warfarin_PK_ODE_dat = dataobj {
+    DECLARED_VARIABLES{GUT Y}
+
+    DATA_INPUT_VARIABLES {
+        ID : { use=id }
+        TIME : { use=idv }
+        WT : { type = continuous, use=covariate }
+        AMT : { use=amt, define = GUT }
+        DVID : { type = categorical, use=dvid}
+        DV : { use=dv, define = Y }
+        MDV : { type = categorical, use=mdv }
+        logtWT:{ type = continuous, use=covariate }  
+    } # end DATA_INPUT_VARIABLES
+    
+    SOURCE {
+        file = "warfarin_conc.csv" 
+            inputformat = nonmemFormat 
+        ignore = "#" 
+    } # end SOURCE
+} # end data object

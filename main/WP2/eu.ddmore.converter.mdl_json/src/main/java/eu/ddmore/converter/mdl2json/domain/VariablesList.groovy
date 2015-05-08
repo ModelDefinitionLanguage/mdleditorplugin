@@ -3,6 +3,9 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain;
 
+import org.ddmore.mdl.mdl.GroupVariablesBlock
+import org.ddmore.mdl.mdl.GroupVariablesBlockStatement
+import org.ddmore.mdl.mdl.PkMacroStatement
 import org.ddmore.mdl.mdl.SymbolDeclaration
 import org.ddmore.mdl.mdl.SymbolName
 
@@ -25,23 +28,41 @@ public class VariablesList extends ArrayList<Variable> implements MDLPrintable {
     }
 
     static VariablesList buildFromSymbolDeclarations(final List<SymbolDeclaration> sds) {
-        return new VariablesList(sds.collect { SymbolDeclaration sd -> new Variable(sd) });
+        return new VariablesList(sds.collect { SymbolDeclaration sd -> new Variable(sd) })
     }
 
     static VariablesList buildFromSymbolNames(final List<SymbolName> sns) {
-        return new VariablesList(sns.collect { SymbolName sn -> new Variable(sn) });
+        return new VariablesList(sns.collect { SymbolName sn -> new Variable(sn) })
+    }
+
+    static VariablesList buildFromPkMacrosStatements(final List<PkMacroStatement> pkmss) {
+        return new VariablesList(pkmss.collect { PkMacroStatement pkms -> Variable.buildFromPkMacroStatement(pkms) })
+    }
+
+    static VariablesList buildFromGroupVariablesBlock(GroupVariablesBlock groupVariables) {
+        List groupVars = []
+        groupVariables.getStatements().each { GroupVariablesBlockStatement statement ->
+            if (statement.getMixtureBlock()) {
+                throw new UnsupportedOperationException("Mixture sub-block of Group Variables block not currently supported")
+            }
+            groupVars.add(new Variable(statement.getVariable()))
+        }
+        return new VariablesList(groupVars)
     }
 
     static VariablesList buildFromJSON(final List jsonList) {
-        return new VariablesList(jsonList.collect { json ->
-            new Variable(json)
-        })
+        return new VariablesList(jsonList.collect { json -> new Variable(json) })
     }
 
     @Override
     public String toMDL() {
+        return toMDL(2)
+    }
+
+    public String toMDL(final int numIndents) {
         collect{ MDLPrintable elem ->
             elem.toMDL()
-        }.join("\n${IDT*2}")
+        }.join("\n${IDT*numIndents}")
     }
+
 }

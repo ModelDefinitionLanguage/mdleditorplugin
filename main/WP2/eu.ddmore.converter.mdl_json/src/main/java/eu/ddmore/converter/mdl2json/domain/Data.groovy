@@ -16,9 +16,9 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
     static final String IDENTIFIER = "dataobj"
 
     static final String SOURCE = "SOURCE"
+    static final String DECLARED_VARIABLES = "DECLARED_VARIABLES"
     static final String DATA_INPUT_VARIABLES = "DATA_INPUT_VARIABLES"
     static final String DATA_DERIVED_VARIABLES = "DATA_DERIVED_VARIABLES"
-    static final String TARGET_CODE = "TARGET_CODE"
 
     private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 
@@ -26,19 +26,22 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
 
         setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
 
-        for (DataObjectBlock b : dataObject.getBlocks()) {
+        for (DataObjectBlock block : dataObject.getBlocks()) {
 
-            if (b.getSourceBlock()) {
-                setProperty(SOURCE, new Source(b.getSourceBlock()))
+            if (block.getSourceBlock()) {
+                setProperty(SOURCE, new Source(block.getSourceBlock()))
             }
-            if (b.getDataInputBlock()) {
-                setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataInputBlock().getVariables()))
+            if (block.getDeclaredVariables()) {
+                setProperty(DECLARED_VARIABLES, VariablesList.buildFromSymbolDeclarations(block.getDeclaredVariables().getVariables()))
             }
-            if (b.getDataDerivedBlock()) {
-                setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromSymbolDeclarations(b.getDataDerivedBlock().getVariables()))
+            if (block.getDataInputBlock()) {
+                setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromSymbolDeclarations(block.getDataInputBlock().getVariables()))
             }
-            if (b.getTargetBlock()) {
-                setProperty(TARGET_CODE, mdlPrinter.toStr(b.getTargetBlock()))
+            if (block.getDataDerivedBlock()) {
+                setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromSymbolDeclarations(block.getDataDerivedBlock().getVariables()))
+            }
+            if (block.getTargetBlock()) {
+                throw new UnsupportedOperationException("Target Code block within Data Object not supported yet")
             }
         }
     }
@@ -49,6 +52,9 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
         if (json[SOURCE]) {
             setProperty(SOURCE, new Source(json[SOURCE]))
         }
+        if (json[DECLARED_VARIABLES]) {
+            setProperty(DECLARED_VARIABLES, VariablesList.buildFromJSON(json[DECLARED_VARIABLES]))
+        }
         if (json[DATA_INPUT_VARIABLES]) {
             setProperty(DATA_INPUT_VARIABLES, VariablesList.buildFromJSON(json[DATA_INPUT_VARIABLES]))
         }
@@ -56,14 +62,14 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
             setProperty(DATA_DERIVED_VARIABLES, VariablesList.buildFromJSON(json[DATA_DERIVED_VARIABLES]))
         }
         if (json[TARGET_CODE]) {
-            setProperty(TARGET_CODE, json[TARGET_CODE])
+            throw new UnsupportedOperationException("Target Code block within Data Object not supported yet")
         }
     }
 
     public String toMDL() {
         StringBuffer mdl = new StringBuffer()
-        def normalProperties = getProperties().minus([(IDENTIFIER_PROPNAME):(IDENTIFIER)])
-        normalProperties.each { String blockName, MDLPrintable obj ->
+        def blocks = getProperties().minus([(IDENTIFIER_PROPNAME):(IDENTIFIER)])
+        blocks.each { String blockName, MDLPrintable obj ->
             mdl.append("\n${IDT}${blockName} {\n${IDT*2}${obj.toMDL()}\n${IDT}}\n")
         }
         return """${IDENTIFIER} {
@@ -76,4 +82,5 @@ ${mdl.toString()}
     public int getPrintedOrder() {
         return 1;
     }
+
 }

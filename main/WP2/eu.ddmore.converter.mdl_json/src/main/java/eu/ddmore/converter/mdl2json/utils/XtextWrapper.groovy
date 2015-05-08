@@ -8,20 +8,23 @@ import org.ddmore.mdl.mdl.AdditiveExpression
 import org.ddmore.mdl.mdl.AndExpression
 import org.ddmore.mdl.mdl.AnyExpression
 import org.ddmore.mdl.mdl.Argument
+import org.ddmore.mdl.mdl.ArgumentExpression
 import org.ddmore.mdl.mdl.Arguments
 import org.ddmore.mdl.mdl.EnumType
 import org.ddmore.mdl.mdl.Expression
+import org.ddmore.mdl.mdl.ExpressionBranch
 import org.ddmore.mdl.mdl.FunctionCall
 import org.ddmore.mdl.mdl.LogicalExpression
 import org.ddmore.mdl.mdl.MultiplicativeExpression
+import org.ddmore.mdl.mdl.NamedArguments
 import org.ddmore.mdl.mdl.OrExpression
 import org.ddmore.mdl.mdl.PowerExpression
-import org.ddmore.mdl.mdl.Primary
 import org.ddmore.mdl.mdl.UnaryExpression
+import org.ddmore.mdl.mdl.UnnamedArguments
 import org.ddmore.mdl.mdl.Vector
 import org.eclipse.emf.common.util.EList
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.Preconditions
 
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
@@ -38,22 +41,22 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(AnyExpression expression) {
+    public static unwrap(AnyExpression expression) {
         Preconditions.checkNotNull(expression, "Cannot unwrap a null AnyExpression");
         if (expression.getExpression()) {
             return unwrap(expression.getExpression());
         } else if (expression.getList()) {
-            throw new UnsupportedOperationException("Encountered an unhandled AnyExpression containing a List: " + expression.getList())
+            return unwrap(expression.getList().getArguments())
         } else if (expression.getVector()) {
             return unwrap(expression.getVector())
         } else if (expression.getType()) {
             return mdlPrinter.toStr(expression.getType())
         }
-        throw new UnsupportedOperationException("Encountered an unhandled AnyExpression: " + expression)
+        throw new UnsupportedOperationException("Encountered an unhandled AnyExpression: " + mdlPrinter.toStr(expression))
     }
 
-    public static Object unwrap(EnumType enumType) {
-        throw new UnsupportedOperationException("Encountered an unhandled EnumType: " + enumType)
+    public static unwrap(EnumType enumType) {
+        throw new UnsupportedOperationException("Encountered an unhandled EnumType: " + mdlPrinter.toStr(enumType))
     }
 
     /**
@@ -63,15 +66,34 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(Expression expression) {
+    public static unwrap(Expression expression) {
         Preconditions.checkNotNull(expression, "Cannot unwrap a null Expression");
+        def StringBuffer strExpr = new StringBuffer()
         if (expression.getExpression()) {
-            return unwrap(expression.getExpression())
+            strExpr.append(unwrap(expression.getExpression()))
         }
-        else if (expression.getCondition()) {
-            throw new UnsupportedOperationException("Encountered an unhandled Expression with a Condition: condition = " + expression.getCondition() + " else = " + expression.getElseExpression())
+        if (expression.getCondition()) {
+            strExpr.append(" when ")
+            strExpr.append(unwrap(expression.getCondition()))
+            if (expression.getElseExpression()) {
+                strExpr.append(" otherwise ")
+                strExpr.append(unwrap(expression.getElseExpression()))
+            }
+            // Assumption: Can't have both an "else" expression and a set of "when" branches
+            else if (expression.getWhenBranches()) {
+                for (ExpressionBranch whenExpr : expression.getWhenBranches()) {
+                    strExpr.append(", ")
+                    strExpr.append(unwrap(whenExpr.getExpression()))
+                    strExpr.append(" when ")
+                    strExpr.append(unwrap(whenExpr.getCondition()))
+                }
+                strExpr.append(";")
+            }
+            else { // Neither an "otherwise" branch nor a set of "when" branches
+                strExpr.append(";")
+            }
         }
-        throw new UnsupportedOperationException("Encountered an unhandled Expression: " + expression)
+        return strExpr.toString()
     }
 
     /**
@@ -81,12 +103,12 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(OrExpression expression) {
+    public static unwrap(OrExpression expression) {
         Preconditions.checkNotNull(expression, "Cannot unwrap a null OrExpression");
         if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
             return unwrap(expression.getExpression().get(0))
         }
-        throw new UnsupportedOperationException("Encountered an unhandled OrExpression: " + expression)
+        throw new UnsupportedOperationException("Encountered an unhandled OrExpression: " + mdlPrinter.toStr(expression))
     }
 
     /**
@@ -96,7 +118,7 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(LogicalExpression expression) {
+    public static unwrap(LogicalExpression expression) {
         Preconditions.checkNotNull(expression, "Cannot unwrap a null LogicalExpression");
         if (expression.getBoolean()) {
             return expression.getBoolean()
@@ -105,7 +127,7 @@ public class XtextWrapper {
         } else if (expression.getExpression1()) {
             return unwrap(expression.getExpression1())
         }
-        throw new UnsupportedOperationException("Encountered an unhandled LogicalExpression: " + expression)
+        throw new UnsupportedOperationException("Encountered an unhandled LogicalExpression: " + mdlPrinter.toStr(expression))
     }
 
     /**
@@ -115,7 +137,7 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(AdditiveExpression expression) {
+    public static unwrap(AdditiveExpression expression) {
         Preconditions.checkNotNull(expression, "Cannot unwrap a null AdditiveExpression");
         if (expression.getString()) {
             return "\"" + expression.getString() + "\"";
@@ -131,7 +153,7 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(MultiplicativeExpression expression) {
+    public static unwrap(MultiplicativeExpression expression) {
         Preconditions.checkNotNull(expression, "Cannot unwrap a null MultiplicativeExpression");
         return unwrap(expression.getExpression(), expression.getOperator())
     }
@@ -143,14 +165,14 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(PowerExpression expression) {
+    public static unwrap(PowerExpression expression) {
         Preconditions.checkNotNull(expression, "Cannot unwrap a null PowerExpression");
         return unwrap(expression.getExpression(), expression.getOperator())
     }
 
     // Would be good if EList could be parameterised by a common superclass of all expression classes but no such suitable class exists.
     // TODO: This should be private but generates an Eclipse warning about mixing public and private methods of the same name
-    public static Object unwrap(EList<Object> expressionList, EList<String> operatorList) {
+    public static unwrap(EList<Object> expressionList, EList<String> operatorList) {
 
         final StringBuffer sb = new StringBuffer();
         for (int i = 0; i < expressionList.size(); i++) {
@@ -169,7 +191,7 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(UnaryExpression expression) {
+    public static unwrap(UnaryExpression expression) {
         Preconditions.checkNotNull(expression, "Cannot unwrap a null UnaryExpression");
         if (expression.getOperator()) {
             return expression.getOperator() + unwrap(expression.getExpression())
@@ -182,11 +204,9 @@ public class XtextWrapper {
         } else if (expression.getParExpression()) {
             return "(" + XtextWrapper.unwrap(expression.getParExpression().getExpression()) + ")"
         } else if (expression.getConstant()) {
-            throw new UnsupportedOperationException("Encountered an unhandled UnaryExpression with unexpected content: Constant: " + expression.getConstant())
-        } else if (expression.getAttribute()) {
-            throw new UnsupportedOperationException("Encountered an unhandled UnaryExpression with unexpected content: Attribute: " + expression.getAttribute())
+            return expression.getConstant()
         } else {
-            throw new UnsupportedOperationException("Encountered an unhandled UnaryExpression with unexpected content: Expression: " + expression.getExpression)
+            throw new UnsupportedOperationException("Encountered an unhandled UnaryExpression with unexpected content: " + mdlPrinter.toStr(expression))
         }
     }
 
@@ -197,12 +217,12 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(AndExpression expression) {
+    public static unwrap(AndExpression expression) {
         Preconditions.checkNotNull(expression, "Cannot unwrap a null AndExpression");
         if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
             return unwrap(expression.getExpression().get(0))
         }
-        throw new UnsupportedOperationException("Encountered an unhandled AndExpression: " + expression)
+        throw new UnsupportedOperationException("Encountered an unhandled AndExpression: " + mdlPrinter.toStr(expression))
     }
 
     /**
@@ -212,16 +232,19 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(FunctionCall fc) {
+    public static unwrap(FunctionCall fc) {
         Preconditions.checkNotNull(fc, "Cannot unwrap a null FunctionCall expression");
         final String functionName = fc.getIdentifier().getName()
-        final String argsStr = fc.getArguments().getArguments().collect { Argument a ->
-            if (a.getArgumentName()) {
-                a.getArgumentName().getName() + "=" + unwrap(a.getExpression())
-            } else {
+        final String argsStr
+        if (fc.getArguments().getUnnamedArguments()) {
+            argsStr = fc.getArguments().getUnnamedArguments().getArguments().collect { ArgumentExpression a ->
                 unwrap(a.getExpression())
-            }
-        }.join(", ")
+            }.join(", ")
+        } else if (fc.getArguments().getNamedArguments()) {
+            argsStr = fc.getArguments().getNamedArguments().getArguments().collect { Argument a ->
+                a.getArgumentName().getName() + "=" + unwrap(a.getExpression())
+            }.join(", ")
+        }
         return functionName + "(" + argsStr + ")"
     }
 
@@ -232,11 +255,45 @@ public class XtextWrapper {
      * @return String representation of the expression
      * @throws NullPointerException if expression is null
      */
-    public static Object unwrap(Vector v) {
+    public static unwrap(Vector v) {
         Preconditions.checkNotNull(v, "Cannot unwrap a null Vector expression");
-        "[".concat(v.getValues().collect {Primary p ->
-            return unwrap(p.getExpression())
-        }.join(", ")).concat("]")
+        if (v.getExpression().getExpressions()) {
+            return "[".concat(v.getExpression().getExpressions().collect { Expression expr ->
+                unwrap(expr)
+            }.join(", ")).concat("]")
+        } else {
+            return "[".concat(v.getExpression().getLists().collect {  org.ddmore.mdl.mdl.List lst ->
+                unwrap(lst.getArguments())
+            }.join(", ")).concat("]")
+        }
+    }
+
+    public static unwrap(final Arguments args) {
+        if (args.getNamedArguments()) {
+            return unwrap(args.getNamedArguments())
+        } else {
+            return unwrap(args.getUnnamedArguments())
+        }
+    }
+
+    public static unwrap(final NamedArguments args) {
+        "{".concat(args.getArguments().collect{ Argument a ->
+            a.getArgumentName().getName() + "=" + unwrap(a.getExpression())
+        }.join(", ")).concat("}")
+    }
+
+    public static unwrap(final UnnamedArguments args) {
+        "{".concat(args.getArguments().collect{ ArgumentExpression ae ->
+            unwrap(ae.getExpression())
+        }.join(", ")).concat("}")
+    }
+
+    public static unwrap(ArgumentExpression argExpr) {
+        if (argExpr.getExpression()) {
+            return unwrap(argExpr.getExpression())
+        } else {
+            throw new UnsupportedOperationException("Encountered an unhandled RandomList of an ArgumentExpression: " + mdlPrinter.toStr(argExpr.getRandomList()))
+        }
     }
 
 }

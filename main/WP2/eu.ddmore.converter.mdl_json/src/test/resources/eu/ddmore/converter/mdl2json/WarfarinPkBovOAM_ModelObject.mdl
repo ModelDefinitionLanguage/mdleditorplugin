@@ -1,0 +1,85 @@
+warfarin_PK_BOV_mdl = mdlobj{
+   IDV { T }
+
+   COVARIATES{
+    WT
+   }
+
+   VARIABILITY_LEVELS{
+    ID : { level=3, type=parameter }
+    OCC : { level=2, type=parameter }
+    DV : { level=1, type=observation }
+   }
+
+   STRUCTURAL_PARAMETERS{
+      #THETA
+      POP_CL
+      POP_V
+      POP_KA
+      POP_TLAG
+   }# end STRUCTURAL_PARAMETERS
+
+   VARIABILITY_PARAMETERS{
+      #OMEGA
+      BSV_CL
+      BSV_V
+      BOV_CL
+      BOV_V
+      BOV_KA
+      BOV_TLAG
+      BSV_KA
+      BSV_TLAG
+      #SIGMA
+      RUV_PROP
+      RUV_ADD
+   }# end VARIABILITY_PARAMETERS
+
+   GROUP_VARIABLES{
+      # Covariate model
+      GRPCL=POP_CL*(WT/70)^ 0.75  ## Type 1 - Equation type
+      GRPV=POP_V*WT/70
+      GRPKA=POP_KA
+      GRPLG=POP_TLAG
+   }# end GROUP_VARIABLES
+
+   RANDOM_VARIABLE_DEFINITION(level=ID){
+      eta_BSV_CL~ Normal(mean=0, var=BSV_CL)
+      eta_BSV_V~ Normal(mean=0, var=BSV_V)
+      eta_BSV_KA~ Normal(mean=0, var=BSV_KA)
+      eta_BSV_TLAG~ Normal(mean=0, var=BSV_TLAG)
+   }# end RANDOM_VARIABLE_DEFINITION
+
+   RANDOM_VARIABLE_DEFINITION(level=OCC){
+      eta_BOV_CL~ Normal(mean=0, var=BOV_CL)
+      eta_BOV_V~ Normal(mean=0, var=BOV_V)
+      eta_BOV_KA~ Normal(mean=0, var=BOV_KA)
+      eta_BOV_TLAG~ Normal(mean=0, var=BOV_TLAG)
+   }# end RANDOM_VARIABLE_DEFINITION
+
+   RANDOM_VARIABLE_DEFINITION(level=DV){
+      eps_RUV_PROP~ Normal(mean=0, var=RUV_PROP)
+      eps_RUV_ADD~ Normal(mean=0, var=RUV_ADD)
+   }# end RANDOM_VARIABLE_DEFINITION
+
+   INDIVIDUAL_VARIABLES{
+      # Individual parameters
+      CL=GRPCL*exp(eta_BSV_CL+eta_BOV_CL) ## Type 1 - Equation type
+      V=GRPV*exp(eta_BSV_V+eta_BOV_V)
+      KA=GRPKA*exp(eta_BSV_KA+eta_BOV_KA)
+      TLAG=GRPLG*exp(eta_BSV_TLAG+eta_BOV_TLAG)
+      }# end INDIVIDUAL_VARIABLES
+
+   MODEL_PREDICTION{
+        DEQ {  
+            RATEIN = GUT * KA when T >= TLAG otherwise 0
+            GUT : { deriv =(- RATEIN), init = 0, x0 = 0 }
+            CENTRAL : { deriv =(RATEIN - CL * CENTRAL / V), init = 0, x0 = 0 } 
+        } # end DEQ block
+        CC = CENTRAL / V 
+   }# end MODEL_PREDICTION
+
+   OBSERVATION{
+      Y = CC*(1+eps_RUV_PROP)+eps_RUV_ADD  # Type 1 - equation type
+   }# end OBSERVATION
+
+} # end of model object

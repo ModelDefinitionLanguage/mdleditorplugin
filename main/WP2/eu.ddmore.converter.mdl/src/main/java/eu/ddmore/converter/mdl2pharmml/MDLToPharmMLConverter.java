@@ -5,9 +5,12 @@ package eu.ddmore.converter.mdl2pharmml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.ddmore.mdl.MdlStandaloneSetup;
+import org.ddmore.mdl.mdl.MOGObject;
 import org.ddmore.mdl.mdl.Mcl;
+import org.ddmore.mdl.validation.Utils;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.resource.XtextResource;
@@ -49,9 +52,15 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
 
         Resource resource = resourceSet.getResource(URI.createURI("file:///" + src.getAbsolutePath()), true);
         Mcl mcl = (Mcl) resource.getContents().get(0);
+        List<MOGObject> mogs = Utils.getMOGs(mcl);
+
+        // TODO: We're currently making an assumption that there will only be a single MOG
+        // in the provided file.  This should be fine for Product 4.
+        // This will be addressed under DDMORE-1221
+        MOGObject mog = mogs.get(0);
 
         Mdl2PharmML xtendConverter = new Mdl2PharmML();
-        CharSequence converted = xtendConverter.convertToPharmML(mcl);
+        CharSequence converted = xtendConverter.convertToPharmML(mog, src.toString());
 
         return printOutputFile(src, outputDirectory, converted.toString(), ".xml");
     }
