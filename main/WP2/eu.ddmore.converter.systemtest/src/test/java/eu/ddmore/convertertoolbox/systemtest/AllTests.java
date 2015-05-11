@@ -13,9 +13,9 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    MdlToPharmmlModelsTest.class,
-    PharmmlToNmtranModelsTest.class,
-    GeneratedPharmmlToNmtranModelsTest.class,
-    MdlToJsonModelsTest.class
+//    MdlToPharmmlModelsTest.class,
+//    PharmmlToNmtranModelsTest.class,
+//    GeneratedPharmmlToNmtranModelsTest.class,
+//    MdlToJsonModelsTest.class
 })
 public class AllTests {}
