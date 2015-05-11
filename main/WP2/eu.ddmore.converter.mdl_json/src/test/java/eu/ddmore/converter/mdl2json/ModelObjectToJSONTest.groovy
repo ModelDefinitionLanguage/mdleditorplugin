@@ -533,5 +533,21 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
         assertEquals("Checking number of Group Variables", 1, groupVars.size())
         assertEquals("Checking Group Variable 1/1", [(Variable.NAME_KEY):'FCLSEX', (Variable.EXPRESSION_KEY):'1 when SEX==female otherwise 0'], groupVars[0])
     }
+    
+    @Test
+    public void testModelOutputVariablesBlock_UseCase10() {
+        def json = getJsonFromMDLFile("UseCase10_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.warfarin_PK_2Compartments_mdl
+        
+        logger.debug(modelObject)
+        
+        def modelOutputVars = modelObject.MODEL_OUTPUT_VARIABLES
+        
+        assertEquals("Checking number of Model Output Variables", 13, modelOutputVars.size())
+        assertEquals("Checking Model Output Variable 1/13", [(Variable.NAME_KEY):'ID'], modelOutputVars[0])
+        assertEquals("Checking Model Output Variable 2/13", [(Variable.NAME_KEY):'TIME'], modelOutputVars[1])
+        assertEquals("Checking Model Output Variable 3/13", [(Variable.NAME_KEY):'WT'], modelOutputVars[2])
+    }
 
 }

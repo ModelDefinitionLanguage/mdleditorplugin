@@ -23,16 +23,17 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 
     static final String IDENTIFIER = "mdlobj"
 
-    static String IDV = "IDV"
-    static String COVARIATES = "COVARIATES"
-    static String VARIABILITY_LEVELS = "VARIABILITY_LEVELS"
-    static String STRUCTURAL_PARAMETERS = "STRUCTURAL_PARAMETERS"
-    static String VARIABILITY_PARAMETERS = "VARIABILITY_PARAMETERS"
-    static String RANDOM_VARIABLE_DEFINITION = "RANDOM_VARIABLE_DEFINITION"
-    static String INDIVIDUAL_VARIABLES = "INDIVIDUAL_VARIABLES"
-    static String MODEL_PREDICTION = "MODEL_PREDICTION"
-    static String OBSERVATION = "OBSERVATION"
-    static String GROUP_VARIABLES = "GROUP_VARIABLES"
+    static final String IDV = "IDV"
+    static final String COVARIATES = "COVARIATES"
+    static final String VARIABILITY_LEVELS = "VARIABILITY_LEVELS"
+    static final String STRUCTURAL_PARAMETERS = "STRUCTURAL_PARAMETERS"
+    static final String VARIABILITY_PARAMETERS = "VARIABILITY_PARAMETERS"
+    static final String RANDOM_VARIABLE_DEFINITION = "RANDOM_VARIABLE_DEFINITION"
+    static final String INDIVIDUAL_VARIABLES = "INDIVIDUAL_VARIABLES"
+    static final String MODEL_PREDICTION = "MODEL_PREDICTION"
+    static final String OBSERVATION = "OBSERVATION"
+    static final String GROUP_VARIABLES = "GROUP_VARIABLES"
+    static final String MODEL_OUTPUT_VARIABLES = "MODEL_OUTPUT_VARIABLES"
 
     public Model(ModelObject modelObject) {
 
@@ -76,11 +77,11 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
             if (block.getGroupVariablesBlock()) {
                 setProperty(GROUP_VARIABLES, VariablesList.buildFromGroupVariablesBlock(block.getGroupVariablesBlock()))
             }
+            if (block.getOutputVariablesBlock()) {
+                setProperty(MODEL_OUTPUT_VARIABLES, VariablesList.buildFromSymbolNames(block.getOutputVariablesBlock().getVariables()))
+            }
             if (block.getEstimationBlock()) {
                 throw new UnsupportedOperationException("Estimation block within Model Object not supported")
-            }
-            if (block.getOutputVariablesBlock()) {
-                throw new UnsupportedOperationException("Output Variables block within Model Object not supported")
             }
             if (block.getSimulationBlock()) {
                 throw new UnsupportedOperationException("Simulation block within Model Object not supported")
@@ -126,6 +127,9 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
         }
         if (json[GROUP_VARIABLES]) {
             setProperty(GROUP_VARIABLES, VariablesList.buildFromJSON(json[GROUP_VARIABLES]))
+        }
+        if (json[MODEL_OUTPUT_VARIABLES]) {
+            setProperty(MODEL_OUTPUT_VARIABLES, VariablesList.buildFromJSON(json[MODEL_OUTPUT_VARIABLES]))
         }
         // RANDOM_VARIABLE_DEFINITION block has to be treated specially as it appears multiple times
         // with (level=ID), (level=DV) etc. appended to the block name to distinguish between them

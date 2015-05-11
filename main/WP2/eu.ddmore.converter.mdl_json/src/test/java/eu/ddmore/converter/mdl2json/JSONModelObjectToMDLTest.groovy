@@ -65,6 +65,8 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         / {"GROUP_VARIABLES":[{".expr":"POP_CL*(WT\/70)^0.75",".name":"GRPCL"},{".expr":"POP_V*WT\/70",".name":"GRPV"},{".expr":"POP_KA",".name":"GRPKA"},{".expr":"POP_TLAG",".name":"GRPLG"}]} /
     private final static String groupVariablesBlockJson_WarfarinPkSexage =
         / {"GROUP_VARIABLES":[{".expr":"1 when SEX==female otherwise 0",".name":"FCLSEX"}]} /
+    private final static String modelOutputVariablesBlockJson =
+        / {"MODEL_OUTPUT_VARIABLES":[{".name":"ID"},{".name":"TIME"},{".name":"WT"},{".name":"LOGTWT"},{".name":"CL"},{".name":"VC"},{".name":"Q"},{".name":"VP"},{".name":"KA"},{".name":"TLAG"},{".name":"DVID"},{".name":"MDV"},{".name":"Y"}]} /
 
     @Test
     public void testIndependentVariablesBlock() {
@@ -591,6 +593,35 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 
     GROUP_VARIABLES {
         FCLSEX = 1 when SEX==female otherwise 0
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    public void testModelOutputVariablesBlock_UseCase10() {
+        def json = getJson(modelOutputVariablesBlockJson)
+        
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    MODEL_OUTPUT_VARIABLES {
+        ID
+        TIME
+        WT
+        LOGTWT
+        CL
+        VC
+        Q
+        VP
+        KA
+        TLAG
+        DVID
+        MDV
+        Y
     }
 
 }
