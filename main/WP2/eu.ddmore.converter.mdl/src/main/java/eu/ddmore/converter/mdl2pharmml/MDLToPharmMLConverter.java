@@ -54,9 +54,13 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
         Mcl mcl = (Mcl) resource.getContents().get(0);
         List<MOGObject> mogs = Utils.getMOGs(mcl);
 
-        // TODO: We're currently making an assumption that there will only be a single MOG
+        // TODO: We're currently making an assumption that there will be a single MOG
         // in the provided file.  This should be fine for Product 4.
         // This will be addressed under DDMORE-1221
+        if (mogs.isEmpty()) {
+        	throw new IllegalStateException("Must be (at least) one MOG defined in the provided MCL file: " + src); 
+        }
+
         MOGObject mog = mogs.get(0);
 
         Mdl2PharmML xtendConverter = new Mdl2PharmML();
