@@ -1,0 +1,16 @@
+# A skeleton file for use by unit tests, i.e. having the top-level blocks present but not populated
+
+skeleton_data = dataobj{
+}
+
+skeleton_par = parobj {
+}
+
+skeleton_mdl = mdlobj {
+}
+
+skeleton_task = taskobj {
+}
+
+skeleton_mog = mogobj {
+}

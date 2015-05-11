@@ -6,6 +6,7 @@ package eu.ddmore.converter.mdl2json
 import groovy.json.JsonSlurper
 
 import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
@@ -13,6 +14,7 @@ import org.apache.log4j.Logger
 
 import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.converter.mdl2json.domain.Model
+import eu.ddmore.converter.mdl2json.domain.ModelPredictionItem
 import eu.ddmore.converter.mdl2json.domain.Mog
 import eu.ddmore.converter.mdl2json.domain.Parameter
 import eu.ddmore.converter.mdl2json.domain.Source
@@ -34,30 +36,32 @@ class MdlTestUtils {
     private static Logger logger = Logger.getLogger(MdlTestUtils.class)
 
     public static List<String> allBlockNames = [
-        Data.DECLARED_VARIABLES,
+        Data.DECLARED_VARIABLES, // Identical name to Parameter.DECLARED_VARIABLES; this will pick up both for the comparison.
         Data.DATA_INPUT_VARIABLES,
         Data.DATA_DERIVED_VARIABLES,
         Data.SOURCE,
         Parameter.STRUCTURAL,
         Parameter.VARIABILITY,
+        Model.IDV,
         Model.COVARIATES,
         Model.VARIABILITY_LEVELS,
         Model.STRUCTURAL_PARAMETERS,
         Model.VARIABILITY_PARAMETERS,
-        Model.RANDOM_VARIABLE_DEFINITION + /\(.+\)/, // note the regex matching for the parameters of the block name
+        Model.RANDOM_VARIABLE_DEFINITION + /\s*\(.+\)/, // Note the regex matching for the parameters of the block name. All matching blocks will get picked up for comparison, as per DECLARED_VARIABLES above.
         Model.INDIVIDUAL_VARIABLES,
-        Model.MODEL_PREDICTION,
+        Model.MODEL_PREDICTION, // Note: Does NOT compare the sub-blocks; must be done explicitly (i.e. by these being listed explicitly - the last line of this def'n).
         Model.OBSERVATION,
         Model.GROUP_VARIABLES,
+        Model.MODEL_OUTPUT_VARIABLES,
         Task.ESTIMATE,
         Task.SIMULATE,
         Task.EVALUATE,
         Task.OPTIMISE,
         Task.DATA,
         Task.MODEL,
-        Mog.OBJECTS,
-        Mog.MAPPING
-    ]
+        //Mog.OBJECTS,
+        //Mog.MAPPING
+    ] + ModelPredictionItem.SUBBLOCK_NAMES
 	
     public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final File newMdlFile) {
         extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, FileUtils.readFileToString(newMdlFile))
@@ -66,8 +70,15 @@ class MdlTestUtils {
     public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final String newMdlFileContent) {
         def String origMdlFileContent = readInAndStripComments(origMdlFile)
 
-        def String origMdlFileBlockContent = putParameterListsIntoKnownOrder(extractSpecificBlock(origMdlFileContent, blockName))
-        def String newMdlFileBlockContent = putParameterListsIntoKnownOrder(extractSpecificBlock(newMdlFileContent, blockName))
+        // Note that extractSpecificBlock() returns a list to allow for multiple matching blocks e.g. for DECLARED_VARIABLES, RANDOM_VARIABLE_DEFINITION
+        def String origMdlFileBlockContent =
+            extractSpecificBlock(origMdlFileContent, blockName).collect { String rawBlockText ->
+                putParameterListsIntoKnownOrder(rawBlockText)
+            }.join("\n")
+        def String newMdlFileBlockContent =
+            extractSpecificBlock(newMdlFileContent, blockName).collect { String rawBlockText ->
+                putParameterListsIntoKnownOrder(rawBlockText)
+            }.join("\n")
 
         if (!StringUtils.isEmpty(origMdlFileBlockContent) || !StringUtils.isEmpty(newMdlFileBlockContent)) { // Check that we actually have something to compare
             logger.info("Verifying block " + blockName + "...")
@@ -86,14 +97,16 @@ class MdlTestUtils {
             }
 
             // Trim off whitespace from both the expected and the actual
-            assertEquals("Checking the content of the block " + blockName,
-                origMdlFileBlockContent.replaceAll(~/\s*/, "") /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */ ,
-                newMdlFileBlockContent.replaceAll(~/\s*/, "") /* REDUNDANT: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */
-            )
+            origMdlFileBlockContent = origMdlFileBlockContent.replaceAll(~/(?s)\s*/, "")
+            newMdlFileBlockContent = newMdlFileBlockContent.replaceAll(~/(?s)\s*/, "")
 
             // If the original MDL file had an empty block for this blockName then this is treated the same as if the block is absent
             if (origMdlFileBlockContent.equals(blockName + "{}")) {
                 origMdlFileBlockContent = "";
+            }
+            // If the newly written out MDL file had an empty block for this blockName then this is treated the same as if the block is absent
+            if (newMdlFileBlockContent.equals(blockName + "{}")) {
+                newMdlFileBlockContent = "";
             }
 
             assertEquals("Checking the content of the block " + blockName,
@@ -146,14 +159,34 @@ class MdlTestUtils {
         }
     }
 
-    private static String extractSpecificBlock(final String mdlFileContent, final String blockName) {
-        final StringBuffer strBuf = new StringBuffer()
-
+    /**
+     * Given a string consisting of the text of an MDL file (with comments stripped out),
+     * and the name of a block (which is treated as a regular expression), extract the text
+     * of that block from the full MDL text.
+     * <p>
+     * We return a {@link List} of {@link String}s rather than a single {@link String}
+     * to allow for multiple matching blocks being found, i.e. in the case of
+     * DECLARED_VARIABLES (which appears in both the Data object and the Parameter object)
+     * and RANDOM_VARIABLE_DEFINITION (of which there can be multiple blocks, distinguished
+     * by "(level=XX)" appended to the block names).
+     * <p>
+     * @param mdlFileContent - the text of an MDL file (with comments stripped out)
+     * @param blockName - regular expression for the name of the block(s) to extract
+     * @return {@link List} of {@link String}s containing the text of the matched blocks
+     */
+    private static List<String> extractSpecificBlock(final String mdlFileContent, final String blockName) {
+        
+        final List<String> extractedBlocks = []
+        
+        final StringBuffer strBuf
+        
         def found = false;
         def interestedIn = false
         def nestingLevel = -1
         mdlFileContent.eachLine { str ->
             if (str.matches("^\\s*" + blockName + "\\s*\\{.*")) {
+                // The start of the block
+                strBuf = new StringBuffer()
                 found = true
                 interestedIn = true
                 // There might be open curly brackets before the name of the block name; the '-' sign on the RHS is deliberate
@@ -166,55 +199,236 @@ class MdlTestUtils {
                 // Update how deep in the { } nesting we are so we know when to escape eventually
                 nestingLevel = nestingLevel + StringUtils.countMatches(str, "{")
                 nestingLevel = nestingLevel - StringUtils.countMatches(str, "}")
-            }
-            if (nestingLevel <= 0) { // End of block we're interested in has been reached
-                interestedIn = false
-                nestingLevel = -1;
+                // Have we reached the end of the block we're interested in?
+                if (nestingLevel <= 0) {
+                    extractedBlocks.add(strBuf.toString())
+                    interestedIn = false
+                    nestingLevel = -1;
+                }
             }
         }
-
+        
         if (!found) {
             logger.info("Block \"" + blockName + "\" was not found in the MDL")
         }
-
-        strBuf.toString()
+        
+        // TODO: A MCL file can have multiple top-level objects of the same type (dataobj, parobj, mdlobj, taskobj);
+        // these can be written out by the JSON->MDL in any order, hence we need to sort multiple matching
+        // blocks into some predictable order. But whitespace causes erratic ordering...
+        extractedBlocks//.sort()
     }
 
     /**
-     * Find all occurrences of lists of parameters (i.e. <code>use=covariate, type=continuous</code>
-     * in the line of MDL <code>RATE=list(use=covariate,type=continuous)</code>), within the given
-     * MDL fragment, and rewrite these lists to be alphabetically ordered by key in order to facilitate
-     * comparison of the MDL fragment.
+     * Find all occurrences of lists of parameters within the given MDL block text, and rewrite these lists
+     * to be alphabetically ordered by key in order to facilitate comparison of the MDL fragment.
+     * Parameter lists can exist in several forms, with different brackets used for different purposes,
+     * e.g. the following 7 examples, taken from real MDL use cases.
+     * <pre>
+     * logtWT : {type = continuous, use = covariate}
+     * OMEGA : {params = [ETA_CL, ETA_V], value = [0.01], type = CORR
+     * CL : {type = linear, trans = log, pop = POP_CL, fixEff = {coeff=BETA_CL_WT, cov=logtWT}, ranEff = ETA_CL}}
+     * ETA_CL ~ Normal(mean = 0, sd = PPV_CL)
+     * CENTRAL : {deriv = (RATEIN - CL * CENTRAL / V), init = 0, x0 = 0, wrt = TIME}
+     * Y : {type = continuous, error = combinedError1(additive = RUV_ADD, proportional = RUV_PROP, f = CC), eps = EPS_Y, prediction = CC} 
+     * { macro = elimination, from = FOO4, cl = CL }
+     * </pre>
+     * Note the nested brackets; these need to be handled with care, such that they don't influence the
+     * parameter parsing and sorting which must only be applied to 'top-level' parameters and not
+     * parameters 'nested' as value of top-level parameters.
      * <p>
-     * @param str - original fragment of MDL
-     * @return fragment of MDL that is identical save for the ordering of aforementioned lists of parameters
+     * @param blockText - original MDL block text
+     * @return MDL block text that is identical to the input apart from the ordering of aforementioned lists of parameters
      */
-    private static String putParameterListsIntoKnownOrder(final String str) {
-
-        // Some explanation of this regex needed!
+    private static String putParameterListsIntoKnownOrder(final String blockText) {
+        if (StringUtils.isBlank(blockText)) {
+            return "";
+        }
+        
+        String blockName = "__DUMMY_BLOCK__"
+        String blockTextContent = "__DUMMY_CONTENT__"
+        
+        final Matcher blockTextContentMatcher = blockText =~ /(?s)\s*([A-Za-z0-9_\(\)=\s]+?)\s*\{(.*)\}/
+        while (blockTextContentMatcher.find()) { // Only one match expected
+            blockName = blockTextContentMatcher.group(1)
+            if ("MODEL_PREDICTION".equals(blockName)) {
+                blockTextContent = replaceModelPredictionSubBlocksWithPlaceholders(blockTextContentMatcher.group(2))
+            } else {
+                blockTextContent = blockTextContentMatcher.group(2)
+            }
+        }
+        if (blockName == "__DUMMY_BLOCK__") {
+            throw new RuntimeException("Unable to recognise the following text as an MDL block:\n" + blockText)
+        }
+        
+        final String outStr1 = replaceCurlyBracesInParameterValues(blockTextContent)
+        
+        // Explanation of this regex:
         // The (?s) is the "dot-all" instruction to the matcher to match newline characters,
         // so parameter definitions spread over multiple lines will match.
-        // The \{\s*(.+?)\s*\} is to match the list of attributes of the parameter, in the { }
+        // The \{\s*(.+?)\s*\} captures the list of parameters of a variable, within { }
         // brackets; the "?" after the ".+" instructs the matcher to lazily match rather than
         // greedily match, otherwise the matcher would keep going until it found the last closing
         // bracket rather than the one that matched the opening bracket.
-        def outStr1 = sortParameterList(str, ( str =~ /(?s)[A-Za-z0-9]+\s*\:\s*\{\s*(.+?)\s*\}/ ))
-        // This regex is almost the same as the previous one but is to match the list of 'complex
-        // attributes' i.e. for a distribution parameter VAR ~ (...).
-        def outStr2 = sortParameterList(outStr1, ( outStr1 =~ /(?s)[A-Za-z0-9]+\s*\~\s*\{\s*(.+?)\s*\}/ ))
-
-        outStr2
+        def outStr2 = sortParameterList(outStr1, ( outStr1 =~ /(?s)\{\s*(.+?)\s*\}/ ))
+        // Explanation of this regex:
+        // This regex is a more complicated version of the previous one, that captures the list
+        // of distribution parameters i.e. for a distribution variable "VAR ~ Normal(...)".
+        def outStr3 = sortParameterList(outStr2, ( outStr2 =~ /(?s)[A-Za-z0-9]+\s*\~\s*[A-Za-z0-9]+\s*\(\s*(.+?)\s*\)/ ))
+        
+        logger.trace("Block text before sorting of parameter lists:\n" + blockText)
+        logger.trace("Block text after sorting of parameter lists:\n" + blockName + " {" + outStr3 + "}\n")
+        
+        blockName + " {" + outStr3 + "}\n"
+    }
+    
+    /**
+     * Trying to capture a list of parameters enclosed within curly braces, is problematic
+     * if any curly braces appear within any of the values of the parameters themselves.
+     * E.g. in the following variable definition:
+     * <pre>
+     * CL : {type = linear, trans = log, pop = POP_CL, fixEff = {coeff=BETA_CL_WT, cov=logtWT}, ranEff = ETA_CL}}
+     * </pre>
+     * We solve this by identifying any of the following formats of parameter value appearing
+     * in a list of parameters such as the one above, and replacing any curly braces within
+     * these parameter values, with square braces instead.
+     * <pre>
+     * fixEff = {coeff=BETA_CL_WT, cov=logtWT}
+     * fixEff = [{coeff=POP_BETA_CL_WT, cov=logtWT}]
+     * define=[{female, 1}, {male, 0}]
+     * </pre>
+     * <p>
+     * The resulting MDL may then be syntactically incorrect, but for the purposes of comparison
+     * of MDL text, this is ok. (If parameter values were actually being written out with square
+     * brackets when they should be using curly braces, this would get picked up by unit tests).
+     * <p>
+     * @param blockText - original MDL block text
+     * @return MDL block text that is identical to the input apart from nested curly braces
+     *         being replaced by square brackets
+     */
+    private static String replaceCurlyBracesInParameterValues(final String blockText) {
+        def outStr = blockText
+        
+        // This regex captures any parameters that consist of a parameter name mapping
+        // to a list of attributes enclosed in curly braces {...}, e.g.
+        // fixEff = {coeff=BETA_CL_WT, cov=logtWT}
+        final Matcher matcherForCurlyBraceEnclosedParamValue = blockText =~ /(?s)([A-Za-z0-9]+)\s*=\s*\{(.+?)\}/
+        
+        while (matcherForCurlyBraceEnclosedParamValue.find()) {
+            outStr = outStr.replace(matcherForCurlyBraceEnclosedParamValue.group(0),
+                matcherForCurlyBraceEnclosedParamValue.group(1) + " = [" + matcherForCurlyBraceEnclosedParamValue.group(2) + "]")
+        }
+        
+        // There are also similar use cases that have parameter lists enclosed in square brackets that themselves
+        // contain curly braces, i.e. [{...}, {...}], e.g.
+        // fixEff = [{coeff=POP_BETA_CL_WT, cov=logtWT}]
+        // define=[{female, 1}, {male, 0}]
+        final Matcher matcherForSquareBracketEnclosedParamValue = blockText =~ /(?s)([A-Za-z0-9]+)\s*=\s*\[\s*(\{.+?\})\s*\]/
+        
+        while (matcherForSquareBracketEnclosedParamValue.find()) {
+            logger.trace("Found square bracket enclosed parameter value: "
+                + matcherForSquareBracketEnclosedParamValue.group(1) + " = [" + matcherForSquareBracketEnclosedParamValue.group(2) + "]")
+            
+            final List<String> subAttrs = []
+            
+            final Matcher matcherForCurlyBraceEnclosedSubAttrOfParamValue = matcherForSquareBracketEnclosedParamValue.group(2) =~ /\{(.+?)\}/
+            while (matcherForCurlyBraceEnclosedSubAttrOfParamValue.find()) {
+                subAttrs.add("[" + matcherForCurlyBraceEnclosedSubAttrOfParamValue.group(1) + "]")
+            }
+            
+            outStr = outStr.replace(matcherForSquareBracketEnclosedParamValue.group(0), matcherForSquareBracketEnclosedParamValue.group(1) + " = [" + subAttrs.join(", ") + "]" )
+        }
+        
+        logger.trace("Block before replacement of curly braces in parameter values: " + blockText)
+        logger.trace("Block after replacement of curly braces in parameter values: " + outStr)
+        outStr
     }
 
-    private static sortParameterList(final String str, Matcher matcher) {
-        def outStr = str
-
+    /**
+     * Find parameter lists within the provided MDL block text, that match the specified
+     * regular expression; some parameter lists are enclosed by {...}, some by (...).
+     * <p>
+     * For each such parameter list encountered, parse the text from left to right,
+     * tracking the nesting depth of parentheses (whether round, curly or square)
+     * encountered on the way. This allows us to identify the comma-separated
+     * 'top-level' parameters, skipping over 'nested' parameter lists that are values
+     * of 'top-level' parameters. Sort the identified list of parameters, and replace
+     * the parameter list in the original MDL with this sorted list of parameters. 
+     * <p>
+     * Once all lists of parameters have been identified and processed, return the
+     * resulting processed MDL block text.
+     * <p>
+     * @param blockTextBeingProcessed - MDL block text, that has already had certain
+     *                                  processing applied (e.g. removal of comments)
+     *                                  and that will be further processed by this method
+     * @param matcher - {@link Matcher} created from the regular expression that is to be
+     *                  used to identify lists of parameters, applied to the MDL block text
+     */
+    private static String sortParameterList(final String blockTextBeingProcessed, Matcher matcher) {
+        def outStr = blockTextBeingProcessed
+        
         while (matcher.find()) {
             final String paramsStr = matcher.group(1)
-            String[] params = paramsStr.split(/\s*,\s*/)
-            outStr = outStr.replace(paramsStr, params.sort().join(","))
+            logger.trace("Parameter List found: " + paramsStr)
+            
+            final List<String> parameters = []
+            final StringBuffer currParam = new StringBuffer()
+            short bracketNestingCount = 0
+            paramsStr.collect { String c ->
+                switch(c) {
+                    // NB: No distinguishing btwn different bracket types; unit tests should pick up such otherwise syntactically incorrect MDL
+                    case '(':
+                    case '[':
+                    case '{':
+                        currParam.append(c)
+                        bracketNestingCount++
+                        break
+                    case ')':
+                    case ']':
+                    case '}':
+                        currParam.append(c)
+                        bracketNestingCount--
+                        break
+                    case ',':
+                        if (bracketNestingCount == 0) {
+                            // Move on to the next parameter
+                            parameters.add(currParam.toString())
+                            currParam = new StringBuffer()
+                        } else {
+                            // Within a parameter value so this comma isn't an parameter separator
+                            currParam.append(c)
+                        }
+                        break
+                    case ' ':
+                    case '\t':
+                    case '\n':
+                        // skip
+                        break
+                    default:
+                        currParam.append(c)
+                }
+            }
+            // Add the final parameter to the list
+            parameters.add(currParam.toString())
+            
+            // Sanity check that we haven't mangled the parameters
+            if (!paramsStr.replaceAll(/\s*/, "").equals(parameters.join(","))) {
+                logger.error("Original parameters string: " + paramsStr)
+                logger.error("Parsed parameters string: " + parameters.join(","))
+                throw new RuntimeException("Parsed parameters string is not identical to the original parameters string. These have been printed to log output for debugging purposes.")
+            }
+            
+            parameters.sort() // Mutates the list
+            logger.trace("Parsed and sorted parameter list:    " + parameters.join("    "))
+            
+            // We need to find and replace the entire parameter list to avoid replacing a subset of
+            // some other parameter list that cannot then be matched and replaced itself.
+            // To ensure we do capture the entire parameter list, we need to include the enclosing
+            // brackets - either curly, round, or square (the latter from the preprocessing applied by
+            // replaceCurlyBracesInParameterValues()) - hence the rather complicated looking regex-ifying
+            // of what was originally just: outStr.replace(paramsStr, parameters.join(", "))
+            outStr = outStr.replaceAll("([\\{|\\(|\\[])\\s*" + Pattern.quote(paramsStr) + "\\s*([\\}|\\)|\\]])", "\$1" + parameters.join(", ") + "\$2")
         }
-
+        
         outStr
     }
 
@@ -274,4 +488,35 @@ class MdlTestUtils {
 
         outStr
     }
+    
+    /**
+     * When doing {@link #putParameterListsIntoKnownOrder(String)}, sub-blocks that themselves
+     * contain lists of parameters, i.e. specifically for the MODEL_PREDICTION block, will
+     * cause the parameter capturing and sorting for the main block itself to go awry.
+     * <p>
+     * Sub-blocks containing parameter lists must instead be processed separately.
+     * For the main block, we still want to verify that the sub-blocks appear where they should
+     * do, so we replace sub-blocks with just the sub-block name, with __PLACEHOLDER__ appended,
+     * for the purposes of the comparison of MDL text.
+     * <p>
+     * @param blockTextContent - original MDL text for MODEL_PREDICTION block
+     * @return MDL text for MODEL_PREDICTION block but with sub-blocks replaced by placeholders
+     *         as described above
+     */
+    private static String replaceModelPredictionSubBlocksWithPlaceholders(final String blockTextContent) {
+        String outStr = blockTextContent
+        
+        for (final String modelPredictionSubBlockName : ModelPredictionItem.SUBBLOCK_NAMES) {
+            
+            // Note that extractSpecificBlock() actually returns a list to allow for multiple matching blocks
+            final List<String> subBlockTextFragments = extractSpecificBlock(blockTextContent, modelPredictionSubBlockName)
+            
+            if (!subBlockTextFragments.isEmpty()) {
+                outStr = outStr.replace(subBlockTextFragments.get(0), "        " + modelPredictionSubBlockName + "__PLACEHOLDER__\n")
+            }
+        }
+        
+        outStr
+    }
+    
 }

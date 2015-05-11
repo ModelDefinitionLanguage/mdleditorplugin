@@ -8,10 +8,10 @@
         </layout>
     </appender>
   <logger name="eu.ddmore">
-    <level value="WARN"/> 
+    <level value="DEBUG"/> 
   </logger>
   <root>
-        <priority value="WARN"/>
+        <priority value="DEBUG"/>
         <appender-ref ref="ca"/>
     </root>
 </log4j:configuration>
