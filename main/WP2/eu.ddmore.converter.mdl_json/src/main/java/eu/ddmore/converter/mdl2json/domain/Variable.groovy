@@ -102,6 +102,7 @@ public class Variable extends Expando implements MDLPrintable {
         // Note: sorting is only done so that we get predictable MDL strings that we can compare in the tests
         getProperties().minus(specialAttributes).sort().each { k, v ->
             if (v instanceof Map) {
+                // TODO: Attribute values that are themselves lists of attributes, are now just stored as strings, so this if-clause is redundant and could be removed
                 def subAttrsStr = "{" + v.collect { k2, v2 -> k2 + "=" + v2 }.join(", ") + "}"
                 attributes.add("${k}=${subAttrsStr}")
             } else {
