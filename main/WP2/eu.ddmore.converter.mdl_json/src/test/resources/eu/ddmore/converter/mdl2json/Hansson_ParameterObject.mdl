@@ -25,11 +25,11 @@ Hansson2013_par = parobj{
       POP_MRTS:{value=2430, lo=0, units="h"}
       
       #Residual Error
-      POP_RES_VEGF_ADD:{value=0.445, lo=0} 
-      POP_RES_sVEGFR2_ADD:{value=0.12, lo=0} 
-      POP_RES_sVEGFR2_PROP:{value=583, lo=0}
-      POP_RES_sVEGFR3_ADD:{value=0.22, lo=0}
-      POP_RES_sKIT_ADD:{value=0.224, lo=0}    
+      POP_RES_VEGF_PROP:{value=0.445, lo=0} 
+      POP_RES_sVEGFR2_PROP:{value=0.12, lo=0} 
+      POP_RES_sVEGFR2_ADD:{value=583, lo=0}
+      POP_RES_sVEGFR3_PROP:{value=0.22, lo=0}
+      POP_RES_sKIT_PROP:{value=0.224, lo=0}    
    }
 
    VARIABILITY{

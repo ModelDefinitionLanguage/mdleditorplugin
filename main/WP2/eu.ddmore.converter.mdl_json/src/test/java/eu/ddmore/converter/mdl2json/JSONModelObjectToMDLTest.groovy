@@ -20,11 +20,13 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     private final static String covariatesBlockJson_WarfarinAnalyticSolution =
         / {"COVARIATES":[{".name":"WT"},{".expr":"log(WT\/70)",".name":"logtWT"}]} /
     private final static String covariatesBlockJson_WarfarinPkSexage =
-        / {"COVARIATES":[{".name":"WT"},{".name":"AGE"},{".expr":"AGE-40",".name":"tAGE"},{".expr":"log(WT\/70)",".name":"logtWT"},{".name":"SEX","type":"categorical(female, male, MISSING)"}]} /
+        / {"COVARIATES":[{".name":"WT"},{".name":"AGE"},{".name":"SEX","type":"categorical(female, male, MISSING)"},{".expr":"ln(WT\/70)",".name":"logtWT"},{".expr":"AGE-40",".name":"tAGE"},{".expr":"1 when (SEX==female) otherwise 0",".name":"tSEX"}]} /
     private final static String variabilityLevelsBlockJson =
         / {"VARIABILITY_LEVELS":[{"level":"2",".name":"ID","type":"parameter"},{"level":"1",".name":"DV","type":"observation"}]} /
-    private final static String structuralParametersBlockJson =
+    private final static String structuralParametersBlockJson_Warfarin =
         / {"STRUCTURAL_PARAMETERS":[{".name":"POP_CL"},{".name":"POP_V"},{".name":"POP_KA"},{".name":"POP_TLAG"},{".name":"BETA_CL_WT"},{".name":"BETA_V_WT"},{".name":"RUV_PROP"},{".name":"RUV_ADD"}]} /
+    private final static String structuralParametersBlockJson_UseCase10 =
+        / {"STRUCTURAL_PARAMETERS":[{".name":"POP_CL","units":"\"L\/h\/kg*70\""},{".name":"POP_VC","units":"\"L\/kg*70\""},{".name":"POP_Q","units":"\"L\/h\/kg*70\""},{".name":"POP_VP","units":"\"L\/kg*70\""},{".name":"POP_KA","units":"\"1\/h\""},{".name":"POP_TLAG","units":"\"h\""},{".name":"POP_BETA_CL_WT"},{".name":"POP_BETA_V_WT"},{".name":"RUV_PROP"},{".name":"RUV_ADD","units":"\"mg\/L\""}]} /
     private final static String variabilityParametersBlockJson_Warfarin =
         / {"VARIABILITY_PARAMETERS":[{".name":"PPV_CL"},{".name":"PPV_V"},{".name":"PPV_KA"},{".name":"PPV_TLAG"}]} /
     private final static String variabilityParametersBlockJson_WarfarinPkSim =
@@ -39,29 +41,27 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         / {"INDIVIDUAL_VARIABLES":[{"trans":"log","ranEff":"eta_BM0","pop":"POP_BM0",".name":"BM0","type":"linear"},{"trans":"log","ranEff":"eta_BM02","pop":"POP_BM02",".name":"BM02","type":"linear"},{"trans":"log","ranEff":"eta_BM03","pop":"POP_BM03",".name":"BM03","type":"linear"},{"trans":"log","ranEff":"eta_BM0S","pop":"POP_BM0S",".name":"BM0S","type":"linear"},{".expr":"POP_IMAX",".name":"IMAX1"},{".expr":"POP_IMAX",".name":"IMAX2"},{".expr":"POP_IMAX",".name":"IMAX3"},{".expr":"POP_IMAX",".name":"IMAXS"},{"trans":"log","ranEff":"eta_IC50","pop":"POP_IC50",".name":"IC50","type":"linear"},{"trans":"log","ranEff":"eta_IC502","pop":"POP_IC50",".name":"IC502","type":"linear"},{"trans":"log","ranEff":"eta_IC503","pop":"POP_IC50",".name":"IC503","type":"linear"},{"trans":"log","ranEff":"eta_IC50S","pop":"POP_IC50",".name":"IC50S","type":"linear"},{".expr":"POP_HILL",".name":"HILL"},{".expr":"POP_HILL2",".name":"HILL2"},{"trans":"log","ranEff":"eta_MRT_VEGFs","pop":"POP_MRT",".name":"MRT1","type":"linear"},{"trans":"log","ranEff":"eta_MRT_VEGFs","pop":"POP_MRT2",".name":"MRT2","type":"linear"},{"trans":"log","ranEff":"eta_MRT_VEGFs","pop":"POP_MRT3",".name":"MRT3","type":"linear"},{"trans":"log","ranEff":"eta_MRT_sKIT","pop":"POP_MRTS",".name":"MRTS","type":"linear"},{".expr":"POP_TVSLP\/1000",".name":"TVSLP"},{"trans":"log","ranEff":"eta_TVSLP","pop":"TVSLP",".name":"DPSLP","type":"linear"},{".expr":"POP_TVSLP\/1000",".name":"TVSLPS"},{"trans":"log","ranEff":"eta_TVSLPS","pop":"TVSLPS",".name":"DPSLPS","type":"linear"},{".expr":"1\/MRT1",".name":"KOUT"},{".expr":"1\/MRT2",".name":"KOUT2"},{".expr":"1\/MRT3",".name":"KOUT3"},{".expr":"1\/MRTS",".name":"KOUTS"},{".expr":"BM02*KOUT2",".name":"KIN2"},{".expr":"BM03*KOUT3",".name":"KIN3"}]} /
     private final static String individualVarsBlockJson_WarfarinPkBov =
         / {"INDIVIDUAL_VARIABLES":[{"fixEff":"{coeff=BETA_CL_WT, cov=logtWT}","trans":"log","ranEff":"[eta_BSV_CL, eta_BOV_CL]","pop":"POP_CL",".name":"CL","type":"linear"},{"fixEff":"{coeff=BETA_V_WT, cov=logtWT}","trans":"log","ranEff":"[eta_BSV_V, eta_BOV_V]","pop":"POP_V",".name":"V","type":"linear"},{"trans":"log","ranEff":"[eta_BSV_KA, eta_BOV_KA]","pop":"POP_KA",".name":"KA","type":"linear"},{"trans":"log","ranEff":"[eta_BSV_TLAG, eta_BOV_TLAG]","pop":"POP_TLAG",".name":"TLAG","type":"linear"}]} /
-    private final static String individualVarsBlockJson_CategoricalDIST =
-        / {"INDIVIDUAL_VARIABLES":[{".expr":"B0+EDRUG+eta_PPV_EVENT",".name":"A0"},{".expr":"B1+EDRUG+eta_PPV_EVENT",".name":"A1"},{".expr":"B2+EDRUG+eta_PPV_EVENT",".name":"A2"}]} /
     private final static String individualVarsBlockJson_WarfarinPkSexage =
-        / {"INDIVIDUAL_VARIABLES":[{"fixEff":"[{coeff=BETA_CL_WT, cov=logtWT}, {coeff=POP_FCL_FEM, cov=FCLSEX}, {coeff=BETA_CL_AGE, cov=tAGE}]","trans":"log","ranEff":"ETA_CL","pop":"POP_CL",".name":"CL","type":"linear"},{"fixEff":"{coeff=BETA_V_WT, cov=logtWT}","trans":"log","ranEff":"ETA_V","pop":"POP_V",".name":"V","type":"linear"},{"trans":"log","ranEff":"ETA_KA","pop":"POP_KA",".name":"KA","type":"linear"},{"trans":"log","ranEff":"ETA_TLAG","pop":"POP_TLAG",".name":"TLAG","type":"linear"}]} /
+        / {"INDIVIDUAL_VARIABLES":[{"fixEff":"[{coeff=BETA_CL_WT, cov=logtWT}, {coeff=POP_FCL_FEM, cov=tSEX}, {coeff=BETA_CL_AGE, cov=tAGE}]","trans":"log","ranEff":"ETA_CL","pop":"POP_CL",".name":"CL","type":"linear"},{"fixEff":"{coeff=BETA_V_WT, cov=logtWT}","trans":"log","ranEff":"ETA_V","pop":"POP_V",".name":"V","type":"linear"},{"trans":"log","ranEff":"ETA_KA","pop":"POP_KA",".name":"KA","type":"linear"},{"trans":"log","ranEff":"ETA_TLAG","pop":"POP_TLAG",".name":"TLAG","type":"linear"}]} /
     private final static String observationBlockJson_Hansson =
-        / {"OBSERVATION":[{"eps":"eps_RES_W","trans":"log","error":"additiveError(additive=POP_RES_VEGF_ADD)","prediction":"VEGF",".name":"VEGF_obs","type":"continuous"},{"eps":"eps_RES_W","trans":"log","error":"combinedError2(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, f=sVEGFR2)","prediction":"sVEGFR2",".name":"sVEGFR2_obs","type":"continuous"},{"eps":"eps_RES_W","trans":"log","error":"additiveError(additive=POP_RES_sVEGFR3_ADD)","prediction":"sVEGFR3",".name":"sVEGFR3_obs","type":"continuous"},{"eps":"eps_RES_W","trans":"log","error":"additiveError(additive=POP_RES_sKIT_ADD)","prediction":"sKIT",".name":"sKIT_obs","type":"continuous"}]} /
+        / {"OBSERVATION":[{"eps":"eps_RES_W","error":"combinedError2log(additive=0, proportional=POP_RES_VEGF_PROP, f=VEGF)","prediction":"VEGF",".name":"LNVEGF_obs","type":"continuous"},{"eps":"eps_RES_W","error":"combinedError2log(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, f=sVEGFR2)","prediction":"sVEGFR2",".name":"LNsVEGFR2_obs","type":"continuous"},{"eps":"eps_RES_W","error":"combinedError2log(additive=0, proportional=POP_RES_sVEGFR3_PROP, f=sVEGFR3)","prediction":"sVEGFR3",".name":"LNsVEGFR3_obs","type":"continuous"},{"eps":"eps_RES_W","error":"combinedError2log(additive=0, proportional=POP_RES_sKIT_PROP, f=sKIT)","prediction":"sKIT",".name":"LNsKIT_obs","type":"continuous"}]} /
     private final static String observationBlockJson_WarfarinPkBovOAM =
         / {"OBSERVATION":[{".expr":"CC*(1+eps_RUV_PROP)+eps_RUV_ADD",".name":"Y"}]} /
-    private final static String observationBlockJson_CategoricalDIST =
-        / {"OBSERVATION":[{"categories":"[0, 1, 2, 3]","probabilities":"[Prob0, Prob1, Prob2, Prob3]",".name":"Y","type":"categorical"}]} /
+    private final static String observationBlockJson_UseCase22 =
+        / {"OBSERVATION":[{".expr":"CONC*(1+eps_RUV_PROP)+eps_RUV_ADD",".name":"Y"}]} /
     private final static String modelPredictionBlockJson_WarfarinAnalyticSolution =
         / {"MODEL_PREDICTION":[{".name":"D"},{".name":"DT"},{".expr":"CL\/V",".name":"k"},{".expr":"0 when T-DT<TLAG otherwise (D\/V)*(KA\/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))",".name":"CC"}]} /
     private final static String modelPredictionBlockJson_Hansson =
-        / {"MODEL_PREDICTION":[{".expr":"DOSE\/CL",".name":"AUC"},{".expr":"BM0*(1+DPSLP*T)",".name":"DP1"},{".expr":"BM0S*(1+DPSLPS*T)",".name":"DPS"},{".expr":"DP1*KOUT",".name":"KIN"},{".expr":"DPS*KOUTS",".name":"KINS"},{".DEQ":[{".expr":"IMAX1*AUC^HILL\/(IC50^HILL+AUC^HILL)",".name":"EFF"},{".expr":"IMAX2*AUC^HILL2\/(IC502^HILL2+AUC^HILL2)",".name":"EFF2"},{".expr":"IMAX3*AUC\/(IC503+AUC)",".name":"EFF3"},{".expr":"IMAXS*AUC\/(IC50S+AUC)",".name":"EFFS"},{"wrt":"T","deriv":"KIN-KOUT*(1-EFF)*VEGF","init":"BM0",".name":"VEGF"},{"wrt":"T","deriv":"KIN2*(1-EFF2)-KOUT2*sVEGFR2","init":"BM02",".name":"sVEGFR2"},{"wrt":"T","deriv":"KIN3*(1-EFF3)-KOUT3*sVEGFR3","init":"BM03",".name":"sVEGFR3"},{"wrt":"T","deriv":"KINS*(1-EFFS)-KOUTS*sKIT","init":"BM0S",".name":"sKIT"}]}]} /
+        / {"MODEL_PREDICTION":[{".expr":"DOSE\/CL",".name":"AUC"},{".expr":"BM0*(1+DPSLP*T)",".name":"DP1"},{".expr":"BM0S*(1+DPSLPS*T)",".name":"DPS"},{".expr":"DP1*KOUT",".name":"KIN"},{".expr":"DPS*KOUTS",".name":"KINS"},{".DEQ":[{".expr":"IMAX1*AUC^HILL\/(IC50^HILL+AUC^HILL)",".name":"EFF"},{".expr":"IMAX2*AUC^HILL2\/(IC502^HILL2+AUC^HILL2)",".name":"EFF2"},{".expr":"IMAX3*AUC\/(IC503+AUC)",".name":"EFF3"},{".expr":"IMAXS*AUC\/(IC50S+AUC)",".name":"EFFS"},{"deriv":"KIN-KOUT*(1-EFF)*VEGF","init":"BM0",".name":"VEGF"},{"wrt":"T","deriv":"KIN2*(1-EFF2)-KOUT2*sVEGFR2","init":"BM02",".name":"sVEGFR2"},{"wrt":"T","deriv":"KIN3*(1-EFF3)-KOUT3*sVEGFR3","init":"BM03",".name":"sVEGFR3"},{"wrt":"T","deriv":"KINS*(1-EFFS)-KOUTS*sKIT","init":"BM0S",".name":"sKIT"}]},{".expr":"ln(VEGF)",".name":"LNVEGF"}]} /
+    private final static String modelPredictionBlockCompartmentJson =
+        / {"MODEL_PREDICTION":[{".COMPARTMENT":[{"to":"CENTRAL","modelCmt":"1","tlag":"ALAG1","ka":"KA",".name":"INPUT_KA","type":"depot"},{"modelCmt":"2",".name":"CENTRAL","type":"compartment"},{"v":"V2","modelCmt":"2","cl":"CL","from":"CENTRAL","type":"elimination"},{"modelCmt":"3","kout":"Q\/V3","kin":"Q\/V2","from":"CENTRAL",".name":"PERIPHERAL","type":"distribution"}]},{".expr":"CENTRAL\/S2",".name":"F"},{".expr":"F",".name":"CC"}]} /
     private final static String modelPredictionBlockPkMacroJson =
-        / {"MODEL_PREDICTION":[{".PKMACRO":[{"to":"CENTRAL","macro":"iv",".name":"DEP1"},{"macro":"compartment","volume":"V",".name":"CENTRAL"},{"macro":"elimination","cl":"CL","from":"CENTRAL"},{"to":"LATENT","macro":"oral","p":"F1","ka":"KA",".name":"GUT"},{"macro":"compartment","volume":"1",".name":"LATENT"},{"to":"CENTRAL","macro":"transfer","kt":"KT","from":"LATENT"},{"macro":"elimination","from":"LATENT","k":"K1"}]},{".expr":"V",".name":"SCALE"},{".expr":"CENTRAL\/V",".name":"CC"}]} /
+        / {"MODEL_PREDICTION":[{".PKMACRO":[{".name":"DEP"},{"to":"Ac","macro":"oral","tlag":"ALAG1","ka":"KA"},{"macro":"compartment","volume":"V",".name":"Ac"},{"macro":"elimination","cl":"CL","from":"Ac"}]},{".expr":"Ac\/V",".name":"CONC"}]} /
     private final static String groupVariablesBlockJson_WarfarinPkBovOAM =
         / {"GROUP_VARIABLES":[{".expr":"POP_CL*(WT\/70)^0.75",".name":"GRPCL"},{".expr":"POP_V*WT\/70",".name":"GRPV"},{".expr":"POP_KA",".name":"GRPKA"},{".expr":"POP_TLAG",".name":"GRPLG"}]} /
-    private final static String groupVariablesBlockJson_WarfarinPkSexage =
-        / {"GROUP_VARIABLES":[{".expr":"1 when SEX==female otherwise 0",".name":"FCLSEX"}]} /
     private final static String modelOutputVariablesBlockJson =
         / {"MODEL_OUTPUT_VARIABLES":[{".name":"ID"},{".name":"TIME"},{".name":"WT"},{".name":"LOGTWT"},{".name":"CL"},{".name":"VC"},{".name":"Q"},{".name":"VP"},{".name":"KA"},{".name":"TLAG"},{".name":"DVID"},{".name":"MDV"},{".name":"Y"}]} /
-
+    
     @Test
     public void testIndependentVariablesBlock() {
 
@@ -111,9 +111,10 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     COVARIATES {
         WT
         AGE
-        tAGE = AGE-40
-        logtWT = log(WT/70)
         SEX : {type=categorical(female, male, MISSING)}
+        logtWT = ln(WT/70)
+        tAGE = AGE-40
+        tSEX = 1 when (SEX==female) otherwise 0
     }
 
 }
@@ -141,9 +142,9 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testStructuralParametersBlock() {
+    public void testStructuralParametersBlock_Warfarin() {
 
-        def json = getJson(structuralParametersBlockJson)
+        def json = getJson(structuralParametersBlockJson_Warfarin)
 
         def modelObj = new Model(json)
 
@@ -158,6 +159,33 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         BETA_V_WT
         RUV_PROP
         RUV_ADD
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    public void testStructuralParametersBlock_UseCase10() {
+
+        def json = getJson(structuralParametersBlockJson_UseCase10)
+
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    STRUCTURAL_PARAMETERS {
+        POP_CL : {units="L/h/kg*70"}
+        POP_VC : {units="L/kg*70"}
+        POP_Q : {units="L/h/kg*70"}
+        POP_VP : {units="L/kg*70"}
+        POP_KA : {units="1/h"}
+        POP_TLAG : {units="h"}
+        POP_BETA_CL_WT
+        POP_BETA_V_WT
+        RUV_PROP
+        RUV_ADD : {units="mg/L"}
     }
 
 }
@@ -350,25 +378,6 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testIndividualVariablesBlock_CategoricalDIST() {
-        def json = getJson(individualVarsBlockJson_CategoricalDIST)
-
-        def modelObj = new Model(json)
-
-        String expected = """mdlobj {
-
-    INDIVIDUAL_VARIABLES {
-        A0 = B0+EDRUG+eta_PPV_EVENT
-        A1 = B1+EDRUG+eta_PPV_EVENT
-        A2 = B2+EDRUG+eta_PPV_EVENT
-    }
-
-}
-"""
-        assertEquals(expected, modelObj.toMDL())
-    }
-
-    @Test
     public void testIndividualVariablesBlock_WarfarinPkSexage() {
         def json = getJson(individualVarsBlockJson_WarfarinPkSexage)
 
@@ -377,7 +386,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         String expected = """mdlobj {
 
     INDIVIDUAL_VARIABLES {
-        CL : {fixEff=[{coeff=BETA_CL_WT, cov=logtWT}, {coeff=POP_FCL_FEM, cov=FCLSEX}, {coeff=BETA_CL_AGE, cov=tAGE}], pop=POP_CL, ranEff=ETA_CL, trans=log, type=linear}
+        CL : {fixEff=[{coeff=BETA_CL_WT, cov=logtWT}, {coeff=POP_FCL_FEM, cov=tSEX}, {coeff=BETA_CL_AGE, cov=tAGE}], pop=POP_CL, ranEff=ETA_CL, trans=log, type=linear}
         V : {fixEff={coeff=BETA_V_WT, cov=logtWT}, pop=POP_V, ranEff=ETA_V, trans=log, type=linear}
         KA : {pop=POP_KA, ranEff=ETA_KA, trans=log, type=linear}
         TLAG : {pop=POP_TLAG, ranEff=ETA_TLAG, trans=log, type=linear}
@@ -397,10 +406,10 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         String expected = """mdlobj {
 
     OBSERVATION {
-        VEGF_obs : {eps=eps_RES_W, error=additiveError(additive=POP_RES_VEGF_ADD), prediction=VEGF, trans=log, type=continuous}
-        sVEGFR2_obs : {eps=eps_RES_W, error=combinedError2(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, f=sVEGFR2), prediction=sVEGFR2, trans=log, type=continuous}
-        sVEGFR3_obs : {eps=eps_RES_W, error=additiveError(additive=POP_RES_sVEGFR3_ADD), prediction=sVEGFR3, trans=log, type=continuous}
-        sKIT_obs : {eps=eps_RES_W, error=additiveError(additive=POP_RES_sKIT_ADD), prediction=sKIT, trans=log, type=continuous}
+        LNVEGF_obs : {eps=eps_RES_W, error=combinedError2log(additive=0, proportional=POP_RES_VEGF_PROP, f=VEGF), prediction=VEGF, type=continuous}
+        LNsVEGFR2_obs : {eps=eps_RES_W, error=combinedError2log(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, f=sVEGFR2), prediction=sVEGFR2, type=continuous}
+        LNsVEGFR3_obs : {eps=eps_RES_W, error=combinedError2log(additive=0, proportional=POP_RES_sVEGFR3_PROP, f=sVEGFR3), prediction=sVEGFR3, type=continuous}
+        LNsKIT_obs : {eps=eps_RES_W, error=combinedError2log(additive=0, proportional=POP_RES_sKIT_PROP, f=sKIT), prediction=sKIT, type=continuous}
     }
 
 }
@@ -426,15 +435,15 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testObservationBlock_CategoricalDIST() {
-        def json = getJson(observationBlockJson_CategoricalDIST)
+    public void testObservationBlock_UseCase22() {
+        def json = getJson(observationBlockJson_UseCase22)
 
         def modelObj = new Model(json)
-
+        
         String expected = """mdlobj {
 
     OBSERVATION {
-        Y : {categories=[0, 1, 2, 3], probabilities=[Prob0, Prob1, Prob2, Prob3], type=categorical}
+        Y = CONC*(1+eps_RUV_PROP)+eps_RUV_ADD
     }
 
 }
@@ -481,11 +490,12 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
             EFF2 = IMAX2*AUC^HILL2/(IC502^HILL2+AUC^HILL2)
             EFF3 = IMAX3*AUC/(IC503+AUC)
             EFFS = IMAXS*AUC/(IC50S+AUC)
-            VEGF : {deriv=KIN-KOUT*(1-EFF)*VEGF, init=BM0, wrt=T}
+            VEGF : {deriv=KIN-KOUT*(1-EFF)*VEGF, init=BM0}
             sVEGFR2 : {deriv=KIN2*(1-EFF2)-KOUT2*sVEGFR2, init=BM02, wrt=T}
             sVEGFR3 : {deriv=KIN3*(1-EFF3)-KOUT3*sVEGFR3, init=BM03, wrt=T}
             sKIT : {deriv=KINS*(1-EFFS)-KOUTS*sKIT, init=BM0S, wrt=T}
         }
+        LNVEGF = ln(VEGF)
     }
 
 }
@@ -494,25 +504,45 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testModelPredictionBlockPkMacro() {
+    public void testModelPredictionBlockWithCompartmentSubBlock() {
+        def json = getJson(modelPredictionBlockCompartmentJson)
+        
+        def modelObj = new Model(json)
+                
+        String expected = """mdlobj {
+
+    MODEL_PREDICTION {
+        COMPARTMENT {
+            INPUT_KA : {ka=KA, modelCmt=1, tlag=ALAG1, to=CENTRAL, type=depot}
+            CENTRAL : {modelCmt=2, type=compartment}
+            {cl=CL, from=CENTRAL, modelCmt=2, type=elimination, v=V2}
+            PERIPHERAL : {from=CENTRAL, kin=Q/V2, kout=Q/V3, modelCmt=3, type=distribution}
+        }
+        F = CENTRAL/S2
+        CC = F
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    public void testModelPredictionBlockWithPkMacroSubBlock() {
         def json = getJson(modelPredictionBlockPkMacroJson)
 
         def modelObj = new Model(json)
-
+        
         String expected = """mdlobj {
 
     MODEL_PREDICTION {
         PKMACRO {
-            DEP1 : {macro=iv, to=CENTRAL}
-            CENTRAL : {macro=compartment, volume=V}
-            {cl=CL, from=CENTRAL, macro=elimination}
-            GUT : {ka=KA, macro=oral, p=F1, to=LATENT}
-            LATENT : {macro=compartment, volume=1}
-            {from=LATENT, kt=KT, macro=transfer, to=CENTRAL}
-            {from=LATENT, k=K1, macro=elimination}
+            DEP
+            {ka=KA, macro=oral, tlag=ALAG1, to=Ac}
+            Ac : {macro=compartment, volume=V}
+            {cl=CL, from=Ac, macro=elimination}
         }
-        SCALE = V
-        CC = CENTRAL/V
+        CONC = Ac/V
     }
 
 }
@@ -533,23 +563,6 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         GRPV = POP_V*WT/70
         GRPKA = POP_KA
         GRPLG = POP_TLAG
-    }
-
-}
-"""
-        assertEquals(expected, modelObj.toMDL())
-    }
-
-    @Test
-    public void testGroupVariablesBlock_WarfarinPkSexage() {
-        def json = getJson(groupVariablesBlockJson_WarfarinPkSexage)
-
-        def modelObj = new Model(json)
-
-        String expected = """mdlobj {
-
-    GROUP_VARIABLES {
-        FCLSEX = 1 when SEX==female otherwise 0
     }
 
 }

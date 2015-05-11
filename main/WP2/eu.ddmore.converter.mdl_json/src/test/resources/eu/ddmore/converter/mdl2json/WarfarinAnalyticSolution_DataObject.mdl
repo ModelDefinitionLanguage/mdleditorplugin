@@ -1,28 +1,24 @@
-warfarin_PK_v2_dat = dataobj{
-    DECLARED_VARIABLES{ Y D }
-    
+warfarin_PK_ODE_dat = dataobj {
+    DECLARED_VARIABLES{D Y}
+
     DATA_INPUT_VARIABLES {
         ID : { use=id }
         TIME : { use=idv }
-        WT : { use = covariate }
-        AGE : { use = covariate }
-        SEX : { use=covariate, type=categorical(male, female), 
-                define=[{category=male, value=0}, {category=female,value=1}]}
-        AMT : { use = amt , define = D }
-        DVID : { use = dvid }
-        DV : { use = dv, define = Y }
-        MDV : { use = mdv}
-    }
+        WT : { type = continuous, use=covariate }
+        AMT : { use=amt, define = D }
+        DVID : { type = categorical, use=dvid}
+        DV : { use=dv, define = Y }
+        MDV : { type = categorical, use=mdv }
+        logtWT:{ type = continuous, use=covariate }  
+    } # end DATA_INPUT_VARIABLES
 
     DATA_DERIVED_VARIABLES {
         DT = TIME when AMT > 0 ;
-        }
-    
+        }   
+
     SOURCE {
-        file = "warfarin_conc_v2.csv"
-        inputformat = nonmemFormat 
+        file = "warfarin_conc.csv" 
+            inputformat = nonmemFormat 
         ignore = "#" 
-#       header = true  # or false
-#       skip =  0  ##  << integer >> Skips number of rows before header / data
     } # end SOURCE
 } # end data object

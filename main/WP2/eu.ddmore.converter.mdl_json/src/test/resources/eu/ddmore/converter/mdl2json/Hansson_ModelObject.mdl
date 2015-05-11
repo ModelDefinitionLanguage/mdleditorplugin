@@ -33,11 +33,11 @@ Hansson2013_mdl = mdlobj{
       POP_MRTS
       
       #Residual Error
-      POP_RES_VEGF_ADD 
+      POP_RES_VEGF_PROP 
       POP_RES_sVEGFR2_ADD 
       POP_RES_sVEGFR2_PROP
-      POP_RES_sVEGFR3_ADD
-      POP_RES_sKIT_ADD        
+      POP_RES_sVEGFR3_PROP
+      POP_RES_sKIT_PROP       
    }# end STRUCTURAL_PARAMETERS
 
    VARIABILITY_PARAMETERS{
@@ -134,11 +134,14 @@ Hansson2013_mdl = mdlobj{
        EFF3 = IMAX3*AUC/(IC503+AUC)                      # V EGFR3: Imax drug effect relationship
        EFFS = IMAXS*AUC/(IC50S+AUC)                      # SKIT  : Imax drug effect relationship
        
-       VEGF : {deriv=KIN -KOUT*(1-EFF)*VEGF, init=BM0, wrt=T}
+       VEGF : {deriv=KIN -KOUT*(1-EFF)*VEGF, init=BM0}
        sVEGFR2 : {deriv=KIN2*(1-EFF2)-KOUT2*sVEGFR2, init=BM02, wrt=T}
        sVEGFR3 : {deriv=KIN3*(1-EFF3)-KOUT3*sVEGFR3, init=BM03, wrt=T}
        sKIT : {deriv= KINS*(1-EFFS)-KOUTS*sKIT, init=BM0S, wrt=T}
     }
+    
+       LNVEGF = ln(VEGF)
+       
    }# end MODEL_PREDICTION
 
  
@@ -147,18 +150,15 @@ Hansson2013_mdl = mdlobj{
    }
 
    OBSERVATION{
-      VEGF_obs : {type=continuous, trans=log, error=additiveError(additive=POP_RES_VEGF_ADD),
+      LNVEGF_obs : {type=continuous, error=combinedError2log(additive=0, proportional=POP_RES_VEGF_PROP, f=VEGF),
                            prediction=VEGF, eps=eps_RES_W}
       
-      sVEGFR2_obs : {type=continuous, trans=log,
-                   error=combinedError3(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP,f=sVEGFR2),
+      LNsVEGFR2_obs : {type=continuous, error=combinedError2log(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP,f=sVEGFR2),
                 prediction=sVEGFR2, eps=eps_RES_W}
 
-      sVEGFR3_obs : {type=continuous, trans=log,
-                       error=additiveError(additive=POP_RES_sVEGFR3_ADD), prediction=sVEGFR3, eps=eps_RES_W}
+      LNsVEGFR3_obs : {type=continuous, error=combinedError2log(additive=0, proportional=POP_RES_sVEGFR3_PROP, f=sVEGFR3), prediction=sVEGFR3, eps=eps_RES_W}
       
-       sKIT_obs : {type=continuous, trans=log,
-                   error=additiveError(additive=POP_RES_sKIT_ADD), prediction=sKIT, eps=eps_RES_W}
+       LNsKIT_obs : {type=continuous, error=combinedError2log(additive=0, proportional=POP_RES_sKIT_PROP, f=sKIT), prediction=sKIT, eps=eps_RES_W}
    }# end OBSERVATION
 
 } # end of model object

@@ -1,5 +1,5 @@
 warfarin_PK_BOV_mdl = mdlobj{
-   IDV { TIME }
+   IDV { T }
 
    COVARIATES{
     WT
@@ -58,14 +58,14 @@ warfarin_PK_BOV_mdl = mdlobj{
       TLAG : { type = linear, trans = log, pop = POP_TLAG, ranEff = [eta_BSV_TLAG, eta_BOV_TLAG] } 
       }# end INDIVIDUAL_VARIABLES
 
-   MODEL_PREDICTION{
-        DEQ {  
-            RATEIN = GUT * KA when TIME >= TLAG otherwise 0
+    MODEL_PREDICTION {
+        DEQ{
+            RATEIN = GUT * KA when T >= TLAG otherwise 0
             GUT : { deriv =(- RATEIN), init = 0, x0 = 0 }
             CENTRAL : { deriv =(RATEIN - CL * CENTRAL / V), init = 0, x0 = 0 } 
-        } # end DEQ block
+        }
         CC = CENTRAL / V 
-   }# end MODEL_PREDICTION
+    } # end MODEL_PREDICTION
 
     RANDOM_VARIABLE_DEFINITION(level=DV) {
         EPS_Y ~ Normal(mean = 0, var = 1) 

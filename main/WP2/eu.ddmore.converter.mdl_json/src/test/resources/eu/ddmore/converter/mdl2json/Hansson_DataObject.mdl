@@ -1,23 +1,23 @@
 Hansson2013_data = dataobj{
     DECLARED_VARIABLES{
         DOSE
-        VEGF_obs
-        VEGFR2_obs
-        VEGFR3_obs 
-        SKIT_obs
+        LNVEGF_obs
+        LNsVEGFR2_obs
+        LNsVEGFR3_obs 
+        LNsKIT_obs
     } 
 
    DATA_INPUT_VARIABLES{
       ID : { use=id }
       CYCL : { type=categorical }
       TIME : { use=idv, units="h" }
-      DAYS : { type=continuous, units="day" }
-      DV : { use=dv, define = [{pred=VEGF_obs, predID=5},
-                {pred=sVEGFR2_obs, predID=6},
-                {pred=sVEGFR3_obs, predID=7},
-                {pred=sKIT_obs, predID=8}]  }
+#     DAYS : { type=continuous, units="day" }
       FLAG : { use=dvid } # 1=Dose ; 4=Tumor size (SLD); 5=VEGF ; 6=VEGFR2 ; 7=VEGFR3 ; 8=SKIT
       DVX : { type=continuous, units="mg/L" }
+      DV : { use=dv, define = [{pred=LNVEGF_obs, predid=5},
+                {pred=LNsVEGFR2_obs, predid=6},
+                {pred=LNsVEGFR3_obs, predid=7},
+                {pred=LNsKIT_obs, predid=8}]  }
       DOS : { use=amt, define=DOSE }
       PLA : { type=categorical } # placebo=1, treated=0
       CL : { use=covariate, type=continuous, units="L/h"}
@@ -25,7 +25,7 @@ Hansson2013_data = dataobj{
    }
    
    SOURCE{
-       file="BIOMARKER_exDATA.csv"
+       file="BIOMARKER_simDATA.csv"
        inputformat=nonmemFormat
        ignore="#"
    }

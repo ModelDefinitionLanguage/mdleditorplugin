@@ -1,0 +1,21 @@
+warfarin_PK_BOV_dat = dataobj{
+  DECLARED_VARIABLES{DEP Y }
+
+  DATA_INPUT_VARIABLES{
+      ID : { use=id }  
+      TIME : { use=idv, units="h"}
+      WT : { use=covariate, variable=WT, units="kg"}
+      AGE : { use = covariate }
+      SEX : { use=covariate, type=categorical(male, female), define=[{female, 1}, {male, 0}] }
+      AMT : { use=amt, define=DEP, units="mg"}
+      OCC : { use=varlevel }
+      DV : { use=dv, define=Y }
+      MDV : { use=mdv }
+   }# end DATA_INPUT_VARIABLES
+
+    SOURCE {
+        file = "warfarin_conc_pca.csv"
+        inputformat = nonmemFormat 
+        ignore = "#" 
+    } # end SOURCE
+} # end data object
