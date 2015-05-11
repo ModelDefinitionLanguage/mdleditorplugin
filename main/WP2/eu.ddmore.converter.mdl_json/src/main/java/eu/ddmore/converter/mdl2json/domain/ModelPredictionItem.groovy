@@ -25,7 +25,7 @@ public class ModelPredictionItem extends Variable implements MDLPrintable {
      * the text following this prefix is the name of the sub-block.
      */
     private static final String SUBBLOCK_PREFIX = "."
-    private static final List<String> SUBBLOCK_NAMES = ["DEQ", "PKMACRO", "COMPARTMENT"]
+    static final List<String> SUBBLOCK_NAMES = ["DEQ", "PKMACRO", "COMPARTMENT"]
     
     private String identifier
         
@@ -70,7 +70,7 @@ public class ModelPredictionItem extends Variable implements MDLPrintable {
         for (final String subBlockName : SUBBLOCK_NAMES) {
             if (getProperty(SUBBLOCK_PREFIX + subBlockName)) {
                 final VariablesList varsList = VariablesList.buildFromJSON(getProperty(SUBBLOCK_PREFIX + subBlockName))
-                return "\n${IDT*2}${subBlockName} {\n${IDT*3}" + varsList.toMDL(3) + "\n${IDT*2}}"
+                return "${subBlockName} {\n${IDT*3}" + varsList.toMDL(3) + "\n${IDT*2}}"
             }
         }
         // If reached here then this ModelPredictionItem is not representing a sub-block

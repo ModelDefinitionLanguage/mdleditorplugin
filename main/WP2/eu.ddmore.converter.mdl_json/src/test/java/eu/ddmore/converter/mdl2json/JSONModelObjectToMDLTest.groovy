@@ -476,7 +476,6 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         DPS = BM0S*(1+DPSLPS*T)
         KIN = DP1*KOUT
         KINS = DPS*KOUTS
-        
         DEQ {
             EFF = IMAX1*AUC^HILL/(IC50^HILL+AUC^HILL)
             EFF2 = IMAX2*AUC^HILL2/(IC502^HILL2+AUC^HILL2)
@@ -503,7 +502,6 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         String expected = """mdlobj {
 
     MODEL_PREDICTION {
-        
         PKMACRO {
             DEP1 : {macro=iv, to=CENTRAL}
             CENTRAL : {macro=compartment, volume=V}
