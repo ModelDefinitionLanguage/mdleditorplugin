@@ -38,6 +38,10 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
     public Model(ModelObject modelObject) {
 
         setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
+        
+        // Each separate level=XX RANDOM_VARIABLE_DEFINITION block encountered will get its
+        // Variables (with level attribute added to each) added to this initially empty VariablesList
+        setProperty(RANDOM_VARIABLE_DEFINITION, VariablesList.createEmpty())
 
         for (ModelObjectBlock block : modelObject.getBlocks()) {
 
@@ -61,9 +65,20 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
                 if (subBlockArgs.size() > 1) {
                     throw new UnsupportedOperationException("Multiple parameterisation of the RANDOM_VARIABLE_DEFINITION sub-block name is not supported")
                 }
-                final String subBlockName = RANDOM_VARIABLE_DEFINITION \
-                    + "(" + subBlockArgs.get(0).getArgumentName().getName() + "=" + XtextWrapper.unwrap(subBlockArgs.get(0).getExpression()) + ")"
-                setProperty(subBlockName, VariablesList.buildFromSymbolDeclarations(block.getRandomVariableDefinitionBlock().getVariables()))
+                
+                final VariablesList varsList = VariablesList.buildFromSymbolDeclarations(block.getRandomVariableDefinitionBlock().getVariables())
+                
+                // Add the attribute on the block definition, to each of the variables in the list
+                varsList.collect { Variable v ->
+                    v.setProperty(subBlockArgs.get(0).getArgumentName().getName(), XtextWrapper.unwrap(subBlockArgs.get(0).getExpression()))
+                }
+                
+                getProperty(RANDOM_VARIABLE_DEFINITION).addAll(varsList)
+                
+                // TODO: Remove this since we now consolidate into a single RANDOM_VARIABLE_DEFINITION block in the JSON
+                //final String subBlockName = RANDOM_VARIABLE_DEFINITION \
+                //    + "(" + subBlockArgs.get(0).getArgumentName().getName() + "=" + XtextWrapper.unwrap(subBlockArgs.get(0).getExpression()) + ")"
+                //setProperty(subBlockName, varsList)
             }
             if (block.getIndividualVariablesBlock()) {
                 setProperty(INDIVIDUAL_VARIABLES, VariablesList.buildFromSymbolDeclarations(block.getIndividualVariablesBlock().getVariables()))
@@ -131,12 +146,16 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
         if (json[MODEL_OUTPUT_VARIABLES]) {
             setProperty(MODEL_OUTPUT_VARIABLES, VariablesList.buildFromJSON(json[MODEL_OUTPUT_VARIABLES]))
         }
+        if (json[RANDOM_VARIABLE_DEFINITION]) {
+            setProperty(RANDOM_VARIABLE_DEFINITION, VariablesList.buildFromJSON(json[RANDOM_VARIABLE_DEFINITION]))
+        }
+        // TODO: Remove this since we now consolidate into a single RANDOM_VARIABLE_DEFINITION block in the JSON
         // RANDOM_VARIABLE_DEFINITION block has to be treated specially as it appears multiple times
         // with (level=ID), (level=DV) etc. appended to the block name to distinguish between them
-        json.entrySet().takeWhile{ mapEntry -> mapEntry.getKey().startsWith(RANDOM_VARIABLE_DEFINITION) }.each { mapEntry ->
-            setProperty(mapEntry.getKey(), VariablesList.buildFromJSON(mapEntry.getValue()))
-        }
-
+        //json.entrySet().takeWhile{ mapEntry -> mapEntry.getKey().startsWith(RANDOM_VARIABLE_DEFINITION + "(") }.each { mapEntry ->
+        //    setProperty(mapEntry.getKey(), VariablesList.buildFromJSON(mapEntry.getValue()))
+        //}
+        
     }
 
     public String toMDL() {
@@ -145,7 +164,18 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
         StringBuffer mdl = new StringBuffer()
         def normalProperties = getProperties().minus([(IDENTIFIER_PROPNAME):(IDENTIFIER)])
         normalProperties.each { String blockName, MDLPrintable obj ->
-            mdl.append("\n${IDT}${blockName} {\n${IDT*2}${obj.toMDL()}\n${IDT}}\n")
+            if (blockName.startsWith(RANDOM_VARIABLE_DEFINITION + "(")) {
+                // Obsolete since we now consolidate into a single RANDOM_VARIABLE_DEFINITION block in the JSON
+            } else if (blockName == RANDOM_VARIABLE_DEFINITION) {
+                // Segregate into separate RANDOM_VARIABLE_DEFINITION blocks with level=XX appended to the block names
+                final VariablesList allVarsList = obj
+                allVarsList.groupBy{ Variable v -> v.level}.collect { Map.Entry entry ->
+                    final VariablesList varsListForLevel = VariablesList.buildFromListOfVariables(entry.getValue())
+                    mdl.append("\n${IDT}${blockName}(level=${entry.getKey()}) {\n${IDT*2}${varsListForLevel.toMDL()}\n${IDT}}\n")
+                }
+            } else {
+                mdl.append("\n${IDT}${blockName} {\n${IDT*2}${obj.toMDL()}\n${IDT}}\n")
+            }
         }
         return """${IDENTIFIER} {
 ${mdl.toString()}

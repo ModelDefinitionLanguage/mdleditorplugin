@@ -29,16 +29,10 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         / {"VARIABILITY_PARAMETERS":[{".name":"PPV_CL"},{".name":"PPV_V"},{".name":"PPV_KA"},{".name":"PPV_TLAG"}]} /
     private final static String variabilityParametersBlockJson_WarfarinPkSim =
         / {"VARIABILITY_PARAMETERS":[{".name":"PPV_CL"},{".name":"PPV_V"},{".name":"PPV_KA"},{".name":"PPV_TLAG"},{".name":"RUV_PROP"},{".name":"RUV_ADD"},{"params":"[ETA_CL, ETA_V]",".name":"OMEGA","type":"CORR"}]} /
-    private final static String randomVarDefinitionBlockDVJson =
-        / {"RANDOM_VARIABLE_DEFINITION(level=DV)":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"1"},".name":"EPS_Y"}]} /
-    private final static String randomVarDefinitionBlockIDJson =
-        / {"RANDOM_VARIABLE_DEFINITION(level=ID)":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_CL"},".name":"ETA_CL"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_V"},".name":"ETA_V"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_KA"},".name":"ETA_KA"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_TLAG"},".name":"ETA_TLAG"}]} /
-    private final static String randomVarDefinitionBlockJson_WarfarinPkBov_ID =
-        / {"RANDOM_VARIABLE_DEFINITION(level=ID)":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_CL"},".name":"eta_BSV_CL"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_V"},".name":"eta_BSV_V"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_KA"},".name":"eta_BSV_KA"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_TLAG"},".name":"eta_BSV_TLAG"}]} /
-    private final static String randomVarDefinitionBlockJson_WarfarinPkBov_OCC =
-        / {"RANDOM_VARIABLE_DEFINITION(level=OCC)":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BOV_CL"},".name":"eta_BOV_CL"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BOV_V"},".name":"eta_BOV_V"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BOV_KA"},".name":"eta_BOV_KA"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BOV_TLAG"},".name":"eta_BOV_TLAG"}]} /
-    private final static String randomVarDefinitionBlockJson_WarfarinPkBov_DV =
-        / {"RANDOM_VARIABLE_DEFINITION(level=DV)":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"1"},".name":"EPS_Y"}]} /
+    private final static String randomVarDefinitionBlocksJson_Warfarin =
+        / {"RANDOM_VARIABLE_DEFINITION":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_CL"},"level":"ID",".name":"ETA_CL"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_V"},"level":"ID",".name":"ETA_V"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_KA"},"level":"ID",".name":"ETA_KA"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","sd":"PPV_TLAG"},"level":"ID",".name":"ETA_TLAG"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"1"},"level":"DV",".name":"EPS_Y"}]} /
+    private final static String randomVarDefinitionBlocksJson_WarfarinPkBov =
+        / {"RANDOM_VARIABLE_DEFINITION":[{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_CL"},"level":"ID",".name":"eta_BSV_CL"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_V"},"level":"ID",".name":"eta_BSV_V"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_KA"},"level":"ID",".name":"eta_BSV_KA"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BSV_TLAG"},"level":"ID",".name":"eta_BSV_TLAG"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BOV_CL"},"level":"OCC",".name":"eta_BOV_CL"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BOV_V"},"level":"OCC",".name":"eta_BOV_V"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BOV_KA"},"level":"OCC",".name":"eta_BOV_KA"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"BOV_TLAG"},"level":"OCC",".name":"eta_BOV_TLAG"},{".random_var_distribution":"Normal",".random_var_attrs":{"mean":"0","var":"1"},"level":"DV",".name":"EPS_Y"}]} /
     private final static String individualVarsBlockJson_Warfarin =
         / {"INDIVIDUAL_VARIABLES":[{"fixEff":"{coeff=BETA_CL_WT, cov=logtWT}","trans":"log","ranEff":"ETA_CL","pop":"POP_CL",".name":"CL","type":"linear"},{"fixEff":"{coeff=BETA_V_WT, cov=logtWT}","trans":"log","ranEff":"ETA_V","pop":"POP_V",".name":"V","type":"linear"},{"trans":"log","ranEff":"ETA_KA","pop":"POP_KA",".name":"KA","type":"linear"},{"trans":"log","ranEff":"ETA_TLAG","pop":"POP_TLAG",".name":"TLAG","type":"linear"}]} /
     private final static String individualVarsBlockJson_Hansson =
@@ -215,30 +209,12 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testRandomVariableDefinitionDVBlock() {
+    public void testRandomVariableDefinitionBlocks_Warfarin() {
 
-        def json = getJson(randomVarDefinitionBlockDVJson)
-
-        def modelObj = new Model(json)
-
-        String expected = """mdlobj {
-
-    RANDOM_VARIABLE_DEFINITION(level=DV) {
-        EPS_Y ~ Normal(mean=0, var=1)
-    }
-
-}
-"""
-        assertEquals(expected, modelObj.toMDL())
-    }
-
-    @Test
-    public void testRandomVariableDefinitionIDBlock() {
-
-        def json = getJson(randomVarDefinitionBlockIDJson)
+        def json = getJson(randomVarDefinitionBlocksJson_Warfarin)
 
         def modelObj = new Model(json)
-
+        
         String expected = """mdlobj {
 
     RANDOM_VARIABLE_DEFINITION(level=ID) {
@@ -248,19 +224,23 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         ETA_TLAG ~ Normal(mean=0, sd=PPV_TLAG)
     }
 
+    RANDOM_VARIABLE_DEFINITION(level=DV) {
+        EPS_Y ~ Normal(mean=0, var=1)
+    }
+
 }
 """
         assertEquals(expected, modelObj.toMDL())
     }
-
+    
     @Test
     public void testRandomVariableDefinitionBlocks_WarfarinPkBov() {
 
-        def json_ID = getJson(randomVarDefinitionBlockJson_WarfarinPkBov_ID)
+        def json = getJson(randomVarDefinitionBlocksJson_WarfarinPkBov)
 
-        def modelObj_ID = new Model(json_ID)
-
-        String expected_ID = """mdlobj {
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
 
     RANDOM_VARIABLE_DEFINITION(level=ID) {
         eta_BSV_CL ~ Normal(mean=0, var=BSV_CL)
@@ -269,16 +249,6 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         eta_BSV_TLAG ~ Normal(mean=0, var=BSV_TLAG)
     }
 
-}
-"""
-        assertEquals(expected_ID, modelObj_ID.toMDL())
-
-        def json_OCC = getJson(randomVarDefinitionBlockJson_WarfarinPkBov_OCC)
-
-        def modelObj_OCC = new Model(json_OCC)
-
-        String expected_OCC = """mdlobj {
-
     RANDOM_VARIABLE_DEFINITION(level=OCC) {
         eta_BOV_CL ~ Normal(mean=0, var=BOV_CL)
         eta_BOV_V ~ Normal(mean=0, var=BOV_V)
@@ -286,24 +256,13 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         eta_BOV_TLAG ~ Normal(mean=0, var=BOV_TLAG)
     }
 
-}
-"""
-        assertEquals(expected_OCC, modelObj_OCC.toMDL())
-
-        def json_DV = getJson(randomVarDefinitionBlockJson_WarfarinPkBov_DV)
-
-        def modelObj_DV = new Model(json_DV)
-
-        String expected_DV = """mdlobj {
-
     RANDOM_VARIABLE_DEFINITION(level=DV) {
         EPS_Y ~ Normal(mean=0, var=1)
     }
 
 }
 """
-        assertEquals(expected_DV, modelObj_DV.toMDL())
-
+        assertEquals(expected, modelObj.toMDL())
     }
 
     @Test

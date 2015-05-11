@@ -26,6 +26,14 @@ public class VariablesList extends ArrayList<Variable> implements MDLPrintable {
     private VariablesList(final List<Variable> l) {
         super(l)
     }
+    
+    static VariablesList createEmpty() {
+        return new VariablesList(new ArrayList<Variable>())
+    }
+    
+    static VariablesList buildFromListOfVariables(final List<Variable> l) {
+        return new VariablesList(l)
+    }
 
     static VariablesList buildFromSymbolDeclarations(final List<SymbolDeclaration> sds) {
         return new VariablesList(sds.collect { SymbolDeclaration sd -> new Variable(sd) })

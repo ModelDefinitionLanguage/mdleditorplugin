@@ -136,86 +136,81 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testRandomVariableDefinitionDVBlock() {
+    public void testRandomVariableDefinitionBlocks_Warfarin() {
         def json = getJsonFromMDLFile("Warfarin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
-
+        
         def modelObject = json.warfarin_PK_ODE_mdl
-
-        def randomVariableDefinitions = modelObject.get("RANDOM_VARIABLE_DEFINITION(level=DV)")
-
+    
+        def randomVariableDefinitions = modelObject.RANDOM_VARIABLE_DEFINITION
+        
         logger.debug(randomVariableDefinitions)
-
-        assertEquals("Checking number of random variable definitions", 1, randomVariableDefinitions.size())
-
-        assertEquals("Checking name of distribution-variable 1/1", 'EPS_Y', randomVariableDefinitions[0][(Variable.NAME_KEY)])
-        assertEquals("Checking distribution-variable 1/1 parameters", ['mean':'0', 'var':'1'], randomVariableDefinitions[0][Variable.RANDOMVAR_ATTRS_KEY])
-        assertEquals("Checking distribution-variable 1/1 type", 'Normal', randomVariableDefinitions[0][Variable.RANDOMVAR_DISTRIBUTION_KEY])
-    }
-
-    @Test
-    public void testRandomVariableDefinitionIDBlock() {
-        def json = getJsonFromMDLFile("Warfarin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
-
-        def modelObject = json.warfarin_PK_ODE_mdl
-
-        def randomVariableDefinitions = modelObject.get("RANDOM_VARIABLE_DEFINITION(level=ID)")
-
-        logger.debug(randomVariableDefinitions)
-
-        assertEquals("Checking number of random variable definitions", 4, randomVariableDefinitions.size())
-
+        
+        assertEquals("Checking number of random variable definitions", 5, randomVariableDefinitions.size())
+        
+        // level=ID
         assertEquals("Checking name of distribution-variable 1/5", 'ETA_CL', randomVariableDefinitions[0][(Variable.NAME_KEY)])
+        assertEquals("Checking level of distribution-variable 1/5 (an attribute of the block itself in the original MDL)", 'ID', randomVariableDefinitions[0]['level'])
         assertEquals("Checking distribution-variable 1/5 parameters", ['mean':'0', 'sd':'PPV_CL'], randomVariableDefinitions[0][Variable.RANDOMVAR_ATTRS_KEY])
         assertEquals("Checking distribution-variable 1/5 type", 'Normal', randomVariableDefinitions[0][Variable.RANDOMVAR_DISTRIBUTION_KEY])
         assertEquals("Checking name of distribution-variable 2/5", 'ETA_V', randomVariableDefinitions[1][(Variable.NAME_KEY)])
+        assertEquals("Checking level of distribution-variable 2/5 (an attribute of the block itself in the original MDL)", 'ID', randomVariableDefinitions[1]['level'])
         assertEquals("Checking distribution-variable 2/5 parameters ", ['mean':'0', 'sd':'PPV_V'], randomVariableDefinitions[1][Variable.RANDOMVAR_ATTRS_KEY])
         assertEquals("Checking distribution-variable 2/5 type", 'Normal', randomVariableDefinitions[1][Variable.RANDOMVAR_DISTRIBUTION_KEY])
         assertEquals("Checking name of distribution-variable 3/5", 'ETA_KA', randomVariableDefinitions[2][(Variable.NAME_KEY)])
+        assertEquals("Checking level of distribution-variable 3/5 (an attribute of the block itself in the original MDL)", 'ID', randomVariableDefinitions[2]['level'])
         assertEquals("Checking distribution-variable 3/5 parameters", ['mean':'0', 'sd':'PPV_KA'], randomVariableDefinitions[2][Variable.RANDOMVAR_ATTRS_KEY])
         assertEquals("Checking distribution-variable 3/5 type", 'Normal', randomVariableDefinitions[2][Variable.RANDOMVAR_DISTRIBUTION_KEY])
         assertEquals("Checking name of distribution-variable 4/5", 'ETA_TLAG', randomVariableDefinitions[3][(Variable.NAME_KEY)])
+        assertEquals("Checking level of distribution-variable 4/5 (an attribute of the block itself in the original MDL)", 'ID', randomVariableDefinitions[3]['level'])
         assertEquals("Checking distribution-variable 4/5 parameters", ['mean':'0', 'sd':'PPV_TLAG'], randomVariableDefinitions[3][Variable.RANDOMVAR_ATTRS_KEY])
         assertEquals("Checking distribution-variable 4/5 type", 'Normal', randomVariableDefinitions[3][Variable.RANDOMVAR_DISTRIBUTION_KEY])
+        
+        // level=DV
+        assertEquals("Checking name of distribution-variable 5/5", 'EPS_Y', randomVariableDefinitions[4][(Variable.NAME_KEY)])
+        assertEquals("Checking level of distribution-variable 5/5 (an attribute of the block itself in the original MDL)", 'DV', randomVariableDefinitions[4]['level'])
+        assertEquals("Checking distribution-variable 5/5 parameters", ['mean':'0', 'var':'1'], randomVariableDefinitions[4][Variable.RANDOMVAR_ATTRS_KEY])
+        assertEquals("Checking distribution-variable 5/5 type", 'Normal', randomVariableDefinitions[4][Variable.RANDOMVAR_DISTRIBUTION_KEY])
+        
     }
-
+    
     @Test
     public void testRandomVariableDefinitionBlocks_WarfarinPkBov() {
         def json = getJsonFromMDLFile("WarfarinPkBov_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
-
+        
         def modelObject = json.warfarin_PK_BOV_mdl
-
-        def randomVariableDefinitionsID = modelObject.get("RANDOM_VARIABLE_DEFINITION(level=ID)")
-
-        logger.debug("level=ID : " + randomVariableDefinitionsID)
-
-        assertEquals("Checking number of random variable definitions for level=ID", 4, randomVariableDefinitionsID.size())
-        assertEquals("[level=ID] Checking name of distribution-variable 1/4", 'eta_BSV_CL', randomVariableDefinitionsID[0][(Variable.NAME_KEY)])
-        assertEquals("[level=ID] Checking distribution-variable 1/4 parameters", ['mean':'0', 'var':'BSV_CL'], randomVariableDefinitionsID[0][Variable.RANDOMVAR_ATTRS_KEY])
-        assertEquals("[level=ID] Checking distribution-variable 1/4 type", 'Normal', randomVariableDefinitionsID[0][Variable.RANDOMVAR_DISTRIBUTION_KEY])
-        assertEquals("[level=ID] Checking name of distribution-variable 2/4", 'eta_BSV_V', randomVariableDefinitionsID[1][(Variable.NAME_KEY)])
-        assertEquals("[level=ID] Checking distribution-variable 2/4 parameters", ['mean':'0', 'var':'BSV_V'], randomVariableDefinitionsID[1][Variable.RANDOMVAR_ATTRS_KEY])
-        assertEquals("[level=ID] Checking distribution-variable 2/4 type", 'Normal', randomVariableDefinitionsID[1][Variable.RANDOMVAR_DISTRIBUTION_KEY])
-
-        def randomVariableDefinitionsOCC = modelObject.get("RANDOM_VARIABLE_DEFINITION(level=OCC)")
-
-        logger.debug("level=OCC : " + randomVariableDefinitionsOCC)
-
-        assertEquals("Checking number of random variable definitions for level=OCC", 4, randomVariableDefinitionsOCC.size())
-        assertEquals("[level=OCC] Checking name of distribution-variable 1/4", 'eta_BOV_CL', randomVariableDefinitionsOCC[0][(Variable.NAME_KEY)])
-        assertEquals("[level=OCC] Checking distribution-variable 1/4 parameters", ['mean':'0', 'var':'BOV_CL'], randomVariableDefinitionsOCC[0][Variable.RANDOMVAR_ATTRS_KEY])
-        assertEquals("[level=OCC] Checking distribution-variable 1/4 type", 'Normal', randomVariableDefinitionsOCC[0][Variable.RANDOMVAR_DISTRIBUTION_KEY])
-        assertEquals("[level=OCC] Checking name of distribution-variable 2/4", 'eta_BOV_V', randomVariableDefinitionsOCC[1][(Variable.NAME_KEY)])
-        assertEquals("[level=OCC] Checking distribution-variable 2/4 parameters", ['mean':'0', 'var':'BOV_V'], randomVariableDefinitionsOCC[1][Variable.RANDOMVAR_ATTRS_KEY])
-        assertEquals("[level=OCC] Checking distribution-variable 2/4 type", 'Normal', randomVariableDefinitionsOCC[1][Variable.RANDOMVAR_DISTRIBUTION_KEY])
-
-        def randomVariableDefinitionsDV = modelObject.get("RANDOM_VARIABLE_DEFINITION(level=DV)")
-
-        logger.debug("level=DV : " + randomVariableDefinitionsDV)
-
-        assertEquals("Checking number of random variable definitions for level=DV", 1, randomVariableDefinitionsDV.size())
-        assertEquals("[level=DV] Checking name of distribution-variable 1/1", 'EPS_Y', randomVariableDefinitionsDV[0][(Variable.NAME_KEY)])
-        assertEquals("[level=DV] Checking distribution-variable 1/1 parameters", ['mean':'0', 'var':'1'], randomVariableDefinitionsDV[0][Variable.RANDOMVAR_ATTRS_KEY])
-        assertEquals("[level=DV] Checking distribution-variable 1/1 type", 'Normal', randomVariableDefinitionsDV[0][Variable.RANDOMVAR_DISTRIBUTION_KEY])
+    
+        def randomVariableDefinitions = modelObject.RANDOM_VARIABLE_DEFINITION
+        
+        logger.debug(randomVariableDefinitions)
+        
+        assertEquals("Checking number of random variable definitions", 9, randomVariableDefinitions.size())
+        
+        // level=ID
+        assertEquals("Checking name of distribution-variable 1/9", 'eta_BSV_CL', randomVariableDefinitions[0][(Variable.NAME_KEY)])
+        assertEquals("Checking level of distribution-variable 1/9 (an attribute of the block itself in the original MDL)", 'ID', randomVariableDefinitions[0]['level'])
+        assertEquals("Checking distribution-variable 1/9 parameters", ['mean':'0', 'var':'BSV_CL'], randomVariableDefinitions[0][Variable.RANDOMVAR_ATTRS_KEY])
+        assertEquals("Checking distribution-variable 1/9 type", 'Normal', randomVariableDefinitions[0][Variable.RANDOMVAR_DISTRIBUTION_KEY])
+        assertEquals("Checking name of distribution-variable 2/9", 'eta_BSV_V', randomVariableDefinitions[1][(Variable.NAME_KEY)])
+        assertEquals("Checking level of distribution-variable 2/9 (an attribute of the block itself in the original MDL)", 'ID', randomVariableDefinitions[1]['level'])
+        assertEquals("Checking distribution-variable 2/9 parameters", ['mean':'0', 'var':'BSV_V'], randomVariableDefinitions[1][Variable.RANDOMVAR_ATTRS_KEY])
+        assertEquals("Checking distribution-variable 2/9 type", 'Normal', randomVariableDefinitions[1][Variable.RANDOMVAR_DISTRIBUTION_KEY])
+        
+        // level=OCC
+        assertEquals("Checking name of distribution-variable 5/9", 'eta_BOV_CL', randomVariableDefinitions[4][(Variable.NAME_KEY)])
+        assertEquals("Checking level of distribution-variable 5/9 (an attribute of the block itself in the original MDL)", 'OCC', randomVariableDefinitions[4]['level'])
+        assertEquals("Checking distribution-variable 5/9 parameters", ['mean':'0', 'var':'BOV_CL'], randomVariableDefinitions[4][Variable.RANDOMVAR_ATTRS_KEY])
+        assertEquals("Checking distribution-variable 5/9 type", 'Normal', randomVariableDefinitions[4][Variable.RANDOMVAR_DISTRIBUTION_KEY])
+        assertEquals("Checking name of distribution-variable 6/9", 'eta_BOV_V', randomVariableDefinitions[5][(Variable.NAME_KEY)])
+        assertEquals("Checking level of distribution-variable 6/9 (an attribute of the block itself in the original MDL)", 'OCC', randomVariableDefinitions[5]['level'])
+        assertEquals("Checking distribution-variable 6/9 parameters", ['mean':'0', 'var':'BOV_V'], randomVariableDefinitions[5][Variable.RANDOMVAR_ATTRS_KEY])
+        assertEquals("Checking distribution-variable 6/9 type", 'Normal', randomVariableDefinitions[5][Variable.RANDOMVAR_DISTRIBUTION_KEY])
+        
+        // level=DV
+        assertEquals("Checking name of distribution-variable 9/9", 'EPS_Y', randomVariableDefinitions[8][(Variable.NAME_KEY)])
+        assertEquals("Checking level of distribution-variable 9/9 (an attribute of the block itself in the original MDL)", 'DV', randomVariableDefinitions[8]['level'])
+        assertEquals("Checking distribution-variable 9/9 parameters", ['mean':'0', 'var':'1'], randomVariableDefinitions[8][Variable.RANDOMVAR_ATTRS_KEY])
+        assertEquals("Checking distribution-variable 9/9 type", 'Normal', randomVariableDefinitions[8][Variable.RANDOMVAR_DISTRIBUTION_KEY])
+        
     }
 
     @Test
