@@ -28,7 +28,7 @@ import groovy.json.JsonSlurper
 public class ConverterTestsParent {
 
     final static String TEST_DATA_DIR = "./"
-    final static String MODELS_PROJECT_TEST_DATA_DIR = "/eu/ddmore/testdata/models/"
+    final static String MODELS_PROJECT_TEST_DATA_DIR = "/test-models/"
     final static String WORKING_DIR = "target/MainTest_Working_Dir/"
 
     private static Logger logger = Logger.getLogger(ConverterTestsParent.class)
@@ -44,7 +44,7 @@ public class ConverterTestsParent {
     /**
      * Return a MDL {@link File} from the testdata models project.
      * <p>
-     * @param relativePathToFile - the relative path to the MDL file within the directory /eu/ddmore/testdata/models/mdl/
+     * @param relativePathToFile - the relative path to the MDL file within the directory /test-models/mdl/
      *                             within the testdata models project
      * @return the MDL {@link File}
      * @throws <code>IllegalArgumentException</code> if the referenced file does not exist
@@ -57,7 +57,7 @@ public class ConverterTestsParent {
     /**
      * Return a model {@link File} from the testdata models project.
      * <p>
-     * @param relativePathToFile - the relative path to the file within the directory /eu/ddmore/testdata/models/[modelType]/
+     * @param relativePathToFile - the relative path to the file within the directory /test-models/[modelType]/
      *                             within the testdata models project
      * @param modelType - the model-type subdirectory (e.g. "mdl", "ctl")
      * @return the {@link File}

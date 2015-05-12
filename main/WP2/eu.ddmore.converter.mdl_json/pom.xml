@@ -73,8 +73,8 @@
 
         <dependency>
             <groupId>eu.ddmore.testdata</groupId>
-            <artifactId>models</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <artifactId>test-models</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
