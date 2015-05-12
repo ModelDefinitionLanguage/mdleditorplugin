@@ -9,6 +9,7 @@ import org.apache.log4j.Logger
 import org.junit.Ignore
 import org.junit.Test
 
+import eu.ddmore.converter.mdl2json.MdlTestUtils
 import eu.ddmore.converter.mdl2json.domain.Task
 
 class TaskObjectToJSONTest extends ConverterTestsParent {
@@ -16,7 +17,7 @@ class TaskObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testEstimateBlock_Hansson() {
-        def json = getJsonFromMDLFile("Hansson_TaskObject.mdl")
+        def json = getJsonFromMDLFile("UseCase3_TaskObject.mdl")
 
         def taskObj = json[0].Hansson2013_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -30,7 +31,7 @@ algo=["FOCE"]'''
 
     @Test
     public void testEstimateBlock_WarfarinAnalyticSolution() {
-        def json = getJsonFromMDLFile("WarfarinAnalyticSolution_TaskObject.mdl")
+        def json = getJsonFromMDLFile("UseCase2_TaskObject.mdl")
 
         def taskObj = json[0].warfarin_PK_ODE_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 

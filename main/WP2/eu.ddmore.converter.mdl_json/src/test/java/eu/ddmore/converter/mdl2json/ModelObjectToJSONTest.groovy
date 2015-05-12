@@ -17,7 +17,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testIndependentVariablesBlock() {
-        def json = getJsonFromMDLFile("Hansson_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
 
@@ -32,7 +32,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testCovariatesBlock_WarfarinAnalyticSolution() {
-        def json = getJsonFromMDLFile("WarfarinAnalyticSolution_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase2_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ANALYTIC_mdl
 
@@ -48,7 +48,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testCovariatesBlock_WarfarinPkSexage() {
-        def json = getJsonFromMDLFile("WarfarinPkSexage_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase5_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_SEXAGE_mdl
 
@@ -68,7 +68,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testVariabilityLevelsBlock() {
-        def json = getJsonFromMDLFile("Warfarin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase1_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ODE_mdl
 
@@ -84,7 +84,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testStructuralParametersBlock_Warfarin() {
-        def json = getJsonFromMDLFile("Warfarin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase1_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ODE_mdl
 
@@ -123,7 +123,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testVariabilityParametersBlock_Warfarin() {
-        def json = getJsonFromMDLFile("Warfarin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase1_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ODE_mdl
 
@@ -141,7 +141,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testVariabilityParametersBlock_WarfarinPkSim() {
-        def json = getJsonFromMDLFile("WarfarinPkSim_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase20_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_SIM_mdl
 
@@ -162,7 +162,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testRandomVariableDefinitionBlocks_Warfarin() {
-        def json = getJsonFromMDLFile("Warfarin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase1_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_ODE_mdl
     
@@ -200,7 +200,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     
     @Test
     public void testRandomVariableDefinitionBlocks_WarfarinPkBov() {
-        def json = getJsonFromMDLFile("WarfarinPkBov_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase8_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_BOV_mdl
     
@@ -240,7 +240,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testIndividualVariablesBlock_Warfarin() {
-        def json = getJsonFromMDLFile("Warfarin_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase1_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ODE_mdl
 
@@ -266,7 +266,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testIndividualVariablesBlock_Hansson() {
-        def json = getJsonFromMDLFile("Hansson_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
 
@@ -306,7 +306,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testIndividualVariablesBlock_WarfarinPkBov() {
-        def json = getJsonFromMDLFile("WarfarinPkBov_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase8_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_BOV_mdl
 
@@ -332,7 +332,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testIndividualVariablesBlock_WarfarinPkSexage() {
-        def json = getJsonFromMDLFile("WarfarinPkSexage_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase5_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_SEXAGE_mdl
 
@@ -376,7 +376,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testObservationBlock_Hansson() {
-        def json = getJsonFromMDLFile("Hansson_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
 
@@ -402,7 +402,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testObservationBlock_WarfarinPkBovOAM() {
-        def json = getJsonFromMDLFile("WarfarinPkBovOAM_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase19_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_BOV_mdl
 
@@ -436,7 +436,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     
     @Test
     public void testModelPredictionBlock_WarfarinAnalyticSolution() {
-        def json = getJsonFromMDLFile("WarfarinAnalyticSolution_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase2_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ANALYTIC_mdl
 
@@ -454,7 +454,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testModelPredictionBlock_Hansson() {
-        def json = getJsonFromMDLFile("Hansson_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
 
@@ -547,7 +547,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     
     @Test
     public void testGroupVariablesBlock_WarfarinPkBovOAM() {
-        def json = getJsonFromMDLFile("WarfarinPkBovOAM_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase19_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_BOV_mdl
 

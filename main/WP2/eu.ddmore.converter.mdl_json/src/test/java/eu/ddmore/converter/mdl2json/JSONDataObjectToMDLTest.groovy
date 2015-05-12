@@ -20,23 +20,23 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
     private static Logger logger = Logger.getLogger(JSONDataObjectToMDLTest.class)
 
     // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
-    private String sourceBlockJson =
+    private String sourceBlockJson_UseCase1 =
         / {"SOURCE":{"file":"\"warfarin_conc.csv\"","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
-    private String dataInputVariablesJson_WarfarinPkBovOAM =
+    private String dataInputVariablesJson_UseCase19 =
         / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{"use":"idv",".name":"TIME","units":"\"h\""},{"use":"covariate",".name":"WT","variable":"WT","units":"\"kg\""},{"use":"covariate",".name":"AGE"},{"define":"[{female, 1}, {male, 0}]","use":"covariate",".name":"SEX","type":"categorical(male, female)"},{"define":"DEP","use":"amt",".name":"AMT","units":"\"mg\""},{"use":"varlevel",".name":"OCC"},{"define":"Y","use":"dv",".name":"DV"},{"use":"mdv",".name":"MDV"}]} /
-    private String dataInputVariablesJson_Hansson =
+    private String dataInputVariablesJson_UseCase3 =
         / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{".name":"CYCL","type":"categorical"},{"use":"idv",".name":"TIME","units":"\"h\""},{"use":"dvid",".name":"FLAG"},{".name":"DVX","type":"continuous","units":"\"mg\/L\""},{"define":"[{pred=LNVEGF_obs, predid=5}, {pred=LNsVEGFR2_obs, predid=6}, {pred=LNsVEGFR3_obs, predid=7}, {pred=LNsKIT_obs, predid=8}]","use":"dv",".name":"DV"},{"define":"DOSE","use":"amt",".name":"DOS"},{".name":"PLA","type":"categorical"},{"use":"covariate",".name":"CL","type":"continuous","units":"\"L\/h\""},{".name":"EVID","type":"categorical"}]} /
-    private String dataInputVariablesJson_WarfarinPkBov =
+    private String dataInputVariablesJson_UseCase8 =
         / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{"use":"idv",".name":"TIME","units":"\"h\""},{"use":"covariate",".name":"WT","units":"\"kg\""},{"use":"covariate",".name":"AGE"},{"define":"[{female, 1}, {male, 0}, {MISSING, -99}]","use":"covariate",".name":"SEX","type":"categorical(male, female, MISSING)"},{"define":"INPUT_KA","use":"amt",".name":"AMT","units":"\"mg\""},{"use":"varlevel",".name":"OCC"},{"define":"Y","use":"dv",".name":"DV"},{"use":"mdv",".name":"MDV"}]} /
-    private String declaredVariablesJson =
+    private String declaredVariablesJson_UseCase3 =
         / {"DECLARED_VARIABLES":[{".name":"DOSE"},{".name":"LNVEGF_obs"},{".name":"LNsVEGFR2_obs"},{".name":"LNsVEGFR3_obs"},{".name":"LNsKIT_obs"}]} /
-    private String dataDerivedVariablesJson =
+    private String dataDerivedVariablesJson_UseCase2 =
         / {"DATA_DERIVED_VARIABLES":[{".expr":"TIME when AMT>0;",".name":"DT"}]} /
 
     @Test
     public void testSource() {
 
-        def json = getJson(sourceBlockJson)
+        def json = getJson(sourceBlockJson_UseCase1)
 
         def dataObj = new Data(json)
 
@@ -57,7 +57,7 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
     @Test
     public void testDataInputVariablesBlock_WarfarinPkBovOAM() {
         
-        def json = getJson(dataInputVariablesJson_WarfarinPkBovOAM)
+        def json = getJson(dataInputVariablesJson_UseCase19)
         
         def dataObj = new Data(json)
         
@@ -83,7 +83,7 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
     @Test
     public void testDataInputVariablesBlock_Hansson() {
 
-        def json = getJson(dataInputVariablesJson_Hansson)
+        def json = getJson(dataInputVariablesJson_UseCase3)
 
         def dataObj = new Data(json)
 
@@ -110,7 +110,7 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
     @Test
     public void testDataInputVariablesBlock_WarfarinPkBov() {
 
-        def json = getJson(dataInputVariablesJson_WarfarinPkBov)
+        def json = getJson(dataInputVariablesJson_UseCase8)
 
         def dataObj = new Data(json)
 
@@ -136,7 +136,7 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
     @Test
     public void testDeclaredVariablesBlock() {
 
-        def json = getJson(declaredVariablesJson)
+        def json = getJson(declaredVariablesJson_UseCase3)
 
         def dataObj = new Data(json)
 
@@ -158,7 +158,7 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
     @Test
     public void testDataDerivedVariablesBlock() {
 
-        def json = getJson(dataDerivedVariablesJson)
+        def json = getJson(dataDerivedVariablesJson_UseCase2)
 
         def dataObj = new Data(json)
 

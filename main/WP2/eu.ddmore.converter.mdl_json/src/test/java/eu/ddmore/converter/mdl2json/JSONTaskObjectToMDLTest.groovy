@@ -15,15 +15,15 @@ class JSONTaskObjectToMDLTest extends ConverterTestsParent  {
     private static Logger logger = Logger.getLogger(JSONTaskObjectToMDLTest.class)
 
     // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
-    private static final String estimateBlockJson_Hansson =
+    private static final String estimateBlockJson_UseCase3 =
         / {"ESTIMATE":"target=NMTRAN_CODE\ncov=true\nalgo=[\"FOCE\"]"} /
-    private static final String estimateBlockJson_WarfarinAnalyticSolution =
+    private static final String estimateBlockJson_UseCase2 =
         / {"ESTIMATE":"target=MLXTRAN_CODE\nversion=\"4.3.2\"\nalgo=[\"SAEM\"]"} /
 
     @Test
     public void testEstimateBlock_Hansson() {
 
-        def json = getJson(estimateBlockJson_Hansson)
+        def json = getJson(estimateBlockJson_UseCase3)
 
         def taskObj = new Task(json)
 
@@ -43,7 +43,7 @@ class JSONTaskObjectToMDLTest extends ConverterTestsParent  {
     @Test
     public void testEstimateBlock_WarfarinAnalyticSolution() {
 
-        def json = getJson(estimateBlockJson_WarfarinAnalyticSolution)
+        def json = getJson(estimateBlockJson_UseCase2)
 
         def taskObj = new Task(json)
 

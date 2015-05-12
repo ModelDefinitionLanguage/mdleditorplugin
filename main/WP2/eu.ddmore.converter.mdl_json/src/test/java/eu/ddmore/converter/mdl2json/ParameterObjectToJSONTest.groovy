@@ -17,7 +17,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testDeclaredVariablesBlock() {
-        def json = getJsonFromMDLFile("Warfarin_ParameterObject.mdl")
+        def json = getJsonFromMDLFile("UseCase1_ParameterObject.mdl")
 
         def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -32,7 +32,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testStructuralBlock_Warfarin() {
-        def json = getJsonFromMDLFile("Warfarin_ParameterObject.mdl")
+        def json = getJsonFromMDLFile("UseCase1_ParameterObject.mdl")
 
         def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -68,7 +68,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testStructuralBlock_Hansson() {
-        def json = getJsonFromMDLFile("Hansson_ParameterObject.mdl")
+        def json = getJsonFromMDLFile("UseCase3_ParameterObject.mdl")
 
         def parameterObject = json[0].Hansson2013_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -102,7 +102,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
      */
     @Test
     public void testVariabilityBlock_Warfarin() {
-        def json = getJsonFromMDLFile("Warfarin_ParameterObject.mdl")
+        def json = getJsonFromMDLFile("UseCase1_ParameterObject.mdl")
 
         def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -129,7 +129,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testVariabilityBlock_Hansson() {
-        def json = getJsonFromMDLFile("Hansson_ParameterObject.mdl")
+        def json = getJsonFromMDLFile("UseCase3_ParameterObject.mdl")
 
         def parameterObject = json[0].Hansson2013_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -156,7 +156,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testVariabilityBlock_WarfarinPkBov() {
-        def json = getJsonFromMDLFile("WarfarinPkBov_ParameterObject.mdl")
+        def json = getJsonFromMDLFile("UseCase8_ParameterObject.mdl")
 
         def parameterObject = json[0].warfarin_PK_BOV_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 

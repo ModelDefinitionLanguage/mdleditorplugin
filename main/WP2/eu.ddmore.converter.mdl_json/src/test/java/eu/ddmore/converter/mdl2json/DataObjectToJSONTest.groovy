@@ -16,7 +16,7 @@ class DataObjectToJSONTest extends ConverterTestsParent  {
 
     @Test
     public void testSourceBlock() {
-        def json = getJsonFromMDLFile("Warfarin_DataObject.mdl")
+        def json = getJsonFromMDLFile("UseCase1_DataObject.mdl")
 
         logger.debug(json)
 
@@ -31,7 +31,7 @@ class DataObjectToJSONTest extends ConverterTestsParent  {
 
     @Test
     public void testDataInputVariablesBlock_WarfarinPkBovOAM() {
-        def json = getJsonFromMDLFile("WarfarinPkBovOAM_DataObject.mdl")
+        def json = getJsonFromMDLFile("UseCase19_DataObject.mdl")
         
         logger.debug(json)
         
@@ -88,7 +88,7 @@ class DataObjectToJSONTest extends ConverterTestsParent  {
 
     @Test
     public void testDataInputVariablesBlock_Hansson() {
-        def json = getJsonFromMDLFile("Hansson_DataObject.mdl")
+        def json = getJsonFromMDLFile("UseCase3_DataObject.mdl")
 
         logger.debug(json)
 
@@ -120,7 +120,7 @@ class DataObjectToJSONTest extends ConverterTestsParent  {
 
     @Test
     public void testDataInputVariablesBlock_WarfarinPkBov() {
-        def json = getJsonFromMDLFile("WarfarinPkBov_DataObject.mdl")
+        def json = getJsonFromMDLFile("UseCase8_DataObject.mdl")
 
         logger.debug(json)
 
@@ -139,7 +139,7 @@ class DataObjectToJSONTest extends ConverterTestsParent  {
 
     @Test
     public void testDeclaredVariablesBlock_OnSameLine() {
-        def json = getJsonFromMDLFile("Warfarin_DataObject.mdl")
+        def json = getJsonFromMDLFile("UseCase1_DataObject.mdl")
 
         logger.debug(json)
 
@@ -155,7 +155,7 @@ class DataObjectToJSONTest extends ConverterTestsParent  {
 
     @Test
     public void testDeclaredVariablesBlock_OnSeparateLines() {
-        def json = getJsonFromMDLFile("Hansson_DataObject.mdl")
+        def json = getJsonFromMDLFile("UseCase3_DataObject.mdl")
 
         logger.debug(json)
 
@@ -174,7 +174,7 @@ class DataObjectToJSONTest extends ConverterTestsParent  {
 
     @Test
     public void testDataDerivedVariables() {
-        def json = getJsonFromMDLFile("WarfarinAnalyticSolution_DataObject.mdl")
+        def json = getJsonFromMDLFile("UseCase2_DataObject.mdl")
 
         logger.debug(json)
 

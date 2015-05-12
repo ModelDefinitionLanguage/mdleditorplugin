@@ -14,7 +14,7 @@ class MogObjectToJSONTest extends ConverterTestsParent {
 	
     @Test
     public void testObjectsBlock() {
-        def json = getJsonFromMDLFile("Warfarin_MogObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase1_MogObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def mogObject = json.warfarin_PK_ODE_mog
         
@@ -32,9 +32,9 @@ class MogObjectToJSONTest extends ConverterTestsParent {
     }
     
 	@Test
-    @Ignore("Mappings block doesn't currently parse so WarfarinPkSim_MogObject.mdl is invalid and cannot be read")
+    @Ignore("Mappings block doesn't currently parse so UseCase20_MogObject.mdl is invalid and cannot be read")
     public void testObjectsBlockWhereUsingAliasing() {
-        def json = getJsonFromMDLFile("WarfarinPkSim_MogObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase20_MogObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def mogObject = json.warfarin_PK_SIM
         
@@ -56,9 +56,9 @@ class MogObjectToJSONTest extends ConverterTestsParent {
     }
     
     @Test
-    @Ignore("Mappings block doesn't currently parse so WarfarinPkSim_MogObject.mdl is invalid and cannot be read")
+    @Ignore("Mappings block doesn't currently parse so UseCase20_MogObject.mdl is invalid and cannot be read")
     public void testMappingBlock() {
-        def json = getJsonFromMDLFile("WarfarinPkSim_MogObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase20_MogObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def mogObject = json.warfarin_PK_SIM_mog
         
