@@ -35,8 +35,8 @@ public class MDLToJSONConverter implements ConverterProvider {
     private static final String MDL_FILE_EXTENSION = ".mdl"
     private static final String JSON_FILE_EXTENSION = ".json"
 
-    private final LanguageVersion source = new LanguageVersionImpl("MDL", new VersionImpl(6, 0, 7))
-    private final LanguageVersion target = new LanguageVersionImpl("JSON", new VersionImpl(6, 0, 7))
+    private final LanguageVersion source = new LanguageVersionImpl("MDL", new VersionImpl(6, 0, 8))
+    private final LanguageVersion target = new LanguageVersionImpl("JSON", new VersionImpl(6, 0, 8))
     private final Version converterVersion = new VersionImpl(1, 0, 5);
 
     private String json
