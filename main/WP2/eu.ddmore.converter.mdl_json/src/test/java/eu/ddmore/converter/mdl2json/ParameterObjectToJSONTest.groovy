@@ -91,7 +91,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
         def expected_POP_HILL = [ (Variable.NAME_KEY):'POP_HILL', 'value':'3.31', 'lo':'0' ]
         assertEquals("Checking Structural parameter 5/18", expected_POP_HILL, structuralModel[4])
 
-        def expected_POP_SLP = [ (Variable.NAME_KEY):'POP_SLP', 'value':'0.035', 'lo':'-0.06', 'units':'\"1/h\"' ]
+        def expected_POP_SLP = [ (Variable.NAME_KEY):'POP_TVSLP', 'value':'0.035', 'lo':'-0.06', 'units':'\"1/h\"' ]
         assertEquals("Checking Structural parameter 6/18", expected_POP_SLP, structuralModel[5])
 
     }
@@ -140,13 +140,13 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
         def expected_OMEGA_BM0 = [ 'OMEGA_BM0' : [ 'value':'0.252', 'type':'VAR' ] ]
         assertEquals("Checking Variability parameter 1/13", expected_OMEGA_BM0, variabilityModel[0])
 
-        def expected_OMEGA_BM2 = [ 'OMEGA_BM2' : [ 'value':'0.0369', 'type':'VAR' ] ]
+        def expected_OMEGA_BM2 = [ 'OMEGA_BM02' : [ 'value':'0.0369', 'type':'VAR' ] ]
         assertEquals("Checking Variability parameter 2/13", expected_OMEGA_BM2, variabilityModel[1])
 
-        def expected_OMEGA_BM3 = [ 'OMEGA_BM3' : [ 'value':'0.186', 'type':'VAR' ] ]
+        def expected_OMEGA_BM3 = [ 'OMEGA_BM03' : [ 'value':'0.186', 'type':'VAR' ] ]
         assertEquals("Checking Variability parameter 3/13", expected_OMEGA_BM3, variabilityModel[2])
 
-        def expected_OMEGA_BMS = [ 'OMEGA_BMS' : [ 'value':'0.254', 'type':'VAR' ] ]
+        def expected_OMEGA_BMS = [ 'OMEGA_BM0S' : [ 'value':'0.254', 'type':'VAR' ] ]
         assertEquals("Checking Variability parameter 4/13", expected_OMEGA_BMS, variabilityModel[3])
 
         def expected_SIGMA_RES_W = [ 'SIGMA_RES_W' : [ 'value':'1', 'type':'VAR', 'fix':'true' ] ]
