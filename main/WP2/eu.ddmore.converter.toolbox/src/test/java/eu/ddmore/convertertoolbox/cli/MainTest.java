@@ -16,8 +16,8 @@ import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
 
 public class MainTest {
 
-    private final static String TEST_DATA_DIR_1 = "/eu/ddmore/testdata/models/mdl/warfarin_PK_PRED/";
-    private final static String TEST_DATA_DIR_2 = "/eu/ddmore/testdata/models/mdl/warfarin_PK_BOV/";
+    private final static String TEST_DATA_DIR_1 = "/test-models/mdl/warfarin_PK_PRED/";
+    private final static String TEST_DATA_DIR_2 = "/test-models/mdl/warfarin_PK_BOV/";
 
     private final static String TEST_FILE_1 = "warfarin_PK_PRED.mdl";
     private final static String TEST_FILE_2 = "warfarin_PK_BOV.mdl";
