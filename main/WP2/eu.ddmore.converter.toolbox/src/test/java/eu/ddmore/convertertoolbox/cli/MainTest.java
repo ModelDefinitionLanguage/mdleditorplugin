@@ -16,21 +16,20 @@ import eu.ddmore.convertertoolbox.api.exception.ConverterNotFoundException;
 
 public class MainTest {
 
-    private final static String TEST_DATA_DIR_1 = "/test-models/mdl/warfarin_PK_PRED/";
-    private final static String TEST_DATA_DIR_2 = "/test-models/mdl/warfarin_PK_BOV/";
+    private final static String TEST_DATA_DIR = "/test-models/MDL/Product4/";
 
-    private final static String TEST_FILE_1 = "warfarin_PK_PRED.mdl";
-    private final static String TEST_FILE_2 = "warfarin_PK_BOV.mdl";
+    private final static String TEST_FILE_1 = "UseCase1.mdl";
+    private final static String TEST_FILE_2 = "UseCase2.mdl";
 
     private final static String WORKING_DIR = "target/MainTest_Working_Dir/";
 
     @Before
     public void setUp() throws IOException {
         FileUtils.copyInputStreamToFile(
-            MainTest.class.getResourceAsStream(TEST_DATA_DIR_1 + TEST_FILE_1),
+            MainTest.class.getResourceAsStream(TEST_DATA_DIR + TEST_FILE_1),
             new File(WORKING_DIR, TEST_FILE_1));
         FileUtils.copyInputStreamToFile(
-            MainTest.class.getResourceAsStream(TEST_DATA_DIR_2 + TEST_FILE_2),
+            MainTest.class.getResourceAsStream(TEST_DATA_DIR + TEST_FILE_2),
             new File(WORKING_DIR, TEST_FILE_2));
     }
 

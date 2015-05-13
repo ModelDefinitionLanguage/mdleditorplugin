@@ -25,8 +25,8 @@ import eu.ddmore.convertertoolbox.spi.DummyMDLToNMTRANFailure;
 
 public class ConverterImplTest {
 
-    private static final String TEST_DATA_DIR = "/test-models/mdl/warfarin_PK_PRED/";
-    private static final String TEST_FILE = "warfarin_PK_PRED.mdl";
+    private static final String TEST_DATA_DIR = "/test-models/MDL/Product4/";
+    private static final String TEST_FILE = "UseCase1.mdl";
     private static final String WORKING_DIR = "target/ConverterImplTest_Working_Dir/";
 
     private File pkPRED;
