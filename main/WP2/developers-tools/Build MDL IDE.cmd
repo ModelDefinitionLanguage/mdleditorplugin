@@ -21,6 +21,9 @@ title Full MDL-IDE Build
 :: Location of Maven local repository
 :: set MVN_REPOSITORY_ROOT="%userprofile%\.m2"
 
+:: name of the directory holding the use.cases repository
+SET USE_CASES_REPO_DIR_NAME="use.cases"
+
 :: name of the directory holding the ddmore-code repository
 SET DDMORE_CODE_REPO_DIR_NAME="ddmore-code"
 
@@ -54,7 +57,7 @@ del /P *-log.txt
 echo =============================
 echo Building Test Data Models ...
 echo =============================
-call mvn -f %BUILD_FOLDER%/%DDMORE_CODE_REPO_DIR_NAME%/main/WP2/eu.ddmore.testdata.models/pom.xml clean install -X > build-testdata-models-log.txt
+call mvn -f %BUILD_FOLDER%/%USE_CASES_REPO_DIR_NAME%/pom.xml clean install -X > build-testdata-models-log.txt
 
 :: MDL IDE core
 echo ===========================
