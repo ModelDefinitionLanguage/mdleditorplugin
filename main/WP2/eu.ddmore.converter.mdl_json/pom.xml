@@ -102,18 +102,26 @@
                 </dependencies>
             </plugin>
 
-            <!-- The test classes are to to be used by the converter toolbox systemtest project -->            
+            <!-- The test utility class(es) are to to be used by the converter toolbox systemtest project -->
 			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-jar-plugin</artifactId>
-			  <version>2.5</version>
-			  <executions>
-			    <execution>
-			      <goals>
-			        <goal>test-jar</goal>
-			      </goals>
-			    </execution>
-			  </executions>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<configuration>
+							<classifier>test-utils</classifier>
+							<classesDirectory>${project.build.testOutputDirectory}</classesDirectory>
+							<includes>
+								<include>**/testutils/*.*</include>
+							</includes>
+						</configuration>
+						<phase>package</phase>
+						<goals>
+                            <goal>jar</goal>
+                        </goals>
+					</execution>
+				</executions>
 			</plugin>
       
         </plugins>

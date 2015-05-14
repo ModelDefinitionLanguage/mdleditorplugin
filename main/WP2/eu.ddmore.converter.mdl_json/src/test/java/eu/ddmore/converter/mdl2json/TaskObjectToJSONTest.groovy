@@ -9,8 +9,8 @@ import org.apache.log4j.Logger
 import org.junit.Ignore
 import org.junit.Test
 
-import eu.ddmore.converter.mdl2json.MdlTestUtils
 import eu.ddmore.converter.mdl2json.domain.Task
+import eu.ddmore.converter.mdl2json.testutils.MdlTestUtils;
 
 class TaskObjectToJSONTest extends ConverterTestsParent {
     private static Logger logger = Logger.getLogger(TaskObjectToJSONTest.class)

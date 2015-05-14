@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
-package eu.ddmore.converter.mdl2json
+package eu.ddmore.converter.mdl2json.testutils
 
 import groovy.json.JsonSlurper
 
