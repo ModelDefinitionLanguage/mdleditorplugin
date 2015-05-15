@@ -3,6 +3,7 @@
  ******************************************************************************/
 package eu.ddmore.convertertoolbox.service.impl.conversion;
 
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.same;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Before;
@@ -18,6 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
@@ -75,7 +78,7 @@ public class CreateOutputPhexArchiveStepTest {
         conversionContext = new ConversionContext(converter, conversion, conversionRepository);
         when(archiveFactory.createArchive(any(File.class))).thenReturn(archive);
         when(archiveFactory.createArchiveHelper(same(archive))).thenReturn(archiveHelper);
-        instance.setResultFileNamePattern(".*%s.*");
+        instance.setResultFileNamePattern(".*%s.*(?<!csv)$");
         List<Entry> entries = Lists.newArrayList();
         Entry entry = mock(Entry.class);
         when(entry.getFileName()).thenReturn("inputFile.txt");
@@ -84,6 +87,10 @@ public class CreateOutputPhexArchiveStepTest {
         entry = mock(Entry.class);
         when(entry.getFileName()).thenReturn("inputFile.other");
         when(entry.getFilePath()).thenReturn("this/is/path/to/inputFile.other");
+        entries.add(entry);
+        entry = mock(Entry.class);
+        when(entry.getFileName()).thenReturn("inputFile.other");
+        when(entry.getFilePath()).thenReturn("this/is/path/to/inputFile.csv");
         entries.add(entry);
         when(archive.getEntries()).thenReturn(entries);
     }
@@ -98,15 +105,17 @@ public class CreateOutputPhexArchiveStepTest {
         when(conversion.getWorkingDirectory()).thenReturn(workingDirectory);
         when(conversion.getInputFileName()).thenReturn("this/is/path/to/inputFile.txt");
         instance.execute(conversionContext);
+        @SuppressWarnings("rawtypes")
+        ArgumentCaptor<Collection> mainEntriesCaptor = ArgumentCaptor.forClass(Collection.class);
         
         verify(archiveHelper).addDirectoryContents(eq(outputDirectory), eq(""));
         verify(conversion).setOutputArchive(eq(outputArchive));
         verify(conversion).setOutputFileSize(any(Long.class));
         verify(archive).open();
         verify(archive).close();
-
+        verify(archive).setMainEntries(mainEntriesCaptor.capture());
+        assertEquals(1, mainEntriesCaptor.getValue().size());
         PowerMockito.verifyStatic();
         Files.copy(inputArchive, outputArchive);
-        
     }
 }

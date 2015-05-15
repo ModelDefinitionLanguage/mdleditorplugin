@@ -39,7 +39,7 @@ public class CreateOutputPhexArchiveStep implements ConversionStep {
     @Autowired(required=true)
     private ArchiveFactory archiveFactory;
     
-    @Value("${:.*%s.*}")
+    @Value("${:.*%s.*(?<!csv)$}")
     private String resultFileNamePattern;
     
     @Override
