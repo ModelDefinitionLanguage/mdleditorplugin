@@ -44,9 +44,6 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
             if (block.getPriorBlock()) {
                 throw new UnsupportedOperationException("Prior Parameters block within Parameter Object not supported yet")
             }
-            if (block.getTargetBlock()) {
-                throw new UnsupportedOperationException("Target Code block within Parameter Object not supported yet")
-            }
 
         }
     }

@@ -55,10 +55,6 @@ class MdlTestUtils {
         Model.MODEL_OUTPUT_VARIABLES,
         Task.ESTIMATE,
         Task.SIMULATE,
-        Task.EVALUATE,
-        Task.OPTIMISE,
-        Task.DATA,
-        Task.MODEL,
         //Mog.OBJECTS,
         //Mog.MAPPING
     ] + ModelPredictionItem.SUBBLOCK_NAMES

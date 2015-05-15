@@ -26,9 +26,6 @@ public class Source extends Expando implements MDLPrintable {
             def expr = pd.getExpression()
             setProperty(pd.getPropertyName().getName(), XtextWrapper.unwrap(expr))
         }
-        if (sourceBlock.getInlineBlock() != null) {
-            setProperty("inlineBlock", sourceBlock.getInlineBlock());
-        }
     }
 
     /**

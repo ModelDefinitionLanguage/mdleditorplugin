@@ -1,8 +1,10 @@
+/*******************************************************************************
+ * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain
 
 import java.util.List;
 
-import org.ddmore.mdl.mdl.FunctionCallStatement
 import org.ddmore.mdl.mdl.ModelPredictionBlock
 import org.ddmore.mdl.mdl.ModelPredictionBlockStatement
 import org.ddmore.mdl.mdl.PkMacroStatement;
@@ -27,8 +29,6 @@ class ModelPredictionList extends ArrayList<ModelPredictionItem> implements MDLP
 			    final ModelPredictionItem mpi = ModelPredictionItem.buildFromSymbolDeclarations(
                     statement.getOdeBlock().getIdentifier(), statement.getOdeBlock().getVariables())
                 add(mpi)
-			} else if (statement.getLibraryBlock()) {
-                throw new UnsupportedOperationException("LIBRARY sub-block within MODEL_PREDICTION block is not currently supported for MDL<->JSON conversion")
 			} else if (statement.getPkMacroBlock()) {
                 final ModelPredictionItem mpi = ModelPredictionItem.buildFromPkMacroStatements(
                     statement.getPkMacroBlock().getIdentifier(), statement.getPkMacroBlock().getStatements())

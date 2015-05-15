@@ -3,11 +3,9 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain
 
-import org.ddmore.mdl.mdl.FullyQualifiedSymbolName
 import org.ddmore.mdl.mdl.ImportObjectStatement
 import org.ddmore.mdl.mdl.MOGObject
 import org.ddmore.mdl.mdl.MOGObjectBlock
-import org.ddmore.mdl.mdl.MappingBlockStatement
 
 import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
@@ -23,7 +21,6 @@ public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlo
     static final String IDENTIFIER = "mogobj"
 
     static final String OBJECTS = "OBJECTS"
-    static final String MAPPING = "MAPPING"
 
     public Mog(MOGObject mogObject) {
 
@@ -44,15 +41,6 @@ public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlo
                 }
                 setProperty(OBJECTS, objectsReverseMap)
             }
-            if (block.getMappingBlock()) {
-                def mappingsMap = [:]
-                for (MappingBlockStatement mapping : block.getMappingBlock().getMappings()) {
-                    final FullyQualifiedSymbolName obj1 = mapping.getObj1()
-                    final FullyQualifiedSymbolName obj2 = mapping.getObj2()
-                    mappingsMap.put(obj1.getParent().getName() + "." + obj1.getSymbolName().getName(), obj2.getParent().getName() + "." + obj2.getSymbolName().getName())
-                }
-                setProperty(MAPPING, mappingsMap)
-            }
         }
     }
 
@@ -61,9 +49,6 @@ public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlo
 
         if (json[OBJECTS]) {
             setProperty(OBJECTS, json[OBJECTS])
-        }
-        if (json[MAPPING]) {
-            setProperty(MAPPING, json[MAPPING])
         }
     }
 
@@ -82,13 +67,6 @@ public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlo
                 }
             }.join("\n${IDT*2}")
             mdl.append("\n${IDT}OBJECTS {\n${IDT*2}${objectsMdl}\n${IDT}}\n")
-        }
-
-        if (getProperties().containsKey(MAPPING)) {
-            final String mappingMdl = getProperty(MAPPING).collect{ String obj1, String obj2 ->
-                """${obj1} = ${obj2}"""
-            }.join("\n${IDT*2}")
-            mdl.append("\n${IDT}MAPPING {\n${IDT*2}${mappingMdl}\n${IDT}}\n")
         }
 
         return """${IDENTIFIER} {

@@ -3,7 +3,6 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain;
 
-import org.ddmore.mdl.mdl.TargetBlock
 import org.ddmore.mdl.mdl.TaskObject
 import org.ddmore.mdl.mdl.TaskObjectBlock
 
@@ -20,11 +19,6 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
 
     static final String ESTIMATE = "ESTIMATE"
     static final String SIMULATE = "SIMULATE"
-    static final String EVALUATE = "EVALUATE"
-    static final String OPTIMISE = "OPTIMISE"
-    static final String DATA = "DATA"
-    static final String MODEL = "MODEL"
-    static final String TARGET_CODE = "TARGET_CODE"
 
     private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 
@@ -42,21 +36,6 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
             }
             if (block.getSimulateBlock()) {
                 setProperty(SIMULATE, printIdentifiedBlock(block.getSimulateBlock(), statementPrinter))
-            }
-            if (block.getEvaluateBlock()) {
-                setProperty(EVALUATE, printIdentifiedBlock(block.getEvaluateBlock(), statementPrinter))
-            }
-            if (block.getOptimiseBlock()) {
-                setProperty(OPTIMISE, printIdentifiedBlock(block.getOptimiseBlock(), statementPrinter))
-            }
-            if (block.getDataBlock()) {
-                setProperty(DATA, printIdentifiedBlock(block.getDataBlock(), statementPrinter))
-            }
-            if (block.getModelBlock()) {
-                setProperty(MODEL, printIdentifiedBlock(block.getModelBlock(), statementPrinter))
-            }
-            if (block.getTargetBlock()) {
-                setProperty(TARGET_CODE, printIdentifiedBlock(block.getTargetBlock(), statementPrinter))
             }
         }
     }
@@ -104,13 +83,6 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
         statementHolder.statements.collect{
             it.getPropertyName().getName() + "=" + XtextWrapper.unwrap(it.getExpression())
         }.join("\n")
-    }
-
-    /**
-     * Prints a target code block, wrapped in the MDL comment character.
-     */
-    def targetCodeBlockPrinter = { TargetBlock tb ->
-        new StringBuffer().append("***").append(mdlPrinter.print(tb)).append("***").toString()
     }
 
     /**

@@ -95,15 +95,6 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
             if (block.getOutputVariablesBlock()) {
                 setProperty(MODEL_OUTPUT_VARIABLES, VariablesList.buildFromSymbolNames(block.getOutputVariablesBlock().getVariables()))
             }
-            if (block.getEstimationBlock()) {
-                throw new UnsupportedOperationException("Estimation block within Model Object not supported")
-            }
-            if (block.getSimulationBlock()) {
-                throw new UnsupportedOperationException("Simulation block within Model Object not supported")
-            }
-            if (block.getTargetBlock()) {
-                throw new UnsupportedOperationException("Target Code block within Model Object not supported")
-            }
         }
     }
 
