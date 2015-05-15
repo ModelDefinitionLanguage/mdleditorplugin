@@ -152,7 +152,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
      * <p>
      * @param originalMdlModel - the original MDL model {@link File}, from which the generated Pharmml model
      *                           {@link File} is obtained
-     * @param modelShortPath - the path to the model with the "target/WorkingDir/eu/ddmore/testdata/models/"
+     * @param modelShortPath - the path to the model with the "target/WorkingDir/test-models/"
      *                         prefix stripped off; this is incorporated into the display name of the test
      *                         but is otherwise unused
      */

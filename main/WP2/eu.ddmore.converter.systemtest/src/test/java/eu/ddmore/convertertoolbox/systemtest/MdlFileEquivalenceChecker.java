@@ -2,7 +2,7 @@ package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.File;
 
-import eu.ddmore.converter.mdl2json.MdlTestUtils;
+import eu.ddmore.converter.mdl2json.testutils.MdlTestUtils;
 
 /**
  * A Converter Output Failure Checker for JSON->MDL conversion; it enhances the standard Converter Output

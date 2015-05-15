@@ -2,11 +2,11 @@ package eu.ddmore.converter.mdl2json
 
 import static org.junit.Assert.*
 
+import static eu.ddmore.converter.mdl2json.testutils.MdlTestUtils.*
+
 import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
 import org.junit.Test
-
-import static eu.ddmore.converter.mdl2json.MdlTestUtils.*
 
 import eu.ddmore.converter.mdl2json.domain.MCLFile
 

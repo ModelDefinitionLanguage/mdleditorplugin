@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 public class ModelsDiscoverer {
     private final static Logger LOGGER = Logger.getLogger(ModelsDiscoverer.class);
     
-    final static String PATH_TO_MODELS_DIR = "target/WorkingDir/eu/ddmore/testdata/models/";
+    final static String PATH_TO_MODELS_DIR = "target/WorkingDir/test-models/";
     
     private final String modelsSubdirectory;
     private final String modelFileExtension;
