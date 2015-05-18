@@ -79,14 +79,14 @@ call mvn -U -f %BUILD_FOLDER%/%DDMORE_CODE_REPO_DIR_NAME%/main/WP2/converter-too
 %FINDCMD% "BUILD SUCCESS" build-converter-toolbox-aggregator-log.txt
 if not %ERRORLEVEL%==0 goto :failed
 
-call mvn -U -f %BUILD_FOLDER%/%DDMORE_CODE_REPO_DIR_NAME%/main/WP2/converter-toolbox-service-aggregator/pom.xml clean install -X > build-converter-toolbox-service-aggregator-log.txt
-:: Check everything has worked!
-%FINDCMD% "BUILD SUCCESS" build-converter-toolbox-service-aggregator-log.txt
-if not %ERRORLEVEL%==0 goto :failed
-
 call mvn -U -f %BUILD_FOLDER%/%NMTRANCONVERTER_REPO_DIR_NAME%/pom.xml clean install -X > build-converter-nonmem-log.txt
 %FINDCMD% "BUILD SUCCESS" build-converter-nonmem-log.txt
 :: Check everything has worked!
+if not %ERRORLEVEL%==0 goto :failed
+
+call mvn -U -f %BUILD_FOLDER%/%DDMORE_CODE_REPO_DIR_NAME%/main/WP2/converter-toolbox-service-aggregator/pom.xml clean install -X > build-converter-toolbox-service-aggregator-log.txt
+:: Check everything has worked!
+%FINDCMD% "BUILD SUCCESS" build-converter-toolbox-service-aggregator-log.txt
 if not %ERRORLEVEL%==0 goto :failed
 
 :: MDL IDE complete
