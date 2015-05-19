@@ -14,17 +14,14 @@ import eu.ddmore.convertertoolbox.systemtest.FileType;
 
 
 /**
- * Run MDL -> PharmML conversions over the testdata models within the "mdl" subdirectory.
+ * Run MDL -> PharmML conversions over the testdata models within the "MDL" subdirectory.
  */
 @RunWith(Parameterized.class)
 public class MdlToPharmmlModelsTest {
     
     private final static Logger LOGGER = Logger.getLogger(MdlToPharmmlModelsTest.class);
 
-    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + FileType.MDL.getVersion();
-    
-    // We'll consider a conversion to have failed if the converted output file has a size that is less than this number of bytes
-    private final static int PHARMML_FILE_SIZE_THRESHOLD = 638;
+    private final static String MODELS_SUBDIRECTORY = "MDL" + File.separator + FileType.MDL.getVersion();
     
     /**
      * The method that produces the parameters to be passed to each construction of the test class.
@@ -71,7 +68,7 @@ public class MdlToPharmmlModelsTest {
         final ConverterRunner runner = new ConverterRunner(
             this.model, FileType.PharmML.getExtension(),
             FileType.MDL.name(), FileType.MDL.getVersion(), FileType.PharmML.name(), FileType.PharmML.getVersion(),
-            new DefaultConverterOutputFailureChecker(PHARMML_FILE_SIZE_THRESHOLD)
+            new MdlToPharmMLOutputFailureChecker()
         );
         runner.run();
 		// Copy the data file

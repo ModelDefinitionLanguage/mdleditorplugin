@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 /**
- * Run MDL -> JSON -> MDL conversions over the testdata models within the "mdl" subdirectory,
+ * Run MDL -> JSON -> MDL conversions over the testdata models within the "MDL" subdirectory,
  * The generated MDL file is tested for syntactic and semantic equivalence to the original MDL file.
  * Minimal checks are done on the MDL -> JSON bit of the pipeline since there is a separate
  * test class, {@link MdlToJsonModelsTest}, for this.
@@ -19,7 +19,7 @@ public class MdlToJsonToMdlModelsTest {
 
     private final static Logger LOGGER = Logger.getLogger(MdlToJsonToMdlModelsTest.class);
 
-    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + FileType.MDL.getVersion();
+    private final static String MODELS_SUBDIRECTORY = "MDL" + File.separator + FileType.MDL.getVersion();
 
     /**
      * The method that produces the parameters to be passed to each construction of the test class.

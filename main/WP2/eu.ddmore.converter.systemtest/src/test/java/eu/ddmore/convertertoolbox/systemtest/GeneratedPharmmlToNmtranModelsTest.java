@@ -35,7 +35,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
     private final static Logger LOGGER = Logger.getLogger(GeneratedPharmmlToNmtranModelsTest.class);
 
     private final static String ORIGINAL_MDL_MODELS_SUBDIRECTORY =
-        quoteReplacement("mdl" + File.separator + FileType.MDL.getVersion()); // quoteReplacement() since the backslashes need to be escaped in this string
+        quoteReplacement("MDL" + File.separator + FileType.MDL.getVersion()); // quoteReplacement() since the backslashes need to be escaped in this string
     private final static String GENERATED_PHARMML_MODELS_SUBDIRECTORY =
         quoteReplacement("PharmML-generated-from-MDL" + File.separator + FileType.MDL.getVersion()); // quoteReplacement() since the backslashes need to be escaped in this string
 
@@ -92,7 +92,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
      * <b>Precondition:</b> The MDL Models conversion tests have already been run, in order that
      * the generated PharmML files are actually present.
      * <p>
-     * The PharmML models generated from the MDL Models conversion are written to "mdl/[modelname]/output-xml" subdirectories.
+     * The PharmML models generated from the MDL Models conversion are written to "MDL/[modelname]/output-xml" subdirectories.
      * Find all the actual PharmML files (i.e. with .xml extension) within these directories (there may be data files etc.
      * in there too), and copy each of their containing folders (i.e. including the associated data files), to a suitably
      * named directory (i.e. taken from the name of the model in the path to the PharmML file) under a
@@ -112,7 +112,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
                 FileType.PharmML.getExtension()).getAllModels(), new Predicate<File>() {
 
             /**
-             * Since .xml is a generic file extension, need to filter out any XML files that are not within a "mdl/[modelname]/output-xml" subdirectory.
+             * Since .xml is a generic file extension, need to filter out any XML files that are not within a "MDL/[modelname]/output-xml" subdirectory.
              */
             public boolean apply(File input) {
                 return input.getParentFile().getName().equals(ConverterRunner.OUTPUT_SUBDIRECTORY_BASENAME + FileType.PharmML.getExtension());

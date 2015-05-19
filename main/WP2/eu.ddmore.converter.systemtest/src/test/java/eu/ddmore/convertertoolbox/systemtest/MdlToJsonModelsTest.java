@@ -9,14 +9,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 /**
- * Run MDL -> JSON conversions over the testdata models within the "mdl" subdirectory.
+ * Run MDL -> JSON conversions over the testdata models within the "MDL" subdirectory.
  */
 @RunWith(Parameterized.class)
 public class MdlToJsonModelsTest {
 
     private final static Logger LOGGER = Logger.getLogger(MdlToJsonModelsTest.class);
     
-    private final static String MODELS_SUBDIRECTORY = "mdl" + File.separator + FileType.MDL.getVersion();
+    private final static String MODELS_SUBDIRECTORY = "MDL" + File.separator + FileType.MDL.getVersion();
 
     /**
      * The method that produces the parameters to be passed to each construction of the test class.
