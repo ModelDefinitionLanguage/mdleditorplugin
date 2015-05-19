@@ -262,37 +262,43 @@ public class XtextWrapper {
                 unwrap(expr)
             }.join(", ")).concat("]")
         } else {
-            return "[".concat(v.getExpression().getLists().collect {  org.ddmore.mdl.mdl.List lst ->
+            return "[".concat(v.getExpression().getLists().collect { org.ddmore.mdl.mdl.List lst ->
                 unwrap(lst.getArguments())
             }.join(", ")).concat("]")
         }
     }
-
+    
     public static unwrap(final Arguments args) {
+        unwrap(args, '{', '}')
+    }
+
+    public static unwrap(final Arguments args, final String bracketCharL, final String bracketCharR) {
         if (args.getNamedArguments()) {
-            return unwrap(args.getNamedArguments())
+            return unwrapArgs(args.getNamedArguments(), bracketCharL, bracketCharR)
         } else {
-            return unwrap(args.getUnnamedArguments())
+            return unwrapArgs(args.getUnnamedArguments(), bracketCharL, bracketCharR)
         }
     }
 
-    public static unwrap(final NamedArguments args) {
-        "{".concat(args.getArguments().collect{ Argument a ->
+    private static unwrapArgs(final NamedArguments args, final String bracketCharL, final String bracketCharR) {
+        bracketCharL + args.getArguments().collect{ Argument a ->
             a.getArgumentName().getName() + "=" + unwrap(a.getExpression())
-        }.join(", ")).concat("}")
+        }.join(", ") + bracketCharR
     }
 
-    public static unwrap(final UnnamedArguments args) {
-        "{".concat(args.getArguments().collect{ ArgumentExpression ae ->
+    private static unwrapArgs(final UnnamedArguments args, final String bracketCharL, final String bracketCharR) {
+        bracketCharL + args.getArguments().collect{ ArgumentExpression ae ->
             unwrap(ae.getExpression())
-        }.join(", ")).concat("}")
+        }.join(", ") + bracketCharR
     }
 
     public static unwrap(ArgumentExpression argExpr) {
         if (argExpr.getExpression()) {
             return unwrap(argExpr.getExpression())
+        } else if (argExpr.getRandomList()) {
+            return "~" + argExpr.getRandomList().getType().getName() + unwrap(argExpr.getRandomList().getArguments(), '(', ')')
         } else {
-            throw new UnsupportedOperationException("Encountered an unhandled RandomList of an ArgumentExpression: " + mdlPrinter.toStr(argExpr.getRandomList()))
+            throw new UnsupportedOperationException("Encountered an ArgumentExpression without either an Expression nor a RandomList: " + mdlPrinter.toStr(argExpr))
         }
     }
 

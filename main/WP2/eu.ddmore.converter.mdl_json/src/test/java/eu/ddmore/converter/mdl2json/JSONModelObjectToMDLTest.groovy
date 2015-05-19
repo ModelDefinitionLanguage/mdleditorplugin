@@ -61,6 +61,8 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         / {"GROUP_VARIABLES":[{".expr":"POP_CL*(WT\/70)^0.75",".name":"GRPCL"},{".expr":"POP_V*WT\/70",".name":"GRPV"},{".expr":"POP_KA",".name":"GRPKA"},{".expr":"POP_TLAG",".name":"GRPLG"}]} /
     private final static String modelOutputVariablesBlockJson_UseCase10 =
         / {"MODEL_OUTPUT_VARIABLES":[{".name":"ID"},{".name":"TIME"},{".name":"WT"},{".name":"LOGTWT"},{".name":"CL"},{".name":"VC"},{".name":"Q"},{".name":"VP"},{".name":"KA"},{".name":"TLAG"},{".name":"DVID"},{".name":"MDV"},{".name":"Y"}]} /
+    private final static String observationBlockJson_UseCase11 =
+        / {"OBSERVATION":[{"link":"log",".name":"Y","type":"count","distn":"~Poisson(lambda=LAMBDA)"}]} /
     
     @Test
     public void testIndependentVariablesBlock() {
@@ -597,6 +599,23 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 }
 """
         assertEquals(expected, modelObj.toMDL())
+    }
+    
+    @Test
+    public void testVariableHavingDistributionAsAttribute() {
+        def json = getJson(observationBlockJson_UseCase11)
+        
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    OBSERVATION {
+        Y : {distn=~Poisson(lambda=LAMBDA), link=log, type=count}
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())        
     }
 
 }

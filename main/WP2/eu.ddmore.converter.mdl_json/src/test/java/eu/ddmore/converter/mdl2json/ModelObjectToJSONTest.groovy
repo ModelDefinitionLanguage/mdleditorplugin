@@ -579,5 +579,19 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
         assertEquals("Checking Model Output Variable 2/13", [(Variable.NAME_KEY):'TIME'], modelOutputVars[1])
         assertEquals("Checking Model Output Variable 3/13", [(Variable.NAME_KEY):'WT'], modelOutputVars[2])
     }
+    
+    @Test
+    public void testVariableHavingDistributionAsAttribute() {
+        def json = getJsonFromMDLFile("UseCase11_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.Poisson_DIST_mdl
+        
+        logger.debug(modelObject)
+        
+        def observation = modelObject.OBSERVATION
+        
+        assertEquals("Checking the distribution attribute", "~Poisson(lambda=LAMBDA)", observation[0].distn)
+        
+    }
 
 }
