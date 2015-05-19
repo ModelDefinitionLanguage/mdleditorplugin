@@ -208,10 +208,13 @@ class MdlTestUtils {
             logger.info("Block \"" + blockName + "\" was not found in the MDL")
         }
         
-        // TODO: A MCL file can have multiple top-level objects of the same type (dataobj, parobj, mdlobj, taskobj);
+        // A MCL file can have multiple top-level objects of the same type (dataobj, parobj, mdlobj, taskobj);
         // these can be written out by the JSON->MDL in any order, hence we need to sort multiple matching
-        // blocks into some predictable order. But whitespace causes erratic ordering...
-        extractedBlocks//.sort()
+        // blocks into some predictable order. But whitespace causes inconsistent ordering, hence we remove
+        // this before sorting.
+        extractedBlocks.sort(true) { String b1, String b2 ->
+            b1.replaceAll("\\s", "").compareTo(b2.replaceAll("\\s", ""))
+        }
     }
 
     /**
