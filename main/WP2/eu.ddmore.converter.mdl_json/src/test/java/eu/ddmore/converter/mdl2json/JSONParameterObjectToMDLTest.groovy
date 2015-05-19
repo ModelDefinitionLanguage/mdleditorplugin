@@ -54,7 +54,7 @@ class JSONParameterObjectToMDLTest extends ConverterTestsParent  {
     }
 
     @Test
-    public void testStructuralBlock_Warfarin() {
+    public void testStructuralBlock_Simple() {
 
         def json = getJson(structuralBlockJson_UseCase1)
 
@@ -79,7 +79,7 @@ class JSONParameterObjectToMDLTest extends ConverterTestsParent  {
     }
 
     @Test
-    public void testStructuralBlock_Hansson() {
+    public void testStructuralBlock_ContainingAttributesHavingQuotedValues() {
 
         def json = getJson(structuralBlockJson_UseCase3)
 
@@ -114,29 +114,7 @@ class JSONParameterObjectToMDLTest extends ConverterTestsParent  {
     }
 
     @Test
-    public void testVariabilityBlock_Warfarin() {
-
-        def json = getJson(variabilityBlockJson_UseCase1)
-
-        def paramObj = new Parameter(json)
-
-        String expected = """parobj {
-
-    VARIABILITY {
-        PPV_CL : {type=SD, value=0.1}
-        PPV_V : {type=SD, value=0.1}
-        PPV_KA : {type=SD, value=0.1}
-        PPV_TLAG : {type=SD, value=0.1}
-        OMEGA : {params=[ETA_CL, ETA_V], type=CORR, value=[0.01]}
-    }
-
-}
-"""
-        assertEquals(expected, paramObj.toMDL())
-    }
-    
-    @Test
-    public void testVariabilityBlock_Hansson() {
+    public void testVariabilityBlock_Simple() {
 
         def json = getJson(variabilityBlockJson_UseCase3)
 
@@ -164,9 +142,39 @@ class JSONParameterObjectToMDLTest extends ConverterTestsParent  {
 """
         assertEquals(expected, paramObj.toMDL())
     }
-
+    
+    /**
+     * Testing attributes like:
+     * params=[ETA_CL, ETA_V]
+     */
     @Test
-    public void testVariabilityBlock_WarfarinPkBov() {
+    public void testVariabilityBlock_ContainingAttributeBeingListOfVariableNames_1() {
+
+        def json = getJson(variabilityBlockJson_UseCase1)
+
+        def paramObj = new Parameter(json)
+
+        String expected = """parobj {
+
+    VARIABILITY {
+        PPV_CL : {type=SD, value=0.1}
+        PPV_V : {type=SD, value=0.1}
+        PPV_KA : {type=SD, value=0.1}
+        PPV_TLAG : {type=SD, value=0.1}
+        OMEGA : {params=[ETA_CL, ETA_V], type=CORR, value=[0.01]}
+    }
+
+}
+"""
+        assertEquals(expected, paramObj.toMDL())
+    }
+
+    /**
+     * Testing attributes like:
+     * params=[ETA_CL, ETA_V]
+     */
+    @Test
+    public void testVariabilityBlock_ContainingAttributeBeingListOfVariableNames_2() {
 
         def json = getJson(variabilityBlockJson_UseCase8)
 
@@ -194,6 +202,8 @@ class JSONParameterObjectToMDLTest extends ConverterTestsParent  {
 
     /**
      * Testing against JSON converted from complexParameter.mdl
+     * <p>
+     * TODO: Will the "complex variability" functionality ever be reinstated in real use cases? if not, it can be removed.
      */
     @Test
     public void testComplexVariability() {

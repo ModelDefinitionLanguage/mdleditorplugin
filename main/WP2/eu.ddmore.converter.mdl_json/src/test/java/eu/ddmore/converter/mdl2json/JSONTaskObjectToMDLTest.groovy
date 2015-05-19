@@ -21,7 +21,7 @@ class JSONTaskObjectToMDLTest extends ConverterTestsParent  {
         / {"ESTIMATE":"target=MLXTRAN_CODE\nversion=\"4.3.2\"\nalgo=[\"SAEM\"]"} /
 
     @Test
-    public void testEstimateBlock_Hansson() {
+    public void testEstimateBlock_ContainingUnquotedAttributeValue() {
 
         def json = getJson(estimateBlockJson_UseCase3)
 
@@ -41,7 +41,7 @@ class JSONTaskObjectToMDLTest extends ConverterTestsParent  {
     }
 
     @Test
-    public void testEstimateBlock_WarfarinAnalyticSolution() {
+    public void testEstimateBlock_ContainingQuotedAttributeValue() {
 
         def json = getJson(estimateBlockJson_UseCase2)
 

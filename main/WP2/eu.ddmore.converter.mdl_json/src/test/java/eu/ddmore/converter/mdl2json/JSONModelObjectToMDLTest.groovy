@@ -47,8 +47,6 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         / {"OBSERVATION":[{"eps":"eps_RES_W","error":"combinedError2log(additive=0, proportional=POP_RES_VEGF_PROP, f=VEGF)","prediction":"VEGF",".name":"LNVEGF_obs","type":"continuous"},{"eps":"eps_RES_W","error":"combinedError2log(additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, f=sVEGFR2)","prediction":"sVEGFR2",".name":"LNsVEGFR2_obs","type":"continuous"},{"eps":"eps_RES_W","error":"combinedError2log(additive=0, proportional=POP_RES_sVEGFR3_PROP, f=sVEGFR3)","prediction":"sVEGFR3",".name":"LNsVEGFR3_obs","type":"continuous"},{"eps":"eps_RES_W","error":"combinedError2log(additive=0, proportional=POP_RES_sKIT_PROP, f=sKIT)","prediction":"sKIT",".name":"LNsKIT_obs","type":"continuous"}]} /
     private final static String observationBlockJson_UseCase19 =
         / {"OBSERVATION":[{".expr":"CC*(1+eps_RUV_PROP)+eps_RUV_ADD",".name":"Y"}]} /
-    private final static String observationBlockJson_UseCase22 =
-        / {"OBSERVATION":[{".expr":"CONC*(1+eps_RUV_PROP)+eps_RUV_ADD",".name":"Y"}]} /
     private final static String modelPredictionBlockJson_UseCase2 =
         / {"MODEL_PREDICTION":[{".name":"D"},{".name":"DT"},{".expr":"CL\/V",".name":"k"},{".expr":"0 when T-DT<TLAG otherwise (D\/V)*(KA\/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))",".name":"CC"}]} /
     private final static String modelPredictionBlockJson_UseCase3 =
@@ -83,7 +81,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testCovariatesBlock_WarfarinAnalyticSolution() {
+    public void testCovariatesBlock_ContainingVariableBeingExpression() {
 
         def json = getJson(covariatesBlockJson_UseCase2)
 
@@ -101,8 +99,12 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, modelObj.toMDL())
     }
 
+    /**
+     * Testing variables like:
+     * SEX : {type=categorical(female, male, MISSING)}
+     */
     @Test
-    public void testCovariatesBlock_WarfarinPkSexage() {
+    public void testCovariatesBlock_ContainingVariableBeingSetOfAttributes() {
 
         def json = getJson(covariatesBlockJson_UseCase5)
 
@@ -144,7 +146,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testStructuralParametersBlock_Warfarin() {
+    public void testStructuralParametersBlock_BeingListOfVariableNames() {
 
         def json = getJson(structuralParametersBlockJson_UseCase1)
 
@@ -168,8 +170,12 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, modelObj.toMDL())
     }
     
+    /**
+     * Testing variables like:
+     * POP_CL : {units="L/h/kg*70"}
+     */
     @Test
-    public void testStructuralParametersBlock_UseCase10() {
+    public void testStructuralParametersBlock_ContainingVariablesBeingSetsOfAttributes() {
 
         def json = getJson(structuralParametersBlockJson_UseCase10)
 
@@ -196,7 +202,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testVariabilityParametersBlock_Warfarin() {
+    public void testVariabilityParametersBlock_BeingListOfVariableNames() {
         def json = getJson(variabilityParametersBlockJson_UseCase1)
 
         def modelObj = new Model(json)
@@ -215,8 +221,12 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, modelObj.toMDL())
     }
 
+    /**
+     * Testing attributes like:
+     * params=[ETA_CL, ETA_V]
+     */
     @Test
-    public void testVariabilityParametersBlock_WarfarinPkSim() {
+    public void testVariabilityParametersBlock_ContainingVariableHavingAttributeBeingListOfVariableNames() {
         def json = getJson(variabilityParametersBlockJson_UseCase20)
 
         def modelObj = new Model(json)
@@ -239,7 +249,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testRandomVariableDefinitionBlocks_Warfarin() {
+    public void testRandomVariableDefinitionBlocks_1() {
 
         def json = getJson(randomVarDefinitionBlocksJson_UseCase1)
 
@@ -264,7 +274,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
     
     @Test
-    public void testRandomVariableDefinitionBlocks_WarfarinPkBov() {
+    public void testRandomVariableDefinitionBlocks_2() {
 
         def json = getJson(randomVarDefinitionBlocksJson_UseCase8)
 
@@ -295,8 +305,12 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, modelObj.toMDL())
     }
 
+    /**
+     * Testing attributes like:
+     * fixEff={coeff=BETA_CL_WT, cov=logtWT}
+     */
     @Test
-    public void testIndividualVariablesBlock_Warfarin() {
+    public void testIndividualVariablesBlock_ContainingVariableHavingAttributeBeingSetOfNameValuePairs() {
         def json = getJson(individualVarsBlockJson_UseCase1)
 
         def modelObj = new Model(json)
@@ -315,8 +329,14 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, modelObj.toMDL())
     }
 
+    /**
+     * Testing variables like:
+     * TVSLP = POP_TVSLP/1000
+     * and variables like:
+     * BM0 : {pop=POP_BM0, ranEff=eta_BM0, trans=log, type=linear}
+     */
     @Test
-    public void testIndividualVariablesBlock_Hansson() {
+    public void testIndividualVariablesBlock_MixtureOfVariablesBeingExpressionsAndVariablesBeingSetsOfAttributes() {
         def json = getJson(individualVarsBlockJson_UseCase3)
 
         def modelObj = new Model(json)
@@ -359,8 +379,12 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, modelObj.toMDL())
     }
 
+    /**
+     * Testing attributes like:
+     * ranEff=[eta_BSV_CL, eta_BOV_CL]
+     */
     @Test
-    public void testIndividualVariablesBlock_WarfarinPkBov() {
+    public void testIndividualVariablesBlock_ContainingVariableHavingAttributeBeingListOfVariableNames() {
         def json = getJson(individualVarsBlockJson_UseCase8)
 
         def modelObj = new Model(json)
@@ -379,8 +403,12 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, modelObj.toMDL())
     }
 
+    /**
+     * Testing attributes like:
+     * fixEff=[{coeff=BETA_CL_WT, cov=logtWT}, ...]
+     */
     @Test
-    public void testIndividualVariablesBlock_WarfarinPkSexage() {
+    public void testIndividualVariablesBlock_ContainingVariableHavingAttributeBeingListOfSetsOfNameValuePairs() {
         def json = getJson(individualVarsBlockJson_UseCase5)
 
         def modelObj = new Model(json)
@@ -399,8 +427,12 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, modelObj.toMDL())
     }
 
+    /**
+     * Testing attributes like:
+     * error=combinedError2log(additive=0, proportional=POP_RES_VEGF_PROP, f=VEGF)
+     */
     @Test
-    public void testObservationBlock_Hansson() {
+    public void testObservationBlock_ContainingVariableHavingErrorFunctionAttribute() {
         def json = getJson(observationBlockJson_UseCase3)
 
         def modelObj = new Model(json)
@@ -420,7 +452,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testObservationBlock_WarfarinPkBovOAM() {
+    public void testObservationBlock_ContainingVariableBeingExpression() {
         def json = getJson(observationBlockJson_UseCase19)
 
         def modelObj = new Model(json)
@@ -437,24 +469,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testObservationBlock_UseCase22() {
-        def json = getJson(observationBlockJson_UseCase22)
-
-        def modelObj = new Model(json)
-        
-        String expected = """mdlobj {
-
-    OBSERVATION {
-        Y = CONC*(1+eps_RUV_PROP)+eps_RUV_ADD
-    }
-
-}
-"""
-        assertEquals(expected, modelObj.toMDL())
-    }
-
-    @Test
-    public void testModelPredictionBlock_WarfarinAnalyticSolution() {
+    public void testModelPredictionBlock_ContainingVariablesBeingExpressions() {
         def json = getJson(modelPredictionBlockJson_UseCase2)
 
         def modelObj = new Model(json)
@@ -474,7 +489,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testModelPredictionBlock_Hansson() {
+    public void testModelPredictionBlockWithDeqSubBlock() {
         def json = getJson(modelPredictionBlockJson_UseCase3)
 
         def modelObj = new Model(json)
@@ -553,7 +568,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testGroupVariablesBlock_WarfarinPkBovOAM() {
+    public void testGroupVariablesBlock_ContainingVariablesBeingExpressions() {
         def json = getJson(groupVariablesBlockJson_UseCase19)
 
         def modelObj = new Model(json)
@@ -573,7 +588,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
     
     @Test
-    public void testModelOutputVariablesBlock_UseCase10() {
+    public void testModelOutputVariablesBlock() {
         def json = getJson(modelOutputVariablesBlockJson_UseCase10)
         
         def modelObj = new Model(json)

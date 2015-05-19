@@ -31,7 +31,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testStructuralBlock_Warfarin() {
+    public void testStructuralBlock_Simple() {
         def json = getJsonFromMDLFile("UseCase1_ParameterObject.mdl")
 
         def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
@@ -67,7 +67,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testStructuralBlock_Hansson() {
+    public void testStructuralBlock_ContainingAttributesHavingQuotedValues() {
         def json = getJsonFromMDLFile("UseCase3_ParameterObject.mdl")
 
         def parameterObject = json[0].Hansson2013_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
@@ -95,40 +95,16 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
         assertEquals("Checking Structural parameter 6/18", expected_POP_SLP, structuralModel[5])
 
     }
-
+    
     /**
      * Note the extra layer of nesting in the 'simple' parameters; this is to be consistent with
      * the matrix/diag/same parameters and make the post-processing in R slightly simpler.
+     * <p>
+     * TODO: This might never become relevant any more in which case we can simplify/standardise
+     *       the representation of this block
      */
     @Test
-    public void testVariabilityBlock_Warfarin() {
-        def json = getJsonFromMDLFile("UseCase1_ParameterObject.mdl")
-
-        def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
-
-        def variabilityModel = parameterObject[Parameter.VARIABILITY]
-
-        assertEquals("Checking the number of variables in the Variability model", 5, variabilityModel.size())
-
-        def expected_PPV_CL = [ 'PPV_CL' : [ 'value':'0.1', 'type':'SD' ] ]
-        assertEquals("Checking Variability parameter 1/5", expected_PPV_CL, variabilityModel[0])
-
-        def expected_PPV_V = [ 'PPV_V' : [ 'value':'0.1', 'type':'SD' ] ]
-        assertEquals("Checking Variability parameter 2/5", expected_PPV_V, variabilityModel[1])
-
-        def expected_PPV_KA = [ 'PPV_KA' : [ 'value':'0.1', 'type':'SD' ] ]
-        assertEquals("Checking Variability parameter 3/5", expected_PPV_KA, variabilityModel[2])
-
-        def expected_PPV_TLAG = [ 'PPV_TLAG' : [ 'value':'0.1', 'type':'SD' ] ]
-        assertEquals("Checking Variability parameter 4/5", expected_PPV_TLAG, variabilityModel[3])
-
-        def expected_OMEGA = [ 'OMEGA' : [ 'params':'[ETA_CL, ETA_V]', 'value':'[0.01]', 'type':'CORR' ] ]
-        assertEquals("Checking Variability parameter 5/5", expected_OMEGA, variabilityModel[4])
-
-    }
-
-    @Test
-    public void testVariabilityBlock_Hansson() {
+    public void testVariabilityBlock_Simple() {
         def json = getJsonFromMDLFile("UseCase3_ParameterObject.mdl")
 
         def parameterObject = json[0].Hansson2013_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
@@ -154,8 +130,44 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
 
     }
 
+    /**
+     * Testing attributes like:
+     * params=[ETA_CL, ETA_V]
+     */
     @Test
-    public void testVariabilityBlock_WarfarinPkBov() {
+    public void testVariabilityBlock_ContainingAttributeBeingListOfVariableNames_1() {
+        def json = getJsonFromMDLFile("UseCase1_ParameterObject.mdl")
+
+        def parameterObject = json[0].warfarin_PK_ODE_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+
+        def variabilityModel = parameterObject[Parameter.VARIABILITY]
+
+        assertEquals("Checking the number of variables in the Variability model", 5, variabilityModel.size())
+
+        def expected_PPV_CL = [ 'PPV_CL' : [ 'value':'0.1', 'type':'SD' ] ]
+        assertEquals("Checking Variability parameter 1/5", expected_PPV_CL, variabilityModel[0])
+
+        def expected_PPV_V = [ 'PPV_V' : [ 'value':'0.1', 'type':'SD' ] ]
+        assertEquals("Checking Variability parameter 2/5", expected_PPV_V, variabilityModel[1])
+
+        def expected_PPV_KA = [ 'PPV_KA' : [ 'value':'0.1', 'type':'SD' ] ]
+        assertEquals("Checking Variability parameter 3/5", expected_PPV_KA, variabilityModel[2])
+
+        def expected_PPV_TLAG = [ 'PPV_TLAG' : [ 'value':'0.1', 'type':'SD' ] ]
+        assertEquals("Checking Variability parameter 4/5", expected_PPV_TLAG, variabilityModel[3])
+
+        def expected_OMEGA = [ 'OMEGA' : [ 'params':'[ETA_CL, ETA_V]', 'value':'[0.01]', 'type':'CORR' ] ]
+        assertEquals("Checking Variability parameter 5/5", expected_OMEGA, variabilityModel[4])
+
+    }
+
+    /**
+     * Testing attributes like:
+     * params=[ETA_CL, ETA_V]
+     * <p>
+     */
+    @Test
+    public void testVariabilityBlock_ContainingAttributeBeingListOfVariableNames_2() {
         def json = getJsonFromMDLFile("UseCase8_ParameterObject.mdl")
 
         def parameterObject = json[0].warfarin_PK_BOV_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
@@ -178,6 +190,9 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
 
     }
 
+    /**
+     * TODO: Will the "complex variability" functionality ever be reinstated in real use cases? if not, it can be removed.
+     */
     @Test
     @Ignore
     public void testComplexVariability() {

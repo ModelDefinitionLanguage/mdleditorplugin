@@ -11,7 +11,7 @@ import org.junit.Test
 import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.converter.mdl2json.domain.Variable
 
-class DataObjectToJSONTest extends ConverterTestsParent  {
+class DataObjectToJSONTest extends ConverterTestsParent {
     private static Logger logger = Logger.getLogger(DataObjectToJSONTest.class)
 
     @Test
@@ -29,8 +29,12 @@ class DataObjectToJSONTest extends ConverterTestsParent  {
         assertEquals("Checking ignoreChar attribute of source block", "\"#\"", source.ignore)
     }
 
+    /**
+     * Testing attributes like:
+     * define=[{female, 1}, {male, 0}]
+     */
     @Test
-    public void testDataInputVariablesBlock_WarfarinPkBovOAM() {
+    public void testDataInputVariablesBlock_ContainingAttributeBeingListOfSetsOfValues() {
         def json = getJsonFromMDLFile("UseCase19_DataObject.mdl")
         
         logger.debug(json)
@@ -86,8 +90,12 @@ class DataObjectToJSONTest extends ConverterTestsParent  {
         assertEquals("Checking Data Input Variable 9/9 - Use", "mdv", var9.use)
     }
 
+    /**
+     * Testing attributes like:
+     * define = [{pred=LNVEGF_obs, predid=5}, ...]
+     */
     @Test
-    public void testDataInputVariablesBlock_Hansson() {
+    public void testDataInputVariablesBlock_ContainingAttributeBeingListOfSetsOfNameValuePairs() {
         def json = getJsonFromMDLFile("UseCase3_DataObject.mdl")
 
         logger.debug(json)
@@ -118,8 +126,12 @@ class DataObjectToJSONTest extends ConverterTestsParent  {
             "[{pred=LNVEGF_obs, predid=5}, {pred=LNsVEGFR2_obs, predid=6}, {pred=LNsVEGFR3_obs, predid=7}, {pred=LNsKIT_obs, predid=8}]", var6.define)
     }
 
+    /**
+     * Testing attributes like:
+     * type=categorical(male, female, MISSING)
+     */
     @Test
-    public void testDataInputVariablesBlock_WarfarinPkBov() {
+    public void testDataInputVariablesBlock_ContainingAttributeBeingNamedSetOfValues() {
         def json = getJsonFromMDLFile("UseCase8_DataObject.mdl")
 
         logger.debug(json)
