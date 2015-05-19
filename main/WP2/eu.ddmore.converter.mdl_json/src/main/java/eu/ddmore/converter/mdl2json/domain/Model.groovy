@@ -74,11 +74,6 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
                 }
                 
                 getProperty(RANDOM_VARIABLE_DEFINITION).addAll(varsList)
-                
-                // TODO: Remove this since we now consolidate into a single RANDOM_VARIABLE_DEFINITION block in the JSON
-                //final String subBlockName = RANDOM_VARIABLE_DEFINITION \
-                //    + "(" + subBlockArgs.get(0).getArgumentName().getName() + "=" + XtextWrapper.unwrap(subBlockArgs.get(0).getExpression()) + ")"
-                //setProperty(subBlockName, varsList)
             }
             if (block.getIndividualVariablesBlock()) {
                 setProperty(INDIVIDUAL_VARIABLES, VariablesList.buildFromSymbolDeclarations(block.getIndividualVariablesBlock().getVariables()))
@@ -140,12 +135,6 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
         if (json[RANDOM_VARIABLE_DEFINITION]) {
             setProperty(RANDOM_VARIABLE_DEFINITION, VariablesList.buildFromJSON(json[RANDOM_VARIABLE_DEFINITION]))
         }
-        // TODO: Remove this since we now consolidate into a single RANDOM_VARIABLE_DEFINITION block in the JSON
-        // RANDOM_VARIABLE_DEFINITION block has to be treated specially as it appears multiple times
-        // with (level=ID), (level=DV) etc. appended to the block name to distinguish between them
-        //json.entrySet().takeWhile{ mapEntry -> mapEntry.getKey().startsWith(RANDOM_VARIABLE_DEFINITION + "(") }.each { mapEntry ->
-        //    setProperty(mapEntry.getKey(), VariablesList.buildFromJSON(mapEntry.getValue()))
-        //}
         
     }
 
