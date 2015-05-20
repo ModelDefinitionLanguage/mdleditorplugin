@@ -50,7 +50,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     private final static String modelPredictionBlockJson_UseCase2 =
         / {"MODEL_PREDICTION":[{".name":"D"},{".name":"DT"},{".expr":"CL\/V",".name":"k"},{".expr":"0 when T-DT<TLAG otherwise (D\/V)*(KA\/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))",".name":"CC"}]} /
     private final static String modelPredictionBlockJson_UseCase3 =
-        / {"MODEL_PREDICTION":[{".expr":"DOSE\/CL",".name":"AUC"},{".expr":"BM0*(1+DPSLP*T)",".name":"DP1"},{".expr":"BM0S*(1+DPSLPS*T)",".name":"DPS"},{".expr":"DP1*KOUT",".name":"KIN"},{".expr":"DPS*KOUTS",".name":"KINS"},{".DEQ":[{".expr":"IMAX1*AUC^HILL\/(IC50^HILL+AUC^HILL)",".name":"EFF"},{".expr":"IMAX2*AUC^HILL2\/(IC502^HILL2+AUC^HILL2)",".name":"EFF2"},{".expr":"IMAX3*AUC\/(IC503+AUC)",".name":"EFF3"},{".expr":"IMAXS*AUC\/(IC50S+AUC)",".name":"EFFS"},{"deriv":"KIN-KOUT*(1-EFF)*VEGF","init":"BM0",".name":"VEGF"},{"wrt":"T","deriv":"KIN2*(1-EFF2)-KOUT2*sVEGFR2","init":"BM02",".name":"sVEGFR2"},{"wrt":"T","deriv":"KIN3*(1-EFF3)-KOUT3*sVEGFR3","init":"BM03",".name":"sVEGFR3"},{"wrt":"T","deriv":"KINS*(1-EFFS)-KOUTS*sKIT","init":"BM0S",".name":"sKIT"}]},{".expr":"ln(VEGF)",".name":"LNVEGF"}]} /
+        / {"MODEL_PREDICTION":[{".name":"DOSE"},{".expr":"DOSE\/CL",".name":"AUC"},{".expr":"BM0*(1+DPSLP*T)",".name":"DP1"},{".expr":"BM0S*(1+DPSLPS*T)",".name":"DPS"},{".expr":"DP1*KOUT",".name":"KIN"},{".expr":"DPS*KOUTS",".name":"KINS"},{".DEQ":[{".expr":"IMAX1*AUC^HILL\/(IC50^HILL+AUC^HILL)",".name":"EFF"},{".expr":"IMAX2*AUC^HILL2\/(IC502^HILL2+AUC^HILL2)",".name":"EFF2"},{".expr":"IMAX3*AUC\/(IC503+AUC)",".name":"EFF3"},{".expr":"IMAXS*AUC\/(IC50S+AUC)",".name":"EFFS"},{"deriv":"KIN-KOUT*(1-EFF)*VEGF","init":"BM0",".name":"VEGF"},{"wrt":"T","deriv":"KIN2*(1-EFF2)-KOUT2*sVEGFR2","init":"BM02",".name":"sVEGFR2"},{"wrt":"T","deriv":"KIN3*(1-EFF3)-KOUT3*sVEGFR3","init":"BM03",".name":"sVEGFR3"},{"wrt":"T","deriv":"KINS*(1-EFFS)-KOUTS*sKIT","init":"BM0S",".name":"sKIT"}]},{".expr":"ln(VEGF)",".name":"LNVEGF"}]} /
     private final static String modelPredictionBlockCompartmentJson_UseCase10 =
         / {"MODEL_PREDICTION":[{".COMPARTMENT":[{"to":"CENTRAL","modelCmt":"1","tlag":"ALAG1","ka":"KA",".name":"INPUT_KA","type":"depot"},{"modelCmt":"2",".name":"CENTRAL","type":"compartment"},{"v":"V2","modelCmt":"2","cl":"CL","from":"CENTRAL","type":"elimination"},{"modelCmt":"3","kout":"Q\/V3","kin":"Q\/V2","from":"CENTRAL",".name":"PERIPHERAL","type":"distribution"}]},{".expr":"CENTRAL\/S2",".name":"F"},{".expr":"F",".name":"CC"}]} /
     private final static String modelPredictionBlockPkMacroJson_UseCase22 =
@@ -497,6 +497,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         String expected = """mdlobj {
 
     MODEL_PREDICTION {
+        DOSE
         AUC = DOSE/CL
         DP1 = BM0*(1+DPSLP*T)
         DPS = BM0S*(1+DPSLPS*T)

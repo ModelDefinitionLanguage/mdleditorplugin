@@ -481,15 +481,16 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
         def modPred = modelObject.MODEL_PREDICTION
 
-        assertEquals("Checking number of Model Prediction items", 7, modPred.size())
+        assertEquals("Checking number of Model Prediction items", 8, modPred.size())
         
-        assertEquals("Checking Model Prediction item 1/6", [(Variable.NAME_KEY):'AUC', (Variable.EXPRESSION_KEY):'DOSE/CL'], modPred[0])
-        assertEquals("Checking Model Prediction item 2/6", [(Variable.NAME_KEY):'DP1', (Variable.EXPRESSION_KEY):'BM0*(1+DPSLP*T)'], modPred[1])
-        assertEquals("Checking Model Prediction item 3/6", [(Variable.NAME_KEY):'DPS', (Variable.EXPRESSION_KEY):'BM0S*(1+DPSLPS*T)'], modPred[2])
-        assertEquals("Checking Model Prediction item 4/6", [(Variable.NAME_KEY):'KIN', (Variable.EXPRESSION_KEY):'DP1*KOUT'], modPred[3])
-        assertEquals("Checking Model Prediction item 5/6", [(Variable.NAME_KEY):'KINS', (Variable.EXPRESSION_KEY):'DPS*KOUTS'], modPred[4])
-        final Map.Entry deqSubblockMapEntry = modPred[5].entrySet().toArray()[0]
-        assertEquals("Checking that Model Prediction item 6/6 is a DEQ sub-block", '.DEQ', deqSubblockMapEntry.getKey())
+        assertEquals("Checking Model Prediction item 1/8", [(Variable.NAME_KEY):'DOSE'], modPred[0])
+        assertEquals("Checking Model Prediction item 2/8", [(Variable.NAME_KEY):'AUC', (Variable.EXPRESSION_KEY):'DOSE/CL'], modPred[1])
+        assertEquals("Checking Model Prediction item 3/8", [(Variable.NAME_KEY):'DP1', (Variable.EXPRESSION_KEY):'BM0*(1+DPSLP*T)'], modPred[2])
+        assertEquals("Checking Model Prediction item 4/8", [(Variable.NAME_KEY):'DPS', (Variable.EXPRESSION_KEY):'BM0S*(1+DPSLPS*T)'], modPred[3])
+        assertEquals("Checking Model Prediction item 5/8", [(Variable.NAME_KEY):'KIN', (Variable.EXPRESSION_KEY):'DP1*KOUT'], modPred[4])
+        assertEquals("Checking Model Prediction item 6/8", [(Variable.NAME_KEY):'KINS', (Variable.EXPRESSION_KEY):'DPS*KOUTS'], modPred[5])
+        final Map.Entry deqSubblockMapEntry = modPred[6].entrySet().toArray()[0]
+        assertEquals("Checking that Model Prediction item 7/8 is a DEQ sub-block", '.DEQ', deqSubblockMapEntry.getKey())
         final deqSubbblockItems = deqSubblockMapEntry.getValue()
         assertEquals("Checking number of Model Prediction DEQ sub-block items", 8, deqSubbblockItems.size())
         assertEquals("Checking Model Prediction DEQ sub-block item 1/8",
