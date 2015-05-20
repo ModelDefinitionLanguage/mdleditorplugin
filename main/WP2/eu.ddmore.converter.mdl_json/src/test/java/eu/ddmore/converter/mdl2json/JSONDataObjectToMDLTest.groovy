@@ -23,7 +23,7 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
     private String sourceBlockJson_UseCase1 =
         / {"SOURCE":{"file":"\"warfarin_conc.csv\"","ignore":"\"#\"","inputformat":"nonmemFormat"}} /
     private String dataInputVariablesJson_UseCase19 =
-        / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{"use":"idv",".name":"TIME","units":"\"h\""},{"use":"covariate",".name":"WT","variable":"WT","units":"\"kg\""},{"use":"covariate",".name":"AGE"},{"define":"[{female, 1}, {male, 0}]","use":"covariate",".name":"SEX","type":"categorical(male, female)"},{"define":"DEP","use":"amt",".name":"AMT","units":"\"mg\""},{"use":"varlevel",".name":"OCC"},{"define":"Y","use":"dv",".name":"DV"},{"use":"mdv",".name":"MDV"}]} /
+        / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{"use":"idv",".name":"TIME","units":"\"h\""},{"define":"WT","use":"covariate",".name":"WT","units":"\"kg\""},{"use":"covariate",".name":"AGE"},{"define":"[{female, 1}, {male, 0}]","use":"covariate",".name":"SEX","type":"categorical(male, female)"},{"define":"DEP","use":"amt",".name":"AMT","units":"\"mg\""},{"use":"varlevel",".name":"OCC"},{"define":"Y","use":"dv",".name":"DV"},{"use":"mdv",".name":"MDV"}]} /
     private String dataInputVariablesJson_UseCase3 =
         / {"DATA_INPUT_VARIABLES":[{"use":"id",".name":"ID"},{".name":"CYCL","type":"categorical"},{"use":"idv",".name":"TIME","units":"\"h\""},{"use":"dvid",".name":"FLAG"},{".name":"DVX","type":"continuous","units":"\"mg\/L\""},{"define":"[{pred=LNVEGF_obs, predId=5}, {pred=LNsVEGFR2_obs, predId=6}, {pred=LNsVEGFR3_obs, predId=7}, {pred=LNsKIT_obs, predId=8}]","use":"dv",".name":"DV"},{"define":"DOSE","use":"amt",".name":"DOS"},{".name":"PLA","type":"categorical"},{"use":"covariate",".name":"CL","type":"continuous","units":"\"L\/h\""},{".name":"EVID","type":"categorical"}]} /
     private String dataInputVariablesJson_UseCase8 =
@@ -70,7 +70,7 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
     DATA_INPUT_VARIABLES {
         ID : {use=id}
         TIME : {units="h", use=idv}
-        WT : {units="kg", use=covariate, variable=WT}
+        WT : {define=WT, units="kg", use=covariate}
         AGE : {use=covariate}
         SEX : {define=[{female, 1}, {male, 0}], type=categorical(male, female), use=covariate}
         AMT : {define=DEP, units="mg", use=amt}

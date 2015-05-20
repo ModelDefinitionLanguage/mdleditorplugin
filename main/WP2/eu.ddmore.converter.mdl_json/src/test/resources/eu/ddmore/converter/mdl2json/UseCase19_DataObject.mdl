@@ -4,7 +4,7 @@ warfarin_PK_BOV_dat = dataobj{
   DATA_INPUT_VARIABLES{
       ID : { use=id }  
       TIME : { use=idv, units="h"}
-      WT : { use=covariate, variable=WT, units="kg"}
+      WT : { use=covariate, define=WT, units="kg"}
       AGE : { use = covariate }
       SEX : { use=covariate, type=categorical(male, female), define=[{female, 1}, {male, 0}] }
       AMT : { use=amt, define=DEP, units="mg"}

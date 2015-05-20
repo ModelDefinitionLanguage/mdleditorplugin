@@ -57,7 +57,7 @@ class DataObjectToJSONTest extends ConverterTestsParent {
         final var3 = dataInputVars[2]
         assertEquals("Checking Data Input Variable 3/9 - Name", "WT", var3.get(Variable.NAME_KEY))
         assertEquals("Checking Data Input Variable 3/9 - Use", "covariate", var3.use)
-        assertEquals("Checking Data Input Variable 3/9 - Variable", "WT", var3.variable)
+        assertEquals("Checking Data Input Variable 3/9 - Define", "WT", var3.define)
         assertEquals("Checking Data Input Variable 3/9 - Units", "\"kg\"", var3.units)
         
         final var4 = dataInputVars[3]
