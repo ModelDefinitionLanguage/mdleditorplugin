@@ -123,7 +123,7 @@ class DataObjectToJSONTest extends ConverterTestsParent {
         assertEquals("Checking Data Input Variable 6/10 - Name", "DV", var6.get(Variable.NAME_KEY))
         assertEquals("Checking Data Input Variable 6/10 - Use", "dv", var6.use)
         assertEquals("Checking Data Input Variable 6/10 - Define",
-            "[{pred=LNVEGF_obs, predid=5}, {pred=LNsVEGFR2_obs, predid=6}, {pred=LNsVEGFR3_obs, predid=7}, {pred=LNsKIT_obs, predid=8}]", var6.define)
+            "[{pred=LNVEGF_obs, predId=5}, {pred=LNsVEGFR2_obs, predId=6}, {pred=LNsVEGFR3_obs, predId=7}, {pred=LNsKIT_obs, predId=8}]", var6.define)
     }
 
     /**
@@ -186,11 +186,11 @@ class DataObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testDataDerivedVariables() {
-        def json = getJsonFromMDLFile("UseCase2_DataObject.mdl")
+        def json = getJsonFromMDLFile("UseCase1_10_DataObject.mdl")
 
         logger.debug(json)
 
-        def dataObject = json[0].warfarin_PK_ODE_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def dataObject = json[0].warfarin_PK_v2_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def dataDerivedVars = dataObject[Data.DATA_DERIVED_VARIABLES]
 
