@@ -31,7 +31,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testCovariatesBlock_WarfarinAnalyticSolution() {
+    public void testCovariatesBlock_ContainingVariableBeingExpression() {
         def json = getJsonFromMDLFile("UseCase2_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ANALYTIC_mdl
@@ -46,8 +46,12 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
         assertEquals("Checking covariate 2/2", [(Variable.NAME_KEY):'logtWT', (Variable.EXPRESSION_KEY):'log(WT/70)'], covariates[1])
     }
 
+    /**
+     * Testing variables like:
+     * SEX : {type=categorical(female, male, MISSING)}
+     */
     @Test
-    public void testCovariatesBlock_WarfarinPkSexage() {
+    public void testCovariatesBlock_ContainingVariableBeingSetOfAttributes() {
         def json = getJsonFromMDLFile("UseCase5_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_SEXAGE_mdl
@@ -83,7 +87,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testStructuralParametersBlock_Warfarin() {
+    public void testStructuralParametersBlock_BeingListOfVariableNames() {
         def json = getJsonFromMDLFile("UseCase1_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ODE_mdl
@@ -104,8 +108,12 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
         assertEquals("Checking structural parameter 8/8", [(Variable.NAME_KEY):'RUV_ADD'], structuralParameters[7])
     }
     
+    /**
+     * Testing variables like:
+     * POP_CL : {units="L/h/kg*70"}
+     */
     @Test
-    public void testStructuralParametersBlock_UseCase10() {
+    public void testStructuralParametersBlock_ContainingVariablesBeingSetsOfAttributes() {
         def json = getJsonFromMDLFile("UseCase10_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_2Compartments_mdl
@@ -122,7 +130,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testVariabilityParametersBlock_Warfarin() {
+    public void testVariabilityParametersBlock_BeingListOfVariableNames() {
         def json = getJsonFromMDLFile("UseCase1_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ODE_mdl
@@ -139,8 +147,12 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
         assertEquals("Checking variability parameter 4/4", [(Variable.NAME_KEY):'PPV_TLAG'], variabilityParameters[3])
     }
 
+    /**
+     * Testing attributes like:
+     * params=[ETA_CL, ETA_V]
+     */
     @Test
-    public void testVariabilityParametersBlock_WarfarinPkSim() {
+    public void testVariabilityParametersBlock_ContainingVariableHavingAttributeBeingListOfVariableNames() {
         def json = getJsonFromMDLFile("UseCase20_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_SIM_mdl
@@ -161,7 +173,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testRandomVariableDefinitionBlocks_Warfarin() {
+    public void testRandomVariableDefinitionBlocks_1() {
         def json = getJsonFromMDLFile("UseCase1_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_ODE_mdl
@@ -199,7 +211,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     }
     
     @Test
-    public void testRandomVariableDefinitionBlocks_WarfarinPkBov() {
+    public void testRandomVariableDefinitionBlocks_2() {
         def json = getJsonFromMDLFile("UseCase8_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_BOV_mdl
@@ -238,8 +250,12 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
         
     }
 
+    /**
+     * Testing attributes like:
+     * fixEff={coeff=BETA_CL_WT, cov=logtWT}
+     */
     @Test
-    public void testIndividualVariablesBlock_Warfarin() {
+    public void testIndividualVariablesBlock_ContainingVariableHavingAttributeBeingSetOfNameValuePairs() {
         def json = getJsonFromMDLFile("UseCase1_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ODE_mdl
@@ -264,8 +280,14 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
             individualVars[3])   
     }
 
+    /**
+     * Testing variables like:
+     * TVSLP = POP_TVSLP/1000
+     * and variables like:
+     * BM0 : {pop=POP_BM0, ranEff=eta_BM0, trans=log, type=linear}
+     */
     @Test
-    public void testIndividualVariablesBlock_Hansson() {
+    public void testIndividualVariablesBlock_MixtureOfVariablesBeingExpressionsAndVariablesBeingSetsOfAttributes() {
         def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
@@ -304,8 +326,12 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
         assertEquals("Checking Individual Variable 28/28", [ (Variable.NAME_KEY):'KIN3', (Variable.EXPRESSION_KEY):'BM03*KOUT3' ], individualVars[27])
     }
 
+    /**
+     * Testing attributes like:
+     * ranEff=[eta_BSV_CL, eta_BOV_CL]
+     */
     @Test
-    public void testIndividualVariablesBlock_WarfarinPkBov() {
+    public void testIndividualVariablesBlock_ContainingVariableHavingAttributeBeingListOfVariableNames() {
         def json = getJsonFromMDLFile("UseCase8_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_BOV_mdl
@@ -330,8 +356,12 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
             individualVars[3])
     }
 
+    /**
+     * Testing attributes like:
+     * fixEff=[{coeff=BETA_CL_WT, cov=logtWT}, ...]
+     */
     @Test
-    public void testIndividualVariablesBlock_WarfarinPkSexage() {
+    public void testIndividualVariablesBlock_ContainingVariableHavingAttributeBeingListOfSetsOfNameValuePairs() {
         def json = getJsonFromMDLFile("UseCase5_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_SEXAGE_mdl
@@ -347,9 +377,11 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
             individualVars[0])
     }
 
-    // This test specifically picked up a bug in XtextWrapper re a multi-part expression without brackets and having a mixture of operators
+    /**
+     * This test specifically picked up a bug in XtextWrapper re a multi-part expression without brackets and having a mixture of operators.
+     */
     @Test
-    public void testIndividualVariablesBlockContainingComplexExpressions() {
+    public void testIndividualVariablesBlockContainingMultipartExprWithoutBracketsAndHavingMixtureOfOperators() {
         def json = getJsonFromMDLFile("Rocchetti2013_ModelObject_IndividualVariables.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.rocchetti2013_mdl
@@ -374,8 +406,12 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
             individualVars[3])
     }
 
+    /**
+     * Testing attributes like:
+     * error=combinedError2log(additive=0, proportional=POP_RES_VEGF_PROP, f=VEGF)
+     */
     @Test
-    public void testObservationBlock_Hansson() {
+    public void testObservationBlock_ContainingVariableHavingErrorFunctionAttribute() {
         def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
@@ -401,7 +437,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testObservationBlock_WarfarinPkBovOAM() {
+    public void testObservationBlock_ContainingVariableBeingExpression() {
         def json = getJsonFromMDLFile("UseCase19_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_BOV_mdl
@@ -416,26 +452,9 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
             [ (Variable.NAME_KEY):'Y', (Variable.EXPRESSION_KEY):'CC*(1+eps_RUV_PROP)+eps_RUV_ADD' ],
             observation[0])
     }
-
-    @Test
-    public void testObservationBlock_UseCase22() {
-        def json = getJsonFromMDLFile("UseCase22_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
-        
-        def modelObject = json.warfarin_PK_BOV_mdl
-        
-        logger.debug(modelObject)
-        
-        def observation = modelObject.OBSERVATION
-        
-        assertEquals("Checking number of observations", 1, observation.size())
-        
-        assertEquals("Checking observation 1/1",
-            [ (Variable.NAME_KEY):'Y', (Variable.EXPRESSION_KEY):'CONC*(1+eps_RUV_PROP)+eps_RUV_ADD' ],
-            observation[0])
-    }
     
     @Test
-    public void testModelPredictionBlock_WarfarinAnalyticSolution() {
+    public void testModelPredictionBlock_ContainingVariablesBeingExpressions() {
         def json = getJsonFromMDLFile("UseCase2_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_ANALYTIC_mdl
@@ -453,7 +472,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     }
 
     @Test
-    public void testModelPredictionBlock_Hansson() {
+    public void testModelPredictionBlockWithDeqSubBlock() {
         def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
@@ -546,7 +565,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     }
     
     @Test
-    public void testGroupVariablesBlock_WarfarinPkBovOAM() {
+    public void testGroupVariablesBlock_ContainingVariablesBeingExpressions() {
         def json = getJsonFromMDLFile("UseCase19_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.warfarin_PK_BOV_mdl
@@ -564,7 +583,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
     }
     
     @Test
-    public void testModelOutputVariablesBlock_UseCase10() {
+    public void testModelOutputVariablesBlock() {
         def json = getJsonFromMDLFile("UseCase10_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
         def modelObject = json.warfarin_PK_2Compartments_mdl
@@ -578,6 +597,20 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
         assertEquals("Checking Model Output Variable 1/13", [(Variable.NAME_KEY):'ID'], modelOutputVars[0])
         assertEquals("Checking Model Output Variable 2/13", [(Variable.NAME_KEY):'TIME'], modelOutputVars[1])
         assertEquals("Checking Model Output Variable 3/13", [(Variable.NAME_KEY):'WT'], modelOutputVars[2])
+    }
+    
+    @Test
+    public void testVariableHavingDistributionAsAttribute() {
+        def json = getJsonFromMDLFile("UseCase11_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.Poisson_DIST_mdl
+        
+        logger.debug(modelObject)
+        
+        def observation = modelObject.OBSERVATION
+        
+        assertEquals("Checking the distribution attribute", "~Poisson(lambda=LAMBDA)", observation[0].distn)
+        
     }
 
 }

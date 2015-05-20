@@ -44,22 +44,22 @@ public class ConverterTestsParent {
     /**
      * Return a MDL {@link File} from the testdata models project.
      * <p>
-     * @param relativePathToFile - the relative path to the MDL file within the directory /test-models/mdl/
-     *                             within the testdata models project
+     * @param relativePathToFile - the relative path to the MDL file within the directory /test-models/MDL/
+     *                             within the Use Cases project
      * @return the MDL {@link File}
      * @throws <code>IllegalArgumentException</code> if the referenced file does not exist
      * @see #getFileFromModelsProject(String, String)
      */
     public File getFileFromModelsProject(final String relativePathToFile) {
-        getFileFromModelsProject(relativePathToFile, "mdl")
+        getFileFromModelsProject(relativePathToFile, "MDL")
     }
 
     /**
      * Return a model {@link File} from the testdata models project.
      * <p>
      * @param relativePathToFile - the relative path to the file within the directory /test-models/[modelType]/
-     *                             within the testdata models project
-     * @param modelType - the model-type subdirectory (e.g. "mdl", "ctl")
+     *                             within the Use Cases project
+     * @param modelType - the model-type subdirectory (e.g. "MDL", "PharmML")
      * @return the {@link File}
      * @throws <code>IllegalArgumentException</code> if the referenced file does not exist
      */

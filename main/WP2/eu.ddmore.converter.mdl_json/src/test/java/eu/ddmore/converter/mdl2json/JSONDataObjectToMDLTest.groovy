@@ -54,8 +54,12 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, dataObj.toMDL())
     }
 
+    /**
+     * Testing attributes like:
+     * define=[{female, 1}, {male, 0}]
+     */
     @Test
-    public void testDataInputVariablesBlock_WarfarinPkBovOAM() {
+    public void testDataInputVariablesBlock_ContainingAttributeBeingListOfSetsOfValues() {
         
         def json = getJson(dataInputVariablesJson_UseCase19)
         
@@ -80,8 +84,12 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, dataObj.toMDL())
     }
 
+    /**
+     * Testing attributes like:
+     * define = [{pred=LNVEGF_obs, predid=5}, ...]
+     */
     @Test
-    public void testDataInputVariablesBlock_Hansson() {
+    public void testDataInputVariablesBlock_ContainingAttributeBeingListOfSetsOfNameValuePairs() {
 
         def json = getJson(dataInputVariablesJson_UseCase3)
 
@@ -107,8 +115,12 @@ class JSONDataObjectToMDLTest extends ConverterTestsParent {
         assertEquals(expected, dataObj.toMDL())
     }
 
+    /**
+     * Testing attributes like:
+     * type=categorical(male, female, MISSING)
+     */
     @Test
-    public void testDataInputVariablesBlock_WarfarinPkBov() {
+    public void testDataInputVariablesBlock_ContainingAttributeBeingNamedSetOfValues() {
 
         def json = getJson(dataInputVariablesJson_UseCase8)
 

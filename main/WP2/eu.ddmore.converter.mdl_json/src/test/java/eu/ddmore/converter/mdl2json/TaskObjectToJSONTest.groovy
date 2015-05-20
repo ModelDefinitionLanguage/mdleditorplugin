@@ -16,7 +16,7 @@ class TaskObjectToJSONTest extends ConverterTestsParent {
     private static Logger logger = Logger.getLogger(TaskObjectToJSONTest.class)
 
     @Test
-    public void testEstimateBlock_Hansson() {
+    public void testEstimateBlock_ContainingUnquotedAttributeValue() {
         def json = getJsonFromMDLFile("UseCase3_TaskObject.mdl")
 
         def taskObj = json[0].Hansson2013_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
@@ -30,7 +30,7 @@ algo=["FOCE"]'''
     }
 
     @Test
-    public void testEstimateBlock_WarfarinAnalyticSolution() {
+    public void testEstimateBlock_ContainingQuotedAttributeValue() {
         def json = getJsonFromMDLFile("UseCase2_TaskObject.mdl")
 
         def taskObj = json[0].warfarin_PK_ODE_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
