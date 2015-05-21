@@ -44,25 +44,6 @@
     </build>
 
     <dependencies>
-    
-            <dependency>
-                <groupId>eu.ddmore.pharmml</groupId>
-                <artifactId>libPharmML</artifactId>
-                <version>0.4-b1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-    
-            <dependency>
-                <groupId>eu.ddmore.pharmml</groupId>
-                <artifactId>libPharmML-PKMacro</artifactId>
-                <version>0.1-b1</version>
-            </dependency>
-            
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-toolbox</artifactId>
