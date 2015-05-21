@@ -21,19 +21,19 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 
     private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 
-    static final String IDENTIFIER = "mdlobj"
+    public static final String IDENTIFIER = "mdlobj"
 
-    static final String IDV = "IDV"
-    static final String COVARIATES = "COVARIATES"
-    static final String VARIABILITY_LEVELS = "VARIABILITY_LEVELS"
-    static final String STRUCTURAL_PARAMETERS = "STRUCTURAL_PARAMETERS"
-    static final String VARIABILITY_PARAMETERS = "VARIABILITY_PARAMETERS"
-    static final String RANDOM_VARIABLE_DEFINITION = "RANDOM_VARIABLE_DEFINITION"
-    static final String INDIVIDUAL_VARIABLES = "INDIVIDUAL_VARIABLES"
-    static final String MODEL_PREDICTION = "MODEL_PREDICTION"
-    static final String OBSERVATION = "OBSERVATION"
-    static final String GROUP_VARIABLES = "GROUP_VARIABLES"
-    static final String MODEL_OUTPUT_VARIABLES = "MODEL_OUTPUT_VARIABLES"
+    public static final String IDV = "IDV"
+    public static final String COVARIATES = "COVARIATES"
+    public static final String VARIABILITY_LEVELS = "VARIABILITY_LEVELS"
+    public static final String STRUCTURAL_PARAMETERS = "STRUCTURAL_PARAMETERS"
+    public static final String VARIABILITY_PARAMETERS = "VARIABILITY_PARAMETERS"
+    public static final String RANDOM_VARIABLE_DEFINITION = "RANDOM_VARIABLE_DEFINITION"
+    public static final String INDIVIDUAL_VARIABLES = "INDIVIDUAL_VARIABLES"
+    public static final String MODEL_PREDICTION = "MODEL_PREDICTION"
+    public static final String OBSERVATION = "OBSERVATION"
+    public static final String GROUP_VARIABLES = "GROUP_VARIABLES"
+    public static final String MODEL_OUTPUT_VARIABLES = "MODEL_OUTPUT_VARIABLES"
 
     public Model(ModelObject modelObject) {
 
