@@ -13,12 +13,12 @@ import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
-    static final String IDENTIFIER = "dataobj"
+    public static final String IDENTIFIER = "dataobj"
 
-    static final String SOURCE = "SOURCE"
-    static final String DECLARED_VARIABLES = "DECLARED_VARIABLES"
-    static final String DATA_INPUT_VARIABLES = "DATA_INPUT_VARIABLES"
-    static final String DATA_DERIVED_VARIABLES = "DATA_DERIVED_VARIABLES"
+    public static final String SOURCE = "SOURCE"
+    public static final String DECLARED_VARIABLES = "DECLARED_VARIABLES"
+    public static final String DATA_INPUT_VARIABLES = "DATA_INPUT_VARIABLES"
+    public static final String DATA_DERIVED_VARIABLES = "DATA_DERIVED_VARIABLES"
 
     private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 

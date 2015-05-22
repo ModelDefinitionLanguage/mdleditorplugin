@@ -15,10 +15,10 @@ import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
-    static final String IDENTIFIER = "taskobj"
+    public static final String IDENTIFIER = "taskobj"
 
-    static final String ESTIMATE = "ESTIMATE"
-    static final String SIMULATE = "SIMULATE"
+    public static final String ESTIMATE = "ESTIMATE"
+    public static final String SIMULATE = "SIMULATE"
 
     private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 

@@ -18,9 +18,9 @@ import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
  */
 public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
-    static final String IDENTIFIER = "mogobj"
+    public static final String IDENTIFIER = "mogobj"
 
-    static final String OBJECTS = "OBJECTS"
+    public static final String OBJECTS = "OBJECTS"
 
     public Mog(MOGObject mogObject) {
 

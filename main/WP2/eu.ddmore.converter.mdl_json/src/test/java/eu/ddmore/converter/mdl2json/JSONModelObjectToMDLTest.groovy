@@ -61,6 +61,8 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         / {"MODEL_OUTPUT_VARIABLES":[{".name":"ID"},{".name":"TIME"},{".name":"WT"},{".name":"LOGTWT"},{".name":"CL"},{".name":"VC"},{".name":"Q"},{".name":"VP"},{".name":"KA"},{".name":"TLAG"},{".name":"DVID"},{".name":"MDV"},{".name":"Y"}]} /
     private final static String observationBlockJson_UseCase11 =
         / {"OBSERVATION":[{"link":"log",".name":"Y","type":"count","distn":"~Poisson(lambda=LAMBDA)"}]} /
+    private final static String Friberg_2009_Schizophrenia_Asenapine_PANSS_HM_20150520_Prod4__Json =
+        / {"MODEL_PREDICTION":[{".expr":"PMAX*(1-exp(-(TIME\/TP)^POW))",".name":"PMOD"},{".expr":"1 when TIME>42 otherwise TIME\/42",".name":"FT"},{".expr":"EMAX*AUC\/(AUC50+AUC)*FT",".name":"EFF"},{".expr":"EFF when (TIME>0 && AUC>0) otherwise 0",".name":"EMOD"},{".expr":"PAN0*(1-PMOD)*(1-EMOD)",".name":"PANSS_total"}]} /
     
     @Test
     public void testIndependentVariablesBlock() {
@@ -632,6 +634,30 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 }
 """
         assertEquals(expected, modelObj.toMDL())        
+    }
+
+    /**
+     * This (failing) test was added to expose the bug reported by DDMORE-1250 re AndExpressions not being handled.
+     */
+    @Test
+    public void testVariableBeingExpressionContainingAnAndExpression() {
+        def json = getJson(Friberg_2009_Schizophrenia_Asenapine_PANSS_HM_20150520_Prod4__Json)
+        
+        def modelObj = new Model(json)
+        
+        String expected = """mdlobj {
+
+    MODEL_PREDICTION {
+        PMOD = PMAX*(1-exp(-(TIME/TP)^POW))
+        FT = 1 when TIME>42 otherwise TIME/42
+        EFF = EMAX*AUC/(AUC50+AUC)*FT
+        EMOD = EFF when (TIME>0 && AUC>0) otherwise 0
+        PANSS_total = PAN0*(1-PMOD)*(1-EMOD)
+    }
+
+}
+"""
+        assertEquals(expected, modelObj.toMDL())
     }
 
 }

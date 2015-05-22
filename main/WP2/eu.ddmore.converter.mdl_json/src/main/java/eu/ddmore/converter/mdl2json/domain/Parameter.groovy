@@ -20,11 +20,11 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 
     private static Logger logger = Logger.getLogger(Parameter.class)
 
-    static final String IDENTIFIER = "parobj"
+    public static final String IDENTIFIER = "parobj"
 
-    static final String STRUCTURAL = "STRUCTURAL"
-    static final String VARIABILITY = "VARIABILITY"
-    static final String DECLARED_VARIABLES = "DECLARED_VARIABLES"
+    public static final String STRUCTURAL = "STRUCTURAL"
+    public static final String VARIABILITY = "VARIABILITY"
+    public static final String DECLARED_VARIABLES = "DECLARED_VARIABLES"
 
     public Parameter(ParameterObject paramObject) {
 

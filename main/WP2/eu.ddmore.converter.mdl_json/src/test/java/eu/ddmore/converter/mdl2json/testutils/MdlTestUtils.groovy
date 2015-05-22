@@ -55,8 +55,8 @@ class MdlTestUtils {
         Model.MODEL_OUTPUT_VARIABLES,
         Task.ESTIMATE,
         Task.SIMULATE,
-        //Mog.OBJECTS,
-        //Mog.MAPPING
+        Mog.OBJECTS,
+        //Mog.MAPPING // TODO: Reinstate if this becomes supported again in the future
     ] + ModelPredictionItem.SUBBLOCK_NAMES
 	
     public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final File newMdlFile) {
@@ -85,11 +85,11 @@ class MdlTestUtils {
                 origMdlFileBlockContent = putSOURCEBlockContentInKnownOrder(origMdlFileBlockContent)
                 newMdlFileBlockContent = putSOURCEBlockContentInKnownOrder(newMdlFileBlockContent)
             }
-            // Special additional preprocessing for the "mog" block:
+            // Special additional preprocessing for the "OBJECTS" block within the "mog" block:
             // The items within this block can be in any order so put the lines of the original and new blocks into a known order
-            if (blockName.endsWith(Mog.IDENTIFIER)) {
-                origMdlFileBlockContent = putMogBlockContentInKnownOrderAndRenameMogToKnownName(blockName, origMdlFileBlockContent)
-                newMdlFileBlockContent = putMogBlockContentInKnownOrderAndRenameMogToKnownName(blockName, newMdlFileBlockContent)
+            if (blockName == Mog.OBJECTS) {
+                origMdlFileBlockContent = putMogObjectsBlockContentInKnownOrder(origMdlFileBlockContent)
+                newMdlFileBlockContent = putMogObjectsBlockContentInKnownOrder(newMdlFileBlockContent)
             }
 
             // Trim off whitespace from both the expected and the actual
@@ -440,29 +440,23 @@ class MdlTestUtils {
      * @return the string comprising the block name and its reordered content
      */
     private static String putSOURCEBlockContentInKnownOrder(final String blockText) {
-        putSOURCEBlockOrMogBlockContentInKnownOrder(Data.SOURCE, blockText, /\s*\S+\s*=\s*\S+\s*/)
+        putSOURCEBlockOrMogObjectsBlockContentInKnownOrder(Data.SOURCE, blockText, /\s*\S+\s*=\s*\S+\s*/)
     }
-
+    
     /**
-     * Special additional preprocessing for the "mog" top-level block:
-     * <ol>
-     * <li>The object identifiers within this block can be in any order so put the lines of the
-     *     original and new blocks into a known order.
-     * <li>The name of the MOG in the written out MDL will in general be different to the name
-     *     of the MOG in the input MDL file, so replace the MOG name with a standard name
-     *     "theMog" for the purposes of comparison of the block text.
-     * </ol>
+     * Special additional preprocessing for the "OBJECTS" block within the "mog" top-level block.
+     * The object identifiers within this block can be in any order so put the lines of the
+     * original and new blocks into a known order.
      * <p>
-     * @param blockName - the name of the block, actually a regular expression
      * @param blockText - the string comprising the block name and its unordered content
      * @return the string comprising the block name and its reordered content
      */
-    private static String putMogBlockContentInKnownOrderAndRenameMogToKnownName(final String blockName, final String blockText) {
-        putSOURCEBlockOrMogBlockContentInKnownOrder(blockName, blockText, /\s*\S+\s*/).toString().replaceFirst(/\S+\s*=\s*mog\s*\{/, "theMog = mog {")
+    private static String putMogObjectsBlockContentInKnownOrder(final String blockText) {
+        putSOURCEBlockOrMogObjectsBlockContentInKnownOrder(Mog.OBJECTS, blockText, /\s*\S+\s*/)
     }
 
     /**
-     * Special additional preprocessing for the "SOURCE" block and the "mog" top-level block.
+     * Special additional preprocessing for the "SOURCE" block, and the "OBJECTS" block within the "mog" top-level block.
      * The items within these blocks can be in any order so put the lines of the original and new blocks into a known order.
      * <p>
      * @param blockName - the name of the block, actually a regular expression
@@ -470,7 +464,7 @@ class MdlTestUtils {
      * @param itemsMatcher - the regular expression to extract the individual attributes / items within the content of the block
      * @return the string comprising the block name and its reordered content
      */
-    private static String putSOURCEBlockOrMogBlockContentInKnownOrder(final String blockName, final String blockText, final String itemsRegex) {
+    private static String putSOURCEBlockOrMogObjectsBlockContentInKnownOrder(final String blockName, final String blockText, final String itemsRegex) {
 
         // Similar regex behaviour to those in putParameterListsIntoKnownOrder()
         final Matcher outerMatcher = ( blockText =~ /(?s)/ + blockName + /\s*\{(\s*.+?\s*)\}/ )
