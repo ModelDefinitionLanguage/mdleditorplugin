@@ -637,7 +637,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     }
 
     /**
-     * This (failing) test was added to expose the bug reported by DDMORE-1250 re AndExpressions not being handled.
+     * This test was added to expose the bug reported by DDMORE-1250 re AndExpressions not being handled.
      */
     @Test
     public void testVariableBeingExpressionContainingAnAndExpression() {
