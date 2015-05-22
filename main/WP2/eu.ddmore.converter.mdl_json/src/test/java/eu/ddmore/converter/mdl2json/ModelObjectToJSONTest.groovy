@@ -613,5 +613,20 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
         assertEquals("Checking the distribution attribute", "~Poisson(lambda=LAMBDA)", observation[0].distn)
         
     }
+    
+    /**
+     * This (failing) test was added to expose the bug reported by DDMORE-1250 re AndExpressions not being handled.
+     */
+    @Test
+    public void testVariableBeingExpressionContainingAnAndExpression() {
+        def json = getJsonFromMDLFile("Friberg_2009_Schizophrenia_Asenapine_PANSS_HM_20150520_Prod4.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        
+        def modelObject = json.Friberg_PANSS_CPT2009_mdl
+        
+        logger.debug(modelObject)
+        
+        assertEquals("EFF when (TIME>0 && AUC>0) otherwise 0", modelObject.MODEL_PREDICTION[3][(Variable.EXPRESSION_KEY)])
+        
+    }
 
 }

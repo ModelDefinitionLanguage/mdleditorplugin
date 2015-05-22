@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
-package eu.ddmore.converter.mdl2json.utils;
+package eu.ddmore.converter.mdl2json.utils
 
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.AdditiveExpression
@@ -42,9 +42,9 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static unwrap(AnyExpression expression) {
-        Preconditions.checkNotNull(expression, "Cannot unwrap a null AnyExpression");
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null AnyExpression")
         if (expression.getExpression()) {
-            return unwrap(expression.getExpression());
+            return unwrap(expression.getExpression())
         } else if (expression.getList()) {
             return unwrap(expression.getList().getArguments())
         } else if (expression.getVector()) {
@@ -67,7 +67,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static unwrap(Expression expression) {
-        Preconditions.checkNotNull(expression, "Cannot unwrap a null Expression");
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null Expression")
         def StringBuffer strExpr = new StringBuffer()
         if (expression.getExpression()) {
             strExpr.append(unwrap(expression.getExpression()))
@@ -97,21 +97,6 @@ public class XtextWrapper {
     }
 
     /**
-     * Expand an {@link OrExpression} expression into its string representation.
-     * <p>
-     * @param expression - {@link OrExpression}
-     * @return String representation of the expression
-     * @throws NullPointerException if expression is null
-     */
-    public static unwrap(OrExpression expression) {
-        Preconditions.checkNotNull(expression, "Cannot unwrap a null OrExpression");
-        if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
-            return unwrap(expression.getExpression().get(0))
-        }
-        throw new UnsupportedOperationException("Encountered an unhandled OrExpression: " + mdlPrinter.toStr(expression))
-    }
-
-    /**
      * Expand a {@link LogicalExpression} expression into its string representation.
      * <p>
      * @param expression - {@link LogicalExpression}
@@ -119,7 +104,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static unwrap(LogicalExpression expression) {
-        Preconditions.checkNotNull(expression, "Cannot unwrap a null LogicalExpression");
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null LogicalExpression")
         if (expression.getBoolean()) {
             return expression.getBoolean()
         } else if (expression.getOperator()) {
@@ -138,9 +123,9 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static unwrap(AdditiveExpression expression) {
-        Preconditions.checkNotNull(expression, "Cannot unwrap a null AdditiveExpression");
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null AdditiveExpression")
         if (expression.getString()) {
-            return "\"" + expression.getString() + "\"";
+            return "\"" + expression.getString() + "\""
         } else {
             return unwrap(expression.getExpression(), expression.getOperator())
         }
@@ -154,7 +139,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static unwrap(MultiplicativeExpression expression) {
-        Preconditions.checkNotNull(expression, "Cannot unwrap a null MultiplicativeExpression");
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null MultiplicativeExpression")
         return unwrap(expression.getExpression(), expression.getOperator())
     }
 
@@ -166,22 +151,8 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static unwrap(PowerExpression expression) {
-        Preconditions.checkNotNull(expression, "Cannot unwrap a null PowerExpression");
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null PowerExpression")
         return unwrap(expression.getExpression(), expression.getOperator())
-    }
-
-    // Would be good if EList could be parameterised by a common superclass of all expression classes but no such suitable class exists.
-    // TODO: This should be private but generates an Eclipse warning about mixing public and private methods of the same name
-    public static unwrap(EList<Object> expressionList, EList<String> operatorList) {
-
-        final StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < expressionList.size(); i++) {
-            sb.append(unwrap(expressionList.get(i)))
-            if ( (!operatorList.isEmpty()) && i < expressionList.size()-1 ) {
-                sb.append(operatorList.get(i))
-            }
-        }
-        return sb.toString()
     }
 
     /**
@@ -192,7 +163,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static unwrap(UnaryExpression expression) {
-        Preconditions.checkNotNull(expression, "Cannot unwrap a null UnaryExpression");
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null UnaryExpression")
         if (expression.getOperator()) {
             return expression.getOperator() + unwrap(expression.getExpression())
         } else if (expression.getNumber()) {
@@ -218,11 +189,34 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static unwrap(AndExpression expression) {
-        Preconditions.checkNotNull(expression, "Cannot unwrap a null AndExpression");
-        if (expression.getOperator().size() == 0 && expression.getExpression().size() == 1) {
-            return unwrap(expression.getExpression().get(0))
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null AndExpression")
+        return unwrap(expression.getExpression(), expression.getOperator().collect {" "+it+" "} as EList<String>) // Pedantic: formatting - add some space padding either side of the "&&" operators
+    }
+    
+    /**
+     * Expand an {@link OrExpression} expression into its string representation.
+     * <p>
+     * @param expression - {@link OrExpression}
+     * @return String representation of the expression
+     * @throws NullPointerException if expression is null
+     */
+    public static unwrap(OrExpression expression) {
+        Preconditions.checkNotNull(expression, "Cannot unwrap a null OrExpression")
+        return unwrap(expression.getExpression(), expression.getOperator().collect {" "+it+" "} as EList<String>) // Pedantic: formatting - add some space padding either side of the "||" operators
+    }
+    
+    // Would be good if EList could be parameterised by a common superclass of all expression classes but no such suitable class exists.
+    // TODO: This should be private but generates an Eclipse warning about mixing public and private methods of the same name
+    public static unwrap(EList<Object> expressionList, EList<String> operatorList) {
+
+        final StringBuffer sb = new StringBuffer()
+        for (int i = 0; i < expressionList.size(); i++) {
+            sb.append(unwrap(expressionList.get(i)))
+            if ( (!operatorList.isEmpty()) && i < expressionList.size()-1 ) {
+                sb.append(operatorList.get(i))
+            }
         }
-        throw new UnsupportedOperationException("Encountered an unhandled AndExpression: " + mdlPrinter.toStr(expression))
+        return sb.toString()
     }
 
     /**
@@ -233,7 +227,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static unwrap(FunctionCall fc) {
-        Preconditions.checkNotNull(fc, "Cannot unwrap a null FunctionCall expression");
+        Preconditions.checkNotNull(fc, "Cannot unwrap a null FunctionCall expression")
         final String functionName = fc.getIdentifier().getName()
         final String argsStr
         if (fc.getArguments().getUnnamedArguments()) {
@@ -256,7 +250,7 @@ public class XtextWrapper {
      * @throws NullPointerException if expression is null
      */
     public static unwrap(Vector v) {
-        Preconditions.checkNotNull(v, "Cannot unwrap a null Vector expression");
+        Preconditions.checkNotNull(v, "Cannot unwrap a null Vector expression")
         if (v.getExpression().getExpressions()) {
             return "[".concat(v.getExpression().getExpressions().collect { Expression expr ->
                 unwrap(expr)
