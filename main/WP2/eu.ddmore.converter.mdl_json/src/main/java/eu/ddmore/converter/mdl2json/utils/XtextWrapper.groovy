@@ -208,7 +208,10 @@ public class XtextWrapper {
     // Would be good if EList could be parameterised by a common superclass of all expression classes but no such suitable class exists.
     // TODO: This should be private but generates an Eclipse warning about mixing public and private methods of the same name
     public static unwrap(EList<Object> expressionList, EList<String> operatorList) {
-
+        Preconditions.checkNotNull(expressionList, "Cannot unwrap a null espressionList")
+        Preconditions.checkNotNull(operatorList, "Cannot unwrap a null operatorList")
+        Preconditions.checkArgument(expressionList.size() == operatorList.size() + 1, "There must be one more Expression in the expressionList than there are Operators in the operatorList")
+        
         final StringBuffer sb = new StringBuffer()
         for (int i = 0; i < expressionList.size(); i++) {
             sb.append(unwrap(expressionList.get(i)))
