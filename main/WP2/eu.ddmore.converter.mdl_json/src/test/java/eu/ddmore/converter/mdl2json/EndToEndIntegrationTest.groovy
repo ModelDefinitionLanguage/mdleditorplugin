@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.converter.mdl2json
 
 import static org.junit.Assert.*
@@ -11,7 +14,7 @@ import org.junit.Test
 import eu.ddmore.converter.mdl2json.domain.MCLFile
 
 class EndToEndIntegrationTest extends ConverterTestsParent {
-	private static Logger logger = Logger.getLogger(EndToEndIntegrationTest.class)
+    private static Logger logger = Logger.getLogger(EndToEndIntegrationTest.class)
     
     /**
      * Tests for the the presence of the top-level objects in the JSON representation of an MDL file:
@@ -24,7 +27,7 @@ class EndToEndIntegrationTest extends ConverterTestsParent {
      * </ul>
      */
     @Test
-	public void topLevelObjectsMustBePresentInJsonRepresention() {
+    public void topLevelObjectsMustBePresentInJsonRepresention() {
         def json = getJsonFromMDLFile("skeleton.mdl")
         
         assertTrue("Returned Json should be a List of length 1", json instanceof List && json.size() == 1)
@@ -42,7 +45,7 @@ class EndToEndIntegrationTest extends ConverterTestsParent {
         assertTrue("Task object should have its identifier", StringUtils.isNotEmpty(json['skeleton_task']['identifier']))
         assertTrue("Mog object should be present", json['skeleton_mog'].size() > 0)
         assertTrue("Mog object should have its identifier", StringUtils.isNotEmpty(json['skeleton_mog']['identifier']))
-	}
+    }
     
     /**
      * Converting a MDL file to JSON then back to MDL should give rise to syntactically and

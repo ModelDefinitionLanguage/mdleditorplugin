@@ -5,10 +5,15 @@ package eu.ddmore.converter.mdl2json
 
 import java.io.IOException;
 import java.text.SimpleDateFormat
+import groovy.json.JsonBuilder
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger
+
+import org.eclipse.xtext.parser.ParseException
+
 import org.ddmore.mdl.mdl.Mcl
+import eu.ddmore.libpharmml.PharmMlFactory
 
 import eu.ddmore.mdlparse.MdlParser
 import eu.ddmore.converter.mdl2json.domain.MCLFile
@@ -21,8 +26,6 @@ import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
 import eu.ddmore.convertertoolbox.domain.ConversionReportImpl;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl
 import eu.ddmore.convertertoolbox.domain.VersionImpl
-import eu.ddmore.libpharmml.PharmMlFactory
-import groovy.json.JsonBuilder
 
 
 /**
@@ -81,11 +84,18 @@ public class MDLToJSONConverter implements ConverterProvider {
 
 
         MdlParser p = new MdlParser()
-        Mcl mcl = p.parse(src)
+        Mcl mcl
+        try {
+            mcl = p.parse(src)
+        } catch (ParseException pe) {
+            ConversionReport report = new ConversionReportImpl()
+            report.setReturnCode(ConversionCode.FAILURE)
+            return report
+        }
 
         ConversionReport report = new ConversionReportImpl();
         json = toJSON(mcl)
-        if(json) {
+        if (json) {
             def outputFile = new File(outputDirectory.getAbsolutePath() + File.separator + outputFileName);
 
             outputFile.write(json)

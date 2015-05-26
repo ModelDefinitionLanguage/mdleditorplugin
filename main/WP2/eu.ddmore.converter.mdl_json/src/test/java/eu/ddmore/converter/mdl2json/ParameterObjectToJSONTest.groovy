@@ -68,7 +68,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testStructuralBlock_ContainingAttributesHavingQuotedValues() {
-        def json = getJsonFromMDLFile("UseCase3_ParameterObject.mdl")
+        def json = getJsonFromMDLFile("UseCase16_ParameterObject.mdl")
 
         def parameterObject = json[0].Hansson2013_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -105,7 +105,7 @@ class ParameterObjectToJSONTest extends ConverterTestsParent {
      */
     @Test
     public void testVariabilityBlock_Simple() {
-        def json = getJsonFromMDLFile("UseCase3_ParameterObject.mdl")
+        def json = getJsonFromMDLFile("UseCase16_ParameterObject.mdl")
 
         def parameterObject = json[0].Hansson2013_par // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 

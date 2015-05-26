@@ -42,6 +42,7 @@ class MdlParser {
             LOGGER.error(errors.size() + " errors encountered in parsing MDL file " + mdlFile.getAbsolutePath())
             for (Diagnostic e : errors) {
                 LOGGER.error(e)
+                System.err.println(e);
             }
             throw new ParseException("Unable to parse MDL file " + mdlFile.getAbsolutePath() + "; " + errors.size() + " error(s) encountered; see the log output.")
         }
@@ -49,6 +50,7 @@ class MdlParser {
             LOGGER.error(warnings.size() + " warning(s) encountered in parsing MDL file " + mdlFile.getAbsolutePath())
             for (Diagnostic w : warnings) {
                 LOGGER.error(w)
+                System.err.println(w);
             }
         }
 
