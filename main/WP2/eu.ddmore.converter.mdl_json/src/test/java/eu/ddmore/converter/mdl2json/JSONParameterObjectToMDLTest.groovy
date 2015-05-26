@@ -23,11 +23,11 @@ class JSONParameterObjectToMDLTest extends ConverterTestsParent  {
         / {"DECLARED_VARIABLES":[{".name":"ETA_CL"},{".name":"ETA_V"}]} /
     private static final String structuralBlockJson_UseCase1 =
         / {"STRUCTURAL":[{"lo":"0.001","value":"0.1",".name":"POP_CL"},{"lo":"0.001","value":"8",".name":"POP_V"},{"lo":"0.001","value":"0.362",".name":"POP_KA"},{"lo":"0.001","value":"1","hi":"10",".name":"POP_TLAG"},{"fix":"true","value":"0.75",".name":"BETA_CL_WT"},{"fix":"true","value":"1",".name":"BETA_V_WT"},{"lo":"0","value":"0.1",".name":"RUV_PROP"},{"lo":"0","value":"0.1",".name":"RUV_ADD"}]} /
-    private static final String structuralBlockJson_UseCase3 =
+    private static final String structuralBlockJson_UseCase16 =
         / {"STRUCTURAL":[{"fix":"true","value":"1",".name":"POP_IMAX"},{"lo":"0","value":"1",".name":"POP_IC50","units":"\"mg\/L*h\""},{"lo":"0","value":"59.7",".name":"POP_BM0","units":"\"pg\/mL\""},{"lo":"0","value":"91",".name":"POP_MRT","units":"\"h\""},{"lo":"0","value":"3.31",".name":"POP_HILL"},{"lo":"-0.06","value":"0.035",".name":"POP_TVSLP","units":"\"1\/h\""},{"lo":"0","value":"8670",".name":"POP_BM02","units":"\"pg\/mL\""},{"lo":"0","value":"554",".name":"POP_MRT2","units":"\"h\""},{"lo":"0","value":"1.54",".name":"POP_HILL2"},{"lo":"0","value":"63900",".name":"POP_BM03","units":"\"pg\/mL\""},{"lo":"0","value":"401",".name":"POP_MRT3","units":"\"h\""},{"lo":"0","value":"39200",".name":"POP_BM0S","units":"\"pg\/mL\""},{"lo":"0","value":"2430",".name":"POP_MRTS","units":"\"h\""},{"lo":"0","value":"0.445",".name":"POP_RES_VEGF_PROP"},{"lo":"0","value":"0.12",".name":"POP_RES_sVEGFR2_PROP"},{"lo":"0","value":"583",".name":"POP_RES_sVEGFR2_ADD"},{"lo":"0","value":"0.22",".name":"POP_RES_sVEGFR3_PROP"},{"lo":"0","value":"0.224",".name":"POP_RES_sKIT_PROP"}]} /
     private static final String variabilityBlockJson_UseCase1 =
         / {"VARIABILITY":[{"PPV_CL":{"value":"0.1","type":"SD"}},{"PPV_V":{"value":"0.1","type":"SD"}},{"PPV_KA":{"value":"0.1","type":"SD"}},{"PPV_TLAG":{"value":"0.1","type":"SD"}},{"OMEGA":{"value":"[0.01]","params":"[ETA_CL, ETA_V]","type":"CORR"}}]} /
-    private static final String variabilityBlockJson_UseCase3 =
+    private static final String variabilityBlockJson_UseCase16 =
         / {"VARIABILITY":[{"OMEGA_BM0":{"value":"0.252","type":"VAR"}},{"OMEGA_BM02":{"value":"0.0369","type":"VAR"}},{"OMEGA_BM03":{"value":"0.186","type":"VAR"}},{"OMEGA_BM0S":{"value":"0.254","type":"VAR"}},{"OMEGA_MRT_VEGFs":{"value":"0.060","type":"VAR"}},{"OMEGA_MRT_sKIT":{"value":"0.0753","type":"VAR"}},{"OMEGA_IC50":{"value":"0.253","type":"VAR"}},{"OMEGA_IC502":{"value":"0.189","type":"VAR"}},{"OMEGA_IC503":{"value":"0.398","type":"VAR"}},{"OMEGA_IC50S":{"value":"5.77","type":"VAR"}},{"OMEGA_TVSLP":{"value":"2.95","type":"VAR"}},{"OMEGA_TVSLPS":{"value":"3.01","type":"VAR"}},{"SIGMA_RES_W":{"fix":"true","value":"1","type":"VAR"}}]} /
     private static final String variabilityBlockJson_UseCase8 =
         / {"VARIABILITY":[{"BSV_CL":{"value":"0.1","type":"VAR"}},{"BSV_V":{"value":"0.1","type":"VAR"}},{"BOV_CL":{"fix":"true","value":"0.1","type":"VAR"}},{"BOV_V":{"fix":"true","value":"0.1","type":"VAR"}},{"BSV_KA":{"value":"0.1","type":"VAR"}},{"BSV_TLAG":{"value":"0.1","type":"VAR"}},{"BOV_KA":{"value":"0.1","type":"VAR"}},{"BOV_TLAG":{"value":"0.1","type":"VAR"}},{"BOV_COV_CL_V":{"value":"0.01","params":"[eta_BOV_CL, eta_BOV_V]","type":"COV"}},{"BOV_COV_KA_TLAG":{"value":"0.01","params":"[eta_BOV_KA, eta_BOV_TLAG]","type":"COV"}}]} /
@@ -81,7 +81,7 @@ class JSONParameterObjectToMDLTest extends ConverterTestsParent  {
     @Test
     public void testStructuralBlock_ContainingAttributesHavingQuotedValues() {
 
-        def json = getJson(structuralBlockJson_UseCase3)
+        def json = getJson(structuralBlockJson_UseCase16)
 
         def paramObj = new Parameter(json)
 
@@ -116,7 +116,7 @@ class JSONParameterObjectToMDLTest extends ConverterTestsParent  {
     @Test
     public void testVariabilityBlock_Simple() {
 
-        def json = getJson(variabilityBlockJson_UseCase3)
+        def json = getJson(variabilityBlockJson_UseCase16)
 
         def paramObj = new Parameter(json)
 

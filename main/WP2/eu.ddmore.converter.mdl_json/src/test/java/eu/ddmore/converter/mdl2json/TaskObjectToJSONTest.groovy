@@ -17,7 +17,7 @@ class TaskObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testEstimateBlock_ContainingUnquotedAttributeValue() {
-        def json = getJsonFromMDLFile("UseCase3_TaskObject.mdl")
+        def json = getJsonFromMDLFile("UseCase16_TaskObject.mdl")
 
         def taskObj = json[0].Hansson2013_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 

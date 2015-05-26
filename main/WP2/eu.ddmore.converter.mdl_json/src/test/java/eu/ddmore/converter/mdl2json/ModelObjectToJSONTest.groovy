@@ -17,7 +17,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testIndependentVariablesBlock() {
-        def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase16_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
 
@@ -288,7 +288,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
      */
     @Test
     public void testIndividualVariablesBlock_MixtureOfVariablesBeingExpressionsAndVariablesBeingSetsOfAttributes() {
-        def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase16_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
 
@@ -412,7 +412,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
      */
     @Test
     public void testObservationBlock_ContainingVariableHavingErrorFunctionAttribute() {
-        def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase16_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
 
@@ -473,7 +473,7 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testModelPredictionBlockWithDeqSubBlock() {
-        def json = getJsonFromMDLFile("UseCase3_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
+        def json = getJsonFromMDLFile("UseCase16_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
         def modelObject = json.Hansson2013_mdl
 

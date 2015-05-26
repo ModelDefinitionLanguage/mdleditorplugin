@@ -15,7 +15,7 @@ class JSONTaskObjectToMDLTest extends ConverterTestsParent  {
     private static Logger logger = Logger.getLogger(JSONTaskObjectToMDLTest.class)
 
     // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
-    private static final String estimateBlockJson_UseCase3 =
+    private static final String estimateBlockJson_UseCase16 =
         / {"ESTIMATE":"target=NMTRAN_CODE\ncov=true\nalgo=[\"FOCE\"]"} /
     private static final String estimateBlockJson_UseCase2 =
         / {"ESTIMATE":"target=MLXTRAN_CODE\nversion=\"4.3.2\"\nalgo=[\"SAEM\"]"} /
@@ -23,7 +23,7 @@ class JSONTaskObjectToMDLTest extends ConverterTestsParent  {
     @Test
     public void testEstimateBlock_ContainingUnquotedAttributeValue() {
 
-        def json = getJson(estimateBlockJson_UseCase3)
+        def json = getJson(estimateBlockJson_UseCase16)
 
         def taskObj = new Task(json)
 

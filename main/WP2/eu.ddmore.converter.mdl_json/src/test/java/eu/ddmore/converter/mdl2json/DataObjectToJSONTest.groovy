@@ -96,7 +96,7 @@ class DataObjectToJSONTest extends ConverterTestsParent {
      */
     @Test
     public void testDataInputVariablesBlock_ContainingAttributeBeingListOfSetsOfNameValuePairs() {
-        def json = getJsonFromMDLFile("UseCase3_DataObject.mdl")
+        def json = getJsonFromMDLFile("UseCase16_DataObject.mdl")
 
         logger.debug(json)
 
@@ -167,7 +167,7 @@ class DataObjectToJSONTest extends ConverterTestsParent {
 
     @Test
     public void testDeclaredVariablesBlock_OnSeparateLines() {
-        def json = getJsonFromMDLFile("UseCase3_DataObject.mdl")
+        def json = getJsonFromMDLFile("UseCase16_DataObject.mdl")
 
         logger.debug(json)
 
