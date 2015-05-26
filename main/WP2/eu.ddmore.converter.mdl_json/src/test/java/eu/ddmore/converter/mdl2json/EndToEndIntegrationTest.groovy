@@ -5,7 +5,8 @@ package eu.ddmore.converter.mdl2json
 
 import static org.junit.Assert.*
 
-import static eu.ddmore.converter.mdl2json.testutils.MdlTestUtils.*
+import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
+import static eu.ddmore.converter.mdl2json.testutils.MdlFileContentTestUtils.*
 
 import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
@@ -13,7 +14,7 @@ import org.junit.Test
 
 import eu.ddmore.converter.mdl2json.domain.MCLFile
 
-class EndToEndIntegrationTest extends ConverterTestsParent {
+class EndToEndIntegrationTest {
     private static Logger logger = Logger.getLogger(EndToEndIntegrationTest.class)
     
     /**

@@ -31,9 +31,9 @@ import static org.junit.Assert.*
  * Some of these are imported and used by the converter toolbox "systemtest" project.
  *
  */
-class MdlTestUtils {
+class MdlFileContentTestUtils {
 
-    private static Logger logger = Logger.getLogger(MdlTestUtils.class)
+    private static Logger logger = Logger.getLogger(MdlFileContentTestUtils.class)
 
     /**
      * This list should include all the block names within all the top-level objects that can appear within an MDL file.

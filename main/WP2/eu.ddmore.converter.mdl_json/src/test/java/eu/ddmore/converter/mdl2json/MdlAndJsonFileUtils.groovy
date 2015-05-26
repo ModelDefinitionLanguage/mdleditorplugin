@@ -25,19 +25,17 @@ import groovy.json.JsonSlurper
 
 
 // This class is public since some of its fields and methods are imported and used by the converter toolbox "systemtest" project.
-public class ConverterTestsParent {
+public class MdlAndJsonFileUtils {
 
-    final static String TEST_DATA_DIR = "./"
-    final static String MODELS_PROJECT_TEST_DATA_DIR = "/test-models/"
-    final static String WORKING_DIR = "target/MainTest_Working_Dir/"
+    private final static String TEST_DATA_DIR = "./"
+    private final static String MODELS_PROJECT_TEST_DATA_DIR = "/test-models/"
+    private final static String WORKING_DIR = new File(FileUtils.getTempDirectory(), "MDL2JSON_Working_Dir")
 
-    private static Logger logger = Logger.getLogger(ConverterTestsParent.class)
+    private static Logger logger = Logger.getLogger(MdlAndJsonFileUtils.class)
 
-    private static final MDLToJSONConverter converter = new MDLToJSONConverter();
-
-    public File getFile(final String pathToFile) {
+    public static File getFile(final String pathToFile) {
         String path = TEST_DATA_DIR + pathToFile
-        URL url = this.getClass().getResource(path)
+        URL url = MdlAndJsonFileUtils.getResource(path)
         new File(url.getFile())
     }
 
@@ -50,7 +48,7 @@ public class ConverterTestsParent {
      * @throws <code>IllegalArgumentException</code> if the referenced file does not exist
      * @see #getFileFromModelsProject(String, String)
      */
-    public File getFileFromModelsProject(final String relativePathToFile) {
+    public static File getFileFromModelsProject(final String relativePathToFile) {
         getFileFromModelsProject(relativePathToFile, "MDL")
     }
 
@@ -63,9 +61,9 @@ public class ConverterTestsParent {
      * @return the {@link File}
      * @throws <code>IllegalArgumentException</code> if the referenced file does not exist
      */
-    public File getFileFromModelsProject(final String relativePathToFile, final String modelType) {
+    public static File getFileFromModelsProject(final String relativePathToFile, final String modelType) {
 
-        final URL urlToFile = ConverterTestsParent.class.getResource(MODELS_PROJECT_TEST_DATA_DIR + modelType + "/" + relativePathToFile)
+        final URL urlToFile = MdlAndJsonFileUtils.class.getResource(MODELS_PROJECT_TEST_DATA_DIR + modelType + "/" + relativePathToFile)
         Preconditions.checkArgument(urlToFile != null,
             "Model file at relative file path %s does not exist in the testdata models project", modelType + "/" + relativePathToFile)
 
@@ -75,18 +73,18 @@ public class ConverterTestsParent {
         return destFile
     }
 
-    public Object getJsonFromMDLFile(final String fileToConvert) {
+    public static Object getJsonFromMDLFile(final String fileToConvert) {
         getJsonFromMDLFile(getFile(fileToConvert))
     }
 
-    public Object getJsonFromMDLFile(final File srcFile) {
+    public static Object getJsonFromMDLFile(final File srcFile) {
 
         MdlParser p = new MdlParser()
         Mcl mcl = p.parse(srcFile)
 
         Preconditions.checkArgument(mcl != null, "Unable to parse MDL file " + srcFile + "; check the log files for exceptions that might have been thrown")
 
-        String jsonText = converter.toJSON(mcl)
+        String jsonText = new MDLToJSONConverter().toJSON(mcl)
 
         Preconditions.checkArgument(StringUtils.isNotBlank(jsonText), "Unable to parse MDL file " + srcFile + " into JSON; check the log files for exceptions that might have been thrown")
 
@@ -96,7 +94,7 @@ public class ConverterTestsParent {
         slurper.parseText(jsonText)
     }
 
-    public Object getJson(String jsonText) {
+    public static Object getJson(String jsonText) {
         JsonSlurper slurper = new JsonSlurper();
         slurper.parseText(jsonText)
     }
