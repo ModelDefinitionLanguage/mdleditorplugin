@@ -59,6 +59,13 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>eu.ddmore.testdata</groupId>
+            <artifactId>test-models</artifactId>
+            <version>0.1.2-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 	
 </project>

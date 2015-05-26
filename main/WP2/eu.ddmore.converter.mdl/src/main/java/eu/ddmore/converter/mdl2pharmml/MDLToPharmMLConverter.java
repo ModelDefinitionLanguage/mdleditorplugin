@@ -7,12 +7,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.ddmore.mdl.MdlStandaloneSetup;
 import org.ddmore.mdl.mdl.MOGObject;
 import org.ddmore.mdl.mdl.Mcl;
 import org.ddmore.mdl.validation.Utils;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
@@ -22,13 +25,17 @@ import eu.ddmore.converter.mdlprinting.MdlPrinterUtility;
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
+import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
+import eu.ddmore.convertertoolbox.domain.ConversionReportImpl;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
 
 import eu.ddmore.converter.mdl2pharmml.Mdl2PharmML;
 
 public class MDLToPharmMLConverter extends MdlPrinterUtility implements ConverterProvider {
+
+    private final static Logger LOGGER = Logger.getLogger(MDLToPharmMLConverter.class);
 
     private LanguageVersion source;
     private LanguageVersion target;
@@ -51,6 +58,27 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 
         Resource resource = resourceSet.getResource(URI.createURI("file:///" + src.getAbsolutePath()), true);
+        
+        EList<Diagnostic> errors = resource.getErrors();
+        EList<Diagnostic> warnings = resource.getWarnings();
+        if (!errors.isEmpty()) {
+            LOGGER.error(errors.size() + " errors encountered in parsing MDL file " + src.getAbsolutePath());
+            for (Diagnostic e : errors) {
+                LOGGER.error(e);
+                System.err.println(e);
+            }
+            ConversionReport report = new ConversionReportImpl();
+            report.setReturnCode(ConversionCode.FAILURE);
+            return report;
+        }
+        if (!warnings.isEmpty()) {
+            LOGGER.error(warnings.size() + " warning(s) encountered in parsing MDL file " + src.getAbsolutePath());
+            for (Diagnostic w : warnings) {
+                LOGGER.error(w);
+                System.err.println(w);
+            }
+        }
+        
         Mcl mcl = (Mcl) resource.getContents().get(0);
         List<MOGObject> mogs = Utils.getMOGs(mcl);
 
