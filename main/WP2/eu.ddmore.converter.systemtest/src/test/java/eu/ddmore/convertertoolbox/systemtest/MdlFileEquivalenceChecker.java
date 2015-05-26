@@ -32,8 +32,8 @@ class MdlFileEquivalenceChecker extends DefaultConverterOutputFailureChecker {
     @Override
     public void check(File expectedOutputMdlFile, File stdoutFile, File stderrFile) {
         super.check(expectedOutputMdlFile, stdoutFile, stderrFile);
-        for (final String blockName : MdlTestUtils.allBlockNames) {
-            MdlTestUtils.extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(this.baselineMdlFile, blockName, expectedOutputMdlFile);
+        for (final String blockName : MdlTestUtils.ALL_BLOCK_NAMES) {
+            MdlTestUtils.assertMDLBlockEqualityIgnoringWhitespaceAndComments(this.baselineMdlFile, blockName, expectedOutputMdlFile);
         }
     }
 
