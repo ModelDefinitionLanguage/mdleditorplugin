@@ -35,7 +35,13 @@ class MdlTestUtils {
 
     private static Logger logger = Logger.getLogger(MdlTestUtils.class)
 
-    public static List<String> allBlockNames = [
+    /**
+     * This list should include all the block names within all the top-level objects that can appear within an MDL file.
+     * <p>
+     * It is primarily used in the automatic block extraction and comparison of a 'new' MDL file against an
+     * 'original' MDL file, and hence should be a complete list to ensure thorough testing of the MDL content.
+     */
+    public static List<String> ALL_BLOCK_NAMES = [
         Data.DECLARED_VARIABLES, // Identical name to Parameter.DECLARED_VARIABLES; this will pick up both for the comparison.
         Data.DATA_INPUT_VARIABLES,
         Data.DATA_DERIVED_VARIABLES,
@@ -59,11 +65,30 @@ class MdlTestUtils {
         //Mog.MAPPING // TODO: Reinstate if this becomes supported again in the future
     ] + ModelPredictionItem.SUBBLOCK_NAMES
 	
-    public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final File newMdlFile) {
-        extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, blockName, FileUtils.readFileToString(newMdlFile))
+    /**
+     * Extract a specified block from an 'original' MDL file and a 'new' MDL file written out from JSON,
+     * strip out any whitespace and comments, and compare the text of the two extracted blocks via a
+     * standard JUnit {@link org.junit.Assert#assertEquals(String, Object, Object)}.
+     * <p>
+     * @param origMdlFile - the {@link File} referencing the original MDL file to be compared against
+     * @param blockName - the name of the block to be extracted for comparison
+     * @param newMdlFile - the {@link File} referencing the written out MDL file that is to be compared against the original
+     */
+    public static assertMDLBlockEqualityIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final File newMdlFile) {
+        assertMDLBlockEqualityIgnoringWhitespaceAndComments(origMdlFile, blockName, FileUtils.readFileToString(newMdlFile))
     }
 
-    public static extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final String newMdlFileContent) {
+    /**
+     * Extract a specified block from an 'original' MDL file and the content of a 'new' MDL file written
+     * out from JSON, strip out any whitespace and comments, and compare the text of the two extracted
+     * blocks via a standard JUnit {@link org.junit.Assert#assertEquals(String, Object, Object)}.
+     * <p>
+     * @param origMdlFile - the {@link File} referencing the original MDL file to be compared against
+     * @param blockName - the name of the block to be extracted for comparison
+     * @param newMdlFileContent - the String contents of the {@link File} referencing the written out MDL file
+     *                            that is to be compared against the original
+     */
+    public static assertMDLBlockEqualityIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final String newMdlFileContent) {
         def String origMdlFileContent = readInAndStripComments(origMdlFile)
 
         // Note that extractSpecificBlock() returns a list to allow for multiple matching blocks e.g. for DECLARED_VARIABLES, RANDOM_VARIABLE_DEFINITION
