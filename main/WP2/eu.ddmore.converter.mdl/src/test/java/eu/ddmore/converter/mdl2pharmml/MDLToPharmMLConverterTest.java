@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,14 +38,7 @@ public class MDLToPharmMLConverterTest {
         
         this.converter = new MDLToPharmMLConverter();
     }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-    }
-
+    
     /**
      * Test method for {@link eu.ddmore.converter.mdl2pharmml.MDLToPharmMLConverter#performConvert(java.io.File, java.io.File)}.
      * @throws IOException 
