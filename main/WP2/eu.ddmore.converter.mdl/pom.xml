@@ -66,6 +66,16 @@
             <version>0.1.2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
-	</dependencies>
-	
+    </dependencies>
+    <organization>
+        <name>Leiden University</name>
+        <url>http://www.leiden.edu</url>
+    </organization>
+    <inceptionYear>2014</inceptionYear>
+    <licenses>
+        <license>
+            <name>The GNU Lesser General Public License version 2.1</name>
+            <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+         </license>
+    </licenses>
 </project>
