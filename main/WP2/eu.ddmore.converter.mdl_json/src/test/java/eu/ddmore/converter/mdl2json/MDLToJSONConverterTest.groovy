@@ -12,18 +12,23 @@ import java.io.IOException
 
 import org.apache.commons.io.FileUtils
 import org.junit.Before
+import org.junit.Rule;
 import org.junit.Test
+import org.junit.rules.TemporaryFolder;
 
 import eu.ddmore.convertertoolbox.api.response.ConversionReport
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode
 
 
 public class MDLToJSONConverterTest {
+    
+    @Rule
+    public TemporaryFolder workingFolder = new TemporaryFolder()
 
-    private static final File validMdlFile = new File(FileUtils.getTempDirectory(), "UseCase1.mdl")
-    private static final File jsonValidMdlFile = new File(FileUtils.getTempDirectory(), "UseCase1.json")
-    private static final File invalidMdlFile = new File(FileUtils.getTempDirectory(), "UseCase1_1.mdl")
-    private static final File jsonInvalidMdlFile = new File(FileUtils.getTempDirectory(), "UseCase1_1.json")
+    private File validMdlFile
+    private File jsonValidMdlFile
+    private File invalidMdlFile
+    private File jsonInvalidMdlFile
     
     private MDLToJSONConverter converter
 
@@ -34,12 +39,14 @@ public class MDLToJSONConverterTest {
      */
     @Before
     public void setUp() throws IOException {
+
+        validMdlFile = new File(workingFolder.getRoot(), "UseCase1.mdl")
+        jsonValidMdlFile = new File(workingFolder.getRoot(), "UseCase1.json")
+        invalidMdlFile = new File(workingFolder.getRoot(), "UseCase1_1.mdl")
+        jsonInvalidMdlFile = new File(workingFolder.getRoot(), "UseCase1_1.json")
     
         FileUtils.copyURLToFile(getClass().getResource("/test-models/MDL/Product4/UseCase1.mdl"), validMdlFile)
         FileUtils.copyURLToFile(getClass().getResource("/test-models/MDL/Product4-invalid/UseCase1_1.mdl"), invalidMdlFile)
-        
-        FileUtils.deleteQuietly(jsonValidMdlFile)
-        FileUtils.deleteQuietly(jsonInvalidMdlFile)
         
         this.converter = new MDLToJSONConverter()
     }
@@ -51,7 +58,7 @@ public class MDLToJSONConverterTest {
     @Test
     public void testPerformConvertForValidMdlFile() throws IOException {
         assertFalse("Converted JSON file should not initially exist", jsonValidMdlFile.exists())
-        final ConversionReport report = converter.performConvert(validMdlFile, FileUtils.getTempDirectory())
+        final ConversionReport report = converter.performConvert(validMdlFile, workingFolder.getRoot())
         assertEquals("Checking for successful return code", ConversionCode.SUCCESS, report.getReturnCode())
         assertTrue("Converted JSON file should have been created", jsonValidMdlFile.exists())
     }
@@ -63,7 +70,7 @@ public class MDLToJSONConverterTest {
     @Test
     public void testPerformConvertForInvalidMdlFile() throws IOException {
         assertFalse("Converted JSON file should not initially exist", jsonInvalidMdlFile.exists())
-        final ConversionReport report = converter.performConvert(invalidMdlFile, FileUtils.getTempDirectory())
+        final ConversionReport report = converter.performConvert(invalidMdlFile, workingFolder.getRoot())
         assertEquals("Checking for failure return code", ConversionCode.FAILURE, report.getReturnCode())
         assertFalse("No converted JSON file should have been created", jsonInvalidMdlFile.exists())
     }
