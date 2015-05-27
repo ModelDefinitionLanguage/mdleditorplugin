@@ -270,6 +270,8 @@ public class XtextWrapper {
     }
 
     public static unwrap(final Arguments args, final String bracketCharL, final String bracketCharR) {
+        Preconditions.checkNotNull(bracketCharL, "bracketCharL must not be null");
+        Preconditions.checkNotNull(bracketCharR, "bracketCharR must not be null");
         if (args.getNamedArguments()) {
             return unwrapArgs(args.getNamedArguments(), bracketCharL, bracketCharR)
         } else {
@@ -290,6 +292,7 @@ public class XtextWrapper {
     }
 
     public static unwrap(ArgumentExpression argExpr) {
+        Preconditions.checkNotNull(argExpr, "Cannot unwrap a null ArgumentExpression")
         if (argExpr.getExpression()) {
             return unwrap(argExpr.getExpression())
         } else if (argExpr.getRandomList()) {
