@@ -28,7 +28,7 @@ public class ModelPredictionItem extends Variable implements MDLPrintable {
      * the text following this prefix is the name of the sub-block.
      */
     private static final String SUBBLOCK_PREFIX = "."
-    static final List<String> SUBBLOCK_NAMES = ["DEQ", "PKMACRO", "COMPARTMENT"]
+    static final List<String> SUBBLOCK_NAMES = ["DEQ", "COMPARTMENT"] // Used to be PKMACRO too; reinstate this if "PKMACRO" is re-introduced into the MDL syntax
     
     private String identifier
         

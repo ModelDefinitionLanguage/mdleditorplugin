@@ -542,32 +542,6 @@ class ModelObjectToJSONTest {
     }
     
     @Test
-    public void testModelPredictionBlockWithPkMacroSubBlock() {
-        def json = getJsonFromMDLFile("UseCase22_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
-        
-        def modelObject = json.warfarin_PK_BOV_mdl
-        
-        logger.debug(modelObject)
-        
-        def modPred = modelObject.MODEL_PREDICTION
-        
-        assertEquals("Checking number of Model Prediction items", 2, modPred.size())
-        
-        final Map.Entry pkmacroSubblockMapEntry = modPred[0].entrySet().toArray()[0]
-        assertEquals("Checking that Model Prediction item 1/2 is a PKMACRO sub-block", '.PKMACRO', pkmacroSubblockMapEntry.getKey())
-        final pkmacroSubblockItems = pkmacroSubblockMapEntry.getValue()
-        assertEquals("Checking number of Model Prediction PKMACRO sub-block items", 4, pkmacroSubblockItems.size())
-        assertEquals("Checking Model Prediction PKMACRO sub-block item 1/4",
-            [(Variable.NAME_KEY):'DEP'], pkmacroSubblockItems[0])
-        assertEquals("Checking Model Prediction PKMACRO sub-block item 2/4",
-            ['macro':'oral', 'to':'Ac', 'ka':'KA', 'tlag':'ALAG1'], pkmacroSubblockItems[1])
-        assertEquals("Checking Model Prediction PKMACRO sub-block item 3/4",
-            [(Variable.NAME_KEY):'Ac', 'macro':'compartment', 'volume':'V'], pkmacroSubblockItems[2])
-        assertEquals("Checking Model Prediction PKMACRO sub-block item 4/4",
-            ['macro':'elimination', 'from':'Ac', 'cl':'CL'], pkmacroSubblockItems[3])
-    }
-    
-    @Test
     public void testGroupVariablesBlock_ContainingVariablesBeingExpressions() {
         def json = getJsonFromMDLFile("UseCase19_ModelObject.mdl")[0] // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
