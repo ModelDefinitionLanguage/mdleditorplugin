@@ -5,6 +5,8 @@ package eu.ddmore.converter.mdl2json
 
 import static org.junit.Assert.*
 
+import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
+
 import org.apache.log4j.Logger
 import org.junit.Test
 import org.junit.Ignore
@@ -12,7 +14,7 @@ import java.util.Map
 
 import eu.ddmore.converter.mdl2json.domain.Variable
 
-class ModelObjectToJSONTest extends ConverterTestsParent {
+class ModelObjectToJSONTest {
     private static Logger logger = Logger.getLogger(ModelObjectToJSONTest.class)
 
     @Test
@@ -40,10 +42,11 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
         logger.debug(covariates)
 
-        assertEquals("Checking number of covariates", 2, covariates.size())
+        assertEquals("Checking number of covariates", 3, covariates.size())
         
-        assertEquals("Checking covariate 1/2", [(Variable.NAME_KEY):'WT'], covariates[0])
-        assertEquals("Checking covariate 2/2", [(Variable.NAME_KEY):'logtWT', (Variable.EXPRESSION_KEY):'log(WT/70)'], covariates[1])
+        assertEquals("Checking covariate 1/3", [(Variable.NAME_KEY):'DT'], covariates[0])
+        assertEquals("Checking covariate 2/3", [(Variable.NAME_KEY):'WT'], covariates[1])
+        assertEquals("Checking covariate 3/3", [(Variable.NAME_KEY):'logtWT', (Variable.EXPRESSION_KEY):'log(WT/70)'], covariates[2])
     }
 
     /**
@@ -463,12 +466,11 @@ class ModelObjectToJSONTest extends ConverterTestsParent {
 
         def modPred = modelObject.MODEL_PREDICTION
 
-        assertEquals("Checking number of Model Prediction items", 4, modPred.size())
+        assertEquals("Checking number of Model Prediction items", 3, modPred.size())
         
-        assertEquals("Checking Model Prediction item 1/4", [(Variable.NAME_KEY):'D'], modPred[0])
-        assertEquals("Checking Model Prediction item 2/4", [(Variable.NAME_KEY):'DT'], modPred[1])
-        assertEquals("Checking Model Prediction item 3/4", [(Variable.NAME_KEY):'k', (Variable.EXPRESSION_KEY):'CL/V'], modPred[2])
-        assertEquals("Checking Model Prediction item 4/4", [(Variable.NAME_KEY):'CC', (Variable.EXPRESSION_KEY):'0 when T-DT<TLAG otherwise (D/V)*(KA/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))'], modPred[3])
+        assertEquals("Checking Model Prediction item 1/3", [(Variable.NAME_KEY):'D'], modPred[0])
+        assertEquals("Checking Model Prediction item 2/3", [(Variable.NAME_KEY):'k', (Variable.EXPRESSION_KEY):'CL/V'], modPred[1])
+        assertEquals("Checking Model Prediction item 3/3", [(Variable.NAME_KEY):'CC', (Variable.EXPRESSION_KEY):'0 when T-DT<TLAG otherwise (D/V)*(KA/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))'], modPred[2])
     }
 
     @Test

@@ -2,7 +2,7 @@ package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.File;
 
-import eu.ddmore.converter.mdl2json.testutils.MdlTestUtils;
+import eu.ddmore.converter.mdl2json.testutils.MdlFileContentTestUtils;
 
 /**
  * A Converter Output Failure Checker for JSON->MDL conversion; it enhances the standard Converter Output
@@ -32,8 +32,8 @@ class MdlFileEquivalenceChecker extends DefaultConverterOutputFailureChecker {
     @Override
     public void check(File expectedOutputMdlFile, File stdoutFile, File stderrFile) {
         super.check(expectedOutputMdlFile, stdoutFile, stderrFile);
-        for (final String blockName : MdlTestUtils.allBlockNames) {
-            MdlTestUtils.extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(this.baselineMdlFile, blockName, expectedOutputMdlFile);
+        for (final String blockName : MdlFileContentTestUtils.ALL_BLOCK_NAMES) {
+            MdlFileContentTestUtils.assertMDLBlockEqualityIgnoringWhitespaceAndComments(this.baselineMdlFile, blockName, expectedOutputMdlFile);
         }
     }
 

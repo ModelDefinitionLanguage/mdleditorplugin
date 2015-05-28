@@ -3,7 +3,9 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
+
+import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
 
 import org.apache.log4j.Logger
 
@@ -16,7 +18,7 @@ import org.ddmore.mdl.mdl.Mcl
 import org.junit.Ignore
 import org.junit.Test;
 
-class JSONDataObjectToMDLTest extends ConverterTestsParent {
+class JSONDataObjectToMDLTest {
     private static Logger logger = Logger.getLogger(JSONDataObjectToMDLTest.class)
 
     // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes

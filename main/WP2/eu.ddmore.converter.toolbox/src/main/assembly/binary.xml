@@ -25,5 +25,12 @@
                 <include>convert.sh</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory></directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>LICENSE</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>

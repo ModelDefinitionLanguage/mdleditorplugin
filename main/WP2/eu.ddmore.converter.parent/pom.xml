@@ -112,6 +112,17 @@
     </dependencyManagement>
 	
 	<build>
+       <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${basedir}</directory>
+                <includes>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
+        </resources>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -140,10 +151,15 @@
     
 	<url>http://ddmore.eu</url>
 	<description>This is a parent module for converters. This modules ensures that converters extending this use the common versions of dependencies</description>
-    
     <organization>
-        <name>Mango Solutions</name>
+        <name>Mango Business Solutions Ltd.</name>
         <url>http://www.mango-solutions.com</url>
     </organization>
     <inceptionYear>2014</inceptionYear>
+    <licenses>
+        <license>
+            <name>The Clear BSD License</name>
+            <url>LICENSE</url>
+        </license>
+    </licenses>
 </project>

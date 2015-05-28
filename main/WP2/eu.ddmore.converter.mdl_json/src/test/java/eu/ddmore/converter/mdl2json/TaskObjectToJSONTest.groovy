@@ -5,14 +5,16 @@ package eu.ddmore.converter.mdl2json;
 
 import static org.junit.Assert.*
 
+import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
+import static eu.ddmore.converter.mdl2json.testutils.MdlFileContentTestUtils.*
+
 import org.apache.log4j.Logger
 import org.junit.Ignore
 import org.junit.Test
 
 import eu.ddmore.converter.mdl2json.domain.Task
-import eu.ddmore.converter.mdl2json.testutils.MdlTestUtils;
 
-class TaskObjectToJSONTest extends ConverterTestsParent {
+class TaskObjectToJSONTest {
     private static Logger logger = Logger.getLogger(TaskObjectToJSONTest.class)
 
     @Test
@@ -115,9 +117,9 @@ $PROB WARFARIN PK
 ;Initiation of warfarin therapy without a loading dose.
 ;Circulation 1968;38:169-177
 ***}'''))
-        extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, "DATA", taskFromJson.toMDL())
-        extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, "EXECUTE", taskFromJson.toMDL())
-        extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(origMdlFile, "ESTIMATE", taskFromJson.toMDL())
+        assertMDLBlockEqualityIgnoringWhitespaceAndComments(origMdlFile, "DATA", taskFromJson.toMDL())
+        assertMDLBlockEqualityIgnoringWhitespaceAndComments(origMdlFile, "EXECUTE", taskFromJson.toMDL())
+        assertMDLBlockEqualityIgnoringWhitespaceAndComments(origMdlFile, "ESTIMATE", taskFromJson.toMDL())
         assertTrue("Checking estimation function is in the right place in the MDL", taskFromJson.toMDL().replace("\r\n","\n").contains(
 '''myEST=function(t,m,p,d) {
 

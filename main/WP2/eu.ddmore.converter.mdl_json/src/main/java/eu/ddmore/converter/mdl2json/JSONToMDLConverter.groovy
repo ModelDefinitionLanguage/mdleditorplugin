@@ -3,31 +3,22 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json
 
-import java.io.IOException;
-import java.text.SimpleDateFormat
-
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger
-import org.ddmore.mdl.mdl.Mcl
 
-import eu.ddmore.mdlparse.MdlParser
 import eu.ddmore.converter.mdl2json.domain.MCLFile
-import eu.ddmore.converter.mdl2json.domain.MCLFile
-import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
-import eu.ddmore.convertertoolbox.api.domain.Version;
-import eu.ddmore.convertertoolbox.api.response.ConversionReport;
-import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
-import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
-import eu.ddmore.convertertoolbox.domain.ConversionReportImpl;
+import eu.ddmore.convertertoolbox.api.domain.LanguageVersion
+import eu.ddmore.convertertoolbox.api.domain.Version
+import eu.ddmore.convertertoolbox.api.response.ConversionReport
+import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode
+import eu.ddmore.convertertoolbox.api.spi.ConverterProvider
+import eu.ddmore.convertertoolbox.domain.ConversionReportImpl
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl
 import eu.ddmore.convertertoolbox.domain.VersionImpl
-import eu.ddmore.libpharmml.PharmMlFactory
-import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
 
 /**
- * This is a ConverterProvider implementation from PharmML to NMTRAN, specified versions thereof.
+ * This is a {@link ConverterProvider} implementation from JSON to MDL, specified versions thereof.
  */
 public class JSONToMDLConverter implements ConverterProvider {
 
@@ -43,43 +34,10 @@ public class JSONToMDLConverter implements ConverterProvider {
     private String mdl
 
     /**
-     * Convert an JSON file into MDL.
-     * 
-     * Accepts the JSON file as first argument, and optionally the output folder for the second argument
-     * Default output folder is the same as the input JSON file
-     *  
-     * @param args
-     */
-    static main(args) {
-
-        String mdlFile = args[0]
-        File inputFile = new File(mdlFile)
-
-        if(inputFile==null) {
-            println("Cannot open file " + mdlFile)
-            System.exit(0)
-        }
-
-        String outputDirectory = inputFile.getAbsoluteFile().getParent()
-        if(args.size() > 1 ) {
-            outputDirectory = args[1]
-        }
-        println "Writing mdl to " + outputDirectory
-
-        File outputDir = new File(outputDirectory)
-
-        ConverterProvider converter = new MDLToJSONConverter()
-        converter.performConvert(inputFile, outputDir)
-
-        println(converter.mdl)
-    }
-
-    /**
-     * Converter toolbox required entry point
+     * Converter Toolbox required entry point.
      */
     public ConversionReport performConvert(File src, File outputDirectory) throws IOException {
         String outputFileName = computeOutputFileName(src.getName())
-
 
         JsonSlurper jsonSlurper = new JsonSlurper();
         MCLFile mclFile = new MCLFile(jsonSlurper.parseText(src.getText()))
@@ -103,7 +61,6 @@ public class JSONToMDLConverter implements ConverterProvider {
         return report
     }
 
-
     private String computeOutputFileName(String name) {
         int dotIndex = name.lastIndexOf(JSON_FILE_EXTENSION)
 
@@ -113,7 +70,6 @@ public class JSONToMDLConverter implements ConverterProvider {
             return name.substring(0, dotIndex) + MDL_FILE_EXTENSION
         }
     }
-
 
     @Override
     public ConversionReport[] performConvert(File[] src, File outputDirectory) throws IOException {
@@ -142,6 +98,6 @@ public class JSONToMDLConverter implements ConverterProvider {
 
     @Override
     public String toString() {
-        return String.format("MDLTOJSONConverter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion) ;
+        return String.format("JSON to MDL Converter [source=%s, target=%s, converterVersion=%s]", source, target, converterVersion)
     }
 }

@@ -5,12 +5,14 @@ package eu.ddmore.converter.mdl2json;
 
 import static org.junit.Assert.*
 
+import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
+
 import org.apache.log4j.Logger
 import org.junit.Test
 
 import eu.ddmore.converter.mdl2json.domain.Task
 
-class JSONTaskObjectToMDLTest extends ConverterTestsParent  {
+class JSONTaskObjectToMDLTest {
 
     private static Logger logger = Logger.getLogger(JSONTaskObjectToMDLTest.class)
 

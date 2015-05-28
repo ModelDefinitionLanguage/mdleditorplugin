@@ -5,20 +5,22 @@ package eu.ddmore.converter.mdl2json
 
 import static org.junit.Assert.*
 
+import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
+
 import org.apache.log4j.Logger
 import org.junit.Test
 
 import eu.ddmore.converter.mdl2json.domain.Model
 
 
-class JSONModelObjectToMDLTest extends ConverterTestsParent {
+class JSONModelObjectToMDLTest {
     private static final Logger logger = Logger.getLogger(JSONModelObjectToMDLTest.class)
 
     // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
     private final static String independentVariablesBlockJson_UseCase16 =
         / {"IDV":[{".name":"T"}]} /
     private final static String covariatesBlockJson_UseCase2 =
-        / {"COVARIATES":[{".name":"WT"},{".expr":"log(WT\/70)",".name":"logtWT"}]} /
+        / {"COVARIATES":[{".name":"DT"},{".name":"WT"},{".expr":"log(WT\/70)",".name":"logtWT"}]} /
     private final static String covariatesBlockJson_UseCase5 =
         / {"COVARIATES":[{".name":"WT"},{".name":"AGE"},{".name":"SEX","type":"categorical(female, male, MISSING)"},{".expr":"ln(WT\/70)",".name":"logtWT"},{".expr":"AGE-40",".name":"tAGE"},{".expr":"1 when (SEX==female) otherwise 0",".name":"tSEX"}]} /
     private final static String variabilityLevelsBlockJson_UseCase1 =
@@ -48,7 +50,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
     private final static String observationBlockJson_UseCase19 =
         / {"OBSERVATION":[{".expr":"CC*(1+eps_RUV_PROP)+eps_RUV_ADD",".name":"Y"}]} /
     private final static String modelPredictionBlockJson_UseCase2 =
-        / {"MODEL_PREDICTION":[{".name":"D"},{".name":"DT"},{".expr":"CL\/V",".name":"k"},{".expr":"0 when T-DT<TLAG otherwise (D\/V)*(KA\/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))",".name":"CC"}]} /
+        / {"MODEL_PREDICTION":[{".name":"D"},{".expr":"CL\/V",".name":"k"},{".expr":"0 when T-DT<TLAG otherwise (D\/V)*(KA\/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))",".name":"CC"}]} /
     private final static String modelPredictionBlockJson_UseCase16 =
         / {"MODEL_PREDICTION":[{".name":"DOSE"},{".expr":"DOSE\/CL",".name":"AUC"},{".expr":"BM0*(1+DPSLP*T)",".name":"DP1"},{".expr":"BM0S*(1+DPSLPS*T)",".name":"DPS"},{".expr":"DP1*KOUT",".name":"KIN"},{".expr":"DPS*KOUTS",".name":"KINS"},{".DEQ":[{".expr":"IMAX1*AUC^HILL\/(IC50^HILL+AUC^HILL)",".name":"EFF"},{".expr":"IMAX2*AUC^HILL2\/(IC502^HILL2+AUC^HILL2)",".name":"EFF2"},{".expr":"IMAX3*AUC\/(IC503+AUC)",".name":"EFF3"},{".expr":"IMAXS*AUC\/(IC50S+AUC)",".name":"EFFS"},{"deriv":"KIN-KOUT*(1-EFF)*VEGF","init":"BM0",".name":"VEGF"},{"wrt":"T","deriv":"KIN2*(1-EFF2)-KOUT2*sVEGFR2","init":"BM02",".name":"sVEGFR2"},{"wrt":"T","deriv":"KIN3*(1-EFF3)-KOUT3*sVEGFR3","init":"BM03",".name":"sVEGFR3"},{"wrt":"T","deriv":"KINS*(1-EFFS)-KOUTS*sKIT","init":"BM0S",".name":"sKIT"}]},{".expr":"ln(VEGF)",".name":"LNVEGF"}]} /
     private final static String modelPredictionBlockCompartmentJson_UseCase10 =
@@ -92,6 +94,7 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
         String expected = """mdlobj {
 
     COVARIATES {
+        DT
         WT
         logtWT = log(WT/70)
     }
@@ -480,7 +483,6 @@ class JSONModelObjectToMDLTest extends ConverterTestsParent {
 
     MODEL_PREDICTION {
         D
-        DT
         k = CL/V
         CC = 0 when T-DT<TLAG otherwise (D/V)*(KA/(KA-k)*(exp(-k*(T-DT-TLAG)-exp(-KA*(T-DT-TLAG)))))
     }
