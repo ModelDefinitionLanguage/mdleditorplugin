@@ -31,8 +31,6 @@ public class JSONToMDLConverter implements ConverterProvider {
     private final LanguageVersion target = new LanguageVersionImpl("MDL", new VersionImpl(6, 0, 8))
     private final Version converterVersion = new VersionImpl(1, 0, 5);
 
-    private String mdl
-
     /**
      * Converter Toolbox required entry point.
      */
@@ -44,20 +42,16 @@ public class JSONToMDLConverter implements ConverterProvider {
 
         ConversionReport report = new ConversionReportImpl();
 
-        mdl = mclFile.toMDL();
+        final String mdl = mclFile.toMDL();
 
-        if(mdl) {
-            def outputFile = new File(outputDirectory.getAbsolutePath() + File.separator + outputFileName);
-
+        if (mdl) {
+            def outputFile = new File(outputDirectory.getAbsolutePath(), outputFileName);
             outputFile.write(mdl)
             report.setReturnCode(ConversionCode.SUCCESS);
+            return report
         } else {
-            def errorMsg = "Could not parse " + src.getPath()
-            LOGGER.error(errorMsg)
-            report.setReturnCode(ConversionCode.FAILURE)
+            throw new RuntimeException("Couldn't parse JSON into MDL from file " + src.getPath())
         }
-
-        return report
     }
 
     private String computeOutputFileName(String name) {

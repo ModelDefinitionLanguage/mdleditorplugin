@@ -69,7 +69,7 @@ public class MDLToPharmMLConverter implements ConverterProvider {
         if (!warnings.isEmpty()) {
             LOGGER.warn(warnings.size() + " warning(s) encountered in parsing MDL file " + src.getAbsolutePath());
             for (Diagnostic w : warnings) {
-                LOGGER.error(w);
+                LOGGER.warn(w);
                 final ConversionDetail detail = new ConversionDetailImpl();
                 detail.setMessage(w.toString());
                 detail.setSeverity(Severity.WARNING);
