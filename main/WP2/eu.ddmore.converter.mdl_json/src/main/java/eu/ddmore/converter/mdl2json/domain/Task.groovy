@@ -20,8 +20,6 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
     public static final String ESTIMATE = "ESTIMATE"
     public static final String SIMULATE = "SIMULATE"
 
-    private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
-
     /**
      * Create a Task from a TaskObject
      * @param taskObj

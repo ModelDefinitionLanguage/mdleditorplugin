@@ -19,8 +19,6 @@ import eu.ddmore.converter.mdlprinting.MdlPrinter
  */
 class ModelPredictionList extends ArrayList<ModelPredictionItem> implements MDLPrintable, MDLAsJSON {
 	
-    private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
-	
     public ModelPredictionList(ModelPredictionBlock mpb) {
         
 		mpb.getStatements().each { ModelPredictionBlockStatement statement ->

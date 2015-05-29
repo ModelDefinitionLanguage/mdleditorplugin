@@ -13,13 +13,10 @@ import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
-import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
     public static final Logger logger = Logger.getLogger(Model.class)
-
-    private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 
     public static final String IDENTIFIER = "mdlobj"
 
