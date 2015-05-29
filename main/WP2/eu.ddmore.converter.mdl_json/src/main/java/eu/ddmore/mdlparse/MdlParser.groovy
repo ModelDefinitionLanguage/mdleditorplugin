@@ -51,6 +51,16 @@ class MdlParser {
 
         EList<Diagnostic> errors = resource.getErrors()
         EList<Diagnostic> warnings = resource.getWarnings()
+        if (warnings) {
+            LOGGER.warn(warnings.size() + " warning(s) encountered in parsing MDL file " + mdlFile.getAbsolutePath());
+            for (Diagnostic w : warnings) {
+                LOGGER.error(w);
+                final ConversionDetail detail = new ConversionDetailImpl();
+                detail.setMessage(w.toString());
+                detail.setSeverity(Severity.WARNING);
+                report.addDetail(detail);
+            }
+        }
         if (errors) {
             LOGGER.error(errors.size() + " errors encountered in parsing MDL file " + mdlFile.getAbsolutePath());
             for (Diagnostic e : errors) {
@@ -62,16 +72,6 @@ class MdlParser {
             }
             report.setReturnCode(ConversionCode.FAILURE);
             return null; // Bail out
-        }
-        if (warnings) {
-            LOGGER.warn(warnings.size() + " warning(s) encountered in parsing MDL file " + mdlFile.getAbsolutePath());
-            for (Diagnostic w : warnings) {
-                LOGGER.error(w);
-                final ConversionDetail detail = new ConversionDetailImpl();
-                detail.setMessage(w.toString());
-                detail.setSeverity(Severity.WARNING);
-                report.addDetail(detail);
-            }
         }
 
         return (Mcl) resource.getContents().get(0);

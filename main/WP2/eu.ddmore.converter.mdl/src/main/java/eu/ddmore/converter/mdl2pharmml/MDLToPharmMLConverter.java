@@ -66,6 +66,16 @@ public class MDLToPharmMLConverter implements ConverterProvider {
         
         EList<Diagnostic> errors = resource.getErrors();
         EList<Diagnostic> warnings = resource.getWarnings();
+        if (!warnings.isEmpty()) {
+            LOGGER.warn(warnings.size() + " warning(s) encountered in parsing MDL file " + src.getAbsolutePath());
+            for (Diagnostic w : warnings) {
+                LOGGER.error(w);
+                final ConversionDetail detail = new ConversionDetailImpl();
+                detail.setMessage(w.toString());
+                detail.setSeverity(Severity.WARNING);
+                report.addDetail(detail);
+            }
+        }
         if (!errors.isEmpty()) {
             LOGGER.error(errors.size() + " errors encountered in parsing MDL file " + src.getAbsolutePath());
             for (Diagnostic e : errors) {
@@ -77,16 +87,6 @@ public class MDLToPharmMLConverter implements ConverterProvider {
             }
             report.setReturnCode(ConversionCode.FAILURE);
             return report; // Bail out
-        }
-        if (!warnings.isEmpty()) {
-            LOGGER.warn(warnings.size() + " warning(s) encountered in parsing MDL file " + src.getAbsolutePath());
-            for (Diagnostic w : warnings) {
-                LOGGER.error(w);
-                final ConversionDetail detail = new ConversionDetailImpl();
-                detail.setMessage(w.toString());
-                detail.setSeverity(Severity.WARNING);
-                report.addDetail(detail);
-            }
         }
         
         Mcl mcl = (Mcl) resource.getContents().get(0);
