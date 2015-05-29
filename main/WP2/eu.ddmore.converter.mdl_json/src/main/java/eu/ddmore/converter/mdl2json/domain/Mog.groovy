@@ -52,6 +52,9 @@ public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlo
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toMDL() {
         final StringBuffer mdl = new StringBuffer()

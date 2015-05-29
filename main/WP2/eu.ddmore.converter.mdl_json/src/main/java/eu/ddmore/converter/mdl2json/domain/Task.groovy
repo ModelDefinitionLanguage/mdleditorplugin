@@ -86,7 +86,7 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
     }
 
     /**
-     * Prints this object back out to MDL
+     * {@inheritDoc}
      */
     public String toMDL() {
 

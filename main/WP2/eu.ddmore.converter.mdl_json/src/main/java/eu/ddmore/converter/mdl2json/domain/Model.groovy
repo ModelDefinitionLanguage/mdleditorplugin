@@ -138,6 +138,9 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toMDL() {
         Properties p = getProperties()
 

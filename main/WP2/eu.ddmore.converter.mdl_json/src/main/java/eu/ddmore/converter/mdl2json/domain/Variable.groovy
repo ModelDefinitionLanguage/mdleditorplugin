@@ -93,6 +93,9 @@ public class Variable extends Expando implements MDLPrintable {
         return (String) getProperty(RANDOMVAR_DISTRIBUTION_KEY)
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toMDL() {
         // NB: NAME_KEY, EXPRESSION_KEY, RANDOMVAR_ATTRS_KEY need to be in parentheses
         // in order to be treated as string variables rather than string literals

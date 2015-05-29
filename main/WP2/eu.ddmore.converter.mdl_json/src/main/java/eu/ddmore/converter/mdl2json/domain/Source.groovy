@@ -37,9 +37,7 @@ public class Source extends Expando implements MDLPrintable {
     }
 
     /**
-     * Returns the MDL equivalent of this object
-     *
-     * @return
+     * {@inheritDoc}
      */
     public String toMDL() {
         List properties = []

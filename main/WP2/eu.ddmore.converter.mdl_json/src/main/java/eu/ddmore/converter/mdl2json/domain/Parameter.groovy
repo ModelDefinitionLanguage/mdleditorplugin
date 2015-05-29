@@ -220,8 +220,7 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
     }
 
     /**
-     * Convert this parameter into MDL.
-     * @return
+     * {@inheritDoc}
      */
     public String toMDL() {
         def p = getProperties()

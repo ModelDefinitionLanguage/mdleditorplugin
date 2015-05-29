@@ -62,6 +62,9 @@ public class VariablesList extends ArrayList<Variable> implements MDLPrintable {
         return new VariablesList(jsonList.collect { json -> new Variable(json) })
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toMDL() {
         return toMDL(2)

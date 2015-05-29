@@ -69,6 +69,9 @@ public class ModelPredictionItem extends Variable implements MDLPrintable {
         super(json)
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toMDL() {
         for (final String subBlockName : SUBBLOCK_NAMES) {
             if (getProperty(SUBBLOCK_PREFIX + subBlockName)) {

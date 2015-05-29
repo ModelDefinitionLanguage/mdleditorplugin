@@ -44,6 +44,9 @@ class ModelPredictionList extends ArrayList<ModelPredictionItem> implements MDLP
         addAll(jsonList.collect { Map json -> new ModelPredictionItem(json) })
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toMDL() {
         collect{
