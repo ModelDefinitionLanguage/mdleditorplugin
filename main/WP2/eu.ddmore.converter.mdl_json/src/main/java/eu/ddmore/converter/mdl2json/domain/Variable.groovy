@@ -1,9 +1,8 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain;
 
-import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.PkMacroStatement
 
@@ -22,8 +21,6 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper
  * {@link org.ddmore.mdl.mdl.PkMacroStatement}, an unnamed list (no operator).
  */
 public class Variable extends Expando implements MDLPrintable {
-
-    private static Logger logger = Logger.getLogger(Variable.class)
 
     public static final String NAME_KEY = ".name"
     public static final String EXPRESSION_KEY = ".expr"
@@ -93,6 +90,9 @@ public class Variable extends Expando implements MDLPrintable {
         return (String) getProperty(RANDOMVAR_DISTRIBUTION_KEY)
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toMDL() {
         // NB: NAME_KEY, EXPRESSION_KEY, RANDOMVAR_ATTRS_KEY need to be in parentheses
         // in order to be treated as string variables rather than string literals

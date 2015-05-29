@@ -93,7 +93,8 @@ warfarin_PK_ODE_mdl = mdlobj {
 	    CL : { type = linear, trans = log, pop = POP_CL, fixEff = {coeff=BETA_CL_WT, cov=logtWT} , ranEff = ETA_CL }
 	    V : { type = linear, trans = log, pop = POP_V, fixEff = {coeff=BETA_V_WT, cov=logtWT} , ranEff = ETA_V }
 	    KA : { type = linear, trans = log, pop = POP_KA, ranEff = ETA_KA }
-	    TLAG : { type = linear, trans = log, pop = POP_TLAG, ranEff = ETA_TLAG } 
+	    TLAG : { type = linear, trans = log, pop = POP_TLAG, ranEff = ETA_TLAG }
+	    F1=1 
 	} # end INDIVIDUAL_VARIABLES
 
 	MODEL_PREDICTION {
@@ -104,16 +105,10 @@ warfarin_PK_ODE_mdl = mdlobj {
 			CENTRAL : { deriv =(RATEIN - CL * CENTRAL / V), init = 0, x0 = 0, wrt=TIME } 
 		}
 	    CC = CENTRAL / V
-	    PKMACRO{
-			FOO5 : { macro = iv, to=FOO4 }
-			FOO4 : { macro=compartment, volume=V }
-			{ macro = elimination, from=FOO4, cl=CL }
-			FOO3 : { macro=oral, ka=KA, p=F1, to=FOO6 }
-			FOO6 : { macro=compartment, volume=1 }
-			{ macro=transfer, from=FOO3, to=FOO4, k=KA }
-	    }
 	    COMPARTMENT{
-	       FOO9 : {macro=compartment, volume=V}
+            FOO3:   {type=depot, modelCmt=1, to=FOO4, ka=KA, tlag=TLAG, finput=F1}
+            FOO4:    {type=compartment, modelCmt=2}
+            {type=elimination, modelCmt=2, from=FOO4, v=V, cl=CL}
 	    }
 	} # end MODEL_PREDICTION
 	

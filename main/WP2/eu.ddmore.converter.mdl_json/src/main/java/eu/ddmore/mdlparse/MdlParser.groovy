@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.mdlparse
 
@@ -10,14 +10,20 @@ import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic
-import org.eclipse.xtext.parser.ParseException
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.resource.XtextResourceSet
 
+import com.google.common.base.Preconditions
 import com.google.inject.Injector
 
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail
+import eu.ddmore.convertertoolbox.api.response.ConversionReport
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity
+import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode
+import eu.ddmore.convertertoolbox.domain.ConversionDetailImpl
+
 class MdlParser {
-    private final static Logger LOGGER = Logger.getLogger(MdlParser.class)
+    private static final Logger LOGGER = Logger.getLogger(MdlParser.class)
 
     static Injector injector;
     static XtextResourceSet resourceSet;
@@ -28,30 +34,44 @@ class MdlParser {
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
     }
 
-    public Mcl parse(String model) {
-        File src = new File(Thread.currentThread().getContextClassLoader().getResource(model).getPath());
-        return parse(src);
-    }
-
-    public Mcl parse(File mdlFile) {
+    /**
+     * Parse the MDL file into an object graph of Xtext domain objects rooted at an {@link Mcl} object.
+     * Any errors encountered in parsing the MDL will be populated in the provided {@link ConversionReport}
+     * and the report's status will be set as FAILED.
+     * <p>
+     * @param mdlFile - the {@link File} object referencing the MDL file to parse
+     * @param report - a newly created {@link ConversionReport}; this will be populated in the event of errors in parsing the MDL
+     * @return the {@link Mcl} object graph representing the parsed MDL file
+     */
+    public Mcl parse(final File mdlFile, final ConversionReport report) {
+        Preconditions.checkNotNull(mdlFile, "No MDL File provided to MdlParser.parse()")
+        Preconditions.checkNotNull(report, "A ConversionReport must be provided to MdlParser.parse()")
+        
         final Resource resource = resourceSet.getResource(URI.createURI("file:///" + mdlFile.getAbsolutePath()), true)
 
         EList<Diagnostic> errors = resource.getErrors()
         EList<Diagnostic> warnings = resource.getWarnings()
-        if (errors) {
-            LOGGER.error(errors.size() + " errors encountered in parsing MDL file " + mdlFile.getAbsolutePath())
-            for (Diagnostic e : errors) {
-                LOGGER.error(e)
-                System.err.println(e);
-            }
-            throw new ParseException("Unable to parse MDL file " + mdlFile.getAbsolutePath() + "; " + errors.size() + " error(s) encountered; see the log output.")
-        }
         if (warnings) {
-            LOGGER.error(warnings.size() + " warning(s) encountered in parsing MDL file " + mdlFile.getAbsolutePath())
+            LOGGER.warn(warnings.size() + " warning(s) encountered in parsing MDL file " + mdlFile.getAbsolutePath());
             for (Diagnostic w : warnings) {
-                LOGGER.error(w)
-                System.err.println(w);
+                LOGGER.error(w);
+                final ConversionDetail detail = new ConversionDetailImpl();
+                detail.setMessage(w.toString());
+                detail.setSeverity(Severity.WARNING);
+                report.addDetail(detail);
             }
+        }
+        if (errors) {
+            LOGGER.error(errors.size() + " errors encountered in parsing MDL file " + mdlFile.getAbsolutePath());
+            for (Diagnostic e : errors) {
+                LOGGER.error(e);
+                final ConversionDetail detail = new ConversionDetailImpl();
+                detail.setMessage(e.toString());
+                detail.setSeverity(Severity.ERROR);
+                report.addDetail(detail);
+            }
+            report.setReturnCode(ConversionCode.FAILURE);
+            return null; // Bail out
         }
 
         return (Mcl) resource.getContents().get(0);

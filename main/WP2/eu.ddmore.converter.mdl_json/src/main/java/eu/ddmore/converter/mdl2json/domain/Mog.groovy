@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain
 
@@ -52,6 +52,9 @@ public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlo
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toMDL() {
         final StringBuffer mdl = new StringBuffer()

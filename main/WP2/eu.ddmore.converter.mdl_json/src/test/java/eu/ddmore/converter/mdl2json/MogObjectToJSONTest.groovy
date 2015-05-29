@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json;
 
@@ -15,7 +15,7 @@ import eu.ddmore.converter.mdl2json.domain.Mog
 import eu.ddmore.converter.mdl2json.domain.Task
 
 class MogObjectToJSONTest {
-	private static Logger logger = Logger.getLogger(MogObjectToJSONTest.class)
+	private static final Logger LOGGER = Logger.getLogger(MogObjectToJSONTest.class)
 	
     @Test
     public void testObjectsBlock() {
@@ -25,7 +25,7 @@ class MogObjectToJSONTest {
         
         def objects = mogObject[Mog.OBJECTS]
         
-        logger.debug(objects)
+        LOGGER.debug(objects)
         
         assertEquals("Checking number of imported objects", 4, objects.size())
         
@@ -45,7 +45,7 @@ class MogObjectToJSONTest {
         
         def objects = mogObject[Mog.OBJECTS]
         
-        logger.debug(objects)
+        LOGGER.debug(objects)
         
         assertEquals("Checking number of imported objects", 4, objects.size())
         
@@ -69,7 +69,7 @@ class MogObjectToJSONTest {
         
         def mappings = mogObject[Mog.MAPPING]
         
-        logger.debug(mappings)
+        LOGGER.debug(mappings)
         
         assertEquals("Checking number of mappings", 1, mappings.size())
         assertTrue("Checking that data object's WT_MEAN variable is mapped", mappings.containsKey("do.WT_MEAN"))

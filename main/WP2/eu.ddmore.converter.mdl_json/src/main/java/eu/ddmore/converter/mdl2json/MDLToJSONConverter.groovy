@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json
 
@@ -25,7 +25,7 @@ import org.eclipse.xtext.parser.ParseException
  */
 public class MDLToJSONConverter implements ConverterProvider {
 
-    private static Logger logger = Logger.getLogger(this.getClass());
+    private static final Logger LOGGER = Logger.getLogger(MDLToJSONConverter.class)
 
     private static final String MDL_FILE_EXTENSION = ".mdl"
     private static final String JSON_FILE_EXTENSION = ".json"
@@ -34,35 +34,27 @@ public class MDLToJSONConverter implements ConverterProvider {
     private final LanguageVersion target = new LanguageVersionImpl("JSON", new VersionImpl(6, 0, 8))
     private final Version converterVersion = new VersionImpl(1, 0, 5);
 
-    private String json
-
     /**
      * Converter Toolbox required entry point.
      */
     public ConversionReport performConvert(File src, File outputDirectory) throws IOException {
-        String outputFileName = computeOutputFileName(src.getName())
+        // We know we're going to return a conversion report so create it up front; it is added to at various places in this method
+        final ConversionReport report = new ConversionReportImpl()
 
-        MdlParser p = new MdlParser()
-        Mcl mcl
-        try {
-            mcl = p.parse(src)
-        } catch (ParseException pe) {
-            ConversionReport report = new ConversionReportImpl()
-            report.setReturnCode(ConversionCode.FAILURE)
-            return report
+        final Mcl mcl = new MdlParser().parse(src, report)
+        
+        if (ConversionCode.FAILURE.equals(report.getReturnCode())) {
+            return report // Bail out - couldn't parse the MDL
         }
 
-        ConversionReport report = new ConversionReportImpl();
-        json = toJSON(mcl)
+        final String json = toJSON(mcl)
+        
         if (json) {
-            def outputFile = new File(outputDirectory.getAbsolutePath() + File.separator + outputFileName);
-
+            def outputFile = new File(outputDirectory.getAbsolutePath(), computeOutputFileName(src.getName()))
             outputFile.write(json)
             report.setReturnCode(ConversionCode.SUCCESS);
         } else {
-            def errorMsg = "Could not parse " + src.getPath()
-            logger.error(errorMsg)
-            System.err.println(errorMsg)
+            LOGGER.error("Couldn't write out JSON from MDL parsed from file " + src.getPath())
             report.setReturnCode(ConversionCode.FAILURE)
         }
 

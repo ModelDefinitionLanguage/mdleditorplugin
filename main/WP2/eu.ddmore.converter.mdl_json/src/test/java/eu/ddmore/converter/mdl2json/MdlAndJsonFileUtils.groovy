@@ -1,25 +1,20 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json
 
 import static org.junit.Assert.*
-
-import java.util.regex.Matcher
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Mcl
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.Preconditions
 
-import eu.ddmore.converter.mdl2json.domain.Data
-import eu.ddmore.converter.mdl2json.domain.Model
-import eu.ddmore.converter.mdl2json.domain.Mog
-import eu.ddmore.converter.mdl2json.domain.Parameter
-import eu.ddmore.converter.mdl2json.domain.Source
-import eu.ddmore.converter.mdl2json.domain.Task
+import eu.ddmore.convertertoolbox.api.response.ConversionReport
+import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode
+import eu.ddmore.convertertoolbox.domain.ConversionReportImpl
 import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
 
@@ -31,7 +26,7 @@ public class MdlAndJsonFileUtils {
     private final static String MODELS_PROJECT_TEST_DATA_DIR = "/test-models/"
     private final static String WORKING_DIR = new File(FileUtils.getTempDirectory(), "MDL2JSON_Working_Dir")
 
-    private static Logger logger = Logger.getLogger(MdlAndJsonFileUtils.class)
+    private static final Logger LOGGER = Logger.getLogger(MdlAndJsonFileUtils.class)
 
     public static File getFile(final String pathToFile) {
         String path = TEST_DATA_DIR + pathToFile
@@ -79,16 +74,19 @@ public class MdlAndJsonFileUtils {
 
     public static Object getJsonFromMDLFile(final File srcFile) {
 
-        MdlParser p = new MdlParser()
-        Mcl mcl = p.parse(srcFile)
+        final ConversionReport report = new ConversionReportImpl()
+        final Mcl mcl = new MdlParser().parse(srcFile, report)
 
-        Preconditions.checkArgument(mcl != null, "Unable to parse MDL file " + srcFile + "; check the log files for exceptions that might have been thrown")
+        Preconditions.checkArgument(mcl != null,
+            "Unable to parse MDL file " + srcFile + "; check the log files for exceptions that might have been thrown")
+        Preconditions.checkArgument(!ConversionCode.FAILURE.equals(report.getReturnCode()),
+            "Unable to parse MDL file " + srcFile + "; check the log files for exceptions that might have been thrown")
 
         String jsonText = new MDLToJSONConverter().toJSON(mcl)
 
         Preconditions.checkArgument(StringUtils.isNotBlank(jsonText), "Unable to parse MDL file " + srcFile + " into JSON; check the log files for exceptions that might have been thrown")
 
-        logger.debug(jsonText)
+        LOGGER.debug(jsonText)
 
         JsonSlurper slurper = new JsonSlurper();
         slurper.parseText(jsonText)

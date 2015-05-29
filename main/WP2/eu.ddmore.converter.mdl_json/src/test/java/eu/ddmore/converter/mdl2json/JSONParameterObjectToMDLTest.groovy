@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json;
 
@@ -8,7 +8,6 @@ import static org.junit.Assert.*
 import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger
 import org.junit.Ignore
 import org.junit.Test
 
@@ -17,8 +16,6 @@ import eu.ddmore.converter.mdl2json.domain.Parameter
 import groovy.json.JsonSlurper
 
 class JSONParameterObjectToMDLTest {
-
-    private static Logger logger = Logger.getLogger(JSONParameterObjectToMDLTest.class)
 
     // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
     private static final String declaredVariablesBlockJson_UseCase1 =

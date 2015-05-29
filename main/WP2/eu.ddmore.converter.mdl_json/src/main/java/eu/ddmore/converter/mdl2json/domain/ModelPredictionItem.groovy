@@ -1,11 +1,9 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain
 
 import java.util.Map
-
-import org.apache.log4j.Logger
 
 import com.google.common.base.Preconditions
 
@@ -20,15 +18,13 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 
 public class ModelPredictionItem extends Variable implements MDLPrintable {
-
-    private static Logger logger = Logger.getLogger(ModelPredictionItem.class)
     
     /**
      * This character is used as a prefix to distinguish sub-blocks from 'normal' variables;
      * the text following this prefix is the name of the sub-block.
      */
     private static final String SUBBLOCK_PREFIX = "."
-    static final List<String> SUBBLOCK_NAMES = ["DEQ", "PKMACRO", "COMPARTMENT"]
+    static final List<String> SUBBLOCK_NAMES = ["DEQ", "COMPARTMENT"] // Used to be PKMACRO too; reinstate this if "PKMACRO" is re-introduced into the MDL syntax
     
     private String identifier
         
@@ -69,6 +65,9 @@ public class ModelPredictionItem extends Variable implements MDLPrintable {
         super(json)
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toMDL() {
         for (final String subBlockName : SUBBLOCK_NAMES) {
             if (getProperty(SUBBLOCK_PREFIX + subBlockName)) {

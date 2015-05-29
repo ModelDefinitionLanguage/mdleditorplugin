@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain;
 
@@ -20,8 +20,6 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
     public static final String ESTIMATE = "ESTIMATE"
     public static final String SIMULATE = "SIMULATE"
 
-    private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
-
     /**
      * Create a Task from a TaskObject
      * @param taskObj
@@ -32,10 +30,10 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
         for (TaskObjectBlock block : taskObj.blocks) {
 
             if (block.getEstimateBlock()) {
-                setProperty(ESTIMATE, printIdentifiedBlock(block.getEstimateBlock(), statementPrinter))
+                setProperty(ESTIMATE, statementPrinter(block.getEstimateBlock()))
             }
             if (block.getSimulateBlock()) {
-                setProperty(SIMULATE, printIdentifiedBlock(block.getSimulateBlock(), statementPrinter))
+                setProperty(SIMULATE, statementPrinter(block.getSimulateBlock()))
             }
         }
     }
@@ -54,29 +52,6 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
     }
 
     /**
-     * Print out the block that has an identifier. Prints out the identifer, possibly any arguments to this identified block,
-     * and then delegates printing of the contents of the block to the supplied blockPrinter
-     * 
-     * @param identifiedBlock The block that has an identifier
-     * @param blockPrinter The closure that will print the block contents
-     * @return
-     */
-    String printIdentifiedBlock(identifiedBlock, blockPrinter) {
-//		StringBuffer buff = new StringBuffer("\n")
-//		buff.append(identifiedBlock.getIdentifier())
-//		if(identifiedBlock.metaClass.hasProperty(identifiedBlock, "arguments")) {
-//			buff.append("(")
-//			buff.append(identifiedBlock.arguments.arguments.collect { Argument arg -> "${arg.argumentName.name}=${XtextWrapper.unwrap(arg.expression)}" }.join(","))
-//			buff.append(")")
-//		}
-//		buff.append("{")
-//		buff.append(blockPrinter(identifiedBlock))
-//		buff.append("}\n")
-
-        blockPrinter(identifiedBlock)
-    }
-
-    /**
      * Prints each statement held in this list of statements.
      */
     def statementPrinter = { statementHolder ->
@@ -86,7 +61,7 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
     }
 
     /**
-     * Prints this object back out to MDL
+     * {@inheritDoc}
      */
     public String toMDL() {
 

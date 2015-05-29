@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain;
 
@@ -9,7 +9,6 @@ import org.ddmore.mdl.mdl.DataObjectBlock
 import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
-import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
@@ -19,8 +18,6 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
     public static final String DECLARED_VARIABLES = "DECLARED_VARIABLES"
     public static final String DATA_INPUT_VARIABLES = "DATA_INPUT_VARIABLES"
     public static final String DATA_DERIVED_VARIABLES = "DATA_DERIVED_VARIABLES"
-
-    private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 
     public Data(DataObject dataObject) {
 
@@ -60,6 +57,9 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toMDL() {
         StringBuffer mdl = new StringBuffer()
         def blocks = getProperties().minus([(IDENTIFIER_PROPNAME):(IDENTIFIER)])

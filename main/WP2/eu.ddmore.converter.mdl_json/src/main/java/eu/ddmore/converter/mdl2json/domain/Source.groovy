@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain;
 
@@ -37,9 +37,7 @@ public class Source extends Expando implements MDLPrintable {
     }
 
     /**
-     * Returns the MDL equivalent of this object
-     *
-     * @return
+     * {@inheritDoc}
      */
     public String toMDL() {
         List properties = []

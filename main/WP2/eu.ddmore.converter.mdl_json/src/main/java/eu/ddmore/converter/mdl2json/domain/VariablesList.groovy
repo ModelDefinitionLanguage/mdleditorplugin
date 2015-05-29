@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain;
 
@@ -62,6 +62,9 @@ public class VariablesList extends ArrayList<Variable> implements MDLPrintable {
         return new VariablesList(jsonList.collect { json -> new Variable(json) })
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toMDL() {
         return toMDL(2)

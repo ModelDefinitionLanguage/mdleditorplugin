@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.ddmore.mdl.MdlStandaloneSetup;
 import org.ddmore.mdl.mdl.MOGObject;
@@ -21,19 +23,19 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.inject.Injector;
 
-import eu.ddmore.converter.mdlprinting.MdlPrinterUtility;
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
+import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
+import eu.ddmore.convertertoolbox.domain.ConversionDetailImpl;
 import eu.ddmore.convertertoolbox.domain.ConversionReportImpl;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
 
-import eu.ddmore.converter.mdl2pharmml.Mdl2PharmML;
-
-public class MDLToPharmMLConverter extends MdlPrinterUtility implements ConverterProvider {
+public class MDLToPharmMLConverter implements ConverterProvider {
 
     private final static Logger LOGGER = Logger.getLogger(MDLToPharmMLConverter.class);
 
@@ -53,6 +55,9 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
 
     @Override
     public ConversionReport performConvert(File src, File outputDirectory) throws IOException {
+        // We know we're going to return a conversion report so create it up front; it is added to at various places in this method
+        final ConversionReport report = new ConversionReportImpl();
+        
         Injector injector = new MdlStandaloneSetup().createInjectorAndDoEMFRegistration();
         XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
@@ -61,22 +66,27 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
         
         EList<Diagnostic> errors = resource.getErrors();
         EList<Diagnostic> warnings = resource.getWarnings();
+        if (!warnings.isEmpty()) {
+            LOGGER.warn(warnings.size() + " warning(s) encountered in parsing MDL file " + src.getAbsolutePath());
+            for (Diagnostic w : warnings) {
+                LOGGER.error(w);
+                final ConversionDetail detail = new ConversionDetailImpl();
+                detail.setMessage(w.toString());
+                detail.setSeverity(Severity.WARNING);
+                report.addDetail(detail);
+            }
+        }
         if (!errors.isEmpty()) {
             LOGGER.error(errors.size() + " errors encountered in parsing MDL file " + src.getAbsolutePath());
             for (Diagnostic e : errors) {
                 LOGGER.error(e);
-                System.err.println(e);
+                final ConversionDetail detail = new ConversionDetailImpl();
+                detail.setMessage(e.toString());
+                detail.setSeverity(Severity.ERROR);
+                report.addDetail(detail);
             }
-            ConversionReport report = new ConversionReportImpl();
             report.setReturnCode(ConversionCode.FAILURE);
-            return report;
-        }
-        if (!warnings.isEmpty()) {
-            LOGGER.error(warnings.size() + " warning(s) encountered in parsing MDL file " + src.getAbsolutePath());
-            for (Diagnostic w : warnings) {
-                LOGGER.error(w);
-                System.err.println(w);
-            }
+            return report; // Bail out
         }
         
         Mcl mcl = (Mcl) resource.getContents().get(0);
@@ -85,16 +95,24 @@ public class MDLToPharmMLConverter extends MdlPrinterUtility implements Converte
         // TODO: We're currently making an assumption that there will be a single MOG
         // in the provided file.  This should be fine for Product 4.
         // This will be addressed under DDMORE-1221
+        
         if (mogs.isEmpty()) {
         	throw new IllegalStateException("Must be (at least) one MOG defined in the provided MCL file: " + src); 
         }
+        final MOGObject mog = mogs.get(0);
 
-        MOGObject mog = mogs.get(0);
-
-        Mdl2PharmML xtendConverter = new Mdl2PharmML();
-        CharSequence converted = xtendConverter.convertToPharmML(mog, src.toString());
-
-        return printOutputFile(src, outputDirectory, converted.toString(), ".xml");
+        final CharSequence converted = new Mdl2PharmML().convertToPharmML(mog, src.toString());
+        
+        final File outputFile = new File(outputDirectory.getAbsoluteFile(), FilenameUtils.getBaseName(src.getName()) + ".xml");
+        
+        try {
+            FileUtils.writeStringToFile(outputFile, converted.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        
+        report.setReturnCode(ConversionCode.SUCCESS);
+        return report;
     }
 
     public ConversionReport[] performConvert(File[] src, File outputDirectory) throws IOException {

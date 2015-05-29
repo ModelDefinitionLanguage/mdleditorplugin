@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json
 
@@ -7,14 +7,12 @@ import static org.junit.Assert.*
 
 import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
 
-import org.apache.log4j.Logger
 import org.junit.Test
 
 import eu.ddmore.converter.mdl2json.domain.Model
 
 
 class JSONModelObjectToMDLTest {
-    private static final Logger logger = Logger.getLogger(JSONModelObjectToMDLTest.class)
 
     // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
     private final static String independentVariablesBlockJson_UseCase16 =
@@ -55,8 +53,6 @@ class JSONModelObjectToMDLTest {
         / {"MODEL_PREDICTION":[{".name":"DOSE"},{".expr":"DOSE\/CL",".name":"AUC"},{".expr":"BM0*(1+DPSLP*T)",".name":"DP1"},{".expr":"BM0S*(1+DPSLPS*T)",".name":"DPS"},{".expr":"DP1*KOUT",".name":"KIN"},{".expr":"DPS*KOUTS",".name":"KINS"},{".DEQ":[{".expr":"IMAX1*AUC^HILL\/(IC50^HILL+AUC^HILL)",".name":"EFF"},{".expr":"IMAX2*AUC^HILL2\/(IC502^HILL2+AUC^HILL2)",".name":"EFF2"},{".expr":"IMAX3*AUC\/(IC503+AUC)",".name":"EFF3"},{".expr":"IMAXS*AUC\/(IC50S+AUC)",".name":"EFFS"},{"deriv":"KIN-KOUT*(1-EFF)*VEGF","init":"BM0",".name":"VEGF"},{"wrt":"T","deriv":"KIN2*(1-EFF2)-KOUT2*sVEGFR2","init":"BM02",".name":"sVEGFR2"},{"wrt":"T","deriv":"KIN3*(1-EFF3)-KOUT3*sVEGFR3","init":"BM03",".name":"sVEGFR3"},{"wrt":"T","deriv":"KINS*(1-EFFS)-KOUTS*sKIT","init":"BM0S",".name":"sKIT"}]},{".expr":"ln(VEGF)",".name":"LNVEGF"}]} /
     private final static String modelPredictionBlockCompartmentJson_UseCase10 =
         / {"MODEL_PREDICTION":[{".COMPARTMENT":[{"to":"CENTRAL","modelCmt":"1","tlag":"ALAG1","ka":"KA",".name":"INPUT_KA","type":"depot"},{"modelCmt":"2",".name":"CENTRAL","type":"compartment"},{"v":"V2","modelCmt":"2","cl":"CL","from":"CENTRAL","type":"elimination"},{"modelCmt":"3","kout":"Q\/V3","kin":"Q\/V2","from":"CENTRAL",".name":"PERIPHERAL","type":"distribution"}]},{".expr":"CENTRAL\/S2",".name":"F"},{".expr":"F",".name":"CC"}]} /
-    private final static String modelPredictionBlockPkMacroJson_UseCase22 =
-        / {"MODEL_PREDICTION":[{".PKMACRO":[{".name":"DEP"},{"to":"Ac","macro":"oral","tlag":"ALAG1","ka":"KA"},{"macro":"compartment","volume":"V",".name":"Ac"},{"macro":"elimination","cl":"CL","from":"Ac"}]},{".expr":"Ac\/V",".name":"CONC"}]} /
     private final static String groupVariablesBlockJson_UseCase19 =
         / {"GROUP_VARIABLES":[{".expr":"POP_CL*(WT\/70)^0.75",".name":"GRPCL"},{".expr":"POP_V*WT\/70",".name":"GRPV"},{".expr":"POP_KA",".name":"GRPKA"},{".expr":"POP_TLAG",".name":"GRPLG"}]} /
     private final static String modelOutputVariablesBlockJson_UseCase10 =
@@ -542,29 +538,6 @@ class JSONModelObjectToMDLTest {
         }
         F = CENTRAL/S2
         CC = F
-    }
-
-}
-"""
-        assertEquals(expected, modelObj.toMDL())
-    }
-    
-    @Test
-    public void testModelPredictionBlockWithPkMacroSubBlock() {
-        def json = getJson(modelPredictionBlockPkMacroJson_UseCase22)
-
-        def modelObj = new Model(json)
-        
-        String expected = """mdlobj {
-
-    MODEL_PREDICTION {
-        PKMACRO {
-            DEP
-            {ka=KA, macro=oral, tlag=ALAG1, to=Ac}
-            Ac : {macro=compartment, volume=V}
-            {cl=CL, from=Ac, macro=elimination}
-        }
-        CONC = Ac/V
     }
 
 }

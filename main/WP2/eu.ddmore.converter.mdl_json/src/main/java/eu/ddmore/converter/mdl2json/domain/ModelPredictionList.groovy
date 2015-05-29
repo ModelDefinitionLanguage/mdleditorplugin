@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain
 
@@ -18,8 +18,6 @@ import eu.ddmore.converter.mdlprinting.MdlPrinter
  * Represents MODEL_PREDICTION block within the MDL file.
  */
 class ModelPredictionList extends ArrayList<ModelPredictionItem> implements MDLPrintable, MDLAsJSON {
-	
-    private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 	
     public ModelPredictionList(ModelPredictionBlock mpb) {
         
@@ -44,6 +42,9 @@ class ModelPredictionList extends ArrayList<ModelPredictionItem> implements MDLP
         addAll(jsonList.collect { Map json -> new ModelPredictionItem(json) })
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toMDL() {
         collect{

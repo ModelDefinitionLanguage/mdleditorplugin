@@ -1,9 +1,8 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain;
 
-import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.ModelObject
 import org.ddmore.mdl.mdl.ModelObjectBlock
@@ -13,13 +12,8 @@ import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
-import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
-
-    public static final Logger logger = Logger.getLogger(Model.class)
-
-    private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 
     public static final String IDENTIFIER = "mdlobj"
 
@@ -138,6 +132,9 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
         
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toMDL() {
         Properties p = getProperties()
 

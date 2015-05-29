@@ -1,9 +1,8 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.utils
 
-import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.AdditiveExpression
 import org.ddmore.mdl.mdl.AndExpression
 import org.ddmore.mdl.mdl.AnyExpression
@@ -29,8 +28,6 @@ import com.google.common.base.Preconditions
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class XtextWrapper {
-
-    private static Logger logger = Logger.getLogger(XtextWrapper.class)
 
     private static MdlPrinter mdlPrinter = MdlPrinter.getInstance()
 

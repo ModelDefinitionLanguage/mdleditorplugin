@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json;
 
@@ -14,13 +14,13 @@ import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.converter.mdl2json.domain.Variable
 
 class DataObjectToJSONTest {
-    private static Logger logger = Logger.getLogger(DataObjectToJSONTest.class)
+    private static final Logger LOGGER = Logger.getLogger(DataObjectToJSONTest.class)
 
     @Test
     public void testSourceBlock() {
         def json = getJsonFromMDLFile("UseCase1_DataObject.mdl")
 
-        logger.debug(json)
+        LOGGER.debug(json)
 
         def dataObject = json[0].warfarin_PK_ODE_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -39,7 +39,7 @@ class DataObjectToJSONTest {
     public void testDataInputVariablesBlock_ContainingAttributeBeingListOfSetsOfValues() {
         def json = getJsonFromMDLFile("UseCase19_DataObject.mdl")
         
-        logger.debug(json)
+        LOGGER.debug(json)
         
         def dataObject = json[0].warfarin_PK_BOV_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
         
@@ -100,7 +100,7 @@ class DataObjectToJSONTest {
     public void testDataInputVariablesBlock_ContainingAttributeBeingListOfSetsOfNameValuePairs() {
         def json = getJsonFromMDLFile("UseCase16_DataObject.mdl")
 
-        logger.debug(json)
+        LOGGER.debug(json)
 
         def dataObject = json[0].Hansson2013_data // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -136,7 +136,7 @@ class DataObjectToJSONTest {
     public void testDataInputVariablesBlock_ContainingAttributeBeingNamedSetOfValues() {
         def json = getJsonFromMDLFile("UseCase8_DataObject.mdl")
 
-        logger.debug(json)
+        LOGGER.debug(json)
 
         def dataObject = json[0].warfarin_PK_BOV_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -155,7 +155,7 @@ class DataObjectToJSONTest {
     public void testDeclaredVariablesBlock_OnSameLine() {
         def json = getJsonFromMDLFile("UseCase1_DataObject.mdl")
 
-        logger.debug(json)
+        LOGGER.debug(json)
 
         def dataObject = json[0].warfarin_PK_ODE_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -171,7 +171,7 @@ class DataObjectToJSONTest {
     public void testDeclaredVariablesBlock_OnSeparateLines() {
         def json = getJsonFromMDLFile("UseCase16_DataObject.mdl")
 
-        logger.debug(json)
+        LOGGER.debug(json)
 
         def dataObject = json[0].Hansson2013_data // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
@@ -190,7 +190,7 @@ class DataObjectToJSONTest {
     public void testDataDerivedVariables() {
         def json = getJsonFromMDLFile("UseCase1_10_DataObject.mdl")
 
-        logger.debug(json)
+        LOGGER.debug(json)
 
         def dataObject = json[0].warfarin_PK_v2_dat // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 

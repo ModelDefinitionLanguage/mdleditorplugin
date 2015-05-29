@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014-5 Mango Solutions Ltd - All rights reserved.
+ * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json;
 
@@ -15,7 +15,7 @@ import org.junit.Test
 import eu.ddmore.converter.mdl2json.domain.Task
 
 class TaskObjectToJSONTest {
-    private static Logger logger = Logger.getLogger(TaskObjectToJSONTest.class)
+    private static final Logger LOGGER = Logger.getLogger(TaskObjectToJSONTest.class)
 
     @Test
     public void testEstimateBlock_ContainingUnquotedAttributeValue() {
@@ -23,7 +23,7 @@ class TaskObjectToJSONTest {
 
         def taskObj = json[0].Hansson2013_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
-        logger.debug(taskObj)
+        LOGGER.debug(taskObj)
 
         def expectedEstimateStr = '''target=NMTRAN_CODE
 cov=true
@@ -37,7 +37,7 @@ algo=["FOCE"]'''
 
         def taskObj = json[0].warfarin_PK_ODE_task // The [0] is because the JSON is enclosed within superfluous square brackets [...]
 
-        logger.debug(taskObj)
+        LOGGER.debug(taskObj)
 
         def expectedEstimateStr = '''target=MLXTRAN_CODE
 version="4.3.2"
@@ -103,7 +103,7 @@ algo = list("FOCE ")
 
         def Task taskFromJson = new Task(taskObject)
 
-        logger.debug(taskFromJson.toMDL())
+        LOGGER.debug(taskFromJson.toMDL())
 
         assertTrue("Checking TARGET_CODE block", taskFromJson.toMDL().replace("\r\n","\n").contains(
 '''taskobj {
