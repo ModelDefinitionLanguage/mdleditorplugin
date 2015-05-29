@@ -3,6 +3,9 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json
 
+import org.apache.log4j.Logger
+import org.ddmore.mdl.mdl.Mcl
+
 import eu.ddmore.converter.mdl2json.domain.MCLFile
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion
 import eu.ddmore.convertertoolbox.api.domain.Version
@@ -14,10 +17,6 @@ import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl
 import eu.ddmore.convertertoolbox.domain.VersionImpl
 import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonBuilder
-
-import org.apache.log4j.Logger
-import org.ddmore.mdl.mdl.Mcl
-import org.eclipse.xtext.parser.ParseException
 
 
 /**
@@ -53,12 +52,10 @@ public class MDLToJSONConverter implements ConverterProvider {
             def outputFile = new File(outputDirectory.getAbsolutePath(), computeOutputFileName(src.getName()))
             outputFile.write(json)
             report.setReturnCode(ConversionCode.SUCCESS);
+            return report
         } else {
-            LOGGER.error("Couldn't write out JSON from MDL parsed from file " + src.getPath())
-            report.setReturnCode(ConversionCode.FAILURE)
+            throw new RuntimeException("Couldn't write out JSON from MDL parsed from file " + src.getPath())
         }
-
-        return report
     }
 
     /**
