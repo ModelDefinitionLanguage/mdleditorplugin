@@ -54,7 +54,7 @@ class MdlParser {
         if (warnings) {
             LOGGER.warn(warnings.size() + " warning(s) encountered in parsing MDL file " + mdlFile.getAbsolutePath());
             for (Diagnostic w : warnings) {
-                LOGGER.error(w);
+                LOGGER.warn(w);
                 final ConversionDetail detail = new ConversionDetailImpl();
                 detail.setMessage(w.toString());
                 detail.setSeverity(Severity.WARNING);
