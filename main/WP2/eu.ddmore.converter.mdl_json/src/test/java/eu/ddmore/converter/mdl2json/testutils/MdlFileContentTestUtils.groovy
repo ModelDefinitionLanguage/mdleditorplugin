@@ -33,7 +33,7 @@ import static org.junit.Assert.*
  */
 class MdlFileContentTestUtils {
 
-    private static Logger logger = Logger.getLogger(MdlFileContentTestUtils.class)
+    private static final Logger LOGGER = Logger.getLogger(MdlFileContentTestUtils.class)
 
     /**
      * This list should include all the block names within all the top-level objects that can appear within an MDL file.
@@ -102,7 +102,7 @@ class MdlFileContentTestUtils {
             }.join("\n")
 
         if (!StringUtils.isEmpty(origMdlFileBlockContent) || !StringUtils.isEmpty(newMdlFileBlockContent)) { // Check that we actually have something to compare
-            logger.info("Verifying block " + blockName + "...")
+            LOGGER.info("Verifying block " + blockName + "...")
 
             // Special additional preprocessing for the "SOURCE" block:
             // The items within this block can be in any order so put the lines of the original and new blocks into a known order
@@ -230,7 +230,7 @@ class MdlFileContentTestUtils {
         }
         
         if (!found) {
-            logger.info("Block \"" + blockName + "\" was not found in the MDL")
+            LOGGER.info("Block \"" + blockName + "\" was not found in the MDL")
         }
         
         // A MCL file can have multiple top-level objects of the same type (dataobj, parobj, mdlobj, taskobj);
@@ -299,8 +299,8 @@ class MdlFileContentTestUtils {
         // of distribution parameters i.e. for a distribution variable "VAR ~ Normal(...)".
         def outStr3 = sortParameterList(outStr2, ( outStr2 =~ /(?s)[A-Za-z0-9]+\s*\~\s*[A-Za-z0-9]+\s*\(\s*(.+?)\s*\)/ ))
         
-        logger.trace("Block text before sorting of parameter lists:\n" + blockText)
-        logger.trace("Block text after sorting of parameter lists:\n" + blockName + " {" + outStr3 + "}\n")
+        LOGGER.trace("Block text before sorting of parameter lists:\n" + blockText)
+        LOGGER.trace("Block text after sorting of parameter lists:\n" + blockName + " {" + outStr3 + "}\n")
         
         blockName + " {" + outStr3 + "}\n"
     }
@@ -349,7 +349,7 @@ class MdlFileContentTestUtils {
         final Matcher matcherForSquareBracketEnclosedParamValue = blockText =~ /(?s)([A-Za-z0-9]+)\s*=\s*\[\s*(\{.+?\})\s*\]/
         
         while (matcherForSquareBracketEnclosedParamValue.find()) {
-            logger.trace("Found square bracket enclosed parameter value: "
+            LOGGER.trace("Found square bracket enclosed parameter value: "
                 + matcherForSquareBracketEnclosedParamValue.group(1) + " = [" + matcherForSquareBracketEnclosedParamValue.group(2) + "]")
             
             final List<String> subAttrs = []
@@ -362,8 +362,8 @@ class MdlFileContentTestUtils {
             outStr = outStr.replace(matcherForSquareBracketEnclosedParamValue.group(0), matcherForSquareBracketEnclosedParamValue.group(1) + " = [" + subAttrs.join(", ") + "]" )
         }
         
-        logger.trace("Block before replacement of curly braces in parameter values: " + blockText)
-        logger.trace("Block after replacement of curly braces in parameter values: " + outStr)
+        LOGGER.trace("Block before replacement of curly braces in parameter values: " + blockText)
+        LOGGER.trace("Block after replacement of curly braces in parameter values: " + outStr)
         outStr
     }
 
@@ -392,7 +392,7 @@ class MdlFileContentTestUtils {
         
         while (matcher.find()) {
             final String paramsStr = matcher.group(1)
-            logger.trace("Parameter List found: " + paramsStr)
+            LOGGER.trace("Parameter List found: " + paramsStr)
             
             final List<String> parameters = []
             final StringBuffer currParam = new StringBuffer()
@@ -436,13 +436,13 @@ class MdlFileContentTestUtils {
             
             // Sanity check that we haven't mangled the parameters
             if (!paramsStr.replaceAll(/\s*/, "").equals(parameters.join(","))) {
-                logger.error("Original parameters string: " + paramsStr)
-                logger.error("Parsed parameters string: " + parameters.join(","))
+                LOGGER.error("Original parameters string: " + paramsStr)
+                LOGGER.error("Parsed parameters string: " + parameters.join(","))
                 throw new RuntimeException("Parsed parameters string is not identical to the original parameters string. These have been printed to log output for debugging purposes.")
             }
             
             parameters.sort() // Mutates the list
-            logger.trace("Parsed and sorted parameter list:    " + parameters.join("    "))
+            LOGGER.trace("Parsed and sorted parameter list:    " + parameters.join("    "))
             
             // We need to find and replace the entire parameter list to avoid replacing a subset of
             // some other parameter list that cannot then be matched and replaced itself.

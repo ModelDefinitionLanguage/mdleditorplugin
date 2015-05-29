@@ -25,7 +25,7 @@ import org.eclipse.xtext.parser.ParseException
  */
 public class MDLToJSONConverter implements ConverterProvider {
 
-    private static Logger LOGGER = Logger.getLogger(MDLToJSONConverter.class)
+    private static final Logger LOGGER = Logger.getLogger(MDLToJSONConverter.class)
 
     private static final String MDL_FILE_EXTENSION = ".mdl"
     private static final String JSON_FILE_EXTENSION = ".json"

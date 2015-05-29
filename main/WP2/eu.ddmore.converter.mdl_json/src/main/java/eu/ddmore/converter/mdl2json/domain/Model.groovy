@@ -3,7 +3,6 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain;
 
-import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.ModelObject
 import org.ddmore.mdl.mdl.ModelObjectBlock
@@ -15,8 +14,6 @@ import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
 import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
-
-    public static final Logger logger = Logger.getLogger(Model.class)
 
     public static final String IDENTIFIER = "mdlobj"
 

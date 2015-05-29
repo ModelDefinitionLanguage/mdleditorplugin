@@ -23,7 +23,7 @@ import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode
 import eu.ddmore.convertertoolbox.domain.ConversionDetailImpl
 
 class MdlParser {
-    private final static Logger LOGGER = Logger.getLogger(MdlParser.class)
+    private static final Logger LOGGER = Logger.getLogger(MdlParser.class)
 
     static Injector injector;
     static XtextResourceSet resourceSet;

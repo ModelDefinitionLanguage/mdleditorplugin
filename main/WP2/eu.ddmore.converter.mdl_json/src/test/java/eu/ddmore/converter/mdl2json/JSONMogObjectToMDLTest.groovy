@@ -14,7 +14,7 @@ import org.junit.Test
 import eu.ddmore.converter.mdl2json.domain.Mog
 
 class JSONMogObjectToMDLTest {
-	private static Logger logger = Logger.getLogger(JSONMogObjectToMDLTest.class)
+	private static final Logger LOGGER = Logger.getLogger(JSONMogObjectToMDLTest.class)
 
     // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
     private String objectsBlockJson_UseCase1 =
@@ -29,7 +29,7 @@ class JSONMogObjectToMDLTest {
         
         def mogObj = new Mog(json)
         
-        logger.debug(mogObj.toMDL())
+        LOGGER.debug(mogObj.toMDL())
         
         String expectedRegex = """mogobj \\{
 
@@ -70,7 +70,7 @@ class JSONMogObjectToMDLTest {
 
         def mogObj = new Mog(json)
         
-        logger.debug(mogObj.toMDL())
+        LOGGER.debug(mogObj.toMDL())
         
         String expectedRegex = """mogobj \\{
 
@@ -114,7 +114,7 @@ class JSONMogObjectToMDLTest {
 //
 //        def mogObj = new Mog(json)
 //        
-//        logger.debug(mogObj.toMDL())
+//        LOGGER.debug(mogObj.toMDL())
 //        
 //        String expectedRegex = """mogobj \\{
 //

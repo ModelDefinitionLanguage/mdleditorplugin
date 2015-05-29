@@ -26,7 +26,7 @@ public class MdlAndJsonFileUtils {
     private final static String MODELS_PROJECT_TEST_DATA_DIR = "/test-models/"
     private final static String WORKING_DIR = new File(FileUtils.getTempDirectory(), "MDL2JSON_Working_Dir")
 
-    private static Logger logger = Logger.getLogger(MdlAndJsonFileUtils.class)
+    private static final Logger LOGGER = Logger.getLogger(MdlAndJsonFileUtils.class)
 
     public static File getFile(final String pathToFile) {
         String path = TEST_DATA_DIR + pathToFile
@@ -86,7 +86,7 @@ public class MdlAndJsonFileUtils {
 
         Preconditions.checkArgument(StringUtils.isNotBlank(jsonText), "Unable to parse MDL file " + srcFile + " into JSON; check the log files for exceptions that might have been thrown")
 
-        logger.debug(jsonText)
+        LOGGER.debug(jsonText)
 
         JsonSlurper slurper = new JsonSlurper();
         slurper.parseText(jsonText)

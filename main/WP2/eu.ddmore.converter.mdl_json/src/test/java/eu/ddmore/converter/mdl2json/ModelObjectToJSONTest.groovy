@@ -15,7 +15,7 @@ import java.util.Map
 import eu.ddmore.converter.mdl2json.domain.Variable
 
 class ModelObjectToJSONTest {
-    private static Logger logger = Logger.getLogger(ModelObjectToJSONTest.class)
+    private static final Logger LOGGER = Logger.getLogger(ModelObjectToJSONTest.class)
 
     @Test
     public void testIndependentVariablesBlock() {
@@ -25,7 +25,7 @@ class ModelObjectToJSONTest {
 
         def independentVars = modelObject.IDV
 
-        logger.debug(independentVars)
+        LOGGER.debug(independentVars)
 
         assertEquals("Checking number of covariates", 1, independentVars.size())
         
@@ -40,7 +40,7 @@ class ModelObjectToJSONTest {
 
         def covariates = modelObject.COVARIATES
 
-        logger.debug(covariates)
+        LOGGER.debug(covariates)
 
         assertEquals("Checking number of covariates", 3, covariates.size())
         
@@ -61,7 +61,7 @@ class ModelObjectToJSONTest {
 
         def covariates = modelObject.COVARIATES
 
-        logger.debug(covariates)
+        LOGGER.debug(covariates)
 
         assertEquals("Checking number of covariates", 6, covariates.size())
         
@@ -81,7 +81,7 @@ class ModelObjectToJSONTest {
 
         def variabilityLevels = modelObject.VARIABILITY_LEVELS
 
-        logger.debug(variabilityLevels)
+        LOGGER.debug(variabilityLevels)
 
         assertEquals("Checking number of variability levels", 2, variabilityLevels.size())
         
@@ -97,7 +97,7 @@ class ModelObjectToJSONTest {
 
         def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
 
-        logger.debug(structuralParameters)
+        LOGGER.debug(structuralParameters)
 
         assertEquals("Checking number of structural parameters", 8, structuralParameters.size())
         
@@ -123,7 +123,7 @@ class ModelObjectToJSONTest {
         
         def structuralParameters = modelObject.STRUCTURAL_PARAMETERS
         
-        logger.debug(structuralParameters)
+        LOGGER.debug(structuralParameters)
 
         assertEquals("Checking number of structural parameters", 10, structuralParameters.size())
         
@@ -140,7 +140,7 @@ class ModelObjectToJSONTest {
 
         def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
 
-        logger.debug(variabilityParameters)
+        LOGGER.debug(variabilityParameters)
 
         assertEquals("Checking number of variability parameters", 4, variabilityParameters.size())
         
@@ -162,7 +162,7 @@ class ModelObjectToJSONTest {
 
         def variabilityParameters = modelObject.VARIABILITY_PARAMETERS
 
-        logger.debug(variabilityParameters)
+        LOGGER.debug(variabilityParameters)
 
         assertEquals("Checking number of variability parameters", 7, variabilityParameters.size())
         
@@ -183,7 +183,7 @@ class ModelObjectToJSONTest {
     
         def randomVariableDefinitions = modelObject.RANDOM_VARIABLE_DEFINITION
         
-        logger.debug(randomVariableDefinitions)
+        LOGGER.debug(randomVariableDefinitions)
         
         assertEquals("Checking number of random variable definitions", 5, randomVariableDefinitions.size())
         
@@ -221,7 +221,7 @@ class ModelObjectToJSONTest {
     
         def randomVariableDefinitions = modelObject.RANDOM_VARIABLE_DEFINITION
         
-        logger.debug(randomVariableDefinitions)
+        LOGGER.debug(randomVariableDefinitions)
         
         assertEquals("Checking number of random variable definitions", 9, randomVariableDefinitions.size())
         
@@ -265,7 +265,7 @@ class ModelObjectToJSONTest {
 
         def individualVars = modelObject.INDIVIDUAL_VARIABLES
 
-        logger.debug(individualVars)
+        LOGGER.debug(individualVars)
 
         assertEquals("Checking number of Individual Variables", 4, individualVars.size())
         
@@ -297,7 +297,7 @@ class ModelObjectToJSONTest {
 
         def individualVars = modelObject.INDIVIDUAL_VARIABLES
 
-        logger.debug(individualVars)
+        LOGGER.debug(individualVars)
 
         assertEquals("Checking number of Individual Variables", 28, individualVars.size())
         
@@ -341,7 +341,7 @@ class ModelObjectToJSONTest {
 
         def individualVars = modelObject.INDIVIDUAL_VARIABLES
 
-        logger.debug(individualVars)
+        LOGGER.debug(individualVars)
 
         assertEquals("Checking number of Individual Variables", 4, individualVars.size())
         
@@ -371,7 +371,7 @@ class ModelObjectToJSONTest {
 
         def individualVars = modelObject.INDIVIDUAL_VARIABLES
 
-        logger.debug(individualVars)
+        LOGGER.debug(individualVars)
 
         assertEquals("Checking number of Individual Variables", 4, individualVars.size())
         
@@ -391,7 +391,7 @@ class ModelObjectToJSONTest {
 
         def individualVars = modelObject.INDIVIDUAL_VARIABLES
 
-        logger.debug(individualVars)
+        LOGGER.debug(individualVars)
 
         assertEquals("Checking number of Individual Variables", 10, individualVars.size())
         
@@ -419,7 +419,7 @@ class ModelObjectToJSONTest {
 
         def modelObject = json.Hansson2013_mdl
 
-        logger.debug(modelObject)
+        LOGGER.debug(modelObject)
 
         def observation = modelObject.OBSERVATION
 
@@ -445,7 +445,7 @@ class ModelObjectToJSONTest {
 
         def modelObject = json.warfarin_PK_BOV_mdl
 
-        logger.debug(modelObject)
+        LOGGER.debug(modelObject)
 
         def observation = modelObject.OBSERVATION
 
@@ -462,7 +462,7 @@ class ModelObjectToJSONTest {
 
         def modelObject = json.warfarin_PK_ANALYTIC_mdl
 
-        logger.debug(modelObject)
+        LOGGER.debug(modelObject)
 
         def modPred = modelObject.MODEL_PREDICTION
 
@@ -479,7 +479,7 @@ class ModelObjectToJSONTest {
 
         def modelObject = json.Hansson2013_mdl
 
-        logger.debug(modelObject)
+        LOGGER.debug(modelObject)
 
         def modPred = modelObject.MODEL_PREDICTION
 
@@ -519,7 +519,7 @@ class ModelObjectToJSONTest {
         
         def modelObject = json.warfarin_PK_2Compartments_mdl
         
-        logger.debug(modelObject)
+        LOGGER.debug(modelObject)
         
         def modPred = modelObject.MODEL_PREDICTION
         
@@ -547,7 +547,7 @@ class ModelObjectToJSONTest {
 
         def modelObject = json.warfarin_PK_BOV_mdl
 
-        logger.debug(modelObject)
+        LOGGER.debug(modelObject)
 
         def groupVars = modelObject.GROUP_VARIABLES
 
@@ -565,7 +565,7 @@ class ModelObjectToJSONTest {
         
         def modelObject = json.warfarin_PK_2Compartments_mdl
         
-        logger.debug(modelObject)
+        LOGGER.debug(modelObject)
         
         def modelOutputVars = modelObject.MODEL_OUTPUT_VARIABLES
         
@@ -582,7 +582,7 @@ class ModelObjectToJSONTest {
         
         def modelObject = json.Poisson_DIST_mdl
         
-        logger.debug(modelObject)
+        LOGGER.debug(modelObject)
         
         def observation = modelObject.OBSERVATION
         
@@ -599,7 +599,7 @@ class ModelObjectToJSONTest {
         
         def modelObject = json.Friberg_PANSS_CPT2009_mdl
         
-        logger.debug(modelObject)
+        LOGGER.debug(modelObject)
         
         assertEquals("EFF when (TIME>0 && AUC>0) otherwise 0", modelObject.MODEL_PREDICTION[3][(Variable.EXPRESSION_KEY)])
         

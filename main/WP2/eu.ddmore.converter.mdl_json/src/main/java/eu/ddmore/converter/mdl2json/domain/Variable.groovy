@@ -3,7 +3,6 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain;
 
-import org.apache.log4j.Logger
 import org.ddmore.mdl.mdl.Argument
 import org.ddmore.mdl.mdl.PkMacroStatement
 
@@ -22,8 +21,6 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper
  * {@link org.ddmore.mdl.mdl.PkMacroStatement}, an unnamed list (no operator).
  */
 public class Variable extends Expando implements MDLPrintable {
-
-    private static Logger logger = Logger.getLogger(Variable.class)
 
     public static final String NAME_KEY = ".name"
     public static final String EXPRESSION_KEY = ".expr"

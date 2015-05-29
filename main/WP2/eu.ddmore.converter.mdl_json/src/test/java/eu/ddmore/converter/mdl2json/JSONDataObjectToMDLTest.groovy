@@ -6,6 +6,7 @@ package eu.ddmore.converter.mdl2json;
 import static org.junit.Assert.*
 
 import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
+import static eu.ddmore.converter.mdl2json.testutils.MdlFileContentTestUtils.*
 
 import org.apache.log4j.Logger
 
@@ -19,7 +20,7 @@ import org.junit.Ignore
 import org.junit.Test;
 
 class JSONDataObjectToMDLTest {
-    private static Logger logger = Logger.getLogger(JSONDataObjectToMDLTest.class)
+    private static final Logger LOGGER = Logger.getLogger(JSONDataObjectToMDLTest.class)
 
     // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
     private String sourceBlockJson_UseCase1 =
@@ -196,10 +197,10 @@ class JSONDataObjectToMDLTest {
 
         MCLFile mclFile = new MCLFile(json)
 
-        logger.debug(mclFile.toMDL())
+        LOGGER.debug(mclFile.toMDL())
 
-        extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "SOURCE", mclFile.toMDL())
-        extractBlockFromOriginalMDLAndCompareIgnoringWhitespaceAndComments(mdlFile, "DATA_INPUT_VARIABLES", mclFile.toMDL())
+        assertMDLBlockEqualityIgnoringWhitespaceAndComments(mdlFile, "SOURCE", mclFile.toMDL())
+        assertMDLBlockEqualityIgnoringWhitespaceAndComments(mdlFile, "DATA_INPUT_VARIABLES", mclFile.toMDL())
 
     }
 

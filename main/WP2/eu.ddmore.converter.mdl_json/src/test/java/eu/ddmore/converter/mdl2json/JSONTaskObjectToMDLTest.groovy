@@ -7,14 +7,11 @@ import static org.junit.Assert.*
 
 import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
 
-import org.apache.log4j.Logger
 import org.junit.Test
 
 import eu.ddmore.converter.mdl2json.domain.Task
 
 class JSONTaskObjectToMDLTest {
-
-    private static Logger logger = Logger.getLogger(JSONTaskObjectToMDLTest.class)
 
     // Using slashy strings /.../ here so we don't have to escape anything other than forward slashes
     private static final String estimateBlockJson_UseCase16 =

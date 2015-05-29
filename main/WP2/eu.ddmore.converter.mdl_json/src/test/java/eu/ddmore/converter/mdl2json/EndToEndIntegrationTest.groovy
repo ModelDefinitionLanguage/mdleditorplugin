@@ -15,7 +15,7 @@ import org.junit.Test
 import eu.ddmore.converter.mdl2json.domain.MCLFile
 
 class EndToEndIntegrationTest {
-    private static Logger logger = Logger.getLogger(EndToEndIntegrationTest.class)
+    private static final Logger LOGGER = Logger.getLogger(EndToEndIntegrationTest.class)
     
     /**
      * Tests for the the presence of the top-level objects in the JSON representation of an MDL file:
@@ -64,10 +64,10 @@ class EndToEndIntegrationTest {
         
         def outputMdl = new MCLFile(json).toMDL()
         
-        logger.debug(outputMdl)
+        LOGGER.debug(outputMdl)
         
         ALL_BLOCK_NAMES.each { blockName ->
-            logger.info("About to process block " + blockName + "...")
+            LOGGER.info("About to process block " + blockName + "...")
             assertMDLBlockEqualityIgnoringWhitespaceAndComments(origMdlFile, blockName, outputMdl)
         }
     }

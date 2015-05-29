@@ -5,8 +5,6 @@ package eu.ddmore.converter.mdl2json.domain
 
 import java.util.Map
 
-import org.apache.log4j.Logger
-
 import com.google.common.base.Preconditions
 
 import org.ddmore.mdl.mdl.PkMacroStatement;
@@ -20,8 +18,6 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 
 public class ModelPredictionItem extends Variable implements MDLPrintable {
-
-    private static Logger logger = Logger.getLogger(ModelPredictionItem.class)
     
     /**
      * This character is used as a prefix to distinguish sub-blocks from 'normal' variables;

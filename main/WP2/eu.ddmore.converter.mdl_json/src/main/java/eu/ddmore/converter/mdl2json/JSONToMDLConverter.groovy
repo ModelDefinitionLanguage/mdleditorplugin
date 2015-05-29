@@ -22,7 +22,7 @@ import groovy.json.JsonSlurper
  */
 public class JSONToMDLConverter implements ConverterProvider {
 
-    private static Logger logger = Logger.getLogger(this.getClass());
+    private static final Logger LOGGER = Logger.getLogger(this.getClass());
 
     private static final String MDL_FILE_EXTENSION = ".mdl"
     private static final String JSON_FILE_EXTENSION = ".json"
@@ -53,8 +53,7 @@ public class JSONToMDLConverter implements ConverterProvider {
             report.setReturnCode(ConversionCode.SUCCESS);
         } else {
             def errorMsg = "Could not parse " + src.getPath()
-            logger.error(errorMsg)
-            System.err.println(errorMsg)
+            LOGGER.error(errorMsg)
             report.setReturnCode(ConversionCode.FAILURE)
         }
 
