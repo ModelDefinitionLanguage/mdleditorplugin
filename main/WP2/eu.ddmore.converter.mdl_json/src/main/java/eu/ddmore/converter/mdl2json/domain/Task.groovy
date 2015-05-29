@@ -32,10 +32,10 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
         for (TaskObjectBlock block : taskObj.blocks) {
 
             if (block.getEstimateBlock()) {
-                setProperty(ESTIMATE, printIdentifiedBlock(block.getEstimateBlock(), statementPrinter))
+                setProperty(ESTIMATE, statementPrinter(block.getEstimateBlock()))
             }
             if (block.getSimulateBlock()) {
-                setProperty(SIMULATE, printIdentifiedBlock(block.getSimulateBlock(), statementPrinter))
+                setProperty(SIMULATE, statementPrinter(block.getSimulateBlock()))
             }
         }
     }
@@ -51,29 +51,6 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
         json.each { k, v ->
             setProperty(k, v)
         }
-    }
-
-    /**
-     * Print out the block that has an identifier. Prints out the identifer, possibly any arguments to this identified block,
-     * and then delegates printing of the contents of the block to the supplied blockPrinter
-     * 
-     * @param identifiedBlock The block that has an identifier
-     * @param blockPrinter The closure that will print the block contents
-     * @return
-     */
-    String printIdentifiedBlock(identifiedBlock, blockPrinter) {
-//		StringBuffer buff = new StringBuffer("\n")
-//		buff.append(identifiedBlock.getIdentifier())
-//		if(identifiedBlock.metaClass.hasProperty(identifiedBlock, "arguments")) {
-//			buff.append("(")
-//			buff.append(identifiedBlock.arguments.arguments.collect { Argument arg -> "${arg.argumentName.name}=${XtextWrapper.unwrap(arg.expression)}" }.join(","))
-//			buff.append(")")
-//		}
-//		buff.append("{")
-//		buff.append(blockPrinter(identifiedBlock))
-//		buff.append("}\n")
-
-        blockPrinter(identifiedBlock)
     }
 
     /**
