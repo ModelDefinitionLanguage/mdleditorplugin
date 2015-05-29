@@ -9,6 +9,7 @@ import org.ddmore.mdl.mdl.SymbolDeclaration
 import org.ddmore.mdl.validation.Utils
 import org.ddmore.mdl.mdl.ModelObject
 import java.util.HashMap
+import org.ddmore.mdl.mdl.SymbolName
 
 class PKMacrosPrinter{
 	extension MdlPrinter mdlPrinter = MdlPrinter::getInstance();
@@ -51,6 +52,7 @@ class PKMacrosPrinter{
 	
 	def print_PKMacros(SymbolDeclaration s){
 		//Convert symbolName to 'amount' PharmML attribute
+		var retVal = ''''''
 		if (s.list != null){
 			var content = "";
 			var type = s.list.arguments.getAttribute(AttributeValidator::attr_type_macro.name);
@@ -71,11 +73,25 @@ class PKMacrosPrinter{
 			var macroType = pk_types.get(type);
 			if (macroType != null){
 				content = content + type.print_PKAttributes(s.list.arguments);
-				return macroType.print_PKMacros(content);
+				retVal = macroType.print_PKMacros(content).toString;
+			}
+			if(type == PkMacroType::TRANSFER.toString){
+				// because a transfer is also a compartment it means that we need to also
+				// create a new compartment definition for it.
+					retVal = retVal + s.symbolName.printImplicitCompartment(s.list.arguments)
 			}
 		}
-		return "";
+		return retVal;
 	}
+	
+	def printImplicitCompartment(SymbolName name, Arguments args)'''
+		<Compartment>
+			<Value argument="amount"> 
+				«name.print_ct_SymbolRef»
+			</Value>
+			«"cmt".print_Attr_Value(args.getAttribute(AttributeValidator::attr_modelCmt.name).print_ct_Value)»
+		</Compartment>
+	'''
 	
 	def print_PKMacros(List list){
 		var retVal = ''''''
@@ -106,7 +122,7 @@ class PKMacrosPrinter{
 			//Custom mapping
 			//DEPOT, INPUT
 			if (type.equals(PkMacroType::DEPOT.toString) || type.equals(PkMacroType::DIRECT.toString)){
-				//type=depot|direct && modelCmt=2 -> adm=1, cmt=1 or from context
+				//type=depot|direct
 				val modelCmt = args.getAttribute(AttributeValidator::attr_modelCmt.name);
 //				if (modelCmt.equals("2"))
 				attrExpressions.put("adm", modelCmt.print_adm);
@@ -168,8 +184,9 @@ class PKMacrosPrinter{
 			if (type.equals(PkMacroType::TRANSFER.toString)){
 				attrExpressions.put("cmt", null); //skip cmt attribute in transfer macro
 				val modelCmt = args.getAttribute(AttributeValidator::attr_modelCmt.name);
-				if (modelCmt.length > 0) 
-					attrExpressions.put("to", modelCmt.print_ct_Value);
+				if (modelCmt.length > 0){ 
+					attrExpressions.put("to", "to".print_Attr_Value(modelCmt.print_ct_Value));
+				}
 				val from = args.getAttribute(AttributeValidator::attr_from.name);
 				if (from.length > 0){
 					var mObj = Utils::getMclObject(args);
