@@ -15,7 +15,7 @@ import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
-    public static final String IDENTIFIER = "taskobj"
+    public static final TopLevelBlock.Identifier IDENTIFIER = TopLevelBlock.Identifier.taskobj
 
     public static final String ESTIMATE = "ESTIMATE"
     public static final String SIMULATE = "SIMULATE"
@@ -59,6 +59,13 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
             it.getPropertyName().getName() + "=" + XtextWrapper.unwrap(it.getExpression())
         }.join("\n")
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public TopLevelBlock.Identifier getIdentifier() {
+        return IDENTIFIER
+    }
 
     /**
      * {@inheritDoc}
@@ -76,8 +83,4 @@ ${mdl.toString()}
 """
     }
 
-    @Override
-    public int getPrintedOrder() {
-        return 4;
-    }
 }

@@ -15,7 +15,7 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
-    public static final String IDENTIFIER = "mdlobj"
+    public static final TopLevelBlock.Identifier IDENTIFIER = TopLevelBlock.Identifier.mdlobj
 
     public static final String IDV = "IDV"
     public static final String COVARIATES = "COVARIATES"
@@ -131,6 +131,13 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
         }
         
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public TopLevelBlock.Identifier getIdentifier() {
+        return IDENTIFIER
+    }
 
     /**
      * {@inheritDoc}
@@ -158,11 +165,6 @@ public class Model extends Expando implements MDLPrintable, MDLAsJSON, TopLevelB
 ${mdl.toString()}
 }
 """
-    }
-
-    @Override
-    public int getPrintedOrder() {
-        return 3;
     }
 
 }

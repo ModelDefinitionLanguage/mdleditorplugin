@@ -18,7 +18,7 @@ import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
  */
 public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
-    public static final String IDENTIFIER = "mogobj"
+    public static final TopLevelBlock.Identifier IDENTIFIER = TopLevelBlock.Identifier.mogobj
 
     public static final String OBJECTS = "OBJECTS"
 
@@ -55,6 +55,13 @@ public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlo
     /**
      * {@inheritDoc}
      */
+    public TopLevelBlock.Identifier getIdentifier() {
+        return IDENTIFIER
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toMDL() {
         final StringBuffer mdl = new StringBuffer()
@@ -76,11 +83,6 @@ public class Mog extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlo
 ${mdl.toString()}
 }
 """
-    }
-
-    @Override
-    public int getPrintedOrder() {
-        return 10; // Sufficiently large to always appear at the end of the file
     }
 
 }

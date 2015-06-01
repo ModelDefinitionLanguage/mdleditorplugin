@@ -17,7 +17,6 @@ public class MCLFile extends Expando {
 
         for (MclObject mclObj : mclFile.getObjects()) {
             String name = mclObj.getObjectName().getName()
-            // log println " found ${name}"
             if(mclObj.getDataObject()) {
                 setProperty(name, new Data(mclObj.getDataObject()))
             } else if (mclObj.getModelObject()) {
@@ -40,7 +39,7 @@ public class MCLFile extends Expando {
             it.each { key, value ->
                 // Each key/value pair is the object (e.g. ex_model7_prolactin_Jan2014_dat -> properties )
                 String type = value.identifier
-                switch (type) {
+                switch (TopLevelBlock.Identifier.valueOf(type)) {
                     case Task.IDENTIFIER:
                         setProperty(key, new Task(value));
                         break;
@@ -70,7 +69,7 @@ public class MCLFile extends Expando {
     public String toMDL() {
         StringBuffer sb = new StringBuffer()
         getProperties().sort{ Map.Entry<String, TopLevelBlock> me ->
-            me.value.getPrintedOrder()
+            me.value.getIdentifier().ordinal()
         }.each{ String key, MDLPrintable value ->
             if (key) {
                 sb.append("\n${key} = ${value.toMDL()}")

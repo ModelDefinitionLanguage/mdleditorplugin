@@ -12,7 +12,7 @@ import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
 
 public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
-    public static final String IDENTIFIER = "dataobj"
+    public static final TopLevelBlock.Identifier IDENTIFIER = TopLevelBlock.Identifier.dataobj
 
     public static final String SOURCE = "SOURCE"
     public static final String DECLARED_VARIABLES = "DECLARED_VARIABLES"
@@ -60,6 +60,13 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
     /**
      * {@inheritDoc}
      */
+    public TopLevelBlock.Identifier getIdentifier() {
+        return IDENTIFIER
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String toMDL() {
         StringBuffer mdl = new StringBuffer()
         def blocks = getProperties().minus([(IDENTIFIER_PROPNAME):(IDENTIFIER)])
@@ -70,11 +77,6 @@ public class Data extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
 ${mdl.toString()}
 }
 """
-    }
-
-    @Override
-    public int getPrintedOrder() {
-        return 1;
     }
 
 }
