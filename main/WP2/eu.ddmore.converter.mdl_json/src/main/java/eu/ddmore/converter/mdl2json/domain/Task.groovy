@@ -15,7 +15,7 @@ import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
-    public static final String IDENTIFIER = "taskobj"
+    public static final TopLevelBlock.Identifier IDENTIFIER = TopLevelBlock.Identifier.taskobj
 
     public static final String ESTIMATE = "ESTIMATE"
     public static final String SIMULATE = "SIMULATE"
@@ -25,7 +25,7 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
      * @param taskObj
      */
     public Task(TaskObject taskObj) {
-        setProperty(IDENTIFIER_PROPNAME, taskObj.getIdentifier())
+        setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
 
         for (TaskObjectBlock block : taskObj.blocks) {
 
@@ -44,11 +44,17 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
      * @param json
      */
     public Task(Map json) {
-        setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
 
         json.each { k, v ->
             setProperty(k, v)
         }
+        
+        // Set the identifier property after the setting of the other properties
+        // because "identifier" itself is one of those properties and we want to
+        // set it to the appropriate TopLevelBlock.Identifier enum value rather
+        // than its string value in the JSON.
+        // This way round, it doesn't get overwritten.
+        setProperty(IDENTIFIER_PROPNAME, IDENTIFIER)
     }
 
     /**
@@ -58,6 +64,13 @@ public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBl
         statementHolder.statements.collect{
             it.getPropertyName().getName() + "=" + XtextWrapper.unwrap(it.getExpression())
         }.join("\n")
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public TopLevelBlock.Identifier getIdentifier() {
+        return IDENTIFIER
     }
 
     /**
@@ -76,8 +89,4 @@ ${mdl.toString()}
 """
     }
 
-    @Override
-    public int getPrintedOrder() {
-        return 4;
-    }
 }

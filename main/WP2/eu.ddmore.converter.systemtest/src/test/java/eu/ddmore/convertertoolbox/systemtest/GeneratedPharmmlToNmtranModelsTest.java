@@ -2,9 +2,6 @@ package eu.ddmore.convertertoolbox.systemtest;
 
 import static java.util.regex.Matcher.quoteReplacement;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -17,10 +14,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-
-import eu.ddmore.convertertoolbox.systemtest.FileType;
 
 /**
  * Run PharmML -> NMTRAN conversions, but on PharmML files that were output by MDL -> PharmML
@@ -132,7 +128,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
             try {
                 FileUtils.copyDirectory(srcDir, destDir);
             } catch (final IOException ioe) {
-                fail("Unable to copy generated PharmML models from " + srcDir + " to " + destDir + " - Cause: " + ioe);
+                throw new RuntimeException("Unable to copy generated PharmML models from " + srcDir + " to " + destDir, ioe);
             }
         }
 
@@ -150,7 +146,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
      * directory structure in {@link #copyGeneratedPharmmlFiles()} and upon which the conversion
      * will be run, within this constructor.
      * <p>
-     * @param originalMdlModel - the original MDL model {@link File}, from which the generated Pharmml model
+     * @param originalMdlModel - the original MDL model {@link File}, from which the generated PharmML model
      *                           {@link File} is obtained
      * @param modelShortPath - the path to the model with the "target/WorkingDir/test-models/"
      *                         prefix stripped off; this is incorporated into the display name of the test
@@ -159,8 +155,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
     public GeneratedPharmmlToNmtranModelsTest(final File originalMdlModel, final String modelShortPath) {
         // Obtain generatedPharmmlModel from originalMdlModel
         this.generatedPharmmlModel = new File(getGeneratedPharrmlModelFilePathFromMdlModelFilePath(originalMdlModel.getPath()));
-        assertTrue("Generated PharmML model \"" + this.generatedPharmmlModel + "\" was not found. Was MdlModelsTest run first?",
-            this.generatedPharmmlModel.exists());
+        Preconditions.checkState(this.generatedPharmmlModel.exists(), "Generated PharmML model \"%s\" was not found. Was MdlToPharmmlModelsTest run first?", this.generatedPharmmlModel);
     }
 
     /**

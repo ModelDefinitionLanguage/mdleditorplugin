@@ -19,8 +19,7 @@ import eu.ddmore.mdlparse.MdlParser
 import groovy.json.JsonSlurper
 
 
-// This class is public since some of its fields and methods are imported and used by the converter toolbox "systemtest" project.
-public class MdlAndJsonFileUtils {
+class MdlAndJsonFileUtils {
 
     private final static String TEST_DATA_DIR = "./"
     private final static String MODELS_PROJECT_TEST_DATA_DIR = "/test-models/"

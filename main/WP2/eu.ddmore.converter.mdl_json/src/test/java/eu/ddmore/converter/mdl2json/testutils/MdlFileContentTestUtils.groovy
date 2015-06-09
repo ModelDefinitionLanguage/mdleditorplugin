@@ -3,7 +3,8 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.testutils
 
-import groovy.json.JsonSlurper
+import static eu.ddmore.converter.mdl2json.interfaces.MDLPrintable.IDT
+import static org.junit.Assert.*
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -12,19 +13,13 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
 
+import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.domain.Data
 import eu.ddmore.converter.mdl2json.domain.Model
 import eu.ddmore.converter.mdl2json.domain.ModelPredictionItem
 import eu.ddmore.converter.mdl2json.domain.Mog
 import eu.ddmore.converter.mdl2json.domain.Parameter
-import eu.ddmore.converter.mdl2json.domain.Source
 import eu.ddmore.converter.mdl2json.domain.Task
-import static eu.ddmore.converter.mdl2json.interfaces.MDLPrintable.IDT
-
-import org.ddmore.mdl.mdl.Mcl
-import eu.ddmore.mdlparse.MdlParser
-
-import static org.junit.Assert.*
 
 /**
  * The fields and methods below are used in testing a MDL->JSON->MDL pipeline.
@@ -535,6 +530,26 @@ class MdlFileContentTestUtils {
         }
         
         outStr
+    }
+    
+    /**
+     * This is a check introduced for DDMORE-1294.
+     * <p>
+     * The JSON representation of an MDL file includes a name-value pair within each of the
+     * top-level blocks identifying that block.
+     * <p>
+     * E.g. <pre>"identifier":"dataobj"</pre>
+     * <p>
+     * When writing out the MDL from the JSON, these identifiers are used to create the
+     * appropriate top-level object blocks, but then the identifier JSON fragments
+     * themselves should be discarded rather than being written out as an actual block
+     * to the MDL file.
+     * <p>
+     * @param outputMdlFileContent - The string content of the MDL file that has been written out from JSON
+     */
+    public static assertNoTopLevelObjectIdentifierPseudoBlocksInWrittenOutMdlFile(final String outputMdlFileContent) {
+        assertFalse("Checking that no \"identifier\" pseudo-blocks from the JSON representation are written out as actual blocks to the MDL file",
+            outputMdlFileContent.contains(MDLAsJSON.IDENTIFIER_PROPNAME + " {"))
     }
     
 }

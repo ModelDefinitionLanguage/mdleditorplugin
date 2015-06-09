@@ -9,9 +9,26 @@ package eu.ddmore.converter.mdl2json.interfaces;
 public interface TopLevelBlock {
 
     /**
-     * @return an integer value indicating whereabouts in the MDL file this block is to printed;
-     *         the lower the number the nearer to the top of the file it will appear
+     * @return {@link TopLevelBlock.Identifier} enum value that identifies this top-level block;
+     *         it is the string that tags the top-level block in the MDL file
      */
-    public int getPrintedOrder();
+    Identifier getIdentifier();
+
+    /**
+     * Enumerates the top-level blocks in an MDL file. The values are the strings that tag the
+     * top-level blocks in the MDL file.
+     * <p>
+     * The order in which the identifier names appear here is important in that this defines
+     * the order in which the blocks will appear in a written out MDL file; the top-level blocks
+     * are sorted into this order (using the {@link Enum#ordinal()) method on each enum value)
+     * before being written out.
+     */
+    enum Identifier {
+        dataobj,
+        parobj,
+        mdlobj,
+        taskobj,
+        mogobj // Must appear last in this list - see the JavaDoc comment
+    }
 
 }

@@ -17,7 +17,7 @@ import eu.ddmore.converter.mdl2json.utils.XtextWrapper
 
 public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {
 
-    public static final String IDENTIFIER = "parobj"
+    public static final TopLevelBlock.Identifier IDENTIFIER = TopLevelBlock.Identifier.parobj
 
     public static final String STRUCTURAL = "STRUCTURAL"
     public static final String VARIABILITY = "VARIABILITY"
@@ -215,6 +215,13 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
         strBuf.append("${IDT}}\n")
         strBuf.toString()
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public TopLevelBlock.Identifier getIdentifier() {
+        return IDENTIFIER
+    }
 
     /**
      * {@inheritDoc}
@@ -236,11 +243,6 @@ public class Parameter extends Expando implements MDLPrintable, MDLAsJSON, TopLe
 ${mdl.toString()}
 }
 """
-    }
-
-    @Override
-    public int getPrintedOrder() {
-        return 2;
     }
 
 }

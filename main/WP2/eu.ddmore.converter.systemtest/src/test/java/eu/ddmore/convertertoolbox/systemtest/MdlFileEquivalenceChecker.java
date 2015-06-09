@@ -1,6 +1,9 @@
 package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 
 import eu.ddmore.converter.mdl2json.testutils.MdlFileContentTestUtils;
 
@@ -34,6 +37,11 @@ class MdlFileEquivalenceChecker extends DefaultConverterOutputFailureChecker {
         super.check(expectedOutputMdlFile, stdoutFile, stderrFile);
         for (final String blockName : MdlFileContentTestUtils.ALL_BLOCK_NAMES) {
             MdlFileContentTestUtils.assertMDLBlockEqualityIgnoringWhitespaceAndComments(this.baselineMdlFile, blockName, expectedOutputMdlFile);
+            try {
+                MdlFileContentTestUtils.assertNoTopLevelObjectIdentifierPseudoBlocksInWrittenOutMdlFile(FileUtils.readFileToString(expectedOutputMdlFile));
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to read output MDL file: " + expectedOutputMdlFile);
+            }
         }
     }
 

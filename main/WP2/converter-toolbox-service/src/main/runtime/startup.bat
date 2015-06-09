@@ -8,7 +8,7 @@ REM  Locations without trailing '\'
 SET SERVICE_HOME=%~dp0
 IF %SERVICE_HOME:~-1%==\ SET SERVICE_HOME=%SERVICE_HOME:~0,-1%
 
-CD %SERVICE_HOME%
+CD "%SERVICE_HOME%"
 
 SET SERVICE_BINARY=${project.build.finalName}.${project.packaging}
 
@@ -20,17 +20,6 @@ popd
 
 SET CTS_LIBS_PATH="./lib,%CONVERTER_LIBS%/lib"
 
-IF NOT DEFINED JAVA_CMD (
-    echo Converter Toolbox Service is executing in standalone mode, outside of SEE, which would have set JAVA_CMD
-    IF EXIST "%JAVA_HOME%\bin\java.exe" (
-        echo Using Java from JAVA_HOME environment variable
-        SET JAVA_CMD="%JAVA_HOME%\bin\java"
-    ) ELSE (
-        echo Falling beck to using Java from system path; this will fail if Java is not installed
-        SET JAVA_CMD=java
-    )
-)
-
-%JAVA_CMD% -DAPP_HOME="%SERVICE_HOME%" -Dcts.workingDirectory="%SERVICE_HOME%\tmp" -Dloader.path=%CTS_LIBS_PATH% -jar %SERVICE_BINARY%
+java.exe -DAPP_HOME="%SERVICE_HOME%" -Dcts.workingDirectory="%SERVICE_HOME%\tmp" -Dloader.path=%CTS_LIBS_PATH% -jar %SERVICE_BINARY%
 
 EXIT
