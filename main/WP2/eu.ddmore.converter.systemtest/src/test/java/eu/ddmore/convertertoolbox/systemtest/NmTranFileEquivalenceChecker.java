@@ -75,15 +75,10 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
      * @throws IOException
      */
     private Map<String, StringBuilder> getFileContentWithoutComments(File expectedOutputNmTranFile) throws IOException{
-        Map<String, StringBuilder> blocks = new HashMap<String, StringBuilder>();
-        BufferedReader reader = null;
-        try{
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(expectedOutputNmTranFile)));
-            blocks = getAllNmTranBlocksFromFile(reader);
-        }finally{
-            reader.close();
+
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(expectedOutputNmTranFile)));){
+            return getAllNmTranBlocksFromFile(reader);
         }
-        return blocks;
     }
 
     /**
