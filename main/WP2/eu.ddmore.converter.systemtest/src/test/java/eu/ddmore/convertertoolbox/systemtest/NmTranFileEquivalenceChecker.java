@@ -55,7 +55,7 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
                     String expectedNmTranBlock = (baselineNmTranBlocks.get(block)).toString();
                     assertEquals("The output block content should match for Block :"+block, expectedNmTranBlock, actualNmTranBlock);
                 }
-                
+
             }else{
                 fail("Base line nmTran file doesn't exist " + expectedOutputNmTranFile);   
             }
@@ -93,11 +93,12 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
         String nextLine = null;
         StringBuilder fileContent = new StringBuilder();
         String blockName = new String();
-        
+
         while((nextLine = reader.readLine())!=null){
             if(nextLine.isEmpty() || nextLine.startsWith(COMMENT_SYMBOL)){
                 continue;
             }else if(nextLine.startsWith(BLOCK_SYMBOL)) {
+                //Encountered a new block, flush the old block and its content to the Map
                 if(!(blockName.isEmpty() || fileContent.toString().isEmpty())){
                     blocks.put(blockName, fileContent);
                     fileContent = new StringBuilder();
