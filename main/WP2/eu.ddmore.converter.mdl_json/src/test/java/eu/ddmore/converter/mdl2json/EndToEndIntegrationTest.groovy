@@ -70,6 +70,7 @@ class EndToEndIntegrationTest {
             LOGGER.info("About to process block " + blockName + "...")
             assertMDLBlockEqualityIgnoringWhitespaceAndComments(origMdlFile, blockName, outputMdl)
         }
+        assertNoTopLevelObjectIdentifierPseudoBlocksInWrittenOutMdlFile(outputMdl)
     }
 
 }

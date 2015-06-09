@@ -1,7 +1,6 @@
 package eu.ddmore.convertertoolbox.systemtest;
 
 import static java.util.regex.Matcher.quoteReplacement;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -129,7 +128,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
             try {
                 FileUtils.copyDirectory(srcDir, destDir);
             } catch (final IOException ioe) {
-                fail("Unable to copy generated PharmML models from " + srcDir + " to " + destDir + " - Cause: " + ioe);
+                throw new RuntimeException("Unable to copy generated PharmML models from " + srcDir + " to " + destDir, ioe);
             }
         }
 
