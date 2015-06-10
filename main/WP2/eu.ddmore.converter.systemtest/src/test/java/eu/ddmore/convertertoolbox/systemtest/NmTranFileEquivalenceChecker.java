@@ -37,33 +37,34 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
     }
 
     @Override
-    public void check(File expectedOutputNmTranFile, File stdoutFile, File stderrFile) {
-        super.check(expectedOutputNmTranFile, stdoutFile, stderrFile);
+    public void check(File generatedOutput, File stdout, File stderr) {
+        super.check(generatedOutput, stdout, stderr);
         try {
-            String outputFileName = expectedOutputNmTranFile.getName();
-            File outputParentDir = expectedOutputNmTranFile.getParentFile().getParentFile();
+            String outputFileName = generatedOutput.getName();
+            File outputParentDir = generatedOutput.getParentFile().getParentFile();
 
             File baselineNmTranFile = new File(ModelsDiscoverer.PATH_TO_MODELS_DIR+File.separator+NMTRAN_DIR+File.separator+
                 FileType.NMTRAN.getVersion()+File.separator+outputParentDir.getName()+File.separator+outputFileName);
 
             if(baselineNmTranFile.exists()){
-                Map<String, StringBuilder> outputNmTranBlocks = getFileContentWithoutComments(expectedOutputNmTranFile);
-                Map<String, StringBuilder> baselineNmTranBlocks = getFileContentWithoutComments(baselineNmTranFile);
+                Map<String, String> outputNmTranBlocks = getNmtranBlocks(generatedOutput);
+                Map<String, String> baselineNmTranBlocks = getNmtranBlocks(baselineNmTranFile);
 
                 for(String block : baselineNmTranBlocks.keySet()){
-                    String actualNmTranBlock = (outputNmTranBlocks.get(block)).toString();
-                    String expectedNmTranBlock = (baselineNmTranBlocks.get(block)).toString();
+                    String actualNmTranBlock = outputNmTranBlocks.get(block);
+                    String expectedNmTranBlock = baselineNmTranBlocks.get(block);
+                    outputNmTranBlocks.remove(block);
                     assertEquals("The output block content should match for Block :"+block, expectedNmTranBlock, actualNmTranBlock);
                 }
 
             }else{
-                fail("Base line nmTran file doesn't exist " + expectedOutputNmTranFile);   
+                fail("Base line nmTran file doesn't exist " + generatedOutput);   
             }
 
         } catch (Exception e) {
-            LOGGER.error("Exception thrown while parsing NmTran from file : " + expectedOutputNmTranFile);
+            LOGGER.error("Exception thrown while parsing NmTran from file : " + generatedOutput);
             LOGGER.error("Exception details : ", e);
-            fail("Error parsing NmTran from file " + expectedOutputNmTranFile);
+            fail("Error parsing NmTran from file " + generatedOutput);
         }
     }
 
@@ -74,10 +75,10 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
      * @return StringBuilder file content 
      * @throws IOException
      */
-    private Map<String, StringBuilder> getFileContentWithoutComments(File expectedOutputNmTranFile) throws IOException{
+    private Map<String, String> getNmtranBlocks(File expectedOutputNmTranFile) throws IOException{
 
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(expectedOutputNmTranFile)));){
-            return getAllNmTranBlocksFromFile(reader);
+            return getNmTranBlocks(reader);
         }
     }
 
@@ -88,8 +89,8 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
      * @return Map<String, StringBuilder> blocks with block content
      * @throws IOException
      */
-    private Map<String, StringBuilder> getAllNmTranBlocksFromFile(BufferedReader reader) throws IOException {
-        Map<String, StringBuilder> blocks = new HashMap<String, StringBuilder>();
+    private Map<String, String> getNmTranBlocks(BufferedReader reader) throws IOException {
+        Map<String, String> blocks = new HashMap<String, String>();
         String nextLine = null;
         StringBuilder fileContent = new StringBuilder();
         String blockName = new String();
@@ -98,13 +99,13 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
             if(nextLine.isEmpty() || nextLine.startsWith(COMMENT_SYMBOL)){
                 continue;
             }else if(nextLine.startsWith(BLOCK_SYMBOL)) {
-                addBlockContentToMap(blockName,fileContent,blocks);
+                addBlockContentToMap(blockName,fileContent.toString(),blocks);
                 fileContent = new StringBuilder();
                 blockName = getBlockName(nextLine);
             }
             fileContent.append(nextLine.trim()+ System.getProperty("line.separator"));
         }
-        addBlockContentToMap(blockName,fileContent,blocks);
+        addBlockContentToMap(blockName,fileContent.toString(),blocks);
 
         return blocks;
     }
@@ -116,8 +117,8 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
      * @param fileContent
      * @param blocks
      */
-    private void addBlockContentToMap(String blockName, StringBuilder fileContent, Map<String, StringBuilder> blocks ){
-        if(!(blockName.isEmpty() || fileContent.toString().isEmpty())){
+    private void addBlockContentToMap(String blockName, String fileContent, Map<String, String> blocks ){
+        if(!(blockName.isEmpty() || fileContent.isEmpty())){
             blocks.put(blockName, fileContent);
         }
     }
