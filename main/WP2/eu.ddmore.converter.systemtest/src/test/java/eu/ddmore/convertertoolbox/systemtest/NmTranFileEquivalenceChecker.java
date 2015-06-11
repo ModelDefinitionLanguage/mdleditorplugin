@@ -47,8 +47,6 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
             File outputParentDir = generatedOutput.getParentFile().getParentFile();
             File baselineNmTranFile = Paths.get(ModelsDiscoverer.PATH_TO_MODELS_DIR,NMTRAN_DIR,
                 FileType.NMTRAN.getVersion(),outputParentDir.getName(),outputFileName).toFile();
-//            File baselineNmTranFile = new File(ModelsDiscoverer.PATH_TO_MODELS_DIR+File.separator+NMTRAN_DIR+File.separator+
-//                FileType.NMTRAN.getVersion()+File.separator+outputParentDir.getName()+File.separator+outputFileName);
 
             if(baselineNmTranFile.exists()){
                 Map<String, String> outputNmTranBlocks = getNmtranBlocks(generatedOutput);
