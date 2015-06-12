@@ -102,19 +102,28 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
             if(nextLine.isEmpty() || nextLine.startsWith(COMMENT_SYMBOL)){
                 continue;
             }else if(nextLine.startsWith(BLOCK_SYMBOL)) {
-                if(!(blockName.isEmpty() || fileContent.toString().isEmpty())){
-                    blocks.put(blockName, fileContent.toString());
-                }
+                addBlockContentToMap(blockName,fileContent.toString(),blocks);
                 fileContent = new StringBuilder();
                 blockName = getBlockName(nextLine);
             }
             fileContent.append(nextLine.trim()+ System.getProperty("line.separator"));
         }
-        if(!(blockName.isEmpty() || fileContent.toString().isEmpty())){
-            blocks.put(blockName, fileContent.toString());
-        }
+        addBlockContentToMap(blockName,fileContent.toString(),blocks);
 
         return blocks;
+    }
+
+    /**
+     * When a new block is Encountered or if its last block, flush the old block and its content to the blocks Map
+     * 
+     * @param blockName
+     * @param fileContent
+     * @param blocks
+     */
+    private void addBlockContentToMap(String blockName, String fileContent, Map<String, String> blocks ){
+        if(!(blockName.isEmpty() || fileContent.isEmpty())){
+            blocks.put(blockName, fileContent);
+        }
     }
 
     /**
