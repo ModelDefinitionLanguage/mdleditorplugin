@@ -4,6 +4,8 @@
 package eu.ddmore.convertertoolbox.systemtest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
@@ -11,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,9 +45,8 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
         try {
             String outputFileName = generatedOutput.getName();
             File outputParentDir = generatedOutput.getParentFile().getParentFile();
-
-            File baselineNmTranFile = new File(ModelsDiscoverer.PATH_TO_MODELS_DIR+File.separator+NMTRAN_DIR+File.separator+
-                FileType.NMTRAN.getVersion()+File.separator+outputParentDir.getName()+File.separator+outputFileName);
+            File baselineNmTranFile = Paths.get(ModelsDiscoverer.PATH_TO_MODELS_DIR,NMTRAN_DIR,
+                FileType.NMTRAN.getVersion(),outputParentDir.getName(),outputFileName).toFile();
 
             if(baselineNmTranFile.exists()){
                 Map<String, String> outputNmTranBlocks = getNmtranBlocks(generatedOutput);
@@ -56,6 +58,7 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
                     outputNmTranBlocks.remove(block);
                     assertEquals("The output block content should match for Block :"+block, expectedNmTranBlock, actualNmTranBlock);
                 }
+                assertTrue("There should not be any redundant nmtran blocks",outputNmTranBlocks.isEmpty());
 
             }else{
                 fail("Base line nmTran file doesn't exist " + generatedOutput);   
