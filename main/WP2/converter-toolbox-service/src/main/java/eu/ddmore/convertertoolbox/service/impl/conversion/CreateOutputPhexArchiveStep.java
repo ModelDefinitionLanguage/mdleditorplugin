@@ -67,7 +67,8 @@ public class CreateOutputPhexArchiveStep implements ConversionStep {
         Archive archive = archiveFactory.createArchive(outputArchive);
         try {
             archive.open();
-            archiveFactory.createArchiveHelper(archive).addDirectoryContents(outputDir, "");
+            LOG.info("Adding directory contents into output archive: " + outputDir + " at " + FilenameUtils.getPathNoEndSeparator(conversion.getInputFileName()));
+            archiveFactory.createArchiveHelper(archive).addDirectoryContents(outputDir, FilenameUtils.getPathNoEndSeparator(conversion.getInputFileName()));
             Collection<Entry> matches = Collections2.filter(archive.getEntries(),new ResultEntryPredicate(conversion,resultFileNamePattern));
             Preconditions.checkState(matches.size()>0, String.format("There were no result file matches for input file %s", conversion.getInputFileName()));
             if(matches.size()>1) {
@@ -89,12 +90,15 @@ public class CreateOutputPhexArchiveStep implements ConversionStep {
        private final Pattern resultFilePathPattern;
        private final String inputFileName;
        private ResultEntryPredicate(Conversion conversion, String pattern) {
-           final String expectedResultFileNamePart = String.format(pattern,FilenameUtils.removeExtension(conversion.getInputFileName()));
-           resultFilePathPattern = Pattern.compile(expectedResultFileNamePart);
+           resultFilePathPattern = Pattern.compile(
+               String.format(pattern, Pattern.quote(FilenameUtils.removeExtension(conversion.getInputFileName())))
+           );
            inputFileName = FilenameUtils.getName(conversion.getInputFileName());
        }
 
        public boolean apply(Entry entry) {
+           // TODO: Given a conversion.getInputFileName() of "input.txt" (i.e. no path prefix), if the archive happens to contain multiple
+           // input.txt files in subdirectories, these will all be matched - is this acceptable?
            LOG.debug(String.format("Considering main entry candidate %s - matches %s", entry.getFilePath(), resultFilePathPattern.pattern()));
            return resultFilePathPattern.matcher(entry.getFilePath()).matches()&&!entry.getFileName().equals(inputFileName);
        }
