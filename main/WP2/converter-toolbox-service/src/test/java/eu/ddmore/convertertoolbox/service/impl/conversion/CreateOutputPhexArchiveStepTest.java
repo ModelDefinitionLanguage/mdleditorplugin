@@ -91,7 +91,7 @@ public class CreateOutputPhexArchiveStepTest {
         File outputArchive = new File(workingDirectory,ConversionResourcesConvention.OUTPUTS_ARCHIVE_NAME);
         File outputDirectory = new File(workingDirectory,ConversionResourcesConvention.OUTPUTS_DIRECTORY_NAME);
         when(conversion.getWorkingDirectory()).thenReturn(workingDirectory);
-        when(conversion.getInputFileName()).thenReturn("inputFile.txt");
+        when(conversion.getInputFileName()).thenReturn("inputFile.input");
         instance.execute(conversionContext);
         @SuppressWarnings("rawtypes")
         ArgumentCaptor<Collection> mainEntriesCaptor = ArgumentCaptor.forClass(Collection.class);
@@ -102,7 +102,7 @@ public class CreateOutputPhexArchiveStepTest {
         verify(archive).open();
         verify(archive).close();
         verify(archive).setMainEntries(mainEntriesCaptor.capture());
-        assertEquals(2, mainEntriesCaptor.getValue().size()); // Should be 1 entry but see in-code comment in ResultEntryPredicate.apply()
+        assertEquals(1, mainEntriesCaptor.getValue().size());
         PowerMockito.verifyStatic();
         Files.copy(inputArchive, outputArchive);
     }
@@ -117,7 +117,7 @@ public class CreateOutputPhexArchiveStepTest {
         File outputArchive = new File(workingDirectory,ConversionResourcesConvention.OUTPUTS_ARCHIVE_NAME);
         File outputDirectory = new File(workingDirectory,ConversionResourcesConvention.OUTPUTS_DIRECTORY_NAME);
         when(conversion.getWorkingDirectory()).thenReturn(workingDirectory);
-        when(conversion.getInputFileName()).thenReturn("this/is/path/to/inputFile.txt");
+        when(conversion.getInputFileName()).thenReturn("this/is/path/to/inputFile.input");
         instance.execute(conversionContext);
         @SuppressWarnings("rawtypes")
         ArgumentCaptor<Collection> mainEntriesCaptor = ArgumentCaptor.forClass(Collection.class);
@@ -143,7 +143,7 @@ public class CreateOutputPhexArchiveStepTest {
         File outputArchive = new File(workingDirectory,ConversionResourcesConvention.OUTPUTS_ARCHIVE_NAME);
         File outputDirectory = new File(workingDirectory,ConversionResourcesConvention.OUTPUTS_DIRECTORY_NAME);
         when(conversion.getWorkingDirectory()).thenReturn(workingDirectory);
-        when(conversion.getInputFileName()).thenReturn("this\\is\\path\\to\\inputFile.txt");
+        when(conversion.getInputFileName()).thenReturn("this\\is\\path\\to\\inputFile.input");
         instance.execute(conversionContext);
         @SuppressWarnings("rawtypes")
         ArgumentCaptor<Collection> mainEntriesCaptor = ArgumentCaptor.forClass(Collection.class);
@@ -162,20 +162,20 @@ public class CreateOutputPhexArchiveStepTest {
     private void setupMockArchiveEntries(final String pathPrefix) {
         List<Entry> entries = Lists.newArrayList();
         Entry entry = mock(Entry.class);
-        when(entry.getFileName()).thenReturn("inputFile.txt");
-        when(entry.getFilePath()).thenReturn(pathPrefix + "inputFile.txt");
+        when(entry.getFileName()).thenReturn("inputFile.input");
+        when(entry.getFilePath()).thenReturn(pathPrefix + "inputFile.input");
         entries.add(entry);
         entry = mock(Entry.class);
-        when(entry.getFileName()).thenReturn("inputFile.other");
-        when(entry.getFilePath()).thenReturn(pathPrefix + "inputFile.other");
+        when(entry.getFileName()).thenReturn("inputFile.output");
+        when(entry.getFilePath()).thenReturn(pathPrefix + "inputFile.output");
         entries.add(entry);
         entry = mock(Entry.class);
-        when(entry.getFileName()).thenReturn("inputFile.other");
+        when(entry.getFileName()).thenReturn("inputFile.csv");
         when(entry.getFilePath()).thenReturn(pathPrefix + "inputFile.csv");
         entries.add(entry);
         entry = mock(Entry.class);
-        when(entry.getFileName()).thenReturn("inputFile.other");
-        when(entry.getFilePath()).thenReturn("/some/other/path/to/inputFile.txt");
+        when(entry.getFileName()).thenReturn("inputFile.input");
+        when(entry.getFilePath()).thenReturn("/some/other/path/to/inputFile.input");
         entries.add(entry);
         when(archive.getEntries()).thenReturn(entries);
     }

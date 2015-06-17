@@ -97,10 +97,12 @@ public class CreateOutputPhexArchiveStep implements ConversionStep {
        }
 
        public boolean apply(Entry entry) {
-           // TODO: Given a conversion.getInputFileName() of "input.txt" (i.e. no path prefix), if the archive happens to contain multiple
-           // input.txt files in subdirectories, these will all be matched - is this acceptable?
+           // NB: Given a conversion.getInputFileName() of e.g. "inputFile.mdl" (i.e. no path prefix), if the archive happens to contain
+           // multiple inputFile.xml (i.e. converted) files in subdirectories, these will all be matched. This is probably benign, and
+           // in any case would be addressed by future work whereby the converters themselves will specify which files in the archive
+           // are the result of the conversion.
            LOG.debug(String.format("Considering main entry candidate %s - matches %s", entry.getFilePath(), resultFilePathPattern.pattern()));
-           return resultFilePathPattern.matcher(entry.getFilePath()).matches()&&!entry.getFileName().equals(inputFileName);
+           return resultFilePathPattern.matcher(entry.getFilePath()).matches() && !entry.getFileName().equals(inputFileName);
        }
    }
    
