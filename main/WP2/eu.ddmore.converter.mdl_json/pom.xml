@@ -32,10 +32,6 @@
             <artifactId>groovy-all</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.ddmore.pharmml</groupId>
-            <artifactId>libPharmML</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
