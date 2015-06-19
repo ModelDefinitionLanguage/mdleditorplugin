@@ -467,7 +467,8 @@ class MdlFileContentTestUtils {
      * @return the string comprising the block name and its reordered content
      */
     private static String putMogObjectsBlockContentInKnownOrder(final String blockText) {
-        putSOURCEBlockOrMogObjectsBlockContentInKnownOrder(Mog.OBJECTS, blockText, /\s*\S+\s*/)
+        // This regex is complicated by the fact that you can either have an object referenced as "Poisson_dat" or "dObj = Poisson_dat"
+        putSOURCEBlockOrMogObjectsBlockContentInKnownOrder(Mog.OBJECTS, blockText, /\s*(?:\S+\s*=\s*)?\S+\s*/)
     }
 
     /**
