@@ -25,6 +25,7 @@ public class ConversionTask implements Runnable {
     private final Logger LOG = Logger.getLogger(ConversionTask.class);
     private final ConversionContext conversionContext;
     private List<ConversionStep> conversionSteps;
+    private final static String ERROR_MESSAGE_KEY = "error";
     /**
      * Creates a new instance of conversion task
      * @param conversionContext
@@ -44,13 +45,29 @@ public class ConversionTask implements Runnable {
             main();
         } catch(Exception ex) {
             LOG.error(String.format("Conversion [%s] Exception was thrown during conversion execution",conversionContext.getConversion().getId()), ex);
-            conversionContext.getConversion().setConversionReport(generateFailedProcessingErrorReport(ex));
+            handleException(conversionContext.getConversion(), ex);
         } finally {
             Conversion conversion = conversionContext.getConversion();
             conversion.setCompletionTime(new Date().getTime());
             conversion.setStatus(ConversionStatus.Completed);
             conversionContext.updateConversion(conversion);
         }
+    }
+
+    @VisibleForTesting
+    void handleException(Conversion conversion, Exception ex) {
+        ConversionReport conversionReport = generateFailedConversionReport(conversion);
+        conversionReport.addDetail(createConversionDetailFor(ex));
+        conversion.setConversionReport(conversionReport);
+    }
+
+    private ConversionReport generateFailedConversionReport(Conversion conversion) {
+        ConversionReport conversionReport = conversion.getConversionReport();
+        if(conversionReport==null) {
+            conversionReport = new ConversionReport();
+        }
+        conversionReport.setReturnCode(ConversionReportOutcomeCode.FAILURE);
+        return conversionReport;
     }
 
     private void main() {
@@ -63,19 +80,14 @@ public class ConversionTask implements Runnable {
         }
     }
     
-    @VisibleForTesting
-    ConversionReport generateFailedProcessingErrorReport(Exception exception) {
-        ConversionReport conversionReport = new ConversionReport();
-        conversionReport.setReturnCode(ConversionReportOutcomeCode.FAILURE);
-        
+    private ConversionDetail createConversionDetailFor(Exception exception) {
         ConversionDetail conversionDetail = new ConversionDetail();
         conversionDetail.setMessage(exception.getMessage());
         conversionDetail.setSeverity(ConversionDetailSeverity.ERROR);
-        conversionReport.addDetail(conversionDetail);
         if(exception.getCause()!=null && exception.getCause().getMessage()!=null) {
-            conversionDetail.addInfo("error", exception.getCause().getMessage());
+            conversionDetail.addInfo(ERROR_MESSAGE_KEY, exception.getCause().getMessage());
         }
-        return conversionReport;
+        return conversionDetail;
     }
     
     
