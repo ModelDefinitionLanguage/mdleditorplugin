@@ -67,7 +67,7 @@ public class MDLToPharmMLConverter implements ConverterProvider {
         EList<Diagnostic> errors = resource.getErrors();
         EList<Diagnostic> warnings = resource.getWarnings();
         if (!warnings.isEmpty()) {
-            LOGGER.warn(warnings.size() + " warning(s) encountered in parsing MDL file " + src.getAbsolutePath());
+            LOGGER.warn(String.format("%1$d warning(s) encountered in parsing MDL file %2$s", warnings.size(), src.getAbsolutePath()));
             for (Diagnostic w : warnings) {
                 LOGGER.warn(w);
                 final ConversionDetail detail = new ConversionDetailImpl();
@@ -77,7 +77,7 @@ public class MDLToPharmMLConverter implements ConverterProvider {
             }
         }
         if (!errors.isEmpty()) {
-            LOGGER.error(errors.size() + " errors encountered in parsing MDL file " + src.getAbsolutePath());
+            LOGGER.error(String.format("%1$d error(s) encountered in parsing MDL file %2$s", errors.size(), src.getAbsolutePath()));
             for (Diagnostic e : errors) {
                 LOGGER.error(e);
                 final ConversionDetail detail = new ConversionDetailImpl();
