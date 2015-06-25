@@ -5,8 +5,10 @@ package eu.ddmore.convertertoolbox.service.impl.conversion;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -17,8 +19,8 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 import com.google.common.io.Files;
 
 import eu.ddmore.archive.Archive;
@@ -39,11 +41,14 @@ public class CreateOutputPhexArchiveStep implements ConversionStep {
     @Autowired(required=true)
     private ArchiveFactory archiveFactory;
     
-    @Value("${:.*%s.*(?<!csv)$}")
-    private String resultFileNamePattern;
+    @Value("${cts.conversion.phex.resultFileNameExclusionPattern:.*\\.csv}")
+    private String resultFileNameExclusionPattern;
     
     @Override
     public void execute(ConversionContext conversionContext) {
+        // TODO remove this debug line
+        LOG.info("Using resultFileNameExclusionPattern=" + resultFileNameExclusionPattern);
+    
         Preconditions.checkNotNull(conversionContext, "Conversion context was null");
         Preconditions.checkNotNull(conversionContext.getConversion(), "Conversion in Conversion Context was null");
         Conversion conversion = conversionContext.getConversion();
@@ -62,53 +67,61 @@ public class CreateOutputPhexArchiveStep implements ConversionStep {
         conversion.setOutputFileSize(outputArchive.length());
     }
 
-    private void prepareOutputArchive(Conversion conversion, File outputArchive, File outputDir) {
-        LOG.debug(String.format("Conversion [%s]: archiving %s to %s.",conversion.getId(),outputDir.getAbsolutePath(),outputArchive.getAbsolutePath()));
-        Archive archive = archiveFactory.createArchive(outputArchive);
+    private void prepareOutputArchive(Conversion conversion, File outputArchiveFile, File outputDir) {
+        LOG.debug(String.format("Conversion [%s]: archiving %s to %s.",conversion.getId(),outputDir.getAbsolutePath(),outputArchiveFile.getAbsolutePath()));
+        
+        Archive inputArchive = archiveFactory.createArchive(conversion.getInputArchive());
+        Archive outputArchive = archiveFactory.createArchive(outputArchiveFile);
         try {
-            archive.open();
-            LOG.info("Adding directory contents into output archive: " + outputDir + " at " + FilenameUtils.getPathNoEndSeparator(conversion.getInputFileName()));
-            archiveFactory.createArchiveHelper(archive).addDirectoryContents(outputDir, FilenameUtils.getPathNoEndSeparator(conversion.getInputFileName()));
-            Collection<Entry> matches = Collections2.filter(archive.getEntries(),new ResultEntryPredicate(conversion,resultFileNamePattern));
-            Preconditions.checkState(matches.size()>0, String.format("There were no result file matches for input file %s", conversion.getInputFileName()));
-            if(matches.size()>1) {
-                LOG.warn(String.format("There were more than one main entry result candidate in the conversion result."));
-            }
-            archive.setMainEntries(matches);
+            inputArchive.open();
+            outputArchive.open();
+            
+            LOG.info("Adding directory contents into output archive: " + outputDir + " at " + FilenameUtils.getPathNoEndSeparator(conversion.getInputFileName()) + " into " + outputArchiveFile.getAbsolutePath());
+            archiveFactory.createArchiveHelper(outputArchive).addDirectoryContents(outputDir, FilenameUtils.getPathNoEndSeparator(conversion.getInputFileName()));
+            
+            final Entry mainEntryForOutputArchive = attemptToDetermineMainOutputFromConversion(inputArchive.getEntries(), outputArchive.getEntries());
+            LOG.info("Setting main entry for output archive to " + mainEntryForOutputArchive.getFilePath());
+            outputArchive.setMainEntries(Arrays.asList(mainEntryForOutputArchive));
+            
         } catch (ArchiveException e) {
-            throw new RuntimeException("Could not add files to output directory", e);
+            throw new RuntimeException("Could not add files to output archive", e);
         } finally {
-            archive.close();
+            inputArchive.close();
+            outputArchive.close();
         }
     }
     
     /**
-    * Identifies if an Entry represents conversion result.
-    * Currently it assumes (as FIS at the time of this writing) that the conversion output file is the input file with different extension.
-    */
-   private final class ResultEntryPredicate implements Predicate<Entry> {
-       private final Pattern resultFilePathPattern;
-       private final String inputFileName;
-       private ResultEntryPredicate(Conversion conversion, String pattern) {
-           resultFilePathPattern = Pattern.compile(
-               String.format(pattern, Pattern.quote(FilenameUtils.removeExtension(conversion.getInputFileName())))
-           );
-           inputFileName = FilenameUtils.getName(conversion.getInputFileName());
-       }
-
-       public boolean apply(Entry entry) {
-           // NB: Given a conversion.getInputFileName() of e.g. "inputFile.mdl" (i.e. no path prefix), if the archive happens to contain
-           // multiple inputFile.xml (i.e. converted) files in subdirectories, these will all be matched. This is probably benign, and
-           // in any case would be addressed by future work whereby the converters themselves will specify which files in the archive
-           // are the result of the conversion.
-           LOG.debug(String.format("Considering main entry candidate %s - matches %s", entry.getFilePath(), resultFilePathPattern.pattern()));
-           return resultFilePathPattern.matcher(entry.getFilePath()).matches() && !entry.getFileName().equals(inputFileName);
-       }
-   }
-   
+     * Attempt to determine the main output from the conversion, by determining which of the output Archive's
+     * Entries were not present in the input Archive. Ignore any files matching the {@link #resultFileNameExclusionPattern}.
+     * <p>
+     * @param inputEntries - {@link Collection} of {@link Entry}s that the Archive that is the input to the Conversion, contains
+     * @param outputEntries - {@link Collection} of {@link Entry}s that the Archive that is the output from the Conversion, contains
+     * @return {@link Entry}, which should be unique; if not then an arbitrary one is selected
+     */
+    private Entry attemptToDetermineMainOutputFromConversion(final Collection<Entry> inputEntries, final Collection<Entry> outputEntries) {
+        final Map<String, Entry> inputEntriesKeyedByFilePath = new HashMap<String, Entry>();
+        final Map<String, Entry> outputEntriesKeyedByFilePath = new HashMap<String, Entry>();
+        for (final Entry e : inputEntries) {
+            inputEntriesKeyedByFilePath.put(e.getFilePath(), e);
+        }
+        for (final Entry e : outputEntries) {
+            if (!e.getFileName().matches(this.resultFileNameExclusionPattern)) {
+                outputEntriesKeyedByFilePath.put(e.getFilePath(), e);
+            }
+        }
+        final SetView<String> filePathsOnlyInOutputEntries = Sets.difference(outputEntriesKeyedByFilePath.keySet(), inputEntriesKeyedByFilePath.keySet());
+        LOG.debug("Paths to files in output Archive that were not present in input Archive: " + filePathsOnlyInOutputEntries);
+        Preconditions.checkState(!filePathsOnlyInOutputEntries.isEmpty(), "No output files were determined in the result of the conversion");
+        if (filePathsOnlyInOutputEntries.size() > 1) {
+            LOG.warn("More than one output file was generated by the conversion - it is arbitrary which one will be selected as the Main Entry for the resulting Archive");
+        }
+        // Arbitrarily pick one of the Entries to choose as the Main Entry - but there should only be one usually
+        return outputEntriesKeyedByFilePath.get(filePathsOnlyInOutputEntries.iterator().next());
+    }
    
     @VisibleForTesting
-    void setResultFileNamePattern(String resultFileNamePattern) {
-        this.resultFileNamePattern = resultFileNamePattern;
+    void setResultFileNameExclusionPattern(String resultFileNameExclusionPattern) {
+        this.resultFileNameExclusionPattern = resultFileNameExclusionPattern;
     }
 }
