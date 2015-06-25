@@ -31,7 +31,20 @@ import eu.ddmore.convertertoolbox.domain.internal.Conversion;
 import eu.ddmore.convertertoolbox.service.impl.ConversionResourcesConvention;
 
 /**
- * Prepares output PHEX archive
+ * Prepares output PHEX archive.
+ * <p>
+ * The output archive is based on the input archive. Then the output files from the conversion are added in.
+ * The "main entry" in the output archive is set; this will be treated as the execution file in the scenario
+ * where MIF is performing an execution on the archive. Finally the {@link Conversion} entity is updated with
+ * appropriate references to the output archive.
+ * <p>
+ * Determining the "main entry" needs some further explanation. Currently it is done by by determining which
+ * of the output Archive's Entries were not present in the input Archive, with any files matching the
+ * injected {@link #resultFileNameExclusionPattern} ignored. But this is not very robust; in the case of
+ * Monolix for example, several output files are generated, and the logic here isn't going to know that it
+ * is the .mlxtran file (in a subfolder to complicate things even more!) that is the main output file from
+ * the conversion. TODO: The proper solution is for the Converters themselves to specify which is the result file
+ * from the conversion, e.g. by writing this out to the Conversion Report.
  */
 @Order(200)
 @Component
@@ -46,9 +59,6 @@ public class CreateOutputPhexArchiveStep implements ConversionStep {
     
     @Override
     public void execute(ConversionContext conversionContext) {
-        // TODO remove this debug line
-        LOG.info("Using resultFileNameExclusionPattern=" + resultFileNameExclusionPattern);
-    
         Preconditions.checkNotNull(conversionContext, "Conversion context was null");
         Preconditions.checkNotNull(conversionContext.getConversion(), "Conversion in Conversion Context was null");
         Conversion conversion = conversionContext.getConversion();
@@ -93,7 +103,8 @@ public class CreateOutputPhexArchiveStep implements ConversionStep {
     
     /**
      * Attempt to determine the main output from the conversion, by determining which of the output Archive's
-     * Entries were not present in the input Archive. Ignore any files matching the {@link #resultFileNameExclusionPattern}.
+     * Entries were not present in the input Archive. Ignore any files matching the injected
+     * {@link #resultFileNameExclusionPattern}.
      * <p>
      * @param inputEntries - {@link Collection} of {@link Entry}s that the Archive that is the input to the Conversion, contains
      * @param outputEntries - {@link Collection} of {@link Entry}s that the Archive that is the output from the Conversion, contains
