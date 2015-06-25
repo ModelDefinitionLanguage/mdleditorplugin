@@ -23,7 +23,7 @@ import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode
 import eu.ddmore.convertertoolbox.domain.ConversionDetailImpl
 
 class MdlParser {
-    private static final Logger LOGGER = Logger.getLogger(MdlParser.class)
+    private static final Logger LOG = Logger.getLogger(MdlParser.class)
 
     static Injector injector;
     static XtextResourceSet resourceSet;
@@ -52,9 +52,9 @@ class MdlParser {
         EList<Diagnostic> errors = resource.getErrors()
         EList<Diagnostic> warnings = resource.getWarnings()
         if (warnings) {
-            LOGGER.warn(String.format("%1\$d warning(s) encountered in parsing MDL file %2\$s", warnings.size(), mdlFile.getAbsolutePath()));
+            LOG.warn(String.format("%1\$d warning(s) encountered in parsing MDL file %2\$s", warnings.size(), mdlFile.getAbsolutePath()));
             for (Diagnostic w : warnings) {
-                LOGGER.warn(w);
+                LOG.warn(w);
                 final ConversionDetail detail = new ConversionDetailImpl();
                 detail.setMessage(w.toString());
                 detail.setSeverity(Severity.WARNING);
@@ -62,9 +62,9 @@ class MdlParser {
             }
         }
         if (errors) {
-            LOGGER.error(String.format("%1\$d error(s) encountered in parsing MDL file %2\$s", errors.size(), mdlFile.getAbsolutePath()));
+            LOG.error(String.format("%1\$d error(s) encountered in parsing MDL file %2\$s", errors.size(), mdlFile.getAbsolutePath()));
             for (Diagnostic e : errors) {
-                LOGGER.error(e);
+                LOG.error(e);
                 final ConversionDetail detail = new ConversionDetailImpl();
                 detail.setMessage(e.toString());
                 detail.setSeverity(Severity.ERROR);
