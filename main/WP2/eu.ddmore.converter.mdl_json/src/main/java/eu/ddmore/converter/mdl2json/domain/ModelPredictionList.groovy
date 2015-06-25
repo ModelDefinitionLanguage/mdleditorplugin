@@ -3,15 +3,11 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain
 
-import java.util.List;
-
 import org.ddmore.mdl.mdl.ModelPredictionBlock
 import org.ddmore.mdl.mdl.ModelPredictionBlockStatement
-import org.ddmore.mdl.mdl.PkMacroStatement;
 
 import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
-import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 
 /**
