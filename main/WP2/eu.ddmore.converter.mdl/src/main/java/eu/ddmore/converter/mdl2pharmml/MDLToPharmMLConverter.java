@@ -37,7 +37,7 @@ import eu.ddmore.convertertoolbox.domain.VersionImpl;
 
 public class MDLToPharmMLConverter implements ConverterProvider {
 
-    private final static Logger LOGGER = Logger.getLogger(MDLToPharmMLConverter.class);
+    private final static Logger LOG = Logger.getLogger(MDLToPharmMLConverter.class);
 
     private LanguageVersion source;
     private LanguageVersion target;
@@ -67,9 +67,9 @@ public class MDLToPharmMLConverter implements ConverterProvider {
         EList<Diagnostic> errors = resource.getErrors();
         EList<Diagnostic> warnings = resource.getWarnings();
         if (!warnings.isEmpty()) {
-            LOGGER.warn(String.format("%1$d warning(s) encountered in parsing MDL file %2$s", warnings.size(), src.getAbsolutePath()));
+            LOG.warn(String.format("%1$d warning(s) encountered in parsing MDL file %2$s", warnings.size(), src.getAbsolutePath()));
             for (Diagnostic w : warnings) {
-                LOGGER.warn(w);
+                LOG.warn(w);
                 final ConversionDetail detail = new ConversionDetailImpl();
                 detail.setMessage(w.toString());
                 detail.setSeverity(Severity.WARNING);
@@ -77,9 +77,9 @@ public class MDLToPharmMLConverter implements ConverterProvider {
             }
         }
         if (!errors.isEmpty()) {
-            LOGGER.error(String.format("%1$d error(s) encountered in parsing MDL file %2$s", errors.size(), src.getAbsolutePath()));
+            LOG.error(String.format("%1$d error(s) encountered in parsing MDL file %2$s", errors.size(), src.getAbsolutePath()));
             for (Diagnostic e : errors) {
-                LOGGER.error(e);
+                LOG.error(e);
                 final ConversionDetail detail = new ConversionDetailImpl();
                 detail.setMessage(e.toString());
                 detail.setSeverity(Severity.ERROR);
