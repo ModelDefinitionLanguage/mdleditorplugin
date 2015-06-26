@@ -1,12 +1,9 @@
-/**
- * 
- */
 package eu.ddmore.convertertoolbox.systemtest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,8 +17,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
-import com.google.common.base.Preconditions;
 
 /**
  * A Converter Output Failure Checker for nmTran output; it enhances the standard Converter Output Failure
@@ -60,7 +55,7 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
         final File baselineNmTranFile = Paths.get(ModelsDiscoverer.PATH_TO_MODELS_DIR, NMTRAN_DIR, FileType.NMTRAN.getVersion())
                 .resolve(modelSubPath).resolve(generatedOutput.getName()).toFile();
         
-        Preconditions.checkState(baselineNmTranFile.exists(), "Baseline NMTRAN file at " + baselineNmTranFile + " doesn't exist for " + generatedOutput);
+        assumeTrue("Baseline NMTRAN file at " + baselineNmTranFile + " doesn't exist for " + generatedOutput, baselineNmTranFile.exists());
         
         try {
             Map<String, String> outputNmTranBlocks = getNmtranBlocks(generatedOutput);
