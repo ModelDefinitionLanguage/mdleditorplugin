@@ -11,7 +11,7 @@ import eu.ddmore.convertertoolbox.systemtest.FileType;
 
 
 /**
- * Run PharmML -> NMTRAN conversions over the testdata models within the "pharmml" subdirectory.
+ * Run PharmML -> NMTRAN conversions over the testdata models within the "PharmML" subdirectory.
  */
 @RunWith(Parameterized.class)
 public class PharmmlToNmtranModelsTest {
@@ -57,7 +57,7 @@ public class PharmmlToNmtranModelsTest {
     public void testPharmMLToNMTRANConversion() {
         new ConverterRunner(
             this.model, FileType.NMTRAN.getExtension(), FileType.PharmML.name(), FileType.PharmML.getVersion(), FileType.NMTRAN.name(), FileType.NMTRAN.getVersion(),
-            new NmTranFileEquivalenceChecker()
+            new NmTranFileEquivalenceChecker(MODELS_SUBDIRECTORY)
         ).run();
     }
     

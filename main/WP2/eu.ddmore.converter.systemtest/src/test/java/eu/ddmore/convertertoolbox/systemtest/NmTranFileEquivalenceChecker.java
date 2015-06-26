@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,12 +21,14 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Preconditions;
+
 /**
  * A Converter Output Failure Checker for nmTran output; it enhances the standard Converter Output Failure
  * Checker to also check that the generated nonmem file is valid by comparing it with base line output file.
  */
 class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker {
-
+    
     private static final String COMMENT_SYMBOL = ";";
     private static final String BLOCK_SYMBOL = "$";
     private static final Logger LOGGER = Logger.getLogger(NmTranFileEquivalenceChecker.class);
@@ -34,40 +37,47 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
     // $PROB $INPUT $DATA
     private final static int NMTRAN_FILE_SIZE_THRESHOLD = 30;
     private final String NMTRAN_DIR = "NM-TRAN";
+    
+    // The subdirectory in which the 'source' models are held, e.g. "PharmML/0.6.0"
+    private String origModelsSubdirectory;
 
-    NmTranFileEquivalenceChecker() {
+    /**
+     * Constructor.
+     * @param origModelsSubdir - the subdirectory in which the 'source' models are held, e.g. "PharmML/0.6.0"
+     */
+    NmTranFileEquivalenceChecker(final String origModelsSubdir) {
         super(NMTRAN_FILE_SIZE_THRESHOLD);
+        this.origModelsSubdirectory = origModelsSubdir;
     }
 
     @Override
     public void check(File generatedOutput, File stdout, File stderr) {
         super.check(generatedOutput, stdout, stderr);
+        
+        final Path origPharmmlModelsPath = Paths.get(ModelsDiscoverer.PATH_TO_MODELS_DIR, this.origModelsSubdirectory);
+        final Path modelSubPath = origPharmmlModelsPath.relativize(generatedOutput.toPath().getParent().getParent());
+        LOGGER.info("modelSubPath=" + modelSubPath);
+        final File baselineNmTranFile = Paths.get(ModelsDiscoverer.PATH_TO_MODELS_DIR, NMTRAN_DIR, FileType.NMTRAN.getVersion())
+                .resolve(modelSubPath).resolve(generatedOutput.getName()).toFile();
+        
+        Preconditions.checkState(baselineNmTranFile.exists(), "Baseline NMTRAN file at " + baselineNmTranFile + " doesn't exist for " + generatedOutput);
+        
         try {
-            String outputFileName = generatedOutput.getName();
-            File outputParentDir = generatedOutput.getParentFile().getParentFile();
-            File baselineNmTranFile = Paths.get(ModelsDiscoverer.PATH_TO_MODELS_DIR,NMTRAN_DIR,
-                FileType.NMTRAN.getVersion(),outputParentDir.getName(),outputFileName).toFile();
+            Map<String, String> outputNmTranBlocks = getNmtranBlocks(generatedOutput);
+            Map<String, String> baselineNmTranBlocks = getNmtranBlocks(baselineNmTranFile);
 
-            if(baselineNmTranFile.exists()){
-                Map<String, String> outputNmTranBlocks = getNmtranBlocks(generatedOutput);
-                Map<String, String> baselineNmTranBlocks = getNmtranBlocks(baselineNmTranFile);
-
-                for(String block : baselineNmTranBlocks.keySet()){
-                    String actualNmTranBlock = outputNmTranBlocks.get(block);
-                    String expectedNmTranBlock = baselineNmTranBlocks.get(block);
-                    outputNmTranBlocks.remove(block);
-                    assertEquals("The output block content should match for Block :"+block, expectedNmTranBlock, actualNmTranBlock);
-                }
-                assertTrue("There should not be any redundant nmtran blocks",outputNmTranBlocks.isEmpty());
-
-            }else{
-                fail("Base line nmTran file doesn't exist " + generatedOutput);   
+            for (String block : baselineNmTranBlocks.keySet()) {
+                String actualNmTranBlock = outputNmTranBlocks.get(block);
+                String expectedNmTranBlock = baselineNmTranBlocks.get(block);
+                outputNmTranBlocks.remove(block);
+                assertEquals("The output block content should match for Block :"+block, expectedNmTranBlock, actualNmTranBlock);
             }
+            assertTrue("There should not be any redundant NMTRAN blocks",outputNmTranBlocks.isEmpty());
 
         } catch (Exception e) {
-            LOGGER.error("Exception thrown while parsing NmTran from file : " + generatedOutput);
+            LOGGER.error("Exception thrown while parsing NMTRAN from file : " + generatedOutput);
             LOGGER.error("Exception details : ", e);
-            fail("Error parsing NmTran from file " + generatedOutput);
+            fail("Error parsing NMTRAN from file " + generatedOutput);
         }
     }
 
@@ -80,7 +90,7 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
      */
     private Map<String, String> getNmtranBlocks(File expectedOutputNmTranFile) throws IOException{
 
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(expectedOutputNmTranFile)));){
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(expectedOutputNmTranFile)))) {
             return getNmTranBlocks(reader);
         }
     }

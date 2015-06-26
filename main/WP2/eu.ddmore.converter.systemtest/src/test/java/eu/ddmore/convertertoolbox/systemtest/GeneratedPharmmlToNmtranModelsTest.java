@@ -166,7 +166,7 @@ public class GeneratedPharmmlToNmtranModelsTest {
     public void testPharmMLToNMTRANConversionForPharmMLGeneratedByMdlToPharmMLConversion() {
         final ConverterRunner runner = new ConverterRunner(this.generatedPharmmlModel, FileType.NMTRAN.getExtension(),
                 FileType.PharmML.name(), FileType.PharmML.getVersion(), FileType.NMTRAN.name(), FileType.NMTRAN.getVersion(),
-                new NmTranFileEquivalenceChecker());
+                new NmTranFileEquivalenceChecker(GENERATED_PHARMML_MODELS_SUBDIRECTORY));
         runner.run();
     }
 
