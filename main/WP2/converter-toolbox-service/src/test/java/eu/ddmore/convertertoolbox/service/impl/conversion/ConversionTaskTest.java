@@ -120,10 +120,11 @@ public class ConversionTaskTest {
         
         ConversionReport conversionReport = conversionReportCaptor.getValue();
         assertEquals("Return Code should be set to FAILURE",ConversionReportOutcomeCode.FAILURE,conversionReport.getReturnCode());
-        assertTrue(conversionReport.getDetails().size()>0);
-        assertTrue(conversionReport.getDetails().get(0).getSeverity()==ConversionDetailSeverity.ERROR);
-        assertTrue(conversionReport.getDetails().get(0).getMessage().equals("Conversion failed"));
-        assertTrue(conversionReport.getDetails().get(0).getInfo().get("error").equals("Cause"));
+        assertTrue("Conversion report should have at least one.", conversionReport.getDetails().size()>0);
+        ConversionDetail conversionDetail = conversionReport.getDetails().get(0);
+        assertEquals("The first conversion detail should have ERROR severity.", ConversionDetailSeverity.ERROR,conversionDetail.getSeverity());
+        assertEquals("The message of the detail should be of the exception being thrown.", "Conversion failed", conversionDetail.getMessage());
+        assertEquals("The additional info of with key 'error' should have the message of the exception that caused the exception represented by the detail.","Cause",conversionDetail.getInfo().get("error"));
     }
 
     @Test
@@ -139,9 +140,9 @@ public class ConversionTaskTest {
         assertEquals("Return Code should be set to FAILURE",ConversionReportOutcomeCode.FAILURE, conversionReport.getReturnCode());
         assertTrue("There should be two conversion details.", conversionReport.getDetails().size()>0);
         ConversionDetail conversionDetail = conversionReport.getDetails().get(1);
-        assertEquals(conversionDetail.getSeverity(),ConversionDetailSeverity.ERROR);
-        assertTrue(conversionDetail.getMessage().equals("Conversion failed"));
-        assertTrue(conversionDetail.getInfo().get("error").equals("Cause"));
+        assertEquals("The last conversion detail should have ERROR severity.", ConversionDetailSeverity.ERROR,conversionDetail.getSeverity());
+        assertEquals("The message of the detail should be of the exception being thrown.", "Conversion failed", conversionDetail.getMessage());
+        assertEquals("The additional info of with key 'error' should have the message of the exception that caused the exception represented by the detail.","Cause",conversionDetail.getInfo().get("error"));
     }
 
     private ConversionReport createMockConversionReport() {
