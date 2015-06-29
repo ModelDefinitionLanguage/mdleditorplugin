@@ -55,6 +55,9 @@ class NmTranFileEquivalenceChecker extends DefaultConverterOutputFailureChecker 
         final File baselineNmTranFile = Paths.get(ModelsDiscoverer.PATH_TO_MODELS_DIR, NMTRAN_DIR, FileType.NMTRAN.getVersion())
                 .resolve(modelSubPath).resolve(generatedOutput.getName()).toFile();
         
+        if (!baselineNmTranFile.exists()) {
+            LOGGER.warn("Baseline NMTRAN file at " + baselineNmTranFile + " doesn't exist for " + generatedOutput + "; skipping the full checking of this model...");
+        }
         assumeTrue("Baseline NMTRAN file at " + baselineNmTranFile + " doesn't exist for " + generatedOutput, baselineNmTranFile.exists());
         
         try {
