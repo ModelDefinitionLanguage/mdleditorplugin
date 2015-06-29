@@ -120,12 +120,7 @@ class MdlFileContentTestUtils {
             // as if the block is absent, and the written out MDL won't have this empty block(s), so remove it
             origMdlFileBlockContent = origMdlFileBlockContent.replaceAll(blockName + /\{\}/, "")
 
-            assertEquals("Checking the content of the block " + blockName,
-                // TODO: Remove the "OBSOLETE" commented out code below once we are confident that "if"
-                // exprs/stmts won't reappear in the MDL, maybe appropriate towards end of Product 4
-                origMdlFileBlockContent /* OBSOLETE?: .replaceAll(/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */ ,
-                newMdlFileBlockContent /* OBSOLETE?: .replaceAll(/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */
-            )
+            assertEquals("Checking the content of the block " + blockName, origMdlFileBlockContent, newMdlFileBlockContent)
         }
     }
 
