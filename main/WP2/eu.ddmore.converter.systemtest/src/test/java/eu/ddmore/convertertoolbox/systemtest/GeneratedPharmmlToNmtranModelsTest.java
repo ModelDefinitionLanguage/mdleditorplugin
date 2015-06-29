@@ -4,7 +4,10 @@ import static java.util.regex.Matcher.quoteReplacement;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -16,6 +19,7 @@ import org.junit.runners.Parameterized;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
 /**
@@ -57,16 +61,37 @@ public class GeneratedPharmmlToNmtranModelsTest {
     @Parameterized.Parameters(name = "{index}: Model {1}")
     public static Iterable<Object[]> getModelsToTest() {
         return Iterables.transform(
-            new ModelsDiscoverer(ORIGINAL_MDL_MODELS_SUBDIRECTORY, FileType.MDL.getExtension()).getAllModels(),
+            filterOutMDLFilesWithMissingMOG( new ModelsDiscoverer(ORIGINAL_MDL_MODELS_SUBDIRECTORY, FileType.MDL.getExtension()).getAllModels() ),
             new Function<File, Object[]>() {
 
-                public Object[] apply(final File input) {
-                    final String anticipatedGenPharmmlModelPath = getGeneratedPharrmlModelFilePathFromMdlModelFilePath(input.getPath());
+                public Object[] apply(final File mdlFile) {
+                    final String anticipatedGenPharmmlModelPath = getGeneratedPharrmlModelFilePathFromMdlModelFilePath(mdlFile.getPath());
                     final String anticipatedGenPharmmlModelShortPath = anticipatedGenPharmmlModelPath
                             .substring(ModelsDiscoverer.PATH_TO_MODELS_DIR.length());
-                    return new Object[] { input, anticipatedGenPharmmlModelShortPath };
+                    return new Object[] { mdlFile, anticipatedGenPharmmlModelShortPath };
                 };
             });
+    }
+    
+    private static Collection<File> filterOutMDLFilesWithMissingMOG(final Collection<File> discoveredMdlFiles) {
+        return Collections2.filter(discoveredMdlFiles, new Predicate<File>() {
+            public boolean apply(final File mdlFile) {
+                String mdlFileContent;
+                try {
+                    mdlFileContent = FileUtils.readFileToString(mdlFile);
+                } catch (IOException ioe) {
+                    throw new RuntimeException("Error reading MDL file " + mdlFile.getAbsolutePath(), ioe);
+                }
+                final Pattern mogobjPattern = Pattern.compile("[A-Za-z0-9_]+\\s*=\\s*mogobj\\s*\\{.+\\}", Pattern.DOTALL);
+                final Matcher mogobjMatcher = mogobjPattern.matcher(mdlFileContent);
+                final boolean containsMogObj = mogobjMatcher.find();
+                if (!containsMogObj) {
+                    LOGGER.warn("No mogobj block found in MDL file " + mdlFile + ", therefore no PharmML file will have been generated. Skipping Generated PharmML to NMTRAN testing for this model...");
+                    return false;
+                }
+                return true;
+            }
+        });
     }
 
     /**
