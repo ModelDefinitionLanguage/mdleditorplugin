@@ -15,7 +15,7 @@
 	<name>Converter Toolbox Integration Test</name>
 
 	<properties>
-        <converter-toolbox.version>1.1.0-SNAPSHOT</converter-toolbox.version>
+        <converter-toolbox.version>1.2.0-SNAPSHOT</converter-toolbox.version>
         <testdata-models.version>0.1.2-SNAPSHOT</testdata-models.version>
         
 		<jacoco.version>0.6.0.201210061924</jacoco.version>

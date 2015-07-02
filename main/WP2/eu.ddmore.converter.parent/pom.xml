@@ -10,7 +10,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<converter-toolbox-api.version>1.1.0-SNAPSHOT</converter-toolbox-api.version>
+		<converter-toolbox-api.version>1.2.0-SNAPSHOT</converter-toolbox-api.version>
 		<groovy-all.version>2.1.5</groovy-all.version>
 		<guava.version>15.0</guava.version>
 		<log4j.version>1.2.17</log4j.version>
