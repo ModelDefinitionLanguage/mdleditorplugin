@@ -6,12 +6,12 @@
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
+		<version>1.1.0</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>	
 	<artifactId>test-mdl2nonmem-success</artifactId>
-	<version>0.1.0-SNAPSHOT</version>	
+	<version>0.1.0</version>	
 	<name>Converter Toolbox Test-Mdl2Nonmem-Success</name>
 
 	<dependencies>
