@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <converter-nonmem.version>0.1.0-SNAPSHOT</converter-nonmem.version>
+        <converter-nonmem.version>0.1.0</converter-nonmem.version>
         <mdl-converters.version>0.1.0</mdl-converters.version>
         <converter-toolbox.version>1.1.0</converter-toolbox.version>
         <test-converters.version>0.1.0</test-converters.version>
