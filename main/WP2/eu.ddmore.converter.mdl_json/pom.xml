@@ -70,7 +70,7 @@
         <dependency>
             <groupId>eu.ddmore.testdata</groupId>
             <artifactId>test-models</artifactId>
-            <version>0.1.2-SNAPSHOT</version>
+            <version>0.2.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         
