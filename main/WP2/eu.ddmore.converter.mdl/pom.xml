@@ -10,6 +10,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>converter-mdl</artifactId>
+    <version>0.1.0</version>
 	<name>Converter Providers: MDL to PharmML and NM-TRAN</name>
 
 	<properties>
