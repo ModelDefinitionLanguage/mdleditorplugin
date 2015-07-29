@@ -201,6 +201,19 @@
                             <goal>single</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>bundle-results</id>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/test/assembly/results.xml</descriptor>
+                            </descriptors>
+                            <attach>false</attach>
+                        </configuration>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -282,7 +295,6 @@
                 </executions>
             </plugin>
         </plugins>
-
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -407,6 +419,40 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    
+    
+    <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <version>2.6</version>
+            <reportSets>
+              <reportSet>
+                <reports>
+                  <report>index</report>
+                  <report>summary</report>
+                </reports>
+              </reportSet>
+            </reportSets>
+          </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.18.1</version>
+                <reportSets>
+                  <reportSet>
+                    <reports>
+                      <report>failsafe-report-only</report>
+                    </reports>
+                  </reportSet>
+                </reportSets>
+                <configuration>
+                  <outputName>conversions-test-report</outputName>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
     
     <name>Converters Acceptance Tests Harness</name>
     <description>Automated execution of converters over all models within eu.ddmore.testdata.test-models.</description>
