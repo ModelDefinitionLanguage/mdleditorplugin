@@ -447,9 +447,6 @@
                     </reports>
                   </reportSet>
                 </reportSets>
-                <configuration>
-                  <outputName>conversions-test-report</outputName>
-                </configuration>
             </plugin>
         </plugins>
     </reporting>
