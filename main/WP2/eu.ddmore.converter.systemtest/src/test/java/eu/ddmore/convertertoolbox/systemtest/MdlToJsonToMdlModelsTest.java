@@ -1,12 +1,19 @@
+/*******************************************************************************
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 /**
  * Run MDL -> JSON -> MDL conversions over the testdata models within the "MDL" subdirectory,
@@ -14,10 +21,10 @@ import org.junit.runners.Parameterized;
  * Minimal checks are done on the MDL -> JSON bit of the pipeline since there is a separate
  * test class, {@link MdlToJsonModelsTest}, for this.
  */
-@RunWith(Parameterized.class)
-public class MdlToJsonToMdlModelsTest {
-
-    private final static Logger LOGGER = Logger.getLogger(MdlToJsonToMdlModelsTest.class);
+@RunWith(ParallelizedRunner.class)
+public class MdlToJsonToMdlModelsTest extends ConverterATParent {
+    private final static Logger LOG = Logger.getLogger(MdlToJsonToMdlModelsTest.class);
+    private final static String NAME = "MdlToJsonToMdlModelsTest";
 
     private final static String MODELS_SUBDIRECTORY = "MDL" + File.separator + FileType.MDL.getVersion();
 
@@ -28,43 +35,44 @@ public class MdlToJsonToMdlModelsTest {
      * NB: The JUnit {@link Parameterized} framework requires the parameter-providing method to
      * return an {@link Iterable} of Arrays.
      * <p>
-     * @return the models to convert, as {@link File} objects
+     * @return the models to convert as Iterable of Object[] arrays with the following elements:
+     *                  <ol>
+     *                      <li>{@link File} - test case's working directory</li>
+     *                      <li>String - relative path to a model file</li>
+     *                      <li>{@link File} - a path of the source test data directory</li>
+     *                   </ol>
+     * @throws Exception 
      */
     @Parameterized.Parameters(name = "{index}: Model {1}")
-    public static Iterable<Object[]> getModelsToTest() {
-        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.MDL.getExtension());
-    }
-
-    private final File model;
-
-    /**
-     * Construct an instance of this test class for a particular model as taken from the list
-     * provided by the {@link #getModelsToTest()} parameter-provider method.
-     * <p>
-     * @param model - the model {@link File}
-     * @param modelShortPath - the path to the model with the "target/WorkingDir/test-models/"
-     *                         prefix stripped off; this is incorporated into the display name of the test
-     *                         but is otherwise unused
-     */
-    public MdlToJsonToMdlModelsTest(final File model, final String modelShortPath) {
-        this.model = model;
+    public static Iterable<Object[]> getModelsToTest() throws Exception {
+        ModelsTestHelper.prepareTestSystemProperties();
+        LOG.info(String.format("Preparing parameters for %s.",MdlToJsonToMdlModelsTest.class));
+        File atWd = ModelsTestHelper.resolveAcceptanceTestSuiteWorkingDirectory(NAME);
+        atWd.mkdirs();
+        Iterable<Object[]> result = ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.MDL.getExtension(),atWd);
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(new File(atWd,ModelsTestHelper.TEST_RECORD_FILE), Lists.newArrayList(result));
+        return result;
     }
 
     /**
-     * Test method that tests the conversion of a particular model file as provided by the
-     * {@link File} parameter that was constructor-injected into this instance of the test class.
+     * See {@link ConverterATParent}
      */
+    public MdlToJsonToMdlModelsTest(File workingDirectory, String model, File testDataDir) {
+        super(workingDirectory, model, testDataDir);
+    }
+    
     @Test
-    public void testMdlToJsonToMdlConversion() throws IOException {
-        final File mdlModelFile = this.model;
+    public void convertsMdlToJsonAndThenBackToMdl() throws IOException {
+        final File mdlModelFile = getModelAbsoluteFile();
             
         final ConverterRunner runner1 = new ConverterRunner(mdlModelFile, FileType.JSON.getExtension(),
                 FileType.MDL.name(), FileType.MDL.getVersion(), FileType.JSON.name(), FileType.JSON.getVersion(),
                 new ConverterJsonOutputFailureChecker());
         runner1.run();
         
-        final File jsonModelFile = new File(new File(mdlModelFile.getParentFile(),
-                "output-"+FileType.JSON.getExtension()), mdlModelFile.getName().replace(FileType.MDL.getExtension(), FileType.JSON.getExtension()));
+        final File jsonModelFile = new File(mdlModelFile.getParentFile(), mdlModelFile.getName().replace(FileType.MDL.getExtension(), FileType.JSON.getExtension()));
         
         final ConverterRunner runner2 = new ConverterRunner(jsonModelFile, FileType.MDL.getExtension(),
                 FileType.JSON.name(), FileType.JSON.getVersion(), FileType.MDL.name(), FileType.MDL.getVersion(),
@@ -73,4 +81,8 @@ public class MdlToJsonToMdlModelsTest {
         
     }
 
+    @AfterClass
+    public static void tearDown() {
+        collectResults(new File(System.getProperty(ModelsTestHelper.AT_WORKING_DIRECTORY_LOCATION_PROP),NAME).getAbsoluteFile());
+    }
 }

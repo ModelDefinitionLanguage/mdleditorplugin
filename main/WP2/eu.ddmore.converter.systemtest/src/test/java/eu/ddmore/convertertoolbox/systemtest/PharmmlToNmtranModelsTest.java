@@ -1,25 +1,28 @@
+/*******************************************************************************
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.File;
 
 import org.apache.log4j.Logger;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import eu.ddmore.convertertoolbox.systemtest.FileType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 
 /**
  * Run PharmML -> NMTRAN conversions over the testdata models within the "PharmML" subdirectory.
  */
-@RunWith(Parameterized.class)
-public class PharmmlToNmtranModelsTest {
-    
-    private final static Logger LOGGER = Logger.getLogger(PharmmlToNmtranModelsTest.class);
-
+@RunWith(ParallelizedRunner.class)
+public class PharmmlToNmtranModelsTest extends ConverterATParent {
+    private final static Logger LOG = Logger.getLogger(PharmmlToNmtranModelsTest.class);
+    private final static String NAME = "PharmmlToNmtranModelsTest";
     private final static String MODELS_SUBDIRECTORY = "PharmML" + File.separator + FileType.PharmML.getVersion();
-    
     /**
      * The method that produces the parameters to be passed to each construction of the test class.
      * In this case, the {@link File}s that are the models for which to test the conversion.
@@ -27,38 +30,44 @@ public class PharmmlToNmtranModelsTest {
      * NB: The JUnit {@link Parameterized} framework requires the parameter-providing method to
      * return an {@link Iterable} of Arrays.
      * <p>
-     * @return the models to convert, as {@link File} objects
+     * @return the models to convert as Iterable of Object[] arrays with the following elements:
+     *                  <ol>
+     *                      <li>{@link File} - test case's working directory</li>
+     *                      <li>String - relative path to a model file</li>
+     *                      <li>{@link File} - a path of the source test data directory</li>
+     *                   </ol>
+     * @throws Exception if collecting models to test failed
      */
     @Parameterized.Parameters(name= "{index}: Model {1}")
-    public static Iterable<Object[]> getModelsToTest() {
-        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.PharmML.getExtension());
-    }
-    
-    private final File model;
-    
-    /**
-     * Construct an instance of this test class for a particular model as taken from the list
-     * provided by the {@link #getModelsToTest()} parameter-provider method.
-     * <p>
-     * @param model - the model {@link File}
-     * @param modelShortPath - the path to the model with the "target/WorkingDir/test-models/"
-     *                         prefix stripped off; this is incorporated into the display name of the test
-     *                         but is otherwise unused
-     */
-    public PharmmlToNmtranModelsTest(final File model, final String modelShortPath) {
-        this.model = model;
+    public static Iterable<Object[]> getModelsToTest() throws Exception {
+        LOG.info(String.format("Preparing parameters for %s.",PharmmlToNmtranModelsTest.class));
+        ModelsTestHelper.prepareTestSystemProperties();
+        File atWd = ModelsTestHelper.resolveAcceptanceTestSuiteWorkingDirectory(NAME);
+        atWd.mkdirs();
+        Iterable<Object[]> result = ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.PharmML.getExtension(),atWd);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(new File(atWd,ModelsTestHelper.TEST_RECORD_FILE), Lists.newArrayList(result));
+        return result;
     }
     
     /**
-     * Test method that tests the conversion of a particular model file as provided by the
-     * {@link File} parameter that was constructor-injected into this instance of the test class.
+     * See {@link ConverterATParent}
      */
+    public PharmmlToNmtranModelsTest(File workingDirectory, String model, File testDataDir) {
+        super(workingDirectory, model, testDataDir);
+    }
+    
     @Test
-    public void testPharmMLToNMTRANConversion() {
+    public void convertsPharmMLToNMTRAN() {
         new ConverterRunner(
-            this.model, FileType.NMTRAN.getExtension(), FileType.PharmML.name(), FileType.PharmML.getVersion(), FileType.NMTRAN.name(), FileType.NMTRAN.getVersion(),
-            new NmTranFileEquivalenceChecker(MODELS_SUBDIRECTORY)
+            getModelAbsoluteFile(), FileType.NMTRAN.getExtension(), FileType.PharmML.name(), FileType.PharmML.getVersion(), FileType.NMTRAN.name(), FileType.NMTRAN.getVersion(),
+            new NmTranCompilationChecker(System.getProperty(ModelsTestHelper.NONMEM_COMPILER_PARAMETERS_PROP),new File(System.getProperty(ModelsTestHelper.NONMEM_COMPILER_EXECUTABLE_PROP)).getAbsoluteFile())
         ).run();
     }
-    
+
+    @AfterClass
+    public static void tearDown() {
+        collectResults(ModelsTestHelper.resolveAcceptanceTestSuiteWorkingDirectory(NAME));
+    }
+
 }
