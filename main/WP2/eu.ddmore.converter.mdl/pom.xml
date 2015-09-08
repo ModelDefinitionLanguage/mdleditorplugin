@@ -5,12 +5,12 @@
 		<relativePath>../eu.ddmore.converter.parent/pom.xml</relativePath>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>converter-parent</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
+		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>converter-mdl</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>0.3.0-SNAPSHOT</version>
 	<name>Converter Providers: MDL to PharmML and NM-TRAN</name>
 
 	<properties>
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>eu.ddmore.mdl</artifactId>
-			<version>1.1.0-SNAPSHOT</version>
+			<version>1.3.0-SNAPSHOT</version>
 		</dependency>
 
         <dependency>
