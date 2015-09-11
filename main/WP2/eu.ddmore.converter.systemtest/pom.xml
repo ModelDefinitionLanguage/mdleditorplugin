@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.ddmore</groupId>
     <artifactId>converter-systemtest</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
     <name>Automated Converter Test Models Execution</name>
 
     <description>
@@ -16,8 +16,8 @@ Note that the generated output models aren't verified in terms of content, just 
     <properties>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <converter-parent.version>1.1.0-SNAPSHOT</converter-parent.version>
-        <converter-toolbox-distribution.version>1.1.0-SNAPSHOT</converter-toolbox-distribution.version>
+        <converter-parent.version>1.3.0-SNAPSHOT</converter-parent.version>
+        <converter-toolbox-distribution.version>1.3.0-SNAPSHOT</converter-toolbox-distribution.version>
         <testdata.models.version>0.1.2-SNAPSHOT</testdata.models.version>
         <models.working.dir>${project.build.directory}/WorkingDir</models.working.dir>
         <commons-exec.version>1.1</commons-exec.version>
@@ -29,14 +29,14 @@ Note that the generated output models aren't verified in terms of content, just 
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-mdl_json</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.3.0-SNAPSHOT</version>
             <classifier>test-utils</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-mdl_json</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.3.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
             
