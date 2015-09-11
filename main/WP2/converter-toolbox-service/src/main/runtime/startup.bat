@@ -20,6 +20,6 @@ popd
 
 SET CTS_LIBS_PATH="./lib,%CONVERTER_LIBS%/lib"
 
-java.exe -DAPP_HOME="%SERVICE_HOME%" -Dcts.workingDirectory="%SERVICE_HOME%\tmp" -Dloader.path=%CTS_LIBS_PATH% -jar %SERVICE_BINARY%
+java.exe %JAVA_OPTS% -DAPP_HOME="%SERVICE_HOME%" -Dcts.workingDirectory="%SERVICE_HOME%\tmp" -Dloader.path=%CTS_LIBS_PATH% -jar %SERVICE_BINARY%
 
 EXIT
