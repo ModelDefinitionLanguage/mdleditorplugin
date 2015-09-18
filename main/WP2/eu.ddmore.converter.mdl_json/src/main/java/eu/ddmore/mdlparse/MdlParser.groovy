@@ -4,8 +4,8 @@
 package eu.ddmore.mdlparse
 
 import org.apache.log4j.Logger
-import org.ddmore.mdl.MdlStandaloneSetup
-import org.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdl.MdlStandaloneSetup
+import eu.ddmore.mdl.mdl.Mcl
 import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
