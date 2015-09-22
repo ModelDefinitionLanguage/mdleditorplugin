@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
-package eu.ddmore.converter.mdl2json;
+package eu.ddmore.converter.mdl2json.legacy;
 
 import static org.junit.Assert.*
 
@@ -11,6 +11,7 @@ import java.util.regex.Matcher
 import org.apache.log4j.Logger
 import org.junit.Test
 
+import eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils;
 import eu.ddmore.converter.mdl2json.domain.Mog
 
 class JSONMogObjectToMDLTest {

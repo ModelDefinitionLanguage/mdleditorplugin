@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
-package eu.ddmore.converter.mdl2json
+package eu.ddmore.converter.mdl2json.legacy
 
 import static org.junit.Assert.*
 
@@ -9,6 +9,7 @@ import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
 
 import org.junit.Test
 
+import eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils;
 import eu.ddmore.converter.mdl2json.domain.Model
 
 
