@@ -13,13 +13,6 @@
     <name>Converter Toolbox - Distributions</name>
     <packaging>pom</packaging>
 
-    <properties>
-        <converter-nonmem.version>0.1.0-SNAPSHOT</converter-nonmem.version>
-        <mdl-converters.version>0.3.0-SNAPSHOT</mdl-converters.version>
-        <converter-toolbox.version>1.3.0-SNAPSHOT</converter-toolbox.version>
-        <test-converters.version>0.3.0-SNAPSHOT</test-converters.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -29,7 +22,6 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/base.xml</descriptor>
-                                <descriptor>src/main/assembly/full.xml</descriptor>
                                 <descriptor>src/main/assembly/acceptance-tests.xml</descriptor>
                             </descriptors>
                         </configuration>
@@ -47,47 +39,41 @@
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-toolbox</artifactId>
-            <version>${converter-toolbox.version}</version>
+            <version>1.3.0-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
 
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-mdl</artifactId>
-            <version>${mdl-converters.version}</version>
+            <version>0.3.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-mdl_json</artifactId>
-            <version>${mdl-converters.version}</version>
+            <version>0.3.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-toolbox-service</artifactId>
-            <version>${project.version}</version>
+            <version>1.3.0-SNAPSHOT</version>
             <classifier>binary</classifier>
             <type>zip</type>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.ddmore</groupId>
-            <artifactId>converter-nonmem</artifactId>
-            <version>${converter-nonmem.version}</version>
         </dependency>
         
         <!-- Test converters included in acceptance tests assembly -->
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>test-mdl2nonmem-failure</artifactId>
-            <version>${test-converters.version}</version>
+            <version>0.3.0-SNAPSHOT</version>
         </dependency>
         
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>test-mdl2nonmem-success</artifactId>
-            <version>${test-converters.version}</version>
+            <version>0.3.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <url>http://ddmore.eu/</url>

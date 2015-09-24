@@ -22,7 +22,7 @@ import eu.ddmore.convertertoolbox.service.impl.ConversionResourcesConvention;
 @Order(2)
 @Component
 public class ExecuteConversionStep implements ConversionStep {
-    private static final Logger LOG = Logger.getLogger(ProcessOutputsStep.class);
+    private static final Logger LOG = Logger.getLogger(ExecuteConversionStep.class);
     @Override
     public void execute(ConversionContext conversionContext) {
         Preconditions.checkNotNull(conversionContext, "Conversion context was null");

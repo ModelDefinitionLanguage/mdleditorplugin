@@ -48,7 +48,7 @@ class MdlFileContentTestUtils {
         Model.VARIABILITY_LEVELS,
         Model.STRUCTURAL_PARAMETERS,
         Model.VARIABILITY_PARAMETERS,
-        Model.RANDOM_VARIABLE_DEFINITION + /\s*\(.+\)/, // Note the regex matching for the parameters of the block name. All matching blocks will get picked up for comparison, as per DECLARED_VARIABLES above.
+        Model.RANDOM_VARIABLE_DEFINITION + /\s*\([A-Za-z0-9=]+\)/, // Note the regex matching for the parameters of the block name. All matching blocks will get picked up for comparison, as per DECLARED_VARIABLES above.
         Model.INDIVIDUAL_VARIABLES,
         Model.MODEL_PREDICTION, // Note: Does NOT compare the sub-blocks; must be done explicitly (i.e. by these being listed explicitly - the last line of this def'n).
         Model.OBSERVATION,
@@ -113,24 +113,14 @@ class MdlFileContentTestUtils {
             }
 
             // Trim off whitespace from both the expected and the actual
-            origMdlFileBlockContent = origMdlFileBlockContent.replaceAll(~/(?s)\s*/, "")
-            newMdlFileBlockContent = newMdlFileBlockContent.replaceAll(~/(?s)\s*/, "")
+            origMdlFileBlockContent = origMdlFileBlockContent.replaceAll(/(?s)\s*/, "")
+            newMdlFileBlockContent = newMdlFileBlockContent.replaceAll(/(?s)\s*/, "")
+            
+            // The original MDL file might have an empty block(s) for this blockName; this is treated the same
+            // as if the block is absent, and the written out MDL won't have this empty block(s), so remove it
+            origMdlFileBlockContent = origMdlFileBlockContent.replaceAll(blockName + /\{\}/, "")
 
-            // If the original MDL file had an empty block for this blockName then this is treated the same as if the block is absent
-            if (origMdlFileBlockContent.equals(blockName + "{}")) {
-                origMdlFileBlockContent = "";
-            }
-            // If the newly written out MDL file had an empty block for this blockName then this is treated the same as if the block is absent
-            if (newMdlFileBlockContent.equals(blockName + "{}")) {
-                newMdlFileBlockContent = "";
-            }
-
-            assertEquals("Checking the content of the block " + blockName,
-                // TODO: Remove the "OBSOLETE" commented out code below once we are confident that "if"
-                // exprs/stmts won't reappear in the MDL, maybe appropriate towards end of Product 4
-                origMdlFileBlockContent /* OBSOLETE?: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */ ,
-                newMdlFileBlockContent /* OBSOLETE?: .replaceAll(~/if\((.+?)\)\{(.*?)\}/, /if($1)$2/) */
-            )
+            assertEquals("Checking the content of the block " + blockName, origMdlFileBlockContent, newMdlFileBlockContent)
         }
     }
 
@@ -167,7 +157,7 @@ class MdlFileContentTestUtils {
                 removeCommentFromLineOfMDL(fullStr, closingQuotePos + 1, strBuf) // Repeat until the end of the string is reached
             } else {
                 // Hash char is not within a quoted string so is most likely starting a comment
-                if (!subStr.matches(~/\s*$/)) { // Not just whitespace
+                if (!subStr.matches(/\s*$/)) { // Not just whitespace
                     strBuf.append(subStr)
                     strBuf.append("\n")
                 }
@@ -472,7 +462,8 @@ class MdlFileContentTestUtils {
      * @return the string comprising the block name and its reordered content
      */
     private static String putMogObjectsBlockContentInKnownOrder(final String blockText) {
-        putSOURCEBlockOrMogObjectsBlockContentInKnownOrder(Mog.OBJECTS, blockText, /\s*\S+\s*/)
+        // This regex is complicated by the fact that you can either have an object referenced as "Poisson_dat" or "dObj = Poisson_dat"
+        putSOURCEBlockOrMogObjectsBlockContentInKnownOrder(Mog.OBJECTS, blockText, /\s*(?:\S+\s*=\s*)?\S+\s*/)
     }
 
     /**

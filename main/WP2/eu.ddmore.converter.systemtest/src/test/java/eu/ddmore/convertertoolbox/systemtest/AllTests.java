@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.systemtest;
 
 import org.junit.runner.RunWith;
@@ -14,9 +17,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
     MdlToPharmmlModelsTest.class,
-//    PharmmlToNmtranModelsTest.class,
-//    GeneratedPharmmlToNmtranModelsTest.class,
+    PharmmlToNmtranModelsTest.class,
     MdlToJsonModelsTest.class,
-    MdlToJsonToMdlModelsTest.class
+    MdlToJsonToMdlModelsTest.class,
+    GeneratedPharmmlToNmtranModelsTest.class
 })
 public class AllTests {}

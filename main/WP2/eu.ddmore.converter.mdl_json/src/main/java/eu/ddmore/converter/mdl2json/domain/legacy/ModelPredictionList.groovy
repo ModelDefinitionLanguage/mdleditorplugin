@@ -1,17 +1,13 @@
 /*******************************************************************************
  * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
-package eu.ddmore.converter.mdl2json.domain
-
-import java.util.List;
+package eu.ddmore.converter.mdl2json.domain.legacy
 
 import org.ddmore.mdl.mdl.ModelPredictionBlock
 import org.ddmore.mdl.mdl.ModelPredictionBlockStatement
-import org.ddmore.mdl.mdl.PkMacroStatement;
 
 import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
-import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 
 /**

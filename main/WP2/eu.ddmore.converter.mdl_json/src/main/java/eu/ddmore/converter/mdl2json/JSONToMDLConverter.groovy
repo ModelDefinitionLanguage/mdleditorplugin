@@ -22,7 +22,7 @@ import groovy.json.JsonSlurper
  */
 public class JSONToMDLConverter implements ConverterProvider {
 
-    private static final Logger LOGGER = Logger.getLogger(this.getClass());
+    private static final Logger LOG = Logger.getLogger(JSONToMDLConverter.class);
 
     private static final String MDL_FILE_EXTENSION = ".mdl"
     private static final String JSON_FILE_EXTENSION = ".json"

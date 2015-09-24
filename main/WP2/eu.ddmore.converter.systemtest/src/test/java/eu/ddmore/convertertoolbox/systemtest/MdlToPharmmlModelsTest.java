@@ -1,25 +1,33 @@
+/*******************************************************************************
+ * Copyright (C) 2015 Mango Solutions Ltd - All rights reserved.
+ ******************************************************************************/
 package eu.ddmore.convertertoolbox.systemtest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.log4j.Logger;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import eu.ddmore.convertertoolbox.systemtest.FileType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 
 /**
  * Run MDL -> PharmML conversions over the testdata models within the "MDL" subdirectory.
  */
-@RunWith(Parameterized.class)
-public class MdlToPharmmlModelsTest {
-    
-    private final static Logger LOGGER = Logger.getLogger(MdlToPharmmlModelsTest.class);
+@RunWith(ParallelizedRunner.class)
+public class MdlToPharmmlModelsTest extends ConverterATParent {
+    private final static Logger LOG = Logger.getLogger(MdlToPharmmlModelsTest.class);
+    final static String NAME = "MdlToPharmmlModelsTest";
 
     private final static String MODELS_SUBDIRECTORY = "MDL" + File.separator + FileType.MDL.getVersion();
     
@@ -30,26 +38,54 @@ public class MdlToPharmmlModelsTest {
      * NB: The JUnit {@link Parameterized} framework requires the parameter-providing method to
      * return an {@link Iterable} of Arrays.
      * <p>
-     * @return the models to convert, as {@link File} objects
+     * @return the models to convert as Iterable of Object[] arrays with the following elements:
+     *                  <ol>
+     *                      <li>{@link File} - test case's working directory</li>
+     *                      <li>String - relative path to a model file</li>
+     *                      <li>{@link File} - a path of the source test data directory</li>
+     *                   </ol>
+     * @throws Exception if collecting models to test failed
      */
     @Parameterized.Parameters(name= "{index}: Model {1}")
-    public static Iterable<Object[]> getModelsToTest() {
-        return ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.MDL.getExtension());
+    public static Iterable<Object[]> getModelsToTest() throws Exception {
+        LOG.info(String.format("Preparing parameters for %s.",MdlToPharmmlModelsTest.class));
+        ModelsTestHelper.prepareTestSystemProperties();
+        File atWd = ModelsTestHelper.resolveAcceptanceTestSuiteWorkingDirectory(NAME);
+        atWd.mkdirs();
+        Iterable<Object[]> result = filterOutMDLFilesWithMissingMOG(ModelsTestHelper.getModelsToTest(MODELS_SUBDIRECTORY, FileType.MDL.getExtension(),atWd));
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(new File(atWd,ModelsTestHelper.TEST_RECORD_FILE), Lists.newArrayList(result));
+        return result;
     }
-    
-    private final File model;
-    
+
+    private static Iterable<Object[]> filterOutMDLFilesWithMissingMOG(final Iterable<Object[]> discoveredMdlFiles) {
+        return Iterables.filter(discoveredMdlFiles, new Predicate<Object[]>() {
+            public boolean apply(final Object[] conversionRecord) {
+                File testDataDir = new File(conversionRecord[2].toString());
+                File mdlFile = new File(testDataDir,conversionRecord[1].toString());
+                String mdlFileContent;
+                try {
+                    mdlFileContent = FileUtils.readFileToString(mdlFile);
+                } catch (IOException ioe) {
+                    throw new RuntimeException("Error reading MDL file " + mdlFile.getAbsolutePath(), ioe);
+                }
+                final Pattern mogobjPattern = Pattern.compile("[A-Za-z0-9_]+\\s*=\\s*mogobj\\s*\\{.+\\}", Pattern.DOTALL);
+                final Matcher mogobjMatcher = mogobjPattern.matcher(mdlFileContent);
+                final boolean containsMogObj = mogobjMatcher.find();
+                if (!containsMogObj) {
+                    LOG.warn("No mogobj block found in MDL file " + mdlFile + ", therefore no PharmML file will be generated. Skipping this model...");
+                    return false;
+                }
+                return true;
+            }
+        });
+    }
+
     /**
-     * Construct an instance of this test class for a particular model as taken from the list
-     * provided by the {@link #getModelsToTest()} parameter-provider method.
-     * <p>
-     * @param model - the model {@link File}
-     * @param modelShortPath - the path to the model with the "target/WorkingDir/test-models/"
-     *                         prefix stripped off; this is incorporated into the display name of the test
-     *                         but is otherwise unused
+     * See {@link ConverterATParent}
      */
-    public MdlToPharmmlModelsTest(final File model, final String modelShortPath) {
-        this.model = model;
+    public MdlToPharmmlModelsTest(File workingDirectory, String model, File testDataDir) {
+        super(workingDirectory, model, testDataDir);
     }
     
     /**
@@ -64,15 +100,18 @@ public class MdlToPharmmlModelsTest {
      * @throws IOException - if an error occurred trying to copy data files
      */
     @Test
-    public void testMdlToPharmMLConversion() throws IOException {
+    public void convertsMdlToPharmML() throws IOException {
         final ConverterRunner runner = new ConverterRunner(
-            this.model, FileType.PharmML.getExtension(),
+            getModelAbsoluteFile(), FileType.PharmML.getExtension(),
             FileType.MDL.name(), FileType.MDL.getVersion(), FileType.PharmML.name(), FileType.PharmML.getVersion(),
             new MdlToPharmMLOutputFailureChecker()
         );
         runner.run();
-		// Copy the data file
-        FileUtils.copyDirectory(this.model.getParentFile(), runner.getOutputDirectory(), new SuffixFileFilter(".csv"));
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        collectResults(new File(System.getProperty(ModelsTestHelper.AT_WORKING_DIRECTORY_LOCATION_PROP),NAME).getAbsoluteFile());
     }
     
 }

@@ -14,7 +14,6 @@
             <excludes>
                 <exclude>eu.ddmore:test-mdl2nonmem-failure</exclude>
                 <exclude>eu.ddmore:test-mdl2nonmem-success</exclude>
-                <exclude>eu.ddmore:converter-nonmem</exclude>
                 <exclude>eu.ddmore:converter-toolbox:*</exclude>
                 <exclude>eu.ddmore:converter-toolbox-service:*</exclude>
             </excludes>
