@@ -7,7 +7,7 @@ import org.ddmore.mdl.mdl.PropertyDeclaration
 import org.ddmore.mdl.mdl.SourceBlock
 
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
-import eu.ddmore.converter.mdl2json.utils.XtextWrapper
+import eu.ddmore.converter.mdl2json.utils.legacy.XtextWrapper;
 
 
 /**

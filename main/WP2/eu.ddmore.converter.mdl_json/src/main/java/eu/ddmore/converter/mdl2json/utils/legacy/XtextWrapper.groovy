@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
-package eu.ddmore.converter.mdl2json.utils
+package eu.ddmore.converter.mdl2json.utils.legacy
 
 import org.ddmore.mdl.mdl.AdditiveExpression
 import org.ddmore.mdl.mdl.AndExpression
@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EList
 
 import com.google.common.base.Preconditions
 
+import eu.ddmore.converter.mdl2json.utils.legacy.XtextWrapper;
 import eu.ddmore.converter.mdlprinting.MdlPrinter
 
 public class XtextWrapper {

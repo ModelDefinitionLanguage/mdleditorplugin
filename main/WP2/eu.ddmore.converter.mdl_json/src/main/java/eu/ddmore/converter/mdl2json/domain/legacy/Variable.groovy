@@ -9,7 +9,7 @@ import org.ddmore.mdl.mdl.PkMacroStatement
 import org.ddmore.mdl.mdl.SymbolName
 
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
-import eu.ddmore.converter.mdl2json.utils.XtextWrapper
+import eu.ddmore.converter.mdl2json.utils.legacy.XtextWrapper;
 
 
 /**

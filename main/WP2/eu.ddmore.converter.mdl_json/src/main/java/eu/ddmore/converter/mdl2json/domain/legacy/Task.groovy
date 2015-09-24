@@ -9,7 +9,7 @@ import org.ddmore.mdl.mdl.TaskObjectBlock
 import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdl2json.interfaces.TopLevelBlock
-import eu.ddmore.converter.mdl2json.utils.XtextWrapper
+import eu.ddmore.converter.mdl2json.utils.legacy.XtextWrapper;
 
 
 public class Task extends Expando implements MDLPrintable, MDLAsJSON, TopLevelBlock {

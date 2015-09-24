@@ -14,7 +14,7 @@ import org.eclipse.emf.common.util.EList
 
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 import eu.ddmore.converter.mdl2json.domain.VariablesList
-import eu.ddmore.converter.mdl2json.utils.XtextWrapper
+import eu.ddmore.converter.mdl2json.utils.legacy.XtextWrapper;
 
 
 public class ModelPredictionItem extends Variable implements MDLPrintable {
