@@ -28,12 +28,12 @@ warfarin_PK_v2_dat = dataobj{
 		CMT : { use is cmt } 
 		AMT : { use  is amt , define={ 1 in CMT as GUT } }
 		DVID : { use  is dvid }
-		DV : { use  is dv, variable = Y }
+		DV : { use  is dv, variable = (Y) }
 		MDV : { use  is mdv}
 	}
 
 	DATA_DERIVED_VARIABLES{
-		DT : { column=TIME, condition=AMT > 0 }
+		DT : { use is doseTime, idvColumn=TIME, amtColumn=AMT }
 	}
 	
 	SOURCE {

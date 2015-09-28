@@ -26,8 +26,6 @@ import eu.ddmore.mdl.mdl.WhenExpression
 import eu.ddmore.mdl.mdl.VectorElement
 import eu.ddmore.mdl.mdl.UnnamedArgument
 import eu.ddmore.mdl.mdl.ConstantLiteral
-import eu.ddmore.mdl.mdl.NamedFuncArguments
-import eu.ddmore.mdl.mdl.CategoryValueDefinition
 
 public class ExpressionConverter {
 	
@@ -35,12 +33,9 @@ public class ExpressionConverter {
 		getString
 	}
 
-	def static dispatch String getString(CategoricalDefinitionExpr defn)'''
-		withCategories {«FOR catValDefn : defn.categories SEPARATOR ', '»«catValDefn.getString»«ENDFOR»}'''
-
-    def static dispatch String getString(CategoryValueDefinition catValDefn) {
-        catValDefn.name + if (catValDefn.mappedTo != null) " when " + catValDefn.mappedTo.getString else ""
-    }
+	def static String convertToString(CategoricalDefinitionExpr defn)'''
+		[«FOR c : defn.categories SEPARATOR ','»
+			«(c as SymbolDefinition).name»«ENDFOR»]'''
 
 	def static dispatch String getString(Expression exp){
 		throw new IllegalStateException("Bug. Concrete dispatch method missing: " + exp.class.simpleName );
@@ -51,7 +46,7 @@ public class ExpressionConverter {
 	}
 	
 	def static dispatch String getString(EnumExpression exp){
-	  exp.enumValue + (if (exp.catDefn != null) " " + exp.catDefn.getString else "")
+		exp.enumValue
 	}
 	
 	def static dispatch String getString(AndExpression exp){
@@ -87,12 +82,9 @@ public class ExpressionConverter {
 	
 	def static dispatch String getString(BuiltinFunctionCall exp)'''
 		«exp.func»(«exp.argList.getString»)'''
-
-    def static dispatch String getString(NamedFuncArguments exp)'''
-        «FOR arg: exp.arguments SEPARATOR ', '»«arg.getArgumentName»=«arg.getExpression.getString»«ENDFOR»'''
 	
 	def static dispatch String getString(UnnamedFuncArguments exp)'''
-		«FOR arg: exp.args SEPARATOR ', '»«arg.getString»«ENDFOR»'''
+		«FOR arg: exp.args SEPARATOR ','»«arg.getString»«ENDFOR»'''
 	
 	def static dispatch String getString(UnnamedArgument exp)'''
 		«exp.argument.getString»'''
@@ -104,19 +96,19 @@ public class ExpressionConverter {
 //		(«limit.low?:''», «initial.getString», «limit.high?:''»)'''
 	
 	def static dispatch String getString(WhenExpression exp)'''
-		«FOR w : exp.when SEPARATOR '\nelse'»«w.getString»«ENDFOR»
-		«IF exp.other!=null»else «exp.other.getString»«ENDIF»'''
+		«FOR w : exp.when SEPARATOR ',\n'»«w.getString»«ENDFOR»«IF exp.other != null»,«ENDIF»
+		«IF exp.other!=null»«exp.other.getString» otherwise«ENDIF»'''
 	
 	def static dispatch String getString(WhenClause exp)'''
-		if («exp.cond.getString») then «exp.value.getString»'''
+		(«exp.value.getString») when «exp.cond.getString»'''
 
 	
 	def static dispatch String getString(ElifClause exp)'''
-		if («exp.cond.getString») then «exp.value.getString»'''
+		(«exp.value.getString») when «exp.cond.getString»'''
 
 	
 	def static dispatch String getString(BooleanLiteral exp){
-		if (exp.isTrue) "true" else "false"
+		if(exp.isTrue)  "true" else "false"
 	}
 	
 	def static dispatch String getString(RealLiteral exp){
