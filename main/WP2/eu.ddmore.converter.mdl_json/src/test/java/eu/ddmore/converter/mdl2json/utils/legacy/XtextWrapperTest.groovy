@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (C) 2014-2015 Mango Solutions Ltd - All rights reserved.
  ******************************************************************************/
-package eu.ddmore.converter.mdl2json.utils;
+package eu.ddmore.converter.mdl2json.utils.legacy;
 
 import static org.junit.Assert.*
 import static org.mockito.Mockito.*
