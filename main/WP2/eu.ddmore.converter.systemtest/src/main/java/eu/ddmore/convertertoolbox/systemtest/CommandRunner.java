@@ -34,7 +34,7 @@ public class CommandRunner {
     private String name = "execution";
     private File workingDirectory;
     private CommandLine commandLine;
-    private Long processTimeout = TimeUnit.SECONDS.toMillis(30);
+    private Long processTimeout = TimeUnit.SECONDS.toMillis(120);
     private boolean dryRun = false;
     
     public CommandRunner setName(String name) {

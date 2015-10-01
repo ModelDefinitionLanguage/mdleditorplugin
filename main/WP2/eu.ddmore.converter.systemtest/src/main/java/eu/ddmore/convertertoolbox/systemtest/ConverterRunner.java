@@ -51,8 +51,7 @@ public class ConverterRunner {
         cmdLine.addArgument(targetVersion);
         
         CommandRunner cRunner = new CommandRunner().setName(this.modelFile.getName() + ".convert")
-                .setProcessTimeout(TimeUnit.SECONDS.toMillis(30))
-                .setWorkingDirectory(new File(CONVERTER_TOOLBOX_EXECUTABLE).getParentFile());
+                .setWorkingDirectory(outputDir);
         cRunner.setCommand(cmdLine.toString());
         
         try {
