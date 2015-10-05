@@ -27,7 +27,7 @@ public class ListDefinition extends AbstractStatement {
     }
     
     public ListDefinition(final Map json) {
-        getProperties().putAll(json)
+        super(json)
     }
     
     @Override

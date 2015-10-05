@@ -24,6 +24,47 @@ public class StatementList extends ArrayList<AbstractStatement> implements MDLPr
         return new StatementList(json.collect { StatementFactory.fromJSON(it) })
     }
     
+    /**
+     * The RANDOM_VARIABLE_DEFINITION block, and possibly other blocks in the future,
+     * has attributes on the block itself as well as for individual variables/items.
+     * To simplify the representation of these in the R objects, and make the
+     * representation of different types of block more consistent, we propagate any
+     * block attributes onto the individual items when converting to JSON, and do
+     * the reverse when writing back out to MDL.
+     * <p>
+     * This method copies the single set of block attributes onto each individual variable/item.
+     * It is a no-op if there are no attributes of this block (i.e. the parameter is null).
+     * <p>
+     * @param blkAttrs - Map of String->String holding the attributes of the enclosing block
+     * @see {@link #getBlockAttributesFromIndividualItems()}
+     */
+    void setBlockAttributesOnIndividualItems(final Map<String, String> blkAttrs) {
+        collect {
+            AbstractStatement ourStmt -> ourStmt.setAttributesFromBlock(blkAttrs)
+        }
+    }
+    
+    /**
+     * The RANDOM_VARIABLE_DEFINITION block, and possibly other blocks in the future,
+     * has attributes on the block itself as well as for individual variables/items.
+     * To simplify the representation of these in the R objects, and make the
+     * representation of different types of block more consistent, we propagate any
+     * block attributes onto the individual items when converting to JSON, and do
+     * the reverse when writing back out to MDL.
+     * <p>
+     * This method retrieves the block attributes that were stored on the first
+     * individual variable/item; it is assumed that all individual variables/items
+     * had the same set of block attributes copied on to them.
+     * <p>
+     * @return Map of String->String holding the attributes of the enclosing block
+     * @see {@link #setBlockAttributesOnIndividualItems(Map)}
+     */
+    Map<String, String> getBlockAttributesFromIndividualItems() {
+        collect {
+            AbstractStatement ourStmt -> ourStmt.getAttributesFromBlock()
+        }.first() // All items should share the same block attributes
+    }
+    
     @Override
     public String toMDL() {
         collect { AbstractStatement it ->

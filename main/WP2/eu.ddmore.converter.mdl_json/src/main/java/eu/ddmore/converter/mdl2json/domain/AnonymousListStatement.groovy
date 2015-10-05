@@ -31,7 +31,7 @@ public class AnonymousListStatement extends AbstractStatement {
     }
     
     public AnonymousListStatement(final Map json) {
-        getProperties().putAll(json)
+        super(json)
     }
     
     @Override

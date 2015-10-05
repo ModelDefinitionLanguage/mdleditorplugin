@@ -13,6 +13,21 @@ public abstract class AbstractStatement extends Expando implements MDLPrintable 
     protected static final String PROPERTY_SUBTYPE = ".subtype"
     protected static final String PROPERTY_BLOCKATTRS = "blkAttrs"
     
+    protected AbstractStatement() {
+    }
+    
+    /**
+     * Constructor for the abstract superclass, creating from JSON representation.
+     * <p>
+     * As part of this, propagates block attributes onto individual variables/items, if the
+     * enclosing block type permits block-level attributes and there are any such attributes.
+     * <p>
+     * @param json - JSON representation of this Statement
+     */
+    protected AbstractStatement(final Map json) {
+        getProperties().putAll(json)
+    }
+    
     /**
      * Tells whether this instance of the subclass of {@link AbstractStatement} can
      * be simplified for writing out to JSON format and thus provide a more concise
@@ -43,6 +58,26 @@ public abstract class AbstractStatement extends Expando implements MDLPrintable 
      */
     Object getSimplifiedJsonRepresentation() {
         throw new IllegalStateException("Tried to obtain a simplified JSON representation of " + toString() + " but this isn't possible for this data")
+    }
+    
+    /**
+     * @see {@link eu.ddmore.converter.mdl2json.domain.StatementList#setBlockAttributesOnIndividualItems(Map)}
+     * <p>
+     * @param blkAttrs - Map of String->String holding the attributes of the enclosing block
+     */
+    void setAttributesFromBlock(final Map<String, String> blkAttrs) {
+        if (blkAttrs != null) {
+            setProperty(PROPERTY_BLOCKATTRS, blkAttrs)
+        }
+    }
+    
+    /**
+     * @see {@link eu.ddmore.converter.mdl2json.domain.StatementList#getBlockAttributesFromIndividualItems()}
+     * <p>
+     * @return blkAttrs - Map of String->String holding the attributes of the enclosing block
+     */
+    Map<String, String> getAttributesFromBlock() {
+        getProperty(PROPERTY_BLOCKATTRS)
     }
     
 }

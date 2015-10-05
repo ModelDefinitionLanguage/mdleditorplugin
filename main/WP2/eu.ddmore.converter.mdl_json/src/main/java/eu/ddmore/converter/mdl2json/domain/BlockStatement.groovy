@@ -22,7 +22,6 @@ public class BlockStatement extends AbstractStatement {
     public final static String PROPERTY_CONTENT = "content"
     public final static String PROPERTY_STATEMENTS = "statements"
     public final static String PROPERTY_SYMBOLNAMES = "symbolNames"
-    public final static String PROPERTY_ARGS = "args"
 
     public BlockStatement(final eu.ddmore.mdl.mdl.BlockStatement blkStatement) {
         setProperty(PROPERTY_SUBTYPE, EStatementSubtype.BlockStmt.getIdentifierString())
@@ -33,13 +32,13 @@ public class BlockStatement extends AbstractStatement {
             setProperty(PROPERTY_CONTENT, ((eu.ddmore.mdl.mdl.BlockTextBody) blkBody).getText())
         } else { // instance of BlockStatementBody
             StatementList stmtList = StatementList.fromMDL(((eu.ddmore.mdl.mdl.BlockStatementBody) blkBody).getStatements())
+            stmtList.setBlockAttributesOnIndividualItems(blkAttrsMap)
             if (stmtList.every { AbstractStatement s -> s.hasSimplifiedJsonRepresentation() }) {
                 setProperty(PROPERTY_SYMBOLNAMES, stmtList.collect { AbstractStatement stmt -> stmt.getSimplifiedJsonRepresentation() })
             } else {
                 setProperty(PROPERTY_STATEMENTS, stmtList)
             }
         }
-        setProperty(PROPERTY_ARGS, blkAttrsMap)
     }
     
     private static Map<String, String> getBlockArgumentsAsMap(final eu.ddmore.mdl.mdl.BlockStatement blkStatement) {
@@ -58,19 +57,10 @@ public class BlockStatement extends AbstractStatement {
     }
     
     public BlockStatement(final Map json) {
-        setProperty(PROPERTY_SUBTYPE, EStatementSubtype.BlockStmt.getIdentifierString())
-        setProperty(PROPERTY_IDENTIFIER, json[PROPERTY_IDENTIFIER])
-        if (json[PROPERTY_CONTENT]) {
-            setProperty(PROPERTY_CONTENT, json[PROPERTY_CONTENT])
-        }
-        else if (json[PROPERTY_SYMBOLNAMES]) {
-            setProperty(PROPERTY_SYMBOLNAMES, json[PROPERTY_SYMBOLNAMES])
-        }
-        else if (json[PROPERTY_STATEMENTS]) {
+        super(json)
+        // Statements property needs special parsing
+        if (json[PROPERTY_STATEMENTS]) {
             setProperty(PROPERTY_STATEMENTS, StatementList.fromJSON(json[PROPERTY_STATEMENTS]))
-        }
-        if (json[PROPERTY_ARGS]) {
-            setProperty(PROPERTY_ARGS, json[PROPERTY_ARGS])
         }
     }
 
@@ -80,13 +70,6 @@ public class BlockStatement extends AbstractStatement {
         
         sb.append(IDT)
         sb.append(getProperty(PROPERTY_IDENTIFIER))
-        if (getProperty(PROPERTY_ARGS)) {
-            sb.append("(")
-            sb.append(getProperty(PROPERTY_ARGS).collect {
-                k, v -> k + "=" + v
-            }.join(", "))
-            sb.append(")")
-        }
         
         if (getProperty(PROPERTY_CONTENT)) {
             sb.append(getProperty(PROPERTY_CONTENT))
@@ -97,15 +80,22 @@ public class BlockStatement extends AbstractStatement {
             }.join("\n"))
             sb.append("\n${IDT}}")
         } else if (getProperty(PROPERTY_STATEMENTS)) {
+            StatementList stmtList = getProperty(PROPERTY_STATEMENTS)
+            // Retrieve block attributes that had been propagated onto individual items
+            Map<String, String> blkAttrs = stmtList.getBlockAttributesFromIndividualItems()
+            if (blkAttrs) {
+                sb.append("(")
+                sb.append(blkAttrs.collect {
+                    k, v -> k + "=" + v
+                }.join(", "))
+                sb.append(")")
+            }
+            // Now append the actual MDL block text
             sb.append(" {\n")
-            sb.append(getProperty(PROPERTY_STATEMENTS).toMDL())
+            sb.append(stmtList.toMDL())
             sb.append("${IDT}}")
         }
         sb.append("\n")
-        
-//        getProperties().each{ String key, MDLPrintable value ->
-//            sb.append("\n${key} = ${value.toMDL()}")
-//        }
     }
     
 }

@@ -35,9 +35,7 @@ public class EnumerationDefinition extends AbstractStatement {
     }
     
     public EnumerationDefinition(final Map json) {
-        setProperty(PROPERTY_SUBTYPE, EStatementSubtype.EnumDefinition.getIdentifierString())
-        setProperty(PROPERTY_NAME, json[PROPERTY_NAME])
-        setProperty(PROPERTY_CATEGORIES, json[PROPERTY_CATEGORIES])
+        super(json)
     }
     
     @Override

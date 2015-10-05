@@ -37,11 +37,7 @@ public class TransformedDefinition extends AbstractStatement {
     }
     
     public TransformedDefinition(final Map json) {
-        setProperty(PROPERTY_SUBTYPE, EStatementSubtype.TransDefinition.getIdentifierString())
-        setProperty(PROPERTY_NAME, json[PROPERTY_NAME])
-        setProperty(PROPERTY_TRANSFORM, json[PROPERTY_TRANSFORM])
-        setProperty(PROPERTY_FUNCTION, json[PROPERTY_FUNCTION])
-        setProperty(PROPERTY_ARGS, json[PROPERTY_ARGS])
+        super(json)
     }
     
     @Override

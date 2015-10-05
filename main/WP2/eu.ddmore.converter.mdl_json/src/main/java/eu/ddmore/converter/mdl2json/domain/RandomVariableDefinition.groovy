@@ -32,10 +32,7 @@ public class RandomVariableDefinition extends AbstractStatement {
     }
     
     public RandomVariableDefinition(final Map json) {
-        setProperty(PROPERTY_SUBTYPE, EStatementSubtype.RandomVarDefinition.getIdentifierString())
-        setProperty(PROPERTY_NAME, json[PROPERTY_NAME])
-        setProperty(PROPERTY_DIST_TYPE, json[PROPERTY_DIST_TYPE])
-        setProperty(PROPERTY_ARGS, json[PROPERTY_ARGS])
+        super(json)
     }
     
     @Override

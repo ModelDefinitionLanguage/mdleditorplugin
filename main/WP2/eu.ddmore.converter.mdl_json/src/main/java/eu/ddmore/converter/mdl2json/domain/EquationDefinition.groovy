@@ -42,14 +42,7 @@ public class EquationDefinition extends AbstractStatement {
     }
     
     public EquationDefinition(final Map json) {
-        setProperty(PROPERTY_SUBTYPE, EStatementSubtype.EquationDefinition.getIdentifierString())
-        setProperty(PROPERTY_NAME, json[PROPERTY_NAME])
-        if (json[PROPERTY_EXPRESSION]) {
-            setProperty(PROPERTY_EXPRESSION, json[PROPERTY_EXPRESSION])
-        } else if (json[PROPERTY_FUNCNAME]) {
-            setProperty(PROPERTY_FUNCNAME, json[PROPERTY_FUNCNAME])
-            setProperty(PROPERTY_FUNCARGS, json[PROPERTY_FUNCARGS])
-        }
+        super(json)
     }
     
     @Override
