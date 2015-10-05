@@ -51,7 +51,7 @@ public class EquationDefinition extends AbstractStatement {
     }
     
     @Override
-    Object getSimplifiedJsonRepresentation() {
+    String getSimplifiedJsonRepresentation() {
          getProperty(PROPERTY_NAME)
     }
     
