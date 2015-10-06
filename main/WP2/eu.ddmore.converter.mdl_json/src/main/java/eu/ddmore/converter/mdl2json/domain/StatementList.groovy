@@ -9,6 +9,10 @@ import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
  * Represents a list of {@link eu.ddmore.mdl.mdl.Statement} for MDL <-> JSON conversion.
  */
 public class StatementList extends ArrayList<AbstractStatement> implements MDLPrintable {
+
+    private StatementList() {
+        super()
+    }
     
     private StatementList(final List list) {
         super(list)
@@ -63,6 +67,24 @@ public class StatementList extends ArrayList<AbstractStatement> implements MDLPr
         collect {
             AbstractStatement ourStmt -> ourStmt.getAttributesFromBlock()
         }.first() // All items should share the same block attributes
+    }
+    
+    /**
+     * @return List of {@link StatementList}, segregated by common block attributes
+     *         that have been stored on the individual variables/items of the
+     *         {@link AbstractStatement}s
+     * @see {@link BlockStatement#stmtListToMDL()} from where this method is used
+     */
+    List<StatementList> splitByBlockAttributesFromIndividualItems() {
+        final List<StatementList> stmtLists = new ArrayList<StatementList>()
+        each { AbstractStatement stmt ->
+            if (stmtLists.isEmpty() || !Objects.equals(stmtLists.last().getBlockAttributesFromIndividualItems(), stmt.getAttributesFromBlock())) {
+                // Jump to the next StatementList
+                stmtLists.add(new StatementList())
+            }
+            stmtLists.last().add(stmt)
+        }
+        stmtLists
     }
     
     @Override

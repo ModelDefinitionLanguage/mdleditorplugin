@@ -13,7 +13,7 @@ public class MclObject extends Expando implements MDLPrintable {
         
         setProperty(PROPERTY_NAME, mclObj.getName())
         setProperty(PROPERTY_TYPE, mclObj.getMdlObjType())
-        setProperty(PROPERTY_BLOCKS, BlockStatementList.fromMDL(mclObj.getBlocks()))
+        setProperty(PROPERTY_BLOCKS, TopLevelBlockStatements.fromMDL(mclObj.getBlocks()))
         
     }
     
@@ -21,7 +21,7 @@ public class MclObject extends Expando implements MDLPrintable {
         
         setProperty(PROPERTY_NAME, json[PROPERTY_NAME])
         setProperty(PROPERTY_TYPE, json[PROPERTY_TYPE])
-        setProperty(PROPERTY_BLOCKS, BlockStatementList.fromJSON(json[PROPERTY_BLOCKS]))
+        setProperty(PROPERTY_BLOCKS, TopLevelBlockStatements.fromJSON(json[PROPERTY_BLOCKS]))
         
     }    @Override    public String toMDL() {        final StringBuffer sb = new StringBuffer()        sb.append(getProperty(PROPERTY_NAME))        sb.append(" = ")        sb.append(getProperty(PROPERTY_TYPE))        sb.append(" {\n")        sb.append(getProperty(PROPERTY_BLOCKS).toMDL())        sb.append("}\n")        sb.toString()    }    
 }
