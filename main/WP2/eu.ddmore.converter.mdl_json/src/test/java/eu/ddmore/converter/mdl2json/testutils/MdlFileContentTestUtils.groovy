@@ -13,18 +13,9 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
 
-import eu.ddmore.converter.mdl2json.interfaces.MDLAsJSON
-import eu.ddmore.converter.mdl2json.domain.Data
-import eu.ddmore.converter.mdl2json.domain.Model
-import eu.ddmore.converter.mdl2json.domain.ModelPredictionItem
-import eu.ddmore.converter.mdl2json.domain.Mog
-import eu.ddmore.converter.mdl2json.domain.Parameter
-import eu.ddmore.converter.mdl2json.domain.Task
-
 /**
  * The fields and methods below are used in testing a MDL->JSON->MDL pipeline.
  * Some of these are imported and used by the converter toolbox "systemtest" project.
- *
  */
 class MdlFileContentTestUtils {
 
@@ -37,28 +28,28 @@ class MdlFileContentTestUtils {
      * 'original' MDL file, and hence should be a complete list to ensure thorough testing of the MDL content.
      */
     public static List<String> ALL_BLOCK_NAMES = [
-        Data.DECLARED_VARIABLES, // Identical name to Parameter.DECLARED_VARIABLES; this will pick up both for the comparison.
-        Data.DATA_INPUT_VARIABLES,
-        Data.DATA_DERIVED_VARIABLES,
-        Data.SOURCE,
-        Parameter.STRUCTURAL,
-        Parameter.VARIABILITY,
-        Model.IDV,
-        Model.COVARIATES,
-        Model.VARIABILITY_LEVELS,
-        Model.STRUCTURAL_PARAMETERS,
-        Model.VARIABILITY_PARAMETERS,
-        Model.RANDOM_VARIABLE_DEFINITION + /\s*\([A-Za-z0-9=]+\)/, // Note the regex matching for the parameters of the block name. All matching blocks will get picked up for comparison, as per DECLARED_VARIABLES above.
-        Model.INDIVIDUAL_VARIABLES,
-        Model.MODEL_PREDICTION, // Note: Does NOT compare the sub-blocks; must be done explicitly (i.e. by these being listed explicitly - the last line of this def'n).
-        Model.OBSERVATION,
-        Model.GROUP_VARIABLES,
-        Model.MODEL_OUTPUT_VARIABLES,
-        Task.ESTIMATE,
-        Task.SIMULATE,
-        Mog.OBJECTS,
-        //Mog.MAPPING // TODO: Reinstate if this becomes supported again in the future
-    ] + ModelPredictionItem.SUBBLOCK_NAMES
+        "DECLARED_VARIABLES", // Identical name to Parameter.DECLARED_VARIABLES; this will pick up both for the comparison.
+        "DATA_INPUT_VARIABLES",
+        "DATA_DERIVED_VARIABLES",
+        "SOURCE",
+        "STRUCTURAL",
+        "VARIABILITY",
+        "IDV",
+        "COVARIATES",
+        "VARIABILITY_LEVELS",
+        "STRUCTURAL_PARAMETERS",
+        "VARIABILITY_PARAMETERS",
+        "RANDOM_VARIABLE_DEFINITION" + /\s*\([A-Za-z0-9=]+\)/, // Note the regex matching for the parameters of the block name. All matching blocks will get picked up for comparison, as per DECLARED_VARIABLES above.
+        "INDIVIDUAL_VARIABLES",
+        "MODEL_PREDICTION", // Note: Does NOT compare the sub-blocks; must be done explicitly (i.e. by these being listed explicitly - see below).
+        "OBSERVATION",
+        "GROUP_VARIABLES",
+        "ESTIMATE",
+        "SIMULATE",
+        "OBJECTS",
+        "DEQ", // Sub-block within MODEL_PREDICTION
+        "COMPARTMENT" // Sub-block within MODEL_PREDICTION
+    ]
 	
     /**
      * Extract a specified block from an 'original' MDL file and a 'new' MDL file written out from JSON,
@@ -99,15 +90,9 @@ class MdlFileContentTestUtils {
         if (!StringUtils.isEmpty(origMdlFileBlockContent) || !StringUtils.isEmpty(newMdlFileBlockContent)) { // Check that we actually have something to compare
             LOGGER.info("Verifying block " + blockName + "...")
 
-            // Special additional preprocessing for the "SOURCE" block:
-            // The items within this block can be in any order so put the lines of the original and new blocks into a known order
-            if (blockName == Data.SOURCE) {
-                origMdlFileBlockContent = putSOURCEBlockContentInKnownOrder(origMdlFileBlockContent)
-                newMdlFileBlockContent = putSOURCEBlockContentInKnownOrder(newMdlFileBlockContent)
-            }
             // Special additional preprocessing for the "OBJECTS" block within the "mog" block:
             // The items within this block can be in any order so put the lines of the original and new blocks into a known order
-            if (blockName == Mog.OBJECTS) {
+            if (blockName == "OBJECTS") {
                 origMdlFileBlockContent = putMogObjectsBlockContentInKnownOrder(origMdlFileBlockContent)
                 newMdlFileBlockContent = putMogObjectsBlockContentInKnownOrder(newMdlFileBlockContent)
             }
@@ -269,7 +254,11 @@ class MdlFileContentTestUtils {
             throw new RuntimeException("Unable to recognise the following text as an MDL block:\n" + blockText)
         }
         
-        final String outStr1 = replaceCurlyBracesInParameterValues(blockTextContent)
+        String outStr1 = replaceCurlyBracesInParameterValues(blockTextContent)
+        
+        if (blockName == "INDIVIDUAL_VARIABLES") {
+            outStr1 = replaceParenthesesInTransformedDefinitionRHS(outStr1)
+        }
         
         // Explanation of this regex:
         // The (?s) is the "dot-all" instruction to the matcher to match newline characters,
@@ -281,13 +270,27 @@ class MdlFileContentTestUtils {
         def outStr2 = sortParameterList(outStr1, ( outStr1 =~ /(?s)\{\s*(.+?)\s*\}/ ))
         // Explanation of this regex:
         // This regex is a more complicated version of the previous one, that captures the list
-        // of distribution parameters i.e. for a distribution variable "VAR ~ Normal(...)".
-        def outStr3 = sortParameterList(outStr2, ( outStr2 =~ /(?s)[A-Za-z0-9]+\s*\~\s*[A-Za-z0-9]+\s*\(\s*(.+?)\s*\)/ ))
+        // of distribution parameters i.e. for a distribution variable "VAR ~ Normal(...)",
+        def outStr3 = sortParameterList(outStr2, ( outStr2 =~ /(?s)[A-Za-z0-9_]+\s*\~\s*[A-Za-z0-9]+\s*\(\s*(.+?)\s*\)/ ))
+        // Explanation of this regex:
+        // This regex is again a slightly more complicated version of the previous one, that
+        // captures the list of function arguments for a transformed definition i.e. for an
+        // Individual Variable "ln(TLAG) = linear(...)"
+        def outStr4 = sortParameterList(outStr3, ( outStr3 =~ /(?s)[a-z]+\([A-Za-z0-9_]+\)\s*\=\s*[A-Za-z0-9]+\s*\(\s*(.+?)\s*\)/ ))
+        def outStr5
+        if ("OBSERVATION".equals(blockName)) {
+            // Explanation of this regex:
+            // This regex is another variant of the previous ones, that captures the list of function
+            // arguments in an Observation item's error model, i.e. "MYVAR_obs = combinedError1(...)"
+            outStr5 = sortParameterList(outStr4, ( outStr4 =~ /(?s)[A-Za-z0-9_]+\s*\=\s*[A-Za-z0-9]+\s*\(\s*(.+?)\s*\)/ ))
+        } else {
+            outStr5 = outStr4
+        }
         
         LOGGER.trace("Block text before sorting of parameter lists:\n" + blockText)
-        LOGGER.trace("Block text after sorting of parameter lists:\n" + blockName + " {" + outStr3 + "}\n")
+        LOGGER.trace("Block text after sorting of parameter lists:\n" + blockName + " {" + outStr5 + "}\n")
         
-        blockName + " {" + outStr3 + "}\n"
+        blockName + " {" + outStr5 + "}\n"
     }
     
     /**
@@ -349,6 +352,33 @@ class MdlFileContentTestUtils {
         
         LOGGER.trace("Block before replacement of curly braces in parameter values: " + blockText)
         LOGGER.trace("Block after replacement of curly braces in parameter values: " + outStr)
+        outStr
+    }
+    
+    /**
+     * Trying to capture a list of arguments, in a pair of parentheses, to a function on the RHS of a
+     * Transformed Definition, is problematic where one of the variables on the RHS is transformed
+     * by a function, since regular expressions can't handle the resulting nested parentheses.
+     * E.g. in the following variable definition:
+     * <pre>
+     * ln(KA) = linear(pop = ln(POP_KA), ranEff = ETA_KA)
+     * </pre>
+     * We solve this by rewriting parentheses around variable names, with angle brackets < > instead.
+     * The resulting MDL will then be syntactically incorrect, but for the purposes of comparison
+     * of MDL text, this is ok.
+     * <p>
+     * This is only intended to be applied to items within the INDIVIDUAL_VARIABLE block since this
+     * is the block that contains such Transformed Definitions. Applying this to text of other
+     * blocks will rewrite fragments of MDL unnecessarily e.g. within the RHS of Equation Definitions.
+     * <p>
+     * @param blockText - original MDL block text
+     * @return MDL block text that is identical to the input apart from parentheses in the RHS of a
+     *         Transformed Definition being replaced by angle brackets
+     */
+    private static String replaceParenthesesInTransformedDefinitionRHS(final String blockText) {
+        final String outStr = blockText.replaceAll(/=\s*([a-z]+)\(([A-Za-z0-9_]+)\)/, "= \$1<\$2>")
+        LOGGER.trace("Block before replacement of parentheses in RHS of Transformed Definitions: " + blockText)
+        LOGGER.trace("Block after replacement of parentheses in RHS of Transformed Definitions: " + outStr)
         outStr
     }
 
@@ -426,6 +456,9 @@ class MdlFileContentTestUtils {
                 throw new RuntimeException("Parsed parameters string is not identical to the original parameters string. These have been printed to log output for debugging purposes.")
             }
             
+            // Remove trailing zeros on e.g. lo=0.10 to enable comparison with written out MDL
+            parameters = removeLeadingAndTrailingZeros(parameters)
+            
             parameters.sort() // Mutates the list
             LOGGER.trace("Parsed and sorted parameter list:    " + parameters.join("    "))
             
@@ -440,43 +473,45 @@ class MdlFileContentTestUtils {
         
         outStr
     }
-
-    /**
-     * Special additional preprocessing for the "SOURCE" block.
-     * The <code>name = value</code> pairs within this block can be in any order so put the lines
-     * of the original and new blocks into a known order.
-     * <p>
-     * @param blockText - the string comprising the block name and its unordered content
-     * @return the string comprising the block name and its reordered content
-     */
-    private static String putSOURCEBlockContentInKnownOrder(final String blockText) {
-        putSOURCEBlockOrMogObjectsBlockContentInKnownOrder(Data.SOURCE, blockText, /\s*\S+\s*=\s*\S+\s*/)
-    }
     
     /**
+     * In a parameter definition <code>attr = value</code>, where <code>value</code>
+     * is a real value, then remove any trailing zeros, otherwise e.g. <code>lo=0.1</code>
+     * would not be equivalent to <code>lo=0.10</code>. Similarly remove any leading
+     * zeros, so that <code>lo=0.1</code> is equivalent to <code>.1</code>.
+     * <p>
+     * @param parameters - List of Strings, zero or more of which may be <code>attr = real_value</code>
+     *                     format and will thus be processed
+     * @return List of Strings, identical to the input apart from trailing zeros having been droped
+     */
+    private static List<String> removeLeadingAndTrailingZeros(final List<String> parameters) {
+        parameters.collect { String paramStr ->
+            // Explanation of the ( ) demarcated groups in this regular expression:
+            // 1 = variable name LHS plus equals sign
+            // 2 = minus prefix on the real value if it is negative
+            // 3 = the real value without sign prefix
+            final String newParamStr = paramStr.replaceAll(/^([A-Za-z0-9_]+=)(-?)0*([0-9]*\.[0-9]*?)0*$/, "\$1\$2\$3")
+            if (LOGGER.isDebugEnabled() && !paramStr.equals(newParamStr)) {
+                LOGGER.debug("Trimmed leading and trailing zeros: " + paramStr + " -> " + newParamStr)
+            }
+            newParamStr
+        }
+    }
+
+    /**
      * Special additional preprocessing for the "OBJECTS" block within the "mog" top-level block.
-     * The object identifiers within this block can be in any order so put the lines of the
-     * original and new blocks into a known order.
+     * The items within this block can be in any order so put the lines of the original and new blocks into a known order.
      * <p>
      * @param blockText - the string comprising the block name and its unordered content
      * @return the string comprising the block name and its reordered content
      */
     private static String putMogObjectsBlockContentInKnownOrder(final String blockText) {
+
+        final String blockName = "OBJECTS"
+        // This is the the regular expression to extract the individual attributes / items within the content of the block
         // This regex is complicated by the fact that you can either have an object referenced as "Poisson_dat" or "dObj = Poisson_dat"
-        putSOURCEBlockOrMogObjectsBlockContentInKnownOrder(Mog.OBJECTS, blockText, /\s*(?:\S+\s*=\s*)?\S+\s*/)
-    }
-
-    /**
-     * Special additional preprocessing for the "SOURCE" block, and the "OBJECTS" block within the "mog" top-level block.
-     * The items within these blocks can be in any order so put the lines of the original and new blocks into a known order.
-     * <p>
-     * @param blockName - the name of the block, actually a regular expression
-     * @param blockText - the string comprising the block name and its unordered content
-     * @param itemsMatcher - the regular expression to extract the individual attributes / items within the content of the block
-     * @return the string comprising the block name and its reordered content
-     */
-    private static String putSOURCEBlockOrMogObjectsBlockContentInKnownOrder(final String blockName, final String blockText, final String itemsRegex) {
-
+        final String itemsRegex = /\s*(?:\S+\s*=\s*)?\S+\s*/
+        
         // Similar regex behaviour to those in putParameterListsIntoKnownOrder()
         final Matcher outerMatcher = ( blockText =~ /(?s)/ + blockName + /\s*\{(\s*.+?\s*)\}/ )
 
@@ -510,7 +545,7 @@ class MdlFileContentTestUtils {
     private static String replaceModelPredictionSubBlocksWithPlaceholders(final String blockTextContent) {
         String outStr = blockTextContent
         
-        for (final String modelPredictionSubBlockName : ModelPredictionItem.SUBBLOCK_NAMES) {
+        for (final String modelPredictionSubBlockName : [ "DEQ", "COMPARTMENT" ]) {
             
             // Note that extractSpecificBlock() actually returns a list to allow for multiple matching blocks
             final List<String> subBlockTextFragments = extractSpecificBlock(blockTextContent, modelPredictionSubBlockName)
@@ -521,26 +556,6 @@ class MdlFileContentTestUtils {
         }
         
         outStr
-    }
-    
-    /**
-     * This is a check introduced for DDMORE-1294.
-     * <p>
-     * The JSON representation of an MDL file includes a name-value pair within each of the
-     * top-level blocks identifying that block.
-     * <p>
-     * E.g. <pre>"identifier":"dataobj"</pre>
-     * <p>
-     * When writing out the MDL from the JSON, these identifiers are used to create the
-     * appropriate top-level object blocks, but then the identifier JSON fragments
-     * themselves should be discarded rather than being written out as an actual block
-     * to the MDL file.
-     * <p>
-     * @param outputMdlFileContent - The string content of the MDL file that has been written out from JSON
-     */
-    public static assertNoTopLevelObjectIdentifierPseudoBlocksInWrittenOutMdlFile(final String outputMdlFileContent) {
-        assertFalse("Checking that no \"identifier\" pseudo-blocks from the JSON representation are written out as actual blocks to the MDL file",
-            outputMdlFileContent.contains(MDLAsJSON.IDENTIFIER_PROPNAME + " {"))
     }
     
 }
