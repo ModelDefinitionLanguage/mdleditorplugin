@@ -61,7 +61,6 @@ class EndToEndIntegrationTest {
         
         // TODO: Re-write a FullyPopulated.mdl for this test
         final File origMdlFile = getFileFromModelsProject("Product4.1_newgrammar/UseCase1.mdl")
-//        final File origMdlFile = getFileFromModelsProject("Product4.1_newgrammar/UseCase13.mdl") // java.lang.IllegalStateException: Bug. Concrete dispatch method missing: CatValRefMappingExpressionImpl
         
         def json = getJsonFromMDLFile(origMdlFile)
         

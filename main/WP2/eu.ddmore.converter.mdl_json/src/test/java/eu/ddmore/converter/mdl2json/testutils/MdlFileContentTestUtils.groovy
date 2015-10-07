@@ -75,7 +75,7 @@ class MdlFileContentTestUtils {
      *                            that is to be compared against the original
      */
     public static assertMDLBlockEqualityIgnoringWhitespaceAndComments(final File origMdlFile, final String blockName, final String newMdlFileContent) {
-        def String origMdlFileContent = readInAndStripComments(origMdlFile)
+        def String origMdlFileContent = readInAndStripCommentsAndSemicolons(origMdlFile)
 
         // Note that extractSpecificBlock() returns a list to allow for multiple matching blocks e.g. for DECLARED_VARIABLES, RANDOM_VARIABLE_DEFINITION
         def String origMdlFileBlockContent =
@@ -109,13 +109,22 @@ class MdlFileContentTestUtils {
         }
     }
 
-    private static String readInAndStripComments(final File origMdlFile) {
+    /**
+     * Comments are denoted by the hash character #.
+     * <p>
+     * Semicolons can be used to separate variable / item definitions (but this is optional, just whitespace
+     * is usually used in the given Use Cases). They do not have any other use hence we strip these out too.
+     * <p>
+     * @param origMdlFile - {@link File} of MDL content to read in
+     * @return the processed text
+     */
+    private static String readInAndStripCommentsAndSemicolons(final File origMdlFile) {
         final BufferedReader rdr = new BufferedReader(new FileReader(origMdlFile));
         final StringBuffer strBuf = new StringBuffer();
         rdr.eachLine() { String str ->
             removeCommentFromLineOfMDL(str, 0, strBuf)
         }
-        strBuf.toString()
+        strBuf.toString().replaceAll(/(?s);\s*/, " ")
     }
 
     /**
@@ -203,7 +212,7 @@ class MdlFileContentTestUtils {
             LOGGER.info("Block \"" + blockName + "\" was not found in the MDL")
         }
         
-        // A MCL file can have multiple top-level objects of the same type (dataobj, parobj, mdlobj, taskobj);
+        // A MCL file can have multiple top-level objects of the same type (dataObj, parObj, mdlObj, taskObj);
         // these can be written out by the JSON->MDL in any order, hence we need to sort multiple matching
         // blocks into some predictable order. But whitespace causes inconsistent ordering, hence we remove
         // this before sorting.
@@ -302,7 +311,7 @@ class MdlFileContentTestUtils {
      * </pre>
      * We solve this by identifying any of the following formats of parameter value appearing
      * in a list of parameters such as the one above, and replacing any curly braces within
-     * these parameter values, with square braces instead.
+     * these parameter values, with angle brackets < > instead.
      * <pre>
      * fixEff = {coeff=BETA_CL_WT, cov=logtWT}
      * fixEff = [{coeff=POP_BETA_CL_WT, cov=logtWT}]
@@ -327,7 +336,7 @@ class MdlFileContentTestUtils {
         
         while (matcherForCurlyBraceEnclosedParamValue.find()) {
             outStr = outStr.replace(matcherForCurlyBraceEnclosedParamValue.group(0),
-                matcherForCurlyBraceEnclosedParamValue.group(1) + " = [" + matcherForCurlyBraceEnclosedParamValue.group(2) + "]")
+                matcherForCurlyBraceEnclosedParamValue.group(1) + " = <" + matcherForCurlyBraceEnclosedParamValue.group(2) + ">")
         }
         
         // There are also similar use cases that have parameter lists enclosed in square brackets that themselves
@@ -344,7 +353,7 @@ class MdlFileContentTestUtils {
             
             final Matcher matcherForCurlyBraceEnclosedSubAttrOfParamValue = matcherForSquareBracketEnclosedParamValue.group(2) =~ /\{(.+?)\}/
             while (matcherForCurlyBraceEnclosedSubAttrOfParamValue.find()) {
-                subAttrs.add("[" + matcherForCurlyBraceEnclosedSubAttrOfParamValue.group(1) + "]")
+                subAttrs.add("<" + matcherForCurlyBraceEnclosedSubAttrOfParamValue.group(1) + ">")
             }
             
             outStr = outStr.replace(matcherForSquareBracketEnclosedParamValue.group(0), matcherForSquareBracketEnclosedParamValue.group(1) + " = [" + subAttrs.join(", ") + "]" )
@@ -363,7 +372,8 @@ class MdlFileContentTestUtils {
      * <pre>
      * ln(KA) = linear(pop = ln(POP_KA), ranEff = ETA_KA)
      * </pre>
-     * We solve this by rewriting parentheses around variable names, with angle brackets < > instead.
+     * We solve this by rewriting a function of a variable or number, with the function name and the
+     * variable or number separated with a tilde ~ instead i.e. <code>ln(POP_KA)</code> becomes <code>ln~POP_KA</code>.
      * The resulting MDL will then be syntactically incorrect, but for the purposes of comparison
      * of MDL text, this is ok.
      * <p>
@@ -376,7 +386,7 @@ class MdlFileContentTestUtils {
      *         Transformed Definition being replaced by angle brackets
      */
     private static String replaceParenthesesInTransformedDefinitionRHS(final String blockText) {
-        final String outStr = blockText.replaceAll(/=\s*([a-z]+)\(([A-Za-z0-9_]+)\)/, "= \$1<\$2>")
+        final String outStr = blockText.replaceAll(/=\s*([a-z]+)\(([A-Za-z0-9_]+)\)/, "= \$1~\$2")
         LOGGER.trace("Block before replacement of parentheses in RHS of Transformed Definitions: " + blockText)
         LOGGER.trace("Block after replacement of parentheses in RHS of Transformed Definitions: " + outStr)
         outStr
@@ -491,8 +501,8 @@ class MdlFileContentTestUtils {
             // 2 = minus prefix on the real value if it is negative
             // 3 = the real value without sign prefix
             final String newParamStr = paramStr.replaceAll(/^([A-Za-z0-9_]+=)(-?)0*([0-9]*\.[0-9]*?)0*$/, "\$1\$2\$3")
-            if (LOGGER.isDebugEnabled() && !paramStr.equals(newParamStr)) {
-                LOGGER.debug("Trimmed leading and trailing zeros: " + paramStr + " -> " + newParamStr)
+            if (LOGGER.isTraceEnabled() && !paramStr.equals(newParamStr)) {
+                LOGGER.trace("Trimmed leading and trailing zeros: " + paramStr + " -> " + newParamStr)
             }
             newParamStr
         }
