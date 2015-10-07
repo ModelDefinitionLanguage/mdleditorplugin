@@ -5,7 +5,7 @@ package eu.ddmore.converter.mdl2json
 
 import org.apache.log4j.Logger
 
-import eu.ddmore.converter.mdl2json.domain.MCLFile
+import eu.ddmore.converter.mdl2json.domain.Mcl
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion
 import eu.ddmore.convertertoolbox.api.domain.Version
 import eu.ddmore.convertertoolbox.api.response.ConversionReport
@@ -27,9 +27,9 @@ public class JSONToMDLConverter implements ConverterProvider {
     private static final String MDL_FILE_EXTENSION = ".mdl"
     private static final String JSON_FILE_EXTENSION = ".json"
 
-    private final LanguageVersion source = new LanguageVersionImpl("JSON", new VersionImpl(6, 0, 8))
-    private final LanguageVersion target = new LanguageVersionImpl("MDL", new VersionImpl(6, 0, 8))
-    private final Version converterVersion = new VersionImpl(1, 0, 5);
+    private final LanguageVersion source = new LanguageVersionImpl("JSON", new VersionImpl(7, 0, 0))
+    private final LanguageVersion target = new LanguageVersionImpl("MDL", new VersionImpl(7, 0, 0))
+    private final Version converterVersion = new VersionImpl(1, 3, 0); // Might as well align with the version of the Demonstrator product
 
     /**
      * Converter Toolbox required entry point.
@@ -38,7 +38,7 @@ public class JSONToMDLConverter implements ConverterProvider {
         String outputFileName = computeOutputFileName(src.getName())
 
         JsonSlurper jsonSlurper = new JsonSlurper();
-        MCLFile mclFile = new MCLFile(jsonSlurper.parseText(src.getText()))
+        Mcl mclFile = new Mcl(jsonSlurper.parseText(src.getText()))
 
         ConversionReport report = new ConversionReportImpl();
 
