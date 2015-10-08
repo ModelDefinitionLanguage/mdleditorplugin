@@ -7,7 +7,7 @@ import org.apache.log4j.Logger
 
 import eu.ddmore.mdl.mdl.BlockArgument
 import eu.ddmore.mdl.mdl.ValuePair
-import eu.ddmore.mdl.utils.MdlExpressionConverter
+
 
 /**
  * Represents {@link eu.ddmore.mdl.mdl.BlockStatement} for MDL <-> JSON conversion.
@@ -42,139 +42,21 @@ import eu.ddmore.mdl.utils.MdlExpressionConverter
  * String. Verbatim MDL, no parsing performed.
  * <p>
  */
-public class BlockStatement extends AbstractStatement {
+public abstract class BlockStatement<T> extends AbstractStatement {
     private final Logger LOG = Logger.getLogger(BlockStatement.class)
 
-    public BlockStatement(final eu.ddmore.mdl.mdl.BlockStatement blkStatement) {
-        final String blockName = blkStatement.getIdentifier()
+    BlockStatement() {
         setProperty(PROPERTY_SUBTYPE, EStatementSubtype.BlockStmt.getIdentifierString())
-        final eu.ddmore.mdl.mdl.BlockBody blkBody = blkStatement.getBody()
-        final Map<String, String> blkAttrsMap = getBlockArgumentsAsMap(blkStatement)
-        if (blkBody instanceof eu.ddmore.mdl.mdl.BlockTextBody) {
-            setProperty(blockName, ((eu.ddmore.mdl.mdl.BlockTextBody) blkBody).getText())
-        } else { // instance of BlockStatementBody
-            StatementList stmtList = StatementList.fromMDL(((eu.ddmore.mdl.mdl.BlockStatementBody) blkBody).getStatements())
-            stmtList.setBlockAttributesOnIndividualItems(blkAttrsMap)
-            if (stmtList.every { AbstractStatement s -> s.hasSimplifiedJsonRepresentation() }) {
-                setProperty(blockName, stmtList.collect { AbstractStatement stmt -> stmt.getSimplifiedJsonRepresentation() })
-            } else {
-                setProperty(blockName, stmtList)
-            }
-        }
     }
     
-    private static Map<String, String> getBlockArgumentsAsMap(final eu.ddmore.mdl.mdl.BlockStatement blkStatement) {
-        if (blkStatement.getBlkArgs().getArgs()) {
-            final Map<String, String> blkArgsMap = [:]
-            blkStatement.getBlkArgs().getArgs().collect { BlockArgument blkArg ->
-                if (blkArg instanceof ValuePair) {
-                    blkArgsMap.put(((ValuePair) blkArg).getArgumentName(), MdlExpressionConverter.convertToString(((ValuePair) blkArg).getExpression()))
-                } else {
-                    throw new UnsupportedOperationException("Subclass " + blkArg.getClass() + " of BlockArgument not currently supported")
-                }
-            }
-            return blkArgsMap
-        }
-        return null
+    public String getBlockName() {
+        getProperties().keySet().find { !it.equals(PROPERTY_SUBTYPE) }
     }
     
-    public BlockStatement(final Map json) {
-        super(json)
-        // Statements type needs special parsing
-        if (getRepresentationType().equals(EBlockStatementType.STATEMENTS)) {
-            final Map.Entry<String, Object> blockNameAndItsRepresentation = getBlockNameAndItsRepresentation()
-            final String blockName = blockNameAndItsRepresentation.getKey()
-            final Object blockRepresentation = blockNameAndItsRepresentation.getValue()
-            setProperty(blockName, StatementList.fromJSON(json[blockName]))
-        }
+    public T getBlockRepresentation() {
+        getProperty(getBlockName())
     }
     
-    EBlockStatementType getRepresentationType() {
-        final Object blockRepresentation = getBlockNameAndItsRepresentation().getValue()
-        if (blockRepresentation instanceof List) {
-            if (!blockRepresentation.isEmpty() && blockRepresentation.get(0) instanceof String) {
-                return EBlockStatementType.SYMBOL_NAMES
-            } else {
-                return EBlockStatementType.STATEMENTS
-            }
-//        } else if (blkRepresentation instanceof Map) {
-//            return EBlockStatementType.NESTED_STATEMENTS
-        } else if (blockRepresentation instanceof String) {
-            return EBlockStatementType.CONTENT
-        }
-    }
-    
-    public Map.Entry<String, Object> getBlockNameAndItsRepresentation() {
-        getProperties().find{ k, v -> !k.equals(PROPERTY_SUBTYPE) }
-    }
-    
-    @Override
-    public String toMDL() {
-        final Map.Entry<String, Object> blockNameAndItsRepresentation = getBlockNameAndItsRepresentation()
-        final String blockName = blockNameAndItsRepresentation.getKey()
-        final Object blockRepresentation = blockNameAndItsRepresentation.getValue()
-
-        final StringBuffer sb = new StringBuffer()
-        
-        switch (getRepresentationType()) {
-            case EBlockStatementType.CONTENT:
-                sb.append(IDT)
-                sb.append(blockName)
-                sb.append(blockRepresentation)
-                break
-            case EBlockStatementType.SYMBOL_NAMES:
-                sb.append(IDT)
-                sb.append(blockName)
-                sb.append(" {\n")
-                sb.append(blockRepresentation.collect {
-                    IDT + IDT + it
-                }.join("\n"))
-                sb.append("\n${IDT}}")
-                break
-            case EBlockStatementType.STATEMENTS:
-                sb.append(stmtListToMDL())
-                break
-        }
-        sb.append("\n")
-        
-        sb.toString()
-    }
-    
-    /**
-     * This {@link StatementList} may actually contain statements corresponding to different
-     * blocks having the same name but different block-level attributes (i.e.
-     * RANDOM_VARIABLE_DEFINITION), that have been stored in the JSON representation on the
-     * individual items; split these back out into individual Lists of {@link StatementList}
-     * and write out each one in turn.
-     * <p>
-     * @return the MDL textual representation i.e. as per the original MDL file
-     */
-    private String stmtListToMDL() {
-        final Map.Entry<String, Object> blockNameAndItsRepresentation = getBlockNameAndItsRepresentation()
-        final String blockName = blockNameAndItsRepresentation.getKey()
-        final Object blockRepresentation = blockNameAndItsRepresentation.getValue()
-        
-        blockRepresentation.splitByBlockAttributesFromIndividualItems().collect { StatementList stmtList ->
-            final StringBuffer sb1 = new StringBuffer()
-            sb1.append(IDT)
-            sb1.append(blockName)
-            // Retrieve block attributes that had been propagated onto individual items
-            Map<String, String> blkAttrs = stmtList.getBlockAttributesFromIndividualItems()
-            if (blkAttrs) {
-                sb1.append("(")
-                sb1.append(blkAttrs.collect {
-                    k, v -> k + "=" + v
-                }.join(", "))
-                sb1.append(")")
-            }
-            // Now append the actual MDL block text
-            sb1.append(" {\n")
-            sb1.append(stmtList.toMDL())
-            sb1.append("${IDT}}")
-            sb1.toString()
-        }.join("\n\n")
-    }
-
     /**
      * Overloaded method to merge two {@link BlockStatement}s' representations.
      * <p>
@@ -255,7 +137,7 @@ public class BlockStatement extends AbstractStatement {
     /**
      * Represents the three types of representation of a Block Statement.
      */
-    static enum EBlockStatementType {
+    protected static enum EBlockStatementType {
         SYMBOL_NAMES,
         STATEMENTS,
         CONTENT

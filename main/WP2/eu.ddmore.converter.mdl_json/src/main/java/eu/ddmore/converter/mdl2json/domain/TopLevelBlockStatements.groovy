@@ -3,7 +3,6 @@
  ******************************************************************************/
 package eu.ddmore.converter.mdl2json.domain
 
-import eu.ddmore.converter.mdl2json.domain.BlockStatement.EBlockStatementType;
 import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 
 /**
@@ -33,7 +32,8 @@ public class TopLevelBlockStatements extends Expando implements MDLPrintable {
     
     public static TopLevelBlockStatements fromMDL(final List<eu.ddmore.mdl.mdl.BlockStatement> blks) {
         new TopLevelBlockStatements(blks.collect {
-            new BlockStatement(it).getBlockNameAndItsRepresentation()
+            final BlockStatement blkStmt = BlockStatementFactory.fromMDL(it)
+            new MapEntry(blkStmt.getBlockName(), blkStmt.getBlockRepresentation())
         })
     }
     
@@ -44,7 +44,7 @@ public class TopLevelBlockStatements extends Expando implements MDLPrintable {
     @Override
     public String toMDL() {
         getProperties().collect { String identifier, Object blockRepresentation ->
-            new BlockStatement([(identifier) : (blockRepresentation)]).toMDL()
+            BlockStatementFactory.fromJSON([(identifier) : (blockRepresentation)]).toMDL()
         }.join("\n")
     }
     

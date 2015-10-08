@@ -11,7 +11,7 @@ import org.apache.log4j.Logger
 /**
  * Creates instances of subclasses of {@link AbstractStatement}.
  */
-public abstract class StatementFactory {
+public class StatementFactory {
 
     private final static Logger LOG = Logger.getLogger(StatementFactory.class);
     
@@ -22,7 +22,11 @@ public abstract class StatementFactory {
         for (final EStatementSubtype e : EStatementSubtype.values()) {
             final Class<? extends eu.ddmore.mdl.mdl.Statement> mdlGrammarDomainClass = Class.forName(MDLGRAMMAR_DOMAIN_PACKAGE_NAME+"."+e.getClassName())
             final Class<? extends StatementFactory> converterDomainClass = Class.forName(CONVERTER_DOMAIN_PACKAGE_NAME+"."+e.getClassName())
-            if (mdlGrammarDomainClass.isAssignableFrom(stmt.getClass())) {
+            if (stmt instanceof eu.ddmore.mdl.mdl.BlockStatement) {
+                // Special case, have to create via BlockStatementFactory
+                return BlockStatementFactory.fromMDL(stmt)
+            }
+            else if (mdlGrammarDomainClass.isAssignableFrom(stmt.getClass())) {
                 return converterDomainClass.newInstance(stmt)
             }
         }
@@ -42,7 +46,11 @@ public abstract class StatementFactory {
                 }
             } else {
                 for (final EStatementSubtype e : EStatementSubtype.values()) {
-                    if (e.getIdentifierString().equals(subtype)) {
+                    if (EStatementSubtype.BlockStmt.getIdentifierString().equals(subtype)) {
+                        // Special case, have to create via BlockStatementFactory
+                        return BlockStatementFactory.fromJSON(json)
+                    }
+                    else if (e.getIdentifierString().equals(subtype)) {
                         final Class clazz = Class.forName(StatementFactory.class.getPackage().getName()+"."+e.getClassName())
                         return clazz.newInstance(json)
                     }
