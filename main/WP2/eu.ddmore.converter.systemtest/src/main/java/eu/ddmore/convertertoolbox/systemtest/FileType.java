@@ -5,10 +5,10 @@ package eu.ddmore.convertertoolbox.systemtest;
  * It contains filetype default extension and version associated with a file type.
  */
 public enum FileType {
-    MDL("mdl","6.0.8"),
+    MDL("mdl","7.0.0"),
     PharmML("xml","0.6.0"),
     NMTRAN("ctl","7.3.0"),
-    JSON("json","6.0.8");
+    JSON("json","7.0.0");
     
     private String version;
     private String extension;

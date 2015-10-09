@@ -69,7 +69,7 @@ public class MdlToPharmmlModelsTest extends ConverterATParent {
                 } catch (IOException ioe) {
                     throw new RuntimeException("Error reading MDL file " + mdlFile.getAbsolutePath(), ioe);
                 }
-                final Pattern mogobjPattern = Pattern.compile("[A-Za-z0-9_]+\\s*=\\s*mogobj\\s*\\{.+\\}", Pattern.DOTALL);
+                final Pattern mogobjPattern = Pattern.compile("[A-Za-z0-9_]+\\s*=\\s*mogObj\\s*\\{.+\\}", Pattern.DOTALL);
                 final Matcher mogobjMatcher = mogobjPattern.matcher(mdlFileContent);
                 final boolean containsMogObj = mogobjMatcher.find();
                 if (!containsMogObj) {
