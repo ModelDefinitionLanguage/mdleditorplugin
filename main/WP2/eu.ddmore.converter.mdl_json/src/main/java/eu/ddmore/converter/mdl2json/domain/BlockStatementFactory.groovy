@@ -53,6 +53,12 @@ public class BlockStatementFactory {
                 
         switch (getRepresentationType(blockName)) {
             case EBlockStatementType.SYMBOL_NAMES:
+                if (json[blockName] instanceof String) {
+                    // This is to cater for the fact that R cannot distinguish between a string and a character vector
+                    // of length 1, hence a variable-name list (vector when read in to R) containing one variable gets
+                    // translated to JSON as a string rather than a list of strings containing one element
+                    return new SymbolListBlockStatement(blockName, [json[blockName]])
+                }
                 return new SymbolListBlockStatement(blockName, ((List<String>) json[blockName]))
             case EBlockStatementType.STATEMENTS:
                 return new StatementListBlockStatement(blockName, ((List<Map>) json[blockName]))
