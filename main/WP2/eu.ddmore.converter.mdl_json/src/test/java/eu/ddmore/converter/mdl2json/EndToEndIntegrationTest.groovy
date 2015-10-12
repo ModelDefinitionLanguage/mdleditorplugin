@@ -9,6 +9,7 @@ import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
 import static eu.ddmore.converter.mdl2json.testutils.MdlFileContentTestUtils.*
 
 import eu.ddmore.converter.mdl2json.domain.Mcl
+import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
 import org.junit.Test
@@ -53,14 +54,11 @@ class EndToEndIntegrationTest {
      * <p>
      * The MDL file "FullyPopulated.mdl" is a syntactically valid, but semantically invalid model,
      * created to try and cover as much of the conversion code with one model as possible.
-     * <p>
-     * TODO: Re-write a FullyPopulated.mdl for this test
      */
     @Test
     public void mdlFileConvertedToJsonAndBackAgainShouldBeEquivalentToOriginalMdlFile() {
-        
-        // TODO: Re-write a FullyPopulated.mdl for this test
-        final File origMdlFile = getFileFromModelsProject("Product4.1_newgrammar/UseCase1.mdl")
+        def origMdlFile = getFile("FullyPopulated.mdl")        
+//        final File origMdlFile = getFileFromModelsProject("Product4.1_newgrammar/UseCase1.mdl")
         
         def json = getJsonFromMDLFile(origMdlFile)
         
