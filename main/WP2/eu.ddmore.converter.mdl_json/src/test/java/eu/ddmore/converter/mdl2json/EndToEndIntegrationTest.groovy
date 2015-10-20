@@ -58,9 +58,33 @@ class EndToEndIntegrationTest {
     @Test
     public void mdlFileConvertedToJsonAndBackAgainShouldBeEquivalentToOriginalMdlFile() {
         def origMdlFile = getFile("FullyPopulated.mdl")        
-//        final File origMdlFile = getFileFromModelsProject("Product4.1_newgrammar/UseCase1.mdl")
+        // final File origMdlFile = getFileFromModelsProject("Product4.1_newgrammar/UseCase1.mdl")
         
         def json = getJsonFromMDLFile(origMdlFile)
+        
+        def mclFromJson = new Mcl(json)
+        def outputMdl = mclFromJson.toMDL()
+        
+        LOGGER.debug(outputMdl)
+        
+        ALL_BLOCK_NAMES.each { blockName ->
+            LOGGER.info("About to process block " + blockName + "...")
+            assertMDLBlockEqualityIgnoringWhitespaceAndComments(origMdlFile, blockName, outputMdl)
+        }
+    }
+    
+    /**
+     * The JSON file "FullyPopulated.json" was created by reading in the above-mentioned
+     * "FullyPopulated.mdl" file into R (via the MDL->JSON converter) and writing it back
+     * out to JSON. Hence this test is a form of end-to-end integration test testing a
+     * full MDL->JSON->R->JSON->MDL pipeline.
+     */
+    @Test
+    public void readMdlFileFromJSON() {
+        
+        final File origMdlFile = getFile("FullyPopulated.mdl")
+        
+        def json = getJson(FileUtils.readFileToString(getFile("FullyPopulated.output.json")))
         
         def mclFromJson = new Mcl(json)
         def outputMdl = mclFromJson.toMDL()

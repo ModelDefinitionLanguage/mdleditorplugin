@@ -214,9 +214,9 @@ fully_populated_task = taskObj {
 
 fully_populated_mog = mogObj {
 	OBJECTS{
-		warfarin_PK_ODE_dat : { type is dataObj }
-		warfarin_PK_ODE_mdl : { type is mdlObj }
-		warfarin_PK_ODE_par : { type is parObj }
-		warfarin_PK_ODE_task : { type is taskObj }
+		fully_populated_dat : { type is dataObj }
+		fully_populated_mdl : { type is mdlObj }
+		fully_populated_par : { type is parObj }
+		fully_populated_task : { type is taskObj }
 	}
 }
