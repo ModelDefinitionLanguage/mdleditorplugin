@@ -33,13 +33,15 @@ import eu.ddmore.mdl.mdl.ValuePair
  * that a block can represent. These can be distinguishing in incoming JSON by the
  * structure of the JSON.
  * <h3>Statement List</h3>
- * List of {@link StatementList} (i.e. List of attribute Maps} The default form of
- * representation of a block.
+ * List of {@link StatementList} (i.e. List of attribute Maps}. The default form of
+ * representation of a block. Represented by instance of subclass {@link StatementListBlockStatement}.
  * <h3>Symbol List</h3>
  * List of Strings. Used where a block comprises a list of variable names / items which have
- * no attributes or other information that needs to be encoded in the JSON.
+ * no attributes or other information that needs to be encoded in the JSON. Represented
+ * by instance of subclass {@link SymbolListBlockStatement}.
  * <h3>Content</h3>
- * String. Verbatim MDL, no parsing performed.
+ * String. Verbatim MDL, no parsing performed. Represented by instance of subclass
+ * {@link TextualContentBlockStatement}.
  * <p>
  */
 public abstract class BlockStatement<T> extends AbstractStatement {

@@ -4,7 +4,6 @@
 package eu.ddmore.converter.mdl2json.domain
 
 
-
 /**
  *
  */

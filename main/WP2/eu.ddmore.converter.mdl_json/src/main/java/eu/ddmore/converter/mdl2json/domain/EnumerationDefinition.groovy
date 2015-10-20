@@ -14,15 +14,25 @@ import eu.ddmore.mdl.mdl.ValuePair
  * <p>
  * Example MDL:
  * <pre>
- * SEX withCategories {female, male, MISSING}
+ * SEX withCategories {female, male}
  * </pre>
- * item within <code>COVARIATES</code> block within <code>mdlobj</code> section.
+ * item within <code>COVARIATES</code> block within <code>mdlObj</code> section.
+ * <p>
+ * Equivalent JSON:
+ * <pre>
+ * {".subtype":"EnumDefn","name":"SEX","categories":["female","male"]}
+ * </pre>
  */
 public class EnumerationDefinition extends AbstractStatement {
     
     public final static String PROPERTY_NAME = "name"
     public final static String PROPERTY_CATEGORIES = "categories"
 
+    /**
+     * Constructor creating from MDL grammar objects.
+     * <p>
+     * @param enumDefn - {@link eu.ddmore.mdl.mdl.EnumerationDefinition} object from the MDL grammar
+     */
     public EnumerationDefinition(final eu.ddmore.mdl.mdl.EnumerationDefinition enumDefn) {
         setProperty(PROPERTY_SUBTYPE, EStatementSubtype.EnumDefinition.getIdentifierString())
         setProperty(PROPERTY_NAME, enumDefn.getName())
@@ -34,6 +44,11 @@ public class EnumerationDefinition extends AbstractStatement {
         }
     }
     
+    /**
+     * Constructor creating from JSON.
+     * <p>
+     * @param json - {@link Map} of content
+     */
     public EnumerationDefinition(final Map json) {
         super(json)
     }

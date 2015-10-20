@@ -15,9 +15,14 @@ import eu.ddmore.mdl.utils.MdlExpressionConverter
  * <p>
  * Example MDL:
  * <pre>
- * Y = combinedError1(additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC)
+ * Y1 = combinedError1(additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC)
  * </pre>
- * item within <code>OBSERVATION</code> block within <code>mdlobj</code> section.
+ * item within <code>OBSERVATION</code> block within <code>mdlObj</code> section.
+ * <p>
+ * Equivalent JSON:
+ * <pre>
+ * {".subtype":"EquationDef","funcArgs":{"additive":"RUV_ADD","proportional":"RUV_PROP","eps":"EPS_Y","prediction":"CC"},"funcName":"combinedError1","name":"Y1"}
+ * </pre> 
  */
 public class EquationDefinition extends AbstractStatement {
     
@@ -26,7 +31,11 @@ public class EquationDefinition extends AbstractStatement {
     public final static String PROPERTY_FUNCNAME = "funcName"
     public final static String PROPERTY_FUNCARGS = "funcArgs"
     
-
+    /**
+     * Constructor creating from MDL grammar objects.
+     * <p>
+     * @param eqnDefn - {@link eu.ddmore.mdl.mdl.EquationDefinition} object from the MDL grammar
+     */
     public EquationDefinition(final eu.ddmore.mdl.mdl.EquationDefinition eqnDefn) {
         setProperty(PROPERTY_SUBTYPE, EStatementSubtype.EquationDefinition.getIdentifierString())
         setProperty(PROPERTY_NAME, eqnDefn.getName())
@@ -41,6 +50,11 @@ public class EquationDefinition extends AbstractStatement {
         }
     }
     
+    /**
+     * Constructor creating from JSON.
+     * <p>
+     * @param json - {@link Map} of content
+     */
     public EquationDefinition(final Map json) {
         super(json)
     }

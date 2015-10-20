@@ -7,6 +7,18 @@ import eu.ddmore.converter.mdl2json.interfaces.MDLPrintable
 
 /**
  * Abstract superclass representing {@link eu.ddmore.mdl.mdl.Statement} for MDL <-> JSON conversion.
+ * <p>
+ * Different types of Statement are represented in different ways in the JSON {@link Map}
+ * but their common features are:
+ * <ul>
+ * <li>A attribute ".subtype" indicating the type of Statement to re-create when
+ *     writing MDL back out from JSON, see {@link EStatementSubtype}; unless a
+ *     Statement can be represented in a simplified representation in which case
+ *     the subtype may not be written out explicitly but will be inferred
+ * <li>A set of block attributes "blkAttrs" which will be populated for Statements
+ *     within Blocks where the Blocks have attributes; these attributes are stored
+ *     on each Statement instead in the JSON
+ * </ul>
  */
 public abstract class AbstractStatement extends Expando implements MDLPrintable {
 
@@ -35,7 +47,7 @@ public abstract class AbstractStatement extends Expando implements MDLPrintable 
      * <p>
      * Example: A symbol name is represented as a {@link eu.ddmore.mdl.mdl.domain.EquationDefinition}
      * with no expression on the RHS. By default the equivalent
-     * {@link eu.ddmore.converter.mdl2json.domain.EquationDefinition} will be written out to JSON as
+     * {@link eu.ddmore.converter.mdl2json.domain.EquationDefinition} would be written out to JSON as
      * <code>{".subtype":"EquationDef","name":"GUT"}</code> but it is better,
      * for the aforementioned reason, for this to be represented just as <code>"GUT"</code>.
      * <p>

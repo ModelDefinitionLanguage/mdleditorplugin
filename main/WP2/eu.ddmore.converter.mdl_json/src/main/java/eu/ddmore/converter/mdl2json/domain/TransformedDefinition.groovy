@@ -14,9 +14,14 @@ import eu.ddmore.mdl.mdl.ValuePair
  * <p>
  * Example MDL:
  * <pre>
- * ln(TLAG) = linear(pop = ln(POP_TLAG), ranEff = eta_PPV_TLAG)
+ * ln(TLAG) = linear(trans is ln, pop = POP_TLAG, ranEff = [ETA_TLAG])
  * </pre>
- * item within <code>INDIVIDUAL_VARIABLES</code> block within <code>mdlobj</code> section.
+ * item within <code>INDIVIDUAL_VARIABLES</code> block within <code>mdlObj</code> section.
+ * <p>
+ * Equivalent JSON:
+ * <pre>
+ * {"transform":"ln",".subtype":"TransDefn","args":{"trans":"ln","pop":"POP_TLAG","ranEff":"[ETA_TLAG]"}
+ * </pre>
  */
 public class TransformedDefinition extends AbstractStatement {
     
@@ -25,6 +30,11 @@ public class TransformedDefinition extends AbstractStatement {
     public final static String PROPERTY_FUNCTION = "func"
     public final static String PROPERTY_ARGS = "args"
 
+    /**
+     * Constructor creating from MDL grammar objects.
+     * <p>
+     * @param transDefn - {@link eu.ddmore.mdl.mdl.TransformedDefinition} object from the MDL grammar
+     */
     public TransformedDefinition(final eu.ddmore.mdl.mdl.TransformedDefinition transDefn) {
         setProperty(PROPERTY_SUBTYPE, EStatementSubtype.TransDefinition.getIdentifierString())
         setProperty(PROPERTY_NAME, transDefn.getName())
@@ -36,6 +46,11 @@ public class TransformedDefinition extends AbstractStatement {
         setProperty(PROPERTY_ARGS, KeyValuePairConverter.toMap(funcCall.getArgList()))
     }
     
+    /**
+     * Constructor creating from JSON.
+     * <p>
+     * @param json - {@link Map} of content
+     */
     public TransformedDefinition(final Map json) {
         super(json)
     }
