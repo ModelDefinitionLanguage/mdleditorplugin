@@ -521,7 +521,7 @@ class MdlFileContentTestUtils {
         // This is the the regular expression to extract the individual attributes / items within the content of the block
         // This regex is complicated by the fact that the object names can either be listed without any attributes, or
         // an object name can have its type explicitly specified i.e. myModel_dat : { type is dataObj }
-        final String itemsRegex = /\s*(?:\S+\s*:\s*)(?:\{.*\})?/
+        final String itemsRegex = /\s*(?:\S+\s*)(?::\s*\{.*\})?/
         
         // Similar regex behaviour to those in putParameterListsIntoKnownOrder()
         final Matcher outerMatcher = ( blockText =~ /(?s)/ + blockName + /\s*\{(\s*.+\s*)\}/ ) // Greedily match until last '}' (safe because blockText is already just the OBJECTS block)
