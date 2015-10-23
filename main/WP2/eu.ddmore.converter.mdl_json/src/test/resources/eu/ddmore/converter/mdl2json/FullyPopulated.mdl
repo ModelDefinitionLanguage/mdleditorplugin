@@ -206,9 +206,14 @@ fully_populated_mdl = mdlObj {
 } # end of model object
 
 fully_populated_task = taskObj {
-	ESTIMATE{ 
-		conf : {target is MLXTRAN_CODE, version = "4.3.2", algo = "SAEM" }
+	ESTIMATE {
+        set algo is saem
+        set solver is stiff
+        set reltol = 6 # e.g. TOL=6 in NONMEM 
 	}
+    SIMULATE{ 
+        set solver is stiff
+    }
 } # end of task object
 
 

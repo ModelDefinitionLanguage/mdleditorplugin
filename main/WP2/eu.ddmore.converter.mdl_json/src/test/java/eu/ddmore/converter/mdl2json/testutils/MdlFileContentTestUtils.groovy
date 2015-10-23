@@ -90,11 +90,14 @@ class MdlFileContentTestUtils {
         if (!StringUtils.isEmpty(origMdlFileBlockContent) || !StringUtils.isEmpty(newMdlFileBlockContent)) { // Check that we actually have something to compare
             LOGGER.info("Verifying block " + blockName + "...")
 
-            // Special additional preprocessing for the "OBJECTS" block within the "mog" block:
-            // The items within this block can be in any order so put the lines of the original and new blocks into a known order
+            // Special additional preprocessing for blocks where their content can be in any order,
+            // so put the items of the original and new blocks into a known order
             if (blockName == "OBJECTS") {
                 origMdlFileBlockContent = putMogObjectsBlockContentInKnownOrder(origMdlFileBlockContent)
                 newMdlFileBlockContent = putMogObjectsBlockContentInKnownOrder(newMdlFileBlockContent)
+            } else if (blockName == "ESTIMATE" || blockName == "SIMULATE") {
+                origMdlFileBlockContent = putTaskObjectBlocksContentInKnownOrder(blockName, origMdlFileBlockContent)
+                newMdlFileBlockContent = putTaskObjectBlocksContentInKnownOrder(blockName, newMdlFileBlockContent)
             }
 
             // Trim off whitespace from both the expected and the actual
@@ -509,19 +512,42 @@ class MdlFileContentTestUtils {
     }
 
     /**
-     * Special additional preprocessing for the "OBJECTS" block within the "mog" top-level block.
+     * Special additional preprocessing for the "OBJECTS" block within the "mogObj" top-level block.
      * The items within this block can be in any order so put the lines of the original and new blocks into a known order.
      * <p>
      * @param blockText - the string comprising the block name and its unordered content
      * @return the string comprising the block name and its reordered content
      */
     private static String putMogObjectsBlockContentInKnownOrder(final String blockText) {
-
-        final String blockName = "OBJECTS"
-        // This is the the regular expression to extract the individual attributes / items within the content of the block
+        // The third parameter is the regular expression to extract the individual attributes / items within the content of the block.
         // This regex is complicated by the fact that the object names can either be listed without any attributes, or
         // an object name can have its type explicitly specified i.e. myModel_dat : { type is dataObj }
-        final String itemsRegex = /\s*(?:\S+\s*)(?::\s*\{.*\})?/
+        putBlockContentInKnownOrder("OBJECTS", blockText, /\s*(?:\S+\s*)(?::\s*\{.*\})?/)
+    }
+    
+    /**
+     * Special additional preprocessing for the "ESTIMATE" and "SIMULATE" blocks within the "taskObj" top-level block.
+     * The items within this block can be in any order so put the lines of the original and new blocks into a known order.
+     * <p>
+     * @param blockName - the name of the block
+     * @param blockText - the string comprising the block name and its unordered content
+     * @return the string comprising the block name and its reordered content
+     */
+    private static String putTaskObjectBlocksContentInKnownOrder(final String blockName, final String blockText) {
+        // The third parameter is the regular expression to extract the individual attributes / items within the content of the block.
+        // The attributes are all prefixed with "set" keyword so use this to split the attributes.
+        putBlockContentInKnownOrder(blockName, blockText, /\s*(?:set\s*.+)/)
+    }
+    
+    /**
+     * Called from {@link #putMogObjectsBlockContentInKnownOrder(String)} and {@link #putTaskObjectBlocksContentInKnownOrder(String, String)}.
+     * <p>
+     * @param blockName - the name of the block
+     * @param blockText - the string comprising the block name and its unordered content
+     * @param itemsRegex - the regular expression to extract the individual attributes / items within the content of the block
+     * @return the string comprising the block name and its reordered content
+     */
+    private static String putBlockContentInKnownOrder(final String blockName, final String blockText, final String itemsRegex) {
         
         // Similar regex behaviour to those in putParameterListsIntoKnownOrder()
         final Matcher outerMatcher = ( blockText =~ /(?s)/ + blockName + /\s*\{(\s*.+\s*)\}/ ) // Greedily match until last '}' (safe because blockText is already just the OBJECTS block)

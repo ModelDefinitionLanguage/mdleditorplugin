@@ -29,9 +29,11 @@ import eu.ddmore.mdl.mdl.ValuePair
  * this class are created and destroyed on the fly just as a means to access the
  * block representation that this class provides.
  * <p>
- * By "block representation", we mean the following three different 'types' of Statements
- * that a block can represent. These can be distinguishing in incoming JSON by the
- * structure of the JSON.
+ * By "block representation", we mean the following different 'types' of Statements
+ * that a block can represent. The name of the block dictates which representation is
+ * used since different blocks encode different MDL constructs.
+ * {@link BlockStatementFactory#getRepresentationType(String)} maps block name to
+ * {@link EBlockStatementType} enum value.
  * <h3>Statement List</h3>
  * List of {@link StatementList} (i.e. List of attribute Maps}. The default form of
  * representation of a block. Represented by instance of subclass {@link StatementListBlockStatement}.
@@ -39,6 +41,10 @@ import eu.ddmore.mdl.mdl.ValuePair
  * List of Strings. Used where a block comprises a list of variable names / items which have
  * no attributes or other information that needs to be encoded in the JSON. Represented
  * by instance of subclass {@link SymbolListBlockStatement}.
+ * <h3>Task Object Block Content</h3>
+ * Map of String -> String. Used explicitly for ESTIMATE and SIMULATE blocks which are
+ * essentially sets of name-value attributes. Represented by instance of subclass
+ * {@link TaskObjectBlockStatement}.
  * <h3>Content</h3>
  * String. Verbatim MDL, no parsing performed. Represented by instance of subclass
  * {@link TextualContentBlockStatement}.
@@ -114,6 +120,31 @@ public abstract class BlockStatement<T> extends AbstractStatement {
     /**
      * Overloaded method to merge two {@link BlockStatement}s' representations.
      * <p>
+     * This version merges two {@link Map}s of key-value attribute pairs, i.e. for
+     * block statement 'type' {@link EBlockStatementType#TASKOBJ_BLOCK}.
+     * <p>
+     * Used where multiple blocks appear in an MDL file at the top-level.
+     * The JSON representation at this level is a Map keyed by block name,
+     * hence multiple blocks will overwrite each other in the JSON representation.
+     * <p>
+     * The method is used by {@link TopLevelBlockStatements} constructors.
+     * <p>
+     * @see {@link #merge(StatementList, StatementList)}
+     * <p>
+     * @param thisTaskAttrsMap {@link Map} of {@link String} -> {@link String}
+     * @param otherTaskAttrsMap {@link Map} of {@link String} -> {@link String}, can be null in which case no modification will be performed
+     * @return the modified <code>thisTaskAttrsMap</code>
+     */
+    public static Map<String, String> merge(final Map<String, String> thisTaskAttrsMap, Map<String, String> otherTaskAttrsMap) {
+        if (otherTaskAttrsMap != null) {
+            thisTaskAttrsMap.putAll(otherTaskAttrsMap)
+        }
+        return thisTaskAttrsMap
+    }
+    
+    /**
+     * Overloaded method to merge two {@link BlockStatement}s' representations.
+     * <p>
      * This version merges two {@link String}s of content, i.e. for block
      * statement 'type' {@link EBlockStatementType#CONTENT}.
      * <p>
@@ -137,11 +168,12 @@ public abstract class BlockStatement<T> extends AbstractStatement {
     }
     
     /**
-     * Represents the three types of representation of a Block Statement.
+     * Represents the different types of representation of a Block Statement.
      */
     protected static enum EBlockStatementType {
         SYMBOL_NAMES,
         STATEMENTS,
+        TASKOBJ_BLOCK,
         CONTENT
     }
     

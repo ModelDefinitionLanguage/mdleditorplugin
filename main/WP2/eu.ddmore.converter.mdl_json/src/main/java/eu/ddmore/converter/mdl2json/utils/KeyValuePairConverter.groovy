@@ -21,7 +21,7 @@ import eu.ddmore.mdl.utils.MdlExpressionConverter;
  */
 public class KeyValuePairConverter {
     
-    final static Collection<String> IS_REPRESENTATION_ATTR_NAMES = [ "type", "use", "inputFormat", "link", "event", "trans", "target" ]
+    final static Collection<String> IS_REPRESENTATION_ATTR_NAMES = [ "type", "use", "inputFormat", "link", "event", "trans", "target", "algo", "solver" ]
 
     public static String toMDL(final Map.Entry<String, String> entry) {
         toMDL(entry.getKey(), entry.getValue())

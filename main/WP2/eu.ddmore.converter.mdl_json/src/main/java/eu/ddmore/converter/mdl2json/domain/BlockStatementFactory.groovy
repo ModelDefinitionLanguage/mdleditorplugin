@@ -26,6 +26,8 @@ public class BlockStatementFactory {
                 return new SymbolListBlockStatement(blockName, blkBody)
             case EBlockStatementType.STATEMENTS:
                 return new StatementListBlockStatement(blockName, blkBody, blkAttrsMap)
+            case EBlockStatementType.TASKOBJ_BLOCK:
+                return new TaskObjectBlockStatement(blockName, blkBody)
             case EBlockStatementType.CONTENT:
                 return new TextualContentBlockStatement(blockName, blkBody)
         }
@@ -62,6 +64,8 @@ public class BlockStatementFactory {
                 return new SymbolListBlockStatement(blockName, ((List<String>) json[blockName]))
             case EBlockStatementType.STATEMENTS:
                 return new StatementListBlockStatement(blockName, ((List<Map>) json[blockName]))
+            case EBlockStatementType.TASKOBJ_BLOCK:
+                return new TaskObjectBlockStatement(blockName, (Map<String, String>)json[blockName])
             case EBlockStatementType.CONTENT:
                 return new TextualContentBlockStatement(blockName, (String) json[blockName])
         }
@@ -77,10 +81,11 @@ public class BlockStatementFactory {
             case "STRUCTURAL_PARAMETERS":
             case "VARIABILITY_PARAMETERS":
                 return EBlockStatementType.SYMBOL_NAMES
-                break
+            case "ESTIMATE":
+            case "SIMULATE":
+                return EBlockStatementType.TASKOBJ_BLOCK
             default:
                 return EBlockStatementType.STATEMENTS
-            break
         }
     }
     
