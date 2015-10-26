@@ -17,6 +17,15 @@
         <module>../converter-toolbox-service</module>
         <module>../converter-toolbox-distribution</module>
     </modules>
+    <build>
+        <pluginManagement>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>4.2</version>
+            </plugin>
+        </pluginManagement>
+    </build>
 
     <url>http://ddmore.eu/</url>
     <name>Converter Toolbox Service Aggregator</name>
