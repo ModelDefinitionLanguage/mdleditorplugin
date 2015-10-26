@@ -31,7 +31,8 @@ public class MDLToJSONConverter implements ConverterProvider {
 
     private final LanguageVersion source = new LanguageVersionImpl("MDL", new VersionImpl(7, 0, 0))
     private final LanguageVersion target = new LanguageVersionImpl("JSON", new VersionImpl(7, 0, 0))
-    private final Version converterVersion = new VersionImpl(1, 3, 0); // Might as well align with the version of the Demonstrator product
+    // this should be the same as the development stream version as of this Maven module
+    private final Version converterVersion = new VersionImpl(0, 3, 0);
 
     /**
      * Converter Toolbox required entry point.
