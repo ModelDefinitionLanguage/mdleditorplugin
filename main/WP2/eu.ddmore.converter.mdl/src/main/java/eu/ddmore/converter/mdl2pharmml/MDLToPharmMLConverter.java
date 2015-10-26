@@ -47,11 +47,11 @@ public class MDLToPharmMLConverter implements ConverterProvider {
         Version sourceVersion = new VersionImpl(7, 0, 0);
         source = new LanguageVersionImpl("MDL", sourceVersion);
 
-        Version targetVersion = new VersionImpl(0, 6, 0);
+        Version targetVersion = new VersionImpl(0, 6, 1);
         target = new LanguageVersionImpl("PharmML", targetVersion);
 
         // this should be the same as the development stream version as of this Maven module
-        converterVersion = new VersionImpl(0,3,0);
+        converterVersion = new VersionImpl(0, 3, 0);
     }
 
     @Override
