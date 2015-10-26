@@ -19,11 +19,13 @@
     </modules>
     <build>
         <pluginManagement>
-            <plugin>
-                <groupId>org.codehaus.sonar</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>4.2</version>
-            </plugin>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.sonar</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>4.2</version>
+                </plugin>
+            </plugins>
         </pluginManagement>
     </build>
 
