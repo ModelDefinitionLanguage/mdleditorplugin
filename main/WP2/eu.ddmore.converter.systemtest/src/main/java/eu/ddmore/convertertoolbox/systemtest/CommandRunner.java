@@ -34,7 +34,7 @@ public class CommandRunner {
     private String name = "execution";
     private File workingDirectory;
     private CommandLine commandLine;
-    private Long processTimeout = TimeUnit.SECONDS.toMillis(30);
+    private Long processTimeout = TimeUnit.SECONDS.toMillis(120);
     private boolean dryRun = false;
     
     public CommandRunner setName(String name) {
@@ -62,6 +62,18 @@ public class CommandRunner {
         return this;
     }
     
+    public File getStdOut() {
+        Preconditions.checkState(workingDirectory!=null, "Working Directory must be set before standard output file path can be produced");
+        Preconditions.checkState(name!=null, "Working Directory must be set before standard output file path can be produced");
+        return new File(workingDirectory, name + "." + STDOUT_FILE_EXT);
+    }
+    
+    public File getStdErr() {
+        Preconditions.checkState(workingDirectory!=null, "Working Directory must be set before standard error file path can be produced");
+        Preconditions.checkState(name!=null, "Working Directory must be set before standard error file path can be produced");
+        return new File(workingDirectory, name + "." + STDERR_FILE_EXT);
+    }
+    
     public void run() throws Exception {
         Preconditions.checkNotNull(name, "Name of the executor can't be null.");
         Preconditions.checkNotNull(workingDirectory, "Working directory can't be null.");
@@ -72,8 +84,8 @@ public class CommandRunner {
 
         DefaultExecutor executor = createCommandExecutor();
         executor.setWorkingDirectory(workingDirectory);
-        File stdoutFile = new File(workingDirectory, name + "." + STDOUT_FILE_EXT);
-        File stderrFile = new File(workingDirectory, name + "." + STDERR_FILE_EXT);
+        File stdoutFile = getStdOut();
+        File stderrFile = getStdErr();
         File pidFile = new File(workingDirectory, name + "." + PID_FILE_EXT);
         try (BufferedOutputStream stdoutOS = new BufferedOutputStream(new TeeOutputStream(new FileOutputStream(stdoutFile), System.out));
                     BufferedOutputStream stderrOS = new BufferedOutputStream(new TeeOutputStream(new FileOutputStream(stderrFile),

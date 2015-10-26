@@ -1,27 +1,18 @@
 package eu.ddmore.convertertoolbox.systemtest;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteException;
-import org.apache.commons.exec.ExecuteWatchdog;
-import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 
 public class ConverterRunner {
+    private static final Logger LOG = Logger.getLogger(ConverterRunner.class);
     public static final String CONVERT_STDERR = ".convert.stderr";
     public static final String CONVERT_STDOUT = ".convert.stdout";
-
-    private final static Logger LOGGER = Logger.getLogger(ConverterRunner.class);
-
-    final static String CONVERTER_TOOLBOX_EXECUTABLE = new File(System.getProperty("converter-toolbox.executable")).getAbsolutePath();
+    private static final String CONVERTER_TOOLBOX_EXECUTABLE = new File(System.getProperty("converter-toolbox.executable")).getAbsolutePath();
     
     private final File modelFile;
     private final String outputFileExtension;
@@ -43,91 +34,36 @@ public class ConverterRunner {
         this.converterOutputFailureChecker = convFailChecker;
     }
     
-    File getModelFile() {
-        return this.modelFile;
-    }
-    
-    File getOutputDirectory() {
+    private File getOutputDirectory() {
     	return this.modelFile.getParentFile();
     }
     
-    File getStandardOutputFile() {
-        return new File(this.modelFile.getAbsolutePath() + CONVERT_STDOUT);
-    }
-    
-    File getStandardErrorFile() {
-        return new File(this.modelFile.getAbsolutePath() + CONVERT_STDERR);
-    }
-    
     void run() {
-        
-        // Initialise output directory and stdout and stderr files
         final File outputDir = getOutputDirectory();
-        final File stdoutFile = getStandardOutputFile();
-        final File stderrFile = getStandardErrorFile();
-        outputDir.mkdir(); // Ideally we'd clear out the output dir here but there may be multiple model files within the same dir
-        if (stdoutFile.exists() && !stdoutFile.delete()) {
-            LOGGER.error("Unable to delete file " + stdoutFile);
-        }
-        if (stderrFile.exists() && !stderrFile.delete()) {
-            LOGGER.error("Unable to delete file " + stderrFile);
-        }
-        
-        // Build up the command line to execute
-        CommandLine cmdLine = new CommandLine(CONVERTER_TOOLBOX_EXECUTABLE);
-        cmdLine.addArgument(this.modelFile.getAbsolutePath());
-        cmdLine.addArgument(outputDir.getAbsolutePath());
-        cmdLine.addArgument(this.sourceLang);
-        cmdLine.addArgument(this.sourceVersion);
-        cmdLine.addArgument(this.targetLang);
-        cmdLine.addArgument(this.targetVersion);
-        
-        // Set up output streams to handle the standard out and standard error
-        final BufferedOutputStream stdoutOS;
-        final BufferedOutputStream stderrOS;
-        try {
-            stdoutOS = new BufferedOutputStream(new FileOutputStream(stdoutFile));
-            IOUtils.write("Invoking converter toolbox command : " + cmdLine + "\n\n", stdoutOS);
-            stderrOS = new BufferedOutputStream(new FileOutputStream(stderrFile));
-        } catch (IOException ioe) {
-            throw new RuntimeException("IOException thrown while trying to set up output streams for converter stdout and stderr: " + ioe);
-        }
-        
-        // Create the executor object, providing a stream handler that will avoid
-        // the child process becoming blocked because nothing is consuming its output,
-        // and also a timeout
-        DefaultExecutor executor = new DefaultExecutor();
-        executor.setWorkingDirectory(new File(CONVERTER_TOOLBOX_EXECUTABLE).getParentFile());
-        executor.setExitValue(0); // Required "success" return code
-        ExecuteWatchdog watchdog = new ExecuteWatchdog(30000); // Will kill the process after 30 seconds
-        executor.setWatchdog(watchdog);
-        PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(stdoutOS, stderrOS);
-        executor.setStreamHandler(pumpStreamHandler);
+        outputDir.mkdir();
 
-        // Finally actually execute the batch script
-        final long startTime = System.currentTimeMillis();
-        try {
-            executor.execute(cmdLine);
-            LOGGER.info("Conversion of " + this.modelFile + " took " + ((System.currentTimeMillis() - startTime) / 1000.0) + " seconds");
-        } catch (final ExecuteException eex) { // Command has failed or timed out
-            try {
-                IOUtils.write("\n\nError code " + eex.getExitValue() + " returned from converter toolbox command : " + cmdLine + "\n\n", stderrOS);
-                IOUtils.write("ExecuteException cause: " + eex.getMessage(), stderrOS);
-            } catch (IOException ioe) {
-            }
-        } catch (final IOException ioe) {
-            throw new RuntimeException("IOException occurred trying to execute converter batch script: " + ioe);
-        }
+        CommandLine cmdLine = new CommandLine(CONVERTER_TOOLBOX_EXECUTABLE);
+        cmdLine.addArgument(modelFile.getAbsolutePath());
+        cmdLine.addArgument(outputDir.getAbsolutePath());
+        cmdLine.addArgument(sourceLang);
+        cmdLine.addArgument(sourceVersion);
+        cmdLine.addArgument(targetLang);
+        cmdLine.addArgument(targetVersion);
+        
+        CommandRunner cRunner = new CommandRunner().setName(this.modelFile.getName() + ".convert")
+                .setWorkingDirectory(outputDir);
+        cRunner.setCommand(cmdLine.toString());
         
         try {
-            stdoutOS.close();
-            stderrOS.close();
-        } catch (final IOException e) {
+            cRunner.run();
+        } catch (Exception e) {
+            LOG.error(String.format("Failed to execute %s", cmdLine), e);
+            throw new RuntimeException(String.format("Failed to perform conversion of [%s] from [%s, %s] to [%s, %s]",
+                modelFile,sourceLang,sourceVersion,targetLang,targetVersion), e);
         }
-        
         // Heuristically test if the conversion didn't fail (we can only generically check for failure rather than success)
         final File expectedOutputFile = new File(outputDir, FilenameUtils.getBaseName(this.modelFile.getPath()) + "." + this.outputFileExtension);
-        this.converterOutputFailureChecker.check(expectedOutputFile, stdoutFile, stderrFile); // fail()s if appropriate
+        this.converterOutputFailureChecker.check(expectedOutputFile, cRunner.getStdOut(), cRunner.getStdErr());
     }
     
 }
