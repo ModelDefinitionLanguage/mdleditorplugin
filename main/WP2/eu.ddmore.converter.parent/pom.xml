@@ -18,8 +18,8 @@
 		<commons-lang.version>2.6</commons-lang.version>
 		<junit.version>4.11</junit.version>
 		<java.version>1.7</java.version>
-		<libpharmml.version>0.4-b1</libpharmml.version>
-		<libpharmml.pkmacro.version>0.1.1-b1</libpharmml.pkmacro.version>
+		<libpharmml.version>0.4.4-b1</libpharmml.version>
+		<libpharmml.pkmacro.version>0.1.4-b2</libpharmml.pkmacro.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -30,7 +30,7 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>eu.ddmore</groupId>
 			<artifactId>converter-toolbox-api</artifactId>
