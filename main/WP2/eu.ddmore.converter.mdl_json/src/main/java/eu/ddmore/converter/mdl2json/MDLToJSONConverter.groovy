@@ -4,9 +4,9 @@
 package eu.ddmore.converter.mdl2json
 
 import org.apache.log4j.Logger
-import org.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdl.mdl.Mcl
 
-import eu.ddmore.converter.mdl2json.domain.MCLFile
+import eu.ddmore.converter.mdl2json.domain.Mcl
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion
 import eu.ddmore.convertertoolbox.api.domain.Version
 import eu.ddmore.convertertoolbox.api.response.ConversionReport
@@ -29,9 +29,10 @@ public class MDLToJSONConverter implements ConverterProvider {
     private static final String MDL_FILE_EXTENSION = ".mdl"
     private static final String JSON_FILE_EXTENSION = ".json"
 
-    private final LanguageVersion source = new LanguageVersionImpl("MDL", new VersionImpl(6, 0, 8))
-    private final LanguageVersion target = new LanguageVersionImpl("JSON", new VersionImpl(6, 0, 8))
-    private final Version converterVersion = new VersionImpl(1, 0, 5);
+    private final LanguageVersion source = new LanguageVersionImpl("MDL", new VersionImpl(7, 0, 0))
+    private final LanguageVersion target = new LanguageVersionImpl("JSON", new VersionImpl(7, 0, 0))
+    // this should be the same as the development stream version as of this Maven module
+    private final Version converterVersion = new VersionImpl(0, 3, 0);
 
     /**
      * Converter Toolbox required entry point.
@@ -40,7 +41,7 @@ public class MDLToJSONConverter implements ConverterProvider {
         // We know we're going to return a conversion report so create it up front; it is added to at various places in this method
         final ConversionReport report = new ConversionReportImpl()
 
-        final Mcl mcl = new MdlParser().parse(src, report)
+        final eu.ddmore.mdl.mdl.Mcl mcl = new MdlParser().parse(src, report)
         
         if (ConversionCode.FAILURE.equals(report.getReturnCode())) {
             return report // Bail out - couldn't parse the MDL
@@ -64,12 +65,12 @@ public class MDLToJSONConverter implements ConverterProvider {
      * @param mcl
      * @return
      */
-    String toJSON(Mcl mcl) {
+    String toJSON(eu.ddmore.mdl.mdl.Mcl mcl) {
 
         JsonBuilder jb = new JsonBuilder()
 
         String ret = null
-        MCLFile f = new MCLFile(mcl)
+        Mcl f = new Mcl(mcl)
         jb f
         ret = jb.toString()
 

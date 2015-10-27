@@ -1,0 +1,151 @@
+# A syntactically valid, but semantically invalid model.
+# This has been based on UseCase1 but with extra blocks/sub-blocks added (containing dummy data)
+# to try and cover as much of the conversion code with one model as possible.
+
+  
+warfarin_PK_ODE_dat = dataobj {
+	DECLARED_VARIABLES{GUT Y}
+
+	DATA_INPUT_VARIABLES {
+		ID : { use=id }
+		TIME : { use=idv }
+		WT : { type = continuous, use=covariate }
+		AMT : { use=amt, define = GUT }
+		DVID : { type = categorical, use=dvid}
+		DV : { use=dv, define = Y }
+		MDV : { type = categorical, use=mdv }
+		logtWT:{ type = continuous, use=covariate }  
+	} # end DATA_INPUT_VARIABLES
+	
+	SOURCE {
+	    file = "warfarin_conc.csv" 
+            inputformat = nonmemFormat 
+	    ignore = "#" 
+	} # end SOURCE
+	
+	DATA_DERIVED_VARIABLES {
+		FOO8 = TIME when AMT > 0;
+	}
+} # end data object
+
+warfarin_PK_ODE_par = parobj {
+	DECLARED_VARIABLES{ETA_CL ETA_V}
+
+	# By default a parameter is to be estimated if fix is omitted
+ 	STRUCTURAL {
+		POP_CL : { value = 0.1, lo = 0.001 }
+		POP_V : { value = 8, lo = 0.001 } 
+		POP_KA : { value = 0.362, lo = 0.001 }
+		POP_TLAG : { value=1, lo=0.001, hi=10 }
+		BETA_CL_WT : { value = 0.75, fix = true }
+		BETA_V_WT : { value = 1, fix = true } 
+		RUV_PROP : { value = 0.1, lo = 0 }
+		RUV_ADD : { value = 0.1, lo = 0 } 
+		} # end STRUCTURAL
+	VARIABILITY {
+		PPV_CL : { value = 0.1, type=SD }
+		PPV_V : { value = 0.1, type=SD }
+		PPV_KA : { value = 0.1, type=SD }
+		PPV_TLAG : { value = 0.1, type=SD } 
+		OMEGA : { params=[ETA_CL, ETA_V], value = [0.01], type = CORR }
+	} # end VARIABILITY
+} # end of parameter object 
+
+warfarin_PK_ODE_mdl = mdlobj {
+	IDV{ TIME }
+
+	COVARIATES{
+		logtWT
+	}
+
+	VARIABILITY_LEVELS{
+		ID : { level=2, type=parameter }
+		DV : { level=1, type=observation }
+	} 
+
+	STRUCTURAL_PARAMETERS { 
+		POP_CL
+		POP_V
+		POP_KA
+		POP_TLAG
+		BETA_CL_WT
+		BETA_V_WT
+		RUV_PROP
+		RUV_ADD
+	} # end STRUCTURAL_PARAMETERS
+	
+	VARIABILITY_PARAMETERS {
+		PPV_CL
+		PPV_V
+		PPV_KA
+		PPV_TLAG
+	} # end VARIABILITY_PARAMETERS 
+	
+	RANDOM_VARIABLE_DEFINITION(level=ID) {
+		ETA_CL ~ Normal(mean = 0, sd = PPV_CL)
+		ETA_V ~ Normal(mean = 0, sd = PPV_V)
+		ETA_KA ~ Normal(mean = 0, sd = PPV_KA)
+		ETA_TLAG ~ Normal(mean = 0, sd = PPV_TLAG) # We define correlation here
+	} # end RANDOM_VARIABLE_DEFINITION 
+
+	
+	INDIVIDUAL_VARIABLES { # This maps to the "Type 3" individual parameter definition in PharmML
+	    CL : { type = linear, trans = log, pop = POP_CL, fixEff = {coeff=BETA_CL_WT, cov=logtWT} , ranEff = ETA_CL }
+	    V : { type = linear, trans = log, pop = POP_V, fixEff = {coeff=BETA_V_WT, cov=logtWT} , ranEff = ETA_V }
+	    KA : { type = linear, trans = log, pop = POP_KA, ranEff = ETA_KA }
+	    TLAG : { type = linear, trans = log, pop = POP_TLAG, ranEff = ETA_TLAG }
+	    F1=1 
+	} # end INDIVIDUAL_VARIABLES
+
+	MODEL_PREDICTION {
+		FOO2 = V
+		DEQ{
+			RATEIN = GUT * KA when TIME >= TLAG otherwise 0
+			GUT : { deriv =(- RATEIN), init = 0, x0 = 0 }
+			CENTRAL : { deriv =(RATEIN - CL * CENTRAL / V), init = 0, x0 = 0, wrt=TIME } 
+		}
+	    CC = CENTRAL / V
+	    COMPARTMENT{
+            FOO3:   {type=depot, modelCmt=1, to=FOO4, ka=KA, tlag=TLAG, finput=F1}
+            FOO4:    {type=compartment, modelCmt=2}
+            {type=elimination, modelCmt=2, from=FOO4, v=V, cl=CL}
+	    }
+	} # end MODEL_PREDICTION
+	
+	RANDOM_VARIABLE_DEFINITION(level=DV){
+	    EPS_Y ~ Normal(mean = 0, var = 1) # This maps the standard error model in PharmML. The error model is predefined.
+	}
+
+	OBSERVATION {
+	    Y : { type = continuous, error = combinedError1(additive = RUV_ADD, proportional = RUV_PROP, f = CC),
+	              eps = EPS_Y, prediction = CC } 
+	} # end OBSERVATION
+	
+    GROUP_VARIABLES{
+        FOO1 = ln(POP_V/(1-POP_V))
+    }
+   
+    MODEL_OUTPUT_VARIABLES {
+        FOO_A
+        FOO_B
+        FOO_C
+    }
+	
+} # end of model object
+
+warfarin_PK_ODE_task = taskobj {
+	ESTIMATE {
+	    target = MLXTRAN_CODE
+	    version = "4.3.2"
+	} #end ESTIMATE sub block
+} # end of task object
+
+
+warfarin_PK_ODE_mog = mogobj {
+	OBJECTS{
+		warfarin_PK_ODE_dat
+		warfarin_PK_ODE_mdl
+		warfarin_PK_ODE_par
+		warfarin_PK_ODE_task
+	}
+}

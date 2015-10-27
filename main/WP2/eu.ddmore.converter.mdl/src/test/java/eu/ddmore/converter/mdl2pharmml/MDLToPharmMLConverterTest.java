@@ -40,7 +40,7 @@ public class MDLToPharmMLConverterTest {
         invalidMdlFile = new File(workingFolder.getRoot(), "UseCase1_1.mdl");
         pharmmlInvalidMdlFile = new File(workingFolder.getRoot(), "UseCase1_1.xml");
     
-        FileUtils.copyURLToFile(getClass().getResource("/test-models/MDL/Product4/UseCase1.mdl"), validMdlFile);
+        FileUtils.copyURLToFile(getClass().getResource("/test-models/MDL/7.0.0/UseCase1.mdl"), validMdlFile);
         FileUtils.copyURLToFile(getClass().getResource("/test-models/MDL/Product4-invalid/UseCase1_1.mdl"), invalidMdlFile);
         
         this.converter = new MDLToPharmMLConverter();

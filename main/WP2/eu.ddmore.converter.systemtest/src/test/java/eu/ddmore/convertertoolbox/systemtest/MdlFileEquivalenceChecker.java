@@ -37,11 +37,6 @@ class MdlFileEquivalenceChecker extends DefaultConverterOutputFailureChecker {
         super.check(expectedOutputMdlFile, stdoutFile, stderrFile);
         for (final String blockName : MdlFileContentTestUtils.ALL_BLOCK_NAMES) {
             MdlFileContentTestUtils.assertMDLBlockEqualityIgnoringWhitespaceAndComments(this.baselineMdlFile, blockName, expectedOutputMdlFile);
-            try {
-                MdlFileContentTestUtils.assertNoTopLevelObjectIdentifierPseudoBlocksInWrittenOutMdlFile(FileUtils.readFileToString(expectedOutputMdlFile));
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to read output MDL file: " + expectedOutputMdlFile);
-            }
         }
     }
 

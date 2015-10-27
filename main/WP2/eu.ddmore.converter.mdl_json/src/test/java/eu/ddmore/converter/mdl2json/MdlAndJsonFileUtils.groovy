@@ -8,7 +8,6 @@ import static org.junit.Assert.*
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
-import org.ddmore.mdl.mdl.Mcl
 
 import com.google.common.base.Preconditions
 
@@ -16,6 +15,7 @@ import eu.ddmore.convertertoolbox.api.response.ConversionReport
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode
 import eu.ddmore.convertertoolbox.domain.ConversionReportImpl
 import eu.ddmore.mdlparse.MdlParser
+import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
 
@@ -61,7 +61,7 @@ class MdlAndJsonFileUtils {
         Preconditions.checkArgument(urlToFile != null,
             "Model file at relative file path %s does not exist in the testdata models project", modelType + "/" + relativePathToFile)
 
-        File destFile = new File(WORKING_DIR + relativePathToFile)
+        File destFile = new File(WORKING_DIR + "/" + relativePathToFile)
         FileUtils.copyURLToFile(urlToFile, destFile)
 
         return destFile
@@ -74,14 +74,14 @@ class MdlAndJsonFileUtils {
     public static Object getJsonFromMDLFile(final File srcFile) {
 
         final ConversionReport report = new ConversionReportImpl()
-        final Mcl mcl = new MdlParser().parse(srcFile, report)
+        final eu.ddmore.mdl.mdl.Mcl mcl = new MdlParser().parse(srcFile, report)
 
         Preconditions.checkArgument(mcl != null,
             "Unable to parse MDL file " + srcFile + "; check the log files for exceptions that might have been thrown")
         Preconditions.checkArgument(!ConversionCode.FAILURE.equals(report.getReturnCode()),
             "Unable to parse MDL file " + srcFile + "; check the log files for exceptions that might have been thrown")
 
-        String jsonText = new MDLToJSONConverter().toJSON(mcl)
+        String jsonText = toJson(mcl)
 
         Preconditions.checkArgument(StringUtils.isNotBlank(jsonText), "Unable to parse MDL file " + srcFile + " into JSON; check the log files for exceptions that might have been thrown")
 
@@ -94,6 +94,24 @@ class MdlAndJsonFileUtils {
     public static Object getJson(String jsonText) {
         JsonSlurper slurper = new JsonSlurper();
         slurper.parseText(jsonText)
+    }
+    
+    /**
+     * Convert an {@link eu.ddmore.mdl.mdl.Mcl} object into JSON.
+     *
+     * @param mcl
+     * @return JSON text
+     */
+    private static String toJson(eu.ddmore.mdl.mdl.Mcl mcl) {
+        eu.ddmore.converter.mdl2json.domain.Mcl wrappedMcl = new eu.ddmore.converter.mdl2json.domain.Mcl(mcl)
+
+        final JsonBuilder jb = new JsonBuilder()
+
+        String ret = null
+        jb wrappedMcl
+        ret = jb.toString()
+
+        return ret
     }
 
 }
