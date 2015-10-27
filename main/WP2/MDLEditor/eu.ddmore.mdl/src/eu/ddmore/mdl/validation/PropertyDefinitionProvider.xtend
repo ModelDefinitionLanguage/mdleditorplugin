@@ -27,18 +27,17 @@ class PropertyDefinitionProvider {
 //	static val EST_OP_ATT = new AttributeDefn('operation', null, false, EST_OP_TYPE)
 	static val SOLVER_TYPE = new BuiltinEnumTypeInfo('solver', #{'stiff', 'nonStiff' })
 	static val SOLVER_ATT = new AttributeDefn('solver', false, SOLVER_TYPE)
-	
-	static val propertyDefns = #{
-//		BlockDefinitionProvider::ESTIMATE_BLK -> #[TARGET_ATT, EST_OP_ATT, VERSION_ATT, ALGO_ATT],
-//		BlockDefinitionProvider::SIMULATE_BLK -> #[SOLVER_ATT, VERSION_ATT, TARGET_ATT]
-		BlockDefinitionProvider::ESTIMATE_BLK -> #[ALGO_ATT],
-		BlockDefinitionProvider::SIMULATE_BLK -> #[SOLVER_ATT]
-	}
 
+	static val propertyDefns = #{ BlockDefinitionProvider::ESTIMATE_BLK -> #[ALGO_ATT], BlockDefinitionProvider::SIMULATE_BLK -> #[SOLVER_ATT] }
+	
+/* the following was commented out inside propertyDefns declaration
+ * 		BlockDefinitionProvider::ESTIMATE_BLK -> #[TARGET_ATT, EST_OP_ATT, VERSION_ATT, ALGO_ATT],
+* 		BlockDefinitionProvider::SIMULATE_BLK -> #[SOLVER_ATT, VERSION_ATT, TARGET_ATT]
+*/
 	def List<String> getAttributeNames(String blkName){
 		val attNames = new ArrayList<String>
-		val propDefns = propertyDefns.get(blkName)
-		if(propDefns != null){
+		val List<AttributeDefn> propDefns = propertyDefns.get(blkName)
+		if(propDefns != null) {
 			propDefns.forEach([at|attNames.add(at.name)])
 		}
 		attNames
@@ -79,7 +78,7 @@ class PropertyDefinitionProvider {
 
 	def unusedMandatoryProperties(BlockStatement it){
 		val mandatoryProps = new HashSet<String>
-		val defns = (propertyDefns.get(identifier) ?: Collections.emptyList)
+		val List<AttributeDefn> defns = (propertyDefns.get(identifier) ?: Collections.emptyList)
 		defns.filter[ad| ad.isMandatory].forEach[a|mandatoryProps.add(a.name)]
 		for(ps : statements.filter[s|s instanceof PropertyStatement]){
 			for(a : (ps as PropertyStatement).properties){
