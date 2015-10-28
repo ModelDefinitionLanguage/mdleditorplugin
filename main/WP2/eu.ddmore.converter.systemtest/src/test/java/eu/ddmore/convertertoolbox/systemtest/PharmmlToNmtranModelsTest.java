@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 public class PharmmlToNmtranModelsTest extends ConverterATParent {
     private final static Logger LOG = Logger.getLogger(PharmmlToNmtranModelsTest.class);
     private final static String NAME = "PharmmlToNmtranModelsTest";
-    private final static String MODELS_SUBDIRECTORY = "PharmML" + File.separator + FileType.PharmML.getVersion();
+    private final static String MODELS_SUBDIRECTORY = "PharmML" + File.separator + FileType.PharmML_060.getVersion();
     /**
      * The method that produces the parameters to be passed to each construction of the test class.
      * In this case, the {@link File}s that are the models for which to test the conversion.
