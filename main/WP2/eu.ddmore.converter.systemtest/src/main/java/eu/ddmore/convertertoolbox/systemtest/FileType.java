@@ -6,7 +6,7 @@ package eu.ddmore.convertertoolbox.systemtest;
  */
 public enum FileType {
     MDL("mdl","7.0.0"),
-    PharmML("xml","0.6.0"),
+    PharmML("xml","0.6.1"),
     NMTRAN("ctl","7.3.0"),
     JSON("json","7.0.0");
     

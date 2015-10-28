@@ -120,7 +120,7 @@
         <dependency>
             <groupId>eu.ddmore</groupId>
             <artifactId>converter-nonmem</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>0.3.0-SNAPSHOT</version>
         </dependency>
         
         <dependency>
