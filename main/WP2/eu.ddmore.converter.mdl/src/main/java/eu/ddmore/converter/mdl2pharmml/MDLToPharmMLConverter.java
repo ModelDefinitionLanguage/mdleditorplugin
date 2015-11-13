@@ -9,11 +9,8 @@ import java.util.Iterator;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
@@ -21,12 +18,9 @@ import com.google.inject.Injector;
 
 import eu.ddmore.convertertoolbox.api.domain.LanguageVersion;
 import eu.ddmore.convertertoolbox.api.domain.Version;
-import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
-import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.api.spi.ConverterProvider;
-import eu.ddmore.convertertoolbox.domain.ConversionDetailImpl;
 import eu.ddmore.convertertoolbox.domain.ConversionReportImpl;
 import eu.ddmore.convertertoolbox.domain.LanguageVersionImpl;
 import eu.ddmore.convertertoolbox.domain.VersionImpl;
@@ -36,8 +30,6 @@ import eu.ddmore.mdl.mdl.MclObject;
 import eu.ddmore.mdl.utils.MclUtils;
 
 public class MDLToPharmMLConverter implements ConverterProvider {
-
-    private final static Logger LOG = Logger.getLogger(MDLToPharmMLConverter.class);
 
     private LanguageVersion source;
     private LanguageVersion target;
@@ -59,60 +51,42 @@ public class MDLToPharmMLConverter implements ConverterProvider {
         // We know we're going to return a conversion report so create it up front; it is added to at various places in this method
         final ConversionReport report = new ConversionReportImpl();
         
-        Injector injector = new MdlStandaloneSetup().createInjectorAndDoEMFRegistration();
-        XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
+        final Injector injector = new MdlStandaloneSetup().createInjectorAndDoEMFRegistration();
+        final XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-
-        Resource resource = resourceSet.getResource(URI.createURI("file:///" + src.getAbsolutePath()), true);
         
-        EList<Diagnostic> errors = resource.getErrors();
-        EList<Diagnostic> warnings = resource.getWarnings();
-        if (!warnings.isEmpty()) {
-            LOG.warn(String.format("%1$d warning(s) encountered in parsing MDL file %2$s", warnings.size(), src.getAbsolutePath()));
-            for (Diagnostic w : warnings) {
-                LOG.warn(w);
-                final ConversionDetail detail = new ConversionDetailImpl();
-                detail.setMessage(w.toString());
-                detail.setSeverity(Severity.WARNING);
-                report.addDetail(detail);
+        final MDLValidator validator = injector.getInstance(MDLValidator.class);
+
+        final Resource resource = resourceSet.getResource(URI.createURI("file:///" + src.getAbsolutePath()), true);
+        
+        if (validator.validate(resource, report)) {
+        
+            MclUtils mclUtils = new MclUtils();
+            Mcl mcl = (Mcl) resource.getContents().get(0);
+            Iterable<MclObject> mogs = mclUtils.getMogObjects(mcl);
+    
+            // TODO: We're currently making an assumption that there will be a single MOG
+            // in the provided file.  This should be fine for Product 4.
+            // This will be addressed under DDMORE-1221
+            Iterator<MclObject> mogsIt = mogs.iterator();
+            if (!mogsIt.hasNext()) {
+            	throw new IllegalStateException("Must be (at least) one MOG defined in the provided MCL file: " + src); 
             }
-        }
-        if (!errors.isEmpty()) {
-            LOG.error(String.format("%1$d error(s) encountered in parsing MDL file %2$s", errors.size(), src.getAbsolutePath()));
-            for (Diagnostic e : errors) {
-                LOG.error(e);
-                final ConversionDetail detail = new ConversionDetailImpl();
-                detail.setMessage(e.toString());
-                detail.setSeverity(Severity.ERROR);
-                report.addDetail(detail);
+            final MclObject mog = mogsIt.next();
+    
+            final CharSequence converted = new Mdl2Pharmml().convertToPharmML(mog);
+            
+            final File outputFile = new File(outputDirectory.getAbsoluteFile(), FilenameUtils.getBaseName(src.getName()) + ".xml");
+            
+            try {
+                FileUtils.writeStringToFile(outputFile, converted.toString());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            report.setReturnCode(ConversionCode.FAILURE);
-            return report; // Bail out
-        }
-        MclUtils mclUtils = new MclUtils();
-        Mcl mcl = (Mcl) resource.getContents().get(0);
-        Iterable<MclObject> mogs = mclUtils.getMogObjects(mcl);
-
-        // TODO: We're currently making an assumption that there will be a single MOG
-        // in the provided file.  This should be fine for Product 4.
-        // This will be addressed under DDMORE-1221
-        Iterator<MclObject> mogsIt = mogs.iterator();
-        if (!mogsIt.hasNext()) {
-        	throw new IllegalStateException("Must be (at least) one MOG defined in the provided MCL file: " + src); 
-        }
-        final MclObject mog = mogsIt.next();
-
-        final CharSequence converted = new Mdl2Pharmml().convertToPharmML(mog);
-        
-        final File outputFile = new File(outputDirectory.getAbsoluteFile(), FilenameUtils.getBaseName(src.getName()) + ".xml");
-        
-        try {
-            FileUtils.writeStringToFile(outputFile, converted.toString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            
+            report.setReturnCode(ConversionCode.SUCCESS);
         }
         
-        report.setReturnCode(ConversionCode.SUCCESS);
         return report;
     }
 
