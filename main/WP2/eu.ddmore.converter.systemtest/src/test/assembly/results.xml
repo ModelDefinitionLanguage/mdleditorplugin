@@ -16,5 +16,12 @@
                 <include>**/*</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>target/at-wd/MdlToJsonModelsTest/results</directory>
+            <outputDirectory>mdl-to-json</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>

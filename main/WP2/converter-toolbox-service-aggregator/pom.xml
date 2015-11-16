@@ -17,6 +17,17 @@
         <module>../converter-toolbox-service</module>
         <module>../converter-toolbox-distribution</module>
     </modules>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.sonar</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>4.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <url>http://ddmore.eu/</url>
     <name>Converter Toolbox Service Aggregator</name>
@@ -26,4 +37,4 @@
         <url>http://www.mango-solutions.com</url>
     </organization>
     <inceptionYear>2014</inceptionYear>
-</project> 
+</project>

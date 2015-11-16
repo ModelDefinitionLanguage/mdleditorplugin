@@ -8,11 +8,11 @@ import static org.junit.Assert.*
 import static eu.ddmore.converter.mdl2json.MdlAndJsonFileUtils.*
 import static eu.ddmore.converter.mdl2json.testutils.MdlFileContentTestUtils.*
 
+import eu.ddmore.converter.mdl2json.domain.Mcl
+import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
 import org.junit.Test
-
-import eu.ddmore.converter.mdl2json.domain.MCLFile
 
 class EndToEndIntegrationTest {
     private static final Logger LOGGER = Logger.getLogger(EndToEndIntegrationTest.class)
@@ -20,32 +20,32 @@ class EndToEndIntegrationTest {
     /**
      * Tests for the the presence of the top-level objects in the JSON representation of an MDL file:
      * <ul>
-     * <li>dataobj
-     * <li>parobj
-     * <li>mdlobj
-     * <li>taskobj
-     * <li>mogobj
+     * <li>dataObj
+     * <li>parObj
+     * <li>mdlObj
+     * <li>taskObj
+     * <li>mogObj
      * </ul>
      */
     @Test
     public void topLevelObjectsMustBePresentInJsonRepresention() {
         def json = getJsonFromMDLFile("skeleton.mdl")
         
-        assertTrue("Returned Json should be a List of length 1", json instanceof List && json.size() == 1)
-        json = json[0]
-        assertTrue("Returned Json should contain a single Map", json instanceof Map)
-        assertTrue("Map representing the top-level objects in the MDL file should contain 5 Entries", json.size() == 5)
+        assertTrue("Returned Json should be a List of length 5", json instanceof List && json.size() == 5)
 
-        assertTrue("Data object should be present", json['skeleton_data'].size() > 0)
-        assertTrue("Data object should have its identifier", StringUtils.isNotEmpty(json['skeleton_data']['identifier']))
-        assertTrue("Parameter object should be present", json['skeleton_par'].size() > 0)
-        assertTrue("Parameter object should have its identifier", StringUtils.isNotEmpty(json['skeleton_par']['identifier']))
-        assertTrue("Model object should be present", json['skeleton_mdl'].size() > 0)
-        assertTrue("Model object should have its identifier", StringUtils.isNotEmpty(json['skeleton_mdl']['identifier']))
-        assertTrue("Task object should be present", json['skeleton_task'].size() > 0)
-        assertTrue("Task object should have its identifier", StringUtils.isNotEmpty(json['skeleton_task']['identifier']))
-        assertTrue("Mog object should be present", json['skeleton_mog'].size() > 0)
-        assertTrue("Mog object should have its identifier", StringUtils.isNotEmpty(json['skeleton_mog']['identifier']))
+        assertTrue("Each element in the top-level List should be a Map", ((List) json).every { it instanceof Map })
+        
+        def dataObj = json[0]
+        def parObj = json[1]
+        def mdlObj = json[2]
+        def taskObj = json[3]
+        def mogObj = json[4]
+        
+        assertEquals("Checking content of data object", ['name':'skeleton_data', 'blocks':[:], 'type':'dataObj'], dataObj)
+        assertEquals("Checking content of parameter object", ['name':'skeleton_par', 'blocks':[:], 'type':'parObj'], parObj)
+        assertEquals("Checking content of model object", ['name':'skeleton_mdl', 'blocks':[:], 'type':'mdlObj'], mdlObj)
+        assertEquals("Checking content of task object", ['name':'skeleton_task', 'blocks':[:], 'type':'taskObj'], taskObj)
+        assertEquals("Checking content of mog object", ['name':'skeleton_mog', 'blocks':[:], 'type':'mogObj'], mogObj)
     }
     
     /**
@@ -57,12 +57,13 @@ class EndToEndIntegrationTest {
      */
     @Test
     public void mdlFileConvertedToJsonAndBackAgainShouldBeEquivalentToOriginalMdlFile() {
-        
-        final File origMdlFile = getFile("FullyPopulated.mdl")
+        def origMdlFile = getFile("FullyPopulated.mdl")        
+        // final File origMdlFile = getFileFromModelsProject("Product4.1_newgrammar/UseCase1.mdl")
         
         def json = getJsonFromMDLFile(origMdlFile)
         
-        def outputMdl = new MCLFile(json).toMDL()
+        def mclFromJson = new Mcl(json)
+        def outputMdl = mclFromJson.toMDL()
         
         LOGGER.debug(outputMdl)
         
@@ -70,7 +71,30 @@ class EndToEndIntegrationTest {
             LOGGER.info("About to process block " + blockName + "...")
             assertMDLBlockEqualityIgnoringWhitespaceAndComments(origMdlFile, blockName, outputMdl)
         }
-        assertNoTopLevelObjectIdentifierPseudoBlocksInWrittenOutMdlFile(outputMdl)
+    }
+    
+    /**
+     * The JSON file "FullyPopulated.json" was created by reading in the above-mentioned
+     * "FullyPopulated.mdl" file into R (via the MDL->JSON converter) and writing it back
+     * out to JSON. Hence this test is a form of end-to-end integration test testing a
+     * full MDL->JSON->R->JSON->MDL pipeline.
+     */
+    @Test
+    public void readMdlFileFromJSON() {
+        
+        final File origMdlFile = getFile("FullyPopulated.mdl")
+        
+        def json = getJson(FileUtils.readFileToString(getFile("FullyPopulated.output.json")))
+        
+        def mclFromJson = new Mcl(json)
+        def outputMdl = mclFromJson.toMDL()
+        
+        LOGGER.debug(outputMdl)
+        
+        ALL_BLOCK_NAMES.each { blockName ->
+            LOGGER.info("About to process block " + blockName + "...")
+            assertMDLBlockEqualityIgnoringWhitespaceAndComments(origMdlFile, blockName, outputMdl)
+        }
     }
 
 }

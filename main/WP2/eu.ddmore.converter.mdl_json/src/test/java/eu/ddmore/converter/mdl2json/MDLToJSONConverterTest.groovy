@@ -45,7 +45,7 @@ public class MDLToJSONConverterTest {
         invalidMdlFile = new File(workingFolder.getRoot(), "UseCase1_1.mdl")
         jsonInvalidMdlFile = new File(workingFolder.getRoot(), "UseCase1_1.json")
     
-        FileUtils.copyURLToFile(getClass().getResource("/test-models/MDL/Product4/UseCase1.mdl"), validMdlFile)
+        FileUtils.copyURLToFile(getClass().getResource("/test-models/MDL/Product4.1_newgrammar/UseCase1.mdl"), validMdlFile)
         FileUtils.copyURLToFile(getClass().getResource("/test-models/MDL/Product4-invalid/UseCase1_1.mdl"), invalidMdlFile)
         
         this.converter = new MDLToJSONConverter()
