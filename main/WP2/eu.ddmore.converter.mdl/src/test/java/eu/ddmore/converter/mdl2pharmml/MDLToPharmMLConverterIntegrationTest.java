@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -36,6 +35,7 @@ public class MDLToPharmMLConverterIntegrationTest {
     private File semanticWarningsPharmmlFile;
     private File unsupportedFeatureMdlFile;
     private File unsupportedFeaturePharmmlFile;
+    private File dataFile;
     
     private MDLToPharmMLConverter converter;
 
@@ -64,6 +64,9 @@ public class MDLToPharmMLConverterIntegrationTest {
         FileUtils.copyURLToFile(getClass().getResource("/semanticwarnings.mdl"), semanticWarningsMdlFile);
         FileUtils.copyURLToFile(getClass().getResource("/unsupportedfeature.mdl"), unsupportedFeatureMdlFile);
         
+        dataFile = new File(workingFolder.getRoot(), "warfarin_conc.csv");
+        FileUtils.copyURLToFile(getClass().getResource("/warfarin_conc.csv"), dataFile);
+        
         this.converter = new MDLToPharmMLConverter();
     }
     
@@ -80,7 +83,6 @@ public class MDLToPharmMLConverterIntegrationTest {
         final List<ConversionDetail> errors = report.getDetails(Severity.ERROR);
         assertTrue("Checking that no errors were returned", errors.isEmpty());
         final List<ConversionDetail> warnings = report.getDetails(Severity.WARNING);
-        removeDataFileValidationWarning(warnings); // TODO: Drop this once Stuart has fixed the data file validation check
         assertTrue("Checking that no warnings were returned", warnings.isEmpty());
     }
     
@@ -123,7 +125,6 @@ public class MDLToPharmMLConverterIntegrationTest {
         final List<ConversionDetail> errors = report.getDetails(Severity.ERROR);
         assertTrue("Checking that no errors were returned", errors.isEmpty());
         final List<ConversionDetail> warnings = report.getDetails(Severity.WARNING);
-        removeDataFileValidationWarning(warnings); // TODO: Drop this once Stuart has fixed the data file validation check
         assertEquals("Checking the number of errors that were returned", 2, warnings.size());
     }
     
@@ -141,19 +142,6 @@ public class MDLToPharmMLConverterIntegrationTest {
         assertEquals("Checking that 1 error was returned", 1, errors.size());
         assertEquals("Checking the error message", "Objects of type 'desObj' are not currently supported for execution in R.", errors.get(0).getMessage());
         assertEquals("Checking the severity of the message", Severity.ERROR, errors.get(0).getServerity());
-    }
-    
-    // TODO: This method can be dropped once Stuart has fixed the data file validation check
-    private void removeDataFileValidationWarning(final Iterable<ConversionDetail> list) {
-        final String WARNING_MSG_TO_IGNORE = "Cannot find data file: path may be incorrect.";
-        final Iterator<ConversionDetail> iter = list.iterator();
-        while (iter.hasNext()) {
-            final ConversionDetail thisMsg = iter.next();
-            if (thisMsg.getServerity().equals(Severity.WARNING) && thisMsg.getMessage().equals(WARNING_MSG_TO_IGNORE)) {
-                iter.remove();
-            }
-        }
-        
     }
 
 }
