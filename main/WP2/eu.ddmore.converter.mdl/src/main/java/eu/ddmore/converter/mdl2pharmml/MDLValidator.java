@@ -9,21 +9,19 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail;
 import eu.ddmore.convertertoolbox.api.response.ConversionDetail.Severity;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport;
 import eu.ddmore.convertertoolbox.api.response.ConversionReport.ConversionCode;
 import eu.ddmore.convertertoolbox.domain.ConversionDetailImpl;
+import eu.ddmore.mdl.validation.UnsupportedFeaturesValidator;
 
 /**
  * Validates an MDL file, checking both syntax and semantics.
@@ -33,14 +31,8 @@ public class MDLValidator {
 
     private final static Logger LOG = Logger.getLogger(MDLValidator.class);
 	
-    @Inject 
-    private Provider<ResourceSet> resourceSetProvider;
-	
     @Inject
     private IResourceValidator validator;
-    
-    @Inject
-    private IGenerator generator;
 	
 	/**
 	 * Perform the syntax checking and the semantics checking.
@@ -95,9 +87,15 @@ public class MDLValidator {
                     }
                     case WARNING: {
                         LOG.warn(issue);
+                        Severity severity = Severity.WARNING;
+                        if (issue.getCode().startsWith(UnsupportedFeaturesValidator.FEATURE_NOT_SUPPORTED)) {
+                            // Promote 'unsupported feature' warnings to errors
+                            severity = Severity.ERROR;
+                            semanticErrors = true;
+                        }
                         final ConversionDetail detail = new ConversionDetailImpl();
                         detail.setMessage(issue.getMessage());
-                        detail.setSeverity(Severity.WARNING);
+                        detail.setSeverity(severity);
                         report.addDetail(detail);
                         break;
                     }
