@@ -88,7 +88,7 @@ public class MDLValidator {
                     case WARNING: {
                         LOG.warn(issue);
                         Severity severity = Severity.WARNING;
-                        if (issue.getCode().startsWith(UnsupportedFeaturesValidator.FEATURE_NOT_SUPPORTED)) {
+                        if (issue.getCode().equals(UnsupportedFeaturesValidator.FEATURE_NOT_SUPPORTED)) {
                             // Promote 'unsupported feature' warnings to errors
                             severity = Severity.ERROR;
                             semanticErrors = true;
