@@ -13,7 +13,7 @@
         <!-- default location from where Standalone NONMEM SEE is to be obtained from -->
         <standalone.nonmem.binary.url>http://cismaster/jenkins/view/DDMoRe%201.1.0/job/DDMoRe-NONMEM_SEE_Plugin_Demonstrator_1.2.0_Release/lastSuccessfulBuild/artifact/nonmem-see-plugin/target/</standalone.nonmem.binary.url>
         <standalone.nonmem.installation.dir.name>nm_7.3.0_g</standalone.nonmem.installation.dir.name>
-        <standalone.nonmem.installation.archive.name>nonmem-see-plugin-1.1.0-bundle.zip</standalone.nonmem.installation.archive.name>
+        <standalone.nonmem.installation.archive.name>nonmem-see-plugin-1.1.0-bundle-with-nonmem.zip</standalone.nonmem.installation.archive.name>
         
         <target.gen>${basedir}/target-gen</target.gen>
         <standalone.nonmem.installation.dir.name>nm_7.3.0_g</standalone.nonmem.installation.dir.name>
