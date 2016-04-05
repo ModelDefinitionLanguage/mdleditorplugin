@@ -1,10 +1,10 @@
 package eu.ddmore.converter.mdl2pharmml08
 
+import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.BlockStatementBody
 import eu.ddmore.mdl.mdl.CategoricalDefinitionExpr
 import eu.ddmore.mdl.mdl.CategoryValueReference
-import eu.ddmore.mdl.mdl.EnumExpression
 import eu.ddmore.mdl.mdl.EnumerationDefinition
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.EquationTypeDefinition
@@ -21,9 +21,9 @@ import eu.ddmore.mdl.mdl.VectorLiteral
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
-import eu.ddmore.mdl.provider.ListDefinitionTable
 import eu.ddmore.mdl.provider.SublistDefinitionProvider
 import eu.ddmore.mdl.type.TypeSystemProvider
+import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.Expression
@@ -33,7 +33,6 @@ import java.util.Comparator
 import java.util.HashMap
 import java.util.List
 import java.util.Map
-import java.util.Set
 import java.util.TreeMap
 import org.eclipse.xtext.EcoreUtil2
 
@@ -41,7 +40,6 @@ import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToInteger
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
-import eu.ddmore.mdl.utils.BlockUtils
 
 class ModelDefinitionPrinter {
 	extension MdlUtils mu = new MdlUtils
@@ -52,10 +50,11 @@ class ModelDefinitionPrinter {
 	extension DistributionPrinter dp = new DistributionPrinter 
 	extension PharmMLConverterUtils pcu = new PharmMLConverterUtils
 	extension SublistDefinitionProvider sdp = new SublistDefinitionProvider
-	extension FunctionDefinitionPrinter fdp = new FunctionDefinitionPrinter
 	extension PKMacrosPrinter pkp = PKMacrosPrinter::INSTANCE
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension BlockUtils bu = new BlockUtils
+	extension ListObservationsWriter low = new ListObservationsWriter
+	extension FunctionObservationsWriter fow = new FunctionObservationsWriter
 	
 	
 	//////////////////////////////////////
@@ -308,6 +307,8 @@ class ModelDefinitionPrinter {
 							«switch(stmt){
 								EquationTypeDefinition:
 									writeIndividualParameter(stmt)
+								ListDefinition:
+									writeIndividualParameter(stmt)
 							}»
 						«ENDFOR» 
 					«ENDIF»
@@ -316,6 +317,29 @@ class ModelDefinitionPrinter {
 			«print_mdef_CollerationModel(mObj, pObj)»
 		</ParameterModel>
   	'''
+	
+	def writeGeneralIdv(AttributeList it, String name){
+		val transEnum = getAttributeEnumValue('trans')
+		val trans = if(transEnum != null) getPharmMLTransFunc(transEnum) else null
+//		val trans = switch(it){
+//			TransformedDefinition:
+//				getPharmMLTransFunc(transform.name)
+//			default: null
+//		} 
+		'''
+		<IndividualParameter symbId="«name»">
+			<StructuredModel>
+				«IF trans!= null»
+					<Transformation>«trans»</Transformation>
+				«ENDIF»
+				<GeneralCovariate>
+					«getAttributeExpression('grp').writeAssignment»
+				</GeneralCovariate>
+				«getAttributeExpression('ranEff').writeRandomEffects»
+			</StructuredModel>
+		</IndividualParameter>
+		''' 
+	}
 	
 	def writeGeneralIdv(EquationTypeDefinition it){
 		var funcExpr = expression as SymbolReference
@@ -435,12 +459,49 @@ class ModelDefinitionPrinter {
 		''' 
 	}
 	
+	def writeLinearIdv(AttributeList it, String name){
+		val fixEff = getAttributeExpression('fixEff') as VectorLiteral
+		'''
+		<IndividualParameter symbId="«name»">
+			<StructuredModel>
+				«IF getAttributeExpression('trans') != null»
+					<Transformation type="«getAttributeEnumValue('trans').getPharmMLTransFunc»" />
+				«ENDIF»
+				<LinearCovariate>
+					<PopulationValue>
+						«getAttributeExpression('pop').writeAssignment»
+					</PopulationValue>
+					«IF fixEff != null && !fixEff.expressions.isEmpty »
+						«getAttributeExpression('fixEff').writeFixedEffects»
+					«ENDIF»
+				</LinearCovariate>
+				«getAttributeExpression('ranEff').writeRandomEffects»
+			</StructuredModel>
+		</IndividualParameter>
+		''' 
+	}
+	
 	def writeExplicitIdv(EquationTypeDefinition it)'''
 		<IndividualParameter symbId="«name»">
 			«expression.writeAssignment»
 		</IndividualParameter>
 	''' 
 	
+	def writeIndividualParameter(ListDefinition it){
+		if(attributeLists.size == 1){
+			val attList = attributeLists.head
+			val typeVal =  attList.getAttributeEnumValue('type')
+			switch(typeVal){
+				case('general'):
+					attList.writeGeneralIdv(name)
+				case('linear'):
+					attList.writeLinearIdv(name)
+				default:
+					'''<Error!>'''		
+			}
+		}
+	}
+
 	// assume definition has a RHS
 	def writeIndividualParameter(EquationTypeDefinition it){
 		val expr = it.expression
@@ -550,7 +611,7 @@ class ModelDefinitionPrinter {
 					'''
 				ListDefinition:
 					'''
-					«writeDiscreteObservations(stmt, idx += 1)»
+					«writeListObservations(stmt, idx += 1)»
 					'''
 				default:{
 					idx += 1
@@ -561,114 +622,6 @@ class ModelDefinitionPrinter {
 		'''
 	}
 	
-	def writeDiscreteObservations(ListDefinition s, int idx) {
-		val type = s.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::OBS_TYPE_ATT)
-		'''
-		<ObservationModel blkId="om«idx»">
-			«switch type{
-				case ListDefinitionTable::COUNT_OBS_VALUE:
-					s.print_mdef_CountObservations
-				case ListDefinitionTable::DISCRETE_OBS_VALUE:
-					s.print_mdef_DiscreteObservations
-				case ListDefinitionTable::CATEGORICAL_OBS_VALUE:
-					s.print_mdef_CategoricalObservations
-				case ListDefinitionTable::TTE_OBS_VALUE:
-					s.print_mdef_TimeToEventObservations
-				default: ''''''
-			}» 
-		</ObservationModel>
-		'''
-	}
-	
-	def isStandardErrorDefinition(Expression expr){
-		expr != null && expr instanceof SymbolReference
-	}
-	
-	def isTransformedBothSides(EquationTypeDefinition definition){
-		definition instanceof TransformedDefinition &&
-		 definition.expression instanceof SymbolReference &&
-		  (definition.expression as SymbolReference).getArgumentExpression('trans') != null
-	}
-	
-	def isTransformedOnlyRhsSide(EquationTypeDefinition definition){
-		definition instanceof EquationDefinition &&
-		 definition.expression instanceof SymbolReference &&
-		  (definition.expression as SymbolReference).getArgumentExpression('trans') != null
-	}
-	
-	def writeContinuousObservation(EquationTypeDefinition definition, int idx){
-		val rhsExpr = definition.expression
-		if(rhsExpr instanceof SymbolReference){
-			val predictionExpr = rhsExpr.getArgumentExpression('prediction')
-			'''
-				<ObservationModel blkId="om«idx»">
-					<ContinuousData>
-						«IF definition.isTransformedOnlyRhsSide»
-							<ct:Variable symbolType="real" symbId="«predictionExpr.singleSymbolRef?.name ?: "ERROR!"»">
-								<ct:Assign>
-									<math:Uniop op="log">
-										«predictionExpr.pharmMLExpr»
-									</math:Uniop>
-								</ct:Assign>
-							</ct:Variable>
-						«ENDIF»
-						«IF isStandardErrorDefinition(definition.expression)»
-							<Standard symbId="«definition.name»">
-								«IF definition instanceof TransformedDefinition»
-									<Transformation>«definition.pharmMLTransFunc»</Transformation>
-								«ENDIF»
-								<Output>
-									«IF definition.isTransformedOnlyRhsSide»
-										«predictionExpr.singleSymbolRef?.localSymbolReference ?: "ERROR!"»
-									«ELSE»
-										«predictionExpr.pharmMLExpr»
-									«ENDIF»
-								</Output>
-								«writeStandardErrorModel(rhsExpr)»
-								<ResidualError>
-									«rhsExpr.getArgumentExpression('eps').pharmMLExpr»
-								</ResidualError>
-							</Standard>
-						«ENDIF»
-					</ContinuousData>
-				</ObservationModel>
-			'''
-		}
-		else{
-			'''
-				<ObservationModel blkId="om«idx»">
-					<ContinuousData>
-						<General symbId="«definition.name»">
-							«definition.expression.expressionAsAssignment»
-						</General>
-					</ContinuousData>
-				</ObservationModel>
-			'''
-		}
-	} 
-	
-	private def writeStandardErrorModel(SymbolReference it){
-		'''
-		<ErrorModel>
-			<ct:Assign>
-				<math:FunctionCall>
-					<ct:SymbRef symbIdRef="«standardErrorName»"/>
-					«FOR vp : getNamedArguments»
-						«IF getStandardErrorArgument(vp.argumentName) != null»
-							<math:FunctionArgument symbId="«getStandardErrorArgument(vp.argumentName)»">
-								«IF !(vp.expression instanceof SymbolReference)»
-									«vp.expression.pharmMLExpr»
-								«ELSE»
-									«vp.expression.pharmMLExpr»
-								«ENDIF»
-							</math:FunctionArgument>
-						«ENDIF»
-					«ENDFOR»
-				</math:FunctionCall>
-			</ct:Assign>
-		</ErrorModel>
-		'''
-	}
 	
 //	/////////////////////////////
 //	// I.d_1 CorrelationModel
@@ -739,209 +692,6 @@ class ModelDefinitionPrinter {
 		'''
 	}
 	
-	private def getInverseFunction(Expression linkFunction, Expression paramVar){
-		switch(linkFunction){
-			SymbolReference case linkFunction.func == "log": return '''
-			<math:Uniop op="exp">
-				«paramVar.pharmMLExpr»
-			</math:Uniop>
-			'''
-			SymbolReference case linkFunction.func == "identity": return '''
-				«paramVar.pharmMLExpr»
-			'''
-		}
-	}
-	
-	private def print_mdef_CountObservations(ListDefinition s) {
-		var name = s.name
-		val linkFunction = s.firstAttributeList.getAttributeExpression('link');
-		val distn = s.firstAttributeList.getAttributeExpression('distn');
-		val paramVar = (distn as SymbolReference).getFunctionArgumentValue("lambda");
-//		var String tmpParamVar = null;
-//		if(paramVar ){
-//			tmpParamVar = paramVar.toStr
-//		}
-		'''
-			<Discrete>
-				<CountData>
-				«IF paramVar != null»
-					<!-- Note that this parameter is local to this block, but uses the same name
-						as the lambda argument. --> 
-					<PopulationParameter symbId="«paramVar.convertToString»">
-						<ct:Assign>
-							«IF linkFunction != null»
-								«getInverseFunction(linkFunction, paramVar)»
-							«ELSE»
-								«paramVar.pharmMLExpr»
-							«ENDIF»
-						</ct:Assign>
-					</PopulationParameter>
-				«ENDIF»
-				<CountVariable symbId="«name»"/>
-				<PMF transform="identity">
-					«distn.writeUncertMlDistribution»
-				</PMF>
-				</CountData>
-			</Discrete>
-		'''
-	}
-	
-	
-	private def getSuccessCategory(SymbolReference it){
-		switch(func){
-			case "Bernoulli":
-				getArgumentExpression('category')
-			case "Binomial":
-				getArgumentExpression('successCategory')
-		}?.convertToString
-	}
-	
-	
-	private def createCategoriesOrderedBySuccess(Set<String> categories, String successCategory){
-		val retVal = new ArrayList<String>(categories.size)
-		retVal.add(successCategory)
-		retVal.addAll(categories.filter[it != successCategory])
-		retVal
-	}
-	
-	private def print_mdef_DiscreteObservations(ListDefinition s) {
-		var name = s.name
-		val linkFunction = s.firstAttributeList.getAttributeExpression('link');
-		val distn = s.firstAttributeList.getAttributeExpression('distn') as SymbolReference
-		val paramVar = (distn as SymbolReference).getFunctionArgumentValue("probability")
-		val categories = s.firstAttributeList.getAttributeExpression(ListDefinitionTable::OBS_TYPE_ATT);
-		val catVals = categories.categories
-		val catList = createCategoriesOrderedBySuccess(catVals.keySet, distn.successCategory)
-		
-		'''
-			<Discrete>
-				<CategoricalData ordered="no">
-					«IF paramVar != null»
-						<!-- Note that this parameter is local to this block, but uses the same name
-							as the lambda argument.  --> 
-						<PopulationParameter symbId="«paramVar.convertToString»">
-							<ct:Assign>
-								«IF linkFunction != null»
-									«getInverseFunction(linkFunction, paramVar)»
-								«ELSE»
-									«paramVar.pharmMLExpr»
-								«ENDIF»
-							</ct:Assign>
-						</PopulationParameter>
-					«ENDIF»
-					<ListOfCategories>
-						«FOR cat : catList»
-							<Category symbId="«cat»"/>
-						«ENDFOR»
-					</ListOfCategories>
-					<CategoryVariable symbId="«name»"/>
-					<PMF transform="identity">
-						«printDiscreteDistribution(distn)»
-					</PMF>
-				</CategoricalData>
-			</Discrete>
-		'''
-	}
-	
-	private def getCategories(Expression categories){
-		val catVals = new HashMap<String, Expression>
-		switch(categories){
-			EnumExpression:{
-				val catDefnExpr = categories.catDefn as CategoricalDefinitionExpr
-				catDefnExpr.categories.forEach[
-					catVals.put(name, mappedTo)
-				]
-			}
-		}
-		catVals
-	}
-	
-	private def print_mdef_CategoricalObservations(ListDefinition s) {
-//			val define = column.list.getAttributeExpression(ListDefinitionTable::USE_ATT);
-//			// get an EnumExpression here - use this to get the categories.
-//			switch(define){
-//				EnumExpression:{
-//					val catDefnExpr = define.catDefn as CategoricalDefinitionExpr
-//					for(catVal : catDefnExpr.categories){
-//					res = res + '''
-//						<ds:Map modelSymbol="«catVal.name»" dataSymbol="«catVal.mappedTo.convertToString»"/>
-//						'''
-//					}
-//				}
-//			}
-		val categories = s.firstAttributeList.getAttributeExpression(ListDefinitionTable::OBS_TYPE_ATT);
-//		val listCats = new ArrayList<String>
-//		val catVals = new HashMap<String, Expression>
-//		switch(categories){
-//			EnumExpression:{
-//				val catDefnExpr = categories.catDefn as CategoricalDefinitionExpr
-//				catDefnExpr.categories.forEach[
-//					listCats.add(name)
-//					catVals.put(name, mappedTo)
-//				]
-//			}
-//		}
-		val catVals = categories.categories
-		'''
-			<Discrete>
-				<CategoricalData>
-					<ListOfCategories>
-						«FOR cat : catVals.keySet»
-							<Category symbId="«cat»"/>
-						«ENDFOR»
-					</ListOfCategories>
-					<CategoryVariable symbId="«s.name»"/>
-					«FOR cat : catVals.keySet»
-						<ProbabilityAssignment>
-							<Probability linkFunction="identity">
-								<math:LogicBinop op="eq">
-									<ct:SymbRef symbIdRef="«s.name»"/>
-									<ct:SymbRef symbIdRef="«cat»"/>
-								</math:LogicBinop>
-							</Probability>
-							«catVals.get(cat).expressionAsAssignment»
-						</ProbabilityAssignment>
-					«ENDFOR»
-				</CategoricalData>
-			</Discrete>
-		'''
-	}
-
-
-	private def print_mdef_TimeToEventObservations(ListDefinition s) {
-		var name = s.name
-		val haz = s.firstAttributeList.getAttributeExpression('hazard');
-		val event = s.firstAttributeList.getAttributeEnumValue('event');
-		val maxEvent = s.firstAttributeList.getAttributeExpression('maxEvent');
-		'''
-			<Discrete>
-				<TimeToEventData>
-					<EventVariable symbId="«name»"/>
-					<HazardFunction symbId="«haz.convertToString»">
-						<ct:Assign>
-							«haz.pharmMLExpr»
-						</ct:Assign>
-					</HazardFunction>
-					«IF event != null»
-						<Censoring censoringType="«event.getEventType»"/>
-					«ENDIF»
-					«IF maxEvent != null»
-						<MaximumNumberEvents>
-							«maxEvent.expressionAsAssignment»
-						</MaximumNumberEvents>
-					«ENDIF»
-				</TimeToEventData>
-			</Discrete>
-		'''
-	}
-	
-	def getEventType(String eventType){
-		switch(eventType){
-			case 'exact': '''rightCensored'''
-			case 'intervalCensored': '''intervalCensored'''
-			default: ''''''
-		}
-	}
 
 
 }

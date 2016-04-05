@@ -42,6 +42,7 @@ import static eu.ddmore.converter.mdl2pharmml.Constants.*
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToInteger
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
 import eu.ddmore.mdl.utils.BlockUtils
+import eu.ddmore.mdl.mdl.AttributeList
 
 class ModelDefinitionPrinter {
 	extension MdlUtils mu = new MdlUtils
@@ -317,6 +318,8 @@ class ModelDefinitionPrinter {
 							«switch(stmt){
 								EquationTypeDefinition:
 									writeIndividualParameter(stmt)
+								ListDefinition:
+									writeIndividualParameter(stmt)
 							}»
 						«ENDFOR» 
 					«ENDIF»
@@ -344,6 +347,29 @@ class ModelDefinitionPrinter {
 					«namedArgList.getArgumentExpression('grp').writeAssignment»
 				</GeneralCovariate>
 				«namedArgList.getArgumentExpression('ranEff').writeRandomEffects»
+			</GaussianModel>
+		</IndividualParameter>
+		''' 
+	}
+	
+	def writeGeneralIdv(AttributeList it, String name){
+		val transEnum = getAttributeEnumValue('trans')
+		val trans = if(transEnum != null) getPharmMLTransFunc(transEnum) else null
+//		val trans = switch(it){
+//			TransformedDefinition:
+//				getPharmMLTransFunc(transform.name)
+//			default: null
+//		} 
+		'''
+		<IndividualParameter symbId="«name»">
+			<GaussianModel>
+				«IF trans!= null»
+					<Transformation>«trans»</Transformation>
+				«ENDIF»
+				<GeneralCovariate>
+					«getAttributeExpression('grp').writeAssignment»
+				</GeneralCovariate>
+				«getAttributeExpression('ranEff').writeRandomEffects»
 			</GaussianModel>
 		</IndividualParameter>
 		''' 
@@ -445,12 +471,49 @@ class ModelDefinitionPrinter {
 		''' 
 	}
 	
+	def writeLinearIdv(AttributeList it, String name){
+		val fixEff = getAttributeExpression('fixEff') as VectorLiteral
+		'''
+		<IndividualParameter symbId="«name»">
+			<GaussianModel>
+				«IF getAttributeExpression('trans') != null»
+					<Transformation>«getAttributeEnumValue('trans').getPharmMLTransFunc»</Transformation>
+				«ENDIF»
+				<LinearCovariate>
+					<PopulationParameter>
+						«getAttributeExpression('pop').writeAssignment»
+					</PopulationParameter>
+					«IF fixEff != null && !fixEff.expressions.isEmpty »
+						«getAttributeExpression('fixEff').writeFixedEffects»
+					«ENDIF»
+				</LinearCovariate>
+				«getAttributeExpression('ranEff').writeRandomEffects»
+			</GaussianModel>
+		</IndividualParameter>
+		''' 
+	}
+	
 	def writeExplicitIdv(EquationTypeDefinition it)'''
 		<IndividualParameter symbId="«name»">
 			«expression.writeAssignment»
 		</IndividualParameter>
 	''' 
 	
+	def writeIndividualParameter(ListDefinition it){
+		if(attributeLists.size == 1){
+			val attList = attributeLists.head
+			val typeVal =  attList.getAttributeEnumValue('type')
+			switch(typeVal){
+				case('general'):
+					attList.writeGeneralIdv(name)
+				case('linear'):
+					attList.writeLinearIdv(name)
+				default:
+					'''<Error!>'''		
+			}
+		}
+	}
+
 	// assume definition has a RHS
 	def writeIndividualParameter(EquationTypeDefinition it){
 		val expr = it.expression

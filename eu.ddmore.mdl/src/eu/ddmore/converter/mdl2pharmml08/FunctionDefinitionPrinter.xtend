@@ -1,20 +1,22 @@
 package eu.ddmore.converter.mdl2pharmml08
 
 import eu.ddmore.mdl.mdl.EquationTypeDefinition
+import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BuiltinFunctionProvider
+import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.utils.MdlUtils
 import java.util.HashSet
-import static extension eu.ddmore.converter.mdl2pharmml08.Constants.*
 
+import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 
 class FunctionDefinitionPrinter {
 
 	extension MdlUtils mclUtil = new MdlUtils
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 //	extension PharmMLConverterUtils pcu = new PharmMLConverterUtils
-//	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 
 	static val functionDefinitions = #{
 		'additiveError' -> '''
@@ -226,6 +228,10 @@ class FunctionDefinitionPrinter {
 		functionDefinitions.get(standardErrorName)
 	}
 
+	def getPharmMLFuncDefn(String errorName){
+		functionDefinitions.get(errorName)
+	}
+
 	def String getStandardErrorName(SymbolReference it){
 		val defn = standardErrorFunctionMappingTable.get(func)
 		if(defn != null){
@@ -240,34 +246,55 @@ class FunctionDefinitionPrinter {
 		return null
 	}
 	
-//	def isStandardErrorArgument(BuiltinFunctionCall it, String name){
-//		standardArgumentLookup.get(standardErrorName)?.containsKey(name) 
-//	}
+	def String getStandardErrorName(String func, String transName){
+		val defn = standardErrorFunctionMappingTable.get(func)
+		if(defn != null){
+			// is a standard error function
+//			val transFunc = argList.getArgumentEnumValue('trans') ?: 'none'
+			val transFunc = transName ?: 'none'
+			for(defnTrans : defn.keySet){
+				if(defnTrans.contains(transFunc)){
+					return defn.get(defnTrans)
+				}
+			}
+		}
+		return null
+	}
 
 	def getStandardErrorArgument(SymbolReference it, String name){
 		standardArgumentLookup.get(standardErrorName)?.get(name) 
 	}
 
+	def getStandardErrorArgument(String typeName, String trans, String argName){
+		standardArgumentLookup.get(getStandardErrorName(typeName, trans))?.get(argName) 
+	}
+
 	def writeFunctionDefinitions(MclObject it){
 		val printed = new HashSet<String>
-		'''
-			«FOR o: mdlObservations»
-				«switch(o){
-					EquationTypeDefinition:{
-						val rhsExpr = o.expression
-						switch(rhsExpr){
-							SymbolReference:
-								if(rhsExpr.isNamedArgFunction && !printed.contains(rhsExpr.func)){
-									printed.add(rhsExpr.func)	
-									'''
-										«rhsExpr.pharmMLFuncDefn»
-									'''
-								}
+		var retVal = ''''''
+		for(o: mdlObservations){
+			switch(o){
+				EquationTypeDefinition:{
+					val rhsExpr = o.expression
+					if(rhsExpr instanceof SymbolReference){
+						if(rhsExpr.isNamedArgFunction && !printed.contains(rhsExpr.func)){
+							printed.add(rhsExpr.func)	
+							retVal +='''«rhsExpr.pharmMLFuncDefn»'''
 						}
 					}
-				}»
-			«ENDFOR»
-		'''
+				}
+				ListDefinition:{
+					for(attList : o.attributeLists){
+						val errFunc = attList.getAttributeEnumValue('type')
+						if(!printed.contains(errFunc) && functionDefinitions.containsKey(errFunc)){
+							printed.add(errFunc)	
+							retVal += getPharmMLFuncDefn(errFunc)
+						}
+					}
+				}
+			}
+		}
+		retVal
 	}
 	
 }
