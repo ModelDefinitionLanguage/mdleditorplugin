@@ -382,4 +382,70 @@ class ListObservationsWriterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
+	@Test
+	def void testWriteCategopricalNonOrderedObs(){
+		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
+		val smBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
+		val varLvlBlock = createBlock(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		val lvlListDefn = varLvlBlock.createListDefn("DV", #[
+											createEnumPair("type", "observation"),
+											createAssignPair("level", createIntLiteral(1))
+										])
+		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS, #[
+																	createAssignPair("level", createSymbolRef(lvlListDefn))
+																	])
+		val p1 = smBlk.createEqnDefn("P1", createRealLiteral(22.2))
+		val p2 = smBlk.createEqnDefn("P2", createRealLiteral(23.2))
+		val p3 = smBlk.createEqnDefn("P3", createRealLiteral(24.2))
+		val p4 = smBlk.createEqnDefn("P4", createRealLiteral(25.2))
+		val randVar = rvBlk.createCategoricalDefinition("Y", #["a", "b", "c", "d"], createNamedFunction("Categorical", #[
+																createAssignPair("probability", createVectorLiteral(#[
+																	createSymbolRef(p1),
+																	createSymbolRef(p2),
+																	createSymbolRef(p3),
+																	createSymbolRef(p4)
+																	]))
+															]))
+		val anonList = obsBlk.createAnonList(#[
+			createEnumPair('type', 'categorical'),
+			createAssignPair('variable', createSymbolRef(randVar))
+		])
+		
+		val actual = writeListObservations(anonList, 1)
+		val expected = '''
+		<ObservationModel blkId="om1">
+			<Discrete>
+				<CategoricalData ordered="no">
+					<ListOfCategories>
+						<Category symbId="a"/>
+						<Category symbId="b"/>
+						<Category symbId="c"/>
+						<Category symbId="d"/>
+					</ListOfCategories>
+					<CategoryVariable symbId="Y"/>
+					<PMF>
+						<Distribution>
+							<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="CategoricalNonordered1">
+								<Parameter name="categoryProb">
+									<ct:Assign>
+										<ct:Vector>
+											<ct:VectorElements>
+												<ct:SymbRef blkIdRef="sm" symbIdRef="P1"/>
+												<ct:SymbRef blkIdRef="sm" symbIdRef="P2"/>
+												<ct:SymbRef blkIdRef="sm" symbIdRef="P3"/>
+												<ct:SymbRef blkIdRef="sm" symbIdRef="P4"/>
+											</ct:VectorElements>
+										</ct:Vector>
+									</ct:Assign>
+								</Parameter>
+							</ProbOnto>
+						</Distribution>
+					</PMF>
+				</CategoricalData>
+			</Discrete>
+		</ObservationModel>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
 }

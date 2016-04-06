@@ -39,6 +39,7 @@ import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToInteger
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
+import eu.ddmore.mdl.mdl.AnonymousListStatement
 
 class ModelDefinitionPrinter {
 	extension MdlUtils mu = new MdlUtils
@@ -531,6 +532,10 @@ class ModelDefinitionPrinter {
 					«writeContinuousObservation(stmt, idx += 1)»
 					'''
 				ListDefinition:
+					'''
+					«writeListObservations(stmt, idx += 1)»
+					'''
+				AnonymousListStatement:
 					'''
 					«writeListObservations(stmt, idx += 1)»
 					'''

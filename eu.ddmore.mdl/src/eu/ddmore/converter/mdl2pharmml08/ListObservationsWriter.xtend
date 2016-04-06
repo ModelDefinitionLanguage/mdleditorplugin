@@ -3,25 +3,19 @@ package eu.ddmore.converter.mdl2pharmml08
 import eu.ddmore.mdl.mdl.AnonymousListStatement
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.BlockStatement
-import eu.ddmore.mdl.mdl.CategoricalDefinitionExpr
-import eu.ddmore.mdl.mdl.EnumExpression
+import eu.ddmore.mdl.mdl.EnumerationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
-import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.ListDefinitionTable
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.Set
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
-import eu.ddmore.mdl.mdl.EnumerationDefinition
 
 class ListObservationsWriter {
 	static var ERROR_MSG = "<Error!>"
@@ -30,7 +24,6 @@ class ListObservationsWriter {
 	extension MdlUtils mu = new MdlUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension BlockArgumentDefinitionProvider badp = new BlockArgumentDefinitionProvider
-	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension DistributionPrinter dp = new DistributionPrinter 
 	extension PharmMLConverterUtils pcu = new PharmMLConverterUtils
@@ -114,7 +107,8 @@ class ListObservationsWriter {
 					list.writeCountObservation
 				case ListDefinitionTable::DISCRETE_OBS_VALUE:
 					list.writeDiscreteObservation
-//				case ListDefinitionTable::CATEGORICAL_OBS_VALUE:
+				case ListDefinitionTable::CATEGORICAL_OBS_VALUE:
+					list.writeDiscreteObservation
 //					s.print_mdef_CategoricalObservations
 //				case ListDefinitionTable::TTE_OBS_VALUE:
 //					s.print_mdef_TimeToEventObservations
@@ -172,18 +166,18 @@ class ListObservationsWriter {
 		 attList.getAttributeEnumValue('trans') != null
 	}
 	
-	private def getInverseFunction(Expression linkFunction, Expression paramVar){
-		switch(linkFunction){
-			SymbolReference case linkFunction.func == "log": return '''
-			<math:Uniop op="exp">
-				«paramVar.pharmMLExpr»
-			</math:Uniop>
-			'''
-			SymbolReference case linkFunction.func == "identity": return '''
-				«paramVar.pharmMLExpr»
-			'''
-		}
-	}
+//	private def getInverseFunction(Expression linkFunction, Expression paramVar){
+//		switch(linkFunction){
+//			SymbolReference case linkFunction.func == "log": return '''
+//			<math:Uniop op="exp">
+//				«paramVar.pharmMLExpr»
+//			</math:Uniop>
+//			'''
+//			SymbolReference case linkFunction.func == "identity": return '''
+//				«paramVar.pharmMLExpr»
+//			'''
+//		}
+//	}
 	
 	private def writeCountObservation(AttributeList it) {
 		val rvSymbolRef = getAttributeExpression('variable')
@@ -223,22 +217,22 @@ class ListObservationsWriter {
 	}
 	
 	
-	private def getSuccessCategory(SymbolReference it){
-		switch(func){
-			case "Bernoulli":
-				getArgumentExpression('category')
-			case "Binomial":
-				getArgumentExpression('successCategory')
-		}?.convertToString
-	}
+//	private def getSuccessCategory(SymbolReference it){
+//		switch(func){
+//			case "Bernoulli":
+//				getArgumentExpression('category')
+//			case "Binomial":
+//				getArgumentExpression('successCategory')
+//		}?.convertToString
+//	}
 	
 	
-	private def createCategoriesOrderedBySuccess(Set<String> categories, String successCategory){
-		val retVal = new ArrayList<String>(categories.size)
-		retVal.add(successCategory)
-		retVal.addAll(categories.filter[it != successCategory])
-		retVal
-	}
+//	private def createCategoriesOrderedBySuccess(Set<String> categories, String successCategory){
+//		val retVal = new ArrayList<String>(categories.size)
+//		retVal.add(successCategory)
+//		retVal.addAll(categories.filter[it != successCategory])
+//		retVal
+//	}
 	
 	private def writeDiscreteObservation(AttributeList it) {
 		val rvSymbolRef = getAttributeExpression('variable')
@@ -266,26 +260,26 @@ class ListObservationsWriter {
 						</CategoricalData>
 					</Discrete>
 				'''
-		
-		}
-		
-		}
-	}
-	
-	private def getCategories(Expression categories){
-		val catVals = new HashMap<String, Expression>
-		switch(categories){
-			EnumExpression:{
-				val catDefnExpr = categories.catDefn as CategoricalDefinitionExpr
-				catDefnExpr.categories.forEach[
-					catVals.put(name, mappedTo)
-				]
 			}
+			else ERROR_MSG
 		}
-		catVals
+		else ERROR_MSG
 	}
 	
-	private def print_mdef_CategoricalObservations(ListDefinition s) {
+//	private def getCategories(Expression categories){
+//		val catVals = new HashMap<String, Expression>
+//		switch(categories){
+//			EnumExpression:{
+//				val catDefnExpr = categories.catDefn as CategoricalDefinitionExpr
+//				catDefnExpr.categories.forEach[
+//					catVals.put(name, mappedTo)
+//				]
+//			}
+//		}
+//		catVals
+//	}
+	
+//	private def print_mdef_CategoricalObservations(ListDefinition s) {
 //			val define = column.list.getAttributeExpression(ListDefinitionTable::USE_ATT);
 //			// get an EnumExpression here - use this to get the categories.
 //			switch(define){
@@ -298,7 +292,7 @@ class ListObservationsWriter {
 //					}
 //				}
 //			}
-		val categories = s.firstAttributeList.getAttributeExpression(ListDefinitionTable::OBS_TYPE_ATT);
+//		val categories = s.firstAttributeList.getAttributeExpression(ListDefinitionTable::OBS_TYPE_ATT);
 //		val listCats = new ArrayList<String>
 //		val catVals = new HashMap<String, Expression>
 //		switch(categories){
@@ -310,31 +304,31 @@ class ListObservationsWriter {
 //				]
 //			}
 //		}
-		val catVals = categories.categories
-		'''
-			<Discrete>
-				<CategoricalData>
-					<ListOfCategories>
-						«FOR cat : catVals.keySet»
-							<Category symbId="«cat»"/>
-						«ENDFOR»
-					</ListOfCategories>
-					<CategoryVariable symbId="«s.name»"/>
-					«FOR cat : catVals.keySet»
-						<ProbabilityAssignment>
-							<Probability linkFunction="identity">
-								<math:LogicBinop op="eq">
-									<ct:SymbRef symbIdRef="«s.name»"/>
-									<ct:SymbRef symbIdRef="«cat»"/>
-								</math:LogicBinop>
-							</Probability>
-							«catVals.get(cat).expressionAsAssignment»
-						</ProbabilityAssignment>
-					«ENDFOR»
-				</CategoricalData>
-			</Discrete>
-		'''
-	}
+//		val catVals = categories.categories
+//		'''
+//			<Discrete>
+//				<CategoricalData>
+//					<ListOfCategories>
+//						«FOR cat : catVals.keySet»
+//							<Category symbId="«cat»"/>
+//						«ENDFOR»
+//					</ListOfCategories>
+//					<CategoryVariable symbId="«s.name»"/>
+//					«FOR cat : catVals.keySet»
+//						<ProbabilityAssignment>
+//							<Probability linkFunction="identity">
+//								<math:LogicBinop op="eq">
+//									<ct:SymbRef symbIdRef="«s.name»"/>
+//									<ct:SymbRef symbIdRef="«cat»"/>
+//								</math:LogicBinop>
+//							</Probability>
+//							«catVals.get(cat).expressionAsAssignment»
+//						</ProbabilityAssignment>
+//					«ENDFOR»
+//				</CategoricalData>
+//			</Discrete>
+//		'''
+//	}
 
 
 	private def print_mdef_TimeToEventObservations(ListDefinition s) {
@@ -380,7 +374,6 @@ class ListObservationsWriter {
 			val rvDefn = rvSymbolRef.ref
 			if(rvDefn instanceof RandomVariableDefinition){
 				val blk = rvDefn.parentBlock
-				
 				'''
 				<ContinuousData>
 					<General symbId="«rvDefn.name»">

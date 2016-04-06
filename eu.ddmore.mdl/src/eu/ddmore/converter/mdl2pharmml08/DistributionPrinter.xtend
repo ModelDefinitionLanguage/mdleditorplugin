@@ -108,6 +108,7 @@ class DistributionPrinter {
 		val distn = switch(typeName){
 			case "Bernoulli": distnDef.printBernoulliDistn
 			case "Binomial": distnDef.printBinomialDistn
+			case "Categorical": distnDef.printCategoricalDistn 
 			default: ''''''
 		}
 		'''
@@ -125,6 +126,20 @@ class DistributionPrinter {
 				<Parameter name="probability">
 					<ct:Assign>
 						«expr.singleSymbolRef.symbolReference»
+					</ct:Assign>
+				</Parameter>
+			</ProbOnto>
+		'''
+	}
+
+	public def printCategoricalDistn(SymbolReference randomList){
+		val probArg = 'probability'
+		val expr = randomList.getArgumentExpression(probArg)
+		'''
+			<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="CategoricalNonordered1">
+				<Parameter name="categoryProb">
+					<ct:Assign>
+						«expr.pharmMLExpr»
 					</ct:Assign>
 				</Parameter>
 			</ProbOnto>
