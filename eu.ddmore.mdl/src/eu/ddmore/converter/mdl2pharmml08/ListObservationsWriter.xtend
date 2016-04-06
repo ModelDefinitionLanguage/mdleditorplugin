@@ -130,28 +130,28 @@ class ListObservationsWriter {
 
 	def writeListObservations(ListDefinition s, int idx){
 		if(s.attributeLists.size == 1){
-//			val type = s.attributeLists.head.getAttributeEnumValue('type')
-			'''
-			<ObservationModel blkId="om«idx»">
-				«writeContinuousObservation(s.attributeLists.head, s.name, idx)»
-			</ObservationModel>
-			'''
+			val type = s.attributeLists.head.getAttributeEnumValue('type')
 //			'''
 //			<ObservationModel blkId="om«idx»">
-//				«switch(type){
+//				«writeContinuousObservation(s.attributeLists.head, s.name, idx)»
+//			</ObservationModel>
+//			'''
+			'''
+			<ObservationModel blkId="om«idx»">
+				«switch(type){
 //					case ListDefinitionTable::COUNT_OBS_VALUE:
 //						s.print_mdef_CountObservations
 //					case ListDefinitionTable::DISCRETE_OBS_VALUE:
 //						s.print_mdef_DiscreteObservations
 //					case ListDefinitionTable::CATEGORICAL_OBS_VALUE:
 //						s.print_mdef_CategoricalObservations
-//					case ListDefinitionTable::TTE_OBS_VALUE:
-//						s.print_mdef_TimeToEventObservations
-//					default:
-//						writeContinuousObservation(s.attributeLists.head, s.name, idx)
-//				}»
-//			</ObservationModel>
-//			'''
+					case ListDefinitionTable::TTE_OBS_VALUE:
+						s.print_mdef_TimeToEventObservations
+					default:
+						writeContinuousObservation(s.attributeLists.head, s.name, idx)
+				}»
+			</ObservationModel>
+			'''
 		}
 		else{
 			'''<Error!>'''
