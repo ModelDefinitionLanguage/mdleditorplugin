@@ -135,5 +135,10 @@ class BlockArgumentDefinitionProvider {
 		}
 	}
 	
+	def getArgumentExpression(BlockArguments it, String argName){
+		args.findFirst[a|
+			a.argumentName == argName
+		]?.expression
+	}
 
 }

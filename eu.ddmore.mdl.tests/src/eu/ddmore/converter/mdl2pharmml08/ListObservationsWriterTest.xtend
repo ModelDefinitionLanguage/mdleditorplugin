@@ -187,6 +187,53 @@ class ListObservationsWriterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
+	@Test
+	def void testWriteContinuousObs(){
+		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
+		val mParamsBlk = createBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
+		val varLvlBlock = createBlock(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		val lvlListDefn = varLvlBlock.createListDefn("DV", #[
+											createEnumPair("type", "observation"),
+											createAssignPair("level", createIntLiteral(1))
+										])
+		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS, #[
+																	createAssignPair("level", createSymbolRef(lvlListDefn))
+																	])
+		val randVar = rvBlk.createRandVar("Y", createNamedFunction("Normal", #[
+																createAssignPair("mean", createRealLiteral(0)),
+																createAssignPair("sd", mParamsBlk.createSymbolRef('B'))
+															])) 
+		val anonList = obsBlk.createAnonList(#[
+			createEnumPair('type', 'continuous'),
+			createAssignPair('variable', createSymbolRef(randVar))
+		])
+		
+		val actual = writeListObservations(anonList, 1)
+		val expected = '''
+		<ObservationModel blkId="om1">
+			<ContinuousData>
+				<General symbId="Y">
+					<ct:VariabilityReference>
+						<ct:SymbRef blkIdRef="vm_err" symbIdRef="DV"/>
+					</ct:VariabilityReference>
+					<Distribution>
+						<UncertML>
+							<NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
+								<mean>
+									<rVal>0.0</rVal>
+								</mean>
+								<stddev>
+									<var varId="pm.B"/>
+								</stddev>
+							</NormalDistribution>
+						</UncertML>
+					</Distribution>
+				</General>
+			</ContinuousData>
+		</ObservationModel>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
 
 
 }

@@ -1,16 +1,21 @@
 package eu.ddmore.converter.mdl2pharmml08
 
+import eu.ddmore.mdl.mdl.AnonymousListStatement
 import eu.ddmore.mdl.mdl.AttributeList
+import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.CategoricalDefinitionExpr
 import eu.ddmore.mdl.mdl.EnumExpression
 import eu.ddmore.mdl.mdl.ListDefinition
+import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.SymbolReference
+import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.ListDefinitionTable
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.Expression
+import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Set
@@ -18,8 +23,12 @@ import java.util.Set
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
 
 class ListObservationsWriter {
+	static var ERROR_MSG = "<Error!>"
+	
+	
 	extension MdlUtils mu = new MdlUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+	extension BlockArgumentDefinitionProvider badp = new BlockArgumentDefinitionProvider
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension DistributionPrinter dp = new DistributionPrinter 
@@ -95,6 +104,29 @@ class ListObservationsWriter {
 		'''
 	} 
 	
+	def writeListObservations(AnonymousListStatement it, int idx){
+		val type = list.getAttributeEnumValue('type')
+		'''
+		<ObservationModel blkId="om«idx»">
+			«switch(type){
+//				case ListDefinitionTable::COUNT_OBS_VALUE:
+//					s.print_mdef_CountObservations
+//				case ListDefinitionTable::DISCRETE_OBS_VALUE:
+//					s.print_mdef_DiscreteObservations
+//				case ListDefinitionTable::CATEGORICAL_OBS_VALUE:
+//					s.print_mdef_CategoricalObservations
+//				case ListDefinitionTable::TTE_OBS_VALUE:
+//					s.print_mdef_TimeToEventObservations
+				case ListDefinitionTable::CONTINUOUS_OBS_VALUE:
+					list.writeContinuousObWithRv
+				
+				default:
+					"<Error!>"
+			}»
+		</ObservationModel>
+		'''
+	}
+
 	def writeListObservations(ListDefinition s, int idx){
 		if(s.attributeLists.size == 1){
 			val type = s.attributeLists.head.getAttributeEnumValue('type')
@@ -109,7 +141,6 @@ class ListObservationsWriter {
 						s.print_mdef_CategoricalObservations
 					case ListDefinitionTable::TTE_OBS_VALUE:
 						s.print_mdef_TimeToEventObservations
-//						case ListDefinitionTable::CONTINUOUS_OBS_VALUE:
 					default:
 						writeContinuousObservation(s.attributeLists.head, s.name, idx)
 				}»
@@ -215,7 +246,7 @@ class ListObservationsWriter {
 					«IF paramVar != null»
 						<!-- Note that this parameter is local to this block, but uses the same name
 							as the lambda argument.  --> 
-						<PopulationParameter symbId="«paramVar.convertToString»">
+						<PopulationParameter symbId="«paramVar.stringValue»">
 							<ct:Assign>
 								«IF linkFunction != null»
 									«getInverseFunction(linkFunction, paramVar)»
@@ -331,6 +362,40 @@ class ListObservationsWriter {
 		'''
 	}
 	
+	
+	def private SymbolDefinition getVarLevelFromRvBlock(BlockStatement it){
+		val rvRef = blkArgs?.getArgumentExpression('level')
+		if(rvRef instanceof SymbolReference){
+			rvRef.ref
+		}
+		else null
+	}
+	
+	
+	def private writeContinuousObWithRv(AttributeList it){
+		val rvSymbolRef = getAttributeExpression('variable')
+		if(rvSymbolRef instanceof SymbolReference){
+			val rvDefn = rvSymbolRef.ref
+			if(rvDefn instanceof RandomVariableDefinition){
+				val blk = rvDefn.parentBlock
+				
+				'''
+				<ContinuousData>
+					<General symbId="«rvDefn.name»">
+						<ct:VariabilityReference>
+							«blk.varLevelFromRvBlock.symbolReference»
+						</ct:VariabilityReference>
+						«rvDefn.distn.writeUncertMlDistribution»
+					</General>
+				</ContinuousData>
+				'''
+			}
+			else ERROR_MSG
+		}
+		else ERROR_MSG
+	} 
+	
+	
 	def getEventType(String eventType){
 		switch(eventType){
 			case 'exact': '''rightCensored'''
@@ -340,11 +405,9 @@ class ListObservationsWriter {
 	}
 
 	def writeUncertMlDistribution(Expression functionCall){
-		switch(functionCall){
-			SymbolReference:
-				functionCall.writeUncertmlDist
-			default:
-				''''''
-		}
+		if(functionCall instanceof SymbolReference)
+			functionCall.writeUncertmlDist
+		else
+			ERROR_MSG
 	}
 }

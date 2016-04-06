@@ -26,12 +26,12 @@ BlockTextBody returns BlockBody:
 ;
 
 BlockArguments:
-	{BlockArguments} ('(' args+=BlockArgument (',' args+=BlockArgument)* ')')?
+	{BlockArguments} ('(' args+=ValuePair (',' args+=ValuePair)* ')')?
 ;
 
-BlockArgument:
-	ValuePair
-;
+//BlockArgument:
+//	ValuePair
+//;
 
 
 Statement:

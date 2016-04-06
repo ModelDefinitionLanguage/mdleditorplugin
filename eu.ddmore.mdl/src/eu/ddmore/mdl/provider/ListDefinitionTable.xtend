@@ -34,6 +34,8 @@ class ListDefinitionTable {
 	public static val DISCRETE_OBS_VALUE = 'discrete'
 	public static val CATEGORICAL_OBS_VALUE = 'categorical'
 	public static val TTE_OBS_VALUE = 'tte'
+	public static val CONTINUOUS_OBS_VALUE = 'continuous'
+
 //	public static val TTE_EVENT_ATT = 'event'
 //	public static val TTE_MAX_EVENT_ATT = 'maxEvent'
 	public static val VAR_LVL_PARAM_VALUE = 'parameter' 

@@ -18,6 +18,7 @@ class DistributionPrinter {
 	
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 	extension MdlUtils mu = new MdlUtils
+	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder
 	
 	@Data @FinalFieldsConstructor
 	static class UncertMlMapping{
@@ -74,7 +75,7 @@ class DistributionPrinter {
 						'''
 					SymbolReference:
 						'''
-						<var varId="«argExpression.convertToString»"/>
+						«argExpression.ref.uncertMLSymbolReference»
 						'''
 					default: '''<!--- ERROR! --->'''
 				}»

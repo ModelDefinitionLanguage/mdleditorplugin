@@ -70,6 +70,13 @@ class PharmMLExpressionBuilder {
 		'''
 	}
 	
+	def getUncertMLSymbolReference(SymbolDefinition it){
+		val blkId = blockId
+		'''
+			<var varId="«IF blkId != GLOBAL_VAR»«blkId ?: 'ERROR!'».«ENDIF»«name»"/>
+		'''
+	}
+	
 	def getBlockId(SymbolDefinition it){
 		val blk = owningBlock
 		val blkName = blk.identifier

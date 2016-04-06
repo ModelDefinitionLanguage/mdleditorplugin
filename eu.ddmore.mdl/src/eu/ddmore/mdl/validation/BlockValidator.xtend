@@ -1,7 +1,6 @@
 package eu.ddmore.mdl.validation
 
 import eu.ddmore.mdl.mdl.AnonymousListStatement
-import eu.ddmore.mdl.mdl.BlockArgument
 import eu.ddmore.mdl.mdl.BlockArguments
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.BlockStatementBody
@@ -12,7 +11,9 @@ import eu.ddmore.mdl.mdl.Statement
 import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 import eu.ddmore.mdl.provider.BlockDefinitionProvider
+import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
+import eu.ddmore.mdllib.mdllib.BlockDefinition
 import eu.ddmore.mdllib.mdllib.MdlLibPackage
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import java.util.HashMap
@@ -20,8 +21,6 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import eu.ddmore.mdl.utils.BlockUtils
-import eu.ddmore.mdllib.mdllib.BlockDefinition
 
 class BlockValidator extends AbstractDeclarativeValidator{
 
@@ -140,7 +139,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 	
 
 	@Check
-	def validateBlockArgument(BlockArgument blkArg){
+	def validateBlockArgument(ValuePair blkArg){
 		if (blkArg.eContainer instanceof BlockArguments && (blkArg.eContainer.eContainer instanceof MclObject || blkArg.eContainer.eContainer instanceof BlockStatement)) {
 			switch (blkArg) {
 //				ForwardDeclaration case !blkArg.isValidObjVarDecl: {
