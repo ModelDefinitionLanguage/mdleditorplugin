@@ -1,6 +1,5 @@
 package eu.ddmore.converter.mdl2pharmml08
 
-import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.BlockStatementBody
 import eu.ddmore.mdl.mdl.CategoricalDefinitionExpr
@@ -55,6 +54,8 @@ class ModelDefinitionPrinter {
 	extension BlockUtils bu = new BlockUtils
 	extension ListObservationsWriter low = new ListObservationsWriter
 	extension FunctionObservationsWriter fow = new FunctionObservationsWriter
+	extension FunctionIndivParamWriter fip = new FunctionIndivParamWriter
+	extension ListIndivParamWriter lip = new ListIndivParamWriter
 	
 	
 	//////////////////////////////////////
@@ -232,7 +233,7 @@ class ModelDefinitionPrinter {
 		«ENDIF»
 	'''
 	
-	def writeAssignment(Expression expr)'''
+	def private writeAssignment(Expression expr)'''
 		<ct:Assign>
 			«expr.pharmMLExpr»
 		</ct:Assign>
@@ -318,29 +319,6 @@ class ModelDefinitionPrinter {
 		</ParameterModel>
   	'''
 	
-	def writeGeneralIdv(AttributeList it, String name){
-		val transEnum = getAttributeEnumValue('trans')
-		val trans = if(transEnum != null) getPharmMLTransFunc(transEnum) else null
-//		val trans = switch(it){
-//			TransformedDefinition:
-//				getPharmMLTransFunc(transform.name)
-//			default: null
-//		} 
-		'''
-		<IndividualParameter symbId="«name»">
-			<StructuredModel>
-				«IF trans!= null»
-					<Transformation>«trans»</Transformation>
-				«ENDIF»
-				<GeneralCovariate>
-					«getAttributeExpression('grp').writeAssignment»
-				</GeneralCovariate>
-				«getAttributeExpression('ranEff').writeRandomEffects»
-			</StructuredModel>
-		</IndividualParameter>
-		''' 
-	}
-	
 	def writeGeneralIdv(EquationTypeDefinition it){
 		var funcExpr = expression as SymbolReference
 		var namedArgList = funcExpr.argList as NamedFuncArguments
@@ -364,7 +342,7 @@ class ModelDefinitionPrinter {
 		''' 
 	}
 	
-	def writeFixedEffects(Expression expr){
+	def private writeFixedEffects(Expression expr){
 		val it = expr as VectorLiteral
 		'''
 		«FOR el : expressions»
@@ -376,10 +354,9 @@ class ModelDefinitionPrinter {
 			</Covariate>
 		«ENDFOR»
 		'''
-		
 	}
 	
-	def writeFixedEffectCovariate(SubListExpression it){
+	def private writeFixedEffectCovariate(SubListExpression it){
 		val cov = getAttributeExpression('cov')
 		if(cov != null){
 			'''
@@ -394,7 +371,7 @@ class ModelDefinitionPrinter {
 		}
 	}
 	
-	def writeFixedEffectCoefficient(SubListExpression it){
+	def private writeFixedEffectCoefficient(SubListExpression it){
 		val catCov = getAttributeExpression('catCov')
 		'''
 		«getAttributeExpression('coeff')?.pharmMLExpr»
@@ -404,7 +381,7 @@ class ModelDefinitionPrinter {
 		'''
 	}
 	
-	def getEnumType(Expression expr){
+	def private getEnumType(Expression expr){
 		switch(expr){
 			CategoryValueReference:{
 				EcoreUtil2.getContainerOfType(expr.ref, SymbolDefinition)
@@ -413,7 +390,7 @@ class ModelDefinitionPrinter {
 		}
 	}
 	
-	def getEnumValue(Expression expr){
+	def private getEnumValue(Expression expr){
 		switch(expr){
 			CategoryValueReference:	expr.ref
 			default: null
@@ -421,7 +398,7 @@ class ModelDefinitionPrinter {
 	}
 	
 	
-	def writeRandomEffects(Expression expr)'''
+	def private writeRandomEffects(Expression expr)'''
 		«IF expr instanceof VectorLiteral»
 			«FOR e : (expr as VectorLiteral).expressions»
 				<RandomEffects>
@@ -457,62 +434,6 @@ class ModelDefinitionPrinter {
 			</StructuredModel>
 		</IndividualParameter>
 		''' 
-	}
-	
-	def writeLinearIdv(AttributeList it, String name){
-		val fixEff = getAttributeExpression('fixEff') as VectorLiteral
-		'''
-		<IndividualParameter symbId="«name»">
-			<StructuredModel>
-				«IF getAttributeExpression('trans') != null»
-					<Transformation type="«getAttributeEnumValue('trans').getPharmMLTransFunc»" />
-				«ENDIF»
-				<LinearCovariate>
-					<PopulationValue>
-						«getAttributeExpression('pop').writeAssignment»
-					</PopulationValue>
-					«IF fixEff != null && !fixEff.expressions.isEmpty »
-						«getAttributeExpression('fixEff').writeFixedEffects»
-					«ENDIF»
-				</LinearCovariate>
-				«getAttributeExpression('ranEff').writeRandomEffects»
-			</StructuredModel>
-		</IndividualParameter>
-		''' 
-	}
-	
-	def writeExplicitIdv(EquationTypeDefinition it)'''
-		<IndividualParameter symbId="«name»">
-			«expression.writeAssignment»
-		</IndividualParameter>
-	''' 
-	
-	def writeIndividualParameter(ListDefinition it){
-		if(attributeLists.size == 1){
-			val attList = attributeLists.head
-			val typeVal =  attList.getAttributeEnumValue('type')
-			switch(typeVal){
-				case('general'):
-					attList.writeGeneralIdv(name)
-				case('linear'):
-					attList.writeLinearIdv(name)
-				default:
-					'''<Error!>'''		
-			}
-		}
-	}
-
-	// assume definition has a RHS
-	def writeIndividualParameter(EquationTypeDefinition it){
-		val expr = it.expression
-		switch(expr){
-			SymbolReference case(expr.func == 'general'):
-				writeGeneralIdv
-			SymbolReference case(expr.func == 'linear'):
-				writeLinearIdv
-			default:
-				writeExplicitIdv			
-		}
 	}
 	
 	def writeVariableDefinition(EquationDefinition stmt)'''

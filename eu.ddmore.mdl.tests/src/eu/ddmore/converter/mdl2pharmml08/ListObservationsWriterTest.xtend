@@ -2,15 +2,10 @@ package eu.ddmore.converter.mdl2pharmml08
 
 import com.google.inject.Inject
 import eu.ddmore.mdl.MdlAndLibInjectorProvider
-import eu.ddmore.mdl.mdl.AssignPair
-import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.BlockStatementBody
-import eu.ddmore.mdl.mdl.EnumPair
 import eu.ddmore.mdl.mdl.MdlFactory
-import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BlockDefinitionTable
-import eu.ddmore.mdllib.mdllib.Expression
-import eu.ddmore.mdllib.mdllib.MdlLibFactory
+import eu.ddmore.mdl.utils.MDLBuildFixture
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.junit.Test
@@ -22,6 +17,7 @@ import static org.junit.Assert.assertEquals
 @InjectWith(typeof(MdlAndLibInjectorProvider))
 class ListObservationsWriterTest {
 	@Inject extension ListObservationsWriter
+	@Inject extension MDLBuildFixture
 	
 	@Test
 	def void testWriteCombinedError2NoTrans(){
@@ -193,38 +189,4 @@ class ListObservationsWriterTest {
 
 
 
-	def BlockStatement createBlock(String blkName){
-		val retVal = MdlFactory.eINSTANCE.createBlockStatement
-		val blkDefn = MdlLibFactory.eINSTANCE.createBlockDefinition
-		blkDefn.name = blkName
-		retVal.blkId = blkDefn
-		retVal.body = MdlFactory.eINSTANCE.createBlockStatementBody
-		retVal
-	}
-	
-	def private EnumPair createEnumPair(String name, String value){
-		val retVal = MdlFactory.eINSTANCE.createEnumPair
-		retVal.argumentName = name
-		val enumExpr =  MdlFactory.eINSTANCE.createEnumExpression
-		enumExpr.enumValue = value
-		retVal.expression = enumExpr
-		retVal
-	}
-	
-	def private AssignPair createAssignPair(String name, Expression exprVal){
-		val retVal = MdlFactory.eINSTANCE.createAssignPair
-		retVal.argumentName = name
-		retVal.expression = exprVal
-		retVal
-	}
-	
-	def private SymbolReference createSymbolRef(BlockStatement it, String name){
-		val bdy = body as BlockStatementBody
-		val sd = MdlFactory.eINSTANCE.createEquationDefinition
-		sd.name = name
-		bdy.statements.add(sd)
-		val retVal = MdlFactory.eINSTANCE.createSymbolReference
-		retVal.ref = sd
-		retVal
-	}
 }
