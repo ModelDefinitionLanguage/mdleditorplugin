@@ -112,30 +112,22 @@ class DistributionPrinter {
 		}
 		'''
 		<Distribution>
-			<UncertML>
-				«distn»
-			</UncertML>
+			«distn»
 		</Distribution>
 		'''
 	}
 
 	public def printBernoulliDistn(SymbolReference randomList){
-		val mapping = pharmMLMapping.get(randomList.func)
-//		var typeName = randomList.func;
-//		val recognizedArgs = distribution_attrs.get(typeName);
-//		val attr = recognizedArgs.get(DistributionValidator::attr_p.name)
-//		val expr = randomList.arguments.namedArguments.arguments.get(0)
-		val catArg = 'category'
 		val probArg = 'probability'
-		val category = randomList.getArgumentExpression(catArg)
 		val expr = randomList.getArgumentExpression(probArg)
 		'''
-			<BernoulliDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/3.0">
-				<categoryProb definition="">
-					<name>«category.convertToString»</name>
-					«mapping.argMapping.get(probArg).writeUncertmlArg(expr)»
-				</categoryProb>
-			</BernoulliDistribution>
+			<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Bernoulli1">
+				<Parameter name="probability">
+					<ct:Assign>
+						«expr.singleSymbolRef.symbolReference»
+					</ct:Assign>
+				</Parameter>
+			</ProbOnto>
 		'''
 	}
 
@@ -150,10 +142,12 @@ class DistributionPrinter {
 		val probs = randomList.getArgumentExpression('probabilityOfSuccess')
 		val probArg = 'probabilityOfSuccess'
 		'''
+		<UncertML>
 			<BinomialDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/3.0">
 				«mapping.argMapping.get(trialsArg).writeUncertmlArg(numTrials)»
 				«mapping.argMapping.get(probArg).writeUncertmlArg(probs)»
 			</BinomialDistribution>
+		</UncertML>
 		'''
 		}
 	

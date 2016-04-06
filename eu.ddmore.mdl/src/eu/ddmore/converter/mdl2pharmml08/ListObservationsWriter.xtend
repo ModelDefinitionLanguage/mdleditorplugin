@@ -21,6 +21,7 @@ import java.util.HashMap
 import java.util.Set
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
+import eu.ddmore.mdl.mdl.EnumerationDefinition
 
 class ListObservationsWriter {
 	static var ERROR_MSG = "<Error!>"
@@ -109,10 +110,10 @@ class ListObservationsWriter {
 		'''
 		<ObservationModel blkId="om«idx»">
 			«switch(type){
-//				case ListDefinitionTable::COUNT_OBS_VALUE:
-//					s.print_mdef_CountObservations
-//				case ListDefinitionTable::DISCRETE_OBS_VALUE:
-//					s.print_mdef_DiscreteObservations
+				case ListDefinitionTable::COUNT_OBS_VALUE:
+					list.writeCountObservation
+				case ListDefinitionTable::DISCRETE_OBS_VALUE:
+					list.writeDiscreteObservation
 //				case ListDefinitionTable::CATEGORICAL_OBS_VALUE:
 //					s.print_mdef_CategoricalObservations
 //				case ListDefinitionTable::TTE_OBS_VALUE:
@@ -129,23 +130,28 @@ class ListObservationsWriter {
 
 	def writeListObservations(ListDefinition s, int idx){
 		if(s.attributeLists.size == 1){
-			val type = s.attributeLists.head.getAttributeEnumValue('type')
+//			val type = s.attributeLists.head.getAttributeEnumValue('type')
 			'''
 			<ObservationModel blkId="om«idx»">
-				«switch(type){
-					case ListDefinitionTable::COUNT_OBS_VALUE:
-						s.print_mdef_CountObservations
-					case ListDefinitionTable::DISCRETE_OBS_VALUE:
-						s.print_mdef_DiscreteObservations
-					case ListDefinitionTable::CATEGORICAL_OBS_VALUE:
-						s.print_mdef_CategoricalObservations
-					case ListDefinitionTable::TTE_OBS_VALUE:
-						s.print_mdef_TimeToEventObservations
-					default:
-						writeContinuousObservation(s.attributeLists.head, s.name, idx)
-				}»
+				«writeContinuousObservation(s.attributeLists.head, s.name, idx)»
 			</ObservationModel>
 			'''
+//			'''
+//			<ObservationModel blkId="om«idx»">
+//				«switch(type){
+//					case ListDefinitionTable::COUNT_OBS_VALUE:
+//						s.print_mdef_CountObservations
+//					case ListDefinitionTable::DISCRETE_OBS_VALUE:
+//						s.print_mdef_DiscreteObservations
+//					case ListDefinitionTable::CATEGORICAL_OBS_VALUE:
+//						s.print_mdef_CategoricalObservations
+//					case ListDefinitionTable::TTE_OBS_VALUE:
+//						s.print_mdef_TimeToEventObservations
+//					default:
+//						writeContinuousObservation(s.attributeLists.head, s.name, idx)
+//				}»
+//			</ObservationModel>
+//			'''
 		}
 		else{
 			'''<Error!>'''
@@ -179,38 +185,41 @@ class ListObservationsWriter {
 		}
 	}
 	
-	private def print_mdef_CountObservations(ListDefinition s) {
-		var name = s.name
-		val linkFunction = s.firstAttributeList.getAttributeExpression('link');
-		val distn = s.firstAttributeList.getAttributeExpression('distn');
-		val paramVar = (distn as SymbolReference).getFunctionArgumentValue("lambda");
-//		var String tmpParamVar = null;
-//		if(paramVar ){
-//			tmpParamVar = paramVar.toStr
-//		}
-		'''
-			<Discrete>
-				<CountData>
-				«IF paramVar != null»
-					<!-- Note that this parameter is local to this block, but uses the same name
-						as the lambda argument. --> 
-					<PopulationParameter symbId="«paramVar.convertToString»">
-						<ct:Assign>
-							«IF linkFunction != null»
-								«getInverseFunction(linkFunction, paramVar)»
-							«ELSE»
-								«paramVar.pharmMLExpr»
-							«ENDIF»
-						</ct:Assign>
-					</PopulationParameter>
-				«ENDIF»
-				<CountVariable symbId="«name»"/>
-				<PMF transform="identity">
-					«distn.writeUncertMlDistribution»
-				</PMF>
-				</CountData>
-			</Discrete>
-		'''
+	private def writeCountObservation(AttributeList it) {
+		val rvSymbolRef = getAttributeExpression('variable')
+		if(rvSymbolRef instanceof SymbolReference){
+			val rvDefn = rvSymbolRef.ref
+			if(rvDefn instanceof RandomVariableDefinition){
+//				val blk = rvDefn.parentBlock
+//				val linkFunction = getAttributeExpression('link');
+//				val paramVar = (rvDefn.distn as SymbolReference).getFunctionArgumentValue("lambda");
+				'''
+					<Discrete>
+						<CountData>
+«««							«IF paramVar != null»
+«««								<!-- Note that this parameter is local to this block, but uses the same name
+«««									as the lambda argument. --> 
+«««								<PopulationParameter symbId="«paramVar.convertToString»">
+«««									<ct:Assign>
+«««										«IF linkFunction != null»
+«««											«getInverseFunction(linkFunction, paramVar)»
+«««										«ELSE»
+«««											«paramVar.pharmMLExpr»
+«««										«ENDIF»
+«««									</ct:Assign>
+«««								</PopulationParameter>
+«««							«ENDIF»
+							<CountVariable symbId="«rvDefn.name»"/>
+							<PMF transform="identity">
+								«rvDefn.distn.writeUncertMlDistribution»
+							</PMF>
+						</CountData>
+					</Discrete>
+				'''
+			}
+			else ERROR_MSG
+		}
+		else ERROR_MSG
 	}
 	
 	
@@ -231,43 +240,36 @@ class ListObservationsWriter {
 		retVal
 	}
 	
-	private def print_mdef_DiscreteObservations(ListDefinition s) {
-		var name = s.name
-		val linkFunction = s.firstAttributeList.getAttributeExpression('link');
-		val distn = s.firstAttributeList.getAttributeExpression('distn') as SymbolReference
-		val paramVar = (distn as SymbolReference).getFunctionArgumentValue("probability")
-		val categories = s.firstAttributeList.getAttributeExpression(ListDefinitionTable::OBS_TYPE_ATT);
-		val catVals = categories.categories
-		val catList = createCategoriesOrderedBySuccess(catVals.keySet, distn.successCategory)
-		
-		'''
-			<Discrete>
-				<CategoricalData ordered="no">
-					«IF paramVar != null»
-						<!-- Note that this parameter is local to this block, but uses the same name
-							as the lambda argument.  --> 
-						<PopulationParameter symbId="«paramVar.stringValue»">
-							<ct:Assign>
-								«IF linkFunction != null»
-									«getInverseFunction(linkFunction, paramVar)»
+	private def writeDiscreteObservation(AttributeList it) {
+		val rvSymbolRef = getAttributeExpression('variable')
+		if(rvSymbolRef instanceof SymbolReference){
+			val rvDefn = rvSymbolRef.ref
+			if(rvDefn instanceof EnumerationDefinition){
+				val categories = rvDefn.catDefn.categories
+				val distn = rvDefn.distn
+				'''
+					<Discrete>
+						<CategoricalData ordered="no">
+							<ListOfCategories>
+								«FOR cat : categories»
+									<Category symbId="«cat.name»"/>
+								«ENDFOR»
+							</ListOfCategories>
+							<CategoryVariable symbId="«rvDefn.name»"/>
+							<PMF>
+								«IF distn instanceof SymbolReference»
+									«printDiscreteDistribution(distn)»
 								«ELSE»
-									«paramVar.pharmMLExpr»
+									«ERROR_MSG»
 								«ENDIF»
-							</ct:Assign>
-						</PopulationParameter>
-					«ENDIF»
-					<ListOfCategories>
-						«FOR cat : catList»
-							<Category symbId="«cat»"/>
-						«ENDFOR»
-					</ListOfCategories>
-					<CategoryVariable symbId="«name»"/>
-					<PMF transform="identity">
-						«printDiscreteDistribution(distn)»
-					</PMF>
-				</CategoricalData>
-			</Discrete>
-		'''
+							</PMF>
+						</CategoricalData>
+					</Discrete>
+				'''
+		
+		}
+		
+		}
 	}
 	
 	private def getCategories(Expression categories){

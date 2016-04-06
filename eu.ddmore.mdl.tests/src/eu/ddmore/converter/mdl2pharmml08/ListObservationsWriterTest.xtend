@@ -235,5 +235,151 @@ class ListObservationsWriterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
+	@Test
+	def void testWriteCountObs(){
+		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
+		val smBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
+		val varLvlBlock = createBlock(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		val lvlListDefn = varLvlBlock.createListDefn("DV", #[
+											createEnumPair("type", "observation"),
+											createAssignPair("level", createIntLiteral(1))
+										])
+		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS, #[
+																	createAssignPair("level", createSymbolRef(lvlListDefn))
+																	])
+		val lambda = smBlk.createEqnDefn("LAMBDA", createRealLiteral(22.2))
+		val randVar = rvBlk.createRandVar("Y", createNamedFunction("Poisson", #[
+																createAssignPair("lambda", createSymbolRef(lambda))
+															])) 
+		val anonList = obsBlk.createAnonList(#[
+			createEnumPair('type', 'count'),
+			createAssignPair('variable', createSymbolRef(randVar))
+		])
+		
+		val actual = writeListObservations(anonList, 1)
+		val expected = '''
+			<ObservationModel blkId="om1">
+				<Discrete>
+					<CountData>
+						<CountVariable symbId="Y"/>
+						<PMF transform="identity">
+							<Distribution>
+								<UncertML>
+									<PoissonDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/poisson">
+										<rate>
+											<var varId="sm.LAMBDA"/>
+										</rate>
+									</PoissonDistribution>
+								</UncertML>
+							</Distribution>
+						</PMF>
+					</CountData>
+				</Discrete>
+			</ObservationModel>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteDiscreteBernoulliObs(){
+		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
+		val smBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
+		val varLvlBlock = createBlock(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		val lvlListDefn = varLvlBlock.createListDefn("DV", #[
+											createEnumPair("type", "observation"),
+											createAssignPair("level", createIntLiteral(1))
+										])
+		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS, #[
+																	createAssignPair("level", createSymbolRef(lvlListDefn))
+																	])
+		val lambda = smBlk.createEqnDefn("P1", createRealLiteral(22.2))
+		val randVar = rvBlk.createCategoricalDefinition("Y", #["a", "b"], createNamedFunction("Bernoulli", #[
+																createAssignPair("probability", createSymbolRef(lambda))
+															])) 
+		val anonList = obsBlk.createAnonList(#[
+			createEnumPair('type', 'discrete'),
+			createAssignPair('variable', createSymbolRef(randVar))
+		])
+		
+		val actual = writeListObservations(anonList, 1)
+		val expected = '''
+		<ObservationModel blkId="om1">
+			<Discrete>
+				<CategoricalData ordered="no">
+					<ListOfCategories>
+						<Category symbId="a"/>
+						<Category symbId="b"/>
+					</ListOfCategories>
+					<CategoryVariable symbId="Y"/>
+					<PMF>
+						<Distribution>
+							<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Bernoulli1">
+								<Parameter name="probability">
+									<ct:Assign>
+										<ct:SymbRef blkIdRef="sm" symbIdRef="P1"/>
+									</ct:Assign>
+								</Parameter>
+							</ProbOnto>
+						</Distribution>
+					</PMF>
+				</CategoricalData>
+			</Discrete>
+		</ObservationModel>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteDiscreteBinomialObs(){
+		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
+		val smBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
+		val varLvlBlock = createBlock(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		val lvlListDefn = varLvlBlock.createListDefn("DV", #[
+											createEnumPair("type", "observation"),
+											createAssignPair("level", createIntLiteral(1))
+										])
+		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS, #[
+																	createAssignPair("level", createSymbolRef(lvlListDefn))
+																	])
+		val p1 = smBlk.createEqnDefn("P1", createRealLiteral(22.2))
+		val randVar = rvBlk.createCategoricalDefinition("Y", #["a", "b"], createNamedFunction("Binomial", #[
+																createAssignPair("probabilityOfSuccess", createSymbolRef(p1)),
+																createAssignPair("numberOfTrials", createIntLiteral(1))
+															])) 
+		val anonList = obsBlk.createAnonList(#[
+			createEnumPair('type', 'discrete'),
+			createAssignPair('variable', createSymbolRef(randVar))
+		])
+		
+		val actual = writeListObservations(anonList, 1)
+		val expected = '''
+		<ObservationModel blkId="om1">
+			<Discrete>
+				<CategoricalData ordered="no">
+					<ListOfCategories>
+						<Category symbId="a"/>
+						<Category symbId="b"/>
+					</ListOfCategories>
+					<CategoryVariable symbId="Y"/>
+					<PMF>
+						<Distribution>
+							<UncertML>
+								<BinomialDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/3.0">
+									<numberOfTrials>
+										<nVal>1</nVal>
+									</numberOfTrials>
+									<probabilityOfSuccess>
+										<var varId="sm.P1"/>
+									</probabilityOfSuccess>
+								</BinomialDistribution>
+							</UncertML>
+						</Distribution>
+					</PMF>
+				</CategoricalData>
+			</Discrete>
+		</ObservationModel>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
 
 }

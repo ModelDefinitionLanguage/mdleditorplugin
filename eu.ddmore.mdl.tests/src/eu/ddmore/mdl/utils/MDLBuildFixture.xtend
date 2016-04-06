@@ -75,7 +75,24 @@ class MDLBuildFixture {
 		bdy.statements.add(sd)
 		sd
 	}
+	
+	def createCategoricalDefinition(BlockStatement it, String varName, List<String> categories, SymbolReference distn){
+		val bdy = body as BlockStatementBody
+		val retVal = MdlFactory.eINSTANCE.createEnumerationDefinition
+		retVal.name = varName
+		retVal.catDefn = MdlFactory.eINSTANCE.createCategoricalDefinitionExpr
+		categories.forEach[c|
+			val cd = MdlFactory.eINSTANCE.createCategoryValueDefinition
+			cd.name = c
+			retVal.catDefn.categories.add(cd)
+		]
+		retVal.distn = distn
+		bdy.statements.add(retVal)
+		retVal
+	}
 
+	
+	
 	def EquationDefinition createEqnDefn(BlockStatement it, String name, Expression expr){
 		val bdy = body as BlockStatementBody
 		val sd = MdlFactory.eINSTANCE.createEquationDefinition
