@@ -91,7 +91,7 @@ Categorical_DIST_mdl = mdlObj{
    }# end MODEL_PREDICTION
 
    RANDOM_VARIABLE_DEFINITION(level=DV){
-   		Y withCategories{c0, c1, c2, c3} ~ Categorical(probability=[Prob0, Prob1, Prob2, Prob3])
+   		Y withCategories{c0, c1, c2, c3} ~ CategoricalNonordered1(categoryProb=[Prob0, Prob1, Prob2, Prob3])
    }
 
    OBSERVATION{

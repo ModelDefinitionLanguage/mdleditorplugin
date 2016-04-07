@@ -26,7 +26,7 @@ _sublist fixEffAtts _atts cov::Reference[::Real], catCov::Reference[::GenericCat
 					
 _type priorElementType _enum(matrix, vector);					
 
-_type divUse _enum (covariate, amt, dv, dvid, cmt, mdv, idv, id, rate, ignore, varLevel, catCov, ss, ii, addl);
+_type divUse _enum (covariate, amt, dv, dvid, cmt, mdv, idv, id, rate, ignore, varLevel, catCov, ss, ii, addl, evid);
 _type ddvUse _enum (doseTime);
 _type varLvlType _enum (parameter, observation);
 _type input _enum (nonmemFormat);
@@ -56,6 +56,7 @@ _list ii _atts use::divUse _sig(use);
 _list addl _atts use::divUse _sig(use);
 _list Dvid _atts use::divUse _sig(use);
 _list ignore _atts use::divUse _sig(use);
+_list Evid _atts use::divUse _sig(use);
 
 // data derived variables
 _list DoseTime _atts use::ddvUse, idvColumn::Reference[::Idv], amtColumn::Reference[::Amt]
@@ -315,7 +316,7 @@ _block DATA_INPUT_VARIABLES (0,) _statements (1,) _listDefn
 								divUse.cmt -> Cmt, divUse.cmt->Cmt, divUse.amt -> Amt, divUse.ii -> ii, divUse.addl -> addl,
 								divUse.id -> Id, divUse.idv -> Idv, divUse.varLevel -> DataVarLevel, divUse.mdv -> Mdv,
 								divUse.rate -> rate, divUse.ignore -> ignore, divUse.dvid -> Dvid, divUse.dv -> Dv,
-								divUse.ss -> ss;
+								divUse.ss -> ss, divUse.evid->Evid;
 								
 _block DECLARED_VARIABLES (0,) _statements (,) _eqnDefn, _enumDefn;
 
@@ -533,7 +534,7 @@ _func MultiEmpirical _named
 				data::Matrix,
 				probability::Vector
 			)	
-			_sig (data, probability)
+			_sig (data, probability?)
 			_returns ::Vector[::Pdf];		
 _func MultivariateNormal _named
 			(
@@ -549,11 +550,17 @@ _func Wishart _named
 			)
 			_sig (scaleMatrix, nu)
 			_returns ::Matrix[[::Pdf]];
-_func Categorical _named
+_func CategoricalNonordered1 _named
 			(
-				probability::Vector[::Real]
+				categoryProb::Vector[::Real]
 			)
-			_sig (probability)
+			_sig (categoryProb)
+			_returns ::Pmf;
+_func CategoricalOrdered1 _named
+			(
+				categoryProb::Vector[::Real]
+			)
+			_sig (categoryProb)
 			_returns ::Pmf;
 _func matrix _named
 		(

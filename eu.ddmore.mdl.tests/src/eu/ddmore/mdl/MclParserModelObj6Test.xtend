@@ -72,8 +72,8 @@ warfarin_PK_SEXAGE_mdl = mdlObj {
 	}# end MODEL_PREDICTION
 
 	RANDOM_VARIABLE_DEFINITION(level=DV){
-		PAIN withCategories { mild, moderate, severe, missing} ~ Categorical(probability=[Prob0, Prob1, Prob2, Prob3])
-		TENDERNESS withCategories {mild, moderate, severe, missing} ~ Categorical(probability=[Prob0, Prob1, Prob2, Prob3])
+		PAIN withCategories { mild, moderate, severe, missing} ~ CategoricalNonordered1(categoryProb=[Prob0, Prob1, Prob2, Prob3])
+		TENDERNESS withCategories {mild, moderate, severe, missing} ~ CategoricalNonordered1(categoryProb=[Prob0, Prob1, Prob2, Prob3])
  	}
 
 

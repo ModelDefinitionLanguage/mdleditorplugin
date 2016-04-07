@@ -398,8 +398,8 @@ class ListObservationsWriterTest {
 		val p2 = smBlk.createEqnDefn("P2", createRealLiteral(23.2))
 		val p3 = smBlk.createEqnDefn("P3", createRealLiteral(24.2))
 		val p4 = smBlk.createEqnDefn("P4", createRealLiteral(25.2))
-		val randVar = rvBlk.createCategoricalDefinition("Y", #["a", "b", "c", "d"], createNamedFunction("Categorical", #[
-																createAssignPair("probability", createVectorLiteral(#[
+		val randVar = rvBlk.createCategoricalDefinition("Y", #["a", "b", "c", "d"], createNamedFunction("CategoricalNonordered1", #[
+																createAssignPair("categoryProb", createVectorLiteral(#[
 																	createSymbolRef(p1),
 																	createSymbolRef(p2),
 																	createSymbolRef(p3),
