@@ -23,14 +23,5 @@
 				<artifactId>tycho-p2-director-plugin</artifactId>
 			</plugin>
 		</plugins>
-		<plugin>
-			<groupId>org.eclipse.tycho</groupId>
-			<artifactId>tycho-p2-repository-plugin</artifactId>
-			<version>${tycho.version}</version>
-                  <configuration>
-                      <includeAllDependencies>true</includeAllDependencies>
-                      <compress>false</compress>
-                  </configuration>
-		</plugin>
 	</build>
 </project>
