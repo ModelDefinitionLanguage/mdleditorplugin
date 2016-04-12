@@ -15,6 +15,7 @@ class Mdl2Pharmml {
 	
 	extension MdlUtils mu = new MdlUtils
 	extension MdlRootProvider mrp = new MdlRootProvider
+	extension TrialDesignPrinter tdw = new TrialDesignPrinter
 	extension ModelDefinitionPrinter mdp = new ModelDefinitionPrinter
 	extension ModellingStepsPrinter msp = new ModellingStepsPrinter
 	extension FunctionDefinitionPrinter fdp = new FunctionDefinitionPrinter
@@ -51,6 +52,7 @@ class Mdl2Pharmml {
 			<IndependentVariable symbId="«mdlRoot.mdlObj.mdlIdv?.name ?: "T"»"/>
 			«mdlRoot.mdlObj.writeFunctionDefinitions»	
 			«mdlRoot.mdlObj.writeModelDefinition(mdlRoot.paramObj)»
+			«writeTrialDesign(mdlRoot.mdlObj, mdlRoot.dataObj)»
 			«writeModellingSteps(mdlRoot)»
 		</PharmML>
 		'''			

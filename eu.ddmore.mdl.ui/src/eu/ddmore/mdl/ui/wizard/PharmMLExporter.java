@@ -18,7 +18,7 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.inject.Injector;
 
-import eu.ddmore.converter.mdl2pharmml.Mdl2Pharmml;
+import eu.ddmore.converter.mdl2pharmml08.Mdl2Pharmml;
 import eu.ddmore.mdl.MdlStandaloneSetup;
 import eu.ddmore.mdl.mdl.Mcl;
 import eu.ddmore.mdl.mdl.MclObject;

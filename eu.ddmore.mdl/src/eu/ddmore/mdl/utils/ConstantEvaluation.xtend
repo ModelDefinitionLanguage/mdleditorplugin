@@ -92,6 +92,16 @@ class ConstantEvaluation {
     	else null
 	} 
 	
+	def evaluateStringExpression(Expression expr){
+		if(expr != null){
+			if(expr instanceof StringLiteral){
+				return expr.value
+			}
+		}
+		null
+	}
+	
+	
 	def getSymbolReference(SymbolReference it){
 		val symbDefn = ref
 		switch(symbDefn){

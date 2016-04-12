@@ -147,6 +147,14 @@ class MDLBuildFixture {
 		retVal
 	}
 
+	def createPropertyStatement(BlockStatement it, List<ValuePair> vps){
+		val bdy = body as BlockStatementBody
+		val retVal = MdlFactory.eINSTANCE.createPropertyStatement
+		bdy.statements.add(retVal)
+		retVal.properties.addAll(vps)
+		retVal
+	}
+
 
 	def createRandVar(BlockStatement it, String varName, SymbolReference distn){
 		val bdy = body as BlockStatementBody
