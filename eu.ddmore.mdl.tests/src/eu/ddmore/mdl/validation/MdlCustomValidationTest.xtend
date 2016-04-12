@@ -24,7 +24,7 @@ class MdlCustomValidationTest {
 	@Test
 	def void testIncorrectUseOfTransFunction(){
 		val mcl = '''bar = mdlObj {
-			
+			IDV{T}
 			
 			COVARIATES{
 			}
@@ -46,8 +46,7 @@ class MdlCustomValidationTest {
 	@Test
 	def void testInconsistentTransFunctions(){
 		val mcl = '''bar = mdlObj {
-			
-			
+			IDV{T}			
 			COVARIATES{
 			}
 			
