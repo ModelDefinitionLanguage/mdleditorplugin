@@ -1,4 +1,4 @@
-package eu.ddmore.converter.mdl2pharmml
+package eu.ddmore.converter.treerewrite
 
 import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject

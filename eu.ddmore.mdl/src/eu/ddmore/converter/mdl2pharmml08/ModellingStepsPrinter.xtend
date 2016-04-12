@@ -32,8 +32,8 @@ import java.util.HashSet
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
-import eu.ddmore.converter.mdl2pharmml.MdlRootProvider
 import eu.ddmore.mdl.utils.BlockUtils
+import eu.ddmore.converter.treerewrite.MdlRootProvider
 
 class ModellingStepsPrinter { 
 	

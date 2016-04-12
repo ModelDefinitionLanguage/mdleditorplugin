@@ -7,6 +7,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml.Constants.*
+import eu.ddmore.converter.treerewrite.MdlRootProvider
+import eu.ddmore.converter.treerewrite.VectorAttributeRewrite
 
 class Mdl2Pharmml {
 	static val mdlVersion = "6.0"
