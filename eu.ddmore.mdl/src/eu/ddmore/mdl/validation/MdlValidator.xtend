@@ -16,7 +16,7 @@ import org.eclipse.xtext.validation.ComposedChecks
  								DataFileValidator,
  								UnsupportedFeaturesValidator, MdlCustomValidator,
  								ListValidator,
- 								TypeSystemValidator,
+// 								TypeSystemValidator,
  								ValueSelectorValidator, UnsupportedToolSpecificFeaturesValidator,
  								BuiltinFunctionValidator, 
  								MogValidator, 

@@ -22,28 +22,27 @@ class BuiltinFunctionValidator extends AbstractDeclarativeValidator{
 
 	override register(EValidatorRegistrar registrar){}
 
-//	extension MdlUtils mu = new MdlUtils	
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 
 	@Check
 	def validateFunctionCall(SymbolReference sr){
 		val ref = sr.ref
 		if(ref instanceof FunctionDefnBody){
-			if(sr.argList == null || sr.argList instanceof UnnamedFuncArguments){
-				checkUnnamedFunctionDefn(ref.name, ref.funcSpec, sr.argList,
-					[fName| error("Simple function '" + fName + "' is not recognised.",
-	//					MdlPackage.eINSTANCE.builtinFunctionCall_Func, MdlValidator::UNRECOGNIZED_FUNCTION_NAME, fName)],
-						MdlPackage.eINSTANCE.symbolReference_Ref, MdlValidator::UNRECOGNIZED_FUNCTION_NAME, fName)],
-						 [fName, eArgNum | error("Function '" + fName + "' has the wrong number of arguments. Expected " + eArgNum + ".",
-						MdlPackage.eINSTANCE.symbolReference_ArgList, MdlValidator::INCORRECT_NUM_FUNC_ARGS, fName)]
-						)
-			}
-			else{
-				ref.checkNamedFunctionDefn(
-					[fName| error("Named argument function '" + fName + "' is not recognised.",
-	//					MdlPackage.eINSTANCE.builtinFunctionCall_Func, MdlValidator::UNRECOGNIZED_FUNCTION_NAME, fName)]
-						MdlPackage.eINSTANCE.symbolReference_ArgList, MdlValidator::UNRECOGNIZED_FUNCTION_NAME, fName)]
-						)
+			if(!sr.isIsRef){
+				if(sr.argList == null || sr.argList instanceof UnnamedFuncArguments){
+					checkUnnamedFunctionDefn(ref.name, ref.funcSpec, sr.argList,
+						[fName| error("Simple function '" + fName + "' is not recognised.",
+							MdlPackage.eINSTANCE.symbolReference_Ref, MdlValidator::UNRECOGNIZED_FUNCTION_NAME, fName)],
+							 [fName, eArgNum | error("Function '" + fName + "' has the wrong number of arguments. Expected " + eArgNum + ".",
+							MdlPackage.eINSTANCE.symbolReference_ArgList, MdlValidator::INCORRECT_NUM_FUNC_ARGS, fName)]
+							)
+				}
+				else{
+					ref.checkNamedFunctionDefn(
+						[fName| error("Named argument function '" + fName + "' is not recognised.",
+							MdlPackage.eINSTANCE.symbolReference_ArgList, MdlValidator::UNRECOGNIZED_FUNCTION_NAME, fName)]
+							)
+				}
 			}
 		}
 		else if(sr.argList != null){

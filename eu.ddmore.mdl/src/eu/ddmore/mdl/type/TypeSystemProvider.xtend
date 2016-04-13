@@ -41,7 +41,6 @@ import java.util.ArrayList
 import java.util.HashSet
 import java.util.List
 import org.eclipse.xtext.EcoreUtil2
-import eu.ddmore.mdl.mdl.FunctionReference
 
 public class TypeSystemProvider {
 
@@ -180,7 +179,10 @@ public class TypeSystemProvider {
 	}
 	
 	private def TypeInfo getTypeOfSymbolRef(SymbolReference e){
-		if(e.indexExpr == null)
+		if(e.isIsRef){
+			e.ref?.typeOfFunctionRef
+		}
+		else if(e.indexExpr == null)
 			e.ref.typeFor.makeReference
 		else{
 			val t = e.ref.typeFor
@@ -231,8 +233,8 @@ public class TypeSystemProvider {
 		switch(e){
 			SymbolReference:
 				e.typeOfSymbolRef
-			FunctionReference:
-				e.ref?.typeOfFunctionRef
+//			FunctionReference:
+//				e.ref?.typeOfFunctionRef
 			CategoryValueReference:
 				e.ref.typeFor.makeReference
 			ParExpression: e.expr.typeFor

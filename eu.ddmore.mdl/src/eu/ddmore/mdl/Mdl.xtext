@@ -34,11 +34,37 @@ BlockArguments:
 //;
 
 
+ConditionalStatement:
+	 	ifelseClause+=IfStmtClause
+	 	(=> ifelseClause+=ElifStmtClause)*
+		(=>elseClause=ElseStmtClause)?
+		'fi'  ';'?
+;
+
+
+IfStmtPart:
+	IfStmtClause | ElifStmtClause
+;
+
+IfStmtClause returns IfStmtPart:
+	{IfStmtClause} IF '(' cond=Expression ')' => THEN stmts+=Statement+
+;
+
+ElifStmtClause returns IfStmtPart:
+	{ElifStmtClause} ELSEIF '(' cond=Expression ')' => THEN stmts+=Statement+
+;
+
+ElseStmtClause:
+	{ElseStmtClause} ELSE stmts+=Statement+
+;
+
+
 Statement:
 	EquationTypeDefinition|ListDefinition|
 	RandomVariableDefinition|BlockStatement|AnonymousListStatement|
-	EnumerationDefinition|PropertyStatement //|
-//	CategoricalProbabilityAssign//|UserFunctionDefinition
+	EnumerationDefinition|PropertyStatement | EquationAssignment |
+	ConditionalStatement|TransformedAssignment|RandomVariableAssignment|
+	ListAssignment
 ;
 
 
@@ -61,8 +87,13 @@ EquationTypeDefinition:
 ;
 
 EquationDefinition returns EquationTypeDefinition:
-	{EquationDefinition} name = ID typeSpec=TypeSpec? (ASSIGN expression = Expression)? ';'?
+	{EquationDefinition} (name = ID typeSpec=TypeSpec?) (ASSIGN expression = Expression)? ';'?
 ;
+
+EquationAssignment :
+	'&'ref=[lib::SymbolDefinition] ASSIGN expression = Expression ';'?
+;
+
 
 FunctionSpec returns lib::FunctionSpec:
 	{lib::FunctionSpec}  '(' argument=FuncUnnamedArgDefns? ')' returnType=TypeSpec IS body=Expression
@@ -73,10 +104,16 @@ TransformedDefinition returns EquationTypeDefinition:
 	{TransformedDefinition} transform = [lib::FunctionDefnBody] '(' name=ID ')' ASSIGN expression=Expression ';'?
 ;
 
+TransformedAssignment returns EquationTypeDefinition:
+	{TransformedDefinition} transform = [lib::FunctionDefnBody] '(' '&'ref=[lib::SymbolDefinition]  ')' ASSIGN expression=Expression ';'?
+;
+
 RandomVariableDefinition:
 	(name = ID|  transform = ID '(' name=ID ')') RANDOM_ASSIGN distn = Expression ';'?
-//	(name = ID|  transform = ID '(' name=ID ')') 
-//		(WITH BEGIN catDefns+=CategoryValueDefinitionNoMapping (',' catDefns+=CategoryValueDefinitionNoMapping)* END)? RANDOM_ASSIGN distn = Expression ';'?
+;
+
+RandomVariableAssignment:
+	('&'ref=[lib::SymbolDefinition]|  transform = [lib::FunctionDefnBody] '(' '&'ref=[lib::SymbolDefinition] ')') RANDOM_ASSIGN distn = Expression ';'?
 ;
 
 TypeSpec returns lib::TypeSpec:
@@ -99,6 +136,10 @@ EnumerationDefinition:
 
 ListDefinition:
 	name = ID LIST_ASSIGN list = (AttributeList|ListPiecewiseExpression|ListIfExpression) ';'?
+;
+
+ListAssignment:
+	'&'ref=[lib::SymbolDefinition] LIST_ASSIGN list = (AttributeList|ListPiecewiseExpression|ListIfExpression) ';'?
 ;
 
 AbstractAttributeList:
@@ -281,7 +322,7 @@ OpUnary:
 PrimaryExpression returns lib::Expression:
 	Literal
 	| SymbolReference
-	| FunctionReference
+//	| FunctionReference
 	| CategoryValueReference
 	| CatValRefMappingExpression
 	| MappingExpression
@@ -338,12 +379,12 @@ Literal returns lib::Expression:
 ;
 
 SymbolReference:
-	{SymbolReference} ref=[lib::SymbolDefinition|ID] ('[' indexExpr = IndexSpec ']'|'(' argList=(UnnamedFuncArguments	| NamedFuncArguments)? ')')?
+	{SymbolReference} isRef?='&'? ref=[lib::SymbolDefinition|ID] ('[' indexExpr = IndexSpec ']'|'(' argList=(UnnamedFuncArguments	| NamedFuncArguments)? ')')?
 ;
 
-FunctionReference:
-	{FunctionReference} '&'ref=[lib::SymbolDefinition]
-;
+//FunctionReference:
+//	{FunctionReference} '&'ref=[lib::SymbolDefinition]
+//;
 
 IndexSpec:
 		{IndexSpec} rowIdx = IndexRange? (',' colIdx = IndexRange?)? 
