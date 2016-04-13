@@ -13,10 +13,12 @@ import eu.ddmore.mdl.utils.MdlLibUtils
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.List
+import eu.ddmore.mdl.utils.BlockUtils
 
 class PropertyDefinitionProvider {
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension MdlLibUtils mlu = new MdlLibUtils
+	extension BlockUtils bu = new BlockUtils
 	
 //	val Map<String, List<AttributeDefn>> propertyDefns
 	

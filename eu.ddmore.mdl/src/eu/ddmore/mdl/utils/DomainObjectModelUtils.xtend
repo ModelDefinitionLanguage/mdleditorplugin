@@ -22,15 +22,15 @@ import org.eclipse.xtext.EcoreUtil2
 class DomainObjectModelUtils {
 	extension BlockUtils bu = new BlockUtils
 
-	def getStatements(BlockStatement it){
-		val b = body
-		switch(b){
-			BlockStatementBody:
-				b.statements
-			default:
-				Collections::emptyList
-		}
-	} 
+//	def getStatements(BlockStatement it){
+//		val b = body
+//		switch(b){
+//			BlockStatementBody:
+//				b.statements
+//			default:
+//				Collections::emptyList
+//		}
+//	} 
 	
 	def getBlockText(BlockStatement it){
 		(body as BlockTextBody).text

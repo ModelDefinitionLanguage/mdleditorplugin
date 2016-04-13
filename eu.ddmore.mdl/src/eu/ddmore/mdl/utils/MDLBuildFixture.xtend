@@ -16,6 +16,7 @@ import eu.ddmore.mdl.mdl.SubListExpression
 import java.util.Map
 import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdllib.mdllib.TypeDefinition
+import java.util.ArrayList
 
 class MDLBuildFixture {
 	val public static String REAL_TYPE_NAME = "Real"
@@ -27,6 +28,16 @@ class MDLBuildFixture {
 	}
 
 
+	def BlockStatement createBlock(BlockStatement parent, String blkName, ValuePair ... args){
+		val bd = parent.body
+		if(bd instanceof BlockStatementBody){
+			val blk = createBlock(blkName, args)
+			bd.statements.add(blk)
+			blk
+		}
+		else null
+	}
+	
 	def BlockStatement createBlock(String blkName, ValuePair ... args){
 		val retVal = MdlFactory.eINSTANCE.createBlockStatement
 		val blkDefn = MdlLibFactory.eINSTANCE.createBlockDefinition
@@ -111,6 +122,26 @@ class MDLBuildFixture {
 		}
 		retVal
 	}
+
+	def createExpressionsFromList(List<? extends Object> elements){
+		val retVal = new ArrayList<Expression>
+		for(el : elements){
+			switch(el){
+				String:
+					retVal.add(createStringLiteral(el))
+				Integer:
+					retVal.add(createIntLiteral(el))
+				Double:
+					retVal.add(createRealLiteral(el))
+				Float:
+					retVal.add(createRealLiteral(el))
+				Boolean:
+					retVal.add(createBooleanLiteral(el))
+			}
+		}
+		retVal
+	}
+
 
 	def SubListExpression createSublist(Map<String, Expression> content){
 		val retVal = MdlFactory.eINSTANCE.createSubListExpression

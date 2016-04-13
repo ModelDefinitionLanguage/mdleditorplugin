@@ -22,8 +22,8 @@ class MdlExpressionConverterTest {
 	@Inject extension LibraryTestHelper<Mcl>
 	@Inject extension ValidationTestHelper
 	
-	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension MdlUtils mu = new MdlUtils
+	extension BlockUtils bu = new BlockUtils
 
 	@Test
 	def void testValidExpressionSyntax(){

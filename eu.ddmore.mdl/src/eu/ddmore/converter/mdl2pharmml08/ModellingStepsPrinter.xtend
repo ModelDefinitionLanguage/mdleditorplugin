@@ -11,6 +11,9 @@ import eu.ddmore.mdl.utils.ConstantEvaluation
 import eu.ddmore.mdl.utils.MdlUtils
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
+import eu.ddmore.mdl.mdl.EquationDefinition
+import eu.ddmore.mdl.mdl.BlockStatement
+import eu.ddmore.mdl.utils.BlockUtils
 
 class ModellingStepsPrinter { 
 	
@@ -20,6 +23,7 @@ class ModellingStepsPrinter {
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension ConstantEvaluation ce = new ConstantEvaluation
 	extension TaskSettingsPrinter tsp = new TaskSettingsPrinter
+	extension BlockUtils bu = new BlockUtils
 	
 
 	////////////////////////////////////////////////
@@ -38,7 +42,7 @@ class ModellingStepsPrinter {
 			for (b: tObj.blocks){
 				if( b.blkId.name == BlockDefinitionTable::ESTIMATE_BLK){
 					var oidRef = BLK_ESTIM_STEP + index;
-					res += writeEstimationStep(oidRef, index, mObj, dObj, pObj, tObj);
+					res += writeEstimationStep(oidRef, mObj, dObj, pObj, b);
 					dependencies  += 
 						'''
 						<mstep:Step>
@@ -61,20 +65,25 @@ class ModellingStepsPrinter {
 		'''	
 	}
 
-	////////////////////////////////////////////////
-	// III.a Estimation Step
-	////////////////////////////////////////////////
-	def writeEstimationStep(String oidRef, Integer order, MclObject mObj, MclObject dObj, MclObject pObj, MclObject tObj)'''
+	def writeEstimationStep(String oidRef, MclObject mObj, MclObject dObj, MclObject pObj, BlockStatement taskBlk)'''
+		<EstimationStep oid="«oidRef»">
+			«taskBlk.statements.writeSettingsFile»
+			«dObj.writeExternalDataSetReference»
+			«pObj.writeParametersToEstimate»
+			«taskBlk.statements.writeSettings»
+		</EstimationStep>
+	'''
+
+	def writeSimulationStep(String oidRef, Integer order, MclObject mObj, MclObject dObj, MclObject pObj, MclObject tObj)'''
 		«FOR blk : tObj.blocks»
-			<EstimationStep oid="«BLK_ESTIM_STEP»«order»">
+			<EstimationStep oid="«oidRef»«order»">
 				«dObj.writeExternalDataSetReference»
-				«pObj.writeParametersToEstimate»
+				«pObj.writeParameterAssignments»
 				«blk.nonBlockStatements.writeSettingsFile»
 				«blk.nonBlockStatements.writeSettings»
 			</EstimationStep>
 		«ENDFOR»
 	'''
-		
 		
 	def private writeExternalDataSetReference(MclObject dObj)'''
 		<ExternalDataSetReference>
@@ -123,5 +132,43 @@ class ModellingStepsPrinter {
 		</ParametersToEstimate>
 	'''	
 
+	def private writeParameterAssignments(MclObject pObj)'''
+		<ParametersToEstimate>
+			«FOR stmt: pObj.paramStructuralParams»
+				«stmt.writeParameterAssignment(pObj)»
+			«ENDFOR»
+			«FOR stmt: pObj.paramVariabilityParams»
+				«IF (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'corr' && (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'cov'»
+					«stmt.writeParameterAssignment(pObj)»
+				«ENDIF»
+			«ENDFOR»
+		</ParametersToEstimate>
+	'''	
+
+	def private writeParameterAssignment(Statement s, MclObject pObj){
+		val stmt = s
+		switch(stmt){
+			ListDefinition:{
+				val paramVar = pObj.findMdlSymbolDefn(stmt.name)
+				'''
+				<ct:VariableAssignment>
+					«paramVar.getSymbolReference»
+					«stmt.firstAttributeList.getAttributeExpression('value').expressionAsAssignment»
+				</ct:VariableAssignment>
+				'''
+			}
+			EquationDefinition:{
+				val paramVar = pObj.findMdlSymbolDefn(stmt.name)
+				'''
+				<ct:VariableAssignment>
+					«paramVar.getSymbolReference»
+					«stmt.expression.expressionAsAssignment»
+				</ct:VariableAssignment>
+				'''
+			}
+			default:''''''
+		}
+	}
+		
 	
 }

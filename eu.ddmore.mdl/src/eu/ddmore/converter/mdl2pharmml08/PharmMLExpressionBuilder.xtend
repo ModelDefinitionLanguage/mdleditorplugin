@@ -416,8 +416,10 @@ class PharmMLExpressionBuilder {
 	'''
 	
 	def getBooleanLiteral(BooleanLiteral it)'''
-		«IF isTrue» <ct:True/>
-		«ELSE» <ct:False/>
+		«IF isTrue»
+			<ct:True/>
+		«ELSE»
+			<ct:False/>
 		«ENDIF»
 	'''
     

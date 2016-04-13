@@ -23,6 +23,7 @@ class BlockDefinitionTable {
 	public static val SIMULATE_BLK = "SIMULATE" 
 	public static val PRIOR_SOURCE_BLK = "PRIOR_SOURCE"
 	public static val DES_STUDY_DESIGN = "STUDY_DESIGN"
+	public static val TARGET_SETTINGS = "TARGET_SETTINGS"
 	
 //	static val ep = MdlPackage::eINSTANCE 
 
