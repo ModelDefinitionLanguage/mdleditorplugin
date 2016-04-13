@@ -50,6 +50,16 @@ class ModellingStepsPrinter {
 						</mstep:Step>
 						'''
 				}
+				else if( b.blkId.name == BlockDefinitionTable::SIMULATE_BLK){
+					var oidRef = BLK_SIMUL_STEP + index;
+					res += writeSimulationStep(oidRef, mObj, dObj, pObj, b);
+					dependencies  += 
+						'''
+						<mstep:Step>
+							<ct:OidRef oidRef="«oidRef»"/>
+						</mstep:Step>
+						'''
+				}
 				index  = index + 1;
 			}
 		}
@@ -74,15 +84,13 @@ class ModellingStepsPrinter {
 		</EstimationStep>
 	'''
 
-	def writeSimulationStep(String oidRef, Integer order, MclObject mObj, MclObject dObj, MclObject pObj, MclObject tObj)'''
-		«FOR blk : tObj.blocks»
-			<EstimationStep oid="«oidRef»«order»">
-				«dObj.writeExternalDataSetReference»
-				«pObj.writeParameterAssignments»
-				«blk.nonBlockStatements.writeSettingsFile»
-				«blk.nonBlockStatements.writeSettings»
-			</EstimationStep>
-		«ENDFOR»
+	def writeSimulationStep(String oidRef, MclObject mObj, MclObject dObj, MclObject pObj, BlockStatement taskBlk)'''
+		<SimulationStep oid="«oidRef»">
+			«taskBlk.statements.writeSettingsFile»
+			«dObj.writeExternalDataSetReference»
+			«pObj.writeParameterAssignments»
+			«taskBlk.statements.writeSettings»
+		</SimulationStep>
 	'''
 		
 	def private writeExternalDataSetReference(MclObject dObj)'''
@@ -133,16 +141,14 @@ class ModellingStepsPrinter {
 	'''	
 
 	def private writeParameterAssignments(MclObject pObj)'''
-		<ParametersToEstimate>
-			«FOR stmt: pObj.paramStructuralParams»
+		«FOR stmt: pObj.paramStructuralParams»
+			«stmt.writeParameterAssignment(pObj)»
+		«ENDFOR»
+		«FOR stmt: pObj.paramVariabilityParams»
+			«IF (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'corr' && (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'cov'»
 				«stmt.writeParameterAssignment(pObj)»
-			«ENDFOR»
-			«FOR stmt: pObj.paramVariabilityParams»
-				«IF (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'corr' && (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'cov'»
-					«stmt.writeParameterAssignment(pObj)»
-				«ENDIF»
-			«ENDFOR»
-		</ParametersToEstimate>
+			«ENDIF»
+		«ENDFOR»
 	'''	
 
 	def private writeParameterAssignment(Statement s, MclObject pObj){
