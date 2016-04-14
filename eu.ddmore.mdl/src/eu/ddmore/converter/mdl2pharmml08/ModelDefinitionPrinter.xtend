@@ -320,122 +320,122 @@ class ModelDefinitionPrinter {
 		</ParameterModel>
   	'''
 	
-	def writeGeneralIdv(EquationTypeDefinition it){
-		var funcExpr = expression as SymbolReference
-		var namedArgList = funcExpr.argList as NamedFuncArguments
-		val trans = switch(it){
-			TransformedDefinition:
-				getPharmMLTransFunc(transform.name)
-			default: null
-		} 
-		'''
-		<IndividualParameter symbId="«name»">
-			<StructuredModel>
-				«IF trans!= null»
-					<Transformation type="«trans»"/>
-				«ENDIF»
-				<GeneralCovariate>
-					«namedArgList.getArgumentExpression('grp').writeAssignment»
-				</GeneralCovariate>
-				«namedArgList.getArgumentExpression('ranEff').writeRandomEffects»
-			</StructuredModel>
-		</IndividualParameter>
-		''' 
-	}
+//	def writeGeneralIdv(EquationTypeDefinition it){
+//		var funcExpr = expression as SymbolReference
+//		var namedArgList = funcExpr.argList as NamedFuncArguments
+//		val trans = switch(it){
+//			TransformedDefinition:
+//				getPharmMLTransFunc(transform.name)
+//			default: null
+//		} 
+//		'''
+//		<IndividualParameter symbId="«name»">
+//			<StructuredModel>
+//				«IF trans!= null»
+//					<Transformation type="«trans»"/>
+//				«ENDIF»
+//				<GeneralCovariate>
+//					«namedArgList.getArgumentExpression('grp').writeAssignment»
+//				</GeneralCovariate>
+//				«namedArgList.getArgumentExpression('ranEff').writeRandomEffects»
+//			</StructuredModel>
+//		</IndividualParameter>
+//		''' 
+//	}
 	
-	def private writeFixedEffects(Expression expr){
-		val it = expr as VectorLiteral
-		'''
-		«FOR el : expressions»
-			<Covariate>
-				«((el as VectorElement).element as SubListExpression).writeFixedEffectCovariate»
-				<FixedEffect>
-					«((el as VectorElement).element as SubListExpression).writeFixedEffectCoefficient»
-				</FixedEffect>
-			</Covariate>
-		«ENDFOR»
-		'''
-	}
+//	def private writeFixedEffects(Expression expr){
+//		val it = expr as VectorLiteral
+//		'''
+//		«FOR el : expressions»
+//			<Covariate>
+//				«((el as VectorElement).element as SubListExpression).writeFixedEffectCovariate»
+//				<FixedEffect>
+//					«((el as VectorElement).element as SubListExpression).writeFixedEffectCoefficient»
+//				</FixedEffect>
+//			</Covariate>
+//		«ENDFOR»
+//		'''
+//	}
 	
-	def private writeFixedEffectCovariate(SubListExpression it){
-		val cov = getAttributeExpression('cov')
-		if(cov != null){
-			'''
-			«cov.pharmMLExpr»
-			'''
-		}
-		else{
-			val catCov = getAttributeExpression('catCov')
-			'''
-			«catCov.getEnumType.symbolReference»
-			'''
-		}
-	}
+//	def private writeFixedEffectCovariate(SubListExpression it){
+//		val cov = getAttributeExpression('cov')
+//		if(cov != null){
+//			'''
+//			«cov.pharmMLExpr»
+//			'''
+//		}
+//		else{
+//			val catCov = getAttributeExpression('catCov')
+//			'''
+//			«catCov.getEnumType.symbolReference»
+//			'''
+//		}
+//	}
+//	
+//	def private writeFixedEffectCoefficient(SubListExpression it){
+//		val catCov = getAttributeExpression('catCov')
+//		'''
+//		«getAttributeExpression('coeff')?.pharmMLExpr»
+//		«IF catCov != null»
+//			<Category catId="«catCov.getEnumValue.name»"/>
+//		«ENDIF»
+//		'''
+//	}
 	
-	def private writeFixedEffectCoefficient(SubListExpression it){
-		val catCov = getAttributeExpression('catCov')
-		'''
-		«getAttributeExpression('coeff')?.pharmMLExpr»
-		«IF catCov != null»
-			<Category catId="«catCov.getEnumValue.name»"/>
-		«ENDIF»
-		'''
-	}
+//	def private getEnumType(Expression expr){
+//		switch(expr){
+//			CategoryValueReference:{
+//				EcoreUtil2.getContainerOfType(expr.ref, SymbolDefinition)
+//			}
+//			default: null
+//		}
+//	}
 	
-	def private getEnumType(Expression expr){
-		switch(expr){
-			CategoryValueReference:{
-				EcoreUtil2.getContainerOfType(expr.ref, SymbolDefinition)
-			}
-			default: null
-		}
-	}
-	
-	def private getEnumValue(Expression expr){
-		switch(expr){
-			CategoryValueReference:	expr.ref
-			default: null
-		}
-	}
+//	def private getEnumValue(Expression expr){
+//		switch(expr){
+//			CategoryValueReference:	expr.ref
+//			default: null
+//		}
+//	}
 	
 	
-	def private writeRandomEffects(Expression expr)'''
-		«IF expr instanceof VectorLiteral»
-			«FOR e : (expr as VectorLiteral).expressions»
-				<RandomEffects>
-					«IF (e as VectorElement).element instanceof SymbolReference»
-						«(e as VectorElement).element.pharmMLExpr»
-					«ELSE»
-						<ERROR!>
-					«ENDIF»
-				</RandomEffects>
-			«ENDFOR»
-		«ENDIF»
-		'''
+//	def private writeRandomEffects(Expression expr)'''
+//		«IF expr instanceof VectorLiteral»
+//			«FOR e : (expr as VectorLiteral).expressions»
+//				<RandomEffects>
+//					«IF (e as VectorElement).element instanceof SymbolReference»
+//						«(e as VectorElement).element.pharmMLExpr»
+//					«ELSE»
+//						<ERROR!>
+//					«ENDIF»
+//				</RandomEffects>
+//			«ENDFOR»
+//		«ENDIF»
+//		'''
 	
-	def writeLinearIdv(EquationTypeDefinition it){
-		var funcExpr = expression as SymbolReference
-		var namedArgList = funcExpr.argList as NamedFuncArguments 
-		val fixEff = namedArgList.getArgumentExpression('fixEff') as VectorLiteral
-		'''
-		<IndividualParameter symbId="«name»">
-			<StructuredModel>
-				«IF namedArgList.getArgumentExpression('trans') != null»
-					<Transformation type="«namedArgList.getArgumentExpression('trans').convertToString.getPharmMLTransFunc»" />
-				«ENDIF»
-				<LinearCovariate>
-					<PopulationValue>
-						«namedArgList.getArgumentExpression('pop').writeAssignment»
-					</PopulationValue>
-					«IF fixEff != null && !fixEff.expressions.isEmpty »
-						«namedArgList.getArgumentExpression('fixEff').writeFixedEffects»
-					«ENDIF»
-				</LinearCovariate>
-				«namedArgList.getArgumentExpression('ranEff').writeRandomEffects»
-			</StructuredModel>
-		</IndividualParameter>
-		''' 
-	}
+//	def writeLinearIdv(EquationTypeDefinition it){
+//		var funcExpr = expression as SymbolReference
+//		var namedArgList = funcExpr.argList as NamedFuncArguments 
+//		val fixEff = namedArgList.getArgumentExpression('fixEff') as VectorLiteral
+//		'''
+//		<IndividualParameter symbId="«name»">
+//			<StructuredModel>
+//				«IF namedArgList.getArgumentExpression('trans') != null»
+//					<Transformation type="«namedArgList.getArgumentExpression('trans').convertToString.getPharmMLTransFunc»" />
+//				«ENDIF»
+//				<LinearCovariate>
+//					<PopulationValue>
+//						«namedArgList.getArgumentExpression('pop').writeAssignment»
+//					</PopulationValue>
+//					«IF fixEff != null && !fixEff.expressions.isEmpty »
+//						«namedArgList.getArgumentExpression('fixEff').writeFixedEffects»
+//					«ENDIF»
+//				</LinearCovariate>
+//				«namedArgList.getArgumentExpression('ranEff').writeRandomEffects»
+//			</StructuredModel>
+//		</IndividualParameter>
+//		''' 
+//	}
 	
 	def writeVariableDefinition(EquationDefinition stmt)'''
 		<ct:Variable symbId="«stmt.name»" symbolType="«IF stmt.typeFor.isVector»ERROR!«ELSE»real«ENDIF»">
