@@ -507,11 +507,11 @@ class PKMacrosPrinter{
 	'''
 
 
-	def writeAdm(Expression adm)'''
-		<Value argument="adm"> 
-			«adm.pharmMLExpr»
-		</Value>
-	'''
+//	def writeAdm(Expression adm)'''
+//		<Value argument="adm"> 
+//			«adm.pharmMLExpr»
+//		</Value>
+//	'''
 
 //	/*If data object variable with use=cmt exists and
 //	  1) it has define attribute, assign adm=define[1] from the use=cmt definition

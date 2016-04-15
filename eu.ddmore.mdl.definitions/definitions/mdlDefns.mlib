@@ -35,7 +35,7 @@ _type cmtType _enum (depot, compartment, elimination, transfer, distribution, di
 _type varType _enum (cov, corr, sd, var);
 _type obstype _enum (combinedError1, combinedError2, additive, proportional, categorical, count, discrete, tte, continuous);
 _type sampletype _enum (simple, combi);
-_type sampleelement _enum (amount, duration, sampleTime, numberTimes, covariate, /*catCov, */ numberArms, armSize, parameter, doseTime);
+_type sampleelement _enum (bolusAmt, infAmt, duration, sampleTime, numberTimes, covariate, /*catCov, */ numberArms, armSize, parameter, doseTime);
 _type objType _enum (mdlObj, dataObj, parObj, taskObj, designObj, priorObj);
 
 // Data input variables
@@ -179,15 +179,22 @@ _list StructuralEstimate _alt Real _atts value::Real, lo::Real, hi::Real, fix::B
 //MOG Objects
 _list MdlObjInMog _atts type::objType _sig(type);
 
-_type AdminTypeType _enum (simple, combi, resetAll, reset);
+_type AdminTypeType _enum (bolus, infusion, combi, resetAll, reset);
 
 // Design Objects
 _list AdminSuperList _super;
-_list AdminSimpleList _extends AdminSuperList _atts type::AdminTypeType, input::Reference[::Real], amount::Real,
+_list AdminBolusList _extends AdminSuperList _atts type::AdminTypeType, input::Reference[::DosingTarget], amount::Real,
+						steadyState::Boolean, p::Real, doseTime::Vector, ssInterval::Real, ssEndTime::Real
+						_sig (type, input, amount, p?, doseTime),
+							(type, input, amount, p?, steadyState, ssInterval?, ssEndTime) ;
+
+_list AdminInfusionList _extends AdminSuperList _atts type::AdminTypeType, input::Reference[::DosingTarget], amount::Real,
 						rate::Vector, steadyState::Boolean, p::Real, doseTime::Vector, duration::Vector,
-						dosingInterval::Real, nDoses::Int, start::Real, end::Real
-						_sig (type, input, amount, p?, doseTime?, duration?, start?, end?, rate?, dosingInterval?, nDoses?),
-							(type, input, amount, steadyState, dosingInterval?, nDoses?) ;
+						ssInterval::Real, ssEnd::Real
+						_sig (type, input, amount, p?, doseTime, rate),
+							(type, input, amount, p?, doseTime, duration),
+							(type, input, amount, p?, rate, steadyState, ssInterval?, ssEnd),
+							(type, input, amount, p?, duration, steadyState, ssInterval?, ssEnd) ;
 						
 _list AdminComplexList _extends AdminSuperList _atts type::AdminTypeType, combination::Vector[::AdminSuperList], start::Vector, end::Vector
 						_sig (type, combination, start?, end?) ;
@@ -213,13 +220,16 @@ _list StudyDesign _atts armSize::Int, sameTimes::Boolean,
 _list DesignSpaceCov _atts objRef::Reference[::Real], element::sampleelement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceAmt _atts objRef::Vector[::Reference[::AdminSimpleList]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceBolusAmt _atts objRef::Vector[::Reference[::AdminBolusList]], element::sampleelement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceDoseTime _atts objRef::Vector[::Reference[::AdminSimpleList]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceInfAmt _atts objRef::Vector[::Reference[::AdminInfusionList]], element::sampleelement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceDuration _atts objRef::Vector[::Reference[::AdminSimpleList]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceDoseTime _atts objRef::Vector[::Reference[::AdminBolusList]], element::sampleelement, discrete::Vector, range::Vector
+						_sig (objRef, element, discrete),
+							(objRef, element, range);
+_list DesignSpaceDuration _atts objRef::Vector[::Reference[::AdminInfusionList]], element::sampleelement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
 _list DesignSpaceNumTimes _atts objRef::Vector[::Reference[::SamplingSuper]], element::sampleelement, discrete::Vector, range::Vector
@@ -364,13 +374,11 @@ _block COMPARTMENT (,) _statements (,) _listDefn, _anonList
 				
 _block FUNCTIONS (,) _statements (,) _eqnDefn;
 
-_block ADMINISTRATION (1, ) _statements (,) _listDefn
-	_list _key=type AdminTypeType.simple->AdminSimpleList, AdminTypeType.combi->AdminComplexList, AdminTypeType.resetAll->AdminResetAllList,
-						AdminTypeType.reset->AdminResetList;
+_block INTERVENTION (1, ) _statements (,) _listDefn
+	_list _key=type AdminTypeType.bolus->AdminBolusList, AdminTypeType.infusion -> AdminInfusionList, 
+						AdminTypeType.combi->AdminComplexList, AdminTypeType.resetAll->AdminResetAllList,
+						AdminTypeType.reset->AdminResetList, AdminTypeType.resetAll->AdminResetAllList, AdminTypeType.reset->AdminResetList;
 
-_block ACTION (, ) _statements (,) _listDefn
-	_list _key=type AdminTypeType.resetAll->AdminResetAllList, AdminTypeType.reset->AdminResetList;
-	
 _block STUDY_DESIGN (,) _statements (,) _listDefn
 		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?
 		_list _key=interventionSequence StudyDesign;
@@ -380,7 +388,8 @@ _block SAMPLING (,) _statements (,) _listDefn
 
 _block DESIGN_SPACES (,) _statements (,) _listDefn
 		_list _key=element //sampleelement.catCov->DesignSpaceCatCov, 
-							sampleelement.covariate->DesignSpaceCov, sampleelement.amount->DesignSpaceAmt,
+							sampleelement.covariate->DesignSpaceCov, sampleelement.bolusAmt->DesignSpaceBolusAmt,
+								sampleelement.infAmt->DesignSpaceInfAmt,
 								sampleelement.doseTime -> DesignSpaceDoseTime, sampleelement.duration->DesignSpaceDuration,
 								sampleelement.numberTimes->DesignSpaceNumTimes, sampleelement.sampleTime->DesignSpaceSampleTimes,
 								sampleelement.numberArms->DesignSpaceNumArms, sampleelement.armSize->DesignSpaceArmSize,
@@ -401,7 +410,7 @@ _container dataObj _has DATA_INPUT_VARIABLES, DECLARED_VARIABLES, DATA_DERIVED_V
 _container parObj _has VARIABILITY, DECLARED_VARIABLES, STRUCTURAL;
 _container taskObj _has ESTIMATE, SIMULATE, OPTIMISE, EVALUATE;
 _container mogObj _has OBJECTS;
-_container designObj _has DECLARED_VARIABLES, ADMINISTRATION, ACTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, COVARIATES, DESIGN_PARAMETERS;
+_container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, COVARIATES, DESIGN_PARAMETERS;
 _container priorObj _has PRIOR_PARAMETERS, NON_CANONICAL_DISTRIBUTION, PRIOR_VARIABLE_DEFINITION;
 _container MODEL_PREDICTION _has DEQ, COMPARTMENT;
 _container NON_CANONICAL_DISTRIBUTION _has PRIOR_SOURCE, INPUT_PRIOR_DATA;
@@ -434,8 +443,11 @@ _func min (x::Real, y::Real) _returns ::Real;
 _func max (x::Real, y::Real) _returns ::Real;
 _func abs (x::Real) _returns ::Real;
 _func exp (x::Real) _returns ::Real;
-_func seq (x::Real, y::Real, z::Real) _returns ::Vector;
-_func dseq (x::Int, y::Int, z::Int) _returns ::Vector[::Int];
+_func seq "Create a sequence of real numbers." (from::Real, to::Real, interval::Real)
+	_returns ::Vector;
+_func dseq "Create a sequence of integers."
+	(from::Int, to::Int, interval::Int)
+	_returns ::Vector[::Int];
 _func sqrt (x::Real) _returns ::Real;
 _func sum (x::Vector) _returns ::Real;
 _func mean (x::Vector) _returns ::Real;
@@ -656,4 +668,7 @@ _func readMatrixFromTable _named
 			)
 			_sig(src, column)
 			_returns ::Matrix;
+			
+_func isArmActive(armDefn::StudyDesign)
+		_returns ::Boolean;
 			

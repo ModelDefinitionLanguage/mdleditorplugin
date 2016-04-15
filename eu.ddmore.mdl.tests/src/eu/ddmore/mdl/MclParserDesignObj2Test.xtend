@@ -24,10 +24,10 @@ d1g=designObj{
 	DECLARED_VARIABLES{
 		Conc
 		Effect
-		Cmt
+		Cmt::DosingTarget
 	}
-	ADMINISTRATION{
-		dose1 : {type is simple, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
+	INTERVENTION{
+		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
 	}
 	SAMPLING{
 	 	pkwin1 : { type is simple, outcome=Conc, sampleTime = [0.5,2] }
@@ -49,7 +49,7 @@ d1g=designObj{
 		sampPKPD : {type is combi, combination=[sampPK, sampPD], start=0  }
 	}
 	DESIGN_SPACES{
-		DS1 : { objRef=[dose1], element is amount, discrete=[10,100,200] }
+		DS1 : { objRef=[dose1], element is infAmt, discrete=[10,100,200] }
 		DS2 : { objRef=[dose1], element is duration, range=[0.5, 2] }
 		DS3 : { objRef=[pkwin1,pdwin1], element is numberTimes, discrete=[1,2] }
 		DS4 : { objRef=[pkwin1,pdwin1], element is sampleTime, range=[0.25,2] }
@@ -93,7 +93,7 @@ d1g=designObj{
 	@Test
 	def void testBlocks(){
 		val mcl = CODE_SNIPPET.parse
-		val Deque<String> expectedBlks = newLinkedList("DECLARED_VARIABLES", "ADMINISTRATION", "SAMPLING", "DESIGN_SPACES", "STUDY_DESIGN");
+		val Deque<String> expectedBlks = newLinkedList("DECLARED_VARIABLES", "INTERVENTION", "SAMPLING", "DESIGN_SPACES", "STUDY_DESIGN");
 		for(blk : mcl.objects.last.blocks){
 			Assert::assertEquals(expectedBlks.pop, blk.identifier)
 		}

@@ -46,6 +46,10 @@ class MdlUtils {
 		obj.isMclObjectOfType(MdlValidator::DATAOBJ)	
 	}
 
+	def isDesignObject(MclObject obj){
+		obj.isMclObjectOfType(MdlValidator::DESIGNOBJ)	
+	}
+
 	def isParamObject(MclObject obj){
 		obj.isMclObjectOfType(MdlValidator::PARAMOBJ)	
 	}
@@ -66,6 +70,10 @@ class MdlUtils {
 
 	def getDataObject(Mcl mcl){
 		mcl.objects.findFirst[isDataObject]
+	}
+
+	def getDesignObject(Mcl mcl){
+		mcl.objects.findFirst[isDesignObject]
 	}
 
 	def getParamObject(Mcl mcl){

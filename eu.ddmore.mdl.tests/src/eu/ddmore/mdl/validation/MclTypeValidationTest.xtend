@@ -1488,7 +1488,7 @@ class MclTypeValidationTest {
 			STUDY_DESIGN{}
 			
 			
-			ADMINISTRATION{
+			INTERVENTION{
 				Conc
 			}
 			SAMPLING{
@@ -1515,7 +1515,7 @@ class MclTypeValidationTest {
 				Conc
 			}
 			
-			ADMINISTRATION{
+			INTERVENTION{
 			}
 			
 			DESIGN_PARAMETERS{
@@ -1746,15 +1746,15 @@ d1g=designObj{
 	DECLARED_VARIABLES{
 		Conc
 		Effect
-		Cmt
+		Cmt::DosingTarget
 	}
-	ADMINISTRATION{
-		dose1 : {type is simple, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
+	INTERVENTION{
+		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
 	}
 	SAMPLING{
 	}
 	DESIGN_SPACES{
-		DS1 : { objRef=[dose1], element is amount, discrete=[10,100,200] }
+		DS1 : { objRef=[dose1], element is infAmt, discrete=[10,100,200] }
 	}
 	STUDY_DESIGN{
 	}
@@ -1771,7 +1771,7 @@ d1g=designObj{
 	DECLARED_VARIABLES{
 		Conc; Cmt
 	}
-	ADMINISTRATION{
+	INTERVENTION{
 		dose1 : {type is simple, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
 	}
 	SAMPLING{
@@ -2100,13 +2100,13 @@ warfarin_PK_v2_dat = dataObj{
 			DECLARED_VARIABLES{
 				Conc
 				Effect
-				Cmt
+				Cmt::DosingTarget
 			}
 			
 			STUDY_DESIGN{}
 			
-			ADMINISTRATION{
-				dose1 : {type is simple, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
+			INTERVENTION{
+				dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
 			}
 		}
 		'''.parse
@@ -2124,15 +2124,15 @@ warfarin_PK_v2_dat = dataObj{
 
 			STUDY_DESIGN{}
 			
-			ADMINISTRATION{
-				dose1 : {type is simple, input=0.0, amount=100, doseTime=[0], duration=[1]} 
+			INTERVENTION{
+				dose1 : {type is infusion, input=0.0, amount=100, doseTime=[0], duration=[1]} 
 			}
 		}
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.assignPair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"attribute 'input' expected value of type 'ref:Real' but was 'Real'.")
+			"attribute 'input' expected value of type 'ref:ListSubtype:DosingTarget' but was 'Real'.")
 	}
 	
 
@@ -2294,10 +2294,10 @@ d1g=designObj{
 	DECLARED_VARIABLES{
 		Conc
 		Effect
-		Cmt
+		Cmt::DosingTarget
 	}
-	ADMINISTRATION{
-		dose1 : {type is simple, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
+	INTERVENTION{
+		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
 	}
 	SAMPLING{
 	 	pkwin1 : { type is simple, outcome=Conc, sampleTime = [0.5,2] }
@@ -2321,10 +2321,10 @@ d1g=designObj{
 	DECLARED_VARIABLES{
 		Conc
 		Effect
-		Cmt
+		Cmt::DosingTarget
 	}
-	ADMINISTRATION{
-		dose1 : {type is simple, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
+	INTERVENTION{
+		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
 	}
 	SAMPLING{
 	 	pkwin1 : { type is simple, outcome=Conc, sampleTime = [0.5,2] }
@@ -2366,10 +2366,10 @@ d1g=designObj{
 	DECLARED_VARIABLES{
 		Conc
 		Effect
-		Cmt
+		Cmt::DosingTarget
 	}
-	ADMINISTRATION{
-		dose1 : { type is simple, input=Cmt, amount=100, doseTime=0, duration=1} 
+	INTERVENTION{
+		dose1 : { type is infusion, input=Cmt, amount=100, doseTime=0, duration=1} 
 	}
 	SAMPLING{
 		pkwin2 : { type is simple, outcome=Conc, numberSamples=0, sampleTime=30 }
@@ -2388,8 +2388,8 @@ d1g=designObj{
 		Effect
 		Cmt
 	}
-	ADMINISTRATION{
-		dose1 : {type is simple, input=Cmt, amount=100, doseTime=0, duration=1} 
+	INTERVENTION{
+		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=0, duration=1} 
 	}
 	
 	COVARIATES{

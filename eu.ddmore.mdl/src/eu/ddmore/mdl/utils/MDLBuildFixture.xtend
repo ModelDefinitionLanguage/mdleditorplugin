@@ -17,18 +17,55 @@ import java.util.Map
 import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdllib.mdllib.TypeDefinition
 import java.util.ArrayList
+import eu.ddmore.mdl.mdl.MclObject
+import eu.ddmore.mdllib.mdllib.ObjectDefinition
+import com.google.common.base.Preconditions
+import eu.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdllib.mdllib.BlockDefinition
+import eu.ddmore.mdllib.mdllib.FunctionDefnBody
 
 class MDLBuildFixture {
-	val public static String REAL_TYPE_NAME = "Real"
-	val TypeDefinition realType
+//	val public static String REAL_TYPE_NAME = "Real"
+//	val TypeDefinition realType
 
-	new(){
-		realType = MdlLibFactory.eINSTANCE.createTypeDefinition
-		realType.name = REAL_TYPE_NAME
+//	new(){
+//		realType = MdlLibFactory.eINSTANCE.createTypeDefinition
+//		realType.name = REAL_TYPE_NAME
+//	}
+
+//	def ObjectDefinition createObjectDefinition(String name){
+//		val retVal = MdlLibFactory.eINSTANCE.createObjectDefinition
+//		retVal.name = name
+//		
+//		retVal
+//	}
+	
+	def Mcl createRoot(){
+		MdlFactory.eINSTANCE.createMcl
 	}
 
+	def MclObject createObject(Mcl mdl, String name, ObjectDefinition oType){
+		val retVal = createObject(name, oType)
+		mdl.objects.add(retVal)
+		
+		retVal
+	}
 
-	def BlockStatement createBlock(BlockStatement parent, String blkName, ValuePair ... args){
+	def MclObject createObject(String name, ObjectDefinition oType){
+		val retVal = MdlFactory.eINSTANCE.createMclObject
+		retVal.name = name
+		retVal.objId = oType
+		
+		retVal
+	}
+
+	def BlockStatement createBlock(MclObject parent, BlockDefinition blkName, ValuePair ... args){
+		val blk = createBlock(blkName, args)
+		parent.blocks.add(blk)
+		blk
+	}
+	
+	def BlockStatement createBlock(BlockStatement parent, BlockDefinition blkName, ValuePair ... args){
 		val bd = parent.body
 		if(bd instanceof BlockStatementBody){
 			val blk = createBlock(blkName, args)
@@ -38,10 +75,8 @@ class MDLBuildFixture {
 		else null
 	}
 	
-	def BlockStatement createBlock(String blkName, ValuePair ... args){
+	def BlockStatement createBlock(BlockDefinition blkDefn, ValuePair ... args){
 		val retVal = MdlFactory.eINSTANCE.createBlockStatement
-		val blkDefn = MdlLibFactory.eINSTANCE.createBlockDefinition
-		blkDefn.name = blkName
 		retVal.blkId = blkDefn
 		retVal.body = MdlFactory.eINSTANCE.createBlockStatementBody
 		if(args.size > 0){
@@ -87,7 +122,7 @@ class MDLBuildFixture {
 		sd
 	}
 	
-	def createCategoricalDefinition(BlockStatement it, String varName, List<String> categories, SymbolReference distn){
+	def createCategoricalDefinition(BlockStatement it, String varName, SymbolReference distn, String ... categories){
 		val bdy = body as BlockStatementBody
 		val retVal = MdlFactory.eINSTANCE.createEnumerationDefinition
 		retVal.name = varName
@@ -113,7 +148,7 @@ class MDLBuildFixture {
 		sd
 	}
 
-	def VectorLiteral createVectorLiteral(List<Expression> elements){
+	def VectorLiteral createVectorLiteral(Expression ... elements){
 		val retVal = MdlFactory.eINSTANCE.createVectorLiteral
 		for(el : elements){
 			val vEl = MdlFactory.eINSTANCE.createVectorElement
@@ -137,6 +172,8 @@ class MDLBuildFixture {
 					retVal.add(createRealLiteral(el))
 				Boolean:
 					retVal.add(createBooleanLiteral(el))
+				default:
+					Preconditions.checkArgument(!(el instanceof List<?>))
 			}
 		}
 		retVal
@@ -155,7 +192,7 @@ class MDLBuildFixture {
 	}
 	
 	
-	def createAnonList(BlockStatement it, List<ValuePair> vps){
+	def createAnonList(BlockStatement it, ValuePair ... vps){
 		val bdy = body as BlockStatementBody
 		val retVal = MdlFactory.eINSTANCE.createAnonymousListStatement
 		retVal.list = createAttributeList(vps)
@@ -163,13 +200,13 @@ class MDLBuildFixture {
 		retVal
 	}
 
-	def createAttributeList(BlockStatement it, List<ValuePair> vps){
+	def createAttributeList(ValuePair ... vps){
 		val retVal = MdlFactory.eINSTANCE.createAttributeList
-		retVal.attributes.addAll(vps)
+		retVal.attributes.addAll(new ArrayList(vps))
 		return retVal
 	}
 
-	def createListDefn(BlockStatement it, String listName, List<ValuePair> vps){
+	def createListDefn(BlockStatement it, String listName, ValuePair ... vps){
 		val bdy = body as BlockStatementBody
 		val retVal = MdlFactory.eINSTANCE.createListDefinition
 		retVal.name = listName
@@ -178,11 +215,11 @@ class MDLBuildFixture {
 		retVal
 	}
 
-	def createPropertyStatement(BlockStatement it, List<ValuePair> vps){
+	def createPropertyStatement(BlockStatement it, ValuePair ... vps){
 		val bdy = body as BlockStatementBody
 		val retVal = MdlFactory.eINSTANCE.createPropertyStatement
 		bdy.statements.add(retVal)
-		retVal.properties.addAll(vps)
+		retVal.properties.addAll(new ArrayList(vps))
 		retVal
 	}
 
@@ -196,18 +233,18 @@ class MDLBuildFixture {
 		retVal
 	}
 
-	def createNamedFunction(String varName, List<ValuePair> argVals){
-		val funcDefn = MdlLibFactory.eINSTANCE.createFunctionDefnBody
-		funcDefn.name = varName
-		funcDefn.funcSpec = MdlLibFactory.eINSTANCE.createFunctionSpec
-		val argDefn = MdlLibFactory.eINSTANCE.createNamedFuncArgs
-		funcDefn.funcSpec.argument = argDefn
-		for(vp : argVals){
-			val arg = MdlLibFactory.eINSTANCE.createFuncArgumentDefinition
-			arg.name = vp.argumentName
-			arg.typeSpec = createSimpleTypeSpec(realType)
-			argDefn.arguments.add(arg)
-		}
+	def createNamedFunction(FunctionDefnBody funcDefn, List<ValuePair> argVals){
+//		val funcDefn = MdlLibFactory.eINSTANCE.createFunctionDefnBody
+//		funcDefn.name = varName
+//		funcDefn.funcSpec = MdlLibFactory.eINSTANCE.createFunctionSpec
+//		val argDefn = MdlLibFactory.eINSTANCE.createNamedFuncArgs
+//		funcDefn.funcSpec.argument = argDefn
+//		for(vp : argVals){
+//			val arg = MdlLibFactory.eINSTANCE.createFuncArgumentDefinition
+//			arg.name = vp.argumentName
+//			arg.typeSpec = createSimpleTypeSpec(realType)
+//			argDefn.arguments.add(arg)
+//		}
 		val retVal = MdlFactory.eINSTANCE.createSymbolReference
 		retVal.ref = funcDefn
 		val namedArgs = MdlFactory.eINSTANCE.createNamedFuncArguments

@@ -1,26 +1,21 @@
 package eu.ddmore.converter.mdl2pharmml08
 
+import eu.ddmore.mdl.mdl.AnonymousListStatement
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.BlockStatementBody
 import eu.ddmore.mdl.mdl.CategoricalDefinitionExpr
-import eu.ddmore.mdl.mdl.CategoryValueReference
 import eu.ddmore.mdl.mdl.EnumerationDefinition
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
-import eu.ddmore.mdl.mdl.NamedFuncArguments
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.Statement
-import eu.ddmore.mdl.mdl.SubListExpression
 import eu.ddmore.mdl.mdl.SymbolReference
-import eu.ddmore.mdl.mdl.TransformedDefinition
 import eu.ddmore.mdl.mdl.VectorElement
 import eu.ddmore.mdl.mdl.VectorLiteral
 import eu.ddmore.mdl.provider.BlockDefinitionTable
-import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
-import eu.ddmore.mdl.provider.SublistDefinitionProvider
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
@@ -33,23 +28,17 @@ import java.util.HashMap
 import java.util.List
 import java.util.Map
 import java.util.TreeMap
-import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToInteger
-import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
-import eu.ddmore.mdl.mdl.AnonymousListStatement
 
 class ModelDefinitionPrinter {
 	extension MdlUtils mu = new MdlUtils
 	extension TypeSystemProvider tsp = new TypeSystemProvider
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
-	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension DistributionPrinter dp = new DistributionPrinter 
-	extension PharmMLConverterUtils pcu = new PharmMLConverterUtils
-	extension SublistDefinitionProvider sdp = new SublistDefinitionProvider
 	extension PKMacrosPrinter pkp = PKMacrosPrinter::INSTANCE
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension BlockUtils bu = new BlockUtils

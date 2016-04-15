@@ -17,7 +17,7 @@ class MclParserDesignObj1Test {
 	val static CODE_SNIPPET = '''
 warfarin_design = designObj {
 	DECLARED_VARIABLES{
-		bsv_lvl; GUT; oral1
+		bsv_lvl; GUT::DosingTarget; oral1
 	}
 	
 	# trial design
@@ -46,13 +46,13 @@ warfarin_design = designObj {
 	}
 
 
-	ADMINISTRATION{
+	INTERVENTION{
 
 		# could use an adm type instead so do
-		dreg1 : { type is simple, input=GUT, doseTime=seq(doseStart, doseEnd, doseGap), amount=baseAmt*0, start=doseStart, end=doseEnd}
-		dreg2 : { type is simple, input=GUT, doseTime=seq(doseStart, doseEnd, doseGap), amount=baseAmt*0, start=doseStart, end=doseEnd}
-		dreg3 : { type is simple, input=GUT, doseTime=seq(doseStart, doseEnd, doseGap), amount=baseAmt*0, start=doseStart, end=doseEnd}
-		dreg4 : { type is simple, input=GUT, doseTime=seq(doseStart, doseEnd, doseGap), amount=baseAmt*0, start=doseStart, end=doseEnd}
+		dreg1 : { type is bolus, input=GUT, doseTime=seq(doseStart, doseEnd, doseGap), amount=baseAmt*0}
+		dreg2 : { type is bolus, input=GUT, doseTime=seq(doseStart, doseEnd, doseGap), amount=baseAmt*0}
+		dreg3 : { type is bolus, input=GUT, doseTime=seq(doseStart, doseEnd, doseGap), amount=baseAmt*0}
+		dreg4 : { type is bolus, input=GUT, doseTime=seq(doseStart, doseEnd, doseGap), amount=baseAmt*0}
 	}
 
 	STUDY_DESIGN{

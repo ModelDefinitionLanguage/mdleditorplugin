@@ -59,14 +59,15 @@ class PharmMLExpressionBuilder {
 		BlockDefinitionTable::IDV_BLK_NAME -> GLOBAL_VAR,
 		BlockDefinitionTable::PARAM_STRUCT_BLK -> 'pm',
 		BlockDefinitionTable::PARAM_VARIABILITY_BLK -> 'pm',
-		BlockDefinitionTable::OBS_BLK_NAME-> 'om'
+		BlockDefinitionTable::OBS_BLK_NAME-> 'om',
+		BlockDefinitionTable::DES_DESIGN_PARAMS-> GLOBAL_VAR
 	}
 	
 	
 	def getSymbolReference(SymbolDefinition it){
 		val blkId = blockId
 		'''
-			<ct:SymbRef «IF blkId != GLOBAL_VAR»blkIdRef="«blkId ?: 'ERROR!'»"«ENDIF» symbIdRef="«name»"/>
+			<ct:SymbRef «IF blkId != GLOBAL_VAR»blkIdRef="«blkId ?: 'ERROR!'»" «ENDIF»symbIdRef="«name»"/>
 		'''
 	}
 	

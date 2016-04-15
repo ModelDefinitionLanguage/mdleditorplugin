@@ -15,7 +15,6 @@ class Mdl2Pharmml {
 	
 	extension MdlUtils mu = new MdlUtils
 	extension MdlRootProvider mrp = new MdlRootProvider
-	extension TrialDesignPrinter tdw = new TrialDesignPrinter
 	extension ModelDefinitionPrinter mdp = new ModelDefinitionPrinter
 	extension ModellingStepsPrinter msp = new ModellingStepsPrinter
 	extension FunctionDefinitionPrinter fdp = new FunctionDefinitionPrinter
@@ -42,7 +41,10 @@ class Mdl2Pharmml {
   	def convertToPharmML(MclObject mog) {
   		copyMdl(EcoreUtil2.getContainerOfType(mog.eContainer, Mcl))
   		rewriteTree()
-		
+		val TrialDesignObjectPrinter trialDesignWriter = if(mdlRoot.designObj != null)
+									new TrialDesignDesignObjectPrinter(mdlRoot)
+								else
+									new TrialDesignDataObjectPrinter(mdlRoot)
 		'''
 		<?xml version="1.0" encoding="UTF-8"?>
 		<PharmML 
@@ -52,7 +54,7 @@ class Mdl2Pharmml {
 			<IndependentVariable symbId="«mdlRoot.mdlObj.mdlIdv?.name ?: "T"»"/>
 			«mdlRoot.mdlObj.writeFunctionDefinitions»	
 			«mdlRoot.mdlObj.writeModelDefinition(mdlRoot.paramObj)»
-			«writeTrialDesign(mdlRoot.mdlObj, mdlRoot.dataObj)»
+			«trialDesignWriter.writeTrialDesign»
 			«writeModellingSteps(mdlRoot)»
 		</PharmML>
 		'''			

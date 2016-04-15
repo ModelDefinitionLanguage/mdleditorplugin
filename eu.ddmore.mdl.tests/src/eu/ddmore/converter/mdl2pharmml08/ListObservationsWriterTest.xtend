@@ -12,19 +12,48 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
+import eu.ddmore.mdl.MdlTestHelper
+import eu.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdl.utils.MdlLibUtils
+import eu.ddmore.mdl.utils.LibraryUtils
+import eu.ddmore.mdllib.mdllib.Library
+import org.junit.Before
+import org.junit.After
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
 class ListObservationsWriterTest {
 	@Inject extension ListObservationsWriter
 	@Inject extension MDLBuildFixture
+	@Inject extension MdlTestHelper<Mcl>
+	@Inject extension MdlLibUtils
+	@Inject extension LibraryUtils
+	
+	var Library libDefns
+	
+	@Before
+	def void setUp(){
+				val dummyMdl = '''
+			foo = mdlObj {
+				
+			}
+		'''.parse
+		
+		libDefns = dummyMdl.objects.head.libraryForObject
+	}
+	
+	@After
+	def void tearDown(){
+		libDefns = null
+	}
+
 	
 	@Test
 	def void testWriteCombinedError2NoTrans(){
-		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
-		val mPredBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
-		val mParamsBlk = createBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::OBS_BLK_NAME))
+		val mPredBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		val mParamsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS))
 		val ld = MdlFactory.eINSTANCE.createListDefinition
 		val bdy = (obsBlk.body as BlockStatementBody)
 		bdy.statements.add(ld)
@@ -73,10 +102,10 @@ class ListObservationsWriterTest {
 
 	@Test
 	def void testWriteCombinedError2LogRhsTrans(){
-		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
-		val mPredBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
-		val mParamsBlk = createBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::OBS_BLK_NAME))
+		val mPredBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		val mParamsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS))
 		val ld = MdlFactory.eINSTANCE.createListDefinition
 		val bdy = (obsBlk.body as BlockStatementBody)
 		bdy.statements.add(ld)
@@ -134,10 +163,10 @@ class ListObservationsWriterTest {
 
 	@Test
 	def void testWriteCombinedError2LogBothTrans(){
-		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
-		val mPredBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
-		val mParamsBlk = createBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::OBS_BLK_NAME))
+		val mPredBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		val mParamsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS))
 		val ld = MdlFactory.eINSTANCE.createListDefinition
 		val bdy = (obsBlk.body as BlockStatementBody)
 		bdy.statements.add(ld)
@@ -189,17 +218,17 @@ class ListObservationsWriterTest {
 
 	@Test
 	def void testWriteContinuousObs(){
-		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
-		val mParamsBlk = createBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
-		val varLvlBlock = createBlock(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::OBS_BLK_NAME))
+		val mParamsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val varLvlBlock = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::VAR_LVL_BLK_NAME))
 		val lvlListDefn = varLvlBlock.createListDefn("DV", #[
 											createEnumPair("type", "observation"),
 											createAssignPair("level", createIntLiteral(1))
 										])
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS, #[
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS), #[
 																	createAssignPair("level", createSymbolRef(lvlListDefn))
 																	])
-		val randVar = rvBlk.createRandVar("Y", createNamedFunction("Normal", #[
+		val randVar = rvBlk.createRandVar("Y", createNamedFunction(libDefns.getFunctionDefinition("Normal"), #[
 																createAssignPair("mean", createRealLiteral(0)),
 																createAssignPair("sd", mParamsBlk.createSymbolRef('B'))
 															])) 
@@ -237,18 +266,18 @@ class ListObservationsWriterTest {
 
 	@Test
 	def void testWriteCountObs(){
-		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
-		val smBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
-		val varLvlBlock = createBlock(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::OBS_BLK_NAME))
+		val smBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		val varLvlBlock = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::VAR_LVL_BLK_NAME))
 		val lvlListDefn = varLvlBlock.createListDefn("DV", #[
 											createEnumPair("type", "observation"),
 											createAssignPair("level", createIntLiteral(1))
 										])
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS, #[
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS), #[
 																	createAssignPair("level", createSymbolRef(lvlListDefn))
 																	])
 		val lambda = smBlk.createEqnDefn("LAMBDA", createRealLiteral(22.2))
-		val randVar = rvBlk.createRandVar("Y", createNamedFunction("Poisson", #[
+		val randVar = rvBlk.createRandVar("Y", createNamedFunction(libDefns.getFunctionDefinition("Poisson"), #[
 																createAssignPair("lambda", createSymbolRef(lambda))
 															])) 
 		val anonList = obsBlk.createAnonList(#[
@@ -282,20 +311,20 @@ class ListObservationsWriterTest {
 
 	@Test
 	def void testWriteDiscreteBernoulliObs(){
-		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
-		val smBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
-		val varLvlBlock = createBlock(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::OBS_BLK_NAME))
+		val smBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		val varLvlBlock = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::VAR_LVL_BLK_NAME))
 		val lvlListDefn = varLvlBlock.createListDefn("DV", #[
 											createEnumPair("type", "observation"),
 											createAssignPair("level", createIntLiteral(1))
 										])
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS, #[
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS), #[
 																	createAssignPair("level", createSymbolRef(lvlListDefn))
 																	])
 		val lambda = smBlk.createEqnDefn("P1", createRealLiteral(22.2))
-		val randVar = rvBlk.createCategoricalDefinition("Y", #["a", "b"], createNamedFunction("Bernoulli", #[
+		val randVar = rvBlk.createCategoricalDefinition("Y", createNamedFunction(libDefns.getFunctionDefinition("Bernoulli"), #[
 																createAssignPair("probability", createSymbolRef(lambda))
-															])) 
+															]), "a", "b") 
 		val anonList = obsBlk.createAnonList(#[
 			createEnumPair('type', 'discrete'),
 			createAssignPair('variable', createSymbolRef(randVar))
@@ -331,21 +360,21 @@ class ListObservationsWriterTest {
 
 	@Test
 	def void testWriteDiscreteBinomialObs(){
-		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
-		val smBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
-		val varLvlBlock = createBlock(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::OBS_BLK_NAME))
+		val smBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		val varLvlBlock = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::VAR_LVL_BLK_NAME))
 		val lvlListDefn = varLvlBlock.createListDefn("DV", #[
 											createEnumPair("type", "observation"),
 											createAssignPair("level", createIntLiteral(1))
 										])
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS, #[
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS), #[
 																	createAssignPair("level", createSymbolRef(lvlListDefn))
 																	])
 		val p1 = smBlk.createEqnDefn("P1", createRealLiteral(22.2))
-		val randVar = rvBlk.createCategoricalDefinition("Y", #["a", "b"], createNamedFunction("Binomial", #[
+		val randVar = rvBlk.createCategoricalDefinition("Y", createNamedFunction(libDefns.getFunctionDefinition("Binomial"), #[
 																createAssignPair("probabilityOfSuccess", createSymbolRef(p1)),
 																createAssignPair("numberOfTrials", createIntLiteral(1))
-															])) 
+															]), "a", "b") 
 		val anonList = obsBlk.createAnonList(#[
 			createEnumPair('type', 'discrete'),
 			createAssignPair('variable', createSymbolRef(randVar))
@@ -384,28 +413,28 @@ class ListObservationsWriterTest {
 
 	@Test
 	def void testWriteCategopricalNonOrderedObs(){
-		val obsBlk = createBlock(BlockDefinitionTable::OBS_BLK_NAME)
-		val smBlk = createBlock(BlockDefinitionTable::MDL_PRED_BLK_NAME)
-		val varLvlBlock = createBlock(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::OBS_BLK_NAME))
+		val smBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		val varLvlBlock = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::VAR_LVL_BLK_NAME))
 		val lvlListDefn = varLvlBlock.createListDefn("DV", #[
 											createEnumPair("type", "observation"),
 											createAssignPair("level", createIntLiteral(1))
 										])
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS, #[
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS), #[
 																	createAssignPair("level", createSymbolRef(lvlListDefn))
 																	])
 		val p1 = smBlk.createEqnDefn("P1", createRealLiteral(22.2))
 		val p2 = smBlk.createEqnDefn("P2", createRealLiteral(23.2))
 		val p3 = smBlk.createEqnDefn("P3", createRealLiteral(24.2))
 		val p4 = smBlk.createEqnDefn("P4", createRealLiteral(25.2))
-		val randVar = rvBlk.createCategoricalDefinition("Y", #["a", "b", "c", "d"], createNamedFunction("CategoricalNonordered1", #[
+		val randVar = rvBlk.createCategoricalDefinition("Y", createNamedFunction(libDefns.getFunctionDefinition("CategoricalNonordered1"), #[
 																createAssignPair("categoryProb", createVectorLiteral(#[
 																	createSymbolRef(p1),
 																	createSymbolRef(p2),
 																	createSymbolRef(p3),
 																	createSymbolRef(p4)
 																	]))
-															]))
+															]), "a", "b", "c", "d")
 		val anonList = obsBlk.createAnonList(#[
 			createEnumPair('type', 'categorical'),
 			createAssignPair('variable', createSymbolRef(randVar))

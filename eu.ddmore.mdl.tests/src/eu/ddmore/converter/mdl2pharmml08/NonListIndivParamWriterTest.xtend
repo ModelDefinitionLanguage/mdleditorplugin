@@ -11,17 +11,46 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
+import eu.ddmore.mdl.MdlTestHelper
+import eu.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdl.utils.MdlLibUtils
+import eu.ddmore.mdl.utils.LibraryUtils
+import eu.ddmore.mdllib.mdllib.Library
+import org.junit.Before
+import org.junit.After
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
 class NonListIndivParamWriterTest {
 	@Inject extension FunctionIndivParamWriter
 	@Inject extension MDLBuildFixture
+	@Inject extension MdlTestHelper<Mcl>
+	@Inject extension MdlLibUtils
+	@Inject extension LibraryUtils
 	
+	var Library libDefns
+	
+	@Before
+	def void setUp(){
+				val dummyMdl = '''
+			foo = mdlObj {
+				
+			}
+		'''.parse
+		
+		libDefns = dummyMdl.objects.head.libraryForObject
+		
+	}
+	
+	@After
+	def void tearDown(){
+		libDefns = null
+	}
+
 	@Test
 	def void testWriteIndivParamExplicit(){
-		val obsBlk = createBlock(BlockDefinitionTable::MDL_INDIV_PARAMS)
-		val mParamsBlk = createBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_INDIV_PARAMS))
+		val mParamsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
 		val bdy = (obsBlk.body as BlockStatementBody)
 		val eqnDefn = obsBlk.createEqnDefn("Z", mParamsBlk.createSymbolRef("POP"))
 		bdy.statements.add(eqnDefn)

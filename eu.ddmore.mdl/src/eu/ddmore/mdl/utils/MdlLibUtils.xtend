@@ -28,33 +28,9 @@ import java.util.HashSet
 import java.util.List
 import org.eclipse.xtext.EcoreUtil2
 import eu.ddmore.mdl.type.RandomVariableTypeInfo
+import eu.ddmore.mdl.mdl.BlockStatement
 
 class MdlLibUtils {
-
-//	val Map<String, ? extends TypeInfo> listDefns = #{
-//		ListDefinitionTable::PRIOR_SOURCE_TYPE.name -> ListDefinitionTable::PRIOR_SOURCE_TYPE
-//	}
-	
-//	def private getScalarType(TypeSpec it){
-//		val typeName = typeName.name
-//		switch(typeName){
-//			case 'Int':
-//				TypeSystemProvider::INT_TYPE
-//			case 'Real':
-//				TypeSystemProvider::REAL_TYPE
-//			case 'Boolean':
-//				TypeSystemProvider::BOOLEAN_TYPE
-//			case 'String':
-//				TypeSystemProvider::STRING_TYPE
-//			case 'Pdf':
-//				TypeSystemProvider::PDF_TYPE
-//			case 'Pmf':
-//				TypeSystemProvider::PMF_TYPE
-//			default:
-//				TypeSystemProvider::UNDEFINED_TYPE
-//		}
-//	}
-
 
 	def TypeInfo getTypeInfo(AbstractTypeDefinition it){
 		val typeClass = typeClass
@@ -135,18 +111,6 @@ class MdlLibUtils {
 	def TypeInfo getTypeInfo(TypeSpec it){
 		val typeClass = typeName.typeClass
 		switch(typeClass){
-//			case TypeClass.INT:
-//				TypeSystemProvider::INT_TYPE
-//			case TypeClass.REAL:
-//				TypeSystemProvider::REAL_TYPE
-//			case TypeClass.BOOLEAN:
-//				TypeSystemProvider::BOOLEAN_TYPE
-//			case TypeClass.STRING:
-//				TypeSystemProvider::STRING_TYPE
-//			case TypeClass.PDF:
-//				TypeSystemProvider::PDF_TYPE
-//			case TypeClass.PMF:
-//				TypeSystemProvider::PMF_TYPE
 			case TypeClass.VECTOR:
 				if(elementType != null && cellType == null && functionSpec == null){
 					// element type specified and well formed
@@ -203,14 +167,6 @@ class MdlLibUtils {
 					new RandomVariableTypeInfo(TypeSystemProvider::REAL_TYPE)
 				}
 				else TypeSystemProvider::UNDEFINED_TYPE
-//			case TypeClass.ENUM:
-//				createBuiltinEnum(typeName)
-//			case TypeClass.SUBLIST:
-//				SublistDefinitionTable::instance.getSublist(typeName.name) ?: TypeSystemProvider::UNDEFINED_TYPE
-//			case TypeClass.CATEGORY:
-//				TypeSystemProvider::GENERIC_ENUM_VALUE_TYPE 
-//			case TypeClass.LIST:
-//				listDefns.get(typeName.name) ?: TypeSystemProvider::UNDEFINED_TYPE
 			default:
 				typeName.typeInfo
 		} 
@@ -236,7 +192,11 @@ class MdlLibUtils {
 	}
 	
 	def Library getLibraryForObject(MclObject obj){
-		EcoreUtil2.getContainerOfType(obj.objId, Library)
+		EcoreUtil2.getContainerOfType(obj.objId.eContainer, Library)
+	}
+	
+	def Library getLibraryFromBlock(BlockStatement blk){
+		EcoreUtil2.getContainerOfType(blk.blkId.eContainer, Library)
 	}
 	
 	def List<String> getMandatoryBlockNamesForObject(Library it, ObjectDefinition objDefn){
@@ -252,7 +212,6 @@ class MdlLibUtils {
 		
 		retVal
 	}
-
 	
 	def List<String> getMandatoryArgumentNames(BlockDefinition it){
 		val retVal = new ArrayList<String>

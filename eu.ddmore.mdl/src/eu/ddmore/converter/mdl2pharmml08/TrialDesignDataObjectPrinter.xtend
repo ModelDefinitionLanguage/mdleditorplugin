@@ -27,8 +27,9 @@ import java.util.HashSet
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
+import eu.ddmore.mdl.mdl.Mcl
 
-class TrialDesignPrinter {
+class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
@@ -37,16 +38,23 @@ class TrialDesignPrinter {
 
 	private var mappedColumns = new HashSet<String>
 	
+	val MclObject mObj
+	val MclObject dObj
 	
-	def writeTrialDesign(MclObject mObj, MclObject dataObj)'''
+	new(Mcl mdl){
+		mObj = mdl.modelObject
+		dObj = mdl.dataObject
+	}
+	
+	override writeTrialDesign()'''
 		<TrialDesign xmlns="«xmlns_design»">
-			«IF mObj != null && dataObj != null»
-				«writeTargetDataSet(mObj, dataObj)»
+			«IF mObj != null && dObj != null»
+				«writeTargetDataSet»
 			«ENDIF»
 		</TrialDesign>
 	'''	
 
-	def private writeTargetDataSet(MclObject mObj, MclObject dObj) {
+	def private writeTargetDataSet() {
 
 		var res = "";
 		if (dObj != null || mObj != null) {
@@ -54,7 +62,7 @@ class TrialDesignPrinter {
 				// get first statement
 			if (s != null){
 				if(s.firstAttributeList.getAttributeEnumValue('inputFormat') == 'nonmemFormat') {
-					var content = print_ds_NONMEM_DataSet(mObj, dObj);
+					var content = print_ds_NONMEM_DataSet;
 					res = res + writeExternalDataSet(content, "NONMEM", BLK_DS_NONMEM_DATASET);
 				}
 			}
@@ -76,7 +84,7 @@ class TrialDesignPrinter {
 		mappedColumns.contains(colName)
 	}
 
-	def print_ds_NONMEM_DataSet(MclObject mObj, MclObject dObj) {
+	def print_ds_NONMEM_DataSet() {
 		var res = "";
 		for (column : dObj.dataColumnDefinitions) {
 			val use = column.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT);
@@ -115,13 +123,13 @@ class TrialDesignPrinter {
 //					Potential bug here. This is meant to ensure that no mapping
 //					is generated if no variables match. @TODO: fix this properly.
 //					if(mObj.findMdlSymbolDefn(column.name) != null){
-						res = res + column.print_ds_AmtMapping(dObj, mObj)
+						res = res + column.print_ds_AmtMapping
 						// record that mapping to model found
 						saveMappedColumn(column.name)
 //					}
 				}
 				case(ListDefinitionTable::OBS_USE_VALUE):{
-					res = res + column.print_ds_DvMapping(dObj, mObj)
+					res = res + column.print_ds_DvMapping
 				}
 			}
 		}
@@ -129,15 +137,15 @@ class TrialDesignPrinter {
 			val use = column.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT);
 			switch(use){
 				case(ListDefinitionTable::DOSE_TIME_USE_VALUE):{
-					res += column.writeDoseTimeMapping(dObj, mObj)
+					res += column.writeDoseTimeMapping
 				}
 			}
 		}
-		res += dObj.print_ds_DataSet(mObj);
+		res += print_ds_DataSet;
 	}
 
 
-	def CharSequence writeDoseTimeMapping(ListDefinition column, MclObject dObj, MclObject mObj){
+	def CharSequence writeDoseTimeMapping(ListDefinition column){
 		var idvCol = column.firstAttributeList.getAttributeExpression(ListDefinitionTable::IDV_COL_ATT)
 		var amtCol = column.firstAttributeList.getAttributeExpression(ListDefinitionTable::AMT_COL_ATT)
 		var mdlDtSymb = mObj.findMdlSymbolDefn(column.name)
@@ -160,12 +168,12 @@ class TrialDesignPrinter {
 		'''
 	}
 
-	def print_ds_AmtMapping(ListDefinition amtColumn, MclObject dObj, MclObject mObj)'''
-		«amtColumn.print_ds_StandardAmtMapping(dObj, mObj)»
-		«amtColumn.print_ds_TargetMapping(dObj, mObj)»
+	def print_ds_AmtMapping(ListDefinition amtColumn)'''
+		«amtColumn.print_ds_StandardAmtMapping»
+		«amtColumn.print_ds_TargetMapping»
 	'''
 
-	def writeSingleDoseMapping(MclObject mObj, ListDefinition column, Expression dataVariable){
+	def writeSingleDoseMapping(ListDefinition column, Expression dataVariable){
 		var mdlSymb = mObj.findMdlSymbolDefn(dataVariable.convertToString)
 		'''
 		<ColumnMapping>
@@ -185,7 +193,7 @@ class TrialDesignPrinter {
 		'''
 	}
 
-	def writeMultiDoseMapping(MclObject mObj, ListDefinition column, Expression dataDefine){
+	def writeMultiDoseMapping(ListDefinition column, Expression dataDefine){
 		switch(dataDefine){
 			MappingExpression:
 				'''
@@ -216,34 +224,34 @@ class TrialDesignPrinter {
 		}
 	}
 	
-	def hasCompartmentDosing(MclObject mdlObj, MappingExpression me){
+	def hasCompartmentDosing(MappingExpression me){
 		me.attList.exists[
-			val mdlSymb = mdlObj.findMdlSymbolDefn(mappedSymbol.ref.name)
+			val mdlSymb = mObj.findMdlSymbolDefn(mappedSymbol.ref.name)
 			mdlSymb instanceof ListDefinition && (mdlSymb as ListDefinition).isAdministrationMacro
 		]
 	}
 	
-	def hasCompartmentDosing(MclObject mdlObj, SymbolDefinition mappedSymbol){
-		val mdlSymb = mdlObj.findMdlSymbolDefn(mappedSymbol.name)
+	def hasCompartmentDosing(SymbolDefinition mappedSymbol){
+		val mdlSymb = mObj.findMdlSymbolDefn(mappedSymbol.name)
 		mdlSymb instanceof ListDefinition && (mdlSymb as ListDefinition).isAdministrationMacro
 	}
 	
-	protected def print_ds_StandardAmtMapping(ListDefinition amtColumn, MclObject dObj, MclObject mObj) {
+	protected def print_ds_StandardAmtMapping(ListDefinition amtColumn) {
 		val define = amtColumn.firstAttributeList.getAttributeExpression('define');
 		if (define == null) {
 			val varDefn = amtColumn.firstAttributeList.getAttributeExpression('variable');
 			if(varDefn instanceof SymbolReference){
-				if(!mObj.hasCompartmentDosing(varDefn.ref)){
-					writeSingleDoseMapping(mObj, amtColumn, varDefn)
+				if(!hasCompartmentDosing(varDefn.ref)){
+					writeSingleDoseMapping(amtColumn, varDefn)
 				}
 			}
 		}
-		else if(!mObj.hasCompartmentDosing(define as MappingExpression)){
-			writeMultiDoseMapping(mObj, amtColumn, define)
+		else if(!hasCompartmentDosing(define as MappingExpression)){
+			writeMultiDoseMapping(amtColumn, define)
 		}
 	}
 
-	def print_ds_TargetMapping(ListDefinition amtColumn, MclObject dObj, MclObject mObj){
+	def print_ds_TargetMapping(ListDefinition amtColumn){
 		val define = amtColumn.firstAttributeList.getAttributeExpression('define');
 		var toolMappingDefn = '''''';
 		if (define != null) {
@@ -349,7 +357,7 @@ class TrialDesignPrinter {
 		print_ds_ColumnMapping(column, mdlSymb, categoricalMapping)
 	}
 
-	def writeSingleObsMapping(MclObject mObj, ListDefinition column, Expression dataVariable){
+	def writeSingleObsMapping(ListDefinition column, Expression dataVariable){
 		var mdlSymb = mObj.findMdlSymbolDefn(dataVariable.convertToString)
 		'''
 			<ColumnMapping>
@@ -373,7 +381,7 @@ class TrialDesignPrinter {
 		else false
 	}
 
-	def writeMultipleObsMapping(MclObject mObj, ListDefinition column, Expression dataDefine){
+	def writeMultipleObsMapping(ListDefinition column, Expression dataDefine){
 //		var mdlSymb = mObj.getMdlObservationVariableFromCatValRef(dataDefine as CatValRefMappingExpression)
 		switch(dataDefine){
 			MappingExpression:
@@ -568,18 +576,18 @@ class TrialDesignPrinter {
 		}
 	}
 	
-	def print_ds_DvMapping(ListDefinition dvColumn, MclObject dObj, MclObject mObj){
+	def print_ds_DvMapping(ListDefinition dvColumn){
 		var CharSequence retVal = ''''''
 		val variable = dvColumn.firstAttributeList.getAttributeExpression('variable');
 		if (variable != null && mObj.isDefinedInMdlObservations(variable)) {
 			// Reference or mapped to data
-			retVal = writeSingleObsMapping(mObj, dvColumn, variable)
+			retVal = writeSingleObsMapping(dvColumn, variable)
 			saveMappedColumn(dvColumn.name)
 		}
 		else { 
 			val define = dvColumn.firstAttributeList.getAttributeExpression(ListDefinitionTable::DEFINE_ATT);
 			if(mObj.isMultiObsMappingDefinedInMdlObs(define)){
-				retVal = writeMultipleObsMapping(mObj, dvColumn, define)
+				retVal = writeMultipleObsMapping(dvColumn, define)
 				saveMappedColumn(dvColumn.name)
 			}
 		}
@@ -641,17 +649,17 @@ class TrialDesignPrinter {
 		false
 	}
 	
-	def getIgnoreLineSymbol(MclObject dObj){
+	def private getIgnoreLineSymbol(){
 		val s = dObj.getDataSourceStmt
 		s.firstAttributeList.getAttributeExpression('ignore')?.convertToString
 	}
 	
-	def print_ds_DataSet(MclObject dObj, MclObject mObj) {
+	def print_ds_DataSet() {
 		var res = "";
 		var k = 1;
 		val dosingToCompartmentMacro = dObj.dataColumnDefinitions.exists[
 				firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT) == ListDefinitionTable::AMT_USE_VALUE &&
-				isDosingToCompartmentMacro(mObj)
+				isDosingToCompartmentMacro
 		]
 		for (column : dObj.dataColumnDefinitions) {
 			val columnType = column.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT);
@@ -671,7 +679,7 @@ class TrialDesignPrinter {
 				'''
 			k = k + 1;
 		}
-		val ignoreLineSymb = dObj.ignoreLineSymbol
+		val ignoreLineSymb = ignoreLineSymbol
 		return '''
 			<DataSet xmlns="«xmlns_ds»">
 				<Definition>
@@ -680,7 +688,7 @@ class TrialDesignPrinter {
 						<IgnoreLine symbol="«ignoreLineSymb»"/>
 					«ENDIF»
 				</Definition>
-				«dObj.print_ds_ExternalFile»
+				«print_ds_ExternalFile»
 			</DataSet>
 		'''
 	}
@@ -712,7 +720,7 @@ class TrialDesignPrinter {
 		}
 	}
 	
-	def boolean isDosingToCompartmentMacro(ListDefinition amtColumn, MclObject mObj){
+	def boolean isDosingToCompartmentMacro(ListDefinition amtColumn){
 		val define = amtColumn.firstAttributeList.getAttributeExpression('define');
 	
 		val mappedSymbol = define.getMappedSymbolRef
@@ -751,7 +759,7 @@ class TrialDesignPrinter {
 		}
 	}
 
-	protected def print_ds_ExternalFile(MclObject dObj) {
+	protected def print_ds_ExternalFile() {
 		var res = "";
 		val s = dObj.getDataSourceStmt
 		var file = "";

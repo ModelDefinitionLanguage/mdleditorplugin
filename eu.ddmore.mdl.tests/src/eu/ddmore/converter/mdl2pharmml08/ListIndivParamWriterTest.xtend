@@ -12,19 +12,48 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
+import org.junit.Before
+import eu.ddmore.mdl.utils.LibraryUtils
+import eu.ddmore.mdl.utils.MdlLibUtils
+import eu.ddmore.mdllib.mdllib.Library
+import org.junit.After
+import eu.ddmore.mdl.MdlTestHelper
+import eu.ddmore.mdl.mdl.Mcl
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
 class ListIndivParamWriterTest {
 	@Inject extension ListIndivParamWriter
 	@Inject extension MDLBuildFixture
+	@Inject extension MdlTestHelper<Mcl>
+	@Inject extension MdlLibUtils
+	@Inject extension LibraryUtils
 	
+	var Library libDefns
+	
+	@Before
+	def void setUp(){
+				val dummyMdl = '''
+			foo = mdlObj {
+				
+			}
+		'''.parse
+		
+		libDefns = dummyMdl.objects.head.libraryForObject
+		
+	}
+	
+	@After
+	def void tearDown(){
+		libDefns = null
+	}
+
 	@Test
 	def void testWriteIndivParamLinearNoTrans(){
-		val obsBlk = createBlock(BlockDefinitionTable::MDL_INDIV_PARAMS)
-		val covBlk = createBlock(BlockDefinitionTable::COVARIATE_BLK_NAME)
-		val mParamsBlk = createBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_INDIV_PARAMS))
+		val covBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
+		val mParamsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS))
 		val ld = MdlFactory.eINSTANCE.createListDefinition
 		val bdy = (obsBlk.body as BlockStatementBody)
 		bdy.statements.add(ld)
@@ -65,10 +94,10 @@ class ListIndivParamWriterTest {
 
 	@Test
 	def void testWriteIndivParamLinearLogitTrans(){
-		val obsBlk = createBlock(BlockDefinitionTable::MDL_INDIV_PARAMS)
-		val covBlk = createBlock(BlockDefinitionTable::COVARIATE_BLK_NAME)
-		val mParamsBlk = createBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_INDIV_PARAMS))
+		val covBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
+		val mParamsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS))
 		val ld = MdlFactory.eINSTANCE.createListDefinition
 		val bdy = (obsBlk.body as BlockStatementBody)
 		bdy.statements.add(ld)
@@ -111,9 +140,9 @@ class ListIndivParamWriterTest {
 
 	@Test
 	def void testWriteIndivParamGeneralNoTrans(){
-		val obsBlk = createBlock(BlockDefinitionTable::MDL_INDIV_PARAMS)
-		val mParamsBlk = createBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_INDIV_PARAMS))
+		val mParamsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS))
 		val ld = MdlFactory.eINSTANCE.createListDefinition
 		val bdy = (obsBlk.body as BlockStatementBody)
 		bdy.statements.add(ld)
@@ -144,9 +173,9 @@ class ListIndivParamWriterTest {
 
 	@Test
 	def void testWriteIndivParamGeneralLogitTrans(){
-		val obsBlk = createBlock(BlockDefinitionTable::MDL_INDIV_PARAMS)
-		val mParamsBlk = createBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
-		val rvBlk = createBlock(BlockDefinitionTable::MDL_RND_VARS)
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_INDIV_PARAMS))
+		val mParamsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS))
 		val ld = MdlFactory.eINSTANCE.createListDefinition
 		val bdy = (obsBlk.body as BlockStatementBody)
 		bdy.statements.add(ld)
