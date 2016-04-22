@@ -92,36 +92,36 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 	
 	
  
-	override complete_IS(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		var node = context.lastCompleteNode
-		val owningBlock = EcoreUtil2.getContainerOfType(model, BlockStatement) 
-		while(node != null && owningBlock != null){
-			val nodeTxt = node.text
-			val matchingAtts = owningBlock.getAllMatchingListDefns(nodeTxt)
-			if(matchingAtts.exists[attType.typeClass == TypeInfoClass.Builtin ]){
-				addProposals(context, acceptor, #['is'], null)
-				node = null
-			}
-			else
-				node = node.nextSibling
-		}
-	}
-	
-	
-	override complete_ASSIGN(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		var node = context.lastCompleteNode
-		val owningBlock = EcoreUtil2.getContainerOfType(model, BlockStatement) 
-		while(node != null && owningBlock != null){
-			val nodeTxt = node.text
-			val matchingAtts = owningBlock.getAllMatchingListDefns(nodeTxt)
-			if(matchingAtts.exists[attType.typeClass != TypeInfoClass.Builtin ]){
-				addProposals(context, acceptor, #['='], null)
-				node = null
-			}
-			else
-				node = node.nextSibling
-		}
-	}
+//	override complete_IS(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+//		var node = context.lastCompleteNode
+//		val owningBlock = EcoreUtil2.getContainerOfType(model, BlockStatement) 
+//		while(node != null && owningBlock != null){
+//			val nodeTxt = node.text
+//			val matchingAtts = owningBlock.getAllMatchingListDefns(nodeTxt)
+//			if(matchingAtts.exists[attType.typeClass == TypeInfoClass.Builtin ]){
+//				addProposals(context, acceptor, #['is'], null)
+//				node = null
+//			}
+//			else
+//				node = node.nextSibling
+//		}
+//	}
+//	
+//	
+//	override complete_ASSIGN(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+//		var node = context.lastCompleteNode
+//		val owningBlock = EcoreUtil2.getContainerOfType(model, BlockStatement) 
+//		while(node != null && owningBlock != null){
+//			val nodeTxt = node.text
+//			val matchingAtts = owningBlock.getAllMatchingListDefns(nodeTxt)
+//			if(matchingAtts.exists[attType.typeClass != TypeInfoClass.Builtin ]){
+//				addProposals(context, acceptor, #['='], null)
+//				node = null
+//			}
+//			else
+//				node = node.nextSibling
+//		}
+//	}
 
 	private def createFuncEnumProposal(SymbolReference fCall, EnumPair model, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
 		val enumType = model.getNamedArgumentType
