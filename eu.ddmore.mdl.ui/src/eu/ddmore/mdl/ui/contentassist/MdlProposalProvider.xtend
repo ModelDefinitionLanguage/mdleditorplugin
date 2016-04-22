@@ -33,6 +33,11 @@ import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
 
 import static extension org.eclipse.xtext.EcoreUtil2.getContainerOfType
+import eu.ddmore.mdl.mdl.SymbolReference
+import eu.ddmore.mdl.provider.BuiltinFunctionProvider
+import eu.ddmore.mdl.type.TypeInfo
+import eu.ddmore.mdllib.mdllib.TypeDefinition
+import eu.ddmore.mdl.utils.MdlLibUtils
 
 /**
  * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant
@@ -42,6 +47,8 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 	extension ListDefinitionProvider listHelper = new ListDefinitionProvider
 	extension PropertyDefinitionProvider pdp = new PropertyDefinitionProvider
 	extension TypeSystemProvider mtp = new TypeSystemProvider
+	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
+	extension MdlLibUtils mlu = new MdlLibUtils
 
 	 public override void completeSymbolReference_Ref(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 	 	val owningObj = model.getContainerOfType(MclObject)
@@ -116,19 +123,34 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 		}
 	}
 
-//	private def createFuncEnumProposal(BuiltinFunctionCall fCall, EnumPair model, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
-//		val enumType = bfc.getNamedArgumentType(model)
-//		val attributes = new ArrayList<String>
-//		if(enumType instanceof BuiltinEnumTypeInfo){
-//			attributes.addAll((enumType as BuiltinEnumTypeInfo).expectedValues)
-//		}
-//		addProposals(context, acceptor, attributes, null);
-//	} 
+	private def createFuncEnumProposal(SymbolReference fCall, EnumPair model, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
+		val enumType = model.getNamedArgumentType
+		val attributes = new ArrayList<String>
+		if(enumType instanceof BuiltinEnumTypeInfo){
+			attributes.addAll((enumType as BuiltinEnumTypeInfo).expectedValues)
+		}
+		addProposals(context, acceptor, attributes, null);
+	} 
 
 
 	private def createListEnumProposal(EnumPair model, ContentAssistContext context, ICompletionProposalAcceptor acceptor){
-//		val parentBlock = model.getContainerOfType(BlockStatement)
-		val enumType = getAttributeType(model)
+		val parentBlock = model.getContainerOfType(BlockStatement)
+		var TypeInfo enumType = TypeSystemProvider::UNDEFINED_TYPE
+		if(parentBlock.blkId.keyAttName == model.argumentName){
+			// this is the key so need to get the type in a different way
+			val firstKeyMapping =  parentBlock.blkId.listTypeMappings.head
+			if(firstKeyMapping != null){
+				// there is a mapping so use it to 
+				val enumVal = firstKeyMapping.attDefn
+				// get the type for the specific enum
+				val typeDefn = EcoreUtil2.getContainerOfType(enumVal, TypeDefinition)
+				enumType = typeDefn.typeInfo
+			}
+		}
+		else{
+			// not the key so can get the type definition as the list will be identified. 
+			enumType = getAttributeType(model)
+		}
 		val attributes = new ArrayList<String>
 		if(enumType instanceof BuiltinEnumTypeInfo){
 			attributes.addAll((enumType as BuiltinEnumTypeInfo).expectedValues)
@@ -152,17 +174,17 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 				createListEnumProposal(model, context, acceptor)
 			}
 			else{
-//				val funcParent = model.getContainerOfType(BuiltinFunctionCall)
-//				if(funcParent != null){
-//						createFuncEnumProposal(funcParent, model, context, acceptor)
-//				}
-//				else{
+				val funcParent = model.getContainerOfType(SymbolReference)
+				if(funcParent != null){
+						createFuncEnumProposal(funcParent, model, context, acceptor)
+				}
+				else{
 					val propParent = model.getContainerOfType(PropertyStatement)
 					if(propParent != null){
 						createPropertyEnumProposal(model, context, acceptor)
 					}
 				}
-//			}
+			}
 		}
 	}
 	
