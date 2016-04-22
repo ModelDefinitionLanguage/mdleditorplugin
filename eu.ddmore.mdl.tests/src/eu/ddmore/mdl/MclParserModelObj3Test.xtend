@@ -49,6 +49,8 @@ warfarin_PK_2Compartments_mdl = mdlObj {
       PPV_KA
       PPV_TLAG
       RUV_EPS1
+      RHO_CL_VC
+      COV_CL_VC
    }# end VARIABILITY_PARAMETERS
 
    GROUP_VARIABLES{
@@ -61,6 +63,8 @@ warfarin_PK_2Compartments_mdl = mdlObj {
       eta_PPV_VP ~ Normal(mean=0, sd=PPV_VP)
       eta_PPV_KA ~ Normal(mean=0, sd=PPV_KA)
       eta_PPV_TLAG ~ Normal(mean=0, sd=PPV_TLAG)
+      :: { type is correlation, rv1=eta_PPV_CL, rv2=eta_PPV_VC, value=RHO_CL_VC }
+      :: { type is covariance, rv1=eta_PPV_CL, rv2=eta_PPV_VC, value=COV_CL_VC }
    }# end RANDOM_VARIABLE_DEFINITION (level=ID)
 
    RANDOM_VARIABLE_DEFINITION (level=DV) {

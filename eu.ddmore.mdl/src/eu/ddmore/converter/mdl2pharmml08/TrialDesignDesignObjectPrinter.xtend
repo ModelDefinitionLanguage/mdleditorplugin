@@ -50,7 +50,8 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static INTVN_TYPE_COMBI_VALUE = 'combi'
 	val public static COMBINATION_ATT_NAME = 'combination'
 	val public static START_ATT_NAME = 'start'	
-	val public static END_ATT_NAME = 'end'	
+	val public static END_ATT_NAME = 'end'
+	val public static INTVN_TYPE_RESET_ALL_VALUE = 'resetAll'	
 
 	val MclObject mObj
 	val MclObject designObj

@@ -51,6 +51,10 @@ warfarin_PK_2Compartments_mdl = mdlObj {
       PPV_KA
       PPV_TLAG
       RUV_EPS1
+      COV_CL_V
+      COV_CL_KA
+      COV_V_KA
+      CovMat = triangle([PPV_CL^2, COV_CL_V, PPV_VC^2, COV_CL_KA, COV_V_KA, PPV_KA^2], true) 
    }# end VARIABILITY_PARAMETERS
 
    GROUP_VARIABLES{
@@ -63,6 +67,7 @@ warfarin_PK_2Compartments_mdl = mdlObj {
       eta_PPV_VP ~ Normal(mean=0, sd=PPV_VP)
       eta_PPV_KA ~ Normal(mean=0, sd=PPV_KA)
       eta_PPV_TLAG ~ Normal(mean=0, sd=PPV_TLAG)
+      :: { type is covariance, matrix=CovMat }
    }# end RANDOM_VARIABLE_DEFINITION (level=ID)
 
    RANDOM_VARIABLE_DEFINITION (level=DV) {
