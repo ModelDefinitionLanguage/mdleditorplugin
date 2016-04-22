@@ -148,7 +148,7 @@ PropertyStatement:
 
 
 CategoricalDefinitionExpr:
-	{CategoricalDefinitionExpr} 'with' '{' categories += CategoryValueDefinition (=>',' categories += CategoryValueDefinition)* '}'
+	{CategoricalDefinitionExpr} 'withCategories' '{' categories += CategoryValueDefinition (=>',' categories += CategoryValueDefinition)* '}'
 //		(ASSIGN expression = Expression)?
 ;
 

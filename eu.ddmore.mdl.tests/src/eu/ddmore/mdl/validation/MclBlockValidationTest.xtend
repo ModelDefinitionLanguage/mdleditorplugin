@@ -110,6 +110,34 @@ class MclBlockValidationTest {
 	}
 
 	@Test
+	def void testInvalidStatementTypeWithConditionalList(){
+		val mcl = '''foo = parObj {
+			STRUCTURAL{
+				T : if(true) { type is foo } else {type is bar }
+			}
+		}'''.parse
+		
+		mcl.assertError(MdlPackage::eINSTANCE.listDefinition,
+			BlockValidator::BLOCK_INVALID_STATEMENT_TYPE,
+			"block 'STRUCTURAL' does not permit statements of this type"
+		)
+	}
+
+	@Test
+	def void testValidStatementTypeWithConditionalList(){
+		val mcl = '''foo = mdlObj {
+			VARIABILITY_LEVELS{
+			}
+			
+			INDIVIDUAL_VARIABLES{
+				T : if(true) { type is foo } else {type is bar }
+			}
+		}'''.parse
+		
+		mcl.assertNoError(BlockValidator::BLOCK_INVALID_STATEMENT_TYPE)
+	}
+
+	@Test
 	def void testExceedMaxBlocks(){
 		val mcl = '''foo = mdlObj {
 			VARIABILITY_LEVELS{

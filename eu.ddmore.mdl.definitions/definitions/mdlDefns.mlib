@@ -332,7 +332,7 @@ _block POPULATION_PARAMETERS (,) _statements(,) _eqnDefn+, _anonList _list _key=
 			 obstype.continuous -> ContinuousObsList
 			 ;
 
-_block INDIVIDUAL_VARIABLES (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn
+_block INDIVIDUAL_VARIABLES (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+
 	_list _key=type IndivTypeType.linear->IndivParamLinear, IndivTypeType.general -> IndivParamGeneral;
 
 _block INFO (,) _statements (,) _propStmt _prop name, problemStmt;
@@ -340,7 +340,7 @@ _block INFO (,) _statements (,) _propStmt _prop name, problemStmt;
 _block MODEL_PREDICTION (0,) _statements (0,) _eqnDefn, _eqnDefn+, _listDefn
 	_list _key=deriv DerivList;
 	
-_block OBSERVATION (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn, _anonList
+_block OBSERVATION (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+, _anonList
 		_list _key=type obstype.count->CountObs, obstype.categorical->CatObs, obstype.discrete->DiscreteObs, obstype.tte->TteObs,
 						obstype.combinedError1->combinedError1List, obstype.combinedError2->combinedError2List,
 						obstype.additiveError->additiveErrorList, obstype.proportionalError->proportionalErrorList,

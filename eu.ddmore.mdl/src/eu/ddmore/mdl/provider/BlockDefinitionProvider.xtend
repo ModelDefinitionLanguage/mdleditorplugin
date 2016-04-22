@@ -14,6 +14,9 @@ import java.util.ArrayList
 import java.util.List
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.xtend.lib.annotations.Data
+import eu.ddmore.mdl.mdl.ListDefinition
+import eu.ddmore.mdl.mdl.ListPiecewiseExpression
+import eu.ddmore.mdl.mdl.ListIfExpression
 
 class BlockDefinitionProvider {
 
@@ -39,6 +42,15 @@ class BlockDefinitionProvider {
 		def dispatch boolean isValidStatement(EquationDefinition stmt){
 			if(stmt.eClass == statementType){
 				(expectHasRhs && stmt.expression != null) || (!expectHasRhs && stmt.expression == null) 
+			}
+			else false
+		}
+		
+		def dispatch boolean isValidStatement(ListDefinition stmt){
+			if(stmt.eClass == statementType){
+				val stmtIsConditionList = stmt.list instanceof ListPiecewiseExpression || stmt.list instanceof ListIfExpression
+				// rhs == true then don't care.  rhs=false then invalid if conditional 
+				expectHasRhs || !stmtIsConditionList    
 			}
 			else false
 		}
