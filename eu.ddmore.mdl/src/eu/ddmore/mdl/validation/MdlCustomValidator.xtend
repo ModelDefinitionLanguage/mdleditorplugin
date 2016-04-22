@@ -30,6 +30,7 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 import eu.ddmore.mdl.type.TypeInfoClass
+import eu.ddmore.mdl.utils.ExpressionUtils
 
 class MdlCustomValidator extends AbstractMdlValidator {
 
@@ -41,6 +42,7 @@ class MdlCustomValidator extends AbstractMdlValidator {
 	extension ConstantEvaluation ce = new ConstantEvaluation 
 	extension CycleDetectionUtils cdu = new CycleDetectionUtils
 	extension BlockUtils bu = new BlockUtils
+	extension ExpressionUtils eu = new ExpressionUtils
 
 	override register(EValidatorRegistrar registrar){}
 

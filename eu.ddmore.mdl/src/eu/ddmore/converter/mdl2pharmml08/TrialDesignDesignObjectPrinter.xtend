@@ -21,6 +21,8 @@ import eu.ddmore.mdl.lib.MdlLib
 import eu.ddmore.mdllib.mdllib.Library
 import eu.ddmore.mdl.utils.LibraryUtils
 import org.eclipse.xtext.EcoreUtil2
+import eu.ddmore.mdl.mdl.VectorLiteral
+import eu.ddmore.mdl.utils.ExpressionUtils
 
 class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
@@ -32,9 +34,11 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	extension TypeSystemProvider tsp = new TypeSystemProvider
 	extension MdlLibUtils mlu = new MdlLibUtils
 	extension LibraryUtils lib = new LibraryUtils
+	extension ExpressionUtils eu = new ExpressionUtils
 
 	val public static INTVN_TYPE_ATT_NAME = 'type'
 	val public static INTVN_TYPE_BOLUS_VALUE = 'bolus'
+	val public static INTVN_TYPE_INFUSION_VALUE = 'infusion'
 	val public static SSINTERVAL_ATT_NAME = 'ssInterval'
 	val public static SSEND_ATT_NAME = 'ssEnd'
 	val public static INPUT_ATT_NAME = 'input'
@@ -43,7 +47,10 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static RATE_ATT_NAME = 'rate'
 	val public static DURATION_ATT_NAME = 'duration'
 	val public static SCALE_ATT_NAME = 'p'
-	val public static SS_ATT_NAME = 'steadyState'
+	val public static INTVN_TYPE_COMBI_VALUE = 'combi'
+	val public static COMBINATION_ATT_NAME = 'combination'
+	val public static START_ATT_NAME = 'start'	
+	val public static END_ATT_NAME = 'end'	
 
 	val MclObject mObj
 	val MclObject designObj
@@ -60,6 +67,7 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		<TrialDesign xmlns="«xmlns_design»">
 			«IF mObj != null && designObj != null»
 				«designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_PARAMS).forEach[writeDesignParameters]»
+				«designObj.getBlocksByName(BlockDefinitionTable::DES_INTERVENTION_BLK).forEach[writeInterventions]»
 			«ENDIF»
 		</TrialDesign>
 	'''	
@@ -80,14 +88,27 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		</mdef:DesignParameter>
 	'''
 	
-	def writeInterventions(MclObject designObj)'''
+	def writeInterventions(BlockStatement designParamsBlk)'''
 		<Interventions>
-			«designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_PARAMS).forEach[statements.forEach[if(it instanceof ListDefinition) writeAdministration]]»
+			«FOR stmt : designParamsBlk.statements»
+				«IF stmt instanceof ListDefinition»
+					«IF stmt.firstAttributeList.isAdministration»
+						«stmt.writeAdministration»
+					«ELSE»
+						«stmt.writeInterventionCombination»
+					«ENDIF»
+				«ENDIF»
+			«ENDFOR»
 		</Interventions>
 	'''
 	
 	def isBolusAdministration(AttributeList it){
 		getAttributeEnumValue(INTVN_TYPE_ATT_NAME) == INTVN_TYPE_BOLUS_VALUE
+	}
+	
+	def isAdministration(AttributeList it){
+		val attVal = getAttributeEnumValue(INTVN_TYPE_ATT_NAME)
+		attVal == INTVN_TYPE_BOLUS_VALUE || attVal == INTVN_TYPE_INFUSION_VALUE
 	}
 	
 	
@@ -149,7 +170,7 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 					«ENDIF»
 				</DoseAmount>
 			«ENDIF»
-			«IF hasAttribute(SS_ATT_NAME) && getAttributeExpression(SS_ATT_NAME).evaluateLogicalExpression == true»
+			«IF hasAttribute(SSEND_ATT_NAME)»
 				<SteadyState>
 					«IF hasAttribute(SSEND_ATT_NAME)»
 						<EndTime>
@@ -192,6 +213,28 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		</Infusion>
 	'''
 
+	def writeInterventionCombination(ListDefinition it)'''
+		<InterventionsCombination oid="«name»">
+			<Interventions>
+				«IF firstAttributeList.getAttributeExpression(COMBINATION_ATT_NAME).vector != null»
+					«FOR expr : firstAttributeList.getAttributeExpression(COMBINATION_ATT_NAME).vector»
+						<InterventionRef oidRef="«expr.symbolRef?.ref.name»"/>
+					«ENDFOR»
+					«IF firstAttributeList.hasAttribute(START_ATT_NAME)»
+						<Start>
+							«firstAttributeList.getAttributeExpression(START_ATT_NAME).expressionAsAssignment»
+						</Start>
+					«ENDIF»
+					«IF firstAttributeList.hasAttribute(END_ATT_NAME)»
+						<End>
+							«firstAttributeList.getAttributeExpression(END_ATT_NAME).expressionAsAssignment»
+						</End>
+					«ENDIF»
+				«ENDIF»
+			</Interventions>
+		</InterventionsCombination>
+	'''
+	
 	def writeAdministration(ListDefinition it)'''
 		<Administration oid="«name»">
 			«IF firstAttributeList.isBolusAdministration»
@@ -200,6 +243,5 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 				«firstAttributeList.writeInfusionDosing»
 			«ENDIF»
 		</Administration>
-	'''
-		
+		'''
 }

@@ -24,10 +24,12 @@ import java.util.List
 import java.util.Map
 import java.util.Set
 import org.eclipse.xtext.EcoreUtil2
+import eu.ddmore.mdl.utils.ExpressionUtils
 
 class ListDefinitionProvider {
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension MdlLibUtils mlu = new MdlLibUtils
+	extension ExpressionUtils eu = new ExpressionUtils
 //	extension BlockUtils bu = new BlockUtils
 
 
@@ -493,8 +495,8 @@ class ListDefinitionProvider {
 	}
 
 	def getAttributeEnumValue(AttributeList it, String attName){
-		val enumExp = getAttributeExpression(attName)
-		enumExp?.enumValue
+		getAttributeExpression(attName)?.enumValue
+//		enumExp?.enumValue
 //		switch(enumExp){
 //			EnumExpression:
 //				return enumExp.enumValue
@@ -503,26 +505,28 @@ class ListDefinitionProvider {
 	}
 	
 	def getAttributeExpessionAsString(AttributeList it, String attName){
-		val expr = getAttributeExpression(attName)
-		if(expr instanceof StringLiteral){
-			return expr.value
-		}
-		return null
+		getAttributeExpression(attName)?.stringValue
+//		if(expr instanceof StringLiteral){
+//			return expr.value
+//		}
+//		return null
 	}
 
-	def getEnumValue(Expression expr){
-		if(expr instanceof EnumExpression){
-			return expr.enumValue
-		}
-		else null
-	}
-	
-	def getStringValue(Expression expr){
-		if(expr instanceof StringLiteral){
-			return expr.value
-		}
-		return null
-	} 
+//	def getEnumValue(Expression expr){
+//		expr.asEnumValue
+////		if(expr instanceof EnumExpression){
+////			return expr.enumValue
+////		}
+////		else null
+//	}
+//	
+//	def getStringValue(Expression it){
+//		asStringValue
+////		if(expr instanceof StringLiteral){
+////			return expr.value
+////		}
+////		return null
+//	} 
 	
 
 	def Map<String, Boolean> findMatchingAttributeSet(AttributeList it, ListDefInfo defn){

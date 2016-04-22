@@ -10,11 +10,13 @@ import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
+import eu.ddmore.mdl.utils.ExpressionUtils
 
 class DataFileValidator extends AbstractMdlValidator  {
 	
 	extension MdlUtils mu = new MdlUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+	extension ExpressionUtils eu = new ExpressionUtils
 	
 	override register(EValidatorRegistrar registrar){}
 	

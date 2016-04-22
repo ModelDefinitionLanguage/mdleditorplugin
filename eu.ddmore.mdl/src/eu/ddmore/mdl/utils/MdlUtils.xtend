@@ -28,6 +28,7 @@ import org.eclipse.xtext.EcoreUtil2
 
 class MdlUtils {
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+	extension ExpressionUtils eu = new ExpressionUtils
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension DependencyWalker dw = new DependencyWalker
 	extension BlockUtils bu = new BlockUtils

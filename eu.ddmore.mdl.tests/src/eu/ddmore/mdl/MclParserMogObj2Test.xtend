@@ -119,6 +119,11 @@ Categorical_DIST_task = taskObj{
 }# end of task object
 
 Categorical_DIST_mog = mogObj {
+		INFO{
+			set name = "A Mog",
+				problemStmt = "A problem statement"
+		}
+	
 		OBJECTS{
 			Categorical_DIST_dat : { type is dataObj }
 			Categorical_DIST_mdl : { type is mdlObj }

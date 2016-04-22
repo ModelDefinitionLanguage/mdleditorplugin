@@ -33,6 +33,9 @@ class PKMacrosPrinter{
 //	);
 
 	private static var PKMacrosPrinter _INSTANCE = null
+	val cmpNumMap = new HashMap<String, Integer>
+	var cmpNum = 0
+	
 
 	public static def INSTANCE(){
 		if(_INSTANCE == null)
@@ -87,9 +90,6 @@ class PKMacrosPrinter{
 		</PKmacros>
 		'''
 	}
-	
-	val cmpNumMap = new HashMap<String, Integer>
-	var cmpNum = 0
 	
 	def resetCompartments(){
 		cmpNum = 0
