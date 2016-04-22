@@ -323,6 +323,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val mdlCompBlk = mdlPredBlk.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_CMT_BLK))
 		val cmtDefn = mdlCompBlk.createListDefn("Gut", createEnumPair('type', 'direct'))
 		val pkm = PKMacrosPrinter::INSTANCE
+		pkm.resetCompartments
 		pkm.defineCompartments(cmtDefn)
 		
 		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
@@ -530,7 +531,10 @@ class TrialDesignDesignObjectPrinterTest {
 		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
 		val mdlPredBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
 		val mdlCompBlk = mdlPredBlk.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_CMT_BLK))
-		mdlCompBlk.createListDefn("Gut", createEnumPair('type', 'direct'))
+		val cmtDefn = mdlCompBlk.createListDefn("Gut", createEnumPair('type', 'direct'))
+		val pkm = PKMacrosPrinter::INSTANCE
+		pkm.resetCompartments
+		pkm.defineCompartments(cmtDefn)
 		
 		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
 		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
@@ -594,6 +598,39 @@ class TrialDesignDesignObjectPrinterTest {
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
 		val actual = tdow.writeInterventionCombination(combiList)
+		val expected = '''
+			<InterventionsCombination oid="regimen1">
+				<Interventions>
+					<InterventionRef oidRef="admin2"/>
+					<InterventionRef oidRef="admin1"/>
+					<Start>
+						<ct:Assign>
+							<ct:Real>0.0</ct:Real>
+						</ct:Assign>
+					</Start>
+					<End>
+						<ct:Assign>
+							<ct:Real>202.1</ct:Real>
+						</ct:Assign>
+					</End>
+				</Interventions>
+			</InterventionsCombination>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Ignore("Not finished.")
+	def void testWriteResetAllDefaultValue(){
+		val mdl = createRoot
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val actionList = desBlk.createListDefn("type", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_RESET_ALL_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::START_ATT_NAME, createRealLiteral(10))
+		)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeInterventionCombination(actionList)
 		val expected = '''
 			<InterventionsCombination oid="regimen1">
 				<Interventions>
