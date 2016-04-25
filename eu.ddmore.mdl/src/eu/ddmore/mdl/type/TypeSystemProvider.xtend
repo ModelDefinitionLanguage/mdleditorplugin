@@ -42,6 +42,8 @@ import java.util.HashSet
 import java.util.List
 import org.eclipse.xtext.EcoreUtil2
 import eu.ddmore.mdl.mdl.FunctionReference
+import eu.ddmore.mdl.mdl.MappingExpression
+import eu.ddmore.mdl.provider.MappingDefinitionProvider
 
 public class TypeSystemProvider {
 
@@ -49,6 +51,7 @@ public class TypeSystemProvider {
 	extension ListDefinitionProvider listProvider = new ListDefinitionProvider
 	extension SublistDefinitionProvider subListProvider = new SublistDefinitionProvider
 	extension PropertyDefinitionProvider propProvider = new PropertyDefinitionProvider
+	extension MappingDefinitionProvider mdp = new MappingDefinitionProvider
 	extension CycleDetectionUtils cdu = new CycleDetectionUtils	
 	extension MdlLibUtils mlu = new MdlLibUtils
 	
@@ -89,9 +92,10 @@ public class TypeSystemProvider {
 		ep.multiplicativeExpression -> REAL_TYPE,
 		ep.powerExpression -> REAL_TYPE,
 		ep.transformedDefinition -> REAL_TYPE,
-		ep.randomVariableDefinition -> REAL_TYPE,
-		ep.mappingExpression -> MAPPING_TYPE,
+		ep.randomVariableDefinition -> REAL_TYPE ,
+//		ep.mappingExpression -> MAPPING_TYPE,
 		ep.catValRefMappingExpression -> MAPPING_TYPE
+//		ep.catValRefMappingExpression -> new MappingTypeInfo(GENERIC_ENUM_VALUE_TYPE)
 	}
 	
 	// returns the richest type if they are different or null if they are the same
@@ -140,27 +144,6 @@ public class TypeSystemProvider {
 	def getTypeForArray(VectorLiteral vl){
 		val arrayType = getTypeForArrayOfElements(vl.expressions)
 		arrayType.makeVector
-//		// first type determines array type unless one of the other elements is a type
-//		// that it could be promoted to. For example if the first element is an int
-//		// and a later type is a Real the the type for the vector as a whole is a Real.
-//		var TypeInfo refType = null
-//		var allRefs = true
-//		for(e : vl.expressions){
-//			val origType = e.typeFor
-//			// check to see if amy non refs present. If so resulting array type will be non-ref
-//			if(!(origType instanceof ReferenceTypeInfo)) allRefs = false  
-//			val exprType = origType.underlyingType // just in case it is a reference
-//			if(refType == null)
-//				refType = exprType
-//			else{
-//				val promotedType = refType.getRichestPromotableType(exprType)
-//				if(promotedType != null && refType != promotedType)
-//					refType = promotedType
-//			}
-//		}
-//		val arrayType = (refType ?: UNDEFINED_TYPE)
-//		// if all the types are refs then reflect this in the vector type.
-//		if(allRefs) arrayType.makeReference.makeVector else arrayType.makeVector
 	}
 	
 	def TypeInfo getTypeForSublist(SubListExpression e){
@@ -226,6 +209,15 @@ public class TypeSystemProvider {
 		}
 	}
 	
+//	def TypeInfo getMappingExpressionType(Expression e){
+//		new MappingTypeInfo(REAL_TYPE)
+//	}
+
+	def dispatch TypeInfo typeFor(MappingExpression it){
+		mappingType
+	}
+
+	
 	def dispatch TypeInfo typeFor(Expression e){
 		if(e == null) return UNDEFINED_TYPE 
 		switch(e){
@@ -236,10 +228,8 @@ public class TypeSystemProvider {
 			CategoryValueReference:
 				e.ref.typeFor.makeReference
 			ParExpression: e.expr.typeFor
-//			EnumExpression:
-//				e.typeOfBuiltinEnum
-//			BuiltinFunctionCall:
-//				e.functionType
+//			MappingExpression:
+//				e.getMappingExpressionType
 			VectorElement:
 				e.element?.typeFor ?: UNDEFINED_TYPE
 			VectorLiteral:

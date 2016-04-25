@@ -55,6 +55,9 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
+import eu.ddmore.mdl.provider.MappingDefinitionProvider
+import eu.ddmore.mdl.type.MappingTypeInfo
+import eu.ddmore.mdl.mdl.CatValRefMappingExpression
 
 class TypeSystemValidator extends AbstractMdlValidator {
 	
@@ -67,6 +70,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	extension SublistDefinitionProvider subListProvider = new SublistDefinitionProvider
 	extension PropertyDefinitionProvider propProvider = new PropertyDefinitionProvider
 	extension MdlLibUtils mlu = new MdlLibUtils
+	extension MappingDefinitionProvider mdp = new MappingDefinitionProvider
 	
 	// Type handling	
 	private def (TypeInfo, TypeInfo) => void typeError(EStructuralFeature feature){ 
@@ -140,10 +144,24 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	}
 		
 		
+	private def void checkMapTypeProperty(MappingTypeInfo mti, String attName, Expression e, (TypeInfo, TypeInfo) => void errorLambda){
+		val attDefn = mti.getAttribute(attName)
+		checkArgumentMatchesAndExpression(attDefn.attType, e, errorLambda)
+	}
+		
 	@Check
 	def validateCompatibleTypes(MappingPair e){
-		checkAsOperator(e.leftOperand, e.rightOperand, typeError(MdlPackage::eINSTANCE.mappingPair_LeftOperand),
-			typeError(MdlPackage::eINSTANCE.mappingPair_RightOperand))
+		val mapType = e.mappingType
+		if(mapType instanceof MappingTypeInfo){
+			checkMapTypeProperty(mapType, MappingTypeInfo::AS_ATT_NAME, e.leftOperand, typeError(MdlPackage::eINSTANCE.mappingPair_LeftOperand))
+			checkMapTypeProperty(mapType, MappingTypeInfo::IN_ATT_NAME, e.srcColumn, typeError(MdlPackage::eINSTANCE.mappingPair_SrcColumn))
+			if(e.rightOperand instanceof CatValRefMappingExpression){
+				checkMapTypeProperty(mapType, MappingTypeInfo::CAT_TGT_ATT_NAME, e.rightOperand, typeError(MdlPackage::eINSTANCE.mappingPair_RightOperand))
+			}
+			else{
+				checkMapTypeProperty(mapType, MappingTypeInfo::TGT_ATT_NAME, e.rightOperand, typeError(MdlPackage::eINSTANCE.mappingPair_RightOperand))
+			}
+		}
 	}
 		
 	@Check
@@ -396,7 +414,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	}
 	
 	
-	def checkAsOperator(Expression lhs, Expression rhs,  (TypeInfo, TypeInfo) => void leftErrorLambda,
+	def private checkAsOperator(Expression lhs, Expression rhs,  (TypeInfo, TypeInfo) => void leftErrorLambda,
 				(TypeInfo, TypeInfo) => void rightErrorLambda){
 		checkExpectedAndExpression(TypeSystemProvider::INT_TYPE, lhs, leftErrorLambda)
 		if(rhs?.typeFor ?: TypeSystemProvider::UNDEFINED_TYPE == TypeSystemProvider::MAPPING_TYPE){

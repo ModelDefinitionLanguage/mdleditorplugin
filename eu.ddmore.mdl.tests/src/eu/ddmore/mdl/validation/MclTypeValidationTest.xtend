@@ -2075,12 +2075,36 @@ warfarin_PK_v2_dat = dataObj{
 	
 	DATA_INPUT_VARIABLES {
 		DVID : { use  is dvid }
-		DV : { use  is dv, define =  {
+«««		DV : { use  is dv, define = [{ dataVal = 1, var=Y },
+«««									 { dataVal = 2, catMap = { PCA.dead when 1, PCA.alive when 2 } },
+«««									 { dataVal = 3, catMap = { PCA.dead when 1, PCA.alive when 2 } }
+«««									] , lookupCol = DVID
+		DV : { use  is dv, define = {
 					1 in DVID as Y,
 					2 in DVID as { PCA.dead when 1, PCA.alive when 2},
 					3 in DVID as { OTHER.dead when 1, OTHER.alive when 2}
 				}
 			  }
+	}
+
+	SOURCE {
+	    SrcFile : { file="warfarin_conc_sex.csv", inputFormat  is nonmemFormat } 
+	} # end SOURCE
+} # end data object
+		'''.parse
+		
+		mcl.assertNoErrors
+	}
+
+	@Test
+	def void testValidDataSimpleMappingWhenExpression(){
+		val mcl = '''
+warfarin_PK_v2_dat = dataObj{
+	DECLARED_VARIABLES{ PCA withCategories {dead, alive} }
+	
+	DATA_INPUT_VARIABLES {
+		DVID : { use  is dvid }
+		DV : { use  is dv, define =  { PCA.dead when 1, PCA.alive when 2} }
 	}
 
 	SOURCE {

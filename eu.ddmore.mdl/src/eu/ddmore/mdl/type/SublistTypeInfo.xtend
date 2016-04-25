@@ -36,16 +36,27 @@ class SublistTypeInfo extends TypeInfo {
 	}
 
 	new(String name, List<AttributeDefn> atts, List<Map<String, Boolean>> ns){
+		this(TypeInfoClass.Sublist, name, atts, ns)
+	}
+
+	protected new(TypeInfoClass tc, String name, List<AttributeDefn> atts, List<Map<String, Boolean>> ns){
 		this.name = name
-		theType = TypeInfoClass.Sublist
+		theType = tc
 		this.attributes = new ArrayList<AttributeDefn>
 		this.attributes.addAll(atts)
 		this.nameSets = new ArrayList<Map<String, Boolean>>
-		ns.forEach[
+		ns.forEach[nsMap|
 			val sigMap = new HashMap<String, Boolean>
-			keySet.forEach[sigMap.put(it, sigMap.get(it))]
+			nsMap.keySet.forEach[sigMap.put(it, nsMap.get(it))]
 			this.nameSets.add(sigMap)
 		] 
+	}
+
+	protected new(TypeInfoClass tc, String name, List<AttributeDefn> atts){
+		this(tc, name, atts, new ArrayList<Map<String, Boolean>>)
+		val sigMap = new HashMap<String, Boolean>
+		atts.forEach[sigMap.put(name, true)]
+		this.nameSets.add(sigMap)
 	}
 
 	def getName(){
@@ -55,6 +66,11 @@ class SublistTypeInfo extends TypeInfo {
 	override getTypeClass(){
 		this.theType
 	}
+	
+	def getAttribute(String attName){
+		attributes.findFirst[attName == it.name]
+	}
+
 	
 	def getAttributes(){
 		Collections::unmodifiableList(this.attributes)

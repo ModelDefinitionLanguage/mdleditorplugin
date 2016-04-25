@@ -6,23 +6,20 @@ import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
+import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.ConstantEvaluation
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
+import eu.ddmore.mdl.utils.ExpressionUtils
+import eu.ddmore.mdl.utils.LibraryUtils
+import eu.ddmore.mdl.utils.MdlLibUtils
 import eu.ddmore.mdl.utils.MdlUtils
+import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
-import eu.ddmore.mdl.mdl.SymbolReference
-import eu.ddmore.mdl.utils.MdlLibUtils
-import eu.ddmore.mdl.lib.MdlLib
-import eu.ddmore.mdllib.mdllib.Library
-import eu.ddmore.mdl.utils.LibraryUtils
-import org.eclipse.xtext.EcoreUtil2
-import eu.ddmore.mdl.mdl.VectorLiteral
-import eu.ddmore.mdl.utils.ExpressionUtils
 
 class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 

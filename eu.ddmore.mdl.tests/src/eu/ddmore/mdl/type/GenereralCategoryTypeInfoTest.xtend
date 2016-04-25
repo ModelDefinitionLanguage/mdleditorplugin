@@ -64,8 +64,8 @@ class GenereralCategoryTypeInfoTest {
 	
 	@Test
 	def void testIsCompatible(){
-		assertFalse(this.testInstance.isCompatible(this.testInstance))
-		assertFalse(this.testInstance.isCompatible(this.equivTestInstance))
+		assertTrue(this.testInstance.isCompatible(this.testInstance))
+		assertTrue(this.testInstance.isCompatible(this.equivTestInstance))
 	}
 	
 	@Test
@@ -87,8 +87,8 @@ class GenereralCategoryTypeInfoTest {
 	
 	@Test
 	def void testIsCompatibleWithRefType(){
-		assertFalse(this.testInstance.isCompatible(this.testInstance.makeReference))
-		assertFalse(this.testInstance.isCompatible(this.equivTestInstance.makeReference))
+		assertTrue(this.testInstance.isCompatible(this.testInstance.makeReference))
+		assertTrue(this.testInstance.isCompatible(this.equivTestInstance.makeReference))
 		assertTrue(this.testInstance.isCompatible(enumTestInstance.makeReference))
 	}
 	
