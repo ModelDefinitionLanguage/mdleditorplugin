@@ -9,13 +9,9 @@ import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
-import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.BlockUtils
-import eu.ddmore.mdl.utils.ConstantEvaluation
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.utils.ExpressionUtils
-import eu.ddmore.mdl.utils.LibraryUtils
-import eu.ddmore.mdl.utils.MdlLibUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import org.eclipse.xtext.EcoreUtil2
 
@@ -27,10 +23,10 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension BlockUtils bu = new BlockUtils
 	extension DomainObjectModelUtils dom = new DomainObjectModelUtils
-	extension ConstantEvaluation ce = new ConstantEvaluation
-	extension TypeSystemProvider tsp = new TypeSystemProvider
-	extension MdlLibUtils mlu = new MdlLibUtils
-	extension LibraryUtils lib = new LibraryUtils
+//	extension ConstantEvaluation ce = new ConstantEvaluation
+//	extension TypeSystemProvider tsp = new TypeSystemProvider
+//	extension MdlLibUtils mlu = new MdlLibUtils
+//	extension LibraryUtils lib = new LibraryUtils
 	extension ExpressionUtils eu = new ExpressionUtils
 
 	val public static INTVN_TYPE_ATT_NAME = 'type'

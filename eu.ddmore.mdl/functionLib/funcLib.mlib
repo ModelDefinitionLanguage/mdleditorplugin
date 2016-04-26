@@ -31,7 +31,7 @@ _type objType _enum (mdlObj, dataObj, parObj, taskObj, designObj, priorObj);
 _list Covariate _alt Real _atts use::divUse, interp::Reference[::Function(::Real, ::Real, ::Real, ::Real, ::Real)::Real]
 							_sig (use, interp?);  
 _list CatCovariate _atts use::divUse _cat use::Int _sig (use);  
-_list Amt _atts use::divUse, define::Mapping, variable::Reference[::Real] _sig (use, define), (use, variable);
+_list Amt _atts use::divUse, define::Mapping, variable::Reference[::DosingTarget] _sig (use, define), (use, variable);
 _list Dv _atts use::divUse, define::Mapping, variable::Reference[::Real] _sig (use, define), (use, variable);
 _list Idv _atts use::divUse _sig(use);
 _list Cmt _atts use::divUse _sig(use);

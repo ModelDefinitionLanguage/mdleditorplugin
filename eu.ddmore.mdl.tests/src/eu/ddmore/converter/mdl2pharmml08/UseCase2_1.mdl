@@ -4,7 +4,7 @@
 #
 
 warfarin_PK_analytic_DerivedDT_dat = dataObj {
-	DECLARED_VARIABLES{D Y}
+	DECLARED_VARIABLES{D::DosingTarget Y::ContinuousObs}
 
 	DATA_INPUT_VARIABLES {
 		ID : { use is id }
@@ -99,7 +99,7 @@ warfarin_PK_ANALYTIC_mdl = mdlObj {
 	} # end INDIVIDUAL_VARIABLES
 	
 	MODEL_PREDICTION {
-	    D # dosing variable
+	    D::DosingVar # dosing variable
 	    DT # dose time variable
 	    k = CL/V
 	    CC = if ( T - DT < TLAG) then 0

@@ -7,7 +7,7 @@
 #
 
 warfarin_PK_BOV_dat = dataObj{
-  DECLARED_VARIABLES{INPUT_KA Y }
+  DECLARED_VARIABLES{INPUT_KA::DosingTarget Y::ContinuousObs }
 
   DATA_INPUT_VARIABLES{
       ID : { use is id }  

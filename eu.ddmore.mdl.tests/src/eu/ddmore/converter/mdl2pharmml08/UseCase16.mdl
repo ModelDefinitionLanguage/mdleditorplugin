@@ -5,11 +5,11 @@
 
 Hansson2013_data = dataObj{
 	DECLARED_VARIABLES{
-		DOSE
-		LNVEGF_obs
-		LNsVEGFR2_obs
-		LNsVEGFR3_obs 
-		LNsKIT_obs
+		DOSE::DosingTarget
+		LNVEGF_obs::ContinuousObs
+		LNsVEGFR2_obs::ContinuousObs
+		LNsVEGFR3_obs::ContinuousObs
+		LNsKIT_obs::ContinuousObs
 	} 
 
    DATA_INPUT_VARIABLES{
@@ -210,7 +210,7 @@ Hansson2013_mdl = mdlObj{
 
 
    MODEL_PREDICTION{
-      DOSE
+      DOSE::DosingVar
       AUC = DOSE/CL
       DP1 = BM0*(1+DPSLP*T)        # Linear disease progression model for VEGF
       DPS = BM0S*(1+DPSLPS*T)      # Linear disease progression model for SKIT

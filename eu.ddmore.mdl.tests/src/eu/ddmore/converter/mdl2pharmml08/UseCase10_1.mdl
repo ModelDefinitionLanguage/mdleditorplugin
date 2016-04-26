@@ -4,7 +4,7 @@
 #
 
 warfarin_PK_Compartments_dat = dataObj {
-	DECLARED_VARIABLES{INPUT_KA CC_obs}
+	DECLARED_VARIABLES{INPUT_KA::DosingTarget CC_obs::ContinuousObs}
 
 	DATA_INPUT_VARIABLES {
 		ID : { use is id }

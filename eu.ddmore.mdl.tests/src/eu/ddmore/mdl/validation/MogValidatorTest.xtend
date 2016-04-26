@@ -376,7 +376,7 @@ class MogValidatorTest {
 	def void testValidSingleObsMatching(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Y }
+			DECLARED_VARIABLES{ Y::ContinuousObs }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
@@ -662,7 +662,7 @@ class MogValidatorTest {
 	def void testValidMultiObsContinuousMatching(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Y; Z }
+			DECLARED_VARIABLES{ Y::ContinuousObs; Z::ContinuousObs }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
@@ -956,7 +956,7 @@ class MogValidatorTest {
 	def void testValidVariabilityLevelsMatch(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Y }
+			DECLARED_VARIABLES{ Y::ContinuousObs }
 		
 			DATA_INPUT_VARIABLES {
 				ID : { use is id }
@@ -1315,7 +1315,7 @@ class MogValidatorTest {
 	def void testValidSingleSimpleDosingMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -1332,9 +1332,9 @@ class MogValidatorTest {
 				}
 				
 				MODEL_PREDICTION{
-					Y
+					Y = A + D
 					A
-					D
+					D::DosingVar
 				}
 		
 		}
@@ -1414,7 +1414,7 @@ class MogValidatorTest {
 	def void testValidSingleOdeDosingMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -1465,7 +1465,7 @@ class MogValidatorTest {
 	def void testValidSingleCompartmentDosingMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -1516,7 +1516,7 @@ class MogValidatorTest {
 	def void testInvalidSingleSimpleDosingNoMdlVarMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				AMT : { use is amt, variable=D }
 			} # end DATA_INPUT_VARIABLES
@@ -1565,7 +1565,7 @@ class MogValidatorTest {
 	def void testValidSingleOdeDosingMissingModelMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				AMT : { use is amt, variable=D }
 			} # end DATA_INPUT_VARIABLES
@@ -1615,7 +1615,7 @@ class MogValidatorTest {
 	def void testValidSingleCompartmentDosingMissingModelMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -1666,11 +1666,11 @@ class MogValidatorTest {
 	def void testValidMultiDosingMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D; D2; Y }
+			DECLARED_VARIABLES { D::DosingTarget; D2::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				CMT : { use is cmt }
-				AMT : { use is amt, define = { 1 in CMT as D, 2 in CMT as D2, 3 in CMT as Y } }
+				AMT : { use is amt, define = { 1 in CMT as D, 2 in CMT as D2 } }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -1690,7 +1690,6 @@ class MogValidatorTest {
 						CENTRAL:    {type is compartment, modelCmt=2}
 			             ::   {type is elimination, from=CENTRAL, v=1, cl=1}
 						}
-					Y
 				}
 		
 		}
@@ -1829,7 +1828,7 @@ class MogValidatorTest {
 	def void testInvalidSingleDosingIncompatibleTypesMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				TIME : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -1880,7 +1879,7 @@ class MogValidatorTest {
 	def void testValidModelStructParamMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -1939,7 +1938,7 @@ class MogValidatorTest {
 	def void testValidModelStructParamWithAssignmentInModelMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -1998,7 +1997,7 @@ class MogValidatorTest {
 	def void testInvalidModelStructParamMatchMissingParamMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				AMT : { use is amt, variable=D }
 			} # end DATA_INPUT_VARIABLES
@@ -2056,7 +2055,7 @@ class MogValidatorTest {
 	def void testInvalidModelStructParamMatchWrongParamBlockMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				AMT : { use is amt, variable=D }
 			} # end DATA_INPUT_VARIABLES
@@ -2119,7 +2118,7 @@ class MogValidatorTest {
 	def void testValidWithWarningMogModelStructParamMatchMaskedAssignmentinMdl(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -2185,7 +2184,7 @@ class MogValidatorTest {
 	def void testValidModelVarParamMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -2244,7 +2243,7 @@ class MogValidatorTest {
 	def void testValidModelVarParamWithAssignmentInModelMatch(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -2302,7 +2301,7 @@ class MogValidatorTest {
 	def void testInvalidModelVarParamsMatchMissingParamMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				TIME : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -2363,7 +2362,7 @@ class MogValidatorTest {
 	def void testInvalidModelVarParamMatchWrongParamBlockMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				AMT : { use is amt, variable=D }
 			} # end DATA_INPUT_VARIABLES
@@ -2426,7 +2425,7 @@ class MogValidatorTest {
 	def void testValidWithWarningMogModelVarParamMatchMaskedAssignmentinMdl(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
@@ -2491,7 +2490,7 @@ class MogValidatorTest {
 	def void testInvalidDanglingObjectRefMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D }
+			DECLARED_VARIABLES { D::DosingTarget }
 			DATA_INPUT_VARIABLES {
 				AMT : { use is amt, variable=D }
 				TIME : { use is idv }

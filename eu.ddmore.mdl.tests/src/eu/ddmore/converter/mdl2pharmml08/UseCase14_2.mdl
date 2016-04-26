@@ -17,7 +17,7 @@ warfarin_T2E_exact_dat = dataObj{
       II: {use is ii}
       WT: {use is covariate}
       DVID: {use is dvid}
-      DV: {use is dv, variable=Y}
+      DV: {use is dv, variable=Y::ContinuousObs }
       MDV: {use is mdv}
       REP: {use is covariate}
       CPX: {use is covariate}

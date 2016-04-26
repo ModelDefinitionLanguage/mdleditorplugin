@@ -4,7 +4,7 @@
 
 warfarin_PRED_dat = dataObj{
 
-   DECLARED_VARIABLES{CONC_obs DOSE }
+   DECLARED_VARIABLES{CONC_obs::ContinuousObs  DOSE::DosingTarget }
 
    DATA_INPUT_VARIABLES{
       ID: {use is id}

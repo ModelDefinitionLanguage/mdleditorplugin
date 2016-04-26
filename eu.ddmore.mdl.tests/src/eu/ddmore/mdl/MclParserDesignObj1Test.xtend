@@ -17,7 +17,7 @@ class MclParserDesignObj1Test {
 	val static CODE_SNIPPET = '''
 warfarin_design = designObj {
 	DECLARED_VARIABLES{
-		bsv_lvl; GUT::DosingTarget; oral1
+		bsv_lvl; GUT::DosingTarget; oral1  Y
 	}
 	
 	# trial design
@@ -61,6 +61,10 @@ warfarin_design = designObj {
 		     	interventionSequence = {
 		       		admin = dreg1,
 		       		start = [epochStart, epochEnd]
+		      	},
+		      	samplingSequence = {
+		      		sample = samp,
+		      		start = 0
 		      	}
 		}
 		arm2 : {
@@ -68,22 +72,38 @@ warfarin_design = designObj {
 		     interventionSequence = {
 		     		admin = dreg2,
 		       		start = [epochStart, epochEnd]
-		     }
+		     },
+	      	samplingSequence = {
+	      		sample = samp,
+	      		start = 0
+	      	}
 		}
 		arm3 : {
 		     armSize = 20,
 		     interventionSequence = {
 			       admin = dreg3,
 			       start = [epochStart, epochEnd]
-			 }
+			 },
+	      	samplingSequence = {
+	      		sample = samp,
+	      		start = 0
+	      	}
 		}
 		arm4 : {
 		     armSize = 20,
 		     interventionSequence = {
 			       admin = dreg4,
 			       start = [epochStart, epochEnd]
-			 }
+			 },
+	      	samplingSequence = {
+	      		sample = samp,
+	      		start = 0
+	      	}
 		}
+	}
+	
+	SAMPLING{
+		samp : { type is simple, sampleTime = [ 0, 20, 40, 60 ], outcome = Y } 
 	}
 }
 		'''

@@ -12,7 +12,7 @@ _type Vector _vector;
 _type Matrix _matrix;
 _type Function _function;
 _type Reference _reference;
-_type Mapping _mapping;
+//_type Mapping _mapping;
 _type Undefined _undef;
 _type GenericEnum _category;
 _type GenericCategoryValue _categoryValue;
@@ -40,13 +40,15 @@ _type objType _enum (mdlObj, dataObj, parObj, taskObj, designObj, priorObj);
 
 // Data input variables
 
+_mapping DoseMapping _data ::Int _col ::Cmt _tgt ::Reference[::DosingTarget]; 
+_mapping ObsMapping _data ::Int _col ::Dvid _tgt ::Reference[::ContinuousObs]; 
 
 _list DataColumn _super;
 _list Covariate _alt Real _extends DataColumn _atts use::divUse, interp::Reference[::Function(::Real, ::Real, ::Real, ::Real, ::Real)::Real]
 							_sig (use, interp?);  
 _list CatCovariate _extends DataColumn _atts use::divUse _cat use::Int _sig (use);  
-_list Amt _extends DataColumn _atts use::divUse, define::Mapping, variable::Reference[::Real] _sig (use, define), (use, variable);
-_list Dv _extends DataColumn _atts use::divUse, define::Mapping, variable::Reference[::Real] _sig (use, define), (use, variable);
+_list Amt _extends DataColumn _atts use::divUse, define::DoseMapping, variable::Reference[::DosingTarget] _sig (use, define), (use, variable);
+_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, variable::Reference[::ContinuousObs] _sig (use, define), (use, variable);
 _list Idv _extends DataColumn _atts use::divUse _sig(use);
 _list Cmt _extends DataColumn _atts use::divUse _sig(use);
 _list Id _extends DataColumn _atts use::divUse _sig(use);
@@ -122,13 +124,15 @@ _list VarLevel _atts type::varLvlType, level::Int
 _list DosingTarget _super;
 _list DerivList _alt Deriv _extends DosingTarget _atts deriv::Real, init::Real, x0::Real, wrt::Reference[::Real]
 	_sig(deriv, init?, x0?, wrt?);
+_list DosingVar _alt Real _extends DosingTarget _atts value::Real _sig(value);
 
 
 // Compartments
 
 _list CmtDirect _alt Real _atts type::cmtType, modelCmt::Int, to::Reference[::DosingTarget],
-		modelDur::Real, tlag::Real, finput::Real
-		_sig(type, modelCmt?, to, modelDur?, tlag?, finput?);
+		modelDur::Real, tlag::Real, finput::Real, modelRate::Real
+		_sig(type, modelCmt?, to, modelDur?, tlag?, finput?),
+			(type, modelCmt?, to, modelRate?, tlag?, finput?);
 
 _list Effect _alt Real _atts type::cmtType, modelCmt::Int, from::Reference[::DosingTarget], keq::Real
 			_sig (type, modelCmt?, from, keq);
@@ -158,29 +162,29 @@ _list Distribution _atts type::cmtType, modelCmt::Int, from::Reference[::DosingT
 
 	 
 // Observations
-_list continuousErrorList _super;
-_list combinedError1List _alt Real _extends continuousErrorList
+_list ContinuousObs _super;
+_list combinedError1List _alt Real _extends ContinuousObs
 	_atts type::obstype, trans::transType, additive::Real, proportional::Real, prediction::Real, eps::RandomVariable[::Real], varLvl::VarLevel
 		_sig(type, trans?, additive, proportional, prediction, eps), (type, trans?, additive, proportional, prediction, varLvl)
 	;
-_list combinedError2List _alt Real _extends continuousErrorList
+_list combinedError2List _alt Real _extends ContinuousObs
 	_atts type::obstype, trans::transType, additive::Real, proportional::Real, prediction::Real, eps::RandomVariable[::Real], varLvl::VarLevel
 		_sig(type, trans?, additive, proportional, prediction, eps), (type, trans?, additive, proportional, prediction, varLvl)
 	;
-_list additiveErrorList _alt Real _extends continuousErrorList
+_list additiveErrorList _alt Real _extends ContinuousObs
 	_atts type::obstype, trans::transType, additive::Real, prediction::Real, eps::RandomVariable[::Real], varLvl::VarLevel
 		_sig(type, trans?, additive, prediction, eps), (type, trans?, additive, prediction, varLvl)
 	;
-_list proportionalErrorList _extends continuousErrorList
+_list proportionalErrorList _extends ContinuousObs
 	_atts type::obstype, trans::transType, proportional::Real, prediction::Real, eps::RandomVariable[::Real], varLvl::VarLevel
 	_sig(type, trans?, proportional, prediction, eps), (type, trans?, proportional, prediction, varLvl)
 	;
 _list CatObs _anon _atts type::obstype, variable::RandomVariable[::GenericEnum] _sig(type, variable);
 _list CountObs _anon _atts type::obstype, variable::RandomVariable[::Int] _sig(type, variable);
 _list DiscreteObs _anon _atts type::obstype, variable::RandomVariable[::GenericEnum] _sig(type, variable);
-_list TteObs _alt Real _atts type::obstype, hazard::Reference[::Real] _sig(type, hazard);
-_list ContinuousObsList _anon _extends continuousErrorList _atts type::obstype, variable::RandomVariable[::Real] _sig(type, variable);
-_list UserDefinedObsList _extends continuousErrorList _atts type::obstype, value::Real, prediction::Real, weight::Real
+_list TteObs _extends ContinuousObs _atts type::obstype, hazard::Reference[::Real] _sig(type, hazard);
+_list ContinuousObsList _anon _extends ContinuousObs _atts type::obstype, variable::RandomVariable[::Real] _sig(type, variable);
+_list UserDefinedObsList _extends ContinuousObs _atts type::obstype, value::Real, prediction::Real, weight::Real
 									_sig(type, value, prediction, weight);
 
 // Parameter obj variability & Structural
@@ -203,24 +207,25 @@ _type AdminTypeType _enum (bolus, infusion, combi, resetAll, reset);
 // Design Objects
 _list AdminSuperList _super;
 _list AdminBolusList _extends AdminSuperList _atts type::AdminTypeType, input::Reference[::DosingTarget], amount::Real,
-						p::Real, doseTime::Vector, ssInterval::Real, ssEndTime::Real
+						p::Real, doseTime::Vector, ssInterval::Real, timeLastSSDose::Real
 						_sig (type, input, amount, p?, doseTime),
-							(type, input, amount, p?, ssInterval?, ssEndTime) ;
+							(type, input, amount, p?, ssInterval?, timeLastSSDose) ;
 
 _list AdminInfusionList _extends AdminSuperList _atts type::AdminTypeType, input::Reference[::DosingTarget], amount::Real,
 						rate::Vector, p::Real, doseTime::Vector, duration::Vector,
-						ssInterval::Real, ssEnd::Real
+						ssInterval::Real, timeLastSSDose::Real, timeStopSSInfusion::Real
 						_sig (type, input, amount, p?, doseTime, rate),
 							(type, input, amount, p?, doseTime, duration),
-							(type, input, amount, p?, rate, ssInterval?, ssEnd),
-							(type, input, amount, p?, duration, ssInterval?, ssEnd) ;
+							(type, input, amount, p?, rate, ssInterval?, timeLastSSDose),
+							(type, input, amount, p?, duration, ssInterval?, timeLastSSDose),
+							(type, input, rate, p?, timeStopSSInfusion);
 						
 _list AdminComplexList _extends AdminSuperList _atts type::AdminTypeType, combination::Vector[::AdminSuperList], start::Vector, end::Vector
 						_sig (type, combination, start?, end?) ;
-_list AdminResetAllList _extends AdminSuperList _atts type::AdminTypeType, resetTime::Real, value::Real, start::Vector
-						_sig (type, resetTime?, value?, start?) ;
-_list AdminResetList _extends AdminSuperList _atts type::AdminTypeType, variable::Vector[::Reference[::DosingTarget]], resetTime::Real, value::Real, start::Vector
-						_sig (type, variable, resetTime?, value?, start?) ;
+_list AdminResetAllList _extends AdminSuperList _atts type::AdminTypeType
+						_sig (type) ;
+_list AdminResetList _extends AdminSuperList _atts type::AdminTypeType, variable::Vector[::Reference[::DosingTarget]], resetTime::Real, value::Real
+						_sig (type, variable, resetTime?, value?) ;
 
 _sublist intSeqAtts _atts admin::Vector[::Reference[::AdminSuperList]], start::Vector
 					_sig (admin, start?);
@@ -231,7 +236,7 @@ _sublist OccSeqSubList _atts occasion::Vector, level::Reference[::VarLevel], sta
 					_sig (occasion, level, start?);
 _list StudyDesign _atts armSize::Int, sameTimes::Boolean, 
 						occasionSequence::Vector[::OccSeqSubList], interventionSequence::Vector[::intSeqAtts], samplingSequence::Vector[::sampSeqAtts]
-		_sig (interventionSequence, samplingSequence?, occasionSequence?, armSize?, sameTimes?);
+		_sig (interventionSequence?, samplingSequence, occasionSequence?, armSize?, sameTimes?);
 
 //_list DesignSpaceCatCov _atts objRef::GenericEnum, element::sampleelement, discrete::Vector, range::Vector
 //						_sig (objRef, element, discrete),
@@ -418,7 +423,7 @@ _block INTERVENTION (1, ) _statements (,) _listDefn
 
 _block STUDY_DESIGN (,) _statements (,) _listDefn
 		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?
-		_list _key=interventionSequence StudyDesign;
+		_list _key=armSize StudyDesign;
 
 _block SAMPLING (,) _statements (,) _listDefn
 		_list _key=type sampletype.simple->SimpleSamplingList, sampletype.combi->DerivedSamplingList;
@@ -667,7 +672,8 @@ _func combinedError1 _named
 			eps::RandomVariable[::Real]
 		)
 		_sig(trans?, additive, proportional, prediction, eps)
-		_returns ::Real
+		_returns ::combinedError1List
+//		_returns ::Real
 ;
 _func combinedError2 _named
 		( 
@@ -678,7 +684,8 @@ _func combinedError2 _named
 			eps::RandomVariable[::Real]
 		)
 		_sig(trans?, additive, proportional, prediction, eps)
-		_returns ::Real
+		_returns ::combinedError2List
+//		_returns ::Real
 ;
 _func additiveError _named
 		( 
@@ -688,7 +695,8 @@ _func additiveError _named
 			eps::RandomVariable[::Real]
 		)
 		_sig(trans?, additive, prediction, eps)
-		_returns ::Real
+//		_returns ::Real
+		_returns ::additiveErrorList
 ;
 _func proportionalError _named
 		( 
@@ -698,7 +706,8 @@ _func proportionalError _named
 			eps::RandomVariable[::Real]
 		)
 		_sig(trans?, proportional, prediction, eps)
-		_returns ::Real
+//		_returns ::Real
+		_returns ::proportionalErrorList
 ;
 _func readVector _named
 			(

@@ -5,9 +5,9 @@
 
 warfarin_PK_IVPO_dat = dataObj {
 	DECLARED_VARIABLES{
-		INPUT_KA
-		Y
-		FOO
+		INPUT_KA::DosingTarget
+		Y::ContinuousObs
+		FOO::DosingTarget
 	}
 
   DATA_INPUT_VARIABLES{

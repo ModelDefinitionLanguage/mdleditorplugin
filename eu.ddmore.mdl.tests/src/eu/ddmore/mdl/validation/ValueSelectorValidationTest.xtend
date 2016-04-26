@@ -21,7 +21,7 @@ class ValueSelectorValidationTest {
 	@Test
 	def void testValidvalueSelection() {
 		val mclText = '''bar = dataObj {
-			DECLARED_VARIABLES { Ad }
+			DECLARED_VARIABLES { Ad::DosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 			  CMT : { use is cmt }

@@ -58,6 +58,7 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 import eu.ddmore.mdl.provider.MappingDefinitionProvider
 import eu.ddmore.mdl.type.MappingTypeInfo
 import eu.ddmore.mdl.mdl.CatValRefMappingExpression
+import eu.ddmore.mdl.mdl.MappingExpression
 
 class TypeSystemValidator extends AbstractMdlValidator {
 	
@@ -414,16 +415,16 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	}
 	
 	
-	def private checkAsOperator(Expression lhs, Expression rhs,  (TypeInfo, TypeInfo) => void leftErrorLambda,
-				(TypeInfo, TypeInfo) => void rightErrorLambda){
-		checkExpectedAndExpression(TypeSystemProvider::INT_TYPE, lhs, leftErrorLambda)
-		if(rhs?.typeFor ?: TypeSystemProvider::UNDEFINED_TYPE == TypeSystemProvider::MAPPING_TYPE){
-			checkArgumentMatchesAndExpression(TypeSystemProvider::MAPPING_TYPE, rhs, rightErrorLambda)
-		}
-		else{
-			checkArgumentMatchesAndExpression(TypeSystemProvider::REAL_TYPE.makeReference, rhs, rightErrorLambda)
-		}
-	}
+//	def private checkAsOperator(Expression lhs, Expression rhs,  (TypeInfo, TypeInfo) => void leftErrorLambda,
+//				(TypeInfo, TypeInfo) => void rightErrorLambda){
+//		checkExpectedAndExpression(TypeSystemProvider::INT_TYPE, lhs, leftErrorLambda)
+//		if(rhs?.typeFor ?: TypeSystemProvider::UNDEFINED_TYPE == TypeSystemProvider::MAPPING_TYPE){
+//			checkArgumentMatchesAndExpression(TypeSystemProvider::MAPPING_TYPE, rhs, rightErrorLambda)
+//		}
+//		else{
+//			checkArgumentMatchesAndExpression(TypeSystemProvider::REAL_TYPE.makeReference, rhs, rightErrorLambda)
+//		}
+//	}
 	
 	def checkWhenOperator(EnumPair at, CategoryValueReference lhs, Expression rhs,  (TypeInfo, TypeInfo) => void leftErrorLambda,
 				(TypeInfo, TypeInfo) => void rightErrorLambda){
@@ -485,6 +486,15 @@ class TypeSystemValidator extends AbstractMdlValidator {
 			errorLambda.apply(expectedType, actualType)
 		} 
 	}
+	
+	def checkCatgoricalMappingMatches(TypeInfo expectedType, Expression exp, (TypeInfo, TypeInfo) => void errorLambda){
+		val actualType = exp?.typeFor ?: TypeSystemProvider::UNDEFINED_TYPE
+		if(expectedType instanceof MappingTypeInfo){
+			if(!expectedType.catTgtType.isArgumentCompatible(actualType)){
+				errorLambda.apply(expectedType, actualType)
+			}
+		} 
+	}
 
 	def checkArgumentMatchesAndExpression(TypeInfo expectedType, Expression exp, (TypeInfo, TypeInfo) => void errorLambda){
 		val actualType = exp?.typeFor ?: TypeSystemProvider::UNDEFINED_TYPE
@@ -502,7 +512,9 @@ class TypeSystemValidator extends AbstractMdlValidator {
 		if(listDefn != null && at != null){
 			val attType = listDefn.getAttributeType(at.attributeName)
 			if(at instanceof ValuePair){
-				checkArgumentMatchesAndExpression(attType, at.expression, errorLambda)				
+				if(at.expression instanceof CatValRefMappingExpression)
+					checkCatgoricalMappingMatches(attType, at.expression, errorLambda)
+				else checkArgumentMatchesAndExpression(attType, at.expression, errorLambda)				
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 warfarin_PKPD_turnover_dat = dataObj{
-     DECLARED_VARIABLES{CP_obs; PCA_obs; GUT }
+     DECLARED_VARIABLES{CP_obs::ContinuousObs; PCA_obs::ContinuousObs; GUT::DosingTarget }
 
      DATA_INPUT_VARIABLES{
       ID : 	 { use is id }

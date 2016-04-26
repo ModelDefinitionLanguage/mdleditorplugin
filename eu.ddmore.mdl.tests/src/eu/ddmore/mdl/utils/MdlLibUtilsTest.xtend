@@ -12,6 +12,7 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
 import eu.ddmore.mdl.type.RandomVariableTypeInfo
+import eu.ddmore.mdl.type.MappingTypeInfo
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -25,6 +26,15 @@ class MdlLibUtilsTest {
 		realTypeDefn.name = 'Real' 
 		realTypeDefn.typeClass = TypeClass.REAL
 		spec.typeName = realTypeDefn
+		spec
+	}
+
+	private def createMappingType(String name, TypeSpec dataType, TypeSpec colType, TypeSpec refType){
+		val spec = MdlLibFactory.eINSTANCE.createMappingTypeDefinition
+		spec.name = name
+		spec.asType = dataType
+		spec.colType = colType
+		spec.tgtType = refType
 		spec
 	}
 
@@ -235,6 +245,17 @@ class MdlLibUtilsTest {
 	def void testRandomVariableDefaultType(){
 		val actualTypeInfo = createRandomVariableTypeSpec(null).typeInfo
 		assertEquals("expectedType", new RandomVariableTypeInfo(TypeSystemProvider::REAL_TYPE), actualTypeInfo)
+	}
+
+	@Test
+	def void testMappingType(){
+		val actualTypeInfo = createMappingType("Foo", createIntTypeSpec, createRealTypeSpec, createRealTypeSpec).typeInfo as MappingTypeInfo
+		val expectedType = new MappingTypeInfo("Foo", TypeSystemProvider::INT_TYPE, TypeSystemProvider::REAL_TYPE, TypeSystemProvider::REAL_TYPE, TypeSystemProvider::MAPPING_TYPE)
+		assertEquals("expectedType", expectedType, actualTypeInfo)
+		assertEquals("expectedType", expectedType.asType, actualTypeInfo.asType)
+		assertEquals("expectedType", expectedType.inType, actualTypeInfo.inType)
+		assertEquals("expectedType", expectedType.tgtType, actualTypeInfo.tgtType)
+		assertEquals("expectedType", expectedType.catTgtType, actualTypeInfo.catTgtType)
 	}
 
 }

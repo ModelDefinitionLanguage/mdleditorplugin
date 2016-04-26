@@ -29,6 +29,8 @@ import java.util.List
 import org.eclipse.xtext.EcoreUtil2
 import eu.ddmore.mdl.type.RandomVariableTypeInfo
 import eu.ddmore.mdl.mdl.BlockStatement
+import eu.ddmore.mdl.type.MappingTypeInfo
+import eu.ddmore.mdllib.mdllib.MappingTypeDefinition
 
 class MdlLibUtils {
 
@@ -69,7 +71,13 @@ class MdlLibUtils {
 					default:
 						TypeSystemProvider::UNDEFINED_TYPE
 				}
-				
+			MappingTypeDefinition:
+				switch(typeClass){
+					case TypeClass.MAPPING:
+						createMappingType(td)
+					default:
+						TypeSystemProvider::UNDEFINED_TYPE
+				}
 			TypeDefinition:
 				switch(typeClass){
 					case TypeClass.INT:
@@ -92,8 +100,6 @@ class MdlLibUtils {
 						createGeneralCategoryValueType(td)
 					case TypeClass.DERIV:
 						TypeSystemProvider::DERIV_TYPE
-					case TypeClass.MAPPING:
-						TypeSystemProvider::MAPPING_TYPE 
 					default:
 						TypeSystemProvider::UNDEFINED_TYPE
 				}
@@ -182,6 +188,11 @@ class MdlLibUtils {
 	
 	def private SublistTypeInfo createSublistType(SubListTypeDefinition it){
 		new SublistTypeInfo(it)
+	}
+	
+	
+	def MappingTypeInfo createMappingType(MappingTypeDefinition it){
+		new MappingTypeInfo(name, asType.typeInfo, colType.typeInfo, tgtType.typeInfo, TypeSystemProvider::MAPPING_TYPE)
 	}
 	
 	def private BuiltinEnumTypeInfo createBuiltinEnum(TypeDefinition it){

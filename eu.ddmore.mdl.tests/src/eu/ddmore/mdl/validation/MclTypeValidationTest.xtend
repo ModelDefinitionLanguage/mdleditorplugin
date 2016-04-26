@@ -1838,7 +1838,7 @@ d1g=designObj{
 	@Test
 	def void testValidBoolExpressionAttributes(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D }
+			DECLARED_VARIABLES{ D::DosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 				TIME : { use is idv }
@@ -1857,7 +1857,7 @@ d1g=designObj{
 	@Test
 	def void testValidMappingExpressionAttributes(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D; E }
+			DECLARED_VARIABLES{ D::DosingTarget; E::DosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 				CMT : { use is cmt }
@@ -1888,14 +1888,14 @@ d1g=designObj{
 		
 		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"attribute 'define' expected value of type 'Mapping' but was 'ref:Real'"
+			"attribute 'define' expected value of type 'mapping:DoseMapping' but was 'ref:Real'"
 		)
 	}
 
 	@Test
 	def void testInvalidNoVarRefAttributes(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D }
+			DECLARED_VARIABLES{ D::DosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 				AMT : { use is amt, variable = 0.0 }
@@ -1908,14 +1908,14 @@ d1g=designObj{
 		
 		mcl.assertError(MdlPackage::eINSTANCE.assignPair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"attribute 'variable' expected value of type 'ref:Real' but was 'Real'."
+			"attribute 'variable' expected value of type 'ref:Listsubtype:DosingTarget' but was 'Real'."
 		)
 	}
 
 	@Test
 	def void testInvalidNonBoolExpressionAttributes(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D }
+			DECLARED_VARIABLES{ D::DosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 				TIME : { use is idv }
@@ -1964,7 +1964,7 @@ d1g=designObj{
 	def void testValidAsExpression(){
 		val mcl = '''
 warfarin_PK_v2_dat = dataObj{
-	DECLARED_VARIABLES{ GUT}
+	DECLARED_VARIABLES{ GUT::DosingTarget }
 	
 	DATA_INPUT_VARIABLES {
 		CMT : { use is cmt } 
@@ -2022,7 +2022,7 @@ warfarin_PK_v2_dat = dataObj{
 		
 		mcl.assertError(MdlPackage::eINSTANCE.mappingPair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"Expected ref:Real type, but was Real."
+			"Expected ref:ListSubtype:DosingTarget type, but was Real."
 		)
 	}
 	
@@ -2071,7 +2071,7 @@ warfarin_PK_v2_dat = dataObj{
 	def void testValidDataMappingWhenExpression(){
 		val mcl = '''
 warfarin_PK_v2_dat = dataObj{
-	DECLARED_VARIABLES{ Y; GUT; PCA withCategories {dead, alive}; OTHER withCategories {dead, alive} }
+	DECLARED_VARIABLES{ Y::ContinuousObs; GUT; PCA withCategories {dead, alive}; OTHER withCategories {dead, alive} }
 	
 	DATA_INPUT_VARIABLES {
 		DVID : { use  is dvid }
