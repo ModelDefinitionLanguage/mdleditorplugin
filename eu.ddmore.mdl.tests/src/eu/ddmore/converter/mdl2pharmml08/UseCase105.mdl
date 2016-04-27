@@ -123,7 +123,7 @@ drugX_delAbs_1occ_v1_mdl = mdlObj{
    }# end MODEL_PREDICTION
 
    OBSERVATION{
-      Cc_obs =  Cc+b*epsilon_Cc
+      Cc_obs : { type is userDefined,  value=Cc+b*epsilon_Cc, prediction=Cc, weight=b }
    }# end OBSERVATION
 
 

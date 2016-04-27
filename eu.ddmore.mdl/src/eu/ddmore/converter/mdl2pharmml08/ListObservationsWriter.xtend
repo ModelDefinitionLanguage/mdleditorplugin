@@ -63,6 +63,18 @@ class ListObservationsWriter {
 	}
 
 
+	def writeUserDefinedObservation(AttributeList attList, String name, int idx){
+		'''
+		<ContinuousData>
+			<General symbId="«name»">
+				«IF attList.hasAttribute('value')»
+					«attList.getAttributeExpression('value').expressionAsAssignment»
+				«ENDIF»
+			</General>
+		</ContinuousData>
+		'''
+	}
+
 	def writeContinuousObservation(AttributeList attList, String name, int idx){
 		val predictionExpr = attList.getAttributeExpression('prediction')
 		'''
@@ -125,22 +137,13 @@ class ListObservationsWriter {
 	def writeListObservations(ListDefinition s, int idx){
 		if(s.attributeLists.size == 1){
 			val type = s.attributeLists.head.getAttributeEnumValue('type')
-//			'''
-//			<ObservationModel blkId="om«idx»">
-//				«writeContinuousObservation(s.attributeLists.head, s.name, idx)»
-//			</ObservationModel>
-//			'''
 			'''
 			<ObservationModel blkId="om«idx»">
 				«switch(type){
-//					case ListDefinitionTable::COUNT_OBS_VALUE:
-//						s.print_mdef_CountObservations
-//					case ListDefinitionTable::DISCRETE_OBS_VALUE:
-//						s.print_mdef_DiscreteObservations
-//					case ListDefinitionTable::CATEGORICAL_OBS_VALUE:
-//						s.print_mdef_CategoricalObservations
 					case ListDefinitionTable::TTE_OBS_VALUE:
 						s.print_mdef_TimeToEventObservations
+					case ListDefinitionTable::USER_DEFINED_OBS_VALUE:
+						writeUserDefinedObservation(s.attributeLists.head, s.name, idx)
 					default:
 						writeContinuousObservation(s.attributeLists.head, s.name, idx)
 				}»

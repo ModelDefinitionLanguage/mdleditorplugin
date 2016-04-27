@@ -138,7 +138,7 @@ UC001_09_Holford_PK_DEQ_genCov_genErr_Tlag_mdl = mdlObj{
    }# end MODEL_PREDICTION
 
    OBSERVATION{
-      CC_obs = CC*(1+eps_RUV_PROP)+eps_RUV_ADD
+      CC_obs : { type is userDefined, value=CC*(1+eps_RUV_PROP)+eps_RUV_ADD, weight=(1+eps_RUV_PROP)+eps_RUV_ADD, prediction=CC }
    }# end OBSERVATION
 
 

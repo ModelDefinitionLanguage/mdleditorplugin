@@ -115,7 +115,7 @@ warfarin_PRED_mdl = mdlObj{
    }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{
-   	   DOSE
+   	   DOSE::DosingVar
        TNOW =  if (TIME<=TLAG) then 0
         else TIME-TLAG
        CONC =  if (TIME<=TLAG) then 0
@@ -123,7 +123,7 @@ warfarin_PRED_mdl = mdlObj{
    }# end MODEL_PREDICTION
 
    OBSERVATION{
-      CONC_obs = CONC*(1+eps_RUV_PROP)+eps_RUV_ADD
+      CONC_obs : { type is userDefined, value=CONC*(1+eps_RUV_PROP)+eps_RUV_ADD, prediction=CONC, weight=(1+eps_RUV_PROP)+eps_RUV_ADD }
    }# end OBSERVATION
 
 
