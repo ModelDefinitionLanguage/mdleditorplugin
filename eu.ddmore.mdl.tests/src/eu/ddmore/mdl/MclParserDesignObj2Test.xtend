@@ -22,8 +22,8 @@ class MclParserDesignObj2Test {
 	val static CODE_SNIPPET = '''
 d1g=designObj{
 	DECLARED_VARIABLES{
-		Conc
-		Effect
+		Conc::ContinuousObs
+		Effect::ContinuousObs
 		Cmt::DosingTarget
 	}
 	INTERVENTION{

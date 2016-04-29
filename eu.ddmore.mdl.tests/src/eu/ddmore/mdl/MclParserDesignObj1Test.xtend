@@ -17,7 +17,7 @@ class MclParserDesignObj1Test {
 	val static CODE_SNIPPET = '''
 warfarin_design = designObj {
 	DECLARED_VARIABLES{
-		bsv_lvl; GUT::DosingTarget; oral1  Y
+		bsv_lvl; GUT::DosingTarget; oral1  Y::ContinuousObs
 	}
 	
 	# trial design

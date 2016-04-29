@@ -177,7 +177,7 @@ ValuePair:
 ;
 
 AssignPair:
-	argumentName = AttributeName '=' expression = Expression
+	argumentName = AttributeName assignOp=('='|'~') expression = Expression
 	
 ;
 

@@ -1512,7 +1512,7 @@ class MclTypeValidationTest {
 		val mcl = 	'''
 		d1g=designObj{
 			DECLARED_VARIABLES{
-				Conc
+				Conc::ContinuousObs
 			}
 			
 			INTERVENTION{
@@ -2316,7 +2316,7 @@ warfarin_PK_v2_dat = dataObj{
 		val mcl = '''
 d1g=designObj{
 	DECLARED_VARIABLES{
-		Conc
+		Conc::ContinuousObs
 		Effect
 		Cmt::DosingTarget
 	}
@@ -2343,7 +2343,7 @@ d1g=designObj{
 		val mcl = '''
 d1g=designObj{
 	DECLARED_VARIABLES{
-		Conc
+		Conc::ContinuousObs
 		Effect
 		Cmt::DosingTarget
 	}
@@ -2388,7 +2388,7 @@ d1g=designObj{
 		val mcl = '''
 d1g=designObj{
 	DECLARED_VARIABLES{
-		Conc
+		Conc::ContinuousObs
 		Effect
 		Cmt::DosingTarget
 	}
