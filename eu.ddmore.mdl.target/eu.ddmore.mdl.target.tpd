@@ -94,6 +94,6 @@ org.slf4j.api
 //de.walware.statet.r.sweave.feature.group
 //} 
 
-location "http://sourceforge.net/projects/ddmore/files/update/libpharmml/0.6.1-1" libpharmml-repo {  
+location "http://sourceforge.net/projects/ddmore/files/update/libpharmml/0.7-1" libpharmml-repo {  
 eu.ddmore.libpharmml.feature.feature.group
 } 
