@@ -245,7 +245,7 @@ class MogValidatorTest {
 				}
 		
 				COVARIATES{
-					logWT = ln(70)
+					logWT = 70
 				}
 		}
 		p1 = parObj{
@@ -402,7 +402,7 @@ class MogValidatorTest {
 				}
 		
 				OBSERVATION{
-					Y = additiveError(additive=1, prediction=F, eps=EPS)
+					Y : { type is additiveError, additive=1, prediction=F, eps=EPS }
 				}
 		}
 		p1 = parObj{
@@ -573,7 +573,7 @@ class MogValidatorTest {
 				}
 		
 				OBSERVATION{
-					Y = additiveError(additive=1, prediction=F, eps=EPS)
+					Y : { type is additiveError, additive=1, prediction=F, eps=EPS }
 				}
 		}
 		p1 = parObj{
@@ -629,7 +629,7 @@ class MogValidatorTest {
 				}
 		
 				OBSERVATION{
-					Y = additiveError(additive=1, prediction=F, eps=EPS)
+					Y : { type is additiveError, additive=1, prediction=F, eps=EPS }
 				}
 		}
 		p1 = parObj{
@@ -689,8 +689,8 @@ class MogValidatorTest {
 				}
 		
 				OBSERVATION{
-					Y = additiveError(additive=1, prediction=F, eps=EPS)
-					Z = additiveError(additive=1, prediction=F, eps=EPS)
+					Y : { type is additiveError, additive=1, prediction=F, eps=EPS }
+					Z : { type is additiveError, additive=1, prediction=F, eps=EPS }
 				}
 		}
 		p1 = parObj{
@@ -745,8 +745,8 @@ class MogValidatorTest {
 				}
 		
 				OBSERVATION{
-					Y = additiveError(additive=1, prediction=F, eps=EPS)
-					Z = additiveError(additive=1, prediction=F, eps=EPS)
+					Y : { type is additiveError, additive=1, prediction=F, eps=EPS }
+					Z : { type is additiveError, additive=1, prediction=F, eps=EPS }
 				}
 		}
 		p1 = parObj{
@@ -804,8 +804,8 @@ class MogValidatorTest {
 				}
 		
 				OBSERVATION{
-					Y = additiveError(additive=1, prediction=F, eps=EPS)
-					Z = additiveError(additive=1, prediction=F, eps=EPS)
+					Y : { type is additiveError, additive=1, prediction=F, eps=EPS }
+					Z : { type is additiveError, additive=1, prediction=F, eps=EPS }
 				}
 		}
 		p1 = parObj{
@@ -863,8 +863,8 @@ class MogValidatorTest {
 				}
 		
 				OBSERVATION{
-					Y = additiveError(additive=1, prediction=F, eps=EPS)
-					Z = additiveError(additive=1, prediction=F, eps=EPS)
+					Y : { type is additiveError, additive=1, prediction=F, eps=EPS }
+					Z : { type is additiveError, additive=1, prediction=F, eps=EPS }
 				}
 		}
 		p1 = parObj{

@@ -25,7 +25,7 @@ warfarin_PK_INFUSION_dat = dataObj {
 
 
 warfarin_PK_INFUSION_par = parObj {
-	DECLARED_VARIABLES{ETA_CL ETA_V}
+#	DECLARED_VARIABLES{ETA_CL ETA_V}
 
 	# By default a parameter is to be estimated if fix is omitted
  	STRUCTURAL {
@@ -41,7 +41,9 @@ warfarin_PK_INFUSION_par = parObj {
 		# Don't need to provide types. No longer needed.
 		PPV_CL : { value = 0.1, type is sd }
 		PPV_V : { value = 0.1, type is sd }
-		OMEGA : { parameter=[ETA_CL, ETA_V], value = [0.01], type is corr }
+    	RHO_CL_V : { value = 0.01 }
+
+#		OMEGA : { parameter=[ETA_CL, ETA_V], value = [0.01], type is corr }
 	} # end VARIABILITY
 } # end of parameter object 
 
@@ -70,17 +72,19 @@ warfarin_PK_INFUSION_mdl = mdlObj {
 	VARIABILITY_PARAMETERS {
 		PPV_CL
 		PPV_V
+		RHO_CL_V
 	} # end VARIABILITY_PARAMETERS 
 	
 	RANDOM_VARIABLE_DEFINITION(level=ID) {
 		ETA_CL ~ Normal(mean = 0, sd = PPV_CL)
 		ETA_V ~ Normal(mean = 0, sd = PPV_V)
+	  :: { type is correlation, rv1=ETA_CL, rv2=ETA_V, value=RHO_CL_V }
 	} # end RANDOM_VARIABLE_DEFINITION 
 
 	
 	INDIVIDUAL_VARIABLES { # This maps to the "Type 3" individual parameter definition in PharmML
-	    ln(CL) = linear( trans is ln, pop = POP_CL, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}] , ranEff = [ETA_CL] )
-	    ln(V) = linear( trans is ln, pop = POP_V, fixEff = [{coeff=BETA_V_WT, cov=logtWT}] , ranEff = [ETA_V] )
+	    CL : { type is linear,  trans is ln, pop = POP_CL, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}] , ranEff = [ETA_CL]  }
+	    V : { type is linear,  trans is ln, pop = POP_V, fixEff = [{coeff=BETA_V_WT, cov=logtWT}] , ranEff = [ETA_V]  }
 	} # end INDIVIDUAL_VARIABLES
 
 	MODEL_PREDICTION {
@@ -95,7 +99,7 @@ warfarin_PK_INFUSION_mdl = mdlObj {
 	}
 
 	OBSERVATION {
-	    Y = combinedError1(additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC ) 
+	    Y : { type is combinedError1, additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC  }
 	} # end OBSERVATION
 } # end of model object
 

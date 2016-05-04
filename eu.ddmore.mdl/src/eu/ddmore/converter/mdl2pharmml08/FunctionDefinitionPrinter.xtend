@@ -285,9 +285,9 @@ class FunctionDefinitionPrinter {
 				}
 				ListDefinition:{
 					for(attList : o.attributeLists){
-						val errFunc = attList.getAttributeEnumValue('type')
+						val errFunc = getStandardErrorName(attList.getAttributeEnumValue('type'), attList.getAttributeEnumValue('trans'))
 						if(!printed.contains(errFunc) && functionDefinitions.containsKey(errFunc)){
-							printed.add(errFunc)	
+							printed.add(errFunc)
 							retVal += getPharmMLFuncDefn(errFunc)
 						}
 					}

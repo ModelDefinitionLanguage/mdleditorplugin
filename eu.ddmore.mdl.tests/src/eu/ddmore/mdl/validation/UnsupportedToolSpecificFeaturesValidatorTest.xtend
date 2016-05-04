@@ -38,7 +38,7 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			}
 
 			INDIVIDUAL_VARIABLES{
-				ln(a) = linear(trans is ln, pop=d, ranEff = [ eta_a ]) 
+				a : { type is linear, trans is ln, pop=d, ranEff = [ eta_a ] }
 			}
 		}
 	'''.parse
@@ -67,12 +67,12 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			}
 
 			INDIVIDUAL_VARIABLES{
-				ln(a) = general(grp=d, ranEff = [ eta_a ]) 
+				a : { type is general, trans is ln, grp=d, ranEff = [ eta_a ] }
 			}
 		}
 	'''.parse
 		mcl.assertNoErrors
-		mcl.assertWarning(MdlPackage::eINSTANCE.equationTypeDefinition, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
+		mcl.assertWarning(MdlPackage::eINSTANCE.attributeList, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
 			"General individual parameter definition is not currently supported by MONOLIX."
 		)
 	}
@@ -160,11 +160,11 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			}
 
 			INDIVIDUAL_VARIABLES{
-				ln(a) = linear(trans is ln, pop=d, ranEff = [ eta_a ]) 
+				a : { type is linear, trans is ln, pop=d, ranEff = [ eta_a ] }
 			}
 			
 			OBSERVATION{
-				z = combinedError2(additive=1, proportional=2, prediction=a, eps=eps_a)
+				z : { type is combinedError2, additive=1, proportional=2, prediction=a, eps=eps_a }
 			}
 		}
 	'''.parse
@@ -198,7 +198,7 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			}
 
 			INDIVIDUAL_VARIABLES{
-				ln(a) = linear(trans is ln, pop=d, ranEff = [ eta_a ]) 
+				a : { type is linear, trans is ln, pop=d, ranEff = [ eta_a ] }
 			}
 			
 			OBSERVATION{

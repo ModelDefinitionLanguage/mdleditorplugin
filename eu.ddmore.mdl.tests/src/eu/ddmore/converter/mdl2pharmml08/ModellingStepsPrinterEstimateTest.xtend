@@ -108,7 +108,7 @@ class ModellingStepsPrinterEstimateTest {
 			}
 			
 			pobj = parObj {
-				DECLARED_VARIABLES{ETA_CL ETA_V}
+				#DECLARED_VARIABLES{ETA_CL ETA_V}
 			
 				# By default a parameter is to be estimated if fix is omitted
 			 	STRUCTURAL {
@@ -126,7 +126,7 @@ class ModellingStepsPrinterEstimateTest {
 					PPV_V : { value = 0.1, type is sd }
 					PPV_KA : { value = 0.1, type is sd }
 					PPV_TLAG : { value = 0.1, type is sd, fix=true }
-					OMEGA : { parameter=[ETA_CL, ETA_V], value = [0.01], type is corr }
+					#OMEGA : { parameter=[ETA_CL, ETA_V], value = [0.01], type is corr }
 				} # end VARIABILITY
 			} # end of parameter object 
 
@@ -403,7 +403,7 @@ class ModellingStepsPrinterEstimateTest {
 			}
 			
 			pobj = parObj {
-				DECLARED_VARIABLES{ETA_CL ETA_V}
+				#DECLARED_VARIABLES{ETA_CL ETA_V}
 			
 				# By default a parameter is to be estimated if fix is omitted
 			 	STRUCTURAL {
@@ -421,7 +421,7 @@ class ModellingStepsPrinterEstimateTest {
 					PPV_V : { value = 0.1, type is sd }
 					PPV_KA : { value = 0.1, type is sd }
 					PPV_TLAG : { value = 0.1, type is sd, fix=true }
-					OMEGA : { parameter=[ETA_CL, ETA_V], value = [0.01], type is corr }
+					#OMEGA : { parameter=[ETA_CL, ETA_V], value = [0.01], type is corr }
 				} # end VARIABILITY
 			} # end of parameter object 
 
@@ -678,7 +678,7 @@ class ModellingStepsPrinterEstimateTest {
 			}
 			
 			pobj = parObj {
-				DECLARED_VARIABLES{ETA_CL ETA_V}
+				#DECLARED_VARIABLES{ETA_CL ETA_V}
 			
 				# By default a parameter is to be estimated if fix is omitted
 			 	STRUCTURAL {
@@ -696,7 +696,7 @@ class ModellingStepsPrinterEstimateTest {
 					PPV_V : { value = 0.1, type is sd }
 					PPV_KA : { value = 0.1, type is sd }
 					PPV_TLAG : { value = 0.1, type is sd, fix=true }
-					OMEGA : { parameter=[ETA_CL, ETA_V], value = [0.01], type is corr }
+					#OMEGA : { parameter=[ETA_CL, ETA_V], value = [0.01], type is corr }
 				} # end VARIABILITY
 			} # end of parameter object 
 

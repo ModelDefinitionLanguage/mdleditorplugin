@@ -76,9 +76,9 @@ Categorical_DIST_mdl = mdlObj{
    }
    
    INDIVIDUAL_VARIABLES{
-      indiv_B0 = general(grp=B0, ranEff = [eta_PPV_EVENT])
-      indiv_B1 = general(grp=B1, ranEff = [eta_PPV_EVENT])
-      indiv_B2 = general(grp=B2, ranEff = [eta_PPV_EVENT])
+      indiv_B0 : { type is general, grp=B0, ranEff = [eta_PPV_EVENT] }
+      indiv_B1 : { type is general, grp=B1, ranEff = [eta_PPV_EVENT] }
+      indiv_B2 : { type is general, grp=B2, ranEff = [eta_PPV_EVENT] }
    }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{
@@ -105,7 +105,7 @@ Categorical_DIST_mdl = mdlObj{
 	
 
    OBSERVATION{
-   	    Y = additiveError(additive=1, prediction=EDRUG, eps=EPS_Y)
+   	    Y : { type is additiveError, additive=1, prediction=EDRUG, eps=EPS_Y }
 		:: { type is categorical, variable=PAIN }  # withCategories {mild when Prob0, moderate when Prob1, severe when Prob2, missing when Prob3} }
     }# end ESTIMATION
 

@@ -13,6 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -28,7 +29,7 @@ class MclBuiltinFunctionValidationTest {
 			
 			COVARIATES{
 				other
-				cov = ln(other)
+				cov = other
 				foo = exp(22)
 			}
 			
@@ -272,24 +273,20 @@ class MclBuiltinFunctionValidationTest {
 
 	@Test
 	def void testValidNamedFunction(){
-		val mcl = '''bar = mdlObj {
+		val mcl = '''
+		bar = mdlObj {
 			IDV{T}
 			
-			COVARIATES{
-				logtWT
-			}
-			
 			VARIABILITY_LEVELS{
+				ID : { type is parameter, level=1 }
 			}
 			
 			GROUP_VARIABLES{
 				POP_CL
 				BETA_CL_WT
-				ETA_CL
 			}
-			
-			INDIVIDUAL_VARIABLES{
-				Cl = linear(pop = POP_CL, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}], ranEff = [ETA_CL])
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA_CL ~ Normal(mean = POP_CL, var=POP_CL)
 			}
 		}'''.parse
 		
@@ -301,24 +298,22 @@ class MclBuiltinFunctionValidationTest {
 		val mcl = '''bar = mdlObj {
 			IDV{ T }
 			
-			COVARIATES{
-				logtWT
-			}
-			
 			VARIABILITY_LEVELS{
+				ID : { type is parameter, level=1 }
 			}
 			
-			INDIVIDUAL_VARIABLES{
+			GROUP_VARIABLES{
 				POP_CL
 				BETA_CL_WT
-				ETA_CL
-				Cl = linear(pop = POP_CL, fixEff = BETA_CL_WT, ranEff = [ETA_CL])
+			}
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA_CL ~ Normal(mean = POP_CL, var=true)
 			}
 		}'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"argument 'fixEff' expected value of type 'vector:Sublist:fixEffAtts' but was 'ref:Real'"
+			"argument 'var' expected value of type 'Real' but was 'Boolean'"
 		)
 	}
 
@@ -401,13 +396,13 @@ class MclBuiltinFunctionValidationTest {
 			}
 
 			INDIVIDUAL_VARIABLES{
-				foo = linear()
+				foo = Normal()
 			}
 		}'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.symbolReference,
 			MdlValidator::UNRECOGNIZED_FUNCTION_NAME,
-			"Simple function 'linear' is not recognised."
+			"Simple function 'Normal' is not recognised."
 		)
 	}
 
@@ -418,15 +413,16 @@ class MclBuiltinFunctionValidationTest {
 			COVARIATES{
 				logtWT
 			}
-			
 			VARIABILITY_LEVELS{
+				ID : { type is parameter, level=1 }
 			}
 			
-			INDIVIDUAL_VARIABLES{
+			GROUP_VARIABLES{
 				POP_CL
 				BETA_CL_WT
-				ETA_CL
-				Cl = linear(pop = POP_CL, wrong = [{coeff=BETA_CL_WT, covariate=logtWT}], ranEff = [ETA_CL])
+			}
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA_CL ~ Normal(mean = POP_CL, var=POP_CL, wrong=true)
 			}
 		}'''.parse
 		
@@ -445,17 +441,15 @@ class MclBuiltinFunctionValidationTest {
 			}
 			
 			VARIABILITY_LEVELS{
+				ID : { type is parameter, level=1 }
 			}
 			
 			GROUP_VARIABLES{
 				POP_CL
 				BETA_CL_WT
-				ETA_CL
 			}
-			INDIVIDUAL_VARIABLES{
-				Cl = linear(pop = POP_CL, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}])
-			}
-			INDIVIDUAL_VARIABLES{
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA_CL ~ Normal(var=POP_CL)
 			}
 		}'''.parse
 		
@@ -466,7 +460,7 @@ class MclBuiltinFunctionValidationTest {
 //		)
 		mcl.assertError(MdlPackage::eINSTANCE.namedFuncArguments,
 			MdlValidator::MANDATORY_NAMED_FUNC_ARG_MISSING,
-			"Mandatory argument 'ranEff' is missing."
+			"Mandatory argument 'mean' is missing."
 		)
 		
 	}
@@ -538,20 +532,18 @@ class MclBuiltinFunctionValidationTest {
 			}
 			
 			VARIABILITY_LEVELS{
+				ID : { type is parameter, level=1 }
 			}
 			
 			GROUP_VARIABLES{
 				POP_CL
 				BETA_CL_WT
-				ETA_CL
 			}
-
-			INDIVIDUAL_VARIABLES{
-				Cl = linear(pop = POP_CL, ranEff = [ETA_CL])
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA_CL ~ Bernoulli(probability=POP_CL)
 			}
-			INDIVIDUAL_VARIABLES{
-			}
-		}'''.parse
+		}
+		'''.parse
 		
 		mcl.assertNoErrors
 	}
@@ -565,29 +557,33 @@ class MclBuiltinFunctionValidationTest {
 			}
 			
 			VARIABILITY_LEVELS{
+				ID : { type is parameter, level=1 }
 			}
 			
 			GROUP_VARIABLES{
 				other
 				POP_CL
-				BETA_CL_WT
-				ETA_CL
+				OMEGA_CL
+			}
+			
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA ~ Normal(mean=POP_CL, sd=OMEGA_CL, mean=POP_CL)
 			}
 			
 			
-			INDIVIDUAL_VARIABLES{
-				Cl = linear(pop = POP_CL, pop=other, fixEff = {coeff=BETA_CL_WT, covariate=logtWT}, ranEff = ETA_CL)
-			}
+«««			INDIVIDUAL_VARIABLES{
+«««				Cl : { type is linear, pop = POP_CL, pop=other, fixEff = {coeff=BETA_CL_WT, covariate=logtWT}, ranEff = ETA_CL }
+«««			}
 
 		}'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
 			MdlValidator::MULTIPLE_IDENTICAL_FUNC_ARG,
-			"Function argument 'pop' occurs more than once."
+			"Function argument 'mean' occurs more than once."
 		)
 		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
 			MdlValidator::MULTIPLE_IDENTICAL_FUNC_ARG,
-			"Function argument 'pop' occurs more than once."
+			"Function argument 'mean' occurs more than once."
 		)
 	}
 
@@ -597,7 +593,7 @@ class MclBuiltinFunctionValidationTest {
 			IDV{T}
 			COVARIATES{
 				other
-				foo = linear(10, 20, 30)
+				foo ~ Normal(10, 20, 30)
 			}
 			
 			VARIABILITY_LEVELS{
@@ -606,13 +602,14 @@ class MclBuiltinFunctionValidationTest {
 		
 		mcl.assertError(MdlPackage::eINSTANCE.symbolReference,
 			MdlValidator::UNRECOGNIZED_FUNCTION_NAME,
-			"Simple function 'linear' is not recognised."
+			"Simple function 'Normal' is not recognised."
 		)
 	}
 
-	@Test
+	@Ignore("Function not supported now. Test probably not recognised.")
 	def void testInValidNamedFunctionSublistWronAttribsType(){
-		val mcl = '''bar = mdlObj {
+		val mcl = '''
+		bar = mdlObj {
 			IDV{ T }
 			
 			COVARIATES{
@@ -630,7 +627,8 @@ class MclBuiltinFunctionValidationTest {
 			INDIVIDUAL_VARIABLES{
 				Cl = linear(pop = POP_CL, fixEff = [{co=BETA_CL_WT, cov=logtWT}], ranEff = ETA_CL)
 			}
-		}'''.parse
+		}
+		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
 			MdlValidator::INCOMPATIBLE_TYPES,

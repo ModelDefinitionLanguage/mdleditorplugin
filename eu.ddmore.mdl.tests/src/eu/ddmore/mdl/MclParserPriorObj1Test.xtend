@@ -51,7 +51,7 @@ testprior = priorObj{
 	}
 
 	PRIOR_VARIABLE_DEFINITION{
-		lnMU_V = ln(MU_V)
+		lnMU_V = MU_V
 		POP_V ~ LogNormal(mean=lnMU_V, var=VAR_V)
 		POP_k ~ NonParametric(bins=bins_k, probability=p_k) 
 		invPOP_SIGMA2_RES ~ Empirical(data=data_SIGMA2_RES, probability=p_SIGMA2_RES) 

@@ -51,7 +51,7 @@ testprior = priorObj{
 	}
 
 	PRIOR_VARIABLE_DEFINITION{
-		 lnMU_V = ln(MU_V)
+		 lnMU_V = MU_V
 		 mp ~ MultiNonParametric(bins=bins_k_v, probability=p_k)
 		 POP_K = mp[0]
 		 POP_V = mp[1]

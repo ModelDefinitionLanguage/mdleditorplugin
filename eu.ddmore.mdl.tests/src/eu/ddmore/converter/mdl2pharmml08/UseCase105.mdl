@@ -112,7 +112,7 @@ drugX_delAbs_1occ_v1_mdl = mdlObj{
       DEQ{    
          # to be checked with the dataset:!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
          Aader = if (T==0) then 0
-            else exp(ln(Dose) + ln(ktr) + n*ln(ktr*T) - ktr*T - lnFactorial(n)) - ka*Aa
+            else exp(Dose + ktr + n*ln(ktr*T) - ktr*T - lnFactorial(n)) - ka*Aa
           
          Aa: {deriv= Aader, init= 0}
          Ac: {deriv= ka*Aa-kel*Ac-kcp*Ac+kpc*Ap, init= 0}

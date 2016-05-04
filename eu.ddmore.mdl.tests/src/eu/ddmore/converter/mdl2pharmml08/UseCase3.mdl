@@ -118,20 +118,18 @@ warfarin_PKPD_turnover_mdl = mdlObj{
 # The INDIVIDUAL_VARIABLES block is used to express the individual variables and their distribution.
 # If this is not a population model then this block is not required.
 
-	 ln(CL) = linear( trans is ln, pop = POP_CL, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}] , ranEff = [ETA_CL] )
-	 ln(V) = linear( trans is ln, pop = POP_V, fixEff = [{coeff=BETA_V_WT, cov=logtWT}] , ranEff = [ETA_V] )
-	 ln(TABS) = linear( trans is ln, pop = POP_TABS, ranEff = [ETA_TABS] )
-	 ln(TLAG) = linear( trans is ln, pop = POP_TLAG, ranEff = [ETA_TLAG] )
-
-	  ln(S0) = linear( trans is ln, pop = POP_S0, ranEff = [ETA_S0] )
-	  ln(EMAX) = linear( trans is ln, pop = POP_EMAX, ranEff = [ETA_EMAX] )
-	  ln(C50) = linear( trans is ln, pop = POP_C50, ranEff = [ETA_C50] )
-	  ln(TEQ) = linear( trans is ln, pop = POP_TEQ, ranEff = [ETA_TEQ] )
-      
+	 CL : { type is linear,  trans is ln, pop = POP_CL, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}] , ranEff = [ETA_CL]  }
+	 V : { type is linear,  trans is ln, pop = POP_V, fixEff = [{coeff=BETA_V_WT, cov=logtWT}] , ranEff = [ETA_V]  }
+	 TABS : { type is linear,  trans is ln, pop = POP_TABS, ranEff = [ETA_TABS]  }
+	 TLAG : { type is linear,  trans is ln, pop = POP_TLAG, ranEff = [ETA_TLAG]  }
+	  S0 : { type is linear,  trans is ln, pop = POP_S0, ranEff = [ETA_S0]  }
+	  EMAX : { type is linear,  trans is ln, pop = POP_EMAX, ranEff = [ETA_EMAX]  }
+	  C50 : { type is linear,  trans is ln, pop = POP_C50, ranEff = [ETA_C50]  }
+	  TEQ : { type is linear,  trans is ln, pop = POP_TEQ, ranEff = [ETA_TEQ]  }
 #      if (EMAX<-1) nul=errorexit(1,101) 
-      KA=ln(2)/TABS
+      KA=2/TABS
       S2=V
-      KPCA=ln(2)/TEQ
+      KPCA=2/TEQ
       RPCA=S0*KPCA
    }# end INDIVIDUAL_VARIABLES
 
@@ -155,9 +153,8 @@ warfarin_PKPD_turnover_mdl = mdlObj{
 	}
 
    OBSERVATION{
-   	 CP_obs = combinedError1( additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_CP, prediction = CC ) 
-   
-   	 PCA_obs = additiveError( additive = RUV_FX, eps = EPS_PCA, prediction = PCA )
+   	 CP_obs : { type is combinedError1,  additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_CP, prediction = CC  }
+   	 PCA_obs : { type is additiveError,  additive = RUV_FX, eps = EPS_PCA, prediction = PCA  }
    }# end OBSERVATION
 } # end of model object
 

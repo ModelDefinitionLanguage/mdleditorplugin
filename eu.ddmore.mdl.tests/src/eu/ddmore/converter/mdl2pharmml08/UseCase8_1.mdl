@@ -26,7 +26,7 @@ warfarin_PK_BOV_dat = dataObj{
 } # end data object
 
 warfarin_PK_BOV_par = parObj{
-DECLARED_VARIABLES{eta_BOV_CL eta_BOV_V eta_BOV_KA eta_BOV_TLAG }
+#DECLARED_VARIABLES{eta_BOV_CL eta_BOV_V eta_BOV_KA eta_BOV_TLAG }
 ### Parameter object
 # The parameter object defines the numerical values of the parameters with optional constraints (lo and high values) and units.
 
@@ -59,8 +59,8 @@ DECLARED_VARIABLES{eta_BOV_CL eta_BOV_V eta_BOV_KA eta_BOV_TLAG }
       BOV_KA : {type  is var, value=0.1}
       BOV_TLAG : {type  is var, value=0.1}
 
-      BOV_COV_CL_V : { type  is cov, parameter=[eta_BOV_CL, eta_BOV_V], value=[0.01]} 
-	  BOV_COV_KA_TLAG : { type  is cov, parameter=[eta_BOV_KA, eta_BOV_TLAG], value=[0.01] } 
+      BOV_COV_CL_V : { value=0.01 } 
+	  BOV_COV_KA_TLAG : { value=0.01 } 
 
    }# end VARIABILITY
 
@@ -102,14 +102,16 @@ warfarin_PK_BOV_mdl = mdlObj{
       BOV_TLAG
       BSV_KA
       BSV_TLAG
+      BOV_COV_CL_V 
+	  BOV_COV_KA_TLAG 
    }# end VARIABILITY_PARAMETERS
 
 	GROUP_VARIABLES{
       # Covariate model
-      GRPCL=ln(POP_CL) + BETA_CL_WT*logtWT  ## Type 1 - Equation type
-      GRPV=ln(POP_V) + BETA_V_WT*logtWT
-      GRPKA=ln(POP_KA)
-      GRPLG=ln(POP_TLAG)
+      GRPCL=POP_CL + BETA_CL_WT*logtWT  ## Type 1 - Equation type
+      GRPV=POP_V + BETA_V_WT*logtWT
+      GRPKA=POP_KA
+      GRPLG=POP_TLAG
    }# end GROUP_VARIABLES
    
    RANDOM_VARIABLE_DEFINITION(level=ID){
@@ -124,14 +126,16 @@ warfarin_PK_BOV_mdl = mdlObj{
       eta_BOV_V~ Normal(mean=0, var=BOV_V)
       eta_BOV_KA~ Normal(mean=0, var=BOV_KA)
       eta_BOV_TLAG~ Normal(mean=0, var=BOV_TLAG)
+      :: { type is covariance, rv1=eta_BOV_CL, rv2=eta_BOV_V, value=0.01 } 
+	  :: { type  is covariance, rv1=eta_BOV_KA, rv2=eta_BOV_TLAG, value=0.01 } 
    }# end RANDOM_VARIABLE_DEFINITION
 
    INDIVIDUAL_VARIABLES{
       # Individual parameters
-	  ln(CL) =general(grp=GRPCL, ranEff=[eta_BSV_CL,eta_BOV_CL] ) ## Type 2 - Guassian with general covariate model
-	  ln(V) =general(grp=GRPV, ranEff=[eta_BSV_V,eta_BOV_V] )
-      ln(KA) = general(grp=GRPKA, ranEff=[eta_BSV_KA,eta_BOV_KA] )
-      ln(TLAG) = general(grp=GRPLG, ranEff=[eta_BSV_TLAG,eta_BOV_TLAG] )
+	  CL : { type is general, grp=GRPCL, ranEff=[eta_BSV_CL,eta_BOV_CL] } ## Type 2 - Guassian with general covariate model
+	  V : { type is general, grp=GRPV, ranEff=[eta_BSV_V,eta_BOV_V] }
+      KA : { type is general, grp=GRPKA, ranEff=[eta_BSV_KA,eta_BOV_KA] } 
+      TLAG : { type is general, grp=GRPLG, ranEff=[eta_BSV_TLAG,eta_BOV_TLAG] } 
    }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{
@@ -149,7 +153,7 @@ warfarin_PK_BOV_mdl = mdlObj{
 	} # end RANDOM_VARIABLE_DEFINITION 
 	
 	OBSERVATION {
-	    Y = combinedError1(additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC )
+	    Y : { type is combinedError1, additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC  }
 	} # end OBSERVATION
 
 } # end of model object

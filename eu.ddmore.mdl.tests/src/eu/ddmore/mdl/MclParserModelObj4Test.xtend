@@ -75,14 +75,14 @@ warfarin_PK_2Compartments_mdl = mdlObj {
    }# end RANDOM_VARIABLE_DEFINITION (level=DV)
 
    INDIVIDUAL_VARIABLES{
-      ln(CL) = linear(trans is ln, pop=POP_CL, fixEff = [{coeff=POP_BETA_CL_WT, cov=logtWT},
+      CL : { type is linear, trans is ln, pop=POP_CL, fixEff = [{coeff=POP_BETA_CL_WT, cov=logtWT},
       				{coeff=BETA_CL_SEX, catCov=SEX.female}
-      				] , ranEff = [eta_PPV_CL])
-      ln(VC) = linear(trans is ln, pop=POP_VC, fixEff = [{coeff=POP_BETA_V_WT, cov=logtWT}] , ranEff = [eta_PPV_VC] )
-      ln(Q) = linear(trans is ln, pop=POP_Q, fixEff = [{coeff=POP_BETA_CL_WT, cov=logtWT}] , ranEff = [eta_PPV_Q])
-      ln(VP) = linear(trans is ln, pop=POP_VP, fixEff = [{coeff=POP_BETA_V_WT, cov=logtWT}] , ranEff = [eta_PPV_VP])
-      ln(KA) = linear(trans is ln, pop=POP_KA, ranEff = [eta_PPV_KA])
-      ln(TLAG) = linear(trans is ln, pop=POP_TLAG, ranEff = [eta_PPV_TLAG]) 
+      				] , ranEff = [eta_PPV_CL] }
+      VC : { type is linear, trans is ln, pop=POP_VC, fixEff = [{coeff=POP_BETA_V_WT, cov=logtWT}] , ranEff = [eta_PPV_VC]  }
+      Q : { type is linear, trans is ln, pop=POP_Q, fixEff = [{coeff=POP_BETA_CL_WT, cov=logtWT}] , ranEff = [eta_PPV_Q] }
+      VP : { type is linear, trans is ln, pop=POP_VP, fixEff = [{coeff=POP_BETA_V_WT, cov=logtWT}] , ranEff = [eta_PPV_VP] }
+      KA : { type is linear, trans is ln, pop=POP_KA, ranEff = [eta_PPV_KA] }
+      TLAG : { type is linear, trans is ln, pop=POP_TLAG, ranEff = [eta_PPV_TLAG] }
       ALAG1=TLAG
       V2=VC
       V3=VP
@@ -107,7 +107,7 @@ warfarin_PK_2Compartments_mdl = mdlObj {
    }# end MODEL_PREDICTION
 
    OBSERVATION{
-         ln(CC_obs) = combinedError1(trans is ln, additive = RUV_ADD, proportional = RUV_PROP, eps = eps_RUV_EPS1, prediction = CC) 
+         CC_obs : { type is combinedError1, lhsTrans = true, trans is ln, additive = RUV_ADD, proportional = RUV_PROP, eps = eps_RUV_EPS1, prediction = CC }
    }# end OBSERVATION
 } # end of model object
 		'''

@@ -79,9 +79,9 @@ Categorical_DIST_mdl = mdlObj{
    }
    
    INDIVIDUAL_VARIABLES{
-      indiv_B0 = general(grp=B0, ranEff = [eta_PPV_EVENT])
-      indiv_B1 = general(grp=B1, ranEff = [eta_PPV_EVENT])
-      indiv_B2 = general(grp=B2, ranEff = [eta_PPV_EVENT])
+      indiv_B0 : { type is general, grp=B0, ranEff = [eta_PPV_EVENT] }
+      indiv_B1 : { type is general, grp=B1, ranEff = [eta_PPV_EVENT] }
+      indiv_B2 : { type is general, grp=B2, ranEff = [eta_PPV_EVENT] }
    }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{

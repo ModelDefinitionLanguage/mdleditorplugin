@@ -33,7 +33,7 @@ class MdlCustomValidationTest {
 			}
 			
 			INDIVIDUAL_VARIABLES{
-				logit(BETA_CL_WT) = ln(22)
+				logit(BETA_CL_WT) = 22
 			}
 		}'''.parse
 		
@@ -43,7 +43,7 @@ class MdlCustomValidationTest {
 		)
 	}
 
-	@Test
+	@Ignore("Ignore LHS using functions is not longer supported")
 	def void testInconsistentTransFunctions(){
 		val mcl = '''bar = mdlObj {
 			IDV{T}			
@@ -64,7 +64,7 @@ class MdlCustomValidationTest {
 		)
 	}
 
-	@Test
+	@Ignore("Ignore LHS using functions is not longer supported")
 	def void testInconsistentNoRhsFunctions(){
 		val mcl = '''bar = mdlObj {
 			
@@ -86,7 +86,7 @@ class MdlCustomValidationTest {
 		)
 	}
 
-	@Test
+	@Ignore("Ignore LHS using functions is not longer supported")
 	def void testInconsistentNoLhsFunctions(){
 		val mcl = '''bar = mdlObj {
 			
@@ -108,7 +108,7 @@ class MdlCustomValidationTest {
 		)
 	}
 
-	@Test
+	@Ignore("Ignore LHS using functions is not longer supported")
 	def void testValidLhsTransLinearDefn(){
 		val mcl = '''bar = mdlObj {
 			IDV{T}
@@ -120,14 +120,14 @@ class MdlCustomValidationTest {
 			}
 			
 			INDIVIDUAL_VARIABLES{
-				ln(BETA_CL_WT) = linear(trans is ln, pop=1, ranEff = [1])
+				BETA_CL_WT = linear(trans is ln, pop=1, ranEff = [1])
 			}
 		}'''.parse
 		
 		mcl.assertNoErrors
 	}
 
-	@Test
+	@Ignore("Ignore LHS using functions is not longer supported")
 	def void testValidLhsNoneTransLinearDefn(){
 		val mcl = '''bar = mdlObj {
 			IDV{T}
@@ -146,7 +146,7 @@ class MdlCustomValidationTest {
 		mcl.assertNoErrors
 	}
 
-	@Test
+	@Ignore("Ignore LHS using functions is not longer supported")
 	def void testValidLhsNoTransLinearDefn(){
 		val mcl = '''bar = mdlObj {
 			IDV{T}
@@ -165,7 +165,7 @@ class MdlCustomValidationTest {
 		mcl.assertNoErrors
 	}
 
-	@Test
+	@Ignore("Ignore LHS using functions is not longer supported")
 	def void testValidLhsTransGeneralDefn(){
 		val mcl = '''bar = mdlObj {
 			IDV{T}
@@ -177,14 +177,14 @@ class MdlCustomValidationTest {
 			}
 			
 			INDIVIDUAL_VARIABLES{
-				ln(BETA_CL_WT) = general(grp=1, ranEff = [1])
+				BETA_CL_WT : { type is general, grp=1, ranEff = [1]
 			}
 		}'''.parse
 		
 		mcl.assertNoErrors
 	}
 
-	@Test
+	@Ignore("Ignore LHS using functions is not longer supported")
 	def void testValidLhsNoTransGeneralDefn(){
 		val mcl = '''bar = mdlObj {
 			IDV{T}
@@ -196,7 +196,7 @@ class MdlCustomValidationTest {
 			}
 			
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT = general(grp=1, ranEff = [1])
+				BETA_CL_WT : { type is general, grp=1, ranEff = [1]
 			}
 		}'''.parse
 		
@@ -220,9 +220,9 @@ class MdlCustomValidationTest {
 			}
 			
 			
-			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT = general(grp=1, ranEff = [1])
-			}
+«««			INDIVIDUAL_VARIABLES{
+«««				BETA_CL_WT : { type is general, grp=1, ranEff = [1]
+«««			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -246,7 +246,7 @@ class MdlCustomValidationTest {
 			
 			
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT = general(grp=1, ranEff = [1])
+				BETA_CL_WT : { type is general, grp=1, ranEff = [1]
 			}
 		}'''.parse
 		
@@ -516,7 +516,7 @@ warfarin_T2E_exact_dat = dataObj{
 			}
 			
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT = linear(pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1])
+				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1] }
 			}
 		}'''.parse
 		
@@ -543,7 +543,7 @@ warfarin_T2E_exact_dat = dataObj{
 			}
 			
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT = linear(pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1])
+				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1] }
 			}
 		}'''.parse
 		
@@ -571,7 +571,7 @@ warfarin_T2E_exact_dat = dataObj{
 			}
 			
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT = linear(pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1])
+				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1] }
 			}
 		}'''.parse
 		
@@ -597,7 +597,7 @@ warfarin_T2E_exact_dat = dataObj{
 			}
 			
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT = linear(pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1])
+				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1] }
 			}
 		}'''.parse
 		
@@ -727,7 +727,7 @@ warfarin_T2E_exact_dat = dataObj{
 			}
 			
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT = 1 + 4 * ln(BETA_CL_WT)
+				BETA_CL_WT = 1 + 4 * BETA_CL_WT
 			}
 		}'''.parse
 		

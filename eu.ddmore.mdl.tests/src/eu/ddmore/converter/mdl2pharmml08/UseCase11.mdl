@@ -55,11 +55,11 @@ Poisson_DIST_mdl = mdlObj{
    }# end RANDOM_VARIABLE_DEFINITION
    
    INDIVIDUAL_VARIABLES{
-	  ln(indiv_BASECOUNT) = linear( trans is ln, pop = POP_BASECOUNT, ranEff = [eta_PPV_EVENT] )
+	  indiv_BASECOUNT : { type is linear,  trans is ln, pop = POP_BASECOUNT, ranEff = [eta_PPV_EVENT]  }
    }# end INDIVIDUAL_VARIABLES
 
   MODEL_PREDICTION{
-  	lnLAMBDA=ln(indiv_BASECOUNT) + POP_BETA*CP
+  	lnLAMBDA=indiv_BASECOUNT + POP_BETA*CP
   	LAMBDA = exp(lnLAMBDA)
    }
 

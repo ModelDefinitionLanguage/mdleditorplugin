@@ -31,7 +31,7 @@ UC001_08_Holford_PK_DEQ_gen2Cov_libErr_Tlag_dat = dataObj{
 
 UC001_08_Holford_PK_DEQ_gen2Cov_libErr_Tlag_par = parObj{
 
-   DECLARED_VARIABLES{eta_PPV_CL eta_PPV_V }
+#   DECLARED_VARIABLES{eta_PPV_CL eta_PPV_V }
 
    STRUCTURAL{
       POP_CL: {value=0.1, lo=0.001}
@@ -50,14 +50,7 @@ UC001_08_Holford_PK_DEQ_gen2Cov_libErr_Tlag_par = parObj{
       PPV_KA: {value=0.1, type is sd}
       PPV_TLAG: {value=0, type is sd, fix=true}
       RUV_EPS1: {value=1, type is sd, fix=true}
-
-# Matrix off-diagonal values
-      MATRIX_1: {
-      type is corr,
-      parameter=[eta_PPV_CL,eta_PPV_V],
-      value=[0.01]
-      }
-
+   	  RHO_CL_V : { value = 0.01 }
    }# end VARIABILITY
 
 } # end of parameter object
@@ -92,6 +85,7 @@ UC001_08_Holford_PK_DEQ_gen2Cov_libErr_Tlag_mdl = mdlObj{
       PPV_KA
       PPV_TLAG
       RUV_EPS1
+      RHO_CL_V
    }# end VARIABILITY_PARAMETERS
 
    GROUP_VARIABLES{
@@ -107,7 +101,7 @@ UC001_08_Holford_PK_DEQ_gen2Cov_libErr_Tlag_mdl = mdlObj{
       eta_PPV_V ~ Normal(mean=0, sd=PPV_V)
       eta_PPV_KA ~ Normal(mean=0, sd=PPV_KA)
       eta_PPV_TLAG ~ Normal(mean=0, sd=PPV_TLAG)
-
+	  :: { type is correlation, rv1=eta_PPV_CL, rv2=eta_PPV_V, value=RHO_CL_V }
    }# end RANDOM_VARIABLE_DEFINITION (level=ID)
 
    RANDOM_VARIABLE_DEFINITION (level=DV) {
@@ -115,11 +109,10 @@ UC001_08_Holford_PK_DEQ_gen2Cov_libErr_Tlag_mdl = mdlObj{
    }# end RANDOM_VARIABLE_DEFINITION (level=DV)
 
    INDIVIDUAL_VARIABLES{
-        ln(CL) = general(trans is ln, grp = GRP_CL, ranEff = [eta_PPV_CL])
-        ln(V) = general(trans is ln, grp = GRP_V, ranEff = [eta_PPV_V])
-        ln(KA) = general(trans is ln, grp = GRP_KA, ranEff = [eta_PPV_KA])
-        ln(TLAG) = general(trans is ln, grp = GRP_TLAG, ranEff = [eta_PPV_TLAG])
-
+        CL : { type is general, trans is ln, grp = GRP_CL, ranEff = [eta_PPV_CL] }
+        V : { type is general, trans is ln, grp = GRP_V, ranEff = [eta_PPV_V] }
+        KA : { type is general, trans is ln, grp = GRP_KA, ranEff = [eta_PPV_KA] }
+        TLAG : { type is general, trans is ln, grp = GRP_TLAG, ranEff = [eta_PPV_TLAG] }
    }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{
@@ -136,7 +129,7 @@ UC001_08_Holford_PK_DEQ_gen2Cov_libErr_Tlag_mdl = mdlObj{
    }# end MODEL_PREDICTION
 
    OBSERVATION{
-         CC_obs = combinedError1(additive = RUV_ADD, proportional = RUV_PROP, eps = eps_RUV_EPS1, prediction = CC ) 
+         CC_obs : { type is combinedError1, additive = RUV_ADD, proportional = RUV_PROP, eps = eps_RUV_EPS1, prediction = CC  }
    }# end OBSERVATION
 
 } # end of model object

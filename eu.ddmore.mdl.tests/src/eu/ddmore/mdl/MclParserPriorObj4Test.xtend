@@ -43,8 +43,8 @@ example332_pri = priorObj{
    PRIOR_VARIABLE_DEFINITION{
 
 	   # prior on "THETA"
-	   lMU_POP_K = ln(MU_POP_K)
-	   lMU_POP_V = ln(MU_POP_V)
+	   lMU_POP_K = MU_POP_K
+	   lMU_POP_V = MU_POP_V
 	    
 # <<<< Creating a vector: v = c(el1,el2) ?>>>  
 	   lMU_POP_P = [lMU_POP_K, lMU_POP_V] 
@@ -122,7 +122,7 @@ example332_mdl = mdlObj{
 # <<<< Accessing vector elements: el1 = v[1] ?>>> 
 	   K = exp(lP[1])
 	   V = exp(lP[2])
-	   ln(TAU) = linear(trans is ln, pop = POP_T, ranEff=[eta_T])
+	   TAU : { type is linear, trans is ln, pop = POP_T, ranEff=[eta_T] }
 	   SD_ADD = sqrt(1/TAU)
    }# end INDIVIDUAL_VARIABLES
 

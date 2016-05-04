@@ -90,7 +90,7 @@ modelObjectName = mdlObj {
 	# Define individual parameters
 	INDIVIDUAL_VARIABLES {
 		# For maximum interoperability with a linear covariate model use this form.
-	    ln(CL) = linear( trans is ln, pop = POP_CL, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}] , ranEff = [ETA_CL] )
+	    CL : { type is linear,  trans is ln, pop = POP_CL, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}] , ranEff = [ETA_CL]  }
 	    # More flexible styles are available
 	    # CL = GRP_CL* exp(ETA_CL)
 	    
@@ -116,7 +116,7 @@ modelObjectName = mdlObj {
 	# Define observations here
 	OBSERVATION {
 		# This is a continuous observation with a combined additive and proportional error model
-	    #Y = combinedError1(additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC ) 
+	    #Y : { type is combinedError1, additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC  }
 	}
 }
 

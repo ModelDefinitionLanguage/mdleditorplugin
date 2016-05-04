@@ -31,7 +31,7 @@ UC001_09_Holford_PK_DEQ_genCov_genErr_Tlag_dat = dataObj{
 
 UC001_09_Holford_PK_DEQ_genCov_genErr_Tlag_par = parObj{
 
-   DECLARED_VARIABLES{eta_PPV_CL eta_PPV_V }
+   #DECLARED_VARIABLES{eta_PPV_CL eta_PPV_V }
 
    STRUCTURAL{
       POP_CL: {value=0.1, lo=0.001}
@@ -49,13 +49,13 @@ UC001_09_Holford_PK_DEQ_genCov_genErr_Tlag_par = parObj{
       PPV_TLAG: {value=0, type is sd, fix=true}
       RUV_PROP: {value=0.01, type is var}
       RUV_ADD: {value=0.01, type is var}
-
+	  RHO_CL_V : { value = 0.01 }
 # Matrix off-diagonal values
-      MATRIX_1: {
-		type is corr,
-		parameter=[eta_PPV_CL,eta_PPV_V],
-		value=[0.01]
-      }
+      #MATRIX_1: {
+	  #type is corr,
+		#parameter=[eta_PPV_CL,eta_PPV_V],
+		#value=[0.01]
+      #}
 
    }# end VARIABILITY
 
@@ -90,6 +90,7 @@ UC001_09_Holford_PK_DEQ_genCov_genErr_Tlag_mdl = mdlObj{
       PPV_TLAG
       RUV_PROP
       RUV_ADD
+      RHO_CL_V
    }# end VARIABILITY_PARAMETERS
 
    GROUP_VARIABLES{
@@ -105,8 +106,7 @@ UC001_09_Holford_PK_DEQ_genCov_genErr_Tlag_mdl = mdlObj{
       eta_PPV_V ~ Normal(mean=0, sd=PPV_V)
       eta_PPV_KA ~ Normal(mean=0, sd=PPV_KA)
       eta_PPV_TLAG ~ Normal(mean=0, sd=PPV_TLAG)
-
-
+	  :: { type is correlation, rv1=eta_PPV_CL, rv2=eta_PPV_V, value=RHO_CL_V }
    }# end RANDOM_VARIABLE_DEFINITION (level=ID)
 
    RANDOM_VARIABLE_DEFINITION (level=DV) {

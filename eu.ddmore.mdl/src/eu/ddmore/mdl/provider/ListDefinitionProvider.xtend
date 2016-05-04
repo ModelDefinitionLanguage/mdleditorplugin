@@ -87,33 +87,13 @@ class ListDefinitionProvider {
 	def ListDefInfo getListDefinition(AttributeList it){
 		val parent = parentStatement
 		val blkDefn = new BlockListDefinition(parent.blkId)
-		val keyAtt = parent.getKeyValuePair(it)
-		blkDefn.getListDefnByValue(keyAtt.expression.enumValue)
-//		if(attDefns.containsKey(parent.identifier)){
-//			val iter = attributes.iterator
-//			val expectedAttributes = new ArrayList<ListDefInfo>()
-//			while(iter.hasNext && expectedAttributes.isEmpty){
-//				val att = iter.next
-//				val blockDefn = attDefns.get(parent.identifier)
-//				val keyVal = att.expression.enumValue
-//				val ld = blockDefn.getListDefnByValue(keyVal)
-//				if(ld != null) expectedAttributes.add(ld)
-////				expectedAttributes.addAll(blockDefn.listDefns.filter[at|
-////					switch(att){
-////						ValuePair case att.argumentName == blockDefn.key:{
-////							if(blockDefn.keyValue != null){
-////								val keyVal = att.expression.enumValue
-////								keyVal == blockDefn
-////							}
-////							else true
-////						}
-////						default: false
-////					}
-////				])
-//			}
-//			return expectedAttributes.head
-//		}
-//		null
+		if(blkDefn.requiresNoKeyAttribute){
+			blkDefn.getSglListDefn
+		}
+		else{
+			val keyAtt = parent.getKeyValuePair(it)
+			blkDefn.getListDefnByValue(keyAtt.expression.enumValue)
+		}
 	}	
 	
 

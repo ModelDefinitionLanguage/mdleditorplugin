@@ -54,10 +54,10 @@ warfarin_PK_ANALYTIC_mdl = mdlObj {
 	} # end RANDOM_VARIABLE_DEFINITION 
 	
 	INDIVIDUAL_VARIABLES { # This maps to the "Type 3" individual parameter definition in PharmML
-	    ln(CL) = linear(trans is ln, pop=POP_CL, fixEff = [{coeff=BETA_CL_WT , cov = logtWT }], ranEff = [ETA_CL])
-	    ln(V) = linear(trans is ln, pop=POP_V, fixEff =  [{coeff=BETA_V_WT , cov = logtWT }] , ranEff = [ETA_V])
-	    ln(KA) = linear(trans is ln, pop=POP_KA, ranEff = [ETA_KA])
-	    ln(TLAG) = linear(trans is ln, pop=POP_TLAG, ranEff = [ETA_TLAG]) 
+	    CL : { type is linear, trans is ln, pop=POP_CL, fixEff = [{coeff=BETA_CL_WT , cov = logtWT }], ranEff = [ETA_CL] }
+	    V : { type is linear, trans is ln, pop=POP_V, fixEff =  [{coeff=BETA_V_WT , cov = logtWT }] , ranEff = [ETA_V] }
+	    KA : { type is linear, trans is ln, pop=POP_KA, ranEff = [ETA_KA] }
+	    TLAG : { type is linear, trans is ln, pop=POP_TLAG, ranEff = [ETA_TLAG] }
 	} # end INDIVIDUAL_VARIABLES
 	
 	MODEL_PREDICTION {
@@ -73,8 +73,8 @@ warfarin_PK_ANALYTIC_mdl = mdlObj {
 	}
 
 	OBSERVATION {
-	    Y = combinedError1(additive = RUV_ADD, proportional = RUV_PROP,
-	              eps = EPS_Y, prediction = CC) 
+	    Y : { type is combinedError1, additive = RUV_ADD, proportional = RUV_PROP,
+	              eps = EPS_Y, prediction = CC } 
 	} # end OBSERVATION
 } # end of model object
 		'''

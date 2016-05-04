@@ -168,35 +168,30 @@ Hansson2013_mdl = mdlObj{
    }# end RANDOM_VARIABLE_DEFINITION
 
    INDIVIDUAL_VARIABLES{
-      ln(BM0) = linear(trans is ln, pop = POP_BM0, ranEff = [eta_BM0])
-      ln(BM02) = linear(trans is ln, pop = POP_BM02, ranEff = [eta_BM02]) 
-      ln(BM03) = linear(trans is ln, pop = POP_BM03, ranEff = [eta_BM03])
-      ln(BM0S) = linear(trans is ln, pop = POP_BM0S, ranEff = [eta_BM0S]) 
-               
+      BM0 : { type is linear, trans is ln, pop = POP_BM0, ranEff = [eta_BM0] }
+      BM02 : { type is linear, trans is ln, pop = POP_BM02, ranEff = [eta_BM02] }
+      BM03 : { type is linear, trans is ln, pop = POP_BM03, ranEff = [eta_BM03] }
+      BM0S : { type is linear, trans is ln, pop = POP_BM0S, ranEff = [eta_BM0S] }
       IMAX1 = POP_IMAX
       IMAX2 = POP_IMAX
       IMAX3 = POP_IMAX
       IMAXS = POP_IMAX
      
-      ln(IC50)  = linear(trans is ln, pop = POP_IC50, ranEff = [eta_IC50])
-      ln(IC502) = linear(trans is ln, pop = POP_IC50, ranEff = [eta_IC502]) 
-      ln(IC503) = linear(trans is ln, pop = POP_IC50, ranEff = [eta_IC503])
-     ln( IC50S) = linear(trans is ln, pop = POP_IC50, ranEff = [eta_IC50S]) 
- 
+      IC50  : { type is linear, trans is ln, pop = POP_IC50, ranEff = [eta_IC50] }
+      IC502 : { type is linear, trans is ln, pop = POP_IC50, ranEff = [eta_IC502] }
+      IC503 : { type is linear, trans is ln, pop = POP_IC50, ranEff = [eta_IC503] }
+      IC50S : { type is linear, trans is ln, pop = POP_IC50, ranEff = [eta_IC50S] }
       HILL = POP_HILL
       HILL2 = POP_HILL2
      
-      ln(MRT1) = linear(trans is ln, pop = POP_MRT, ranEff = [eta_MRT_VEGFs]) 
-      ln(MRT2) = linear(trans is ln, pop = POP_MRT2, ranEff = [eta_MRT_VEGFs]) 
-      ln(MRT3) = linear(trans is ln, pop = POP_MRT3, ranEff = [eta_MRT_VEGFs])
-      ln(MRTS) = linear(trans is ln, pop = POP_MRTS, ranEff = [eta_MRT_sKIT])
-     
+      MRT1 : { type is linear, trans is ln, pop = POP_MRT, ranEff = [eta_MRT_VEGFs] }
+      MRT2 : { type is linear, trans is ln, pop = POP_MRT2, ranEff = [eta_MRT_VEGFs] }
+      MRT3 : { type is linear, trans is ln, pop = POP_MRT3, ranEff = [eta_MRT_VEGFs] }
+      MRTS : { type is linear, trans is ln, pop = POP_MRTS, ranEff = [eta_MRT_sKIT] }
       TVSLP = POP_TVSLP/1000
-      ln(DPSLP) = linear(trans is ln, pop = TVSLP, ranEff = [eta_TVSLP])
-         
+      DPSLP : { type is linear, trans is ln, pop = TVSLP, ranEff = [eta_TVSLP] }
       TVSLPS = POP_TVSLP/1000
-      ln(DPSLPS) = linear(trans is ln, pop = TVSLPS, ranEff = [eta_TVSLPS])
-         
+      DPSLPS : { type is linear, trans is ln, pop = TVSLPS, ranEff = [eta_TVSLPS] }
       # Derived parameters
       KOUT = 1/MRT1
       KOUT2 = 1/MRT2
@@ -237,13 +232,10 @@ Hansson2013_mdl = mdlObj{
    }
 
    OBSERVATION{
-      LNVEGF_obs = combinedError2(trans is ln, additive=0, proportional=POP_RES_VEGF_PROP, prediction=VEGF, eps=eps_RES_W)
-      
-      LNsVEGFR2_obs = combinedError2(trans is ln, additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, prediction=sVEGFR2, eps=eps_RES_W)
-
-      LNsVEGFR3_obs = combinedError2(trans is ln, additive=0, proportional=POP_RES_sVEGFR3_PROP, prediction=sVEGFR3, eps=eps_RES_W)
-  	  
-      LNsKIT_obs = combinedError2(trans is ln, additive=0, proportional=POP_RES_sKIT_PROP, prediction=sKIT, eps=eps_RES_W)
+      LNVEGF_obs : { type is combinedError2, trans is ln, additive=0, proportional=POP_RES_VEGF_PROP, prediction=VEGF, eps=eps_RES_W }
+      LNsVEGFR2_obs : { type is combinedError2, trans is ln, additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, prediction=sVEGFR2, eps=eps_RES_W }
+      LNsVEGFR3_obs : { type is combinedError2, trans is ln, additive=0, proportional=POP_RES_sVEGFR3_PROP, prediction=sVEGFR3, eps=eps_RES_W }
+      LNsKIT_obs : { type is combinedError2, trans is ln, additive=0, proportional=POP_RES_sKIT_PROP, prediction=sKIT, eps=eps_RES_W }
    }# end OBSERVATION
 
 } # end of model object

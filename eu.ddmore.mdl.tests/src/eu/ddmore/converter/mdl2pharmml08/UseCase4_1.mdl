@@ -28,7 +28,7 @@ warfarin_PK_IVPO_dat = dataObj {
 } # end data object
 
 warfarin_PK_IVPO_par = parObj {
-	DECLARED_VARIABLES{ETA_CL ETA_V}
+#	DECLARED_VARIABLES{ETA_CL ETA_V}
 
 	# By default a parameter is to be estimated if fix is omitted
  	STRUCTURAL {
@@ -48,7 +48,8 @@ warfarin_PK_IVPO_par = parObj {
 		PPV_KA : { value = 0.1, type is sd }
 		PPV_TLAG : { value = 0.1, type is sd } 
 		PPV_FORAL : { value = 0.1, type is sd }
-		OMEGA : { parameter=[ETA_CL, ETA_V], value = [0.01], type is corr }
+    	RHO_CL_V : { value = 0.01 }
+#		OMEGA : { parameter=[ETA_CL, ETA_V], value = [0.01], type is corr }
 	} # end VARIABILITY
 } # end of parameter object 
 
@@ -82,6 +83,7 @@ warfarin_PK_IVPO_mdl = mdlObj {
 		PPV_KA
 		PPV_TLAG
 		PPV_FORAL
+		RHO_CL_V
 	} # end VARIABILITY_PARAMETERS 
 	
 	RANDOM_VARIABLE_DEFINITION(level=ID) {
@@ -90,15 +92,15 @@ warfarin_PK_IVPO_mdl = mdlObj {
 		ETA_KA ~ Normal(mean = 0, sd = PPV_KA)
 		ETA_TLAG ~ Normal(mean = 0, sd = PPV_TLAG) # We define correlation here
 		ETA_FORAL ~ Normal(mean = 0, sd = PPV_FORAL)
+	  :: { type is correlation, rv1=ETA_CL, rv2=ETA_V, value=RHO_CL_V }
 	} # end RANDOM_VARIABLE_DEFINITION 
 
 	
 	INDIVIDUAL_VARIABLES { # This maps to the "Type 3" individual parameter definition in PharmML
-	    ln(CL) = linear( pop = POP_CL, trans is ln, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}] , ranEff = [ETA_CL] )
-	    ln(V) = linear( pop = POP_V, trans is ln, fixEff = [{coeff=BETA_V_WT, cov=logtWT}] , ranEff = [ETA_V] )
-	    ln(KA) = linear( pop = POP_KA, trans is ln, ranEff = [ETA_KA] )
-	    ln(ALAG1) = linear(trans is ln, pop = POP_TLAG, ranEff = [ETA_TLAG]) 
-
+	    CL : { type is linear,  pop = POP_CL, trans is ln, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}] , ranEff = [ETA_CL]  }
+	    V : { type is linear,  pop = POP_V, trans is ln, fixEff = [{coeff=BETA_V_WT, cov=logtWT}] , ranEff = [ETA_V]  }
+	    KA : { type is linear,  pop = POP_KA, trans is ln, ranEff = [ETA_KA]  }
+	    ALAG1 : { type is linear, trans is ln, pop = POP_TLAG, ranEff = [ETA_TLAG] }
 		F1=1
 	} # end INDIVIDUAL_VARIABLES
 
@@ -118,7 +120,7 @@ warfarin_PK_IVPO_mdl = mdlObj {
 	}
 
 	OBSERVATION {
-	    Y = combinedError1(additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CONC ) 
+	    Y : { type is combinedError1, additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CONC  }
 	} # end OBSERVATION
 } # end of model object
 

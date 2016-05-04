@@ -37,6 +37,14 @@ class BlockListDefinition {
 		}
 	}
 	
+	def requiresNoKeyAttribute(){
+		_sglListDefn != null
+	}
+	
+	def getSglListDefn(){
+		_sglListDefn
+	}
+	
 //	new(String key, ListDefInfo sdl){
 //		_key = key
 //		_listDefns = Collections::emptyMap

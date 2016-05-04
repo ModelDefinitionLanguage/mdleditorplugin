@@ -27,7 +27,7 @@ DECLARED_VARIABLES{Y1::ContinuousObs  Y2::ContinuousObs  Y3::ContinuousObs  Y4::
 
 magni2000_par = parObj{
 
-DECLARED_VARIABLES{eta_ts eta_F eta_tl eta_V}
+#DECLARED_VARIABLES{eta_ts eta_F eta_tl eta_V}
 
    STRUCTURAL{
    
@@ -51,12 +51,20 @@ DECLARED_VARIABLES{eta_ts eta_F eta_tl eta_V}
 	SIGMA2_F : {value=0.0022, type is var}
 	SIGMA2_tl : {value=32.94, type is var}
 	SIGMA2_V : {value=0.71, type is var}
+	cov_ts_F : { value= 0.0062 }
+	cov_ts_tl : { value=3.24 }
+	cov_ts_V : { value= 0.59 }
+	cov_F_tl : { value = 0.071 }
+	cov_F_V : { value=-0.0055 }
+	cov_tl_V : { value=1.89 }
 	
-	MATRIX_1: {
-		type is cov,
-		parameter=[eta_ts, eta_F, eta_tl, eta_V],
-		value=[0.0062, 3.24, 0.071, 0.59, -0.0055, 1.89]
-      }
+#	MATRIX_1: {
+#		type is cov,
+#		parameter=[eta_ts, eta_F, eta_tl, eta_V],
+#		value=[0.0062, 
+#				3.24, 0.071,
+#				0.59, -0.0055, 1.89]
+#      }
 	}
 
 }
@@ -99,10 +107,16 @@ magni2000_mdl = mdlObj{
 	}
 	
 	VARIABILITY_PARAMETERS{
-	SIGMA2_ts
-	SIGMA2_F
-	SIGMA2_tl
-	SIGMA2_V
+		SIGMA2_ts
+		SIGMA2_F
+		SIGMA2_tl
+		SIGMA2_V
+		cov_ts_F
+		cov_ts_tl
+		cov_ts_V 
+		cov_F_tl
+		cov_F_V 
+		cov_tl_V
 	}
 		
    	
@@ -136,10 +150,10 @@ magni2000_mdl = mdlObj{
    	}
    	
    	INDIVIDUAL_VARIABLES{
-    	ts_IND = linear(pop=GROUP_ts, ranEff=[eta_ts])
-		F_IND = linear(pop=GROUP_F, ranEff=[eta_F])
-		tl_IND = linear(pop=GROUP_tl, ranEff=[eta_tl])
-		V_IND = linear(pop=GROUP_V, ranEff=[eta_V])
+    	ts_IND : { type is linear, pop=GROUP_ts, ranEff=[eta_ts] }
+		F_IND : { type is linear, pop=GROUP_F, ranEff=[eta_F] }
+		tl_IND : { type is linear, pop=GROUP_tl, ranEff=[eta_tl] }
+		V_IND : { type is linear, pop=GROUP_V, ranEff=[eta_V] }
    	}
    	
    RANDOM_VARIABLE_DEFINITION(level=ID){
@@ -147,6 +161,12 @@ magni2000_mdl = mdlObj{
       eta_F ~ Normal(mean=0, var=SIGMA2_F)
       eta_tl ~ Normal(mean=0, var=SIGMA2_tl)
       eta_V ~ Normal(mean=0, var=SIGMA2_V)
+      :: { type is covariance, rv1=eta_ts, rv2=eta_F, value=cov_ts_F }
+      :: { type is covariance, rv1=eta_ts, rv2=eta_tl, value=cov_ts_tl }
+      :: { type is covariance, rv1=eta_ts, rv2=eta_V, value=cov_ts_V }
+      :: { type is covariance, rv1=eta_F, rv2=eta_tl, value=cov_F_tl }
+      :: { type is covariance, rv1=eta_F, rv2=eta_V, value=cov_F_V }
+      :: { type is covariance, rv1=eta_tl, rv2=eta_V, value=cov_tl_V }
    }# end RANDOM_VARIABLE_DEFINITION
 	
    RANDOM_VARIABLE_DEFINITION(level=DV){
@@ -163,10 +183,10 @@ magni2000_mdl = mdlObj{
    
    
    OBSERVATION {	
- 		Y1 = additiveError(additive=ADD_SMALL, eps=EPS, prediction= ts_PRED)
- 		Y2 = additiveError(additive=ADD_SMALL, eps=EPS, prediction= F_PRED)
- 		Y3 = additiveError(additive=ADD_SMALL, eps=EPS, prediction= tl_PRED)
- 		Y4 = additiveError(additive=ADD_SMALL, eps=EPS, prediction= V_PRED)
+ 		Y1 : { type is additiveError, additive=ADD_SMALL, eps=EPS, prediction= ts_PRED }
+ 		Y2 : { type is additiveError, additive=ADD_SMALL, eps=EPS, prediction= F_PRED }
+ 		Y3 : { type is additiveError, additive=ADD_SMALL, eps=EPS, prediction= tl_PRED }
+ 		Y4 : { type is additiveError, additive=ADD_SMALL, eps=EPS, prediction= V_PRED }
  	}
 }
    

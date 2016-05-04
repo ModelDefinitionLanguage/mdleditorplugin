@@ -635,16 +635,17 @@ class MclTypeValidationTest {
 			GROUP_VARIABLES{
 				POP_CL
 				BETA_CL_WT
-				ETA_CL			}
+				ETA_CL
+			}
 			
 			INDIVIDUAL_VARIABLES{
-				Cl = linear(pop = POP_CL, fixEff = BETA_CL_WT, ranEff = ETA_CL)
+				Cl : { type is linear, pop = POP_CL, fixEff = BETA_CL_WT, ranEff = ETA_CL }
 			}
 		}'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"argument 'fixEff' expected value of type 'vector:Sublist:fixEffAtts' but was 'ref:Real'"
+			"attribute 'fixEff' expected value of type 'vector:Sublist:fixEffAtts' but was 'ref:Real'"
 		)
 	}
 	
@@ -664,13 +665,13 @@ class MclTypeValidationTest {
 				POP_CL
 				BETA_CL_WT
 				ETA_CL
-				Cl = linear(pop = false, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}], ranEff = ETA_CL)
+				Cl : { type is linear, pop = false, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}], ranEff = ETA_CL }
 			}
 		}'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"argument 'pop' expected value of type 'Real' but was 'Boolean'"
+			"attribute 'pop' expected value of type 'Real' but was 'Boolean'"
 		)
 	}
 	
@@ -698,7 +699,7 @@ class MclTypeValidationTest {
 			}
 			
 			INDIVIDUAL_VARIABLES{
-				Cl = linear(pop = POP_CL, fixEff = {coeff=BETA_CL_WT, cov=logtWT}, ranEff = ETA_CL)
+				Cl : { type is linear, pop = POP_CL, fixEff = {coeff=BETA_CL_WT, cov=logtWT}, ranEff = ETA_CL }
 			}
 		}'''.parse
 		
@@ -725,7 +726,7 @@ class MclTypeValidationTest {
 				POP_CL
 				BETA_CL_WT
 				ETA_CL
-				Cl = linear(pop = POP_CL, fixEff = [{coeff=0.0, cov=logtWT}], ranEff = ETA_CL)
+				Cl : { type is linear, pop = POP_CL, fixEff = [{coeff=0.0, cov=logtWT}], ranEff = ETA_CL }
 			}
 		}'''.parse
 		
@@ -773,7 +774,7 @@ class MclTypeValidationTest {
 			}
 		
 			RANDOM_VARIABLE_DEFINITION(level=ID){
-				foo ~ LogNormal(mean=ln(POP_V), var=OMEGA_V)
+				foo ~ LogNormal(mean=POP_V, var=OMEGA_V)
 			}
 			
 			

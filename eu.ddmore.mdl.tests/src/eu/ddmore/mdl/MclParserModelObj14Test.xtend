@@ -67,7 +67,8 @@ Hierarchical_model_mdl = mdlObj {
 	}
 
 	OBSERVATION {
-		Y = proportionalError(prediction=f, proportional=b, eps=EPS_Y)	} # end OBSERVATION
+		Y : { type is proportionalError, prediction=f, proportional=b, eps=EPS_Y }
+	 } # end OBSERVATION
 } # end of model object
 		'''
 	

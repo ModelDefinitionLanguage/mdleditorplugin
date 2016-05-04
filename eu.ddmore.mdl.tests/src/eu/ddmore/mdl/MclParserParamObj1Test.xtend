@@ -16,8 +16,6 @@ class MclParserParamObj1Test {
 	
 	val static CODE_SNIPPET = '''
 warfarin_PK_ODE_par = parObj {
-	DECLARED_VARIABLES{ETA_CL ETA_V}
-
 	# By default a parameter is to be estimated if fix is omitted
 		STRUCTURAL {
 			POP_CL : { value = 0.1, lo=0.001 }

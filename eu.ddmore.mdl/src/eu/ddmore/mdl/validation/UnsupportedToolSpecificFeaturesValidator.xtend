@@ -10,6 +10,8 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 import eu.ddmore.mdl.utils.BlockUtils
+import eu.ddmore.mdl.mdl.AttributeList
+import eu.ddmore.mdl.provider.ListDefinitionProvider
 
 class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	
@@ -17,13 +19,11 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	
 	extension MdlUtils mu = new MdlUtils
 	extension BlockUtils bu = new BlockUtils
+	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	
-	def isGeneralIdv(EquationTypeDefinition it){
-		val eq = expression
-		if(eq instanceof SymbolReference){
-			eq.func == 'general'
-		}
-		else false
+	def isGeneralIdv(AttributeList it){
+		val eq = getAttributeEnumValue('type')
+		eq != null && eq == 'general'
 	}
 	
 	def isExplicitIdv(EquationTypeDefinition it){
@@ -34,22 +34,40 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 		else true
 	}
 	
+	
+	@Check
+	def checkMonolixUnsupportedIdv(AttributeList it){
+		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
+		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::MDL_INDIV_PARAMS){
+			if(attributes != null){
+				// check for explicit and general defns
+				if(isGeneralIdv){
+					warning("General individual parameter definition is not currently supported by MONOLIX.", 
+							MdlPackage.eINSTANCE.attributeList_Attributes,
+							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX)
+				}
+			}
+		}
+	}
+
+
+
 	@Check
 	def checkMonolixUnsupportedIdv(EquationTypeDefinition it){
 		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::MDL_INDIV_PARAMS){
 			if(expression != null){
 				// check for explicit and general defns
-				if(isGeneralIdv){
-					warning("General individual parameter definition is not currently supported by MONOLIX.", 
-							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
-							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
-				}
-				else if(isExplicitIdv){
+//				if(isGeneralIdv){
+//					warning("General individual parameter definition is not currently supported by MONOLIX.", 
+//							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
+//							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
+//				}
+//				else if(isExplicitIdv){
 					warning("Explicit individual parameter definition is not currently supported by MONOLIX.", 
 							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
 							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
-				}
+//				}
 			}
 		}
 	}

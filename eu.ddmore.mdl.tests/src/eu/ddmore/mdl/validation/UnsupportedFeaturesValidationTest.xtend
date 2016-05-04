@@ -286,7 +286,7 @@ warfarin_design = designObj {
 			
 			
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT = general(grp=1, ranEff = [1])
+				BETA_CL_WT : { type is general, grp=1, ranEff = [1] }
 			}
 		}'''.parse
 		
@@ -415,11 +415,11 @@ Bernoulli_DIST_mdl = mdlObj{
    }# end RANDOM_VARIABLE_DEFINITION
  
    INDIVIDUAL_VARIABLES{
-      logit(indiv_BASE) = linear(pop= POP_BASEP, ranEff=[eta_PPV_EVENT], trans is logit) 
+      indiv_BASE : { type is linear, pop= POP_BASEP, ranEff=[eta_PPV_EVENT], trans is logit }
    }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{
-  	  LP = logit(indiv_BASE) + POP_BETA*CP
+  	  LP = indiv_BASE + POP_BETA*CP
 	  P1 = invLogit(LP)
    }# end MODEL_PREDICTION
 
@@ -469,9 +469,9 @@ Categorical_DIST_mdl = mdlObj{
    }
    
    INDIVIDUAL_VARIABLES{
-      indiv_B0 = general(grp=B0, ranEff = [eta_PPV_EVENT])
-      indiv_B1 = general(grp=B1, ranEff = [eta_PPV_EVENT])
-      indiv_B2 = general(grp=B2, ranEff = [eta_PPV_EVENT])
+      indiv_B0 : { type is general, grp=B0, ranEff = [eta_PPV_EVENT] }
+      indiv_B1 : { type is general, grp=B1, ranEff = [eta_PPV_EVENT] }
+      indiv_B2 : { type is general, grp=B2, ranEff = [eta_PPV_EVENT] }
    }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{

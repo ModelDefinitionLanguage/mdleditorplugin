@@ -55,10 +55,10 @@ warfarin_PK_SEXAGE_mdl = mdlObj {
 	} # end RANDOM_VARIABLE_DEFINITION 
 	
 	INDIVIDUAL_VARIABLES { # This maps to the "Type 3" individual parameter definition in PharmML
-	    ln(CL) = linear(trans is ln, pop = POP_CL, fixEff = [{coeff=BETA_CL_WT , cov = logtWT }], ranEff = [ETA_CL])
-	    logit(V) = linear(trans is logit, pop = POP_V, fixEff =  [{coeff=BETA_V_WT , cov = logtWT }] , ranEff = [ETA_V])
-	    KA = linear(pop = POP_KA, ranEff = [ETA_KA])
-	    probit(TLAG) = linear(trans is probit, pop = POP_TLAG, ranEff = [ETA_TLAG]) 
+	    CL : { type is linear, trans is ln, pop = POP_CL, fixEff = [{coeff=BETA_CL_WT , cov = logtWT }], ranEff = [ETA_CL] }
+	    V : { type is linear, trans is logit, pop = POP_V, fixEff =  [{coeff=BETA_V_WT , cov = logtWT }] , ranEff = [ETA_V] }
+	    KA : { type is linear, pop = POP_KA, ranEff = [ETA_KA] }
+	    TLAG : { type is linear, trans is probit, pop = POP_TLAG, ranEff = [ETA_TLAG] }
 	} # end INDIVIDUAL_VARIABLES
 	
 	MODEL_PREDICTION {
@@ -74,7 +74,7 @@ warfarin_PK_SEXAGE_mdl = mdlObj {
 	}
 
 	OBSERVATION {
-	    Y = additiveError(additive = RUV_ADD, eps = EPS_Y, prediction = CC) 
+	    Y : { type is additiveError, additive = RUV_ADD, eps = EPS_Y, prediction = CC }
 	} # end OBSERVATION
 
 } # end of model object

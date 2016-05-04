@@ -62,7 +62,7 @@ Bernoulli_DIST_mdl = mdlObj{
    }
    
    INDIVIDUAL_VARIABLES{
-     logit(P1) = linear(trans is logit, pop=POP_BASEP, fixEff=[{coeff=POP_BETA, cov=CP}], ranEff=[eta_PPV_EVENT])
+     P1 : { type is linear, trans is logit, pop=POP_BASEP, fixEff=[{coeff=POP_BETA, cov=CP}], ranEff=[eta_PPV_EVENT] }
    }# end INDIVIDUAL_VARIABLES
 
 	RANDOM_VARIABLE_DEFINITION(level=DV){

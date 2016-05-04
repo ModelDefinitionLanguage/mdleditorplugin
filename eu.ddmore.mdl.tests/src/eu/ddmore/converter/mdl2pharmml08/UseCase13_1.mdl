@@ -69,9 +69,9 @@ Categorical_DIST_mdl = mdlObj{
    }
    
    INDIVIDUAL_VARIABLES{
-      logit(P0) = linear(trans is logit, pop=B0, fixEff=[{coeff=Beta, cov=CP}], ranEff= [eta_PPV_EVENT])
-	  logit(P1) = linear(trans is logit, pop=B1, fixEff=[{coeff=Beta, cov=CP}], ranEff=[eta_PPV_EVENT])
-	  logit(P2) = linear(trans is logit, pop=B2, fixEff=[{coeff=Beta, cov=CP}], ranEff= [eta_PPV_EVENT])
+      P0 : { type is linear, trans is logit, pop=B0, fixEff=[{coeff=Beta, cov=CP}], ranEff= [eta_PPV_EVENT] }
+	  P1 : { type is linear, trans is logit, pop=B1, fixEff=[{coeff=Beta, cov=CP}], ranEff=[eta_PPV_EVENT] }
+	  P2 : { type is linear, trans is logit, pop=B2, fixEff=[{coeff=Beta, cov=CP}], ranEff= [eta_PPV_EVENT] }
    }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{

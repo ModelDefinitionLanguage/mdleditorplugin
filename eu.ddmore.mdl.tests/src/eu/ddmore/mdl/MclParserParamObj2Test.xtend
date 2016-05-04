@@ -18,7 +18,7 @@ class MclParserParamObj2Test {
 	
 	val static CODE_SNIPPET = '''
 	warfarin_PK_ODE_par = parObj {
-		DECLARED_VARIABLES{ETA_CL ETA_V}
+		#DECLARED_VARIABLES{ETA_CL ETA_V}
 
 		# By default a parameter is to be estimated if fix is omitted
 		STRUCTURAL {
@@ -36,7 +36,7 @@ class MclParserParamObj2Test {
 			PPV_V : { type is sd, value=0.1, lo=0, hi=1 } 
 			PPV_KA : { type is sd, value=0.1, fix=true } 
 			PPV_TLAG : { type is sd, value=0.1, fix=false } 
-			OMEGA : { type is corr, parameter=[ETA_CL, ETA_V], value = [0.01] } 
+			#OMEGA : { type is corr, parameter=[ETA_CL, ETA_V], value = [0.01] } 
 		} # end VARIABILITY
 	} # end of parameter object 
 		'''
@@ -51,7 +51,7 @@ class MclParserParamObj2Test {
 	def void testUnitialisedParamError(){
 		val mcl='''
 	warfarin_PK_ODE_par = parObj {
-		DECLARED_VARIABLES{ETA_CL ETA_V}
+		#DECLARED_VARIABLES{ETA_CL ETA_V}
 
 		# By default a parameter is to be estimated if fix is omitted
 		STRUCTURAL {
@@ -69,7 +69,7 @@ class MclParserParamObj2Test {
 			PPV_V : { type is sd, value=0.1, lo=0, hi=1 } 
 			PPV_KA : { type is sd, value=0.1, fix=true } 
 			PPV_TLAG : { type is sd, value=0.1, fix=false } 
-			OMEGA : { type is corr, parameter=[ETA_CL, ETA_V], value = [0.01] } 
+			#OMEGA : { type is corr, parameter=[ETA_CL, ETA_V], value = [0.01] } 
 		} # end VARIABILITY
 	} # end of parameter object 
 		'''.parse

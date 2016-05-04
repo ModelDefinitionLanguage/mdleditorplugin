@@ -57,11 +57,11 @@ Bernoulli_DIST_mdl = mdlObj{
    }# end RANDOM_VARIABLE_DEFINITION
  
    INDIVIDUAL_VARIABLES{
-      logit(indiv_BASE) = linear(pop= POP_BASEP, ranEff=[eta_PPV_EVENT], trans is logit) 
+      indiv_BASE : { type is linear, pop= POP_BASEP, ranEff=[eta_PPV_EVENT], trans is logit }
    }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{
-  	  LP = logit(indiv_BASE) + POP_BETA*CP
+  	  LP = indiv_BASE + POP_BETA*CP
 	  P1 = invLogit(LP)
    }# end MODEL_PREDICTION
 
