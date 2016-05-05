@@ -12,8 +12,8 @@ warfarin_T2E_interval_dat = dataObj{
       TRT: {use is covariate}
       AMT: {use is ignore}
       RATE: {use is covariate}
-      ADDL: {use is addl}
-      II: {use is ii}
+#      ADDL: {use is addl}
+#      II: {use is ii}
       WT: {use is covariate}
       DVID: {use is dvid}
       DV: {use is dv, variable=Y}
@@ -76,7 +76,7 @@ warfarin_T2E_exact_mdl = mdlObj{
    }# end MODEL_PREDICTION
 
    OBSERVATION{
-     Y : {type is tte, hazard = HAZ, event is intervalCensored }
+     Y : {type is tte, hazard = HAZ }
    }# end ESTIMATION
 
 } # end of model object

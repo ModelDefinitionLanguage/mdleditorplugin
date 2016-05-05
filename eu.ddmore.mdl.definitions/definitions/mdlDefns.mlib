@@ -189,7 +189,7 @@ _list proportionalErrorList _extends ContinuousObs
 _list CatObs _anon _atts type::obstype, variable::RandomVariable[::GenericEnum] _sig(type, variable);
 _list CountObs _anon _atts type::obstype, variable::RandomVariable[::Int] _sig(type, variable);
 _list DiscreteObs _anon _atts type::obstype, variable::RandomVariable[::GenericEnum] _sig(type, variable);
-_list TteObs _extends ContinuousObs _atts type::obstype, hazard::Reference[::Real] _sig(type, hazard);
+_list TteObs _extends ContinuousObs _atts type::obstype, hazard::Reference[::Real], maxEvent::Real _sig(type, hazard, maxEvent?);
 _list ContinuousObsList _anon _extends ContinuousObs _atts type::obstype, variable::RandomVariable[::Real] _sig(type, variable);
 _list UserDefinedObsList _extends ContinuousObs _atts type::obstype, value::Real, prediction::Real, weight::Real
 									_sig(type, value, prediction, weight);
