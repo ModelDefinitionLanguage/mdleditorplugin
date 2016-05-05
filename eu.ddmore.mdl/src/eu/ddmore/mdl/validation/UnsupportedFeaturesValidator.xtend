@@ -98,7 +98,7 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 			val blk = EcoreUtil2::getContainerOfType(eContainer, BlockStatement)
 			val attList = EcoreUtil2::getContainerOfType(eContainer, AttributeList)
 			// check first that this is a well constructed derivative list in the correct block etc.
-			if(blk != null && attList != null && blk.isKeyAttributeDefined(attList)){
+			if(blk != null && attList != null){
 				validateWrt(attList)
 				validateInitTime(attList)
 			}

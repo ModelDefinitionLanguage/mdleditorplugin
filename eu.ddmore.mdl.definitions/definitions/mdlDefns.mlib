@@ -354,7 +354,7 @@ _block COVARIATES (0,)
 	_statements (0,) _eqnDefn, _eqnDefn+, _enumDefn, _rvDefn;
 
 _block VARIABILITY_LEVELS (0,) _statements (0,) _listDefn
-	_list _key=type VarLevel;
+	_list VarLevel;
 	
 _block STRUCTURAL_PARAMETERS (0,) _statements (0,) _eqnDefn, _eqnDefn+;
 
@@ -376,7 +376,7 @@ _block INDIVIDUAL_VARIABLES (0,) _statements (0,) _eqnDefn+, _transDefn, _listDe
 _block INFO (,) _statements (,) _propStmt _prop name, problemStmt;
 
 _block MODEL_PREDICTION (0,) _statements (0,) _eqnDefn, _eqnDefn+, _listDefn
-	_list _key=deriv DerivList;
+	_list DerivList;
 	
 _block OBSERVATION (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+, _anonList
 		_list _key=type obstype.count->CountObs, obstype.categorical->CatObs, obstype.discrete->DiscreteObs, obstype.tte->TteObs,
@@ -401,10 +401,10 @@ _block DECLARED_VARIABLES (0,) _statements (,) _eqnDefn, _enumDefn;
 _block DATA_DERIVED_VARIABLES (0,) _statements (,) _listDefn
 	_list _key=use ddvUse.doseTime->DoseTime, ddvUse.variable->DDVariable, ddvUse.covariate->DDCovariate, ddvUse.doseInterval->DoseInterval;
 _block SOURCE (1,1) _statements (1,1) _listDefn
-		_list _key=file Source;
+		_list Source;
 		
 _block STRUCTURAL (,) _statements (,) _listDefn//, _eqnDefn+
-	_list _key=value StructuralEstimate;
+	_list StructuralEstimate;
 
 //_block STRUCTURAL (,) _statements (,) _listDefn//, _eqnDefn+
 //	_list _key=type estimateType.scalar -> ScalarEstimate, estimateType.vector->VectorEstimate, estimateType.matrix->MatrixEstimate;
@@ -413,7 +413,7 @@ _block STRUCTURAL (,) _statements (,) _listDefn//, _eqnDefn+
 //	_list _key=type varType.cov->CovarMatrix, varType.corr->CorrMatrix, varType.sd -> SDEstimate, varType.var -> VarEstimate;
 
 _block VARIABILITY (,) _statements (,) _listDefn//, _eqnDefn+
-	_list _key=value VarEstimate;
+	_list VarEstimate;
 	
 
 _block ESTIMATE (,1) _statements (,) _propStmt
@@ -438,10 +438,10 @@ _block OPTIMISE (,1) _statements (,) _propStmt
 _block TARGET_SETTINGS (,)  _arguments target::String, settingsFile::Vector[::String]? _statements (,) _propStmt _prop _free;
 
 _block OBJECTS (1,1) _statements (4,5) _listDefn
-		_list _key=type MdlObjInMog;
+		_list MdlObjInMog;
 		
 _block DEQ (,) _statements (,) _listDefn, _eqnDefn, _eqnDefn+
-	_list _key=deriv DerivList;
+	_list DerivList;
 	
 _block COMPARTMENT (,) _statements (,) _listDefn, _anonList
 	_list _key=type cmtType.depot->Depot, cmtType.direct->CmtDirect, cmtType.effect->Effect, 
@@ -457,7 +457,7 @@ _block INTERVENTION (1, ) _statements (,) _listDefn
 
 _block STUDY_DESIGN (,) _statements (,) _listDefn
 		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?
-		_list _key=armSize StudyDesign;
+		_list StudyDesign;
 
 _block SAMPLING (,) _statements (,) _listDefn
 		_list _key=type sampletype.simple->SimpleSamplingList, sampletype.combi->DerivedSamplingList;

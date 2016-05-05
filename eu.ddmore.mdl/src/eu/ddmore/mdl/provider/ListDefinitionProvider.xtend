@@ -412,19 +412,21 @@ class ListDefinitionProvider {
 		val blkDefn = new BlockListDefinition(owningBlock.blkId)
 //		val listDefns = blkDefn?.listDefns ?: Collections.emptyList
 //		listDefns.findFirst[defn|
-			for(a : attList.attributes){
-				if(a.argumentName == blkDefn.key){
-					val lstDefn = blkDefn.getListDefnByValue(a.expression.enumValue)
-					if(lstDefn != null) return lstDefn
-				}
+		if(blkDefn.requiresNoKeyAttribute){
+			blkDefn.sglListDefn
+		}
+		else{
+			val keyVal = attList.getAttributeEnumValue(blkDefn.key)
+			if(keyVal != null){
+				blkDefn.getListDefnByValue(keyVal)
+			}
 //				if(blkDefn.key == a.attributeName)
 //					if(defn.keyValue == null || defn.keyValue == a.expression.enumValue){
 //						return true;
 //					}
-			} 
+		} 
 //			false
 //		]
-		null
 	}
 
 
@@ -537,11 +539,16 @@ class ListDefinitionProvider {
 		// expect Attribute->AttributeList->ListDefInfo|AnaonolymousListStatement->BlockStatement
 		// get key from parent list
 		val parent = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
-		val attList = EcoreUtil2.getContainerOfType(eContainer, AttributeList)
-		if (attList.attributes.exists[parent.blkId.keyAttName == argumentName]) {
+//		val attList = EcoreUtil2.getContainerOfType(eContainer, AttributeList)
+		if(parent.blkId != null){
 			val blkDefn = new BlockListDefinition(parent.blkId)
-			val keyVal = parentList.getAttributeEnumValue(blkDefn.key)
-			val listDefn = blkDefn.getListDefnByKeyValue(keyVal)
+			val listDefn =  if(!blkDefn.requiresNoKeyAttribute){
+								val keyVal = parentList.getAttributeEnumValue(blkDefn.key)
+								blkDefn.getListDefnByKeyValue(keyVal)
+							}
+							else blkDefn.sglListDefn
+			
+	//		if (attList.attributes.exists[parent.blkId.keyAttName == argumentName]) {
 			if(listDefn != null){
 				// there is a listDefn so check if attribute is in list
 //				listDefn.attributeDefnExists(it)

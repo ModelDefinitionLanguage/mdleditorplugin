@@ -105,7 +105,7 @@ class ListValidator extends AbstractMdlValidator {
 					unusedMandatoryAttributes.forEach[name| error("mandatory attribute '" + name + "' is missing in list.",
 						MdlPackage.eINSTANCE.attributeList_Attributes, MdlValidator::MANDATORY_LIST_ATT_MISSING, name) ]
 			}		
-			else{
+			else if(owningBlock.blkId != null && owningBlock.blkId.listType == null){
 				error("mandatory key attribute is missing in list.",
 					MdlPackage.eINSTANCE.attributeList_Attributes, MdlValidator::MANDATORY_LIST_KEY_ATT_MISSING, "")
 			}
