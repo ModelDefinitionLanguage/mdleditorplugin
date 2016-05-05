@@ -4,18 +4,18 @@ class ListTypeInfo extends AbstractListTypeInfo{
 	val ListSuperTypeInfo superType
 	
 	new(String name){
-		this(name, TypeInfoClass.Undefined, null)
+		this(name, new PrimitiveTypeInfo(TypeInfoClass.Undefined), null)
 	}
 	
-	new(String name, TypeInfoClass secondaryType){
+	new(String name, PrimitiveTypeInfo secondaryType){
 		this(name, secondaryType, null)
 	}
 	
-	new(String name, TypeInfo superType){
-		this(name, TypeInfoClass.Undefined, superType)
+	new(String name, ListSuperTypeInfo superType){
+		this(name, new PrimitiveTypeInfo(TypeInfoClass.Undefined), superType)
 	}
 	
-	new(String name, TypeInfoClass secondaryType, TypeInfo superType){
+	new(String name, PrimitiveTypeInfo secondaryType, ListSuperTypeInfo superType){
 		super(name, secondaryType)
 		if(superType != null){
 			if(superType instanceof ListSuperTypeInfo){

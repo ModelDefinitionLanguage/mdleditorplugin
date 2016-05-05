@@ -25,7 +25,7 @@ class TypeSystemProviderTest {
 	@Inject extension ParseHelper<Library>
 	@Inject extension ValidationTestHelper
 
-	val COMP_LIST_TYPE = new ListTypeInfo("Compartment", TypeInfoClass.Real)
+	val COMP_LIST_TYPE = new ListTypeInfo("Compartment", TypeSystemProvider::REAL_TYPE)
 
 	var incompatible = false
 	var Library testLibraryFixture
@@ -281,7 +281,7 @@ class TypeSystemProviderTest {
 
 	@Test
 	def void testCompRefWithRealCompatible(){
-		val testType = new ListTypeInfo("testType", TypeInfoClass.Real)
+		val testType = new ListTypeInfo("testType", TypeSystemProvider::REAL_TYPE)
 		val value = MdlFactory::eINSTANCE.createRealLiteral
 		val (TypeInfo, TypeInfo) => void errorFunc = [e, a| fail("should not call me!")]
 		checkExpectedAndExpression(testType.makeReference, value, errorFunc)				
@@ -289,7 +289,7 @@ class TypeSystemProviderTest {
 
 	@Test
 	def void testCompRefWithRealRefCompatible(){
-		val testType = new ListTypeInfo("testType", TypeInfoClass.Real)
+		val testType = new ListTypeInfo("testType", TypeSystemProvider::REAL_TYPE)
 		val ref = MdlFactory::eINSTANCE.createSymbolReference
 		val defn = MdlFactory::eINSTANCE.createEquationDefinition
 		defn.name = "AReal"

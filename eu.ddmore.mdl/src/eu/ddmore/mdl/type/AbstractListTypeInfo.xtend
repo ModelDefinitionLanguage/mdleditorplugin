@@ -5,13 +5,13 @@ import org.eclipse.xtend.lib.annotations.ToString
 @ToString
 abstract class AbstractListTypeInfo extends TypeInfo{
 	val String name
-	val TypeInfoClass secondaryType
+	val PrimitiveTypeInfo secondaryType
 	
 	protected new(String name){
-		this(name, TypeInfoClass.Undefined)
+		this(name, new PrimitiveTypeInfo(TypeInfoClass.Undefined))
 	}
 	
-	protected new(String name, TypeInfoClass secondaryType){
+	protected new(String name, PrimitiveTypeInfo secondaryType){
 		this.name = name
 		this.secondaryType = secondaryType 
 	}
@@ -29,7 +29,8 @@ abstract class AbstractListTypeInfo extends TypeInfo{
 			switch(otherType){
 				AbstractListTypeInfo:  otherType.matchesList(this)
 				PrimitiveTypeInfo:{
-					PrimitiveTypeInfo::isPrimitiveCompatible(this.secondaryType, otherType.typeClass)
+					this.secondaryType.isCompatible(otherType)
+//					PrimitiveTypeInfo::isPrimitiveCompatible(this.secondaryType, otherType.typeClass)
 				}
 					
 				default:
@@ -43,7 +44,7 @@ abstract class AbstractListTypeInfo extends TypeInfo{
 		this.name
 	}
 	
-	def getSecondaryType(){
+	def PrimitiveTypeInfo getSecondaryType(){
 		secondaryType
 	}
 	

@@ -31,6 +31,7 @@ import eu.ddmore.mdl.type.RandomVariableTypeInfo
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.type.MappingTypeInfo
 import eu.ddmore.mdllib.mdllib.MappingTypeDefinition
+import eu.ddmore.mdl.type.PrimitiveTypeInfo
 
 class MdlLibUtils {
 
@@ -42,8 +43,9 @@ class MdlLibUtils {
 				switch(typeClass){
 					case TypeClass.LIST:{
 						if(td.isIsSuper){
-							if(td.altType != null)
-								new ListSuperTypeInfo(td.name, td.altType.typeInfo.typeClass)
+							if(td.altType != null){
+								new ListSuperTypeInfo(td.name, td.altType.typeInfo as PrimitiveTypeInfo)
+							}
 							else
 								new ListSuperTypeInfo(td.name)
 						}
@@ -53,10 +55,10 @@ class MdlLibUtils {
 						else{
 							val altTypeInfo = td.altType?.typeInfo
 							if(td.superRef != null && altTypeInfo != null)
-								new ListTypeInfo(td.name, altTypeInfo.typeClass, td.superRef.typeInfo)
-							else if(td.superRef == null && td.altType != null) new ListTypeInfo(td.name, altTypeInfo.typeClass)
+								new ListTypeInfo(td.name, altTypeInfo as PrimitiveTypeInfo, td.superRef.typeInfo as ListSuperTypeInfo)
+							else if(td.superRef == null && td.altType != null) new ListTypeInfo(td.name, altTypeInfo as PrimitiveTypeInfo)
 							else if(td.superRef != null && td.altType == null)
-								new ListTypeInfo(td.name, td.superRef.typeInfo)
+								new ListTypeInfo(td.name, td.superRef.typeInfo as ListSuperTypeInfo)
 							else
 								new ListTypeInfo(td.name)
 						}

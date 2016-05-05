@@ -27,7 +27,7 @@ class ListTypeInfoTest {
 		superTestInstance = new ListSuperTypeInfo("Super list")
 		equivTestInstance = new ListTypeInfo("A list")
 		equivSuperTestInstance = new ListTypeInfo("A list", this.superTestInstance)
-		equivAltTestInstance = new ListTypeInfo("A list", TypeInfoClass.Real)
+		equivAltTestInstance = new ListTypeInfo("A list", TypeSystemProvider::REAL_TYPE)
 	}
 	
 	@Test
