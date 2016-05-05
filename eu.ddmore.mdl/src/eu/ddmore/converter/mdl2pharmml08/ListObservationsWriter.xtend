@@ -46,7 +46,7 @@ class ListObservationsWriter {
 				<math:FunctionCall>
 					<ct:SymbRef symbIdRef="«standardErrorName»"/>
 					«FOR vp : it.attributes»
-						«IF getStandardErrorArgument(vp.attributeName) != null»
+						«IF getStandardErrorArgument(vp.argumentName) != null»
 							<math:FunctionArgument symbId="«getStandardErrorArgument(vp.argumentName)»">
 								«IF !(vp.expression instanceof SymbolReference)»
 									«vp.expression.pharmMLExpr»

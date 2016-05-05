@@ -53,6 +53,9 @@ class ListDefInfo {
 		_ltd.catAtt?.name
 	}
 	
+	def getListTypeDefinition(){
+		this._ltd
+	}
 	
 //	new(String keyValue, TypeInfo listType, List<AttributeDefn> attributes){
 //		this(keyValue, listType, attributes, false, null, null, false)

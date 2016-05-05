@@ -186,7 +186,7 @@ class MdlCustomValidator extends AbstractMdlValidator {
 	@Check
 	// check that a covariate is used in the fixed eff sublist
 	def validateCovariateFixedEffect(ValuePair it){
-		if(attributeName == COV_ATT){
+		if(argumentName == COV_ATT){
 			val expr = expression
 			if(expr instanceof SymbolReference){
 				val subList = EcoreUtil2.getContainerOfType(eContainer, SubListExpression)
@@ -195,7 +195,7 @@ class MdlCustomValidator extends AbstractMdlValidator {
 					val refBlk = EcoreUtil2.getContainerOfType(expr.ref.eContainer, BlockStatement)
 					if(refBlk != null && refBlk.identifier != BlockDefinitionTable::COVARIATE_BLK_NAME){
 						// ref cov is not in cov block so assume it not a covariate
-						error("Attribute '" + attributeName + "' expects a reference to a covariate. '" + expr.ref.name + "' is not a covariate.",
+						error("Attribute '" + argumentName + "' expects a reference to a covariate. '" + expr.ref.name + "' is not a covariate.",
 							MdlPackage::eINSTANCE.valuePair_Expression,
 							MdlValidator::INCOMPATIBLE_VARIABLE_REF, expr.ref.name)
 					} 
@@ -239,7 +239,7 @@ class MdlCustomValidator extends AbstractMdlValidator {
 		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 		val owningList = EcoreUtil2.getContainerOfType(eContainer, ListDefinition)
 		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::DIV_BLK_NAME &&
-			owningList != null && attributeName == ListDefinitionTable::USE_ATT){
+			owningList != null && argumentName == ListDefinitionTable::USE_ATT){
 			val enumVal = owningList.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT)
 			if(UniqueUseValue.contains(enumVal)){
 				if(owningBlock.isDuplicateUse(owningList.firstAttributeList, it)){

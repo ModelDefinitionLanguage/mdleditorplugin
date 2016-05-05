@@ -66,15 +66,15 @@ class ListValidator extends AbstractMdlValidator {
 		switch(parent){
 			AttributeList:{
 				if(!attributeRecognised){
-					error("attribute '" + attributeName + "' is not recognised in this context.",
-							MdlPackage.eINSTANCE.valuePair_ArgumentName, MdlValidator.UNRECOGNIZED_LIST_ATT, attributeName)
+					error("attribute '" + argumentName + "' is not recognised in this context.",
+							MdlPackage.eINSTANCE.valuePair_ArgumentName, MdlValidator.UNRECOGNIZED_LIST_ATT, argumentName)
 				}
 			}
 			PropertyStatement:{
 				val blk = EcoreUtil2.getContainerOfType(parent.eContainer, BlockStatement)
 				if(!blk.blkId.isFreeProps && !isPropertyKnown){
-					error("property '" + attributeName + "' is not recognised in this context.",
-							MdlPackage.eINSTANCE.valuePair_ArgumentName, MdlValidator.UNRECOGNIZED_PROPERTY_ATT, attributeName)
+					error("property '" + argumentName + "' is not recognised in this context.",
+							MdlPackage.eINSTANCE.valuePair_ArgumentName, MdlValidator.UNRECOGNIZED_PROPERTY_ATT, argumentName)
 				}
 			}
 			
@@ -97,7 +97,7 @@ class ListValidator extends AbstractMdlValidator {
 		if(owningBlock != null){
 			if(owningBlock.isKeyAttributeDefined(it)){
 				val keyVal = getAttributeEnumValue(owningBlock.blkId.keyAttName)
-				if(BlockListDefinition::create(owningBlock).getListDefnByKeyValue(keyVal) == null){
+				if(BlockListDefinition::create(owningBlock).getListDefnByValue(keyVal) == null){
 					error("Attribute list key value '" + keyVal + "' is not recognised.",
 						MdlPackage.eINSTANCE.attributeList_Attributes, MdlValidator::LIST_KEY_VAL_UNRECOGNISED, "")
 				}

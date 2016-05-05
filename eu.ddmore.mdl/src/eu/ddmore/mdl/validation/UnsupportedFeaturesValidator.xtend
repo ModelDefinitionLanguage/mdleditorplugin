@@ -25,6 +25,7 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 import eu.ddmore.mdl.type.TypeInfoClass
+import eu.ddmore.mdl.utils.DomainObjectModelUtils
 
 class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 	
@@ -33,6 +34,7 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 	extension ConstantEvaluation ce = new ConstantEvaluation
 	extension TypeSystemProvider mtp = new TypeSystemProvider 
 	extension BlockUtils bu = new BlockUtils
+	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	
 	override register(EValidatorRegistrar registrar){}
 	
@@ -94,7 +96,7 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 	@Check
 	//Check for unsupported object names
 	def checkUnsupportedDifferentWrt(ValuePair it){
-		if(attributeName == ListDefinitionTable::DERIV_TYPE_ATT){
+		if(argumentName == ListDefinitionTable::DERIV_TYPE_ATT){
 			val blk = EcoreUtil2::getContainerOfType(eContainer, BlockStatement)
 			val attList = EcoreUtil2::getContainerOfType(eContainer, AttributeList)
 			// check first that this is a well constructed derivative list in the correct block etc.
@@ -121,7 +123,7 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 	// Check for unsupported attribute names
 	def checkUnsupportedAttributes(ValuePair it){
 		val blk = owningBlock?.identifier
-		val nm = attributeName
+		val nm = argumentName
 		if(blk != null && nm != null){
 			val attMap = unsupportedAttributes.get(blk)
 			if(attMap != null && attMap.contains(nm)){

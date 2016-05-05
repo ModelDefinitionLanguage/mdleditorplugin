@@ -287,22 +287,22 @@ class TypeSystemValidator extends AbstractMdlValidator {
 		switch(parent){
 			AttributeList:
 				parent.checkAttributeTyping(vp, [e, a|
-					error("attribute '" + vp.attributeName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
+					error("attribute '" + vp.argumentName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
 							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, a.typeName)
 				])
 			NamedFuncArguments:
 				vp.checkNamedFunctionArgumentTyping([e, a|
-					error("argument '" + vp.attributeName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
+					error("argument '" + vp.argumentName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
 							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, a.typeName)
 				])
 			SubListExpression:
 				parent.checkSublistAttributeTyping(vp, [e, a|
-					error("attribute '" + vp.attributeName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
+					error("attribute '" + vp.argumentName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
 							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, a.typeName)
 				])
 			PropertyStatement:
 				parent.checkPropertyAttributeTyping(vp, [e, a|
-					error("property '" + vp.attributeName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
+					error("property '" + vp.argumentName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
 							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, a.typeName)
 				])
 		}
@@ -456,7 +456,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	private  def void validateCategoricalMappingType(EnumPair at, Expression mappingExpr, (TypeInfo, TypeInfo) => void typeErrorLambda){
 		val attList = at.eContainer as AttributeList
 		val listDefn = attList.matchingListDefn
-		if(listDefn.isCatMappingPossible(at.attributeName)){
+		if(listDefn.isCatMappingPossible(at.argumentName)){
 			val expectedType = listDefn.catMappingType ?: TypeSystemProvider::UNDEFINED_TYPE
 			checkArgumentMatchesAndExpression(expectedType, mappingExpr, typeErrorLambda)
 		}
@@ -510,7 +510,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	def checkAttributeTyping(AttributeList attList, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda){
 		val listDefn = attList.matchingListDefn
 		if(listDefn != null && at != null){
-			val attType = listDefn.getAttributeType(at.attributeName)
+			val attType = listDefn.getAttributeType(at.argumentName)
 			if(at instanceof ValuePair){
 				if(at.expression instanceof CatValRefMappingExpression)
 					checkCatgoricalMappingMatches(attType, at.expression, errorLambda)
@@ -532,7 +532,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 		val subListDefn = findSublistMatch
 
 		if(subListDefn != null){
-			val attDefn = subListDefn.attributes.findFirst[name == at.attributeName]
+			val attDefn = subListDefn.attributes.findFirst[name == at.argumentName]
 			checkArgumentMatchesAndExpression(attDefn.attType, at.expression, errorLambda)
 		}
 	}

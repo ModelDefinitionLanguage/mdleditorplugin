@@ -33,7 +33,7 @@ class ListIndivParamWriterTest {
 	
 	@Before
 	def void setUp(){
-				val dummyMdl = '''
+		val dummyMdl = '''
 			foo = mdlObj {
 				
 			}

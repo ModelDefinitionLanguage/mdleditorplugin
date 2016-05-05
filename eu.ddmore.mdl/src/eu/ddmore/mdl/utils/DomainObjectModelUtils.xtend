@@ -18,6 +18,7 @@ import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import java.util.Collections
 import org.eclipse.xtext.EcoreUtil2
+import eu.ddmore.mdl.mdl.ListDefinition
 
 class DomainObjectModelUtils {
 	extension BlockUtils bu = new BlockUtils
@@ -46,6 +47,10 @@ class DomainObjectModelUtils {
 		EcoreUtil2.getContainerOfType(eContainer, ValuePair)
 	}
 	
+	def getOwningBlock(ValuePair it){
+		EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
+	} 
+
 	def getOwningBlock(EnumExpression it){
 		EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 	} 
@@ -86,6 +91,10 @@ class DomainObjectModelUtils {
 		EcoreUtil2.getContainerOfType(it, SymbolReference)
 	}
 	
+	def getOwningListDefinition(ValuePair it){
+		EcoreUtil2.getContainerOfType(eContainer, ListDefinition)
+	} 
+
 	def getFuncArgNum(UnnamedArgument it){
 		val argList = parentFunction.argList
 		var idx = -1;
