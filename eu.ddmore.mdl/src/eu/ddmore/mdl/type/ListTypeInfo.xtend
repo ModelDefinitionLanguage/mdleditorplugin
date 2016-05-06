@@ -7,7 +7,7 @@ class ListTypeInfo extends AbstractListTypeInfo{
 		this(name, new PrimitiveTypeInfo(TypeInfoClass.Undefined), null)
 	}
 	
-	new(String name, PrimitiveTypeInfo secondaryType){
+	new(String name, TypeInfo secondaryType){
 		this(name, secondaryType, null)
 	}
 	
@@ -15,7 +15,7 @@ class ListTypeInfo extends AbstractListTypeInfo{
 		this(name, new PrimitiveTypeInfo(TypeInfoClass.Undefined), superType)
 	}
 	
-	new(String name, PrimitiveTypeInfo secondaryType, ListSuperTypeInfo superType){
+	new(String name, TypeInfo secondaryType, ListSuperTypeInfo superType){
 		super(name, secondaryType)
 		if(superType != null){
 			if(superType instanceof ListSuperTypeInfo){

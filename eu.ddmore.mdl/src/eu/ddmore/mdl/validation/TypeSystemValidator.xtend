@@ -4,6 +4,7 @@ import eu.ddmore.mdl.mdl.AdditiveExpression
 import eu.ddmore.mdl.mdl.AndExpression
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.CatValRefMapping
+import eu.ddmore.mdl.mdl.CatValRefMappingExpression
 import eu.ddmore.mdl.mdl.CategoryValueDefinition
 import eu.ddmore.mdl.mdl.CategoryValueReference
 import eu.ddmore.mdl.mdl.ElseClause
@@ -33,11 +34,13 @@ import eu.ddmore.mdl.mdl.VectorElement
 import eu.ddmore.mdl.mdl.VectorLiteral
 import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
+import eu.ddmore.mdl.provider.MappingDefinitionProvider
 import eu.ddmore.mdl.provider.PropertyDefinitionProvider
 import eu.ddmore.mdl.provider.SublistDefinitionProvider
 import eu.ddmore.mdl.type.CategoryTypeInfo
 import eu.ddmore.mdl.type.CategoryValueTypeInfo
 import eu.ddmore.mdl.type.GeneralCategoryTypeInfo
+import eu.ddmore.mdl.type.MappingTypeInfo
 import eu.ddmore.mdl.type.RandomVariableTypeInfo
 import eu.ddmore.mdl.type.TypeInfo
 import eu.ddmore.mdl.type.TypeInfoClass
@@ -55,10 +58,6 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import eu.ddmore.mdl.provider.MappingDefinitionProvider
-import eu.ddmore.mdl.type.MappingTypeInfo
-import eu.ddmore.mdl.mdl.CatValRefMappingExpression
-import eu.ddmore.mdl.mdl.MappingExpression
 
 class TypeSystemValidator extends AbstractMdlValidator {
 	
@@ -455,7 +454,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 
 	private  def void validateCategoricalMappingType(EnumPair at, Expression mappingExpr, (TypeInfo, TypeInfo) => void typeErrorLambda){
 		val attList = at.eContainer as AttributeList
-		val listDefn = attList.matchingListDefn
+		val listDefn = attList.listDefinition
 		if(listDefn.isCatMappingPossible(at.argumentName)){
 			val expectedType = listDefn.catMappingType ?: TypeSystemProvider::UNDEFINED_TYPE
 			checkArgumentMatchesAndExpression(expectedType, mappingExpr, typeErrorLambda)
@@ -508,7 +507,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	}
 
 	def checkAttributeTyping(AttributeList attList, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda){
-		val listDefn = attList.matchingListDefn
+		val listDefn = attList.listDefinition
 		if(listDefn != null && at != null){
 			val attType = listDefn.getAttributeType(at.argumentName)
 			if(at instanceof ValuePair){

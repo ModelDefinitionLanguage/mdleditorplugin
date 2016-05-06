@@ -95,6 +95,11 @@ class DomainObjectModelUtils {
 		EcoreUtil2.getContainerOfType(eContainer, ListDefinition)
 	} 
 
+	def getOwningAttributeList(ValuePair it){
+		EcoreUtil2.getContainerOfType(eContainer, AttributeList)
+	} 
+
+
 	def getFuncArgNum(UnnamedArgument it){
 		val argList = parentFunction.argList
 		var idx = -1;

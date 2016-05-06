@@ -3,7 +3,9 @@ package eu.ddmore.mdl.provider
 import eu.ddmore.mdl.type.TypeInfo
 import eu.ddmore.mdl.utils.MdlLibUtils
 import eu.ddmore.mdllib.mdllib.ListAttributeDefn
+import org.eclipse.xtend.lib.annotations.ToString
 
+@ToString
 class MdlListAttributeDefn{
 	extension MdlLibUtils mlu = new MdlLibUtils
 	
@@ -21,35 +23,29 @@ class MdlListAttributeDefn{
 		_lad.name
 	}
 	
-//	def boolean isMandatory(){
-//		!_lad.isOptional
-//	}
-	
-	
 	def TypeInfo getAttType(){
 		_attType
 	}
+
 	
-//		TypeInfo catMappingType
-//		boolean catMappingMandatory
+	// equality is based on the list name
+	override boolean equals(Object other){
+		var retVal = false
+		if(other !== null){
+			if(this !== other){
+				if(other instanceof MdlListAttributeDefn){
+					retVal = this._lad == other._lad
+				}
+			}
+			else retVal = true
+		}
+		retVal
+	}
+
+	override int hashCode() {
+	    val int prime = 31
+	    var result = prime + if(this._lad == null)  0 else this._lad.hashCode()
+	    result
+	}
 	
-//		new(String name, String depAtt, boolean mand, TypeInfo attType){
-//			this(name, depAtt, mand, attType, null, false)
-//		}
-	
-//		new(String name, boolean mand, TypeInfo attType){
-//			this(name, mand, attType, null, false)
-//		}
-	
-//		def isCatMappingMandatory(){
-//			return catMappingType != null && catMappingMandatory
-//		}
-//		
-//		def isCatMappingForbidden(){
-//			return catMappingType == null || (catMappingType != null && !catMappingMandatory)
-//		}
-//		
-//		def isCatMappingPossible(){
-//			return catMappingType != null
-//		}
 }

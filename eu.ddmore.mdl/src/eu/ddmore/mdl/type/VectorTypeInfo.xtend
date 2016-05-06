@@ -29,6 +29,8 @@ class VectorTypeInfo extends TypeInfo{
 				VectorTypeInfo: elementType.isCompatible(otherType.elementType)
 				ReferenceTypeInfo:
 					this.isCompatible(otherType.underlyingType)
+				AbstractListTypeInfo:
+					this.isCompatible(otherType.secondaryType)
 				RandomVariableTypeInfo:
 					this.isCompatible(otherType.rvType)
 				default: false

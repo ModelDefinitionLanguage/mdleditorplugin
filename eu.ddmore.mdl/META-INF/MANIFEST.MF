@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: eu.ddmore.mdl
-Bundle-Vendor: Leiden University
+Bundle-Vendor: Pfizer Ltd and Leiden University
 Bundle-Version: 1.4.0.qualifier
 Bundle-SymbolicName: eu.ddmore.mdl; singleton:=true
 Bundle-ActivationPolicy: lazy

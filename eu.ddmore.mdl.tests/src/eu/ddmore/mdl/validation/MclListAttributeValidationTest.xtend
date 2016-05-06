@@ -443,6 +443,10 @@ class MclListAttributeValidationTest {
 			MdlValidator::UNRECOGNIZED_LIST_ATT,
 			"attribute 'inputformat' is not recognised in this context"
 		)
+		mcl.assertError(MdlPackage::eINSTANCE.attributeList,
+			MdlValidator::MANDATORY_LIST_ATT_MISSING,
+			"mandatory attribute 'inputFormat' is missing in list."
+		)
 	}
 
 	@Test

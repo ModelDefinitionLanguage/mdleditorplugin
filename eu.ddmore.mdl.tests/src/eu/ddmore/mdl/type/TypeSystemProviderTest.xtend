@@ -43,7 +43,7 @@ class TypeSystemProviderTest {
 			_type Int _int;
 			_type cmtType _enum (depot, compartment, elimination, transfer, distribution, direct, effect);
 			
-			_list Compartment _alt Real
+			_list Compartment _alt ::Real
 					_atts  type::cmtType, modelCmt::Int
 					_sig (type, modelCmt?);
 					

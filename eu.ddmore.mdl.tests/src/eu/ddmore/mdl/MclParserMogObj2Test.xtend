@@ -43,6 +43,7 @@ Categorical_DIST_par = parObj{
 
    VARIABILITY{
       #OMEGA
+      OMEGA : { matrixValue = [[ 20, 21 ]] }
       PPV_EVENT : {value=0.04 ,type is var}
    }# end VARIABILITY
 
@@ -65,6 +66,7 @@ Categorical_DIST_mdl = mdlObj{
 
    VARIABILITY_PARAMETERS{
       PPV_EVENT
+      OMEGA::Matrix
    }# end VARIABILITY_PARAMETERS
 
 

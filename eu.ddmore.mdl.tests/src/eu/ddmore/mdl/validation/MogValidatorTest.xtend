@@ -1935,6 +1935,65 @@ class MogValidatorTest {
 	}
 
 	@Test
+	def void testValidModelStructParamMatchMatrixTypeMog(){
+		val mcl = '''
+		testData = dataObj {
+			DECLARED_VARIABLES { D::DosingTarget }
+			DATA_INPUT_VARIABLES {
+				T : { use is idv }
+				AMT : { use is amt, variable=D }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				STRUCTURAL_PARAMETERS { 
+					POP_CL::Vector
+					POP_V
+				} # end STRUCTURAL_PARAMETERS
+
+				MODEL_PREDICTION{
+					COMPARTMENT{
+				      D:   {type is depot, modelCmt=1, to=CENTRAL, ka=1, tlag=1}
+				      CENTRAL:    {type is compartment, modelCmt=2}
+				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
+			         }
+				}
+		
+		}
+		p1 = parObj{
+			STRUCTURAL{
+				POP_CL : {vectorValue = [1] }
+				POP_V : { value = 2 }
+			}
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				testData : { type is dataObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertNoErrors
+	}
+
+	@Test
 	def void testValidModelStructParamWithAssignmentInModelMatchMog(){
 		val mcl = '''
 		testData = dataObj {

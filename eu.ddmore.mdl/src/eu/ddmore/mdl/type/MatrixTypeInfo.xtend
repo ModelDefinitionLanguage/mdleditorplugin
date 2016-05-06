@@ -31,6 +31,8 @@ class MatrixTypeInfo extends TypeInfo{
 					this.isCompatible(otherType.underlyingType)
 				RandomVariableTypeInfo:
 					this.isCompatible(otherType.rvType)
+				AbstractListTypeInfo:
+					this.isCompatible(otherType.secondaryType)
 				default: false
 			}
 		}

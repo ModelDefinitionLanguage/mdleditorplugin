@@ -2,12 +2,11 @@ package eu.ddmore.mdl.provider
 
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.MappingExpression
+import eu.ddmore.mdl.mdl.MappingPair
 import eu.ddmore.mdl.type.MappingTypeInfo
 import eu.ddmore.mdl.type.TypeInfo
 import eu.ddmore.mdl.type.TypeSystemProvider
 import org.eclipse.xtext.EcoreUtil2
-import eu.ddmore.mdl.mdl.MappingPair
-import eu.ddmore.mdl.type.ListSuperTypeInfo
 
 class MappingDefinitionProvider {
 	

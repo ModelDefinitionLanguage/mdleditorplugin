@@ -1,16 +1,15 @@
 package eu.ddmore.mdl.utils
 
-import eu.ddmore.mdllib.mdllib.MdlLibFactory
-import eu.ddmore.mdllib.mdllib.Library
 import eu.ddmore.mdllib.mdllib.AbstractTypeDefinition
+import eu.ddmore.mdllib.mdllib.Library
 import eu.ddmore.mdllib.mdllib.ListAttributeDefn
-import java.util.List
-import java.util.ArrayList
-import eu.ddmore.mdllib.mdllib.ListSignature
-import eu.ddmore.mdllib.mdllib.TypeSpec
+import eu.ddmore.mdllib.mdllib.ListTypeDefinition
+import eu.ddmore.mdllib.mdllib.MdlLibFactory
 import eu.ddmore.mdllib.mdllib.TypeClass
 import eu.ddmore.mdllib.mdllib.TypeDefinition
-import eu.ddmore.mdllib.mdllib.ListTypeDefinition
+import eu.ddmore.mdllib.mdllib.TypeSpec
+import java.util.Collections
+import java.util.List
 import java.util.Map
 
 class MDLLibraryBuildFixture {
@@ -19,17 +18,23 @@ class MDLLibraryBuildFixture {
 	def createLibraryRoot(){
 		MdlLibFactory::eINSTANCE.createLibrary
 	}
+
+	def createListTypeDefinition(Library root, TypeSpec altType, AbstractTypeDefinition superRef, List<ListAttributeDefn> attributes){
+		createListTypeDefinition(root, altType, superRef, attributes, Collections::emptyList)
+	}
 	
-	def createListTypeDefinition(Library root, AbstractTypeDefinition altType, AbstractTypeDefinition superRef, List<ListAttributeDefn> attributes){
+	def createListTypeDefinition(Library root, TypeSpec altType, AbstractTypeDefinition superRef,
+								List<ListAttributeDefn> attributes,	List<Boolean> mandFlags){
 		val retVal = MdlLibFactory::eINSTANCE.createListTypeDefinition
 		retVal.altType = altType
 		retVal.superRef = superRef
 		retVal.attributes.addAll(attributes)
 		val sig = MdlLibFactory::eINSTANCE.createListSignature
+		val mandIter = mandFlags.iterator
 		attributes.forEach[
 			val attRef = MdlLibFactory::eINSTANCE.createListAttributeRef
 			attRef.attRef = it
-			attRef.optional = false
+			attRef.optional = if(mandIter.hasNext) !mandIter.next else false
 			sig.attRefs.add(attRef)
 		]
 		retVal.sigLists.add(sig)
@@ -90,6 +95,20 @@ class MDLLibraryBuildFixture {
 			attValMap.attDefn.name = p1
 			attValMap.attType = p2
 			retVal.listTypeMappings.add(attValMap)
+		]
+		
+		blockDefns.add(retVal)
+		retVal
+	}
+	
+	def createBlockDefnWithKeyAttributes(Library it, String name, Map<ListAttributeDefn, ListTypeDefinition> listMapping){
+		val retVal = MdlLibFactory::eINSTANCE.createBlockDefinition
+		retVal.name = name
+		listMapping.forEach[p1, p2|
+			val attValMap = MdlLibFactory::eINSTANCE.createAttNameListMap
+			attValMap.attDefn = p1
+			attValMap.attType = p2
+			retVal.listAttMappings.add(attValMap)
 		]
 		
 		blockDefns.add(retVal)

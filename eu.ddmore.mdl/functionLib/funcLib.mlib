@@ -45,7 +45,7 @@ _mapping DoseMapping _data ::Int _col ::Cmt _tgt ::Reference[::DosingTarget];
 _mapping ObsMapping _data ::Int _col ::Dvid _tgt ::Reference[::ContinuousObs]; 
 
 _list DataColumn _super;
-_list Covariate _alt Real _extends DataColumn _atts use::divUse, interp::Reference[::Function(::Real, ::Real, ::Real, ::Real, ::Real)::Real]
+_list Covariate _alt ::Real _extends DataColumn _atts use::divUse, interp::Reference[::Function(::Real, ::Real, ::Real, ::Real, ::Real)::Real]
 							_sig (use, interp?);  
 _list CatCovariate _extends DataColumn _atts use::divUse _cat use::Int _sig (use);  
 _list Amt _extends DataColumn _atts use::divUse, define::DoseMapping, variable::Reference[::DosingTarget] _sig (use, define), (use, variable);
@@ -105,16 +105,16 @@ _list CorrelationList _anon _atts type::CorrelationEnumType, matrix::Matrix, rv1
 // Individual Parameters
 _type IndivTypeType _enum (linear, general);
 
-_list IndivAbstractList _alt Real _super;
+_list IndivAbstractList _super _alt ::Real;
 
 _sublist EtaFreeRanEffSublist _atts var::Real, sd::Real, varLvl::VarLevel _sig(var, varLvl), (sd, varLvl);
 
-_list IndivParamLinear _alt Real _extends IndivAbstractList
+_list IndivParamLinear _alt ::Real _extends IndivAbstractList
 		_atts type::IndivTypeType, trans::transType,
 				pop::Real, fixEff::Vector[::fixEffAtts], ranEff::Vector[::RandomVariable], omega::Vector[::EtaFreeRanEffSublist]
 		_sig(type, trans?, pop, fixEff?, ranEff), (type, trans?, pop, fixEff?, omega);
 		
-_list IndivParamGeneral _alt Real _extends IndivAbstractList
+_list IndivParamGeneral _alt ::Real _extends IndivAbstractList
 		_atts type::IndivTypeType, trans::transType, grp::Real,
 				ranEff::Vector[::RandomVariable], omega::Vector[::EtaFreeRanEffSublist]
 			_sig(type, trans?, grp, ranEff), (type, trans?, grp, omega); 
@@ -125,22 +125,22 @@ _list IndivParamGeneral _alt Real _extends IndivAbstractList
 _list VarLevel _atts type::varLvlType, level::Int
 	_sig(type, level);
 _list DosingTarget _super;
-_list DerivList _alt Deriv _extends DosingTarget _atts deriv::Real, init::Real, x0::Real, wrt::Reference[::Real]
+_list DerivList _alt ::Deriv _extends DosingTarget _atts deriv::Real, init::Real, x0::Real, wrt::Reference[::Real]
 	_sig(deriv, init?, x0?, wrt?);
-_list DosingVar _alt Real _extends DosingTarget _atts value::Real _sig(value);
+_list DosingVar _alt ::Real _extends DosingTarget _atts value::Real _sig(value);
 
 
 // Compartments
 
-_list CmtDirect _alt Real _atts type::cmtType, modelCmt::Int, to::Reference[::DosingTarget],
+_list CmtDirect _alt ::Real _atts type::cmtType, modelCmt::Int, to::Reference[::DosingTarget],
 		modelDur::Real, tlag::Real, finput::Real, modelRate::Real
 		_sig(type, modelCmt?, to, modelDur?, tlag?, finput?),
 			(type, modelCmt?, to, modelRate?, tlag?, finput?);
 
-_list Effect _alt Real _atts type::cmtType, modelCmt::Int, from::Reference[::DosingTarget], keq::Real
+_list Effect _alt ::Real _atts type::cmtType, modelCmt::Int, from::Reference[::DosingTarget], keq::Real
 			_sig (type, modelCmt?, from, keq);
 			
-_list Depot _alt Real _atts type::cmtType, modelCmt::Int, to::Reference[::DosingTarget], ka::Real,
+_list Depot _alt ::Real _atts type::cmtType, modelCmt::Int, to::Reference[::DosingTarget], ka::Real,
 						modelDur::Real, tlag::Real, finput::Real, ktr::Real, mtt::Real
 			_sig (type, modelCmt?, to, ka, tlag?, finput?),
 				 (type, modelCmt?, to, ktr, mtt),
@@ -149,7 +149,7 @@ _list Depot _alt Real _atts type::cmtType, modelCmt::Int, to::Reference[::Dosing
 _list Transfer _anon _atts type::cmtType, modelCmt::Int, to::Reference[::DosingTarget], from::Reference[::DosingTarget], kt::Real
 			_sig (type, modelCmt?, to, from, kt);
 
-_list Compartment _alt Real _extends DosingTarget
+_list Compartment _alt ::Real _extends DosingTarget
 		_atts  type::cmtType, modelCmt::Int
 		_sig (type, modelCmt?);
 		
@@ -166,17 +166,17 @@ _list Distribution _atts type::cmtType, modelCmt::Int, from::Reference[::DosingT
 	 
 // Observations
 _list ContinuousObs _super;
-_list combinedError1List _alt Real _extends ContinuousObs
+_list combinedError1List _alt ::Real _extends ContinuousObs
 	_atts type::obstype, trans::transType, lhsTrans::Boolean,
 			additive::Real, proportional::Real, prediction::Real, eps::RandomVariable[::Real]
 		_sig(type, trans?, lhsTrans?, additive, proportional, prediction, eps)
 	;
-_list combinedError2List _alt Real _extends ContinuousObs
+_list combinedError2List _alt ::Real _extends ContinuousObs
 	_atts type::obstype, trans::transType, lhsTrans::Boolean,
 			additive::Real, proportional::Real, prediction::Real, eps::RandomVariable[::Real]
 			_sig(type, trans?, lhsTrans?, additive, proportional, prediction, eps)
 	;
-_list additiveErrorList _alt Real _extends ContinuousObs
+_list additiveErrorList _alt ::Real _extends ContinuousObs
 	_atts type::obstype, trans::transType, lhsTrans::Boolean,
 			additive::Real, prediction::Real, eps::RandomVariable[::Real]
 			_sig(type, trans?, lhsTrans?, additive, prediction, eps)
@@ -206,10 +206,10 @@ _list UserDefinedObsList _extends ContinuousObs _atts type::obstype, value::Real
 //_list StructuralEstimate _alt Real _atts value::Real, lo::Real, hi::Real, fix::Boolean
 //					_sig(value, lo?, hi?, fix?);
 
-_list StructuralEstimate _alt Real _atts value::Real, vectorValue::Vector, matrixValue::Matrix,
+_list StructuralEstimate _alt ::Real _atts value::Real, vectorValue::Vector, matrixValue::Matrix,
 							 lo::Real, hi::Real, fix::Boolean
 					_sig(value, lo?, hi?, fix?), (vectorValue, lo?, hi?, fix?), (matrixValue, lo?, hi?, fix?);
-_list VarEstimate _alt Real  _atts type::varType, value::Real, vectorValue::Vector, matrixValue::Matrix,
+_list VarEstimate _alt ::Real  _atts type::varType, value::Real, vectorValue::Vector, matrixValue::Matrix,
 							lo::Real, hi::Real, fix::Boolean
 							_sig(type?, value, lo?, hi?, fix?),
 								(type?, vectorValue, lo?, hi?, fix?),
