@@ -253,8 +253,11 @@ _list AdminComplexList _extends AdminSuperList _atts type::AdminTypeType, combin
 						_sig (type, combination, start?, end?) ;
 _list AdminResetAllList _extends AdminSuperList _atts type::AdminTypeType
 						_sig (type) ;
-_list AdminResetList _extends AdminSuperList _atts type::AdminTypeType, variable::Vector[::Reference[::DosingTarget]], resetTime::Real, value::Real
-						_sig (type, variable, resetTime?, value?) ;
+						
+_sublist ResetSublist _atts variable::Reference[::DosingTarget], resetTime::Real, value::Real _sig(variable, resetTime?, value?);
+
+_list AdminResetList _extends AdminSuperList _atts type::AdminTypeType, reset::Vector[::ResetSublist]
+						_sig (type, reset) ;
 
 _sublist intSeqAtts _atts admin::Vector[::Reference[::AdminSuperList]], start::Vector
 					_sig (admin, start?);

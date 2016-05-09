@@ -91,6 +91,10 @@ class SublistDefinitionProvider {
 		sle.attributes.findFirst[argumentName == name]?.expression
 	}
 
+	def hasAttribute(SubListExpression sle, String name){
+		sle.attributes.exists[argumentName == name]
+	}
+
 	def getAttributeEnumValue(SubListExpression sle, String name){
 		val e = sle.getAttributeExpression(name)
 		switch(e){

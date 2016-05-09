@@ -2,21 +2,20 @@ package eu.ddmore.converter.mdl2pharmml08
 
 import com.google.inject.Inject
 import eu.ddmore.mdl.MdlAndLibInjectorProvider
+import eu.ddmore.mdl.MdlTestHelper
+import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.provider.BlockDefinitionTable
+import eu.ddmore.mdl.utils.LibraryUtils
 import eu.ddmore.mdl.utils.MDLBuildFixture
+import eu.ddmore.mdl.utils.MdlLibUtils
+import eu.ddmore.mdllib.mdllib.Library
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
-import eu.ddmore.mdl.MdlTestHelper
-import eu.ddmore.mdl.mdl.Mcl
-import eu.ddmore.mdl.utils.MdlLibUtils
-import org.junit.Before
-import eu.ddmore.mdllib.mdllib.Library
-import eu.ddmore.mdl.utils.LibraryUtils
-import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -86,7 +85,7 @@ class TrialDesignDesignObjectPrinterTest {
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeAdministration(adminList)
+		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
 				<Bolus>
@@ -133,7 +132,7 @@ class TrialDesignDesignObjectPrinterTest {
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeAdministration(adminList)
+		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
 				<Bolus>
@@ -179,7 +178,7 @@ class TrialDesignDesignObjectPrinterTest {
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeAdministration(adminList)
+		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
 				<Bolus>
@@ -232,7 +231,7 @@ class TrialDesignDesignObjectPrinterTest {
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeAdministration(adminList)
+		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
 				<Bolus>
@@ -285,7 +284,7 @@ class TrialDesignDesignObjectPrinterTest {
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeAdministration(adminList)
+		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
 				<Bolus>
@@ -342,7 +341,7 @@ class TrialDesignDesignObjectPrinterTest {
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeAdministration(adminList)
+		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
 				<Bolus>
@@ -392,7 +391,7 @@ class TrialDesignDesignObjectPrinterTest {
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeAdministration(adminList)
+		val actual = tdow.writeInfusionDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
 				<Infusion>
@@ -442,7 +441,7 @@ class TrialDesignDesignObjectPrinterTest {
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeAdministration(adminList)
+		val actual = tdow.writeInfusionDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
 				<Infusion>
@@ -495,7 +494,7 @@ class TrialDesignDesignObjectPrinterTest {
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeAdministration(adminList)
+		val actual = tdow.writeInfusionDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
 				<Infusion>
@@ -552,7 +551,7 @@ class TrialDesignDesignObjectPrinterTest {
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeAdministration(adminList)
+		val actual = tdow.writeInfusionDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
 				<Infusion>
@@ -619,35 +618,169 @@ class TrialDesignDesignObjectPrinterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
-	@Ignore("Not finished.")
+	@Test
 	def void testWriteResetAllDefaultValue(){
 		val mdl = createRoot
 		
 		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
 		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
-		val actionList = desBlk.createListDefn("type", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_RESET_ALL_VALUE),
+		val actionList = desBlk.createListDefn("act1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_RESET_ALL_VALUE),
 									createAssignPair(TrialDesignDesignObjectPrinter::START_ATT_NAME, createRealLiteral(10))
 		)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-		val actual = tdow.writeInterventionCombination(actionList)
+		val actual = tdow.writeResetAll(actionList)
 		val expected = '''
-			<InterventionsCombination oid="regimen1">
-				<Interventions>
-					<InterventionRef oidRef="admin2"/>
-					<InterventionRef oidRef="admin1"/>
-					<Start>
-						<ct:Assign>
-							<ct:Real>0.0</ct:Real>
-						</ct:Assign>
-					</Start>
-					<End>
-						<ct:Assign>
-							<ct:Real>202.1</ct:Real>
-						</ct:Assign>
-					</End>
-				</Interventions>
-			</InterventionsCombination>
+			<Action oid="act1">
+				<Washout>
+					<VariableToReset>
+						<FullReset/>
+					</VariableToReset>
+				</Washout>
+			</Action>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteResetDefaultValueAndTime(){
+		val mdl = createRoot
+		
+		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
+		val mdlPredBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		mdlPredBlk.createEqnDefn("Gut")
+
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val declVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val rsVar1 = declVarBlk.createEqnDefn("Gut") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val actionList = desBlk.createListDefn("act1",
+									createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_RESET_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::RESET_ATT, createVectorLiteral( 
+											createSublist(#{
+												TrialDesignDesignObjectPrinter::RESET_VARIABLE -> createSymbolRef(rsVar1)
+											})
+										)
+									)
+								)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeReset(actionList)
+		val expected = '''
+			<Action oid="act1">
+				<Washout>
+					<VariableToReset>
+						<ct:SymbRef blkIdRef="sm" symbIdRef="Gut"/>
+					</VariableToReset>
+				</Washout>
+			</Action>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteResetWithSingleValueAndTime(){
+		val mdl = createRoot
+		
+		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
+		val mdlPredBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		mdlPredBlk.createEqnDefn("Gut")
+
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val declVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val rsVar1 = declVarBlk.createEqnDefn("Gut") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val actionList = desBlk.createListDefn("act1",
+									createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_RESET_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::RESET_ATT, createVectorLiteral( 
+											createSublist(#{
+												TrialDesignDesignObjectPrinter::RESET_VARIABLE -> createSymbolRef(rsVar1),
+												TrialDesignDesignObjectPrinter::RESET_TIME_ATT -> createRealLiteral(11),
+												TrialDesignDesignObjectPrinter::RESET_VALUE_ATT -> createRealLiteral(100.0)
+											})
+										)
+									)
+								)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeReset(actionList)
+		val expected = '''
+			<Action oid="act1">
+				<Washout>
+					<VariableToReset>
+						<ct:SymbRef blkIdRef="sm" symbIdRef="Gut"/>
+						<ResetValue>
+							<ct:Real>100.0</ct:Real>
+						</ResetValue>
+						<ResetTime>
+							<ct:Real>11.0</ct:Real>
+						</ResetTime>
+					</VariableToReset>
+				</Washout>
+			</Action>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteResetMultiVarsWithValue(){
+		val mdl = createRoot
+		
+		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
+		val mdlPredBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		mdlPredBlk.createEqnDefn("Gut1")
+		mdlPredBlk.createEqnDefn("Gut2")
+
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val declVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val rsVar1 = declVarBlk.createEqnDefn("Gut1") 
+		val rsVar2 = declVarBlk.createEqnDefn("Gut2") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val actionList = desBlk.createListDefn("act1",
+									createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_RESET_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::RESET_ATT, createVectorLiteral( 
+											createSublist(#{
+												TrialDesignDesignObjectPrinter::RESET_VARIABLE -> createSymbolRef(rsVar1),
+												TrialDesignDesignObjectPrinter::RESET_TIME_ATT -> createRealLiteral(11),
+												TrialDesignDesignObjectPrinter::RESET_VALUE_ATT -> createRealLiteral(100.0)
+											}),
+											createSublist(#{
+												TrialDesignDesignObjectPrinter::RESET_VARIABLE -> createSymbolRef(rsVar2),
+												TrialDesignDesignObjectPrinter::RESET_TIME_ATT -> createRealLiteral(119),
+												TrialDesignDesignObjectPrinter::RESET_VALUE_ATT -> createRealLiteral(110.0)
+											})
+										)
+									)
+									)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeReset(actionList)
+		val expected = '''
+			<Action oid="act1">
+				<Washout>
+					<VariableToReset>
+						<ct:SymbRef blkIdRef="sm" symbIdRef="Gut1"/>
+						<ResetValue>
+							<ct:Real>100.0</ct:Real>
+						</ResetValue>
+						<ResetTime>
+							<ct:Real>11.0</ct:Real>
+						</ResetTime>
+					</VariableToReset>
+					<VariableToReset>
+						<ct:SymbRef blkIdRef="sm" symbIdRef="Gut2"/>
+						<ResetValue>
+							<ct:Real>110.0</ct:Real>
+						</ResetValue>
+						<ResetTime>
+							<ct:Real>119.0</ct:Real>
+						</ResetTime>
+					</VariableToReset>
+				</Washout>
+			</Action>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}

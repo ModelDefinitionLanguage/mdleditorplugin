@@ -9,6 +9,7 @@ import eu.ddmore.mdl.mdl.EnumExpression
 import eu.ddmore.mdl.mdl.StringLiteral
 import eu.ddmore.mdl.mdl.VectorElement
 import eu.ddmore.mdl.mdl.MatrixElement
+import java.util.ArrayList
 
 class ExpressionUtils {
 	
@@ -22,7 +23,12 @@ class ExpressionUtils {
 			else null
 		}
 		else if(exp instanceof VectorLiteral){
-			exp.expressions
+			// stop off the element
+			val retVal = new ArrayList<Expression>(exp.expressions.size)
+			exp.expressions.forEach[el|
+				if(el instanceof VectorElement) retVal.add(el.element)
+			]
+			retVal
 		}
 		else null
 	}

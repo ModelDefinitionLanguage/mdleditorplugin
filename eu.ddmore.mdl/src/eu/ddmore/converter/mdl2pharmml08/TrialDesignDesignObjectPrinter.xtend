@@ -16,11 +16,14 @@ import eu.ddmore.mdl.utils.MdlUtils
 import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
+import eu.ddmore.mdl.mdl.SubListExpression
+import eu.ddmore.mdl.provider.SublistDefinitionProvider
 
 class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+	extension SublistDefinitionProvider sldp = new SublistDefinitionProvider
 	extension BlockUtils bu = new BlockUtils
 	extension DomainObjectModelUtils dom = new DomainObjectModelUtils
 //	extension ConstantEvaluation ce = new ConstantEvaluation
@@ -45,6 +48,11 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static START_ATT_NAME = 'start'	
 	val public static END_ATT_NAME = 'end'
 	val public static INTVN_TYPE_RESET_ALL_VALUE = 'resetAll'	
+	val public static INTVN_TYPE_RESET_VALUE = 'reset'	
+	val public static RESET_VALUE_ATT = 'value'	
+	val public static RESET_TIME_ATT = 'resetTime'	
+	val public static RESET_VARIABLE = 'variable'
+	val public static RESET_ATT = 'reset'
 
 	val MclObject mObj
 	val MclObject designObj
@@ -86,47 +94,30 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		<Interventions>
 			«FOR stmt : designParamsBlk.statements»
 				«IF stmt instanceof ListDefinition»
-					«IF stmt.firstAttributeList.isAdministration»
-						«stmt.writeAdministration»
-					«ELSE»
-						«stmt.writeInterventionCombination»
-					«ENDIF»
+					«switch(stmt.firstAttributeList.getAttributeEnumValue(INTVN_TYPE_ATT_NAME)){
+						case(INTVN_TYPE_BOLUS_VALUE):
+							stmt.writeBolusDosing
+						case(INTVN_TYPE_INFUSION_VALUE):
+							stmt.writeInfusionDosing
+						case(INTVN_TYPE_COMBI_VALUE):
+							stmt.writeInterventionCombination
+						case(INTVN_TYPE_RESET_ALL_VALUE):
+							stmt.writeResetAll
+						case(INTVN_TYPE_RESET_VALUE):
+							stmt.writeReset
+					}»
 				«ENDIF»
 			«ENDFOR»
 		</Interventions>
 	'''
 	
-	def isBolusAdministration(AttributeList it){
-		getAttributeEnumValue(INTVN_TYPE_ATT_NAME) == INTVN_TYPE_BOLUS_VALUE
+	def private getModelVar(SubListExpression it, String attName){
+		val targetVar = getAttributeExpression(attName)
+		if(targetVar instanceof SymbolReference){
+			mObj.findMdlSymbolDefn(targetVar.ref.name)
+		}
+		else null
 	}
-	
-	def isAdministration(AttributeList it){
-		val attVal = getAttributeEnumValue(INTVN_TYPE_ATT_NAME)
-		attVal == INTVN_TYPE_BOLUS_VALUE || attVal == INTVN_TYPE_INFUSION_VALUE
-	}
-	
-	
-//	def private Library getLibrary(AttributeList it){
-//		val blk = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
-//		getLibraryFromBlock(blk)
-//	}
-//	
-//	def getInputTargetType(AttributeList it){
-//		val targetVar = getAttributeExpression(AMT_ATT_NAME)
-//		if(targetVar instanceof SymbolReference){
-//			val mdlTgtVar = mObj.findMdlSymbolDefn(targetVar.ref.name)
-//			val lib = library
-//			val mdlType = mdlTgtVar.typeFor
-//			switch(mdlType){
-//				case(lib.getListDefinition('Deriv')):
-//					'derivative'
-//				default:'error'
-//			}
-//		}
-//		else{
-//			'Error!'
-//		}
-//	}
 	
 	def writeTargetMapping(AttributeList it){
 		val targetVar = getAttributeExpression(INPUT_ATT_NAME)
@@ -185,13 +176,19 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 			«ENDIF»	'''
 	
 	
-	def writeBolusDosing(AttributeList it)'''
+	def writeBolusDosing(ListDefinition ld){
+		ld.writeAdministration[
+		'''
 		<Bolus>
 			«writeCommonDosing»
 		</Bolus>
-	'''
+		'''
+		]
+	}
 	
-	def writeInfusionDosing(AttributeList it)'''
+	def writeInfusionDosing(ListDefinition ld){
+		ld.writeAdministration[
+		'''
 		<Infusion>
 			«writeCommonDosing»
 			«IF hasAttribute(RATE_ATT_NAME)»
@@ -205,7 +202,9 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 				</RATE>
 			«ENDIF»
 		</Infusion>
-	'''
+		'''
+		]
+	}
 
 	def writeInterventionCombination(ListDefinition it)'''
 		<InterventionsCombination oid="«name»">
@@ -229,13 +228,55 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		</InterventionsCombination>
 	'''
 	
-	def writeAdministration(ListDefinition it)'''
+	def writeAdministration(ListDefinition it, (AttributeList) => String dosingLambda)'''
 		<Administration oid="«name»">
-			«IF firstAttributeList.isBolusAdministration»
-				«firstAttributeList.writeBolusDosing»
-			«ELSE»
-				«firstAttributeList.writeInfusionDosing»
-			«ENDIF»
+			«dosingLambda.apply(firstAttributeList)»
 		</Administration>
 		'''
+
+	def writeAction(ListDefinition it, (AttributeList) => String resetLambda)'''
+		<Action oid="«name»">
+			«resetLambda.apply(firstAttributeList)»
+		</Action>
+		'''
+
+
+	def writeReset(ListDefinition ld){
+		ld.writeAction[
+		'''
+			<Washout>
+				«FOR vtr : getAttributeExpression(RESET_ATT).vector»
+					<VariableToReset>
+						«IF vtr instanceof SubListExpression»
+							«vtr.getModelVar(RESET_VARIABLE).symbolReference»
+							«IF vtr.hasAttribute(RESET_VALUE_ATT)»
+								<ResetValue>
+									«vtr.getAttributeExpression(RESET_VALUE_ATT).pharmMLExpr»
+								</ResetValue>
+							«ENDIF»
+							«IF vtr.hasAttribute(RESET_TIME_ATT)»
+								<ResetTime>
+									«vtr.getAttributeExpression(RESET_TIME_ATT).pharmMLExpr»
+								</ResetTime>
+							«ENDIF»
+						«ENDIF»
+					</VariableToReset>
+				«ENDFOR»
+			</Washout>
+		'''
+		]
+	}
+
+	def writeResetAll(ListDefinition ld){
+		ld.writeAction[
+		'''
+			<Washout>
+				<VariableToReset>
+					<FullReset/>
+				</VariableToReset>
+			</Washout>
+		'''
+		]
+	}
+
 }
