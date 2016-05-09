@@ -70,7 +70,8 @@ d1g=designObj{
 		arm1 : {
 			armSize=100,
 			interventionSequence={
-				admin=dose1
+				admin=dose1,
+				start = 0
 			},
 			samplingSequence={
 				sample=pkwin5,

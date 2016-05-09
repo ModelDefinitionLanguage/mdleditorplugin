@@ -785,45 +785,582 @@ class TrialDesignDesignObjectPrinterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
-//	@Test
-//	def void testWriteStudyDesign(){
-//		val mdl = createRoot
-//		
-//		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
-//		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
-//
-//		val declVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
-//
-//		val adminList = desBlk.createListDefn("arm1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
-//									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
-//							)
-//		
-//		val tdow = new TrialDesignDesignObjectPrinter(mdl)
-//		val actual = tdow.writeAdministration(adminList)
-//		val expected = '''
-//			<Administration oid="admin1">
-//				<Bolus>
-//					<DoseAmount>
-//						<TargetMapping blkIdRef="sm">
-//							<ds:Map modelSymbol="Gut"/>
-//						</TargetMapping>
-//						<ct:Assign>
-//							<ct:SymbRef symbIdRef="Admin1Dose"/>
-//						</ct:Assign>
-//					</DoseAmount>
-//					<DosingTimes>
-//						<ct:Assign>
-//							<ct:Vector>
-//								<ct:VectorElements>
-//									<ct:Real>0.0</ct:Real>
-//								</ct:VectorElements>
-//							</ct:Vector>
-//						</ct:Assign>
-//					</DosingTimes>
-//				</Bolus>
-//			</Administration>
-//		'''
-//		assertEquals("Output as expected", expected, actual.toString)
-//	}
+	@Test
+	def void testWriteStudyDesignInterventionsAndSamples(){
+		val mdl = createRoot
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
+
+		val intBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val adminList = intBlk.createListDefn("arm1");
+		val sampBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_SAMPLING_BLK))
+		val sampList = sampBlk.createListDefn("samp1");
+		
+		desBlk.createPropertyStatement(createAssignPair(TrialDesignDesignObjectPrinter::TOTAL_SIZE_PROP, createIntLiteral(33)),
+										createAssignPair(TrialDesignDesignObjectPrinter::NUM_SAMPLES_PROP, createVectorLiteral(createIntLiteral(5), createIntLiteral(7))),
+										createAssignPair(TrialDesignDesignObjectPrinter::NUM_ARMS_PROP, createIntLiteral(6)),
+										createAssignPair(TrialDesignDesignObjectPrinter::SAME_TIMES_PROP, createBooleanLiteral(true)),
+										createAssignPair(TrialDesignDesignObjectPrinter::TOTAL_COST_PROP, createRealLiteral(22.643))
+									)
+		
+		desBlk.createListDefn("arm1",
+									createAssignPair(TrialDesignDesignObjectPrinter::ARM_SIZE_ATT, createIntLiteral(1)),
+									createAssignPair(TrialDesignDesignObjectPrinter::INTSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::INTSEQ_ADMIN_ATT -> createVectorLiteral(createSymbolRef(adminList)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(0.0))
+																}))),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMPSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT -> createVectorLiteral(createSymbolRef(sampList)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(10.0))
+																})))
+							)
+		desBlk.createListDefn("arm2",
+									createAssignPair(TrialDesignDesignObjectPrinter::ARM_SIZE_ATT, createIntLiteral(1)),
+									createAssignPair(TrialDesignDesignObjectPrinter::INTSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::INTSEQ_ADMIN_ATT -> createVectorLiteral(createSymbolRef(adminList)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(0.0))
+																}))),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMPSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT -> createVectorLiteral(createSymbolRef(sampList)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(10.0))
+																})))
+							)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeStudyDesign(desBlk)
+		val expected = '''
+		<Arms>
+			<TotalSize>
+				<ct:Assign>
+					<ct:Int>33</ct:Int>
+				</ct:Assign>
+			</TotalSize>
+			<NumberSamples>
+				<ct:Assign>
+					<ct:Vector>
+						<ct:VectorElements>
+							<ct:Int>5</ct:Int>
+							<ct:Int>7</ct:Int>
+						</ct:VectorElements>
+					</ct:Vector>
+				</ct:Assign>
+			</NumberSamples>
+			<NumberArms>
+				<ct:Assign>
+					<ct:Int>6</ct:Int>
+				</ct:Assign>
+			</NumberArms>
+			<SameTimes>
+				<ct:Assign>
+					<ct:True/>
+				</ct:Assign>
+			</SameTimes>
+			<TotalCost>
+				<ct:Assign>
+					<ct:Real>22.643</ct:Real>
+				</ct:Assign>
+			</TotalCost>
+			<Arm oid="arm1">
+				<ArmSize>
+					<ct:Assign>
+						<ct:Int>1</ct:Int>
+					</ct:Assign>
+				</ArmSize>
+				<InterventionSequence>
+					<InterventionList>
+						<InterventionRef oidRef="arm1"/>
+					</InterventionList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>0.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</InterventionSequence>
+				<ObservationSequence>
+					<ObservationList>
+						<ObservationRef oidRef="samp1"/>
+					</ObservationList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>10.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</ObservationSequence>
+			</Arm>
+			<Arm oid="arm2">
+				<ArmSize>
+					<ct:Assign>
+						<ct:Int>1</ct:Int>
+					</ct:Assign>
+				</ArmSize>
+				<InterventionSequence>
+					<InterventionList>
+						<InterventionRef oidRef="arm1"/>
+					</InterventionList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>0.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</InterventionSequence>
+				<ObservationSequence>
+					<ObservationList>
+						<ObservationRef oidRef="samp1"/>
+					</ObservationList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>10.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</ObservationSequence>
+			</Arm>
+		</Arms>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteArmSingleInterventionAndSample(){
+		val mdl = createRoot
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
+
+		val intBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val adminList = intBlk.createListDefn("arm1");
+		val sampBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_SAMPLING_BLK))
+		val sampList = sampBlk.createListDefn("samp1");
+		
+		desBlk.createPropertyStatement(createAssignPair(TrialDesignDesignObjectPrinter::TOTAL_SIZE_PROP, createIntLiteral(33)),
+										createAssignPair(TrialDesignDesignObjectPrinter::NUM_SAMPLES_PROP, createVectorLiteral(createIntLiteral(5), createIntLiteral(7))),
+										createAssignPair(TrialDesignDesignObjectPrinter::NUM_ARMS_PROP, createIntLiteral(6)),
+										createAssignPair(TrialDesignDesignObjectPrinter::SAME_TIMES_PROP, createBooleanLiteral(true)),
+										createAssignPair(TrialDesignDesignObjectPrinter::TOTAL_COST_PROP, createRealLiteral(22.643))
+									)
+		
+		val armList = desBlk.createListDefn("arm1",
+									createAssignPair(TrialDesignDesignObjectPrinter::ARM_SIZE_ATT, createIntLiteral(1)),
+									createAssignPair(TrialDesignDesignObjectPrinter::INTSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::INTSEQ_ADMIN_ATT -> createVectorLiteral(createSymbolRef(adminList)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(0.0))
+																}))),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMPSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT -> createVectorLiteral(createSymbolRef(sampList)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(10.0))
+																})))
+							)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeArm(armList)
+		val expected = '''
+			<Arm oid="arm1">
+				<ArmSize>
+					<ct:Assign>
+						<ct:Int>1</ct:Int>
+					</ct:Assign>
+				</ArmSize>
+				<InterventionSequence>
+					<InterventionList>
+						<InterventionRef oidRef="arm1"/>
+					</InterventionList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>0.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</InterventionSequence>
+				<ObservationSequence>
+					<ObservationList>
+						<ObservationRef oidRef="samp1"/>
+					</ObservationList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>10.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</ObservationSequence>
+			</Arm>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteArmMultiInterventionAndMultiSample(){
+		val mdl = createRoot
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
+
+		val intBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val admin1List = intBlk.createListDefn("admin1");
+		val admin2List = intBlk.createListDefn("admin2");
+		val sampBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_SAMPLING_BLK))
+		val samp1List = sampBlk.createListDefn("samp1");
+		val samp2List = sampBlk.createListDefn("samp2");
+		
+		desBlk.createPropertyStatement(createAssignPair(TrialDesignDesignObjectPrinter::TOTAL_SIZE_PROP, createIntLiteral(33)),
+										createAssignPair(TrialDesignDesignObjectPrinter::NUM_SAMPLES_PROP, createVectorLiteral(createIntLiteral(5), createIntLiteral(7))),
+										createAssignPair(TrialDesignDesignObjectPrinter::NUM_ARMS_PROP, createIntLiteral(6)),
+										createAssignPair(TrialDesignDesignObjectPrinter::SAME_TIMES_PROP, createBooleanLiteral(true)),
+										createAssignPair(TrialDesignDesignObjectPrinter::TOTAL_COST_PROP, createRealLiteral(22.643))
+									)
+		
+		val armList = desBlk.createListDefn("arm1",
+									createAssignPair(TrialDesignDesignObjectPrinter::ARM_SIZE_ATT, createIntLiteral(1)),
+									createAssignPair(TrialDesignDesignObjectPrinter::INTSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::INTSEQ_ADMIN_ATT -> createVectorLiteral(createSymbolRef(admin1List),
+																					createSymbolRef(admin1List)
+																	),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(0.0), createRealLiteral(30.0))
+																}),
+																createSublist(#{
+																	TrialDesignDesignObjectPrinter::INTSEQ_ADMIN_ATT -> createVectorLiteral(createSymbolRef(admin2List)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(20.0))
+																}))),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMPSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT -> createVectorLiteral(createSymbolRef(samp1List)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(10.0))
+																}),
+																createSublist(#{
+																	TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT -> createVectorLiteral(createSymbolRef(samp1List),
+																		createSymbolRef(samp2List)
+																	),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(1.0), createRealLiteral(10.0))
+																})
+																
+																))
+							)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeArm(armList)
+		val expected = '''
+			<Arm oid="arm1">
+				<ArmSize>
+					<ct:Assign>
+						<ct:Int>1</ct:Int>
+					</ct:Assign>
+				</ArmSize>
+				<InterventionSequence>
+					<InterventionList>
+						<InterventionRef oidRef="admin1"/>
+						<InterventionRef oidRef="admin1"/>
+					</InterventionList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>0.0</ct:Real>
+									<ct:Real>30.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</InterventionSequence>
+				<InterventionSequence>
+					<InterventionList>
+						<InterventionRef oidRef="admin2"/>
+					</InterventionList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>20.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</InterventionSequence>
+				<ObservationSequence>
+					<ObservationList>
+						<ObservationRef oidRef="samp1"/>
+					</ObservationList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>10.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</ObservationSequence>
+				<ObservationSequence>
+					<ObservationList>
+						<ObservationRef oidRef="samp1"/>
+						<ObservationRef oidRef="samp2"/>
+					</ObservationList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>1.0</ct:Real>
+									<ct:Real>10.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</ObservationSequence>
+			</Arm>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+
+	@Test
+	def void testWriteArmSingleInterventionAndSampleWithOneLevelOccasions(){
+		val mdl = createRoot
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
+
+		val intBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val adminList = intBlk.createListDefn("arm1");
+		val sampBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_SAMPLING_BLK))
+		val sampList = sampBlk.createListDefn("samp1");
+		
+		desBlk.createPropertyStatement(createAssignPair(TrialDesignDesignObjectPrinter::TOTAL_SIZE_PROP, createIntLiteral(33)),
+										createAssignPair(TrialDesignDesignObjectPrinter::NUM_SAMPLES_PROP, createVectorLiteral(createIntLiteral(5), createIntLiteral(7))),
+										createAssignPair(TrialDesignDesignObjectPrinter::NUM_ARMS_PROP, createIntLiteral(6)),
+										createAssignPair(TrialDesignDesignObjectPrinter::SAME_TIMES_PROP, createBooleanLiteral(true)),
+										createAssignPair(TrialDesignDesignObjectPrinter::TOTAL_COST_PROP, createRealLiteral(22.643))
+									)
+		
+		val armList = desBlk.createListDefn("arm1",
+									createAssignPair(TrialDesignDesignObjectPrinter::ARM_SIZE_ATT, createIntLiteral(1)),
+									createAssignPair(TrialDesignDesignObjectPrinter::INTSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::INTSEQ_ADMIN_ATT -> createVectorLiteral(createSymbolRef(adminList)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(0.0))
+																}))),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMPSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT -> createVectorLiteral(createSymbolRef(sampList)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(10.0))
+																})))
+							)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeArm(armList)
+		val expected = '''
+			<Arm oid="arm1">
+				<ArmSize>
+					<ct:Assign>
+						<ct:Int>1</ct:Int>
+					</ct:Assign>
+				</ArmSize>
+				<InterventionSequence>
+					<InterventionList>
+						<InterventionRef oidRef="arm1"/>
+					</InterventionList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>0.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</InterventionSequence>
+				<ObservationSequence>
+					<ObservationList>
+						<ObservationRef oidRef="samp1"/>
+					</ObservationList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>10.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</ObservationSequence>
+				<OccasionSequence>
+					<OccasionList oid="arm1_OCC">
+						<ct:VariabilityReference>
+							<ct:SymbRef symbIdRef="OCC"></ct:SymbRef>
+						</ct:VariabilityReference>
+						<Occasion oid="OCC_1">
+							<Start>
+								<ct:Assign>
+									<ct:Vector>
+										<ct:VectorElements>
+											<ct:Real>0</ct:Real>
+										</ct:VectorElements>
+									</ct:Vector>
+								</ct:Assign>
+							</Start>
+						</Occasion>
+						<Occasion oid="OCC_2">
+							<Start>
+								<ct:Assign>
+									<ct:Vector>
+										<ct:VectorElements>
+											<ct:Real>0</ct:Real>
+										</ct:VectorElements>
+									</ct:Vector>
+								</ct:Assign>
+							</Start>
+						</Occasion>
+					</OccasionList>
+				</OccasionSequence>
+			</Arm>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteArmSingleInterventionAndSampleWithTwoLevelOccasions(){
+		val mdl = createRoot
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
+
+		val intBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val adminList = intBlk.createListDefn("arm1");
+		val sampBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_SAMPLING_BLK))
+		val sampList = sampBlk.createListDefn("samp1");
+		
+		desBlk.createPropertyStatement(createAssignPair(TrialDesignDesignObjectPrinter::TOTAL_SIZE_PROP, createIntLiteral(33)),
+										createAssignPair(TrialDesignDesignObjectPrinter::NUM_SAMPLES_PROP, createVectorLiteral(createIntLiteral(5), createIntLiteral(7))),
+										createAssignPair(TrialDesignDesignObjectPrinter::NUM_ARMS_PROP, createIntLiteral(6)),
+										createAssignPair(TrialDesignDesignObjectPrinter::SAME_TIMES_PROP, createBooleanLiteral(true)),
+										createAssignPair(TrialDesignDesignObjectPrinter::TOTAL_COST_PROP, createRealLiteral(22.643))
+									)
+		
+		val armList = desBlk.createListDefn("arm1",
+									createAssignPair(TrialDesignDesignObjectPrinter::ARM_SIZE_ATT, createIntLiteral(1)),
+									createAssignPair(TrialDesignDesignObjectPrinter::INTSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::INTSEQ_ADMIN_ATT -> createVectorLiteral(createSymbolRef(adminList)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(0.0))
+																}))),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMPSEQ_ATT, createVectorLiteral(createSublist(#{
+																	TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT -> createVectorLiteral(createSymbolRef(sampList)),
+																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(10.0))
+																})))
+							)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeArm(armList)
+		val expected = '''
+			<Arm oid="arm1">
+				<ArmSize>
+					<ct:Assign>
+						<ct:Int>1</ct:Int>
+					</ct:Assign>
+				</ArmSize>
+				<InterventionSequence>
+					<InterventionList>
+						<InterventionRef oidRef="arm1"/>
+					</InterventionList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>0.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</InterventionSequence>
+				<ObservationSequence>
+					<ObservationList>
+						<ObservationRef oidRef="samp1"/>
+					</ObservationList>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>10.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</ObservationSequence>
+				<OccasionSequence>
+					<OccasionList oid="arm1_OCC">
+						<ct:VariabilityReference>
+							<ct:SymbRef symbIdRef="OCC"></ct:SymbRef>
+						</ct:VariabilityReference>
+						<Occasion oid="OCC_1">
+							<Start>
+								<ct:Assign>
+									<ct:Vector>
+										<ct:VectorElements>
+											<ct:Real>0</ct:Real>
+										</ct:VectorElements>
+									</ct:Vector>
+								</ct:Assign>
+							</Start>
+						</Occasion>
+						<Occasion oid="OCC_2">
+							<Start>
+								<ct:Assign>
+									<ct:Vector>
+										<ct:VectorElements>
+											<ct:Real>0</ct:Real>
+										</ct:VectorElements>
+									</ct:Vector>
+								</ct:Assign>
+							</Start>
+						</Occasion>
+					</OccasionList>
+				</OccasionSequence>
+				<OccasionSequence>
+					<OccasionList oid="arm1_TRIAL">
+						<ct:VariabilityReference>
+							<ct:SymbRef symbIdRef="TRIAL"></ct:SymbRef>
+						</ct:VariabilityReference>
+						<Occasion oid="TRIAL_1">
+							<Start>
+								<ct:Assign>
+									<ct:Vector>
+										<ct:VectorElements>
+											<ct:Real>0</ct:Real>
+										</ct:VectorElements>
+									</ct:Vector>
+								</ct:Assign>
+							</Start>
+						</Occasion>
+						<Occasion oid="TRIAL_2">
+							<Start>
+								<ct:Assign>
+									<ct:Vector>
+										<ct:VectorElements>
+											<ct:Real>0</ct:Real>
+										</ct:VectorElements>
+									</ct:Vector>
+								</ct:Assign>
+							</Start>
+						</Occasion>
+					</OccasionList>
+				</OccasionSequence>			</Arm>		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
 
 }

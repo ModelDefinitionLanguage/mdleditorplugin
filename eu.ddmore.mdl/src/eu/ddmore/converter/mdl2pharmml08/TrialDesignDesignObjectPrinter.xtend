@@ -18,6 +18,9 @@ import org.eclipse.xtext.EcoreUtil2
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 import eu.ddmore.mdl.mdl.SubListExpression
 import eu.ddmore.mdl.provider.SublistDefinitionProvider
+import eu.ddmore.mdl.mdl.PropertyStatement
+import eu.ddmore.mdl.mdl.ValuePair
+import eu.ddmore.mdllib.mdllib.Expression
 
 class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
@@ -53,6 +56,18 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static RESET_TIME_ATT = 'resetTime'	
 	val public static RESET_VARIABLE = 'variable'
 	val public static RESET_ATT = 'reset'
+	val public static ARM_SIZE_ATT = 'armSize'
+	val public static INTSEQ_ATT = 'interventionSequence'
+	val public static INTSEQ_ADMIN_ATT = 'admin'
+	val public static SAMPSEQ_ATT = 'samplingSequence'
+	val public static SAMPSEQ_SAMP_ATT = 'sample'
+	val public static TOTAL_SIZE_PROP = 'totalSize'
+	val public static NUM_SAMPLES_PROP = 'numSamples'
+	val public static NUM_ARMS_PROP = 'numArms'
+	val public static SAME_TIMES_PROP = 'sameTimes'
+	val public static TOTAL_COST_PROP = 'totalCost'
+
+
 
 	val MclObject mObj
 	val MclObject designObj
@@ -278,5 +293,86 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		'''
 		]
 	}
+
+	def writeStudyDesign(BlockStatement studyDesignBlk)'''
+		<Arms>
+			«FOR stmt : studyDesignBlk.statements.filter[it instanceof PropertyStatement]»
+				«IF stmt instanceof PropertyStatement»
+					«FOR prop : stmt.properties»
+						«writeStudyDesignProperty(prop)»
+					«ENDFOR»
+				«ENDIF»
+			«ENDFOR»
+			«FOR stmt : studyDesignBlk.statements.filter[it instanceof ListDefinition]»
+				«IF stmt instanceof ListDefinition»
+					«writeArm(stmt)»
+				«ENDIF»
+			«ENDFOR»
+		</Arms>
+	'''
+
+	def writeArm(ListDefinition it)'''
+		<Arm oid="«name»">
+			<ArmSize>
+				«firstAttributeList.getAttributeExpression(ARM_SIZE_ATT).expressionAsAssignment»
+			</ArmSize>
+			«FOR intSeqSl : firstAttributeList.getAttributeExpression(INTSEQ_ATT).vector»
+				<InterventionSequence>
+					«IF intSeqSl instanceof SubListExpression»
+						<InterventionList>
+							«FOR intRef : intSeqSl.getAttributeExpression(INTSEQ_ADMIN_ATT).vector»
+								<InterventionRef oidRef="«intRef.symbolRef?.ref?.name?: 'Error!'»"/>
+							«ENDFOR»
+						</InterventionList>
+						«IF intSeqSl.hasAttribute(START_ATT_NAME)»
+							<Start>
+								«intSeqSl.getAttributeExpression(START_ATT_NAME).expressionAsAssignment»
+							</Start>
+						«ENDIF»
+					«ENDIF»
+				</InterventionSequence>
+			«ENDFOR»
+			«FOR obsSeqSl : firstAttributeList.getAttributeExpression(SAMPSEQ_ATT).vector»
+				<ObservationSequence>
+					«IF obsSeqSl instanceof SubListExpression»
+						<ObservationList>
+							«FOR obsRef : obsSeqSl.getAttributeExpression(TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT).vector»
+								<ObservationRef oidRef="«obsRef.symbolRef?.ref?.name?: 'Error!'»"/>
+							«ENDFOR»
+						</ObservationList>
+						«IF obsSeqSl.hasAttribute(START_ATT_NAME)»
+							<Start>
+								«obsSeqSl.getAttributeExpression(START_ATT_NAME).expressionAsAssignment»
+							</Start>
+						«ENDIF»
+					«ENDIF»
+				</ObservationSequence>
+			«ENDFOR»
+		</Arm>
+	'''
+		
+	def writeStudyDesignProperty(ValuePair it){
+		switch(argumentName){
+			case(TOTAL_COST_PROP):
+				writeProperty('TotalCost', expression)
+			case(TOTAL_SIZE_PROP):
+				writeProperty('TotalSize', expression)
+			case(NUM_ARMS_PROP):
+				writeProperty('NumberArms', expression)
+			case(NUM_SAMPLES_PROP):
+				writeProperty('NumberSamples', expression)
+			case(SAME_TIMES_PROP):
+				writeProperty('SameTimes', expression)
+		}
+	}
+	
+	
+	def private writeProperty(String element, Expression value)'''
+		<«element»>
+			«value.expressionAsAssignment»
+		</«element»>
+	'''
+		
+	
 
 }

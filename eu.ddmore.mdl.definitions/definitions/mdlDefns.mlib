@@ -260,16 +260,16 @@ _list AdminResetList _extends AdminSuperList _atts type::AdminTypeType, reset::V
 						_sig (type, reset) ;
 
 _sublist intSeqAtts _atts admin::Vector[::Reference[::AdminSuperList]], start::Vector
-					_sig (admin, start?);
+					_sig (admin, start);
 
 _sublist sampSeqAtts _atts sample::Vector[::Reference[::SamplingSuper]], start::Vector
-					_sig (sample, start?);
+					_sig (sample, start);
 _sublist OccSeqSubList _atts occasion::Vector, level::Reference[::VarLevel], start::Vector
 					_sig (occasion, level, start?);
 _list StudyDesign _atts armSize::Int, sameTimes::Boolean, 
 						occasionSequence::Vector[::OccSeqSubList], interventionSequence::Vector[::intSeqAtts], samplingSequence::Vector[::sampSeqAtts],
 						population::Reference[::PopulationTemplate]
-		_sig (interventionSequence?, samplingSequence, occasionSequence?, armSize?, sameTimes?, population?);
+		_sig (interventionSequence, samplingSequence, occasionSequence?, armSize?, sameTimes?, population?);
 
 //_list DesignSpaceCatCov _atts objRef::GenericEnum, element::sampleelement, discrete::Vector, range::Vector
 //						_sig (objRef, element, discrete),
@@ -334,7 +334,8 @@ _type estAlgo _enum(saem, foce, fo, focei);
 _type solverType _enum(stiff, nonStiff);							
 _type OptAlgoType _enum(simplex, fw);
 
-_prop algo::estAlgo, solver::solverType, armSize::Int, totalSize::Int, numberSamples::Int, totalCost::Real, numberArms::Int;
+_prop algo::estAlgo, solver::solverType, armSize::Int, totalSize::Int, numberSamples::Vector[::Int], totalCost::Real, numberArms::Vector[::Int],
+				sameTimes::Boolean;
 
 _prop name::String, problemStmt::String;
 
@@ -464,7 +465,7 @@ _block INTERVENTION (1, ) _statements (,) _listDefn
 						AdminTypeType.reset->AdminResetList, AdminTypeType.resetAll->AdminResetAllList, AdminTypeType.reset->AdminResetList;
 
 _block STUDY_DESIGN (,) _statements (,) _listDefn
-		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?
+		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?, sameTimes?
 		_list StudyDesign;
 
 _block SAMPLING (,) _statements (,) _listDefn
