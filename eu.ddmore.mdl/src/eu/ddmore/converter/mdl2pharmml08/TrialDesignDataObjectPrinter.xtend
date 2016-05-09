@@ -153,17 +153,17 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		<!-- doseTime=«mdlDtSymb.name» -->
 		<ColumnMapping>
 			<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«idvCol.convertToString»"/>
-			<Piecewise xmlns="«xmlns_ds»">
+			<math:Piecewise>
 				<math:Piece>
 					«mdlDtSymb.symbolReference»
 					<math:Condition>
 						<math:LogicBinop op="gt">
-							<ColumnRef columnIdRef="«amtCol.convertToString»"/>
+							<ds:ColumnRef columnIdRef="«amtCol.convertToString»"/>
 							<ct:Int>0</ct:Int>
 						</math:LogicBinop>
 					</math:Condition>
 				</math:Piece>
-			</Piecewise>
+			</math:Piecewise>
 		</ColumnMapping>
 		'''
 	}
@@ -178,17 +178,17 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		'''
 		<ColumnMapping>
 			<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«column.name»"/>
-			<Piecewise xmlns="«xmlns_ds»">
+			<math:Piecewise>
 				<math:Piece>
 					«mdlSymb.symbolReference»
 					<math:Condition>
 						<math:LogicBinop op="gt">
-							<ColumnRef columnIdRef="«column.name»"/>
+							<ds:ColumnRef columnIdRef="«column.name»"/>
 							<ct:Int>0</ct:Int>
 						</math:LogicBinop>
 					</math:Condition>
 				</math:Piece>
-			</Piecewise>
+			</math:Piecewise>
 		</ColumnMapping>
 		'''
 	}
@@ -199,25 +199,25 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 				'''
 				<ColumnMapping>
 				    <ColumnRef xmlns="«xmlns_ds»" columnIdRef="«column.name»"/>
-					<Piecewise xmlns="«xmlns_ds»">
+					<math:Piecewise>
 						«FOR p : dataDefine.attList»
 							<math:Piece>
 								«mObj.findMdlSymbolDefn(p.mappedSymbol.ref.name).symbolReference»
 							   	<math:Condition>
 							   		<math:LogicBinop op="and">
 							   			<math:LogicBinop op="eq">
-											<ColumnRef columnIdRef="«p.srcColumn.ref.name»"/>
+											<ds:ColumnRef columnIdRef="«p.srcColumn.ref.name»"/>
 								   			«p.leftOperand.pharmMLExpr»
 										</math:LogicBinop>
 							   			<math:LogicBinop op="gt">
-											<ColumnRef columnIdRef="«column.name»"/>
+											<ds:ColumnRef columnIdRef="«column.name»"/>
 								   			<ct:Int>0</ct:Int>
 										</math:LogicBinop>
 									</math:LogicBinop>
 							   	</math:Condition>
 							</math:Piece>
 						«ENDFOR» 
-					</Piecewise>
+					</math:Piecewise>
 				</ColumnMapping>
 				'''
 		  default: ''''''
@@ -388,7 +388,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 				'''
 				<MultipleDVMapping>
 					<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«column.name»"/>
-					<Piecewise>
+					<math:Piecewise>
 						«FOR p : dataDefine.attList»
 							«IF p.rightOperand instanceof SymbolReference»
 								«IF mObj.isDefinedInMdlObservations(p.mappedSymbol)»
@@ -396,7 +396,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 									   	«mObj.findMdlSymbolDefn(p.mappedSymbol.ref.name).symbolReference»
 										<math:Condition>
 											<math:LogicBinop op="eq">
-											<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«p.srcColumn.ref.name»"/>
+											<ds:ColumnRef xmlns="«xmlns_ds»" columnIdRef="«p.srcColumn.ref.name»"/>
 												«p.leftOperand.pharmMLExpr»
 									   		</math:LogicBinop>
 									   	</math:Condition>
@@ -413,7 +413,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 										«ENDIF»
 										<math:Condition>
 											<math:LogicBinop op="eq">
-											<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«p.srcColumn.ref.name»"/>
+											<ds:ColumnRef xmlns="«xmlns_ds»" columnIdRef="«p.srcColumn.ref.name»"/>
 												«p.leftOperand.pharmMLExpr»
 									   		</math:LogicBinop>
 									   	</math:Condition>
@@ -421,7 +421,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 								«ENDIF»
 							«ENDIF»
 						«ENDFOR» 
-					</Piecewise>
+					</math:Piecewise>
 				</MultipleDVMapping>
 				'''
 			CatValRefMappingExpression:{

@@ -327,7 +327,7 @@ class PharmMLExpressionBuilder {
 	'''
 	
 	def getPiecewiseExpression(PiecewiseExpression it)'''
-		<ct:Piecewise>
+		<math:Piecewise>
 			«FOR w : when»
 				«w.whenClause»
 			«ENDFOR»
@@ -339,7 +339,7 @@ class PharmMLExpressionBuilder {
 					</math:Condition>
 				</math:Piece>
 			«ENDIF»
-		</ct:Piecewise>
+		</math:Piecewise>
 	'''
 	
 	def getWhenClause(PWClause it)'''
@@ -352,7 +352,7 @@ class PharmMLExpressionBuilder {
 	'''
 	
 	def getIfExpression(IfExpression it)'''
-		<ct:Piecewise>
+		<math:Piecewise>
 			«FOR w : ifelseClause»
 				«w.ifElseClause»
 			«ENDFOR»
@@ -364,7 +364,7 @@ class PharmMLExpressionBuilder {
 					</math:Condition>
 				</math:Piece>
 			«ENDIF»
-		</ct:Piecewise>
+		</math:Piecewise>
 	'''
 	
 	def getIfElseClause(IfExprPart it)'''
