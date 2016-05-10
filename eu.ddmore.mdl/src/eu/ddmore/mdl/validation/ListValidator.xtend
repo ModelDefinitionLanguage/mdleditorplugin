@@ -1,25 +1,24 @@
 package eu.ddmore.mdl.validation
 
+import eu.ddmore.mdl.mdl.AnonymousListStatement
 import eu.ddmore.mdl.mdl.AttributeList
+import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.EnumExpression
 import eu.ddmore.mdl.mdl.EnumPair
+import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MappingPair
 import eu.ddmore.mdl.mdl.MdlPackage
 import eu.ddmore.mdl.mdl.PropertyStatement
 import eu.ddmore.mdl.mdl.ValuePair
+import eu.ddmore.mdl.provider.BlockListDefinition
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.ListDefinitionTable
 import eu.ddmore.mdl.provider.PropertyDefinitionProvider
 import eu.ddmore.mdl.type.TypeSystemProvider
+import eu.ddmore.mdl.utils.MdlUtils
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import eu.ddmore.mdl.mdl.AnonymousListStatement
-import eu.ddmore.mdl.mdl.ListDefinition
-import eu.ddmore.mdl.utils.MdlUtils
-import eu.ddmore.mdl.mdl.BlockStatement
-import eu.ddmore.mdl.provider.BlockListDefinition
-import eu.ddmore.mdl.utils.DomainObjectModelUtils
 
 // validates attributes in lists, functions and properties
 class ListValidator extends AbstractMdlValidator {
@@ -30,7 +29,6 @@ class ListValidator extends AbstractMdlValidator {
 	extension PropertyDefinitionProvider pdp = new PropertyDefinitionProvider
 	extension TypeSystemProvider mtp = new TypeSystemProvider
 	extension MdlUtils mu = new MdlUtils
-	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	
 	static val MappingToColumn = #{
 		ListDefinitionTable::AMT_USE_VALUE -> ListDefinitionTable::CMT_COL_TYPE,
@@ -67,7 +65,6 @@ class ListValidator extends AbstractMdlValidator {
 		val parent = eContainer
 		switch(parent){
 			AttributeList:{
-				val attList = owningAttributeList
 				if(!attributeRecognised){
 					error("attribute '" + argumentName + "' is not recognised in this context.",
 							MdlPackage.eINSTANCE.valuePair_ArgumentName, MdlValidator.UNRECOGNIZED_LIST_ATT, argumentName)
