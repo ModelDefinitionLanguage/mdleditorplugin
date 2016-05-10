@@ -26,6 +26,11 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 		eq != null && eq == 'general'
 	}
 	
+	def isUserDefinedIdv(AttributeList it){
+		val eq = getAttributeEnumValue('type')
+		eq != null && eq == 'userDefined'
+	}
+	
 	def isExplicitIdv(EquationTypeDefinition it){
 		val eq = expression
 		if(eq instanceof SymbolReference){
@@ -46,31 +51,36 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 							MdlPackage.eINSTANCE.attributeList_Attributes,
 							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX)
 				}
+				else if(isUserDefinedIdv){
+					warning("User-defined individual parameter definition is not currently supported by MONOLIX.", 
+							MdlPackage.eINSTANCE.attributeList_Attributes,
+							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX)
+				}
 			}
 		}
 	}
 
 
 
-	@Check
-	def checkMonolixUnsupportedIdv(EquationTypeDefinition it){
-		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
-		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::MDL_INDIV_PARAMS){
-			if(expression != null){
-				// check for explicit and general defns
-//				if(isGeneralIdv){
-//					warning("General individual parameter definition is not currently supported by MONOLIX.", 
+//	@Check
+//	def checkMonolixUnsupportedIdv(EquationTypeDefinition it){
+//		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
+//		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::MDL_INDIV_PARAMS){
+//			if(expression != null){
+//				// check for explicit and general defns
+////				if(isGeneralIdv){
+////					warning("General individual parameter definition is not currently supported by MONOLIX.", 
+////							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
+////							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
+////				}
+////				else if(isExplicitIdv){
+//					warning("Explicit individual parameter definition is not currently supported by MONOLIX.", 
 //							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
 //							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
-//				}
-//				else if(isExplicitIdv){
-					warning("Explicit individual parameter definition is not currently supported by MONOLIX.", 
-							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
-							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
-//				}
-			}
-		}
-	}
+////				}
+//			}
+//		}
+//	}
 	
 	static val StandardErrorFuctions = #{  
 		'combinedError1', 'combinedError2', 'additiveError', 'proportionalError' 
