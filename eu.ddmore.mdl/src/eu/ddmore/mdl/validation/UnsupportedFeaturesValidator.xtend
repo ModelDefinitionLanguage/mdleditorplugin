@@ -191,15 +191,15 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 		}
 	}
 
-	@Check
-	//Check for unsupported object names
-	def checkExperimentalFeature(ListDefinition it){
-		val attListType = typeOfList
-		if(attListType.typeName == ListDefinitionTable::DISCRETE_LIST_TYPE || attListType.typeName == ListDefinitionTable::CATEGORICAL_LIST_TYPE){
-			warning("This is an experimental feature and may change in the future. Models using this feature may not be compatible with later versions of MDL.",
-					MdlPackage::eINSTANCE.listDefinition_List,
-					MdlValidator::EXPERIMENTAL_FEATURE, "")
-		}
-	}
+//	@Check
+//	//Check for unsupported object names
+//	def checkExperimentalFeature(ListDefinition it){
+//		val attListType = typeOfList
+//		if(attListType.typeName == ListDefinitionTable::DISCRETE_LIST_TYPE || attListType.typeName == ListDefinitionTable::CATEGORICAL_LIST_TYPE){
+//			warning("This is an experimental feature and may change in the future. Models using this feature may not be compatible with later versions of MDL.",
+//					MdlPackage::eINSTANCE.listDefinition_List,
+//					MdlValidator::EXPERIMENTAL_FEATURE, "")
+//		}
+//	}
 
 }

@@ -97,18 +97,18 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			}
 
 			INDIVIDUAL_VARIABLES{
-				a = exp(d * eta_a) 
+				a : { type is userDefined, value=exp(d * eta_a) } 
 			}
 		}
 	'''.parse
 		mcl.assertNoErrors
-		mcl.assertWarning(MdlPackage::eINSTANCE.equationTypeDefinition, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
-			"Explicit individual parameter definition is not currently supported by MONOLIX."
+		mcl.assertWarning(MdlPackage::eINSTANCE.attributeList, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
+			"User-defined individual parameter definition is not currently supported by MONOLIX."
 		)
 	}
 
 	@Test
-	def void testMonolixNotSupportedIdvExplicitNoRV(){
+	def void testMonolixSupportedIfOnlyParamAssignment(){
 		val mcl = '''
 		foo = mdlObj{
 			IDV { T }
@@ -130,10 +130,10 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			}
 		}
 	'''.parse
-		mcl.assertNoErrors
-		mcl.assertWarning(MdlPackage::eINSTANCE.equationTypeDefinition, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
-			"Explicit individual parameter definition is not currently supported by MONOLIX."
-		)
+		mcl.assertNoIssues
+//		mcl.assertWarning(MdlPackage::eINSTANCE.equationTypeDefinition, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
+//			"Explicit individual parameter definition is not currently supported by MONOLIX."
+//		)
 	}
 
 	@Test
