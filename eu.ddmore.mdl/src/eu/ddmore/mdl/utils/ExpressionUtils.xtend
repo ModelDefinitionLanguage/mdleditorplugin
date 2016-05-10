@@ -10,6 +10,8 @@ import eu.ddmore.mdl.mdl.StringLiteral
 import eu.ddmore.mdl.mdl.VectorElement
 import eu.ddmore.mdl.mdl.MatrixElement
 import java.util.ArrayList
+import eu.ddmore.mdl.mdl.IntegerLiteral
+import eu.ddmore.mdl.mdl.RealLiteral
 
 class ExpressionUtils {
 	
@@ -56,6 +58,34 @@ class ExpressionUtils {
 			else null
 		}
 		else if(expr instanceof StringLiteral){
+			return expr.value
+		}
+		else null
+	} 
+	
+	def Integer getIntegerValue(Expression expr){
+		if(expr instanceof SymbolReference){
+			val defn = expr.ref
+			if(defn instanceof EquationTypeDefinition){
+				defn.expression.integerValue
+			}
+			else null
+		}
+		else if(expr instanceof IntegerLiteral){
+			return expr.value
+		}
+		else null
+	} 
+	
+	def Double getRealValue(Expression expr){
+		if(expr instanceof SymbolReference){
+			val defn = expr.ref
+			if(defn instanceof EquationTypeDefinition){
+				defn.expression.realValue
+			}
+			else null
+		}
+		else if(expr instanceof RealLiteral){
 			return expr.value
 		}
 		else null

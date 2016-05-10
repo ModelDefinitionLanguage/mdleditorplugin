@@ -21,6 +21,7 @@ import eu.ddmore.mdl.provider.SublistDefinitionProvider
 import eu.ddmore.mdl.mdl.PropertyStatement
 import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdllib.mdllib.Expression
+import java.util.Collections
 
 class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
@@ -61,6 +62,12 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static INTSEQ_ADMIN_ATT = 'admin'
 	val public static SAMPSEQ_ATT = 'samplingSequence'
 	val public static SAMPSEQ_SAMP_ATT = 'sample'
+	val public static OCC_SEQ_ATT = 'occasionSequence'
+	val public static OCC_SEQ_OCC_ATT = 'occasion'
+	val public static OCC_LEVEL_ATT = 'level'
+
+
+
 	val public static TOTAL_SIZE_PROP = 'totalSize'
 	val public static NUM_SAMPLES_PROP = 'numSamples'
 	val public static NUM_ARMS_PROP = 'numArms'
@@ -85,6 +92,7 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 			«IF mObj != null && designObj != null»
 				«designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_PARAMS).forEach[writeDesignParameters]»
 				«designObj.getBlocksByName(BlockDefinitionTable::DES_INTERVENTION_BLK).forEach[writeInterventions]»
+				«designObj.getBlocksByName(BlockDefinitionTable::DES_STUDY_DESIGN).forEach[writeStudyDesign]»
 			«ENDIF»
 		</TrialDesign>
 	'''	
@@ -316,40 +324,87 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 			<ArmSize>
 				«firstAttributeList.getAttributeExpression(ARM_SIZE_ATT).expressionAsAssignment»
 			</ArmSize>
-			«FOR intSeqSl : firstAttributeList.getAttributeExpression(INTSEQ_ATT).vector»
-				<InterventionSequence>
-					«IF intSeqSl instanceof SubListExpression»
-						<InterventionList>
-							«FOR intRef : intSeqSl.getAttributeExpression(INTSEQ_ADMIN_ATT).vector»
-								<InterventionRef oidRef="«intRef.symbolRef?.ref?.name?: 'Error!'»"/>
-							«ENDFOR»
-						</InterventionList>
-						«IF intSeqSl.hasAttribute(START_ATT_NAME)»
-							<Start>
-								«intSeqSl.getAttributeExpression(START_ATT_NAME).expressionAsAssignment»
-							</Start>
+			«IF firstAttributeList.hasAttribute(INTSEQ_ATT)»
+				«FOR intSeqSl : firstAttributeList.getAttributeExpression(INTSEQ_ATT).vector»
+					<InterventionSequence>
+						«IF intSeqSl instanceof SubListExpression»
+							<InterventionList>
+								«FOR intRef : intSeqSl.getAttributeExpression(INTSEQ_ADMIN_ATT).vector»
+									<InterventionRef oidRef="«intRef.symbolRef?.ref?.name?: 'Error!'»"/>
+								«ENDFOR»
+							</InterventionList>
+							«IF intSeqSl.hasAttribute(START_ATT_NAME)»
+								<Start>
+									«intSeqSl.getAttributeExpression(START_ATT_NAME).expressionAsAssignment»
+								</Start>
+							«ENDIF»
 						«ENDIF»
-					«ENDIF»
-				</InterventionSequence>
-			«ENDFOR»
-			«FOR obsSeqSl : firstAttributeList.getAttributeExpression(SAMPSEQ_ATT).vector»
-				<ObservationSequence>
-					«IF obsSeqSl instanceof SubListExpression»
-						<ObservationList>
-							«FOR obsRef : obsSeqSl.getAttributeExpression(TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT).vector»
-								<ObservationRef oidRef="«obsRef.symbolRef?.ref?.name?: 'Error!'»"/>
-							«ENDFOR»
-						</ObservationList>
-						«IF obsSeqSl.hasAttribute(START_ATT_NAME)»
-							<Start>
-								«obsSeqSl.getAttributeExpression(START_ATT_NAME).expressionAsAssignment»
-							</Start>
+					</InterventionSequence>
+				«ENDFOR»
+			«ENDIF»
+			«IF firstAttributeList.hasAttribute(SAMPSEQ_ATT)»
+				«FOR obsSeqSl : firstAttributeList.getAttributeExpression(SAMPSEQ_ATT).vector»
+					<ObservationSequence>
+						«IF obsSeqSl instanceof SubListExpression»
+							<ObservationList>
+								«FOR obsRef : obsSeqSl.getAttributeExpression(TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT).vector»
+									<ObservationRef oidRef="«obsRef.symbolRef?.ref?.name?: 'Error!'»"/>
+								«ENDFOR»
+							</ObservationList>
+							«IF obsSeqSl.hasAttribute(START_ATT_NAME)»
+								<Start>
+									«obsSeqSl.getAttributeExpression(START_ATT_NAME).expressionAsAssignment»
+								</Start>
+							«ENDIF»
 						«ENDIF»
-					«ENDIF»
-				</ObservationSequence>
-			«ENDFOR»
+					</ObservationSequence>
+				«ENDFOR»
+			«ENDIF»
+			«IF firstAttributeList.hasAttribute(OCC_SEQ_ATT)»
+				«FOR occSeqSl : firstAttributeList.getAttributeExpression(OCC_SEQ_ATT).vector»
+					<OccasionSequence>
+						«IF occSeqSl instanceof SubListExpression»
+							«occSeqSl.writeOccasionList(name)»
+						«ENDIF»
+					</OccasionSequence>
+				«ENDFOR»
+			«ENDIF»
 		</Arm>
 	'''
+		
+		
+	def private writeOccasionList(SubListExpression it, String armName){
+		val occList = getAttributeExpression(TrialDesignDesignObjectPrinter::OCC_SEQ_OCC_ATT).vector
+		val startList = if(hasAttribute(START_ATT_NAME))
+					getAttributeExpression(START_ATT_NAME).vector
+				else Collections::emptyList
+		var idx = 0
+		'''
+		<OccasionList oid="«createObsListName(armName)»">
+			<ct:VariabilityReference>
+				«getModelVar(OCC_LEVEL_ATT).symbolReference»
+			</ct:VariabilityReference>
+			«FOR obsId : occList»
+				<Occasion oid="«createObsName(armName, obsId.integerValue)»">
+					«IF !startList.isEmpty && idx < occList.size»
+						<Start>
+							«startList.get(idx++).expressionAsAssignment»
+						</Start>
+					«ENDIF»
+				</Occasion>
+			«ENDFOR»
+		</OccasionList>
+		'''
+	}
+		
+	def private createObsListName(SubListExpression it, String armName){
+		val varLvlName = getAttributeExpression(OCC_LEVEL_ATT)?.symbolRef?.ref?.name
+		armName + "_" + varLvlName
+	} 
+		
+	def private createObsName(SubListExpression it, String armName, int obsId){
+		createObsListName(armName) + '_' + obsId 
+	} 
 		
 	def writeStudyDesignProperty(ValuePair it){
 		switch(argumentName){

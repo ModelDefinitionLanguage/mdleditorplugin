@@ -16,7 +16,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
-import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -1132,11 +1131,18 @@ class TrialDesignDesignObjectPrinterTest {
 	}
 
 
-	@Ignore("not implemented yet")
+	@Test
 	def void testWriteArmSingleInterventionAndSampleWithOneLevelOccasions(){
 		val mdl = createRoot
-		
+
+		val mdlObj = mdl.createObject("mfoo", libDefns.getObjectDefinition("mdlObj"))
+		val varBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::VAR_LVL_BLK_NAME))
+		varBlk.createListDefn("OCC");
+
 		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val declBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val occVarLevel = declBlk.createEqnDefn("OCC");
+
 		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
 
 		val intBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
@@ -1160,7 +1166,16 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::SAMPSEQ_ATT, createVectorLiteral(createSublist(#{
 																	TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT -> createVectorLiteral(createSymbolRef(sampList)),
 																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(10.0))
-																})))
+																}))),
+									createAssignPair(TrialDesignDesignObjectPrinter::OCC_SEQ_ATT, createVectorLiteral(createSublist(#{
+												TrialDesignDesignObjectPrinter::OCC_LEVEL_ATT -> createSymbolRef(occVarLevel),
+												TrialDesignDesignObjectPrinter::OCC_SEQ_OCC_ATT -> createVectorLiteral(
+													createIntLiteral(1), createIntLiteral(2)
+												),
+												TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(
+													createRealLiteral(1.0), createRealLiteral(3.0)
+												)
+									})))
 							)
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
@@ -1203,27 +1218,19 @@ class TrialDesignDesignObjectPrinterTest {
 				<OccasionSequence>
 					<OccasionList oid="arm1_OCC">
 						<ct:VariabilityReference>
-							<ct:SymbRef symbIdRef="OCC"></ct:SymbRef>
+							<ct:SymbRef blkIdRef="vm_err" symbIdRef="OCC"/>
 						</ct:VariabilityReference>
-						<Occasion oid="OCC_1">
+						<Occasion oid="arm1_OCC_1">
 							<Start>
 								<ct:Assign>
-									<ct:Vector>
-										<ct:VectorElements>
-											<ct:Real>0</ct:Real>
-										</ct:VectorElements>
-									</ct:Vector>
+									<ct:Real>1.0</ct:Real>
 								</ct:Assign>
 							</Start>
 						</Occasion>
-						<Occasion oid="OCC_2">
+						<Occasion oid="arm1_OCC_2">
 							<Start>
 								<ct:Assign>
-									<ct:Vector>
-										<ct:VectorElements>
-											<ct:Real>0</ct:Real>
-										</ct:VectorElements>
-									</ct:Vector>
+									<ct:Real>3.0</ct:Real>
 								</ct:Assign>
 							</Start>
 						</Occasion>
@@ -1234,11 +1241,20 @@ class TrialDesignDesignObjectPrinterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
-	@Ignore("Not implemented yet")
+	@Test
 	def void testWriteArmSingleInterventionAndSampleWithTwoLevelOccasions(){
 		val mdl = createRoot
 		
+		val mdlObj = mdl.createObject("mfoo", libDefns.getObjectDefinition("mdlObj"))
+		val varBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::VAR_LVL_BLK_NAME))
+		varBlk.createListDefn("OCC");
+		varBlk.createListDefn("TRIAL");
+
 		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val declBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val occVarLevel = declBlk.createEqnDefn("OCC");
+		val trialVarLevel = declBlk.createEqnDefn("TRIAL");
+
 		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
 
 		val intBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
@@ -1262,8 +1278,26 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::SAMPSEQ_ATT, createVectorLiteral(createSublist(#{
 																	TrialDesignDesignObjectPrinter::SAMPSEQ_SAMP_ATT -> createVectorLiteral(createSymbolRef(sampList)),
 																	TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(createRealLiteral(10.0))
-																})))
-							)
+																}))),
+									createAssignPair(TrialDesignDesignObjectPrinter::OCC_SEQ_ATT, createVectorLiteral(
+										createSublist(#{
+												TrialDesignDesignObjectPrinter::OCC_LEVEL_ATT -> createSymbolRef(occVarLevel),
+												TrialDesignDesignObjectPrinter::OCC_SEQ_OCC_ATT -> createVectorLiteral(
+													createIntLiteral(1), createIntLiteral(2)
+												),
+												TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(
+													createRealLiteral(1.0), createRealLiteral(3.0)
+												)
+										}),
+										createSublist(#{TrialDesignDesignObjectPrinter::OCC_LEVEL_ATT -> createSymbolRef(trialVarLevel),
+													TrialDesignDesignObjectPrinter::OCC_SEQ_OCC_ATT -> createVectorLiteral(
+														createIntLiteral(1), createIntLiteral(2)
+													),
+													TrialDesignDesignObjectPrinter::START_ATT_NAME -> createVectorLiteral(
+														createRealLiteral(6.0), createRealLiteral(33.0)
+													)
+										}))
+							))
 		
 		val tdow = new TrialDesignDesignObjectPrinter(mdl)
 		val actual = tdow.writeArm(armList)
@@ -1305,27 +1339,19 @@ class TrialDesignDesignObjectPrinterTest {
 				<OccasionSequence>
 					<OccasionList oid="arm1_OCC">
 						<ct:VariabilityReference>
-							<ct:SymbRef symbIdRef="OCC"></ct:SymbRef>
+							<ct:SymbRef blkIdRef="vm_err" symbIdRef="OCC"/>
 						</ct:VariabilityReference>
-						<Occasion oid="OCC_1">
+						<Occasion oid="arm1_OCC_1">
 							<Start>
 								<ct:Assign>
-									<ct:Vector>
-										<ct:VectorElements>
-											<ct:Real>0</ct:Real>
-										</ct:VectorElements>
-									</ct:Vector>
+									<ct:Real>1.0</ct:Real>
 								</ct:Assign>
 							</Start>
 						</Occasion>
-						<Occasion oid="OCC_2">
+						<Occasion oid="arm1_OCC_2">
 							<Start>
 								<ct:Assign>
-									<ct:Vector>
-										<ct:VectorElements>
-											<ct:Real>0</ct:Real>
-										</ct:VectorElements>
-									</ct:Vector>
+									<ct:Real>3.0</ct:Real>
 								</ct:Assign>
 							</Start>
 						</Occasion>
@@ -1334,32 +1360,26 @@ class TrialDesignDesignObjectPrinterTest {
 				<OccasionSequence>
 					<OccasionList oid="arm1_TRIAL">
 						<ct:VariabilityReference>
-							<ct:SymbRef symbIdRef="TRIAL"></ct:SymbRef>
+							<ct:SymbRef blkIdRef="vm_err" symbIdRef="TRIAL"/>
 						</ct:VariabilityReference>
-						<Occasion oid="TRIAL_1">
+						<Occasion oid="arm1_TRIAL_1">
 							<Start>
 								<ct:Assign>
-									<ct:Vector>
-										<ct:VectorElements>
-											<ct:Real>0</ct:Real>
-										</ct:VectorElements>
-									</ct:Vector>
+									<ct:Real>6.0</ct:Real>
 								</ct:Assign>
 							</Start>
 						</Occasion>
-						<Occasion oid="TRIAL_2">
+						<Occasion oid="arm1_TRIAL_2">
 							<Start>
 								<ct:Assign>
-									<ct:Vector>
-										<ct:VectorElements>
-											<ct:Real>0</ct:Real>
-										</ct:VectorElements>
-									</ct:Vector>
+									<ct:Real>33.0</ct:Real>
 								</ct:Assign>
 							</Start>
 						</Occasion>
 					</OccasionList>
-				</OccasionSequence>			</Arm>		'''
+				</OccasionSequence>
+			</Arm>
+		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
