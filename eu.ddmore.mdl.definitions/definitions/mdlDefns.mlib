@@ -334,7 +334,7 @@ _list PopulationTemplate _atts type::PopnType, covariate::Vector[::PopTmpltCovSu
 						 _sig(type, covariate);
 
 							
-_type estAlgo _enum(saem, foce, fo, focei);
+_type estAlgo _enum(saem, foce, fo, focei, mcmc);
 _type solverType _enum(stiff, nonStiff);							
 _type OptAlgoType _enum(simplex, fw);
 
