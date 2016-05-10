@@ -103,7 +103,7 @@ _list CorrelationList _anon _atts type::CorrelationEnumType, matrix::Matrix, rv1
 
 		
 // Individual Parameters
-_type IndivTypeType _enum (linear, general);
+_type IndivTypeType _enum (linear, general, userDefined);
 
 _list IndivAbstractList _super _alt ::Real;
 
@@ -118,6 +118,10 @@ _list IndivParamGeneral _alt ::Real _extends IndivAbstractList
 		_atts type::IndivTypeType, trans::transType, grp::Real,
 				ranEff::Vector[::RandomVariable], omega::Vector[::EtaFreeRanEffSublist]
 			_sig(type, trans?, grp, ranEff), (type, trans?, grp, omega); 
+
+_list IndivUserDefined _alt ::Real _extends IndivAbstractList
+		_atts type::IndivTypeType, value::Real
+			_sig(type, value); 
 
 
 // Model
@@ -379,9 +383,10 @@ _block POPULATION_PARAMETERS (,) _statements(,) _eqnDefn+, _anonList _list _key=
 			 ;
 
 _block INDIVIDUAL_VARIABLES (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+
-	_list _key=type IndivTypeType.linear->IndivParamLinear, IndivTypeType.general -> IndivParamGeneral;
+	_list _key=type IndivTypeType.linear->IndivParamLinear, IndivTypeType.general -> IndivParamGeneral,
+						IndivTypeType.userDefined -> IndivUserDefined;
 
-_block INFO (,) _statements (,) _propStmt _prop name, problemStmt;
+_block INFO (,) _statements (,) _propStmt _prop name?, problemStmt?;
 
 _block MODEL_PREDICTION (0,) _statements (0,) _eqnDefn, _eqnDefn+, _listDefn
 	_list DerivList;

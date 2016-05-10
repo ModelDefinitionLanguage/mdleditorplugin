@@ -206,5 +206,23 @@ class ListIndivParamWriterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
+	@Test
+	def void testWriteIndivUserDefined(){
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_INDIV_PARAMS))
+		val ld = obsBlk.createListDefn('CL', createEnumPair('type', 'userDefined'),
+											createAssignPair('value', createRealLiteral(22.0))
+		)	
+		
+		val actual = writeIndividualParameter(ld)
+		val expected = '''
+			<IndividualParameter symbId="CL">
+				<ct:Assign>
+					<ct:Real>22.0</ct:Real>
+				</ct:Assign>
+			</IndividualParameter>
+			'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
 
 }

@@ -16,6 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
+import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -1131,7 +1132,7 @@ class TrialDesignDesignObjectPrinterTest {
 	}
 
 
-	@Test
+	@Ignore("not implemented yet")
 	def void testWriteArmSingleInterventionAndSampleWithOneLevelOccasions(){
 		val mdl = createRoot
 		
@@ -1233,7 +1234,7 @@ class TrialDesignDesignObjectPrinterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
-	@Test
+	@Ignore("Not implemented yet")
 	def void testWriteArmSingleInterventionAndSampleWithTwoLevelOccasions(){
 		val mdl = createRoot
 		

@@ -7,8 +7,8 @@ Bernoulli_DIST_dat = dataObj{
 	
    DATA_INPUT_VARIABLES{
       ID:{ use is id }
-	  TIME:{ use is idv } # NOT USED IN MODEL
-      CP:{ use is covariate }
+	  TIME:{ use is ignore } # NOT USED IN MODEL
+      CP:{ use is idv }
       DV:{ use is dv, define={ Y.success when 0, Y.fail when 1 } }
       MDV:{ use is mdv }
    }# end DATA_INPUT_VARIABLES
@@ -34,9 +34,7 @@ Bernoulli_DIST_par = parObj{
 } # end of parameter object
 
 Bernoulli_DIST_mdl = mdlObj{
-   IDV{ T }
-
-	COVARIATES{ CP }
+   IDV{ CP }
 
    VARIABILITY_LEVELS{
 	ID : { level=2, type is parameter }
@@ -62,7 +60,7 @@ Bernoulli_DIST_mdl = mdlObj{
    }
    
    INDIVIDUAL_VARIABLES{
-     P1 : { type is linear, trans is logit, pop=POP_BASEP, fixEff=[{coeff=POP_BETA, cov=CP}], ranEff=[eta_PPV_EVENT] }
+     P1 : { type is userDefined, value=POP_BASEP*CP^POP_BETA * eta_PPV_EVENT }
    }# end INDIVIDUAL_VARIABLES
 
 	RANDOM_VARIABLE_DEFINITION(level=DV){

@@ -44,7 +44,7 @@ class ModelDefinitionPrinter {
 	extension BlockUtils bu = new BlockUtils
 	extension ListObservationsWriter low = new ListObservationsWriter
 	extension FunctionObservationsWriter fow = new FunctionObservationsWriter
-	extension FunctionIndivParamWriter fip = new FunctionIndivParamWriter
+	extension SimpleParameterWriter spw = new SimpleParameterWriter
 	extension ListIndivParamWriter lip = new ListIndivParamWriter
 	
 	
@@ -297,7 +297,7 @@ class ModelDefinitionPrinter {
 						«FOR stmt: b.getNonBlockStatements»
 							«switch(stmt){
 								EquationTypeDefinition:
-									writeIndividualParameter(stmt)
+									writeParameter(stmt)
 								ListDefinition:
 									writeIndividualParameter(stmt)
 							}»

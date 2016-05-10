@@ -10,6 +10,7 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 	extension MdlUtils mu = new MdlUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension PharmMLConverterUtils pcu = new PharmMLConverterUtils
+	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder
 
 	def writeIndividualParameter(ListDefinition it){
 		if(attributeLists.size == 1){
@@ -20,6 +21,8 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 					attList.writeGeneralIdv(name)
 				case('linear'):
 					attList.writeLinearIdv(name)
+				case('userDefined'):
+					attList.writeUserDefinedIdv(name)
 				default:
 					'''<Error!>'''		
 			}
@@ -71,4 +74,15 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 		''' 
 	}
 	
+	def writeUserDefinedIdv(AttributeList it, String name){
+		'''
+		<IndividualParameter symbId="«name»">
+			«IF hasAttribute('value')»
+				«getAttributeExpression('value').expressionAsAssignment»
+			«ELSE»
+				<Error!/>
+			«ENDIF»
+		</IndividualParameter>
+		''' 
+	}
 }
