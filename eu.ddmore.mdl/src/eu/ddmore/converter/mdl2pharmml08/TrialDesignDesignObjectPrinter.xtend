@@ -102,6 +102,7 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 				«designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_PARAMS).forEach[writeDesignParameters]»
 				«designObj.getBlocksByName(BlockDefinitionTable::DES_INTERVENTION_BLK).forEach[writeInterventions]»
 				«designObj.getBlocksByName(BlockDefinitionTable::DES_STUDY_DESIGN).forEach[writeStudyDesign]»
+				«designObj.getBlocksByName(BlockDefinitionTable::DES_SAMPLING_BLK).forEach[writeSampling]»
 			«ENDIF»
 		</TrialDesign>
 	'''	
