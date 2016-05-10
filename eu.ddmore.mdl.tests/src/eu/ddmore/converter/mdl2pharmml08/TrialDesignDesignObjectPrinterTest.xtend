@@ -1384,4 +1384,221 @@ class TrialDesignDesignObjectPrinterTest {
 	}
 
 
+	@Test
+	def void testWriteSimpleSampling(){
+		val mdl = createRoot
+		
+		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
+		val mdlPredBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		mdlPredBlk.createEqnDefn("Y")
+
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val declVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val rsVar1 = declVarBlk.createEqnDefn("Y") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_SAMPLING_BLK))
+		val actionList = desBlk.createListDefn("samp1",
+									createEnumPair(TrialDesignDesignObjectPrinter::SAMP_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::SAMP_TYPE_SIMPLE_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_NUM_TIMES, createIntLiteral(34)),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_SAMP_TIMES, createVectorLiteral(
+																						createRealLiteral(0.5),	
+																						createRealLiteral(2),
+																						createRealLiteral(6),	
+																						createRealLiteral(8)		
+																					)
+																				),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_OUTCOME, createSymbolRef(rsVar1))
+									)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeSimpleSampling(actionList)
+		val expected = '''
+			<Observation oid="samp1">
+				<NumberTimes>
+					<ct:Assign>
+						<ct:Int>34</ct:Int>
+					</ct:Assign>
+				</NumberTimes>
+				<ObservationTimes>
+					<ct:Assign>
+						<ct:Vector>
+							<ct:VectorElements>
+								<ct:Real>0.5</ct:Real>
+								<ct:Real>2.0</ct:Real>
+								<ct:Real>6.0</ct:Real>
+								<ct:Real>8.0</ct:Real>
+							</ct:VectorElements>
+						</ct:Vector>
+					</ct:Assign>
+				</ObservationTimes>
+				<Continuous>
+					<ct:SymbRef blkIdRef="sm" symbIdRef="Y"/>
+				</Continuous>
+			</Observation>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteCombiSampling(){
+		val mdl = createRoot
+		
+		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
+		val mdlPredBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		mdlPredBlk.createEqnDefn("Y")
+
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val declVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val rsVar1 = declVarBlk.createEqnDefn("Y") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_SAMPLING_BLK))
+		val samp1 = desBlk.createListDefn("samp1",
+									createEnumPair(TrialDesignDesignObjectPrinter::SAMP_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::SAMP_TYPE_SIMPLE_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_NUM_TIMES, createIntLiteral(34)),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_SAMP_TIMES, createVectorLiteral(
+																						createRealLiteral(0.5),	
+																						createRealLiteral(2),
+																						createRealLiteral(6),	
+																						createRealLiteral(8)		
+																					)
+																				),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_OUTCOME, createSymbolRef(rsVar1))
+									)
+
+		val combiList = desBlk.createListDefn("combi1",
+									createEnumPair(TrialDesignDesignObjectPrinter::SAMP_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::SAMP_TYPE_COMBI_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_COMBI_ATT, createVectorLiteral(
+																createSymbolRef(samp1),
+																createSymbolRef(samp1)
+															)
+														),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_START, createVectorLiteral(
+																createRealLiteral(2),
+																createRealLiteral(6)
+															)
+														),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_RELATIVE, createBooleanLiteral(true))					
+									)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeCombiSampling(combiList)
+		val expected = '''
+			<ObservationsCombination oid="combi1">
+				<Observations>
+					<ObservationRef oidRef="samp1"/>
+					<ObservationRef oidRef="samp1"/>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>2.0</ct:Real>
+									<ct:Real>6.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</Observations>
+				<Relative>
+					<ct:Assign>
+						<ct:True/>
+					</ct:Assign>
+				</Relative>
+			</ObservationsCombination>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteSampling(){
+		val mdl = createRoot
+		
+		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
+		val mdlPredBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		mdlPredBlk.createEqnDefn("Y")
+
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val declVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val rsVar1 = declVarBlk.createEqnDefn("Y") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_SAMPLING_BLK))
+		val samp1 = desBlk.createListDefn("samp1",
+									createEnumPair(TrialDesignDesignObjectPrinter::SAMP_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::SAMP_TYPE_SIMPLE_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_NUM_TIMES, createIntLiteral(34)),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_SAMP_TIMES, createVectorLiteral(
+																						createRealLiteral(0.5),	
+																						createRealLiteral(2),
+																						createRealLiteral(6),	
+																						createRealLiteral(8)		
+																					)
+																				),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_OUTCOME, createSymbolRef(rsVar1))
+									)
+
+		desBlk.createListDefn("combi1",
+									createEnumPair(TrialDesignDesignObjectPrinter::SAMP_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::SAMP_TYPE_COMBI_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_COMBI_ATT, createVectorLiteral(
+																createSymbolRef(samp1),
+																createSymbolRef(samp1)
+															)
+														),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_START, createVectorLiteral(
+																createRealLiteral(2),
+																createRealLiteral(6)
+															)
+														),
+									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_RELATIVE, createBooleanLiteral(true))					
+									)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeSampling(desBlk)
+		val expected = '''
+		<Observations>
+			<Observation oid="samp1">
+				<NumberTimes>
+					<ct:Assign>
+						<ct:Int>34</ct:Int>
+					</ct:Assign>
+				</NumberTimes>
+				<ObservationTimes>
+					<ct:Assign>
+						<ct:Vector>
+							<ct:VectorElements>
+								<ct:Real>0.5</ct:Real>
+								<ct:Real>2.0</ct:Real>
+								<ct:Real>6.0</ct:Real>
+								<ct:Real>8.0</ct:Real>
+							</ct:VectorElements>
+						</ct:Vector>
+					</ct:Assign>
+				</ObservationTimes>
+				<Continuous>
+					<ct:SymbRef blkIdRef="sm" symbIdRef="Y"/>
+				</Continuous>
+			</Observation>
+			<ObservationsCombination oid="combi1">
+				<Observations>
+					<ObservationRef oidRef="samp1"/>
+					<ObservationRef oidRef="samp1"/>
+					<Start>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>2.0</ct:Real>
+									<ct:Real>6.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Start>
+				</Observations>
+				<Relative>
+					<ct:Assign>
+						<ct:True/>
+					</ct:Assign>
+				</Relative>
+			</ObservationsCombination>
+		</Observations>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
 }

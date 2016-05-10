@@ -65,7 +65,16 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static OCC_SEQ_ATT = 'occasionSequence'
 	val public static OCC_SEQ_OCC_ATT = 'occasion'
 	val public static OCC_LEVEL_ATT = 'level'
-
+	val public static SAMP_NUM_TIMES = 'numTimes'
+	val public static SAMP_SAMP_TIMES = 'sampleTime'
+	val public static SAMP_OUTCOME = 'outcome'
+	val public static SAMP_COMBI = 'combination'
+	val public static SAMP_START = 'start'
+	val public static SAMP_RELATIVE = 'relative'
+	val public static SAMP_TYPE_ATT_NAME = 'type'
+	val public static SAMP_TYPE_SIMPLE_VALUE = 'simple'
+	val public static SAMP_TYPE_COMBI_VALUE = 'combi'
+	val public static SAMP_COMBI_ATT = 'combination'
 
 
 	val public static TOTAL_SIZE_PROP = 'totalSize'
@@ -135,6 +144,14 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	'''
 	
 	def private getModelVar(SubListExpression it, String attName){
+		val targetVar = getAttributeExpression(attName)
+		if(targetVar instanceof SymbolReference){
+			mObj.findMdlSymbolDefn(targetVar.ref.name)
+		}
+		else null
+	}
+	
+	def private getModelVar(AttributeList it, String attName){
 		val targetVar = getAttributeExpression(attName)
 		if(targetVar instanceof SymbolReference){
 			mObj.findMdlSymbolDefn(targetVar.ref.name)
@@ -428,6 +445,62 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		</«element»>
 	'''
 		
-	
+	def writeSampling(BlockStatement it)'''
+		<Observations>
+			«FOR stmt : statements»
+				«IF stmt instanceof ListDefinition»
+					«IF stmt.firstAttributeList.getAttributeEnumValue(SAMP_TYPE_ATT_NAME) == SAMP_TYPE_SIMPLE_VALUE»
+						«writeSimpleSampling(stmt)»
+					«ENDIF»
+				«ENDIF»
+			«ENDFOR»
+«««			Simple first then followed by combi
+			«FOR stmt : statements»
+				«IF stmt instanceof ListDefinition»
+					«IF stmt.firstAttributeList.getAttributeEnumValue(SAMP_TYPE_ATT_NAME) == SAMP_TYPE_COMBI_VALUE»
+						«writeCombiSampling(stmt)»
+					«ENDIF»
+				«ENDIF»
+			«ENDFOR»
+		</Observations>
+	'''
+		
+	def writeSimpleSampling(ListDefinition it)'''
+		<Observation oid="«name»">
+			«IF firstAttributeList.hasAttribute(SAMP_NUM_TIMES)»
+				<NumberTimes>
+					«firstAttributeList.getAttributeExpression(SAMP_NUM_TIMES).expressionAsAssignment»
+				</NumberTimes>
+			«ENDIF»
+			«IF firstAttributeList.hasAttribute(SAMP_SAMP_TIMES)»
+				<ObservationTimes>
+					«firstAttributeList.getAttributeExpression(SAMP_SAMP_TIMES).expressionAsAssignment»
+				</ObservationTimes>
+			«ENDIF»
+			<Continuous>
+				«firstAttributeList.getModelVar(SAMP_OUTCOME).symbolReference»
+			</Continuous>
+		</Observation>
+	'''
+
+	def writeCombiSampling(ListDefinition it)'''
+		<ObservationsCombination oid="«name»">
+			<Observations>
+				«FOR obRef : firstAttributeList.getAttributeExpression(SAMP_COMBI).vector»
+					<ObservationRef oidRef="«obRef.symbolRef?.ref?.name ?: '<Error!/>'»"/>
+				«ENDFOR»
+				«IF firstAttributeList.hasAttribute(SAMP_START)»
+					<Start>
+						«firstAttributeList.getAttributeExpression(SAMP_START).expressionAsAssignment»
+					</Start>
+				«ENDIF»
+			</Observations>
+			«IF firstAttributeList.hasAttribute(SAMP_RELATIVE)»
+				<Relative>
+					«firstAttributeList.getAttributeExpression(SAMP_RELATIVE).expressionAsAssignment»
+				</Relative>
+			«ENDIF»
+		</ObservationsCombination>
+	'''
 
 }
