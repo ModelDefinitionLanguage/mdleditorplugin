@@ -4,7 +4,7 @@
 #
 
 warfarin_PK_analytic_DerivedDT_dat = dataObj {
-	DECLARED_VARIABLES{D::DosingTarget Y::ContinuousObs}
+	DECLARED_VARIABLES{D::dosingTarget Y::continuousObs}
 
 	DATA_INPUT_VARIABLES {
 		ID : { use is id }

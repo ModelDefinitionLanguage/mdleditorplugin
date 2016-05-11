@@ -9,7 +9,7 @@
 
 UC001_08_Holford_PK_DEQ_gen2Cov_libErr_Tlag_dat = dataObj{
 
-   DECLARED_VARIABLES{GUT::DosingTarget CC_obs::ContinuousObs}
+   DECLARED_VARIABLES{GUT::dosingTarget CC_obs::continuousObs}
 
    DATA_INPUT_VARIABLES{
       ID: {use is id}

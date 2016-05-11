@@ -203,7 +203,7 @@ obj1 = dataObj{
 		val mcl = '''
 obj1 = dataObj{
 	DECLARED_VARIABLES{
-		Y::ContinuousObs X withCategories { cat1, cat2 } 
+		Y::continuousObs X withCategories { cat1, cat2 } 
 	}
 	
 	

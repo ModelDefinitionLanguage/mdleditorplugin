@@ -4,7 +4,7 @@
 # Hazard function specified in MODEL_PREDICTION 
 
 warfarin_T2E_interval_dat = dataObj{
-   DECLARED_VARIABLES{Y::ContinuousObs }
+   DECLARED_VARIABLES{Y::continuousObs }
 
    DATA_INPUT_VARIABLES{
       ID: {use is id}

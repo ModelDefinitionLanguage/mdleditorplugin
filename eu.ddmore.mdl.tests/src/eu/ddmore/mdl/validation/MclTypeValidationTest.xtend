@@ -1513,7 +1513,7 @@ class MclTypeValidationTest {
 		val mcl = 	'''
 		d1g=designObj{
 			DECLARED_VARIABLES{
-				Conc::ContinuousObs
+				Conc::continuousObs
 			}
 			
 			INTERVENTION{
@@ -1747,7 +1747,7 @@ d1g=designObj{
 	DECLARED_VARIABLES{
 		Conc
 		Effect
-		Cmt::DosingTarget
+		Cmt::dosingTarget
 	}
 	INTERVENTION{
 		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
@@ -1839,7 +1839,7 @@ d1g=designObj{
 	@Test
 	def void testValidBoolExpressionAttributes(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D::DosingTarget }
+			DECLARED_VARIABLES{ D::dosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 				TIME : { use is idv }
@@ -1858,7 +1858,7 @@ d1g=designObj{
 	@Test
 	def void testValidMappingExpressionAttributes(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D::DosingTarget; E::DosingTarget }
+			DECLARED_VARIABLES{ D::dosingTarget; E::dosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 				CMT : { use is cmt }
@@ -1896,7 +1896,7 @@ d1g=designObj{
 	@Test
 	def void testInvalidNoVarRefAttributes(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D::DosingTarget }
+			DECLARED_VARIABLES{ D::dosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 				AMT : { use is amt, variable = 0.0 }
@@ -1916,7 +1916,7 @@ d1g=designObj{
 	@Test
 	def void testInvalidNonBoolExpressionAttributes(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D::DosingTarget }
+			DECLARED_VARIABLES{ D::dosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 				TIME : { use is idv }
@@ -1965,7 +1965,7 @@ d1g=designObj{
 	def void testValidAsExpression(){
 		val mcl = '''
 warfarin_PK_v2_dat = dataObj{
-	DECLARED_VARIABLES{ GUT::DosingTarget }
+	DECLARED_VARIABLES{ GUT::dosingTarget }
 	
 	DATA_INPUT_VARIABLES {
 		CMT : { use is cmt } 
@@ -2072,7 +2072,7 @@ warfarin_PK_v2_dat = dataObj{
 	def void testValidDataMappingWhenExpression(){
 		val mcl = '''
 warfarin_PK_v2_dat = dataObj{
-	DECLARED_VARIABLES{ Y::ContinuousObs; GUT; PCA withCategories {dead, alive}; OTHER withCategories {dead, alive} }
+	DECLARED_VARIABLES{ Y::continuousObs; GUT; PCA withCategories {dead, alive}; OTHER withCategories {dead, alive} }
 	
 	DATA_INPUT_VARIABLES {
 		DVID : { use  is dvid }
@@ -2125,7 +2125,7 @@ warfarin_PK_v2_dat = dataObj{
 			DECLARED_VARIABLES{
 				Conc
 				Effect
-				Cmt::DosingTarget
+				Cmt::dosingTarget
 			}
 			
 			STUDY_DESIGN{}
@@ -2317,9 +2317,9 @@ warfarin_PK_v2_dat = dataObj{
 		val mcl = '''
 d1g=designObj{
 	DECLARED_VARIABLES{
-		Conc::ContinuousObs
+		Conc::continuousObs
 		Effect
-		Cmt::DosingTarget
+		Cmt::dosingTarget
 	}
 	INTERVENTION{
 		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
@@ -2344,9 +2344,9 @@ d1g=designObj{
 		val mcl = '''
 d1g=designObj{
 	DECLARED_VARIABLES{
-		Conc::ContinuousObs
+		Conc::continuousObs
 		Effect
-		Cmt::DosingTarget
+		Cmt::dosingTarget
 	}
 	INTERVENTION{
 		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
@@ -2389,9 +2389,9 @@ d1g=designObj{
 		val mcl = '''
 d1g=designObj{
 	DECLARED_VARIABLES{
-		Conc::ContinuousObs
+		Conc::continuousObs
 		Effect
-		Cmt::DosingTarget
+		Cmt::dosingTarget
 	}
 	INTERVENTION{
 		dose1 : { type is infusion, input=Cmt, amount=100, doseTime=0, duration=1} 

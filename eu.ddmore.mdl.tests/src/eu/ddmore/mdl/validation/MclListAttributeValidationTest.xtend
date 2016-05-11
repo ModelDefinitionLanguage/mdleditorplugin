@@ -90,7 +90,7 @@ class MclListAttributeValidationTest {
 	@Test
 	def void testDataDerivedVariablesAttributes(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D::DosingTarget }
+			DECLARED_VARIABLES{ D::dosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 				AMT : { use is amt, variable = D }
@@ -109,7 +109,7 @@ class MclListAttributeValidationTest {
 	@Test
 	def void testValidSrcColumn(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D::DosingTarget }
+			DECLARED_VARIABLES{ D::dosingTarget }
 			
 			DATA_INPUT_VARIABLES{
 				CMT : { use is cmt }
@@ -143,7 +143,7 @@ class MclListAttributeValidationTest {
 	@Test
 	def void testValidSrcDvColumn(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D::ContinuousObs }
+			DECLARED_VARIABLES{ D::continuousObs }
 			
 			DATA_INPUT_VARIABLES{
 				CMT : { use is dvid }

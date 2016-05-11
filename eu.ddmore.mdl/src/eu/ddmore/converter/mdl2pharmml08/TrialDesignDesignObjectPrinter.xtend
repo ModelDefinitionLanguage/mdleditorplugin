@@ -75,7 +75,11 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static SAMP_TYPE_SIMPLE_VALUE = 'simple'
 	val public static SAMP_TYPE_COMBI_VALUE = 'combi'
 	val public static SAMP_COMBI_ATT = 'combination'
-
+	val public static DS_ELEMENT_ATT = 'element'
+	val public static DS_ELEMENT_PARAM_VALUE = 'parameter'
+	val public static DS_DISCRETE_ATT = 'discrete'
+	val public static DS_RANGE_ATT = 'discrete'
+	val public static DS_OBJREF_ATT = 'objRef'
 
 	val public static TOTAL_SIZE_PROP = 'totalSize'
 	val public static NUM_SAMPLES_PROP = 'numSamples'
@@ -502,6 +506,20 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 				</Relative>
 			«ENDIF»
 		</ObservationsCombination>
+	'''
+
+
+	def writeDesignSpace(AttributeList it)'''
+		<DesignSpace>
+			«FOR p : getAttributeExpression(DS_OBJREF_ATT).vector»
+				«p.pharmMLExpr»
+			«ENDFOR»
+			«IF hasAttribute(DS_DISCRETE_ATT)»
+				«getAttributeExpression(DS_DISCRETE_ATT).expressionAsAssignment»
+			«ELSEIF hasAttribute(DS_RANGE_ATT)»
+				«getAttributeExpression(DS_RANGE_ATT).expressionAsAssignment»
+			«ENDIF»
+		</DesignSpace>
 	'''
 
 }

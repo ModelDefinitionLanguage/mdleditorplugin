@@ -21,8 +21,8 @@ class MclIndexDataTest {
 	val static CODE_SNIPPET = '''
 obj1 = dataObj{
 	DECLARED_VARIABLES{
-			Y::ContinuousObs
-			GUT::DosingTarget
+			Y::continuousObs
+			GUT::dosingTarget
 			PCA withCategories {dead, alive}
 			OTHER withCategories {dead, alive}
 	}

@@ -22,7 +22,7 @@ class MclParserDataObj1Test {
 	
 	val static CODE_SNIPPET = '''
 	warfarin_PK_ODE_dat = dataObj {
-	DECLARED_VARIABLES{GUT::DosingTarget Y}
+	DECLARED_VARIABLES{GUT::dosingTarget Y}
 
 	DATA_INPUT_VARIABLES {
 		ID : { use is id }

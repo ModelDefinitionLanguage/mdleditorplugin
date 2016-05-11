@@ -18,7 +18,7 @@ class MclParserDataObj3Test {
 	
 	val static CODE_SNIPPET = '''
 warfarin_PK_v2_dat = dataObj{
-	DECLARED_VARIABLES{ Y::ContinuousObs; GUT::DosingTarget; PCA withCategories {dead, alive}; OTHER withCategories {dead, alive} }
+	DECLARED_VARIABLES{ Y::continuousObs; GUT::dosingTarget; PCA withCategories {dead, alive}; OTHER withCategories {dead, alive} }
 	
 	DATA_INPUT_VARIABLES {
 		ID : { use is id }

@@ -35,6 +35,8 @@ import eu.ddmore.mdl.mdl.PWClause
 import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.mdl.CategoryValueReference
 import eu.ddmore.mdl.utils.BlockUtils
+import eu.ddmore.mdl.mdl.UnnamedArgument
+import java.util.List
 
 class PharmMLExpressionBuilder {
 	
@@ -425,29 +427,49 @@ class PharmMLExpressionBuilder {
 	'''
     
     private def CharSequence getFunctionCall(SymbolReference it){
-    	var retVal = ''''''
     	val a = argList
     	switch(a){
     		NamedFuncArguments:
-    			retVal += '''
-						<math:FunctionCall>
-							«func.localSymbolReference»
-							«a.namedArguments»
-						</math:FunctionCall>
+    			'''
+				<math:FunctionCall>
+					«func.localSymbolReference»
+					«a.namedArguments»
+				</math:FunctionCall>
     			''' 
     			
     		UnnamedFuncArguments:{
-    			val opType = if(a.args.size > 1) "Binop" else "Uniop"
-    			retVal += '''
+    			switch(func){
+    				case 'dseq':
+    					writeSequence(a.args)
+    				case 'seq':
+    					writeSequence(a.args)
+    				default:{
+		    			val opType = if(a.args.size > 1) "Binop" else "Uniop"
+		    			'''
     					<math:«opType» op="«func.pharmMlFunction»">
     						«a.unnamedArguments»
     					</math:«opType»>	
     					'''
+   					}
+    			}
     		}
     	}
-    	retVal
     }
 
+	def private writeSequence(List<UnnamedArgument> args)'''
+«««    seq functions tage args(from, to, interval)
+		<ct:Sequence>
+			<ct:Begin>
+				«args.get(0).argument.pharmMLExpr»
+			</ct:Begin>
+			<ct:StepSize>
+				«args.get(2).argument.pharmMLExpr»
+			</ct:StepSize>
+			<ct:End>
+				«args.get(1).argument.pharmMLExpr»
+			</ct:End>
+		</ct:Sequence>
+	'''
 	
 	def getNamedArguments(NamedFuncArguments it)'''
 		«FOR arg : arguments»

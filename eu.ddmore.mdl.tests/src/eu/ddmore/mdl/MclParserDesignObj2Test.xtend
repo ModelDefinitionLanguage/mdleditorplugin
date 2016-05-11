@@ -22,9 +22,9 @@ class MclParserDesignObj2Test {
 	val static CODE_SNIPPET = '''
 d1g=designObj{
 	DECLARED_VARIABLES{
-		Conc::ContinuousObs
-		Effect::ContinuousObs
-		Cmt::DosingTarget
+		Conc::continuousObs
+		Effect::continuousObs
+		Cmt::dosingTarget
 	}
 	INTERVENTION{
 		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 

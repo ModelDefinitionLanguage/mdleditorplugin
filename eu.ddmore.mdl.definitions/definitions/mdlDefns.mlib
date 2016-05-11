@@ -36,20 +36,20 @@ _type varType _enum (cov, corr, sd, var);
 _type estimateType _enum (scalar, vector, matrix);
 _type obstype _enum (combinedError1, combinedError2, additiveError, proportionalError, categorical, count, discrete, tte, continuous, userDefined);
 _type sampletype _enum (simple, combi);
-_type sampleelement _enum (bolusAmt, infAmt, duration, sampleTime, numberTimes, covariate, /*catCov, */ numberArms, armSize, parameter, doseTime);
+_type sampleElement _enum (bolusAmt, infAmt, duration, sampleTime, numberTimes, covariate, /*catCov, */ numberArms, armSize, parameter, doseTime);
 _type objType _enum (mdlObj, dataObj, parObj, taskObj, designObj, priorObj);
 
 // Data input variables
 
-_mapping DoseMapping _data ::Int _col ::Cmt _tgt ::Reference[::DosingTarget]; 
-_mapping ObsMapping _data ::Int _col ::Dvid _tgt ::Reference[::ContinuousObs]; 
+_mapping DoseMapping _data ::Int _col ::Cmt _tgt ::Reference[::dosingTarget]; 
+_mapping ObsMapping _data ::Int _col ::Dvid _tgt ::Reference[::continuousObs]; 
 
 _list DataColumn _super;
 _list Covariate _alt ::Real _extends DataColumn _atts use::divUse, interp::Reference[::Function(::Real, ::Real, ::Real, ::Real, ::Real)::Real]
 							_sig (use, interp?);  
 _list CatCovariate _extends DataColumn _atts use::divUse _cat use::Int _sig (use);  
-_list Amt _extends DataColumn _atts use::divUse, define::DoseMapping, variable::Reference[::DosingTarget] _sig (use, define), (use, variable);
-_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, variable::Reference[::ContinuousObs] _sig (use, define), (use, variable);
+_list Amt _extends DataColumn _atts use::divUse, define::DoseMapping, variable::Reference[::dosingTarget] _sig (use, define), (use, variable);
+_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, variable::Reference[::continuousObs] _sig (use, define), (use, variable);
 _list Idv _extends DataColumn _atts use::divUse _sig(use);
 _list Cmt _extends DataColumn _atts use::divUse _sig(use);
 _list Id _extends DataColumn _atts use::divUse _sig(use);
@@ -128,64 +128,64 @@ _list IndivUserDefined _alt ::Real _extends IndivAbstractList
 	
 _list VarLevel _atts type::varLvlType, level::Int
 	_sig(type, level);
-_list DosingTarget _super;
-_list DerivList _alt ::Deriv _extends DosingTarget _atts deriv::Real, init::Real, x0::Real, wrt::Reference[::Real]
+_list dosingTarget _super;
+_list DerivList _alt ::Deriv _extends dosingTarget _atts deriv::Real, init::Real, x0::Real, wrt::Reference[::Real]
 	_sig(deriv, init?, x0?, wrt?);
-_list DosingVar _alt ::Real _extends DosingTarget _atts value::Real _sig(value);
+_list DosingVar _alt ::Real _extends dosingTarget _atts value::Real _sig(value);
 
 
 // Compartments
 
-_list CmtDirect _alt ::Real _atts type::cmtType, modelCmt::Int, to::Reference[::DosingTarget],
+_list CmtDirect _alt ::Real _atts type::cmtType, modelCmt::Int, to::Reference[::dosingTarget],
 		modelDur::Real, tlag::Real, finput::Real, modelRate::Real
 		_sig(type, modelCmt?, to, modelDur?, tlag?, finput?),
 			(type, modelCmt?, to, modelRate?, tlag?, finput?);
 
-_list Effect _alt ::Real _atts type::cmtType, modelCmt::Int, from::Reference[::DosingTarget], keq::Real
+_list Effect _alt ::Real _atts type::cmtType, modelCmt::Int, from::Reference[::dosingTarget], keq::Real
 			_sig (type, modelCmt?, from, keq);
 			
-_list Depot _alt ::Real _atts type::cmtType, modelCmt::Int, to::Reference[::DosingTarget], ka::Real,
+_list Depot _alt ::Real _atts type::cmtType, modelCmt::Int, to::Reference[::dosingTarget], ka::Real,
 						modelDur::Real, tlag::Real, finput::Real, ktr::Real, mtt::Real
 			_sig (type, modelCmt?, to, ka, tlag?, finput?),
 				 (type, modelCmt?, to, ktr, mtt),
 				 (type, modelCmt?, to, modelDur, tlag?, finput?);
 
-_list Transfer _anon _atts type::cmtType, modelCmt::Int, to::Reference[::DosingTarget], from::Reference[::DosingTarget], kt::Real
+_list Transfer _anon _atts type::cmtType, modelCmt::Int, to::Reference[::dosingTarget], from::Reference[::dosingTarget], kt::Real
 			_sig (type, modelCmt?, to, from, kt);
 
-_list Compartment _alt ::Real _extends DosingTarget
+_list Compartment _alt ::Real _extends dosingTarget
 		_atts  type::cmtType, modelCmt::Int
 		_sig (type, modelCmt?);
 		
-_list Elimination _anon _atts type::cmtType, modelCmt::Int, from::Reference[::DosingTarget], v::Real,
+_list Elimination _anon _atts type::cmtType, modelCmt::Int, from::Reference[::dosingTarget], v::Real,
 								cl::Real, k::Real, vm::Real, km::Real
 				_sig (type, modelCmt?, from, v?, k),
 					 (type, modelCmt?, from, v?, cl),
 					 (type, modelCmt?, from, vm, km);
 					 
-_list Distribution _atts type::cmtType, modelCmt::Int, from::Reference[::DosingTarget],
+_list Distribution _atts type::cmtType, modelCmt::Int, from::Reference[::dosingTarget],
 								kin::Real, kout::Real
 				_sig(type, modelCmt?, kin, kout, from);
 
 	 
 // Observations
-_list ContinuousObs _super;
-_list combinedError1List _alt ::Real _extends ContinuousObs
+_list continuousObs _super;
+_list combinedError1List _alt ::Real _extends continuousObs
 	_atts type::obstype, trans::transType, lhsTrans::Boolean,
 			additive::Real, proportional::Real, prediction::Real, eps::RandomVariable[::Real]
 		_sig(type, trans?, lhsTrans?, additive, proportional, prediction, eps)
 	;
-_list combinedError2List _alt ::Real _extends ContinuousObs
+_list combinedError2List _alt ::Real _extends continuousObs
 	_atts type::obstype, trans::transType, lhsTrans::Boolean,
 			additive::Real, proportional::Real, prediction::Real, eps::RandomVariable[::Real]
 			_sig(type, trans?, lhsTrans?, additive, proportional, prediction, eps)
 	;
-_list additiveErrorList _alt ::Real _extends ContinuousObs
+_list additiveErrorList _alt ::Real _extends continuousObs
 	_atts type::obstype, trans::transType, lhsTrans::Boolean,
 			additive::Real, prediction::Real, eps::RandomVariable[::Real]
 			_sig(type, trans?, lhsTrans?, additive, prediction, eps)
 	;
-_list proportionalErrorList _extends ContinuousObs
+_list proportionalErrorList _extends continuousObs
 	_atts type::obstype, trans::transType, lhsTrans::Boolean,
 			proportional::Real, prediction::Real, eps::RandomVariable[::Real]
 			_sig(type, trans?, lhsTrans?, proportional, prediction, eps)
@@ -193,9 +193,9 @@ _list proportionalErrorList _extends ContinuousObs
 _list CatObs _anon _atts type::obstype, variable::RandomVariable[::GenericEnum] _sig(type, variable);
 _list CountObs _anon _atts type::obstype, variable::RandomVariable[::Int] _sig(type, variable);
 _list DiscreteObs _anon _atts type::obstype, variable::RandomVariable[::GenericEnum] _sig(type, variable);
-_list TteObs _extends ContinuousObs _atts type::obstype, hazard::Reference[::Real], maxEvent::Real _sig(type, hazard, maxEvent?);
-_list ContinuousObsList _anon _extends ContinuousObs _atts type::obstype, variable::RandomVariable[::Real] _sig(type, variable);
-_list UserDefinedObsList _extends ContinuousObs _atts type::obstype, value::Real, prediction::Real, weight::Real
+_list TteObs _extends continuousObs _atts type::obstype, hazard::Reference[::Real], maxEvent::Real _sig(type, hazard, maxEvent?);
+_list ContinuousObsList _anon _extends continuousObs _atts type::obstype, variable::RandomVariable[::Real] _sig(type, variable);
+_list UserDefinedObsList _extends continuousObs _atts type::obstype, value::Real, prediction::Real, weight::Real
 									_sig(type, value, prediction, weight);
 
 // Parameter obj variability & Structural
@@ -238,12 +238,12 @@ _type AdminTypeType _enum (bolus, infusion, combi, resetAll, reset);
 
 // Design Objects
 _list AdminSuperList _super;
-_list AdminBolusList _extends AdminSuperList _atts type::AdminTypeType, input::Reference[::DosingTarget], amount::Real,
+_list AdminBolusList _extends AdminSuperList _atts type::AdminTypeType, input::Reference[::dosingTarget], amount::Real,
 						p::Real, doseTime::Vector, ssInterval::Real, timeLastSSDose::Real, doseIntervalVar::Reference, lastDoseTimeVar::Reference
 						_sig (type, input, amount, p?, doseTime, doseIntervalVar?, lastDoseTimeVar?),
 							(type, input, amount, p?, ssInterval?, timeLastSSDose) ;
 
-_list AdminInfusionList _extends AdminSuperList _atts type::AdminTypeType, input::Reference[::DosingTarget], amount::Real,
+_list AdminInfusionList _extends AdminSuperList _atts type::AdminTypeType, input::Reference[::dosingTarget], amount::Real,
 						rate::Vector, p::Real, doseTime::Vector, duration::Vector,
 						ssInterval::Real, timeLastSSDose::Real, timeStopSSInfusion::Real,
 						doseIntervalVar::Reference, lastDoseTimeVar::Reference
@@ -258,13 +258,13 @@ _list AdminComplexList _extends AdminSuperList _atts type::AdminTypeType, combin
 _list AdminResetAllList _extends AdminSuperList _atts type::AdminTypeType
 						_sig (type) ;
 						
-_sublist ResetSublist _atts variable::Reference[::DosingTarget], resetTime::Real, value::Real _sig(variable, resetTime?, value?);
+_sublist ResetSublist _atts variable::Reference[::dosingTarget], resetTime::Real, value::Real _sig(variable, resetTime?, value?);
 
 _list AdminResetList _extends AdminSuperList _atts type::AdminTypeType, reset::Vector[::ResetSublist]
 						_sig (type, reset) ;
 
 _sublist intSeqAtts _atts admin::Vector[::Reference[::AdminSuperList]], start::Vector
-					_sig (admin, start);
+					_sig (admin, start?);
 
 _sublist sampSeqAtts _atts sample::Vector[::Reference[::SamplingSuper]], start::Vector
 					_sig (sample, start);
@@ -278,40 +278,40 @@ _list StudyDesign _atts armSize::Int, sameTimes::Boolean,
 //_list DesignSpaceCatCov _atts objRef::GenericEnum, element::sampleelement, discrete::Vector, range::Vector
 //						_sig (objRef, element, discrete),
 //							(objRef, element, range);
-_list DesignSpaceCov _atts objRef::Reference[::Real], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceCov _atts objRef::Reference[::Real], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceBolusAmt _atts objRef::Vector[::Reference[::AdminBolusList]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceBolusAmt _atts objRef::Vector[::Reference[::AdminBolusList]], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceInfAmt _atts objRef::Vector[::Reference[::AdminInfusionList]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceInfAmt _atts objRef::Vector[::Reference[::AdminInfusionList]], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceDoseTime _atts objRef::Vector[::Reference[::AdminBolusList]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceDoseTime _atts objRef::Vector[::Reference[::AdminBolusList]], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceDuration _atts objRef::Vector[::Reference[::AdminInfusionList]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceDuration _atts objRef::Vector[::Reference[::AdminInfusionList]], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceNumTimes _atts objRef::Vector[::Reference[::SamplingSuper]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceNumTimes _atts objRef::Vector[::Reference[::SamplingSuper]], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceSampleTimes _atts objRef::Vector[::Reference[::SamplingSuper]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceSampleTimes _atts objRef::Vector[::Reference[::SamplingSuper]], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceNumArms _atts objRef::Vector[::Reference[::StudyDesign]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceNumArms _atts objRef::Vector[::Reference[::StudyDesign]], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceArmSize _atts objRef::Vector[::Reference[::StudyDesign]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceArmSize _atts objRef::Vector[::Reference[::StudyDesign]], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
-_list DesignSpaceParam _atts objRef::Vector[::Reference[::Real]], element::sampleelement, discrete::Vector, range::Vector
+_list DesignSpaceParam _atts objRef::Vector[::Reference[::Real]], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
 
 _list SamplingSuper _super;
 
-_list SimpleSamplingList _extends SamplingSuper _atts type::sampletype, outcome::Reference[::ContinuousObs], sampleTime::Vector,
+_list SimpleSamplingList _extends SamplingSuper _atts type::sampletype, outcome::Reference[::continuousObs], sampleTime::Vector,
 								numberTimes::Int, deltaTime::Real, blq::Real, ulq::Real, numberSamples::Vector[::Int]
 							_sig(type, outcome, sampleTime?, numberTimes?, numberSamples?, deltaTime?, blq?, ulq?);
 //_list ComplexSamplingList _extends SamplingSuper _atts type::sampletype, combination::Vector[::sampSeqAtts], numberTimes::Int
@@ -348,7 +348,7 @@ _prop optAlgo::OptAlgoType, fim::String, previousFim::String, graphOnly::Boolean
 		equivalenceRange::Vector, powerEquivalence::Boolean, nSubjectsEquivalence::Boolean, typeIIError::Real,
 		graphLogical::Boolean, logLogical::Boolean, namesDataX::Vector[::String], namesDataY::Vector[::String],
 		graphInfA::Vector, graphSupA::Vector, subjectsOpt::Boolean, lowerA::Vector, upperA::Vector, iterPrint::Boolean,
-		simplexParameter::Real, maxIter::Int, rcTol::Real,identicalTimes::Boolean, features::Vector[::sampleelement];
+		simplexParameter::Real, maxIter::Int, rcTol::Real,identicalTimes::Boolean, features::Vector[::sampleElement];
 		
 _prop amount::Real, duration::Real, sampleTime::Real, numberTimes::Int, doseTime::Real;
 
@@ -478,12 +478,12 @@ _block SAMPLING (,) _statements (,) _listDefn
 
 _block DESIGN_SPACES (,) _statements (,) _listDefn
 		_list _key=element //sampleelement.catCov->DesignSpaceCatCov, 
-							sampleelement.covariate->DesignSpaceCov, sampleelement.bolusAmt->DesignSpaceBolusAmt,
-								sampleelement.infAmt->DesignSpaceInfAmt,
-								sampleelement.doseTime -> DesignSpaceDoseTime, sampleelement.duration->DesignSpaceDuration,
-								sampleelement.numberTimes->DesignSpaceNumTimes, sampleelement.sampleTime->DesignSpaceSampleTimes,
-								sampleelement.numberArms->DesignSpaceNumArms, sampleelement.armSize->DesignSpaceArmSize,
-								sampleelement.parameter->DesignSpaceParam;
+							sampleElement.covariate->DesignSpaceCov, sampleElement.bolusAmt->DesignSpaceBolusAmt,
+								sampleElement.infAmt->DesignSpaceInfAmt,
+								sampleElement.doseTime -> DesignSpaceDoseTime, sampleElement.duration->DesignSpaceDuration,
+								sampleElement.numberTimes->DesignSpaceNumTimes, sampleElement.sampleTime->DesignSpaceSampleTimes,
+								sampleElement.numberArms->DesignSpaceNumArms, sampleElement.armSize->DesignSpaceArmSize,
+								sampleElement.parameter->DesignSpaceParam;
 
 _block DESIGN_PARAMETERS (,) _statements (,) _eqnDefn, _eqnDefn+;
 _block PRIOR_PARAMETERS (,) _statements (,) _eqnDefn, _eqnDefn+;

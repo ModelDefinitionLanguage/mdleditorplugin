@@ -3,7 +3,7 @@
 # log link specified in OBSERVATION block definition
 
 Poisson_DIST_dat = dataObj{
-   DECLARED_VARIABLES{ Y::ContinuousObs }
+   DECLARED_VARIABLES{ Y::continuousObs }
 	
    DATA_INPUT_VARIABLES{
       ID:{ use is id }

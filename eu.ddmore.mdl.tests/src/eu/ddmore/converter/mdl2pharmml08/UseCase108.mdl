@@ -2,7 +2,7 @@
 
 magni2000_data = dataObj{
 
-DECLARED_VARIABLES{Y1::ContinuousObs  Y2::ContinuousObs  Y3::ContinuousObs  Y4::ContinuousObs }
+DECLARED_VARIABLES{Y1::continuousObs  Y2::continuousObs  Y3::continuousObs  Y4::continuousObs }
 
    DATA_INPUT_VARIABLES{
       ID:{use is id}

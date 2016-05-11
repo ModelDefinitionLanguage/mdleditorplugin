@@ -7,7 +7,7 @@
 dataObjectName = dataObj {
 	DECLARED_VARIABLES{
 		# Variables referenced in the model are declared here.
-		Y::ContinuousObs
+		Y::continuousObs
 	}
 
 	DATA_INPUT_VARIABLES {

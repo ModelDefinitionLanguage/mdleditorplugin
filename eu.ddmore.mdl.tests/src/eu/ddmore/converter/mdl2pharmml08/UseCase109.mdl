@@ -3,7 +3,7 @@
 ### Data object
 Friberg_PANSS_CPT2009_dat = dataObj{
 
-   DECLARED_VARIABLES {Y::ContinuousObs }
+   DECLARED_VARIABLES {Y::continuousObs }
    
    DATA_INPUT_VARIABLES{
       ID : {use is id}

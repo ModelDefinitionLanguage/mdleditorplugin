@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions
 import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdllib.mdllib.BlockDefinition
 import eu.ddmore.mdllib.mdllib.FunctionDefnBody
+import eu.ddmore.mdllib.mdllib.FunctionSpec
 
 class MDLBuildFixture {
 //	val public static String REAL_TYPE_NAME = "Real"
@@ -111,6 +112,19 @@ class MDLBuildFixture {
 	def SymbolReference createSymbolRef(SymbolDefinition sd){
 		val retVal = MdlFactory.eINSTANCE.createSymbolReference
 		retVal.ref = sd
+		retVal
+	}
+	
+	def SymbolReference createFunctionCall(FunctionDefnBody fSpec, Expression ... funcArgs){
+		val retVal = MdlFactory.eINSTANCE.createSymbolReference
+		retVal.ref = fSpec
+		val unnamedArgs = MdlFactory.eINSTANCE.createUnnamedFuncArguments
+		funcArgs.forEach[
+			val unArg = MdlFactory.eINSTANCE.createUnnamedArgument
+			unArg.argument = it
+			unnamedArgs.args.add(unArg)
+		]
+		retVal.argList = unnamedArgs
 		retVal
 	}
 	

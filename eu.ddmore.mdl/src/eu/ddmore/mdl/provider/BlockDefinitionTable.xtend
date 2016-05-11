@@ -28,6 +28,7 @@ class BlockDefinitionTable {
 	public static val DES_INTERVENTION_BLK = "INTERVENTION"
 	public static val TARGET_SETTINGS = "TARGET_SETTINGS"
 	public static val DECLARED_VARS_BLK = "DECLARED_VARIABLES"
+	public static val DES_DESIGN_SPACE_BLK = "DESIGN_SPACES"
 	
 //	static val ep = MdlPackage::eINSTANCE 
 

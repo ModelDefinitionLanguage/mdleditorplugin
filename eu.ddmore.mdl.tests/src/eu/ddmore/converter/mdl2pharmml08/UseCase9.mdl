@@ -5,7 +5,7 @@
 #
 
 warfarin_PK_INFUSION_dat = dataObj {
-	DECLARED_VARIABLES{ CENTRAL::DosingTarget Y::ContinuousObs }
+	DECLARED_VARIABLES{ CENTRAL::dosingTarget Y::continuousObs }
 	
 	DATA_INPUT_VARIABLES {
 		ID : { use is id }
