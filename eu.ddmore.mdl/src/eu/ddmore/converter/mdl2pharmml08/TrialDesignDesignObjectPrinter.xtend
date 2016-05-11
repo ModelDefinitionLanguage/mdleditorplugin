@@ -76,9 +76,19 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static SAMP_TYPE_COMBI_VALUE = 'combi'
 	val public static SAMP_COMBI_ATT = 'combination'
 	val public static DS_ELEMENT_ATT = 'element'
-	val public static DS_ELEMENT_PARAM_VALUE = 'parameter'
 	val public static DS_ELEMENT_BOLUSAMT_VALUE = 'bolusAmt'
 	val public static DS_ELEMENT_INFAMT_VALUE = 'infAmt'
+	val public static DS_ELEMENT_DURATION_VALUE = 'duration'
+	val public static DS_ELEMENT_SAMPLE_TIMES_VALUE = 'sampleTime'
+	val public static DS_ELEMENT_NUMBER_TIMES_VALUE = 'numberTimes'
+	val public static DS_ELEMENT_COVARIATE_VALUE = 'covariate'
+	val public static DS_ELEMENT_NUMBER_ARMS_VALUE = 'numberArms'
+	val public static DS_ELEMENT_ARM_SIZE_VALUE = 'armSize'
+	val public static DS_ELEMENT_PARAM_VALUE = 'parameter'
+	val public static DS_ELEMENT_DOSE_TIME_VALUE = 'doseTime'
+	
+	val public static COV_MOD_OID = "desCovModOid"
+
 	val public static DS_DISCRETE_ATT = 'discrete'
 	val public static DS_RANGE_ATT = 'discrete'
 	val public static DS_OBJREF_ATT = 'objRef'
@@ -89,17 +99,14 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static SAME_TIMES_PROP = 'sameTimes'
 	val public static TOTAL_COST_PROP = 'totalCost'
 
-
-
 	val MclObject mObj
 	val MclObject designObj
+	
 
 	new(Mcl mdl){
 		this.mObj = mdl.modelObject
 		this.designObj = mdl.designObject
 	}
-
-
 
 
 	override writeTrialDesign()'''
@@ -516,6 +523,43 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		«FOR p : getAttributeExpression(DS_OBJREF_ATT).vector»
 			«p.pharmMLExpr»
 		«ENDFOR»
+		«writeDiscreteOrRange»
+	'''
+
+//	def writeDsDosingBlock(AttributeList it)
+//	'''
+//		«FOR p : getAttributeExpression(DS_OBJREF_ATT).vector»
+//			<InterventionRef oidRef="«p.symbolRef.ref.name»"/>
+//		«ENDFOR»
+//		<DoseAmount>
+//			«writeDiscreteOrRange»
+//		</DoseAmount>
+//	'''
+
+	def writeDsElementBlock(AttributeList it, String refName, String timesName)'''
+		«FOR p : getAttributeExpression(DS_OBJREF_ATT).vector»
+			<«refName» oidRef="«p.symbolRef.ref.name»"/>
+		«ENDFOR»
+		<«timesName»>
+			«writeDiscreteOrRange»
+		</«timesName»>
+	'''
+
+	def writeDsCovariateBlock(AttributeList it)'''
+		«FOR p : getAttributeExpression(DS_OBJREF_ATT).vector SEPARATOR	'''
+
+</DesignSpace>
+<DesignSpace>'''»
+			<CovariateModelRef oidRef="«COV_MOD_OID»"/>
+			<CovariateRef symbIdRef="«p.symbolRef.ref.name»">
+				<mdef:Continuous>
+					«writeDiscreteOrRange»
+				</mdef:Continuous>
+			</CovariateRef>
+		«ENDFOR»
+	'''
+
+	def writeDiscreteOrRange(AttributeList it)'''
 		«IF hasAttribute(DS_DISCRETE_ATT)»
 			«getAttributeExpression(DS_DISCRETE_ATT).expressionAsAssignment»
 		«ELSEIF hasAttribute(DS_RANGE_ATT)»
@@ -523,28 +567,28 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		«ENDIF»
 	'''
 
-	def writeDsDosingBlock(AttributeList it)
-	'''
-		«FOR p : getAttributeExpression(DS_OBJREF_ATT).vector»
-			<InterventionRef oidRef="«p.symbolRef.ref.name»"/>
-		«ENDFOR»
-		<DoseAmount>
-			«IF hasAttribute(DS_DISCRETE_ATT)»
-				«getAttributeExpression(DS_DISCRETE_ATT).expressionAsAssignment»
-			«ELSEIF hasAttribute(DS_RANGE_ATT)»
-				«getAttributeExpression(DS_RANGE_ATT).expressionAsAssignment»
-			«ENDIF»
-		</DoseAmount>
-	'''
-
 	def writeDesignSpace(AttributeList it)'''
 		<DesignSpace>
 			«switch(getAttributeEnumValue(DS_ELEMENT_ATT)){
-				case(DS_ELEMENT_PARAM_VALUE):
-					writeDsParameterBlock
 				case(DS_ELEMENT_BOLUSAMT_VALUE),
 				case(DS_ELEMENT_INFAMT_VALUE):
-					writeDsDosingBlock
+					writeDsElementBlock('InterventionRef', 'DoseAmount')
+				case(DS_ELEMENT_DURATION_VALUE):
+					writeDsElementBlock('InterventionRef', 'Duration')
+				case(DS_ELEMENT_SAMPLE_TIMES_VALUE):
+					writeDsElementBlock('ObservationRef', 'ObservationTimes')
+				case(DS_ELEMENT_NUMBER_TIMES_VALUE):
+					writeDsElementBlock('ObservationRef', 'NumberTimes')
+				case(DS_ELEMENT_COVARIATE_VALUE):
+					writeDsCovariateBlock
+				case(DS_ELEMENT_NUMBER_ARMS_VALUE):
+					writeDsElementBlock('ArmRef', 'NumberArms')
+				case(DS_ELEMENT_ARM_SIZE_VALUE):
+					writeDsElementBlock('ArmRef', 'ArmSize')
+				case(DS_ELEMENT_PARAM_VALUE):
+					writeDsParameterBlock
+				case(DS_ELEMENT_DOSE_TIME_VALUE):
+					writeDsElementBlock('InterventionRef', 'DosingTimes')
 			}»
 		</DesignSpace>
 	'''

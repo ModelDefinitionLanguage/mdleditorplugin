@@ -36,7 +36,7 @@ _type varType _enum (cov, corr, sd, var);
 _type estimateType _enum (scalar, vector, matrix);
 _type obstype _enum (combinedError1, combinedError2, additiveError, proportionalError, categorical, count, discrete, tte, continuous, userDefined);
 _type sampletype _enum (simple, combi);
-_type sampleElement _enum (bolusAmt, infAmt, duration, sampleTime, numberTimes, covariate, /*catCov, */ numberArms, armSize, parameter, doseTime);
+_type sampleElement _enum (bolusAmt, infAmt, duration, sampleTime, numberTimes, covariate, numberArms, armSize, parameter, doseTime);
 _type objType _enum (mdlObj, dataObj, parObj, taskObj, designObj, priorObj);
 
 // Data input variables
@@ -278,7 +278,7 @@ _list StudyDesign _atts armSize::Int, sameTimes::Boolean,
 //_list DesignSpaceCatCov _atts objRef::GenericEnum, element::sampleelement, discrete::Vector, range::Vector
 //						_sig (objRef, element, discrete),
 //							(objRef, element, range);
-_list DesignSpaceCov _atts objRef::Reference[::Real], element::sampleElement, discrete::Vector, range::Vector
+_list DesignSpaceCov _atts objRef::Vector[::Reference[::Real]], element::sampleElement, discrete::Vector, range::Vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
 _list DesignSpaceBolusAmt _atts objRef::Vector[::Reference[::AdminBolusList]], element::sampleElement, discrete::Vector, range::Vector
@@ -312,8 +312,8 @@ _list DesignSpaceParam _atts objRef::Vector[::Reference[::Real]], element::sampl
 _list SamplingSuper _super;
 
 _list SimpleSamplingList _extends SamplingSuper _atts type::sampletype, outcome::Reference[::continuousObs], sampleTime::Vector,
-								numberTimes::Int, deltaTime::Real, blq::Real, ulq::Real, numberSamples::Vector[::Int]
-							_sig(type, outcome, sampleTime?, numberTimes?, numberSamples?, deltaTime?, blq?, ulq?);
+								numberTimes::Int, deltaTime::Real, blq::Real, ulq::Real
+							_sig(type, outcome, sampleTime?, numberTimes?, deltaTime?, blq?, ulq?);
 //_list ComplexSamplingList _extends SamplingSuper _atts type::sampletype, combination::Vector[::sampSeqAtts], numberTimes::Int
 //							_sig(type,combination, numberTimes?);
 _list DerivedSamplingList _extends SamplingSuper _atts type::sampletype, combination::Vector[::Reference[::SamplingSuper]],
