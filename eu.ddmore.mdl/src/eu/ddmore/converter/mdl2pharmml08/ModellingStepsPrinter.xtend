@@ -78,8 +78,8 @@ class ModellingStepsPrinter {
 	def writeEstimationStep(String oidRef, MclObject mObj, MclObject dObj, MclObject pObj, BlockStatement taskBlk)'''
 		<EstimationStep oid="«oidRef»">
 			«taskBlk.statements.writeSettingsFile»
-			«dObj.writeExternalDataSetReference»
-			«pObj.writeParametersToEstimate»
+			«writeExternalDataSetReference(dObj)»
+			«writeParametersToEstimate(pObj, mObj)»
 			«taskBlk.statements.writeSettings»
 		</EstimationStep>
 	'''
@@ -87,8 +87,8 @@ class ModellingStepsPrinter {
 	def writeSimulationStep(String oidRef, MclObject mObj, MclObject dObj, MclObject pObj, BlockStatement taskBlk)'''
 		<SimulationStep oid="«oidRef»">
 			«taskBlk.statements.writeSettingsFile»
-			«dObj.writeExternalDataSetReference»
-			«pObj.writeParameterAssignments»
+			«writeExternalDataSetReference(dObj)»
+			«writeParameterAssignments(pObj, mObj)»
 			«taskBlk.statements.writeSettings»
 		</SimulationStep>
 	'''
@@ -99,77 +99,83 @@ class ModellingStepsPrinter {
 		</ExternalDataSetReference>
 	'''
 
-	def private writeParameterEstimate(Statement s, MclObject pObj){
+	def private writeParameterEstimate(Statement s, MclObject mObj){
 		val stmt = s
 		switch(stmt){
 			ListDefinition:{
-				val paramVar = pObj.findMdlSymbolDefn(stmt.name)
+				val paramVar = mObj.findMdlSymbolDefn(stmt.name)
 				'''
-				<ParameterEstimation>
-					«paramVar.getSymbolReference»
-					<InitialEstimate fixed="«stmt.firstAttributeList.getAttributeExpression('fix')?.evaluateLogicalExpression ?: 'false'»">
-						«stmt.firstAttributeList.getAttributeExpression('value').pharmMLExpr»
-					</InitialEstimate>
-					«IF stmt.firstAttributeList.getAttributeExpression('lo') != null»
-						<LowerBound>
-							«stmt.firstAttributeList.getAttributeExpression('lo').pharmMLExpr»
-						</LowerBound>
-					«ENDIF»
-					«IF stmt.firstAttributeList.getAttributeExpression('hi') != null»
-						<UpperBound>
-							«stmt.firstAttributeList.getAttributeExpression('hi').pharmMLExpr»
-						</UpperBound>
-					«ENDIF»
-				</ParameterEstimation>
+				«IF paramVar != null»
+					<ParameterEstimation>
+						«paramVar.getSymbolReference»
+						<InitialEstimate fixed="«stmt.firstAttributeList.getAttributeExpression('fix')?.evaluateLogicalExpression ?: 'false'»">
+							«stmt.firstAttributeList.getAttributeExpression('value').pharmMLExpr»
+						</InitialEstimate>
+						«IF stmt.firstAttributeList.getAttributeExpression('lo') != null»
+							<LowerBound>
+								«stmt.firstAttributeList.getAttributeExpression('lo').pharmMLExpr»
+							</LowerBound>
+						«ENDIF»
+						«IF stmt.firstAttributeList.getAttributeExpression('hi') != null»
+							<UpperBound>
+								«stmt.firstAttributeList.getAttributeExpression('hi').pharmMLExpr»
+							</UpperBound>
+						«ENDIF»
+					</ParameterEstimation>
+				«ENDIF»
 				'''
 			}
 			default:''''''
 		}
 	}
 		
-	def private writeParametersToEstimate(MclObject pObj)'''
+	def private writeParametersToEstimate(MclObject pObj, MclObject mObj)'''
 		<ParametersToEstimate>
 			«FOR stmt: pObj.paramStructuralParams»
-				«stmt.writeParameterEstimate(pObj)»
+				«stmt.writeParameterEstimate(mObj)»
 			«ENDFOR»
 			«FOR stmt: pObj.paramVariabilityParams»
 				«IF (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'corr' && (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'cov'»
-					«stmt.writeParameterEstimate(pObj)»
+					«stmt.writeParameterEstimate(mObj)»
 				«ENDIF»
 			«ENDFOR»
 		</ParametersToEstimate>
 	'''	
 
-	def private writeParameterAssignments(MclObject pObj)'''
+	def private writeParameterAssignments(MclObject pObj, MclObject mObj)'''
 		«FOR stmt: pObj.paramStructuralParams»
-			«stmt.writeParameterAssignment(pObj)»
+			«stmt.writeParameterAssignment(mObj)»
 		«ENDFOR»
 		«FOR stmt: pObj.paramVariabilityParams»
 			«IF (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'corr' && (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'cov'»
-				«stmt.writeParameterAssignment(pObj)»
+				«stmt.writeParameterAssignment(mObj)»
 			«ENDIF»
 		«ENDFOR»
 	'''	
 
-	def private writeParameterAssignment(Statement s, MclObject pObj){
+	def private writeParameterAssignment(Statement s, MclObject mObj){
 		val stmt = s
 		switch(stmt){
 			ListDefinition:{
-				val paramVar = pObj.findMdlSymbolDefn(stmt.name)
+				val paramVar = mObj.findMdlSymbolDefn(stmt.name)
 				'''
-				<ct:VariableAssignment>
-					«paramVar.getSymbolReference»
-					«stmt.firstAttributeList.getAttributeExpression('value').expressionAsAssignment»
-				</ct:VariableAssignment>
+				«IF paramVar != null»
+					<ct:VariableAssignment>
+						«paramVar.getSymbolReference»
+						«stmt.firstAttributeList.getAttributeExpression('value').expressionAsAssignment»
+					</ct:VariableAssignment>
+				«ENDIF»
 				'''
 			}
 			EquationDefinition:{
-				val paramVar = pObj.findMdlSymbolDefn(stmt.name)
+				val paramVar = mObj.findMdlSymbolDefn(stmt.name)
 				'''
-				<ct:VariableAssignment>
-					«paramVar.getSymbolReference»
-					«stmt.expression.expressionAsAssignment»
-				</ct:VariableAssignment>
+				«IF paramVar != null»
+					<ct:VariableAssignment>
+						«paramVar.getSymbolReference»
+						«stmt.expression.expressionAsAssignment»
+					</ct:VariableAssignment>
+				«ENDIF»
 				'''
 			}
 			default:''''''

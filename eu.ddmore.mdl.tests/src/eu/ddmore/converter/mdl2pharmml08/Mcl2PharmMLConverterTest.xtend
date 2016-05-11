@@ -210,7 +210,12 @@ class Mcl2PharmMLConverterTest {
 		validateConversion("UseCase17")
 	}
 
-	@Test // compartment dosing to ODEs not supported in 4.1
+	@Test
+	def void testUseCase20(){
+		validateConversion("UseCase20")
+	}
+
+	@Test
 	def void testUseCase101(){
 		validateConversion("UseCase101")
 	}

@@ -1,29 +1,28 @@
 package eu.ddmore.mdl.utils
 
-import eu.ddmore.mdl.mdl.BlockStatement
-import eu.ddmore.mdl.mdl.MdlFactory
-import eu.ddmore.mdllib.mdllib.MdlLibFactory
-import eu.ddmore.mdl.mdl.EnumPair
+import com.google.common.base.Preconditions
 import eu.ddmore.mdl.mdl.AssignPair
-import eu.ddmore.mdllib.mdllib.Expression
-import eu.ddmore.mdl.mdl.SymbolReference
+import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.BlockStatementBody
+import eu.ddmore.mdl.mdl.EnumPair
 import eu.ddmore.mdl.mdl.EquationDefinition
-import eu.ddmore.mdllib.mdllib.SymbolDefinition
-import eu.ddmore.mdl.mdl.VectorLiteral
-import java.util.List
+import eu.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdl.mdl.MclObject
+import eu.ddmore.mdl.mdl.MdlFactory
 import eu.ddmore.mdl.mdl.SubListExpression
-import java.util.Map
+import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.ValuePair
+import eu.ddmore.mdl.mdl.VectorLiteral
+import eu.ddmore.mdllib.mdllib.BlockDefinition
+import eu.ddmore.mdllib.mdllib.Expression
+import eu.ddmore.mdllib.mdllib.FunctionDefnBody
+import eu.ddmore.mdllib.mdllib.MdlLibFactory
+import eu.ddmore.mdllib.mdllib.ObjectDefinition
+import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import eu.ddmore.mdllib.mdllib.TypeDefinition
 import java.util.ArrayList
-import eu.ddmore.mdl.mdl.MclObject
-import eu.ddmore.mdllib.mdllib.ObjectDefinition
-import com.google.common.base.Preconditions
-import eu.ddmore.mdl.mdl.Mcl
-import eu.ddmore.mdllib.mdllib.BlockDefinition
-import eu.ddmore.mdllib.mdllib.FunctionDefnBody
-import eu.ddmore.mdllib.mdllib.FunctionSpec
+import java.util.List
+import java.util.Map
 
 class MDLBuildFixture {
 //	val public static String REAL_TYPE_NAME = "Real"
