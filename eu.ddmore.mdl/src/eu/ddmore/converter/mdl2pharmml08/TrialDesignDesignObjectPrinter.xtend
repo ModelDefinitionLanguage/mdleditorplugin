@@ -77,6 +77,8 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static SAMP_COMBI_ATT = 'combination'
 	val public static DS_ELEMENT_ATT = 'element'
 	val public static DS_ELEMENT_PARAM_VALUE = 'parameter'
+	val public static DS_ELEMENT_BOLUSAMT_VALUE = 'bolusAmt'
+	val public static DS_ELEMENT_INFAMT_VALUE = 'infAmt'
 	val public static DS_DISCRETE_ATT = 'discrete'
 	val public static DS_RANGE_ATT = 'discrete'
 	val public static DS_OBJREF_ATT = 'objRef'
@@ -509,16 +511,41 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	'''
 
 
-	def writeDesignSpace(AttributeList it)'''
-		<DesignSpace>
-			«FOR p : getAttributeExpression(DS_OBJREF_ATT).vector»
-				«p.pharmMLExpr»
-			«ENDFOR»
+	def writeDsParameterBlock(AttributeList it)
+	'''
+		«FOR p : getAttributeExpression(DS_OBJREF_ATT).vector»
+			«p.pharmMLExpr»
+		«ENDFOR»
+		«IF hasAttribute(DS_DISCRETE_ATT)»
+			«getAttributeExpression(DS_DISCRETE_ATT).expressionAsAssignment»
+		«ELSEIF hasAttribute(DS_RANGE_ATT)»
+			«getAttributeExpression(DS_RANGE_ATT).expressionAsAssignment»
+		«ENDIF»
+	'''
+
+	def writeDsDosingBlock(AttributeList it)
+	'''
+		«FOR p : getAttributeExpression(DS_OBJREF_ATT).vector»
+			<InterventionRef oidRef="«p.symbolRef.ref.name»"/>
+		«ENDFOR»
+		<DoseAmount>
 			«IF hasAttribute(DS_DISCRETE_ATT)»
 				«getAttributeExpression(DS_DISCRETE_ATT).expressionAsAssignment»
 			«ELSEIF hasAttribute(DS_RANGE_ATT)»
 				«getAttributeExpression(DS_RANGE_ATT).expressionAsAssignment»
 			«ENDIF»
+		</DoseAmount>
+	'''
+
+	def writeDesignSpace(AttributeList it)'''
+		<DesignSpace>
+			«switch(getAttributeEnumValue(DS_ELEMENT_ATT)){
+				case(DS_ELEMENT_PARAM_VALUE):
+					writeDsParameterBlock
+				case(DS_ELEMENT_BOLUSAMT_VALUE),
+				case(DS_ELEMENT_INFAMT_VALUE):
+					writeDsDosingBlock
+			}»
 		</DesignSpace>
 	'''
 

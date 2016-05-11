@@ -1695,4 +1695,184 @@ class TrialDesignDesignObjectPrinterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 	
+	@Test
+	def void testWriteDesignSpaceBolusAmtDiscrete(){
+		val mdl = createRoot
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val rsVar1 = desParamsBlk.createListDefn("admin1") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_DESIGN_SPACE_BLK))
+		val dsList = desBlk.createListDefn("ds1",
+									createEnumPair(TrialDesignDesignObjectPrinter::DS_ELEMENT_ATT, TrialDesignDesignObjectPrinter::DS_ELEMENT_BOLUSAMT_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_DISCRETE_ATT, createFunctionCall(libDefns.getFunctionDefinition('dseq'), 
+																									createIntLiteral(0),
+																									createIntLiteral(20),
+																									createIntLiteral(1)
+																								)
+													),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_OBJREF_ATT, createVectorLiteral(
+																						createSymbolRef(rsVar1)
+																					)
+																				)
+									)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
+		val expected = '''
+			<DesignSpace>
+				<InterventionRef oidRef="admin1"/>
+				<DoseAmount>
+					<ct:Assign>
+						<ct:Sequence>
+							<ct:Begin>
+								<ct:Int>0</ct:Int>
+							</ct:Begin>
+							<ct:StepSize>
+								<ct:Int>1</ct:Int>
+							</ct:StepSize>
+							<ct:End>
+								<ct:Int>20</ct:Int>
+							</ct:End>
+						</ct:Sequence>
+					</ct:Assign>
+				</DoseAmount>
+			</DesignSpace>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+	
+	@Test
+	def void testWriteDesignSpaceBolusAmtRange(){
+		val mdl = createRoot
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val rsVar1 = desParamsBlk.createListDefn("admin1") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_DESIGN_SPACE_BLK))
+		val dsList = desBlk.createListDefn("ds1",
+									createEnumPair(TrialDesignDesignObjectPrinter::DS_ELEMENT_ATT, TrialDesignDesignObjectPrinter::DS_ELEMENT_BOLUSAMT_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_RANGE_ATT, createVectorLiteral( 
+																									createRealLiteral(0),
+																									createRealLiteral(20)
+																								)
+													),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_OBJREF_ATT, createVectorLiteral(
+																						createSymbolRef(rsVar1)
+																					)
+																				)
+									)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
+		val expected = '''
+			<DesignSpace>
+				<InterventionRef oidRef="admin1"/>
+				<DoseAmount>
+					<ct:Assign>
+						<ct:Vector>
+							<ct:VectorElements>
+								<ct:Real>0.0</ct:Real>
+								<ct:Real>20.0</ct:Real>
+							</ct:VectorElements>
+						</ct:Vector>
+					</ct:Assign>
+				</DoseAmount>
+			</DesignSpace>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteDesignSpaceInfusionAmtDiscrete(){
+		val mdl = createRoot
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val rsVar1 = desParamsBlk.createListDefn("admin1") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_DESIGN_SPACE_BLK))
+		val dsList = desBlk.createListDefn("ds1",
+									createEnumPair(TrialDesignDesignObjectPrinter::DS_ELEMENT_ATT, TrialDesignDesignObjectPrinter::DS_ELEMENT_INFAMT_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_DISCRETE_ATT, createFunctionCall(libDefns.getFunctionDefinition('dseq'), 
+																									createIntLiteral(0),
+																									createIntLiteral(20),
+																									createIntLiteral(1)
+																								)
+													),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_OBJREF_ATT, createVectorLiteral(
+																						createSymbolRef(rsVar1)
+																					)
+																				)
+									)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
+		val expected = '''
+			<DesignSpace>
+				<InterventionRef oidRef="admin1"/>
+				<DoseAmount>
+					<ct:Assign>
+						<ct:Sequence>
+							<ct:Begin>
+								<ct:Int>0</ct:Int>
+							</ct:Begin>
+							<ct:StepSize>
+								<ct:Int>1</ct:Int>
+							</ct:StepSize>
+							<ct:End>
+								<ct:Int>20</ct:Int>
+							</ct:End>
+						</ct:Sequence>
+					</ct:Assign>
+				</DoseAmount>
+			</DesignSpace>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+	
+	@Test
+	def void testWriteDesignSpaceInfusionAmtRange(){
+		val mdl = createRoot
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val rsVar1 = desParamsBlk.createListDefn("admin1") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_DESIGN_SPACE_BLK))
+		val dsList = desBlk.createListDefn("ds1",
+									createEnumPair(TrialDesignDesignObjectPrinter::DS_ELEMENT_ATT, TrialDesignDesignObjectPrinter::DS_ELEMENT_INFAMT_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_RANGE_ATT, createVectorLiteral( 
+																									createRealLiteral(0),
+																									createRealLiteral(20)
+																								)
+													),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_OBJREF_ATT, createVectorLiteral(
+																						createSymbolRef(rsVar1)
+																					)
+																				)
+									)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
+		val expected = '''
+			<DesignSpace>
+				<InterventionRef oidRef="admin1"/>
+				<DoseAmount>
+					<ct:Assign>
+						<ct:Vector>
+							<ct:VectorElements>
+								<ct:Real>0.0</ct:Real>
+								<ct:Real>20.0</ct:Real>
+							</ct:VectorElements>
+						</ct:Vector>
+					</ct:Assign>
+				</DoseAmount>
+			</DesignSpace>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+	
 }
