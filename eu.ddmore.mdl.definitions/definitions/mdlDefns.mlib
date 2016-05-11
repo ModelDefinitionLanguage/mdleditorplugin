@@ -137,9 +137,8 @@ _list DosingVar _alt ::Real _extends dosingTarget _atts value::Real _sig(value);
 // Compartments
 
 _list CmtDirect _alt ::Real _atts type::cmtType, modelCmt::Int, to::Reference[::dosingTarget],
-		modelDur::Real, tlag::Real, finput::Real, modelRate::Real
-		_sig(type, modelCmt?, to, modelDur?, tlag?, finput?),
-			(type, modelCmt?, to, modelRate?, tlag?, finput?);
+		modelDur::Real, tlag::Real, finput::Real
+		_sig(type, modelCmt?, to, modelDur?, tlag?, finput?);
 
 _list Effect _alt ::Real _atts type::cmtType, modelCmt::Int, from::Reference[::dosingTarget], keq::Real
 			_sig (type, modelCmt?, from, keq);
@@ -147,7 +146,8 @@ _list Effect _alt ::Real _atts type::cmtType, modelCmt::Int, from::Reference[::d
 _list Depot _alt ::Real _atts type::cmtType, modelCmt::Int, to::Reference[::dosingTarget], ka::Real,
 						modelDur::Real, tlag::Real, finput::Real, ktr::Real, mtt::Real
 			_sig (type, modelCmt?, to, ka, tlag?, finput?),
-				 (type, modelCmt?, to, ktr, mtt),
+				 (type, modelCmt?, to, ka, ktr, mtt),
+				 (type, modelCmt?, to, modelDur, ktr, mtt),
 				 (type, modelCmt?, to, modelDur, tlag?, finput?);
 
 _list Transfer _anon _atts type::cmtType, modelCmt::Int, to::Reference[::dosingTarget], from::Reference[::dosingTarget], kt::Real
