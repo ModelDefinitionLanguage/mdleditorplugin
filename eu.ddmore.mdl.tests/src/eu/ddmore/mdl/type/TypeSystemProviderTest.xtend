@@ -39,12 +39,12 @@ class TypeSystemProviderTest {
 	def void setUp(){
 		incompatible = false
 		testLibraryFixture = '''
-			_type Real _real;
-			_type Int _int;
+			_type real _real;
+			_type int _int;
 			_type cmtType _enum (depot, compartment, elimination, transfer, distribution, direct, effect);
 			
-			_list Compartment _alt ::Real
-					_atts  type::cmtType, modelCmt::Int
+			_list Compartment _alt ::real
+					_atts  type::cmtType, modelCmt::int
 					_sig (type, modelCmt?);
 					
 			_object mdlObj;
@@ -54,7 +54,7 @@ class TypeSystemProviderTest {
 
 			_container mdlObj _has COMPARTMENT;
 						
-			_func ln (x::Real) _returns ::Real;
+			_func ln (x::real) _returns ::real;
 		'''.parse
 	}
 

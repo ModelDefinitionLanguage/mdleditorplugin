@@ -818,7 +818,7 @@ class MclTypeValidationTest {
 		
 			
 			MODEL_PREDICTION{
-				B::Matrix
+				B::matrix
 				A =  inverse(B)
 			}
 			
@@ -839,7 +839,7 @@ class MclTypeValidationTest {
 		
 			
 			MODEL_PREDICTION{
-				B::Matrix[[::Real]]
+				B::matrix[[::real]]
 				A =  inverse(B)
 			}
 			
@@ -860,7 +860,7 @@ class MclTypeValidationTest {
 		
 			
 			MODEL_PREDICTION{
-				B::Matrix[[::String]]
+				B::matrix[[::string]]
 				A =  inverse(B)
 			}
 			
@@ -1377,7 +1377,7 @@ class MclTypeValidationTest {
 		
 			
 			MODEL_PREDICTION{
-				A::Vector
+				A::vector
 				C = mean(A)
 			}
 			
@@ -1399,7 +1399,7 @@ class MclTypeValidationTest {
 		
 			
 			MODEL_PREDICTION{
-				A::Vector[::Real]
+				A::vector[::real]
 				C = mean(A)
 			}
 			
@@ -1421,7 +1421,7 @@ class MclTypeValidationTest {
 		
 			
 			MODEL_PREDICTION{
-				A::Vector[::String]
+				A::vector[::string]
 				C = mean(A)
 			}
 			
@@ -2472,8 +2472,8 @@ testprior = priorObj{
 
 	NON_CANONICAL_DISTRIBUTION{
 		INPUT_PRIOR_DATA{
-			bins_k::Vector[::Real]
-			bins_v::Vector[::Real]
+			bins_k::vector[::real]
+			bins_v::vector[::real]
 			bins_k_v= toMatrixByRow([bins_k, bins_v])
 		}
 	}
@@ -2517,7 +2517,7 @@ warfarin_PK_v2_dat = dataObj{
 		
 		mcl.assertError(MdlPackage::eINSTANCE.assignPair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"attribute 'interp' expected value of type 'ref:Function(Real,Real,Real,Real,Real)::Real' but was 'ref:Function(Real)::Real'."
+			"attribute 'interp' expected value of type 'ref:Function(Real,Real,Real,Real,Real)::real' but was 'ref:Function(Real)::real'."
 		)
 	}
 	

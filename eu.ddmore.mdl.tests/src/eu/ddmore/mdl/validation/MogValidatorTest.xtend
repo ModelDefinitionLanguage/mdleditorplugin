@@ -1845,7 +1845,7 @@ class MogValidatorTest {
 				}
 				
 				MODEL_PREDICTION{
-			      D::Vector
+			      D::vector
 				}
 		
 		}
@@ -1954,7 +1954,7 @@ class MogValidatorTest {
 				}
 				
 				STRUCTURAL_PARAMETERS { 
-					POP_CL::Vector
+					POP_CL::vector
 					POP_V
 				} # end STRUCTURAL_PARAMETERS
 

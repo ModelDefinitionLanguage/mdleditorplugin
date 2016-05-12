@@ -380,14 +380,14 @@ public class TypeSystemProvider {
 //			typeFromSpecName(typeName.name)
 //		}
 //		else if(elementType != null){
-//			if(typeName == '::Vector'){
+//			if(typeName == '::vector'){
 //				val elType = elementType.typeFor
 //				elType.makeVector
 //			}
 //			else UNDEFINED_TYPE
 //		}
 //		else if(cellType != null){
-//			if(typeName == '::Matrix'){
+//			if(typeName == '::matrix'){
 //				val elType = cellType.typeFor
 //				elType.makeMatrix
 //			}
@@ -397,13 +397,13 @@ public class TypeSystemProvider {
 //	}
 	
 	static val specNameLookup = #{
-		'::Int' -> INT_TYPE,
-		'::Real' -> REAL_TYPE,
+		'::int' -> INT_TYPE,
+		'::real' -> REAL_TYPE,
 		'::Pdf' -> PDF_TYPE,
-		'::String' -> STRING_TYPE,
-		'::Boolean' -> BOOLEAN_TYPE,
-		'::Vector' -> REAL_VECTOR_TYPE,
-		'::Matrix' -> REAL_MATRIX_TYPE
+		'::string' -> STRING_TYPE,
+		'::boolean' -> BOOLEAN_TYPE,
+		'::vector' -> REAL_VECTOR_TYPE,
+		'::matrix' -> REAL_MATRIX_TYPE
 	} 
 	
 	def typeFromSpecName(String specName){

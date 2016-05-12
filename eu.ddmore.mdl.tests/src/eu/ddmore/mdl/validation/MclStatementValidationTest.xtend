@@ -90,7 +90,7 @@ class MclStatementValidationTest {
 	def void testValidCategoryDefnInList(){
 		val mcl = '''
 		foo = dataObj {
-			DECLARED_VARIABLES{ bar::Int }
+			DECLARED_VARIABLES{ bar::int }
 			
 			DATA_INPUT_VARIABLES{
 				foo : { use is catCov withCategories {mild when bar} }
@@ -124,7 +124,7 @@ class MclStatementValidationTest {
 	def void testInValidCategoryDefnInList(){
 		val mcl = '''
 		foo = dataObj {
-			DECLARED_VARIABLES{ bar::Int }
+			DECLARED_VARIABLES{ bar::int }
 			
 			DATA_INPUT_VARIABLES{
 				foo : { use is catCov withCategories {mild} }
@@ -340,7 +340,7 @@ class MclStatementValidationTest {
 			}
 
 			MODEL_PREDICTION{
-				foo::Vector
+				foo::vector
 			}# end MODEL_PREDICTION
 		}
 		'''.parse

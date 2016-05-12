@@ -22,7 +22,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Int, arg2::Real, arg3::String)::Real is
+		userFunc::function(arg1::int, arg2::real, arg3::string)::real is
 			# the function can contain only a single expression
 		    arg2 * arg1  # return type is Real
 	}

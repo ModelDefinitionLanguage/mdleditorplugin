@@ -58,7 +58,7 @@ example332_pri = priorObj{
 #	   invOMEGA_P ~ Wishart(scaleMatrix=R, nu=rho)
 	# SLM not sure about this. Should wishard return a matrix?
 	# Creating a dummy matrix to keep the inverse function happy
-	   invOMEGA_P::Matrix
+	   invOMEGA_P::matrix
 
 # <<<< the inverse(matrix) operator does not exist in the current version>>> 
 	   OMEGA_P = inverse(invOMEGA_P)
@@ -100,12 +100,12 @@ example332_mdl = mdlObj{
 
    STRUCTURAL_PARAMETERS{
 	   POP_T
-	   lPOP_P::Vector
+	   lPOP_P::vector
    }# end STRUCTURAL_PARAMETERS
 
    VARIABILITY_PARAMETERS{
 	   OMEGA_T
-	   OMEGA_P::Matrix
+	   OMEGA_P::matrix
    }# end VARIABILITY_PARAMETERS
 
    RANDOM_VARIABLE_DEFINITION(level=ID) {

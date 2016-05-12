@@ -66,7 +66,7 @@ Categorical_DIST_mdl = mdlObj{
 
    VARIABILITY_PARAMETERS{
       PPV_EVENT
-      OMEGA::Matrix
+      OMEGA::matrix
    }# end VARIABILITY_PARAMETERS
 
 

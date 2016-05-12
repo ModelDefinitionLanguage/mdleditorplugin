@@ -30,7 +30,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Int, arg2::Real, arg3::String)::Real is
+		userFunc::function(arg1::int, arg2::real, arg3::string)::real is
 			# the function can contain only a single expression
 		    arg2 * arg1 + arg3 # return type is Real
 	}
@@ -52,7 +52,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Int, arg2::Real, arg3::String)::Real is
+		userFunc::function(arg1::int, arg2::real, arg3::string)::real is
 			# the function can contain only a single expression
 		    arg2 * arg1 + arg4 # return type is Real
 	}
@@ -73,13 +73,13 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Int, arg2::Real, arg3::String)::Real is
+		userFunc::function(arg1::int, arg2::real, arg3::string)::real is
 			# the function can contain only a single expression
 		    arg2 * arg1 + foo # return type is Real
 	}
 	
 	MODEL_PREDICTION{
-		foo::Real
+		foo::real
 	}
 
 } # end of model object
@@ -98,7 +98,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Int, arg2::Real, arg3::String)::Real is
+		userFunc::function(arg1::int, arg2::real, arg3::string)::real is
 			# the function can contain only a single expression
 		    arg3 # return type is Real
 	}
@@ -120,7 +120,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Int, arg2::Real, arg3::String)::Real is
+		userFunc::function(arg1::int, arg2::real, arg3::string)::real is
 			# the function can contain only a single expression
 		    arg1
 	}
@@ -139,7 +139,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Int, arg2::Real, arg3::String)::Matrix[[::Real]] is
+		userFunc::function(arg1::int, arg2::real, arg3::string)::matrix[[::real]] is
 			# the function can contain only a single expression
 		    [[arg1;arg2]]
 	}
@@ -158,7 +158,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Int, arg2::Real, arg3::String)::Vector[::Real] is
+		userFunc::function(arg1::int, arg2::real, arg3::string)::vector[::real] is
 			# the function can contain only a single expression
 		    [ arg1, arg2 ]
 	}
@@ -177,7 +177,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Vector[::Boolean])::Boolean is
+		userFunc::function(arg1::vector[::boolean])::boolean is
 			# the function can contain only a single expression
 		    arg1[1]
 	}
@@ -196,7 +196,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Matrix[[::String]])::String is
+		userFunc::function(arg1::matrix[[::string]])::string is
 			# the function can contain only a single expression
 		    arg1[1,1]
 	}
@@ -216,7 +216,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Real(arg1::Int, arg2::Real, arg3::String)::Real is
+		userFunc::real(arg1::int, arg2::real, arg3::string)::real is
 			# the function can contain only a single expression
 		    arg1
 	}
@@ -238,7 +238,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function
+		userFunc::function
 	}
 } # end of model object
 '''.parse
@@ -257,7 +257,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function(arg1::Int, arg2::Real)::Real is
+		userFunc::function(arg1::int, arg2::real)::real is
 			# the function can contain only a single expression
 		    arg2 * arg1  # return type is Real
 	}
@@ -285,7 +285,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function()::Real is
+		userFunc::function()::real is
 			# the function can contain only a single expression
 		    pi
 	}
@@ -313,7 +313,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function()::String is
+		userFunc::function()::string is
 			# the function can contain only a single expression
 		    "A String"
 	}
@@ -343,7 +343,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 	FUNCTIONS{
 	   	# define a function. The return type of the function is given by it's name.
 	   	# In this case it is a real. If it were a vector or matric it would use [] or [[]] 
-		userFunc::Function()::Real is
+		userFunc::function()::real is
 			# the function can contain only a single expression
 		    21
 	}
