@@ -1,19 +1,19 @@
 package eu.ddmore.converter.mdl2pharmml08
 
 import eu.ddmore.converter.treerewrite.MdlRootProvider
+import eu.ddmore.mdl.mdl.BlockStatement
+import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.Statement
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
+import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.ConstantEvaluation
 import eu.ddmore.mdl.utils.MdlUtils
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
-import eu.ddmore.mdl.mdl.EquationDefinition
-import eu.ddmore.mdl.mdl.BlockStatement
-import eu.ddmore.mdl.utils.BlockUtils
 
 class ModellingStepsPrinter { 
 	
@@ -34,34 +34,43 @@ class ModellingStepsPrinter {
 		var pObj = paramObj
 		var dObj = dataObj
 		var tObj = taskObj
+		var desObj = designObj
 
 		var res = "";
 		var dependencies = ""; 
-		if (mObj != null && dObj != null && pObj != null && tObj != null) {
-			var index = 1;
-			for (b: tObj.blocks){
-				if( b.blkId.name == BlockDefinitionTable::ESTIMATE_BLK){
-					var oidRef = BLK_ESTIM_STEP + index;
-					res += writeEstimationStep(oidRef, mObj, dObj, pObj, b);
-					dependencies  += 
-						'''
-						<mstep:Step>
-							<ct:OidRef oidRef="«oidRef»"/>
-						</mstep:Step>
-						'''
-				}
-				else if( b.blkId.name == BlockDefinitionTable::SIMULATE_BLK){
-					var oidRef = BLK_SIMUL_STEP + index;
-					res += writeSimulationStep(oidRef, mObj, dObj, pObj, b);
-					dependencies  += 
-						'''
-						<mstep:Step>
-							<ct:OidRef oidRef="«oidRef»"/>
-						</mstep:Step>
-						'''
-				}
-				index  = index + 1;
+		var index = 1;
+		for (b: tObj.blocks){
+			if( b.blkId.name == BlockDefinitionTable::ESTIMATE_BLK){
+				var oidRef = BLK_ESTIM_STEP + index;
+				res += writeEstimationStep(oidRef, mObj, dObj, pObj, b);
+				dependencies  += 
+					'''
+					<mstep:Step>
+						<ct:OidRef oidRef="«oidRef»"/>
+					</mstep:Step>
+					'''
 			}
+			else if( b.blkId.name == BlockDefinitionTable::EVALUATE_BLK || b.blkId.name == BlockDefinitionTable::OPTIMISE_BLK){
+				var oidRef = BLK_ESTIM_STEP + index;
+				res += writeOptimalStep(oidRef, mObj, desObj, pObj, b);
+				dependencies  += 
+					'''
+					<mstep:Step>
+						<ct:OidRef oidRef="«oidRef»"/>
+					</mstep:Step>
+					'''
+			}
+			else if( b.blkId.name == BlockDefinitionTable::SIMULATE_BLK){
+				var oidRef = BLK_SIMUL_STEP + index;
+				res += writeSimulationStep(oidRef, mObj, desObj, pObj, b);
+				dependencies  += 
+					'''
+					<mstep:Step>
+						<ct:OidRef oidRef="«oidRef»"/>
+					</mstep:Step>
+					'''
+			}
+			index  = index + 1;
 		}
 		'''
 		<ModellingSteps xmlns="«xmlns_mstep»">
@@ -87,10 +96,23 @@ class ModellingStepsPrinter {
 	def writeSimulationStep(String oidRef, MclObject mObj, MclObject dObj, MclObject pObj, BlockStatement taskBlk)'''
 		<SimulationStep oid="«oidRef»">
 			«taskBlk.statements.writeSettingsFile»
-			«writeExternalDataSetReference(dObj)»
+«««			«writeExternalDataSetReference(dObj)»
 			«writeParameterAssignments(pObj, mObj)»
 			«taskBlk.statements.writeSettings»
 		</SimulationStep>
+	'''
+		
+	def private boolean isEvaluation(BlockStatement blk){
+		blk.blkId.name == BlockDefinitionTable::EVALUATE_BLK
+	}
+		
+	def writeOptimalStep(String oidRef, MclObject mObj, MclObject dObj, MclObject pObj, BlockStatement taskBlk)'''
+		<OptimalDesignStep oid="«oidRef»">
+			«taskBlk.statements.writeSettingsFile»
+			«writeParametersToEstimate(pObj, mObj)»
+			<Operation order="1" opType="«IF taskBlk.isEvaluation»evaluation«ELSE»optimization«ENDIF»"/>
+«««			«taskBlk.statements.writeSettings»
+		</OptimalDesignStep>
 	'''
 		
 	def private writeExternalDataSetReference(MclObject dObj)'''

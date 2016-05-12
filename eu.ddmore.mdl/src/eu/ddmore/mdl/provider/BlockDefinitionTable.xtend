@@ -29,6 +29,8 @@ class BlockDefinitionTable {
 	public static val TARGET_SETTINGS = "TARGET_SETTINGS"
 	public static val DECLARED_VARS_BLK = "DECLARED_VARIABLES"
 	public static val DES_DESIGN_SPACE_BLK = "DESIGN_SPACES"
+	public static val EVALUATE_BLK = "EVALUATE" 
+	public static val OPTIMISE_BLK = "OPTIMISE" 
 	
 //	static val ep = MdlPackage::eINSTANCE 
 

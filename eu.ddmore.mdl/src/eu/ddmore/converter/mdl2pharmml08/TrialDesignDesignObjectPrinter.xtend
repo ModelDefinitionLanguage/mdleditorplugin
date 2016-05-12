@@ -6,22 +6,22 @@ import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
+import eu.ddmore.mdl.mdl.PropertyStatement
+import eu.ddmore.mdl.mdl.SubListExpression
 import eu.ddmore.mdl.mdl.SymbolReference
+import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
+import eu.ddmore.mdl.provider.SublistDefinitionProvider
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
+import eu.ddmore.mdllib.mdllib.Expression
+import java.util.Collections
 import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
-import eu.ddmore.mdl.mdl.SubListExpression
-import eu.ddmore.mdl.provider.SublistDefinitionProvider
-import eu.ddmore.mdl.mdl.PropertyStatement
-import eu.ddmore.mdl.mdl.ValuePair
-import eu.ddmore.mdllib.mdllib.Expression
-import java.util.Collections
 
 class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
@@ -112,12 +112,24 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	override writeTrialDesign()'''
 		<TrialDesign xmlns="«xmlns_design»">
 			«IF mObj != null && designObj != null»
-				«designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_PARAMS).forEach[writeDesignParameters]»
-				«designObj.getBlocksByName(BlockDefinitionTable::DES_INTERVENTION_BLK).forEach[writeInterventions]»
-				«designObj.getBlocksByName(BlockDefinitionTable::DES_STUDY_DESIGN).forEach[writeStudyDesign]»
-				«designObj.getBlocksByName(BlockDefinitionTable::DES_SAMPLING_BLK).forEach[writeSampling]»
-				«designObj.getBlocksByName(BlockDefinitionTable::COVARIATE_BLK_NAME).forEach[writeCovariates]»
-				«designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_SPACE_BLK).forEach[writeDesignSpaces]»
+				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_PARAMS)»
+					«blk.writeDesignParameters»
+				«ENDFOR»
+				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_INTERVENTION_BLK)»
+					«blk.writeInterventions»
+				«ENDFOR»
+				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_SAMPLING_BLK)»
+					«blk.writeSampling»
+				«ENDFOR»
+				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_STUDY_DESIGN)»
+					«blk.writeStudyDesign»
+				«ENDFOR»
+				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::COVARIATE_BLK_NAME)»
+					«blk.writeCovariates»
+				«ENDFOR»
+				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_SPACE_BLK)»
+					«blk.writeDesignSpaces»
+				«ENDFOR»
 			«ENDIF»
 		</TrialDesign>
 	'''	
