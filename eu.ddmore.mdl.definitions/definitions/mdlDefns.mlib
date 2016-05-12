@@ -328,8 +328,9 @@ _type covArgEnumType _enum(constant, idvDependent); //, occDependent);
 
 _type PopnType _enum(template);
 _sublist PopTmpltCovSublist _atts catCovValue::reference[::genericCategoryValue], cov::reference[::real],
+									catCov::reference[::genericEnum], discreteRv::randomVariable[::genericEnum],
 									value::real, rv::randomVariable[::real]
-							_sig(catCovValue), (cov, value), (cov, rv);
+							_sig(catCovValue), (cov, value), (cov, rv), (catCov, discreteRv);
 _list PopulationTemplate _atts type::PopnType, covariate::vector[::PopTmpltCovSublist]
 						 _sig(type, covariate);
 
@@ -502,7 +503,8 @@ _container dataObj _has DATA_INPUT_VARIABLES, DECLARED_VARIABLES, DATA_DERIVED_V
 _container parObj _has VARIABILITY, /*DECLARED_VARIABLES,*/ STRUCTURAL;
 _container taskObj _has ESTIMATE, SIMULATE, OPTIMISE, EVALUATE;
 _container mogObj _has INFO, OBJECTS;
-_container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, COVARIATES, DESIGN_PARAMETERS, POPULATION;
+//_container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, COVARIATES, DESIGN_PARAMETERS, POPULATION;
+_container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, DESIGN_PARAMETERS, POPULATION;
 _container priorObj _has PRIOR_PARAMETERS, NON_CANONICAL_DISTRIBUTION, PRIOR_VARIABLE_DEFINITION;
 _container MODEL_PREDICTION _has DEQ, COMPARTMENT;
 _container NON_CANONICAL_DISTRIBUTION _has PRIOR_SOURCE, INPUT_PRIOR_DATA;
