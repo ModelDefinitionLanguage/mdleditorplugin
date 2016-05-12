@@ -988,4 +988,134 @@ class TrialDesignDesignSpacePrinterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
+	@Test
+	def void testWriteDesignSpaces(){
+		val mdl = createRoot
+		
+
+
+
+
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+
+		val desIntvnBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val admin1 = desIntvnBlk.createListDefn("admin1") 
+
+		val desStudDesBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
+		val arm1 = desStudDesBlk.createListDefn("arm1") 
+
+		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
+		val rsVar1 = desParamsBlk.createEqnDefn("W") 
+		val rsVar2 = desParamsBlk.createEqnDefn("Y") 
+
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_DESIGN_SPACE_BLK))
+		desBlk.createListDefn("ds1",
+									createEnumPair(TrialDesignDesignObjectPrinter::DS_ELEMENT_ATT, TrialDesignDesignObjectPrinter::DS_ELEMENT_COVARIATE_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_RANGE_ATT, createVectorLiteral( 
+																									createRealLiteral(0),
+																									createRealLiteral(20)
+																								)
+													),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_OBJREF_ATT, createVectorLiteral(
+																						createSymbolRef(rsVar1),
+																						createSymbolRef(rsVar2)
+																					)
+																				)
+									)
+		desBlk.createListDefn("ds2",
+									createEnumPair(TrialDesignDesignObjectPrinter::DS_ELEMENT_ATT, TrialDesignDesignObjectPrinter::DS_ELEMENT_DURATION_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_RANGE_ATT, createVectorLiteral( 
+																									createRealLiteral(0),
+																									createRealLiteral(20)
+																								)
+													),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_OBJREF_ATT, createVectorLiteral(
+																						createSymbolRef(admin1)
+																					)
+																				)
+									)
+		desBlk.createListDefn("ds3",
+									createEnumPair(TrialDesignDesignObjectPrinter::DS_ELEMENT_ATT, TrialDesignDesignObjectPrinter::DS_ELEMENT_ARM_SIZE_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_DISCRETE_ATT, createFunctionCall(libDefns.getFunctionDefinition('dseq'), 
+																									createIntLiteral(0),
+																									createIntLiteral(20),
+																									createIntLiteral(1)
+																								)
+													),
+									createAssignPair(TrialDesignDesignObjectPrinter::DS_OBJREF_ATT, createVectorLiteral(
+																						createSymbolRef(arm1)
+																					)
+																				)
+									)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val actual = tdow.writeDesignSpaces(desBlk)
+		val expected = '''
+			<DesignSpaces>
+				<DesignSpace>
+					<CovariateModelRef oidRef="«TrialDesignDesignObjectPrinter::COV_MOD_OID»"/>
+					<CovariateRef symbIdRef="W">
+						<mdef:Continuous>
+							<ct:Assign>
+								<ct:Vector>
+									<ct:VectorElements>
+										<ct:Real>0.0</ct:Real>
+										<ct:Real>20.0</ct:Real>
+									</ct:VectorElements>
+								</ct:Vector>
+							</ct:Assign>
+						</mdef:Continuous>
+					</CovariateRef>
+					</DesignSpace>
+					<DesignSpace>
+					<CovariateModelRef oidRef="«TrialDesignDesignObjectPrinter::COV_MOD_OID»"/>
+					<CovariateRef symbIdRef="Y">
+						<mdef:Continuous>
+							<ct:Assign>
+								<ct:Vector>
+									<ct:VectorElements>
+										<ct:Real>0.0</ct:Real>
+										<ct:Real>20.0</ct:Real>
+									</ct:VectorElements>
+								</ct:Vector>
+							</ct:Assign>
+						</mdef:Continuous>
+					</CovariateRef>
+				</DesignSpace>
+				<DesignSpace>
+					<InterventionRef oidRef="admin1"/>
+					<Duration>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>0.0</ct:Real>
+									<ct:Real>20.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</Duration>
+				</DesignSpace>
+				<DesignSpace>
+					<ArmRef oidRef="arm1"/>
+					<ArmSize>
+						<ct:Assign>
+							<ct:Sequence>
+								<ct:Begin>
+									<ct:Int>0</ct:Int>
+								</ct:Begin>
+								<ct:StepSize>
+									<ct:Int>1</ct:Int>
+								</ct:StepSize>
+								<ct:End>
+									<ct:Int>20</ct:Int>
+								</ct:End>
+							</ct:Sequence>
+						</ct:Assign>
+					</ArmSize>
+				</DesignSpace>
+			</DesignSpaces>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
 }

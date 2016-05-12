@@ -116,6 +116,8 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 				«designObj.getBlocksByName(BlockDefinitionTable::DES_INTERVENTION_BLK).forEach[writeInterventions]»
 				«designObj.getBlocksByName(BlockDefinitionTable::DES_STUDY_DESIGN).forEach[writeStudyDesign]»
 				«designObj.getBlocksByName(BlockDefinitionTable::DES_SAMPLING_BLK).forEach[writeSampling]»
+				«designObj.getBlocksByName(BlockDefinitionTable::COVARIATE_BLK_NAME).forEach[writeCovariates]»
+				«designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_SPACE_BLK).forEach[writeDesignSpaces]»
 			«ENDIF»
 		</TrialDesign>
 	'''	
@@ -593,4 +595,34 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		</DesignSpace>
 	'''
 
+	def writeDesignSpaces(BlockStatement it)'''
+		<DesignSpaces>
+			«FOR stmt : statements»
+				«IF stmt instanceof ListDefinition»
+					«writeDesignSpace(stmt.firstAttributeList)»
+				«ENDIF»
+			«ENDFOR»
+		</DesignSpaces>
+	'''
+		
+	def writeCovariate(EquationDefinition it)'''
+		<Covariate symbId="«name»">
+			<mdef:Continuous>
+				«expression.expressionAsAssignment»
+			</mdef:Continuous>
+		</Covariate>
+	'''
+
+	def writeCovariates(BlockStatement it)'''
+		<Covariates>
+			<CovariateModel oid="«COV_MOD_OID»">
+				<CovariateModelRef blkIdRef="cm"/>
+				«FOR stmt : statements»
+					«IF stmt instanceof EquationDefinition»
+						«writeCovariate(stmt)»
+					«ENDIF»
+				«ENDFOR»
+			</CovariateModel>
+		</Covariates>
+	'''
 }
