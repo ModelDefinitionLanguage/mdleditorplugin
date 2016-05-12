@@ -18,7 +18,7 @@ import org.junit.runner.RunWith
 @InjectWith(typeof(MdlAndLibInjectorProvider))
 class Mcl2PharmMLConverterTest {
 	static val CONVERTED_OUTPUT_DIR="convertedFiles08/"
-	static val USE_CASE_DIR="src/eu/ddmore/converter/mdl2pharmml08/"
+	static val USE_CASE_DIR="testMdlFiles/"
 	
 	@Inject extension MdlTestHelper<Mcl>
 	@Inject extension ValidationTestHelper
