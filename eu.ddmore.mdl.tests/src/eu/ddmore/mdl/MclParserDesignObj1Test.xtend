@@ -34,16 +34,16 @@ warfarin_design = designObj {
 		doseEnd = 24
 		doseGap = 2
 		baseAmt = 2.5
-		WT_MEAN = 85.5
-		WT_VAR = 19
+«««		WT_MEAN = 85.5
+«««		WT_VAR = 19
 		epochStart = 0
 		epochEnd = 24
 «««		varlevel = bsv_lvl
 	}
 
-	COVARIATES{
-	    WT ~ Normal(mean=WT_MEAN, var=WT_VAR)
-	}
+«««	COVARIATES{
+«««	    WT ~ Normal(mean=WT_MEAN, var=WT_VAR)
+«««	}
 
 
 	INTERVENTION{
