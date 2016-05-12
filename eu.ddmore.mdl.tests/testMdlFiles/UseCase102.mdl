@@ -97,7 +97,7 @@ warfarin_PK_SEXAGE_mdl = mdlObj {
 		ETA_V ~ Normal(mean = 0, sd = PPV_V)
 		ETA_KA ~ Normal(mean = 0, sd = PPV_KA)
 		ETA_TLAG ~ Normal(mean = 0, sd = PPV_TLAG) # We define correlation here
-	  :: { type is correlation, rv1=PPV_CL, rv2=PPV_V, value=RHO_CL_V }
+	  :: { type is correlation, rv1=ETA_CL, rv2=ETA_V, value=RHO_CL_V }
 	} # end RANDOM_VARIABLE_DEFINITION 
 	
 	INDIVIDUAL_VARIABLES { # This maps to the "Type 3" individual parameter definition in PharmML

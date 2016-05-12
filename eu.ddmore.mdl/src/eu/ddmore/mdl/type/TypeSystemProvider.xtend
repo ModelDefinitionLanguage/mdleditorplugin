@@ -541,6 +541,14 @@ public class TypeSystemProvider {
 					// check that underlying tyes are argument compatible
 					isArgumentCompatible(argType.underlyingType, valueType.underlyingType)
 				else false
+			RandomVariableTypeInfo:{
+				// if RB then expect the other var ro also be an RV
+				val otherType = valueType.underlyingType
+				if(otherType instanceof RandomVariableTypeInfo){
+					isArgumentCompatible(argType.rvType, otherType.rvType)
+				}
+				else false
+			}
 			default:
 				// no special case handling so check for expression compatibility
 				argType.isCompatible(valueType)

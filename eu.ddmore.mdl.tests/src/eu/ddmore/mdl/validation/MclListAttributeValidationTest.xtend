@@ -631,4 +631,87 @@ foo = mdlObj {
 //		)
 	}
 
+	@Test
+	def void testValidRandomAttributes(){
+		val mcl = '''
+			des = designObj{
+				DECLARED_VARIABLES{ dose::dosingTarget Y::continuousObs W }
+				
+				INTERVENTION{
+					treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}
+					control : {type is bolus, input=dose, amount=0, doseTime=[8,12,16]}
+				}
+			
+				POPULATION{
+					treat1 : { type is template, covariate={ cov = W, rv ~ Normal(mean=70.0, sd=10) }  }
+				}
+			}
+		'''.parse
+		
+		mcl.assertNoErrors
+	}
+
+
+	@Test
+	def void testInvalidRandomAttributeAssignment(){
+		val mcl = '''
+			des = designObj{
+				DECLARED_VARIABLES{ dose::dosingTarget Y::continuousObs W }
+				
+				INTERVENTION{
+					treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}
+					control : {type is bolus, input=dose, amount~0, doseTime=[8,12,16]}
+				}
+			}
+		'''.parse
+		
+		mcl.assertError(MdlPackage::eINSTANCE.assignPair,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"Inappropriate use of '~' assignment. Expected a 'Real' on the LHS of assignment."
+		)
+	}
+
+	@Test
+	def void testInvalidRandomAttributeEqualsAssignment(){
+		val mcl = '''
+			des = designObj{
+				DECLARED_VARIABLES{ dose::dosingTarget Y::continuousObs W }
+				
+				INTERVENTION{
+					treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}
+					control : {type is bolus, input=dose, amount=0, doseTime=[8,12,16]}
+				}
+				POPULATION{
+					treat1 : { type is template, covariate={ cov = W, rv = 70 }  }
+				}			}
+		'''.parse
+		
+		mcl.assertError(MdlPackage::eINSTANCE.assignPair,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"attribute 'rv' expected value of type 'RV:Real' but was 'Int'."
+		)
+	}
+
+	@Test
+	def void testInvalidRandomAttributRvAssignmentToNonDistn(){
+		val mcl = '''
+			des = designObj{
+				DECLARED_VARIABLES{ dose::dosingTarget Y::continuousObs W }
+				
+				INTERVENTION{
+					treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}
+					control : {type is bolus, input=dose, amount=0, doseTime=[8,12,16]}
+				}
+				POPULATION{
+					treat1 : { type is template, covariate={ cov = W, rv ~ 70 }  }
+				}			}
+		'''.parse
+		
+		mcl.assertError(MdlPackage::eINSTANCE.assignPair,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"attribute 'rv' expected value of type 'Pdf' but was 'Int'."
+		)
+	}
+
+
 }

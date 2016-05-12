@@ -130,7 +130,7 @@ Friberg_PANSS_CPT2009_mdl = mdlObj{
       ETA_PMAX ~ Normal(mean=0, var=IIV_PMAX)
       ETA_AUC50 ~ Normal(mean=0, var=IIV_AUC50)
       ETA_ERROR ~ Normal(mean=0, var=IIV_ERROR)
-      :: { type is covariance, rv1=ETA_PAN0, rv2=PMAX, value=COV_PAN0_PMAX }
+      :: { type is covariance, rv1=ETA_PAN0, rv2=ETA_PMAX, value=COV_PAN0_PMAX }
    }# end RANDOM_VARIABLE_DEFINITION
 
    INDIVIDUAL_VARIABLES{

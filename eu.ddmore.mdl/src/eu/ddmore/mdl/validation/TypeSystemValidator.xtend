@@ -58,6 +58,9 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
+import eu.ddmore.mdl.mdl.AssignPair
+import eu.ddmore.mdl.type.MatrixTypeInfo
+import eu.ddmore.mdllib.mdllib.TypeClass
 
 class TypeSystemValidator extends AbstractMdlValidator {
 	
@@ -193,33 +196,117 @@ class TypeSystemValidator extends AbstractMdlValidator {
 //			else
 //				checkExpectedReal(e.expression, typeError(MdlPackage::eINSTANCE.equationTypeDefinition_Expression))
 //	}
-		
+
+
+	def private checkRandomVariableAssignmentTypes(RandomVariableTypeInfo lhs, Expression rhs, (TypeInfo, TypeInfo) => void errorLambda){
+		val lhsRvType = lhs.rvType
+		val distType = rhs.typeFor.underlyingType
+		if(lhsRvType.isVector){
+			if(distType instanceof VectorTypeInfo){
+				if(distType.elementType == TypeSystemProvider::PDF_TYPE){
+					checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeVector, rhs,errorLambda)
+				}
+				else{
+					checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE.makeVector, rhs,errorLambda)
+				}
+			}
+			else{
+				// assume RHS must be a vector of PDFs
+				checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeVector, rhs,errorLambda)
+			}
+		}
+		else if(lhsRvType.isMatrix){
+			if(distType instanceof MatrixTypeInfo){
+				if(distType.elementType == TypeSystemProvider::PDF_TYPE){
+					checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeMatrix, rhs, errorLambda)
+				}
+				else{
+					checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE.makeMatrix, rhs, errorLambda)
+				}
+			}
+			else{
+				// assume RHS must be a vector of PDFs
+				checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeMatrix, rhs, errorLambda)
+			}
+		}
+		else if(lhsRvType instanceof CategoryTypeInfo){
+			// if categorical on lhs must be pmf on rhs
+			checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, rhs, errorLambda)
+		}
+		else{
+			// must be a scalar so check on that basis.
+			if(distType == TypeSystemProvider::PDF_TYPE){
+				checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE, rhs, errorLambda)
+			}
+			else if(distType == TypeSystemProvider::PMF_TYPE){
+				checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, rhs, errorLambda)
+			}
+			else if(lhsRvType == TypeSystemProvider::REAL_TYPE){
+				// in order to give a more meaningful error we choose the expected type based in the lhs rv
+				checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE, rhs, errorLambda)
+			}
+			else{
+				checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, rhs, errorLambda)
+			}
+		}
+	}
+
+
+//	def private checkRandomVariableAssignmentTypes(RandomVariableTypeInfo lhs, Expression rhs, (TypeInfo, TypeInfo) => void errorLambda){
+//		val distType = rhs.typeFor
+//		if(distType.isCompatible(TypeSystemProvider::PDF_TYPE)){
+//			switch(lhs.underlyingType.typeClass){
+//				case(TypeInfoClass.Matrix):
+//					checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeMatrix, rhs, errorLambda)
+//				case(TypeInfoClass.Vector):
+//					checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeVector, rhs,errorLambda)
+//				default:
+//					checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE, rhs, errorLambda)
+//			}
+//		}
+//		else if(distType.isCompatible(TypeSystemProvider::PMF_TYPE)){
+//			switch(lhs.rvType){
+//				case(TypeInfoClass.Matrix):
+//					checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE.makeMatrix, rhs, errorLambda)
+//				case(TypeInfoClass.Vector):
+//					checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE.makeVector, rhs, errorLambda)
+//				default:
+//					checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, rhs, errorLambda)
+//			}
+//		}
+//		else{
+//			// dist type is not the correct type so let's raise an error
+//			errorLambda.apply(TypeSystemProvider::PDF_TYPE, distType)
+//		}
+//	}
+
 	@Check
 	def validateCompatibleTypes(RandomVariableDefinition e){
 		if(e.distn != null){
 			val stmtType = e.typeFor
 			if(stmtType instanceof RandomVariableTypeInfo){
-				val distType = e.distn.typeFor
-				if(distType.isCompatible(TypeSystemProvider::PDF_TYPE)){
-					switch(stmtType.underlyingType.typeClass){
-						case(TypeInfoClass.Matrix):
-							checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeMatrix, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-						case(TypeInfoClass.Vector):
-							checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeVector, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-						default:
-							checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-					}
-				}
-				else if(distType.isCompatible(TypeSystemProvider::PMF_TYPE)){
-					switch(stmtType.rvType){
-						case(TypeInfoClass.Matrix):
-							checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE.makeMatrix, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-						case(TypeInfoClass.Vector):
-							checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE.makeVector, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-						default:
-							checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-					}
-				}
+				checkRandomVariableAssignmentTypes(stmtType, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
+//				val distType = e.distn.typeFor
+//				if(distType.isCompatible(TypeSystemProvider::PDF_TYPE)){
+//					switch(stmtType.underlyingType.typeClass){
+//						case(TypeInfoClass.Matrix):
+//							checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeMatrix, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
+//						case(TypeInfoClass.Vector):
+//							checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeVector, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
+//						default:
+//							checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
+//					}
+//				}
+//				else if(distType.isCompatible(TypeSystemProvider::PMF_TYPE)){
+//					switch(stmtType.rvType){
+//						case(TypeInfoClass.Matrix):
+//							checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE.makeMatrix, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
+//						case(TypeInfoClass.Vector):
+//							checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE.makeVector, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
+//						default:
+//							checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
+//					}
+//				}
 			}
 		}
 	}
@@ -510,11 +597,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 		val listDefn = attList.listDefinition
 		if(listDefn != null && at != null){
 			val attType = listDefn.getAttributeType(at.argumentName)
-			if(at instanceof ValuePair){
-				if(at.expression instanceof CatValRefMappingExpression)
-					checkCatgoricalMappingMatches(attType, at.expression, errorLambda)
-				else checkArgumentMatchesAndExpression(attType, at.expression, errorLambda)				
-			}
+			checkValuePairTyping(at, attType, errorLambda)
 		}
 	}
 
@@ -522,8 +605,38 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	def checkPropertyAttributeTyping(PropertyStatement stmt, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda){
 		val attType = at.typeForProperty
 		if(at instanceof ValuePair){
-			checkArgumentMatchesAndExpression(attType, at.expression, errorLambda)				
+			checkValuePairTyping(at, attType, errorLambda)				
 		}
+	}
+
+	def checkValuePairTyping(ValuePair at, TypeInfo attType, (TypeInfo, TypeInfo) => void errorLambda){
+			if(at instanceof AssignPair){
+				if(at.assignOp == '='){
+//					if(attType instanceof RandomVariableTypeInfo){
+//						error("Inappropriate use of '=' assignment. Expected a '" + attType.typeName + "' on the LHS of assignment.",
+//							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, attType.typeName
+//						)
+//					}
+//					else{
+						if(at.expression instanceof CatValRefMappingExpression)
+							checkCatgoricalMappingMatches(attType, at.expression, errorLambda)
+						else checkArgumentMatchesAndExpression(attType, at.expression, errorLambda)
+//					}				
+				}
+				else{
+					if(attType instanceof RandomVariableTypeInfo){
+						checkRandomVariableAssignmentTypes(attType, at.expression, errorLambda)
+					}
+					else{
+						error("Inappropriate use of '~' assignment. Expected a '" + attType.typeName + "' on the LHS of assignment.",
+							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, attType.typeName
+						)
+					}
+				}
+			}
+			else{
+				checkArgumentMatchesAndExpression(attType, at.expression, errorLambda)
+			}
 	}
 
 
@@ -532,7 +645,8 @@ class TypeSystemValidator extends AbstractMdlValidator {
 
 		if(subListDefn != null){
 			val attDefn = subListDefn.attributes.findFirst[name == at.argumentName]
-			checkArgumentMatchesAndExpression(attDefn.attType, at.expression, errorLambda)
+			checkValuePairTyping(at, attDefn.attType, errorLambda)
+//			checkArgumentMatchesAndExpression(attDefn.attType, at.expression, errorLambda)
 		}
 	}
 
