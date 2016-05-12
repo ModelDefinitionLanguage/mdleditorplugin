@@ -168,9 +168,6 @@ class ModellingStepsPrinterSimulateTest {
 					<ds:path>foo/bar/setting.txt</ds:path>
 				</File>
 			</SoftwareSettings>
-			<ExternalDataSetReference>
-				<ct:OidRef oidRef="nm_ds"/>
-			</ExternalDataSetReference>
 			<ct:VariableAssignment>
 				<ct:SymbRef blkIdRef="pm" symbIdRef="POP_CL"/>
 				<ct:Assign>
@@ -434,9 +431,6 @@ class ModellingStepsPrinterSimulateTest {
 
 		val expected = '''
 		<SimulationStep oid="simOid99">
-			<ExternalDataSetReference>
-				<ct:OidRef oidRef="nm_ds"/>
-			</ExternalDataSetReference>
 			<ct:VariableAssignment>
 				<ct:SymbRef blkIdRef="pm" symbIdRef="POP_CL"/>
 				<ct:Assign>
@@ -676,9 +670,6 @@ class ModellingStepsPrinterSimulateTest {
 
 		val expected = '''
 		<SimulationStep oid="simOid1">
-			<ExternalDataSetReference>
-				<ct:OidRef oidRef="nm_ds"/>
-			</ExternalDataSetReference>
 			<ct:VariableAssignment>
 				<ct:SymbRef blkIdRef="pm" symbIdRef="POP_CL"/>
 				<ct:Assign>
