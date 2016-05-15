@@ -322,7 +322,7 @@ class ListObservationsWriterTest {
 																	createAssignPair("level", createSymbolRef(lvlListDefn))
 																	])
 		val lambda = smBlk.createEqnDefn("P1", createRealLiteral(22.2))
-		val randVar = rvBlk.createCategoricalDefinition("Y", createNamedFunction(libDefns.getFunctionDefinition("Bernoulli"), #[
+		val randVar = rvBlk.createCategoricalDefinition("Y", createNamedFunction(libDefns.getFunctionDefinition("Bernoulli1"), #[
 																createAssignPair("probability", createSymbolRef(lambda))
 															]), "a", "b") 
 		val anonList = obsBlk.createAnonList(#[

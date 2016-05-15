@@ -4,6 +4,7 @@ import eu.ddmore.mdl.type.TypeInfo
 import eu.ddmore.mdl.utils.MdlLibUtils
 import eu.ddmore.mdllib.mdllib.ListAttributeDefn
 import org.eclipse.xtend.lib.annotations.ToString
+import eu.ddmore.mdl.type.TypeSystemProvider
 
 @ToString
 class MdlListAttributeDefn{
@@ -15,7 +16,7 @@ class MdlListAttributeDefn{
 
 	new(ListAttributeDefn lad){
 		_lad = lad
-		_attType = lad.attType.typeInfo
+		_attType = lad.attType?.typeInfo ?: TypeSystemProvider::UNDEFINED_TYPE
 	}
 	
 	

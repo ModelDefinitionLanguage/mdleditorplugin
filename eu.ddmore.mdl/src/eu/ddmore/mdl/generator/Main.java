@@ -3,21 +3,28 @@
  */
 package eu.ddmore.mdl.generator;
 
+import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
+
+import eu.ddmore.mdl.scoping.MdlImportURIGlobalScopeProvider;
 
 public class Main {
 	
@@ -26,11 +33,15 @@ public class Main {
 			System.err.println("Aborting: no path to EMF resource provided!");
 			return;
 		}
+		new eu.ddmore.mdllib.MdlLibStandaloneSetup().createInjectorAndDoEMFRegistration();
 		Injector injector = new eu.ddmore.mdl.MdlStandaloneSetup().createInjectorAndDoEMFRegistration();
 		Main main = injector.getInstance(Main.class);
 		main.runGenerator(args[0]);
 	}
 	
+	@Inject
+    private XtextResourceSet resourceSet;
+
 	@Inject 
 	private Provider<ResourceSet> resourceSetProvider;
 	
@@ -45,8 +56,11 @@ public class Main {
 
 	protected void runGenerator(String string) {
 		// load the resource
-		ResourceSet set = resourceSetProvider.get();
-		Resource resource = set.getResource(URI.createURI(string), true);
+//		ResourceSet set = resourceSetProvider.get();
+		
+		registerURIMappingsForImplicitImports(resourceSet);
+		
+		Resource resource = resourceSet.getResource(URI.createURI(string), true);
 		
 		// validate the resource
 		List<Issue> list = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
@@ -63,4 +77,27 @@ public class Main {
 		
 		System.out.println("Code generation finished.");
 	}
+
+    private static void registerURIMappingsForImplicitImports(XtextResourceSet resourceSet) {
+        URIConverter uriConverter = resourceSet.getURIConverter();
+        Map<URI, URI> uriMap = uriConverter.getURIMap();
+        registerPlatformToFileURIMapping(MdlImportURIGlobalScopeProvider.HEADER_URI, uriMap);
+    }
+ 
+    private static void registerPlatformToFileURIMapping(URI uri, Map<URI, URI> uriMap) {
+        URI fileURI = createFileURIForHeaderFile(uri);
+        File file = new File(fileURI.toFileString());
+        Preconditions.checkArgument(file.exists());
+        uriMap.put(uri, fileURI);
+        
+    }
+
+    private static URI createFileURIForHeaderFile(URI uri) {
+        return URI.createFileURI(deriveFilePathFromURI(uri));
+    }
+ 
+
+    private static String deriveFilePathFromURI(URI uri) {
+        return ".." + uri.path().substring(7);
+    }
 }

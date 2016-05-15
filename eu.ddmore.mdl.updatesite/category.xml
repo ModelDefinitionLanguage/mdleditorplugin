@@ -4,4 +4,5 @@
       <category name="eu.ddmore.mdl"/>
    </feature>
    <category-def name="eu.ddmore.mdl" label="MDL Language Editor"/>
+   <repository-reference location="http://https://sourceforge.net/projects/ddmore/files/update/mdl-plugin" enabled="true" />
 </site>

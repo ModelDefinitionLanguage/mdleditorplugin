@@ -3,9 +3,14 @@
  */
 package eu.ddmore.mdl.generator
 
+import eu.ddmore.converter.mdl2pharmml08.Mdl2Pharmml
+import eu.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdl.utils.MdlUtils
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
+
+//import static extension EcoreUtils2
 
 /**
  * Generates code from your model files on save.
@@ -15,10 +20,25 @@ import org.eclipse.xtext.generator.IGenerator
 class MdlGenerator implements IGenerator {
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-//			resource.allContents
-//				.filter(typeof(Greeting))
-//				.map[name]
-//				.join(', '))
+        val mcl = resource.getContents().head as Mcl;
+        
+        val mogs = new MdlUtils().getMogObjects(mcl);
+        
+        // TODO: We're currently making an assumption that there will be a single MOG
+        // in the provided file.  This should be fine for Product 4.
+        // This will be addressed under DDMORE-1221
+        val mogsIt = mogs.iterator();
+        if (!mogsIt.hasNext()) {
+            throw new IllegalStateException("Must be (at least) one MOG defined in the provided MCL file"); 
+        }
+        val mog = mogsIt.next();
+        
+
+        val xtendConverter = new Mdl2Pharmml();
+        
+//        final CharSequence converted = xtendConverter.convertToPharmML(mog);
+//       	val newDest = dest.removeFileExtension().addFileExtension("xml");
+
+		fsa.generateFile('output.xml', xtendConverter.convertToPharmML(mog))
 	}
 }

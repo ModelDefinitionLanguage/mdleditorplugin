@@ -2,6 +2,7 @@ package eu.ddmore.mdl.validation
 
 import eu.ddmore.mdl.mdl.AdditiveExpression
 import eu.ddmore.mdl.mdl.AndExpression
+import eu.ddmore.mdl.mdl.AssignPair
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.CatValRefMapping
 import eu.ddmore.mdl.mdl.CatValRefMappingExpression
@@ -41,6 +42,7 @@ import eu.ddmore.mdl.type.CategoryTypeInfo
 import eu.ddmore.mdl.type.CategoryValueTypeInfo
 import eu.ddmore.mdl.type.GeneralCategoryTypeInfo
 import eu.ddmore.mdl.type.MappingTypeInfo
+import eu.ddmore.mdl.type.MatrixTypeInfo
 import eu.ddmore.mdl.type.RandomVariableTypeInfo
 import eu.ddmore.mdl.type.TypeInfo
 import eu.ddmore.mdl.type.TypeInfoClass
@@ -58,9 +60,6 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import eu.ddmore.mdl.mdl.AssignPair
-import eu.ddmore.mdl.type.MatrixTypeInfo
-import eu.ddmore.mdllib.mdllib.TypeClass
 
 class TypeSystemValidator extends AbstractMdlValidator {
 	
@@ -612,16 +611,9 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	def checkValuePairTyping(ValuePair at, TypeInfo attType, (TypeInfo, TypeInfo) => void errorLambda){
 			if(at instanceof AssignPair){
 				if(at.assignOp == '='){
-//					if(attType instanceof RandomVariableTypeInfo){
-//						error("Inappropriate use of '=' assignment. Expected a '" + attType.typeName + "' on the LHS of assignment.",
-//							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, attType.typeName
-//						)
-//					}
-//					else{
-						if(at.expression instanceof CatValRefMappingExpression)
-							checkCatgoricalMappingMatches(attType, at.expression, errorLambda)
-						else checkArgumentMatchesAndExpression(attType, at.expression, errorLambda)
-//					}				
+					if(at.expression instanceof CatValRefMappingExpression)
+						checkCatgoricalMappingMatches(attType, at.expression, errorLambda)
+					else checkArgumentMatchesAndExpression(attType, at.expression, errorLambda)
 				}
 				else{
 					if(attType instanceof RandomVariableTypeInfo){

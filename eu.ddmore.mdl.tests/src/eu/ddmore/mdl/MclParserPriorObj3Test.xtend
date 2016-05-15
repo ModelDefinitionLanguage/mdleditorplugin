@@ -57,9 +57,9 @@ testprior = priorObj{
 		 POP_V = mp[1]
 		invPOP_SIGMA2_RES ~ Empirical(data=data_SIGMA2_RES, probability=p_SIGMA2_RES) 
 
-		invOMEGA_V ~ Gamma(shape=a_OMEGA_V, scale=b_OMEGA_V)
-		invOMEGA_k ~ Gamma(shape=a_OMEGA_k, scale=b_OMEGA_k)
-		invOMEGA_SIGMA_RES ~ Gamma(shape=a_OMEGA_SIGMA2_RES, scale=b_OMEGA_SIGMA2_RES)
+		invOMEGA_V ~ Gamma1(shape=a_OMEGA_V, scale=b_OMEGA_V)
+		invOMEGA_k ~ Gamma1(shape=a_OMEGA_k, scale=b_OMEGA_k)
+		invOMEGA_SIGMA_RES ~ Gamma1(shape=a_OMEGA_SIGMA2_RES, scale=b_OMEGA_SIGMA2_RES)
 	}
 	
 

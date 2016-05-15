@@ -540,7 +540,7 @@ class MclBuiltinFunctionValidationTest {
 				BETA_CL_WT
 			}
 			RANDOM_VARIABLE_DEFINITION(level=ID){
-				ETA_CL ~ Bernoulli(probability=POP_CL)
+				ETA_CL ~ Bernoulli1(probability=POP_CL)
 			}
 		}
 		'''.parse

@@ -131,7 +131,7 @@ _list VarLevel _atts type::varLvlType, level::int
 _list dosingTarget _super;
 _list DerivList _alt ::deriv _extends dosingTarget _atts deriv::real, init::real, x0::real, wrt::reference[::real]
 	_sig(deriv, init?, x0?, wrt?);
-_list DosingVar _alt ::real _extends dosingTarget _atts value::real _sig(value);
+_list dosingVar _alt ::real _extends dosingTarget _atts value::real _sig(value);
 
 
 // Compartments
@@ -198,18 +198,6 @@ _list ContinuousObsList _anon _extends continuousObs _atts type::obstype, variab
 _list UserDefinedObsList _extends continuousObs _atts type::obstype, value::real, prediction::real, weight::real
 									_sig(type, value, prediction, weight);
 
-// Parameter obj variability & Structural
-//_list CovarMatrix _atts type::varType, parameter::Vector, value::Vector
-//					_sig(type, parameter, value);
-//_list CorrMatrix _atts type::varType, parameter::Vector, value::Vector
-//					_sig(type, parameter, value);
-//_list SDEstimate _alt Real _atts type::varType, value::Real, lo::Real, hi::Real, fix::Boolean
-//					_sig(type, value, lo?, hi?, fix?);
-//_list VarEstimate _alt Real  _atts type::varType, value::Real, lo::Real, hi::Real, fix::Boolean
-//					_sig(type, value, lo?, hi?, fix?);
-//_list StructuralEstimate _alt Real _atts value::Real, lo::Real, hi::Real, fix::Boolean
-//					_sig(value, lo?, hi?, fix?);
-
 _list StructuralEstimateReal _alt ::real _atts value::real, lo::real, hi::real, fix::boolean
 					_sig(value, lo?, hi?, fix?);
 _list StructuralEstimateVector _alt ::vector _atts vectorValue::vector, fix::boolean
@@ -223,13 +211,6 @@ _list VarEstimateVector _alt ::vector  _atts type::varType, vectorValue::vector,
 _list VarEstimateMatrix _alt ::matrix  _atts type::varType, matrixValue::matrix, fix::boolean
 							_sig(type?, matrixValue, fix?);
 
-
-//_list ScalarEstimate _alt Real _atts type::estimateType, value::Real, lo::Real, hi::Real, fix::Boolean
-//					_sig(type, value, lo?, hi?, fix?);
-//_list VectorEstimate _alt Real _atts type::estimateType, value::Vector, lo::Real, hi::Real, fix::Boolean
-//					_sig(type, value, lo?, hi?, fix?);
-//_list MatrixEstimate _alt Real _atts type::estimateType, value::Matrix, lo::Real, hi::Real, fix::Boolean
-//					_sig(type, value, lo?, hi?, fix?);
 
 //MOG Objects
 _list MdlObjInMog _atts type::objType _sig(type);
@@ -274,6 +255,7 @@ _list StudyDesign _atts armSize::int, sameTimes::boolean,
 						occasionSequence::vector[::OccSeqSubList], interventionSequence::vector[::intSeqAtts], samplingSequence::vector[::sampSeqAtts],
 						population::reference[::PopulationTemplate]
 		_sig (interventionSequence, samplingSequence, occasionSequence?, armSize?, sameTimes?, population?);
+
 
 //_list DesignSpaceCatCov _atts objRef::GenericEnum, element::sampleelement, discrete::Vector, range::Vector
 //						_sig (objRef, element, discrete),
@@ -323,8 +305,9 @@ _list DerivedSamplingList _extends SamplingSuper _atts type::sampletype, combina
 _type covArgEnumType _enum(constant, idvDependent); //, occDependent); 
 
 //_type likelihoodType _enum(blq, likelihood);
-//_list LikelihoodBlq _atts type::likelihoodType, function::Reference[::Function(::Real,::Real,::Real)::Real], limit::Real _sig(type, function, limit); 
-//_list LikelihoodDefn _atts type::likelihoodType, function::Real _sig(type, function); 
+//_list LikelihoodBlq _atts type::likelihoodType, function::Reference[::Function(::Real,::Real,::Real)::Real], limit::Real _sig(type, function, limit);
+_type blkMethodType _enum(m1, m2, m3, m4); 
+_list blkDefn _atts type::blkMethodType, llq::real _sig(type, llq); 
 
 _type PopnType _enum(template);
 _sublist PopTmpltCovSublist _atts catCovValue::reference[::genericCategoryValue], cov::reference[::real],
@@ -583,13 +566,37 @@ _func pchipInterp(x::real, t0::real, x0::real, t1::real, x1::real) _returns ::re
 _func splineInterp(x::real, t0::real, x0::real, t1::real, x1::real) _returns ::real;
 
 // Named functions
-_func Normal _named
-				(mean::real,
-				sd::real,
-				var::real
+_func Normal "Normal distribution with varying parameterisation" _named
+				(mean::real "mean",
+				sd::real " standard deviation",
+				var::real "variance"
 			)
 			_sig (mean, sd),
 				(mean, var)
+			_returns ::pdf
+			;
+
+_func Normal1 "Normal distribution with s.d." _named
+				(mean::real "mean",
+				stdev::real " standard deviation"
+			)
+			_sig (mean, stdev)
+			_returns ::pdf
+			;
+
+_func Normal2 "Normal distribution with variance" _named
+				(mean::real "mean",
+				var::real "variance"
+			)
+			_sig (mean, var)
+			_returns ::pdf
+			;
+
+_func Normal3 "Normal distribution with precision" _named
+				(mean::real "mean",
+				precision::real "precision"
+			)
+			_sig (mean, precision)
 			_returns ::pdf
 			;
 
@@ -599,43 +606,57 @@ _func Normal _named
 //			_returns ::Real
 //			;
 			
-_func LogNormal _named
+_func LogNormal1 "Log Normal distribution" _named
 		(
-			mean::real,
-			sd::real,
-			var::real
+			meanLog::real "mean of log",
+			stdevLog::real "shape"
 		)
-		_sig(mean, sd),
-			(mean, var)
+		_sig(meanLog, stdevLog)
 		_returns ::pdf;
-_func Bernoulli _named
+
+_func LogNormal2 "Log Normal distribution" _named
+		(
+			meanLog::real "mean of log",
+			varLog::real "shape"
+		)
+		_sig(meanLog, varLog)
+		_returns ::pdf;
+
+_func Bernoulli1 "Bernoulli distributions" _named
 				(
-					category::reference[::genericEnum], // need to require a reference here
 					probability::real
 				)
-				_sig (category?, probability)
+				_sig (probability)
 				_returns ::pmf
 			;
-_func	 Poisson _named
+			
+_func Poisson1 "Poisson distribution" _named
 			(
-				lambda::real
+				rate::real "Poisson intensity"
 			)
-			_sig (lambda)
+			_sig (rate)
 			_returns ::pmf;
-_func Binomial _named
+
+_func Binomial1 " Bernouli distributon with parameters n and p" _named
 			(
-				successCategory ::reference[::genericEnum],
-				probabilityOfSuccess::real,
-				numberOfTrials::real
+				probability::real "success probability in each trial",
+				numberOfTrials::real "number of trial"
 			)
-			_sig(successCategory?, probabilityOfSuccess, numberOfTrials)
+			_sig(probability, numberOfTrials)
 			_returns ::pmf;
-_func	 Gamma _named
+_func Gamma1 _named
 			(
 				shape::real,
 				scale::real
 			)
 			_sig(shape, scale)
+			_returns ::pdf;
+_func Gamma2 _named
+			(
+				shape::real,
+				rate::real
+			)
+			_sig(shape, rate)
 			_returns ::pdf;
 _func NonParametric _named
 			(
@@ -665,20 +686,85 @@ _func MultiEmpirical _named
 			)	
 			_sig (data, probability?)
 			_returns ::vector[::pdf];		
-_func MultivariateNormal _named
+
+_func MultivariateNormal1 "Multivariate normal distribution" _named
 			(
-				mean::vector,
-				cov::matrix
+				mean::vector "location",
+				covarianceMatrix::matrix "covariance matrix"
 			)
-			_sig (mean, cov)
+			_sig (mean, covarianceMatrix)
 			_returns ::vector[::pdf];
-_func Wishart _named
+
+_func MultivariateNormal2 "Multivariate normal distribution" _named
 			(
-				scaleMatrix::matrix,
-				nu::real
+				mean::vector "location",
+				precisionMatrix::matrix "inverse of the covariance matrix"
 			)
-			_sig (scaleMatrix, nu)
+			_sig (mean, precisionMatrix)
+			_returns ::vector[::pdf];
+
+_func MultivariateStudentT1 "Multivariate (Student) T distribution" _named
+			(
+				mean::vector "location",
+				scaleMatrix::matrix "scale matrix",
+				degreesOfFreedom::real "degrees of freedom"
+			)
+			_sig (mean, scaleMatrix, degreesOfFreedom)
+			_returns ::vector[::pdf];
+
+_func MultivariateStudentT2 "Multivariate (Student) T distribution" _named
+			(
+				mean::vector "location",
+				precisionMatrix::matrix "inverse of the covariance matrix",
+				degreesOfFreedom::real "degrees of freedom"
+			)
+			_sig (mean, precisionMatrix, degreesOfFreedom)
+			_returns ::vector[::pdf];
+
+_func StudentT1 "Student's t-distribution" _named (
+				degreesOfFreedom::real
+			)
+			_sig (degreesOfFreedom)
+			_returns ::pdf;
+
+_func StudentT2 "Student's t-distribution" _named (
+				mean::real "mean",
+				scale::real "scale",
+				degreesOfFreedom::real
+			)
+			_sig (mean, scale, degreesOfFreedom)
+			_returns ::pdf;
+
+_func Uniform1 "Uniform distribution" _named (
+				minimum::real "minimum",
+				maximum::real "maximum"
+			)
+			_sig(minimum, maximum)
+			_returns ::pdf;
+
+_func Wishart1 "Wishart distribution" _named
+			(
+				scaleMatrix::matrix "scale matrix",
+				degreesOfFreedom::real "degrees of freedom"
+			)
+			_sig (scaleMatrix, degreesOfFreedom)
 			_returns ::matrix[[::pdf]];
+			
+_func Wishart2 "Wishart distribution" _named
+			(
+				inverseScaleMatrix::matrix "inverse scale matrix",
+				degreesOfFreedom::real "degrees of freedom"
+			)
+			_sig (inverseScaleMatrix, degreesOfFreedom)
+			_returns ::matrix[[::pdf]];
+		
+_func InverseWishart1 "Inverse Wishart" _named (
+				scaleMatrix::matrix "scale matrix",
+				degreesOfFreedom::real "degrees of freedom"
+			)
+			_sig(scaleMatrix, degreesOfFreedom)
+			_returns ::matrix[[::pdf]];
+		
 _func CategoricalNonordered1 _named
 			(
 				categoryProb::vector[::real]
@@ -691,6 +777,20 @@ _func CategoricalOrdered1 _named
 			)
 			_sig (categoryProb)
 			_returns ::pmf;
+			
+_func MixtureDistribution1 _named (
+				weight::vector  "mixing coefficients"
+			)
+			_sig (weight)
+			_returns ::vector[::pdf];
+
+_func ZeroInflatedPoisson1 "Sero-inflated Poisson" _named (
+				rate::real "Poisson intensity",
+				probabilityOfZero::real "probability of zero"
+			)
+			_sig(rate, probabilityOfZero)
+			_returns ::pdf;
+
 _func matrix _named
 		(
 			vector::vector,

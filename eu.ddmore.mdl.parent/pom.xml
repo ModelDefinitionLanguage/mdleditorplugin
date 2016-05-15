@@ -35,7 +35,7 @@
 		<sonar.skipDesign>true</sonar.skipDesign-->
 
         <!-- A URL where the p2 repository will be published, the value is set in feature.xml of the mdl-ide-dependencies feature -->
-        <sf.publish.location>http://sourceforge.net/projects/ddmore/files/update/ddmore-tools</sf.publish.location>
+        <sf.publish.location>http://sourceforge.net/projects/ddmore/files/update/mdl-plugin</sf.publish.location>
  		<mars-repo.url>http://download.eclipse.org/releases/mars</mars-repo.url>
      </properties>
 
@@ -70,7 +70,7 @@
     </profiles>
     
 	<repositories>
-		<repository>
+		<!--repository>
 			<id>repo.mdlteam.ddmore.eu</id>
 			<releases>
 				<enabled>true</enabled>
@@ -79,7 +79,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 			<url>s3://repo.mdlteam.ddmore.eu</url>
-		</repository>
+		</repository-->
 		<!-- repository>
 			<id>xtend</id>
 			<url>${xtend.repo.url}</url>

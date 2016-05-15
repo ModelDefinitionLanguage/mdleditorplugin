@@ -1334,7 +1334,7 @@ class MogValidatorTest {
 				MODEL_PREDICTION{
 					Y = A + D
 					A
-					D::DosingVar
+					D::dosingVar
 				}
 		
 		}

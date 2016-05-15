@@ -106,8 +106,8 @@ class DistributionPrinter {
 	public def printDiscreteDistribution(SymbolReference distnDef){
 		val typeName = distnDef.func;
 		val distn = switch(typeName){
-			case "Bernoulli": distnDef.printBernoulliDistn
-			case "Binomial": distnDef.printBinomialDistn
+			case "Bernoulli1": distnDef.printBernoulliDistn
+			case "Binomial1": distnDef.printBinomialDistn
 			case "CategoricalNonordered1": distnDef.printCategoricalNonorderedDistn 
 			case "CategoricalOrdered1": distnDef.printCategoricalOrderedDistn 
 			default: ''''''
