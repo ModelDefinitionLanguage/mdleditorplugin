@@ -234,18 +234,18 @@ class ModelDefinitionPrinter {
 			<ct:VariabilityReference>
 				«level.pharmMLExpr»
 			</ct:VariabilityReference>
-			«writeUncertMlDistribution(stmt.distn)»
+			«writeDistribution(stmt.distn)»
 		</RandomVariable>
 	'''
 		
-	def writeUncertMlDistribution(Expression functionCall){
-		switch(functionCall){
-			SymbolReference:
-				functionCall.writeUncertmlDist
-			default:
-				''''''
-		}
-	}
+//	def writeUncertMlDistribution(Expression functionCall){
+//		switch(functionCall){
+//			SymbolReference:
+//				functionCall.writeUncertmlDist
+//			default:
+//				''''''
+//		}
+//	}
 		
 
 //	/////////////////////////////

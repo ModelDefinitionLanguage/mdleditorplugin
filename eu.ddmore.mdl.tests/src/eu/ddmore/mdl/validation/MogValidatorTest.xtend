@@ -516,7 +516,7 @@ class MogValidatorTest {
 				}
 		
 				OBSERVATION{
-					Y : { type is count, distn = Poisson(lambda = F) }
+					Y : { type is count, distn = Poisson1(rate = F) }
 				}
 		}
 		p1 = parObj{
@@ -922,7 +922,7 @@ class MogValidatorTest {
 		
 				RANDOM_VARIABLE_DEFINITION(level is DV){
 					EPS ~ Normal(mean=0, sd=1)
-					Z ~ Poisson(lambda=0.0)
+					Z ~ Poisson1(rate=0.0)
 				}
 		
 				OBSERVATION{

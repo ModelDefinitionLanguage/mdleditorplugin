@@ -64,7 +64,7 @@ Bernoulli_DIST_mdl = mdlObj{
    }# end INDIVIDUAL_VARIABLES
 
 	RANDOM_VARIABLE_DEFINITION(level=DV){
-		Y withCategories{success, fail} ~ Bernoulli(probability=P1)
+		Y withCategories{success, fail} ~ Bernoulli1(probability=P1)
 	}
 
    OBSERVATION{

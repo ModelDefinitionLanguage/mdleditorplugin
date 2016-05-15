@@ -205,7 +205,7 @@ Hansson2013_mdl = mdlObj{
 
 
    MODEL_PREDICTION{
-      DOSE::DosingVar
+      DOSE::dosingVar
       AUC = DOSE/CL
       DP1 = BM0*(1+DPSLP*T)        # Linear disease progression model for VEGF
       DPS = BM0S*(1+DPSLPS*T)      # Linear disease progression model for SKIT

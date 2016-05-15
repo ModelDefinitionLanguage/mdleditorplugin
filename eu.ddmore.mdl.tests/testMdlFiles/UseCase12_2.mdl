@@ -70,7 +70,7 @@ Bernoulli_DIST_mdl = mdlObj{
    }# end MODEL_PREDICTION
 
 	RANDOM_VARIABLE_DEFINITION(level=DV){
-		Y withCategories{success, fail} ~ Binomial(probabilityOfSuccess=P1, numberOfTrials=1)
+		Y withCategories{success, fail} ~ Binomial1(probability=P1, numberOfTrials=1)
 	}
 
    OBSERVATION{

@@ -246,16 +246,18 @@ class ListObservationsWriterTest {
 						<ct:SymbRef blkIdRef="vm_err" symbIdRef="DV"/>
 					</ct:VariabilityReference>
 					<Distribution>
-						<UncertML>
-							<NormalDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/normal">
-								<mean>
-									<rVal>0.0</rVal>
-								</mean>
-								<stddev>
-									<var varId="pm.B"/>
-								</stddev>
-							</NormalDistribution>
-						</UncertML>
+						<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Normal1">
+							<Parameter name="mean">
+								<ct:Assign>
+									<ct:Real>0.0</ct:Real>
+								</ct:Assign>
+							</Parameter>
+							<Parameter name="stdev">
+								<ct:Assign>
+									<ct:SymbRef blkIdRef="pm" symbIdRef="B"/>
+								</ct:Assign>
+							</Parameter>
+						</ProbOnto>
 					</Distribution>
 				</General>
 			</ContinuousData>
@@ -277,8 +279,8 @@ class ListObservationsWriterTest {
 																	createAssignPair("level", createSymbolRef(lvlListDefn))
 																	])
 		val lambda = smBlk.createEqnDefn("LAMBDA", createRealLiteral(22.2))
-		val randVar = rvBlk.createRandVar("Y", createNamedFunction(libDefns.getFunctionDefinition("Poisson"), #[
-																createAssignPair("lambda", createSymbolRef(lambda))
+		val randVar = rvBlk.createRandVar("Y", createNamedFunction(libDefns.getFunctionDefinition("Poisson1"), #[
+																createAssignPair("rate", createSymbolRef(lambda))
 															])) 
 		val anonList = obsBlk.createAnonList(#[
 			createEnumPair('type', 'count'),
@@ -293,13 +295,13 @@ class ListObservationsWriterTest {
 						<CountVariable symbId="Y"/>
 						<PMF transform="identity">
 							<Distribution>
-								<UncertML>
-									<PoissonDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/distributions/poisson">
-										<rate>
-											<var varId="sm.LAMBDA"/>
-										</rate>
-									</PoissonDistribution>
-								</UncertML>
+								<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Poisson1">
+									<Parameter name="rate">
+										<ct:Assign>
+											<ct:SymbRef blkIdRef="sm" symbIdRef="LAMBDA"/>
+										</ct:Assign>
+									</Parameter>
+								</ProbOnto>
 							</Distribution>
 						</PMF>
 					</CountData>
@@ -371,8 +373,8 @@ class ListObservationsWriterTest {
 																	createAssignPair("level", createSymbolRef(lvlListDefn))
 																	])
 		val p1 = smBlk.createEqnDefn("P1", createRealLiteral(22.2))
-		val randVar = rvBlk.createCategoricalDefinition("Y", createNamedFunction(libDefns.getFunctionDefinition("Binomial"), #[
-																createAssignPair("probabilityOfSuccess", createSymbolRef(p1)),
+		val randVar = rvBlk.createCategoricalDefinition("Y", createNamedFunction(libDefns.getFunctionDefinition("Binomial1"), #[
+																createAssignPair("probability", createSymbolRef(p1)),
 																createAssignPair("numberOfTrials", createIntLiteral(1))
 															]), "a", "b") 
 		val anonList = obsBlk.createAnonList(#[
@@ -392,16 +394,18 @@ class ListObservationsWriterTest {
 					<CategoryVariable symbId="Y"/>
 					<PMF>
 						<Distribution>
-							<UncertML>
-								<BinomialDistribution xmlns="http://www.uncertml.org/3.0" definition="http://www.uncertml.org/3.0">
-									<numberOfTrials>
-										<nVal>1</nVal>
-									</numberOfTrials>
-									<probabilityOfSuccess>
-										<var varId="sm.P1"/>
-									</probabilityOfSuccess>
-								</BinomialDistribution>
-							</UncertML>
+							<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Binomial1">
+								<Parameter name="probability">
+									<ct:Assign>
+										<ct:SymbRef blkIdRef="sm" symbIdRef="P1"/>
+									</ct:Assign>
+								</Parameter>
+								<Parameter name="numberOfTrials">
+									<ct:Assign>
+										<ct:Int>1</ct:Int>
+									</ct:Assign>
+								</Parameter>
+							</ProbOnto>
 						</Distribution>
 					</PMF>
 				</CategoricalData>

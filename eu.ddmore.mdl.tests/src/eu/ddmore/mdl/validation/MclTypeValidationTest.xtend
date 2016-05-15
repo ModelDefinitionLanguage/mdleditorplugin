@@ -774,7 +774,7 @@ class MclTypeValidationTest {
 			}
 		
 			RANDOM_VARIABLE_DEFINITION(level=ID){
-				foo ~ LogNormal(mean=POP_V, var=OMEGA_V)
+				foo ~ LogNormal2(meanLog=POP_V, varLog=OMEGA_V)
 			}
 			
 			

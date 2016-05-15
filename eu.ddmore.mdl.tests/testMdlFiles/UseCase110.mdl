@@ -117,7 +117,7 @@ warfarin_PRED_mdl = mdlObj{
    }# end INDIVIDUAL_VARIABLES
 
    MODEL_PREDICTION{
-   	   DOSE::DosingVar
+   	   DOSE::dosingVar
        TNOW =  if (TIME<=TLAG) then 0
         else TIME-TLAG
        CONC =  if (TIME<=TLAG) then 0

@@ -48,14 +48,14 @@ example332_pri = priorObj{
 	    
 # <<<< Creating a vector: v = c(el1,el2) ?>>>  
 	   lMU_POP_P = [lMU_POP_K, lMU_POP_V] 
-	   lPOP_P ~ MultivariateNormal(mean=lMU_POP_P, cov=SIGMA_POP_P)
+	   lPOP_P ~ MultivariateNormal1(mean=lMU_POP_P, covarianceMatrix=SIGMA_POP_P)
 	 	
 # <<<< Accessing vector elements: el1 = v[1] ?>>> 
 	   POP_K = exp(lPOP_P[1])
 	   POP_V = exp(lPOP_P[2]) 
 
 	   # prior on "OMEGA" 	
-#	   invOMEGA_P ~ Wishart(scaleMatrix=R, nu=rho)
+#	   invOMEGA_P ~ Wishart1(scaleMatrix=R, degreesOfFreedom=rho)
 	# SLM not sure about this. Should wishard return a matrix?
 	# Creating a dummy matrix to keep the inverse function happy
 	   invOMEGA_P::matrix
@@ -63,11 +63,11 @@ example332_pri = priorObj{
 # <<<< the inverse(matrix) operator does not exist in the current version>>> 
 	   OMEGA_P = inverse(invOMEGA_P)
 		
-	   TAU_T ~ Gamma(shape=a_OMEGA_T, scale=b_OMEGA_T)
+	   TAU_T ~ Gamma1(shape=a_OMEGA_T, scale=b_OMEGA_T)
 	   OMEGA_T = 1/TAU_T 
         
 	   # prior on "SIGMA"  
-	   POP_T ~ Gamma(shape=a_POP_T, scale=b_POP_T) 
+	   POP_T ~ Gamma1(shape=a_POP_T, scale=b_POP_T) 
 
     } # end PRIOR_VARIABLE_DEFINITION
 } # end of parameter object
@@ -109,7 +109,7 @@ example332_mdl = mdlObj{
    }# end VARIABILITY_PARAMETERS
 
    RANDOM_VARIABLE_DEFINITION(level=ID) {
-	   lP ~ MultivariateNormal(mean=lPOP_P, cov=OMEGA_P) 
+	   lP ~ MultivariateNormal1(mean=lPOP_P, covarianceMatrix=OMEGA_P) 
 	   eta_T ~ Normal(mean=0, var=OMEGA_T)
    }# end RANDOM_VARIABLE_DEFINITION
 

@@ -96,7 +96,7 @@ warfarin_PK_ANALYTIC_mdl = mdlObj {
 	} # end INDIVIDUAL_VARIABLES
 	
 	MODEL_PREDICTION {
-		D::DosingVar
+		D::dosingVar
 	    k = CL/V
 	    CC = if ( T - DT < TLAG) then 0
 	         else (D/V) * KA/(KA-k) * (exp(-k * (T -DT-TLAG))- exp(-KA*(T-DT-TLAG)) )

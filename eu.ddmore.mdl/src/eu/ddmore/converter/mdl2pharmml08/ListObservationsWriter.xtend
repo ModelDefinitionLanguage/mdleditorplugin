@@ -208,7 +208,7 @@ class ListObservationsWriter {
 «««							«ENDIF»
 							<CountVariable symbId="«rvDefn.name»"/>
 							<PMF transform="identity">
-								«rvDefn.distn.writeUncertMlDistribution»
+								«rvDefn.distn.writeDistribution»
 							</PMF>
 						</CountData>
 					</Discrete>
@@ -255,7 +255,7 @@ class ListObservationsWriter {
 							<CategoryVariable symbId="«rvDefn.name»"/>
 							<PMF>
 								«IF distn instanceof SymbolReference»
-									«printDiscreteDistribution(distn)»
+									«writeDistribution(distn)»
 								«ELSE»
 									«ERROR_MSG»
 								«ENDIF»
@@ -383,7 +383,7 @@ class ListObservationsWriter {
 						<ct:VariabilityReference>
 							«blk.varLevelFromRvBlock.symbolReference»
 						</ct:VariabilityReference>
-						«rvDefn.distn.writeUncertMlDistribution»
+						«rvDefn.distn.writeDistribution»
 					</General>
 				</ContinuousData>
 				'''
@@ -404,7 +404,7 @@ class ListObservationsWriter {
 
 	def writeUncertMlDistribution(Expression functionCall){
 		if(functionCall instanceof SymbolReference)
-			functionCall.writeUncertmlDist
+			functionCall.writeDistribution
 		else
 			ERROR_MSG
 	}
