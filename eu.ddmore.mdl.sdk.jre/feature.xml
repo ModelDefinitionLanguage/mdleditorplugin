@@ -2,7 +2,7 @@
 <feature
       id="eu.ddmore.mdl.sdk.jre"
       label="MDL Editor"
-      version="1.4.0"
+      version="1.4.0.qualifier"
       provider-name="DDMoRe Project">
 
    <description>
