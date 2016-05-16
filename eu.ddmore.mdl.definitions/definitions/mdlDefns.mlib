@@ -375,7 +375,7 @@ _block RANDOM_VARIABLE_DEFINITION (0,) _arguments level::VarLevel _statements (0
 					_rvDefn, _enumDefn, _anonList
 					_list _key=type CorrelationEnumType.covariance->CovarianceList, CorrelationEnumType.correlation->CorrelationList;
 
-_block POPULATION_PARAMETERS (,) _arguments level::VarLevel _statements(,) _eqnDefn+, _anonList _list _key=type
+_block POPULATION_PARAMETERS (,) _statements(,) _eqnDefn+, _anonList _list _key=type
 			 PopnTypeType.continuous -> PopnContinuousList, PopnTypeType.categorical->PopnCategoricalList;
 
 _block INDIVIDUAL_VARIABLES (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+

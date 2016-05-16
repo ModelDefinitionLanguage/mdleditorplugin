@@ -32,6 +32,9 @@ import java.util.TreeMap
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToInteger
+import eu.ddmore.mdl.validation.MdlValidator
+import eu.ddmore.mdl.utils.ExpressionUtils
+import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 
 class ModelDefinitionPrinter {
 	extension MdlUtils mu = new MdlUtils
@@ -46,12 +49,19 @@ class ModelDefinitionPrinter {
 	extension FunctionObservationsWriter fow = new FunctionObservationsWriter
 	extension SimpleParameterWriter spw = new SimpleParameterWriter
 	extension ListIndivParamWriter lip = new ListIndivParamWriter
+	extension ExpressionUtils eu = new ExpressionUtils
+	extension BlockArgumentDefinitionProvider badp = new BlockArgumentDefinitionProvider 
 	
+	
+	var AbstractParameterWriter paramWriter;
 	
 	//////////////////////////////////////
 	// I. Model Definition
 	//////////////////////////////////////	
 	def writeModelDefinition(MclObject mObj, MclObject pObj){
+		if(pObj.objId.name == MdlValidator::PARAMOBJ){
+			paramWriter = new StandardParameterWriter
+		}
 		'''
 		<ModelDefinition xmlns="«xmlns_mdef»">
 			«mObj.writeAllVariabilityModels»
@@ -127,10 +137,7 @@ class ModelDefinitionPrinter {
 	
     def getCategoryDefinitions(CategoricalDefinitionExpr expr){
     	val retVal = new ArrayList<String>
-//    	switch(expr){
-//    		CategoricalDefinitionExpr:
-    			expr.categories.forEach[retVal.add(name)]
-//    	}
+		expr.categories.forEach[retVal.add(name)]
     	retVal
     }
     
@@ -213,16 +220,6 @@ class ModelDefinitionPrinter {
 	}	
 		
 		
-	def writeSimpleParameter(EquationDefinition stmt)'''
-		«IF stmt.expression != null»
-			<PopulationParameter symbId = "«stmt.name»">
-				«stmt.expression.writeAssignment»
-			</PopulationParameter>
-		«ELSE»
-			<PopulationParameter symbId = "«stmt.name»"/>
-		«ENDIF»
-	'''
-	
 	def private writeAssignment(Expression expr)'''
 		<ct:Assign>
 			«expr.pharmMLExpr»
@@ -260,7 +257,7 @@ class ModelDefinitionPrinter {
 						«FOR stmt: b.getNonBlockStatements»
 							«switch(stmt){
 								EquationDefinition:
-									writeSimpleParameter(stmt)
+									paramWriter.writeParameter(stmt)
 							}»
 						«ENDFOR» 
 			  		«ENDIF»
@@ -269,7 +266,7 @@ class ModelDefinitionPrinter {
 						«FOR stmt: b.getNonBlockStatements»
 							«switch(stmt){
 								EquationDefinition:
-									writeSimpleParameter(stmt)
+									paramWriter.writeParameter(stmt)
 							}»
 						«ENDFOR» 
 			  		«ENDIF»
@@ -278,7 +275,7 @@ class ModelDefinitionPrinter {
 						«FOR stmt: b.getNonBlockStatements»
 							«switch(stmt){
 								EquationDefinition:
-									writeSimpleParameter(stmt)
+									paramWriter.writeSimpleParameter(stmt)
 							}»
 						«ENDFOR» 
 			  		«ENDIF»
@@ -305,126 +302,10 @@ class ModelDefinitionPrinter {
 					«ENDIF»
 				«ENDFOR»
 	  		«ENDIF»
-			«print_mdef_CollerationModel(mObj, pObj)»
+			«print_mdef_CollerationModel(mObj)»
 		</ParameterModel>
   	'''
 	
-//	def writeGeneralIdv(EquationTypeDefinition it){
-//		var funcExpr = expression as SymbolReference
-//		var namedArgList = funcExpr.argList as NamedFuncArguments
-//		val trans = switch(it){
-//			TransformedDefinition:
-//				getPharmMLTransFunc(transform.name)
-//			default: null
-//		} 
-//		'''
-//		<IndividualParameter symbId="«name»">
-//			<StructuredModel>
-//				«IF trans!= null»
-//					<Transformation type="«trans»"/>
-//				«ENDIF»
-//				<GeneralCovariate>
-//					«namedArgList.getArgumentExpression('grp').writeAssignment»
-//				</GeneralCovariate>
-//				«namedArgList.getArgumentExpression('ranEff').writeRandomEffects»
-//			</StructuredModel>
-//		</IndividualParameter>
-//		''' 
-//	}
-	
-//	def private writeFixedEffects(Expression expr){
-//		val it = expr as VectorLiteral
-//		'''
-//		«FOR el : expressions»
-//			<Covariate>
-//				«((el as VectorElement).element as SubListExpression).writeFixedEffectCovariate»
-//				<FixedEffect>
-//					«((el as VectorElement).element as SubListExpression).writeFixedEffectCoefficient»
-//				</FixedEffect>
-//			</Covariate>
-//		«ENDFOR»
-//		'''
-//	}
-	
-//	def private writeFixedEffectCovariate(SubListExpression it){
-//		val cov = getAttributeExpression('cov')
-//		if(cov != null){
-//			'''
-//			«cov.pharmMLExpr»
-//			'''
-//		}
-//		else{
-//			val catCov = getAttributeExpression('catCov')
-//			'''
-//			«catCov.getEnumType.symbolReference»
-//			'''
-//		}
-//	}
-//	
-//	def private writeFixedEffectCoefficient(SubListExpression it){
-//		val catCov = getAttributeExpression('catCov')
-//		'''
-//		«getAttributeExpression('coeff')?.pharmMLExpr»
-//		«IF catCov != null»
-//			<Category catId="«catCov.getEnumValue.name»"/>
-//		«ENDIF»
-//		'''
-//	}
-	
-//	def private getEnumType(Expression expr){
-//		switch(expr){
-//			CategoryValueReference:{
-//				EcoreUtil2.getContainerOfType(expr.ref, SymbolDefinition)
-//			}
-//			default: null
-//		}
-//	}
-	
-//	def private getEnumValue(Expression expr){
-//		switch(expr){
-//			CategoryValueReference:	expr.ref
-//			default: null
-//		}
-//	}
-	
-	
-//	def private writeRandomEffects(Expression expr)'''
-//		«IF expr instanceof VectorLiteral»
-//			«FOR e : (expr as VectorLiteral).expressions»
-//				<RandomEffects>
-//					«IF (e as VectorElement).element instanceof SymbolReference»
-//						«(e as VectorElement).element.pharmMLExpr»
-//					«ELSE»
-//						<ERROR!>
-//					«ENDIF»
-//				</RandomEffects>
-//			«ENDFOR»
-//		«ENDIF»
-//		'''
-	
-//	def writeLinearIdv(EquationTypeDefinition it){
-//		var funcExpr = expression as SymbolReference
-//		var namedArgList = funcExpr.argList as NamedFuncArguments 
-//		val fixEff = namedArgList.getArgumentExpression('fixEff') as VectorLiteral
-//		'''
-//		<IndividualParameter symbId="«name»">
-//			<StructuredModel>
-//				«IF namedArgList.getArgumentExpression('trans') != null»
-//					<Transformation type="«namedArgList.getArgumentExpression('trans').convertToString.getPharmMLTransFunc»" />
-//				«ENDIF»
-//				<LinearCovariate>
-//					<PopulationValue>
-//						«namedArgList.getArgumentExpression('pop').writeAssignment»
-//					</PopulationValue>
-//					«IF fixEff != null && !fixEff.expressions.isEmpty »
-//						«namedArgList.getArgumentExpression('fixEff').writeFixedEffects»
-//					«ENDIF»
-//				</LinearCovariate>
-//				«namedArgList.getArgumentExpression('ranEff').writeRandomEffects»
-//			</StructuredModel>
-//		</IndividualParameter>
-//		''' 
-//	}
 	
 	def writeVariableDefinition(EquationDefinition stmt)'''
 		<ct:Variable symbId="«stmt.name»" symbolType="«IF stmt.typeFor.isVector»ERROR!«ELSE»real«ENDIF»">
@@ -541,30 +422,23 @@ class ModelDefinitionPrinter {
 //	/////////////////////////////
 //	// I.d_1 CorrelationModel
 //	/////////////////////////////
-	def print_mdef_CollerationModel(MclObject mObj, MclObject pObj){
+	def print_mdef_CollerationModel(MclObject mObj){
 		var model = "";
-			for (s: pObj.getParamCorrelations){
-				val corrDefn = s as ListDefinition
-				val type = corrDefn.firstAttributeList.getAttributeEnumValue('type');
-				if (type == 'corr' || type == 'cov'){
-					val params = corrDefn.firstAttributeList.getAttributeExpression('parameter') as VectorLiteral
-					val values = corrDefn.firstAttributeList.getAttributeExpression('value') as VectorLiteral
-					var k = 0;
-					for(i : 1 .. params.expressions.size - 1){
-						for(j : 0 .. i -1){
-							val rv1 = params.expressions.get(j).vectorElementAsSymbolReference
-							val rv2 = params.expressions.get(i).vectorElementAsSymbolReference
-							if (k < values.expressions.size){
-								var value = values.expressions.get(k) as VectorElement;
-								k = k + 1;
-								val level = mObj.getLevel(rv1.ref);
-								model += print_mdef_Correlation(type, level, rv1, rv2, value.element)
-							}							
-						}
+		for (b: mObj.getBlocksByName(BlockDefinitionTable::MDL_RND_VARS)){
+			val level = b.blkArgs.getArgumentExpression('level').symbolRef
+			for(s : b.statementsFromBlock){
+				if(s instanceof AnonymousListStatement){
+					if(s.list.hasAttribute('type')){
+						val corrType = s.list.getAttributeEnumValue('type')
+						val rv1 = s.list.getAttributeExpression('rv1').symbolRef
+						val rv2 = s.list.getAttributeExpression('rv2').symbolRef
+						val value = s.list.getAttributeExpression('value')
+						model += print_mdef_Correlation(corrType, level, rv1, rv2, value)
 					}
 				}
-			} 
-		return model;
+			}
+		}
+		model
 	}
 	
 	def getLevel(MclObject mObj, SymbolDefinition randomVar){
@@ -572,42 +446,34 @@ class ModelDefinitionPrinter {
 		randVar.getRandomVarLevel
 	}
 	
-	def print_mdef_Correlation(String type, SymbolReference level, SymbolReference rv1, SymbolReference rv2, Expression value){
-		var res = '''
-			<RandomVariable1>
-				«rv1.localSymbolReference»
-			</RandomVariable1>
-			<RandomVariable2>
-				«rv2.localSymbolReference»
-			</RandomVariable2>
-		'''
-		if (type == 'cov')
-			res  = res + '''
-				<Covariance>
-					«value.expressionAsEquation»
-				</Covariance>
-			'''
-		if (type == 'corr')
-			res  = res + '''
-				<CorrelationCoefficient>
-					«value.expressionAsEquation»
-				</CorrelationCoefficient>
-			'''
-		'''
-			<Correlation>
-				«IF level != null»
-					<ct:VariabilityReference>
-						«level.symbolReference»
-					</ct:VariabilityReference>
+	def print_mdef_Correlation(String type, SymbolReference level, SymbolReference rv1, SymbolReference rv2, Expression value)'''
+		<Correlation>
+			«IF level != null»
+				<ct:VariabilityReference>
+					«level.symbolReference»
+				</ct:VariabilityReference>
+			«ENDIF»
+			<Pairwise>
+				<RandomVariable1>
+					«rv1.localSymbolReference»
+				</RandomVariable1>
+				<RandomVariable2>
+					«rv2.localSymbolReference»
+				</RandomVariable2>
+				«IF type == 'correlation'»
+					<CorrelationCoefficient>
+						«value.expressionAsAssignment»
+					</CorrelationCoefficient>
+				«ELSEIF type == 'covariance'»
+					<Covariance>
+						«value.expressionAsAssignment»
+					</Covariance>
+				«ELSE»
+					<Error!/>
 				«ENDIF»
-				<Pairwise>
-					«res»
-				</Pairwise>
-			</Correlation>	
+			</Pairwise>
+		</Correlation>
 		'''
-	}
-	
-
 
 }
 
