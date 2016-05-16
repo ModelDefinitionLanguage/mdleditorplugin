@@ -103,7 +103,7 @@ _list CorrelationList _anon _atts type::CorrelationEnumType, matrix::matrix, rv1
 
 		
 // Individual Parameters
-_type IndivTypeType _enum (linear, general, userDefined);
+_type IndivTypeType _enum (linear, general, userDefined, rv);
 
 _list IndivAbstractList _super _alt ::real;
 
@@ -123,6 +123,21 @@ _list IndivUserDefined _alt ::real _extends IndivAbstractList
 		_atts type::IndivTypeType, value::real
 			_sig(type, value); 
 
+_list IndivRvList _anon _extends IndivAbstractList
+		_atts type::IndivTypeType, variable::randomVariable[::real]
+		_sig(type, variable);
+
+// Population parameter lists
+
+_type PopnTypeType _enum(continuous, categorical);
+
+_list PopnContinuousList _anon
+		_atts type::PopnTypeType, variable::randomVariable[::real]
+		_sig(type, variable);
+
+_list PopnCategoricalList _anon
+		_atts type::PopnTypeType, variable::randomVariable[::genericEnum]
+		_sig(type, variable);
 
 // Model
 	
@@ -358,17 +373,14 @@ _block VARIABILITY_PARAMETERS (0,) _statements (0,) _eqnDefn, _eqnDefn+;
 
 _block RANDOM_VARIABLE_DEFINITION (0,) _arguments level::VarLevel _statements (0,) 
 					_rvDefn, _enumDefn, _anonList
-					_list _key=type CorrelationEnumType.covariance->CovarianceList, CorrelationEnumType.correlation->CorrelationList
-					;
+					_list _key=type CorrelationEnumType.covariance->CovarianceList, CorrelationEnumType.correlation->CorrelationList;
 
-_block POPULATION_PARAMETERS (,) _statements(,) _eqnDefn+, _anonList _list _key=type
-			 obstype.count->CountObs, obstype.categorical->CatObs, obstype.discrete->DiscreteObs,
-			 obstype.continuous -> ContinuousObsList
-			 ;
+_block POPULATION_PARAMETERS (,) _arguments level::VarLevel _statements(,) _eqnDefn+, _anonList _list _key=type
+			 PopnTypeType.continuous -> PopnContinuousList, PopnTypeType.categorical->PopnCategoricalList;
 
 _block INDIVIDUAL_VARIABLES (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+
 	_list _key=type IndivTypeType.linear->IndivParamLinear, IndivTypeType.general -> IndivParamGeneral,
-						IndivTypeType.userDefined -> IndivUserDefined;
+						IndivTypeType.userDefined -> IndivUserDefined, IndivTypeType.rv -> IndivRvList;
 
 _block INFO (,) _statements (,) _propStmt _prop name?, problemStmt?;
 
