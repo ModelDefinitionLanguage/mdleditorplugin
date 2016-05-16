@@ -310,6 +310,27 @@
 	        <filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
         </page>
     </extension>
+    <extension point="org.eclipse.ui.menus">
+		<menuContribution locationURI="popup:#TextEditorContext?after=xtext.ui.openDeclaration">
+			<command
+				commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand"
+				id="eu.ddmore.mdl.Mdl.OpenGeneratedCode"
+				style="push">
+					<visibleWhen checkEnabled="false">
+						<reference definitionId="eu.ddmore.mdl.Mdl.Editor.opened" />
+					</visibleWhen>
+			</command>
+		</menuContribution>
+	</extension>
+	<extension point="org.eclipse.ui.handlers">
+		<handler
+			class="eu.ddmore.mdl.ui.MdlExecutableExtensionFactory:org.eclipse.xtext.ui.generator.trace.OpenGeneratedFileHandler"
+			commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand">
+				<activeWhen>
+					<reference definitionId="eu.ddmore.mdl.Mdl.Editor.opened" />
+				</activeWhen>
+		</handler>
+	</extension>
 
 	<!-- marker definitions for eu.ddmore.mdl.Mdl -->
 	<extension
@@ -475,5 +496,130 @@
             extensions="mdl">
     </provider>
   </extension>
+  <extension point="org.eclipse.team.core.fileTypes">
+    <fileTypes
+            extension="mdl"
+            type="text">
+    </fileTypes>
+  </extension>
 
+ <extension
+       point="org.eclipse.ui.views">
+ </extension>
+ <extension
+       point="org.eclipse.ui.navigator.viewer">
+    <viewerActionBinding
+          viewerId="eu.ddmore.mdl.ui.navigator">
+       <includes>
+          <actionExtension
+                pattern="org.eclipse.ui.navigator.resources.*">
+          </actionExtension>
+       </includes>
+    </viewerActionBinding>
+    <viewerContentBinding
+          viewerId="eu.ddmore.mdl.ui.navigator">
+       <includes>
+          <contentExtension
+                pattern="org.eclipse.ui.navigator.resourceContent">
+          </contentExtension>
+          <contentExtension
+                pattern="org.eclipse.ui.navigator.resources.filters.*">
+          </contentExtension>
+          <contentExtension
+                pattern="org.eclipse.ui.navigator.resources.linkHelper">
+          </contentExtension>
+          <contentExtension
+                pattern="org.eclipse.ui.navigator.resources.workingSets">
+          </contentExtension>
+       </includes>
+    </viewerContentBinding>
+ </extension>
+    <extension point="org.eclipse.ui.menus">
+	    <!--menuContribution
+          locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=group.edit">
+	        <command
+	            commandId="eu.ddmore.mdl.ui.handler.ConvertToPharmML_PE" style="push">
+	            <visibleWhen checkEnabled="false">
+                	<iterate>
+				       <adapt type="org.eclipse.core.resources.IResource">
+		        			<test property="org.eclipse.core.resources.name"
+				              value="*.mdl"/>
+		    		   </adapt>
+	 	    		</iterate>
+ 	            </visibleWhen>
+	        </command>
+		</menuContribution-->
+		<!--menuContribution
+          locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=group.edit">
+	        <command
+               commandId="eu.ddmore.mdl.ui.handler.NMTranToMDL_PE"
+               label="NMTran to MDL"
+               style="push">
+	            <visibleWhen checkEnabled="false">
+                	<iterate>
+				       <adapt type="org.eclipse.core.resources.IResource">
+		        			<test property="org.eclipse.core.resources.name"
+				              value="*.ctl"/>
+		    		   </adapt>
+	 	    		</iterate>
+ 	            </visibleWhen>
+	        </command>
+		</menuContribution-->
+		<!--menuContribution
+          locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=group.edit">
+	        <command
+	            commandId="eu.ddmore.mdl.ui.handler.ValidatePharmML_PE" style="push">
+	            <visibleWhen checkEnabled="false">
+                	<iterate>
+				       <adapt type="org.eclipse.core.resources.IResource">
+		        			<test property="org.eclipse.core.resources.name"
+				              value="*.xml"/>
+		    		   </adapt>
+	 	    		</iterate>
+ 	            </visibleWhen>
+	        </command>
+		</menuContribution-->
+	    <!--menuContribution locationURI="popup:#TextEditorContext?after=group.edit">
+	        <command
+	            commandId="eu.ddmore.mdl.ui.handler.ConvertToPharmML"
+	            style="push">
+	            <visibleWhen
+	                      checkEnabled="false">
+	                   <reference
+	                         definitionId="eu.ddmore.mdl.Mdl.Editor.opened">
+	                   </reference>
+	                </visibleWhen>
+	        </command>
+	    </menuContribution-->
+	</extension>
+    <extension
+          point="org.eclipse.ui.perspectives">
+       <perspective
+             class="eu.ddmore.mdl.ui.perspective.MDLPerspective"
+             id="eu.ddmore.mdl.ui.perspective.MDL"
+             name="DDMoRe">
+       </perspective>
+    </extension>
+    <extension
+          point="org.eclipse.ui.perspectiveExtensions">
+       <perspectiveExtension
+             targetID="org.eclipse.ui.resourcePerspective">
+          <perspectiveShortcut
+                id="eu.ddmore.mdl.ui.perspective.MDL">
+          </perspectiveShortcut>
+       </perspectiveExtension>
+    </extension>
+    <extension
+          point="org.eclipse.ui.exportWizards">
+       <wizard
+             category="eu.ddmore.mdl.ui.exportwiz.ddmore"
+             class="eu.ddmore.mdl.ui.wizard.PharmMLExportWizard"
+             id="eu.ddmore.mdl.ui.wizard.export.pharmml"
+             name="PharmML Export">
+       </wizard>
+       <category
+             id="eu.ddmore.mdl.ui.exportwiz.ddmore"
+             name="DDMoRe">
+       </category>
+    </extension>
 </plugin>

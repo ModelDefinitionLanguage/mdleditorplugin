@@ -51,7 +51,7 @@ public class PharmMLExporter {
         final XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
         resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 
-        final URI uri = URI.createURI(src.getRawLocationURI().toString());
+        final URI uri = URI.createURI(src.getLocationURI().toString());
         final Resource resource = resourceSet.getResource(uri, true);
 
 

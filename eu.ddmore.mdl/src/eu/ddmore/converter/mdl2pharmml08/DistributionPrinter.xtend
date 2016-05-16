@@ -1,23 +1,17 @@
 package eu.ddmore.converter.mdl2pharmml08
 
-import eu.ddmore.mdl.mdl.IntegerLiteral
 import eu.ddmore.mdl.mdl.NamedFuncArguments
-import eu.ddmore.mdl.mdl.RealLiteral
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BuiltinFunctionProvider
-import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.Expression
 import java.util.List
 import java.util.Map
 import org.eclipse.xtend.lib.annotations.Data
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 
-import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
-
 class DistributionPrinter {
 	
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
-	extension MdlUtils mu = new MdlUtils
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder
 	
 	@Data @FinalFieldsConstructor

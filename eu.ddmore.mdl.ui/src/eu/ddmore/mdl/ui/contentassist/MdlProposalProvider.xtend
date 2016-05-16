@@ -11,14 +11,18 @@ import eu.ddmore.mdl.mdl.EnumPair
 import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.PropertyStatement
+import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.ValuePair
+import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.PropertyDefinitionProvider
 import eu.ddmore.mdl.type.BuiltinEnumTypeInfo
-import eu.ddmore.mdl.type.TypeInfoClass
+import eu.ddmore.mdl.type.TypeInfo
 import eu.ddmore.mdl.type.TypeSystemProvider
+import eu.ddmore.mdl.utils.MdlLibUtils
 import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
+import eu.ddmore.mdllib.mdllib.TypeDefinition
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.emf.ecore.EObject
@@ -27,17 +31,11 @@ import org.eclipse.swt.graphics.Image
 import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.CrossReference
 import org.eclipse.xtext.EcoreUtil2
-import org.eclipse.xtext.RuleCall
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
 
 import static extension org.eclipse.xtext.EcoreUtil2.getContainerOfType
-import eu.ddmore.mdl.mdl.SymbolReference
-import eu.ddmore.mdl.provider.BuiltinFunctionProvider
-import eu.ddmore.mdl.type.TypeInfo
-import eu.ddmore.mdllib.mdllib.TypeDefinition
-import eu.ddmore.mdl.utils.MdlLibUtils
 
 /**
  * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant

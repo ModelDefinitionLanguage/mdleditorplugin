@@ -6,8 +6,9 @@ import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultSemanticHighlightingCalculator;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.DefaultSemanticHighlightingCalculator;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 
 import eu.ddmore.mdl.mdl.BlockStatement;
 import eu.ddmore.mdl.mdl.EnumExpression;
@@ -18,8 +19,8 @@ import eu.ddmore.mdl.mdl.ValuePair;
 public class MdlSemanticHighlightingCalculator extends DefaultSemanticHighlightingCalculator{
 	
 	@Override
-	protected void doProvideHighlightingFor(XtextResource resource,
-			IHighlightedPositionAcceptor acceptor) {
+	public void provideHighlightingFor(XtextResource resource,
+			IHighlightedPositionAcceptor acceptor, CancelIndicator ci) {
 		EObject rootObject = resource.getParseResult().getRootASTElement();
 		
 		for (BlockStatement g : EcoreUtil2.getAllContentsOfType(rootObject, BlockStatement.class)) {
@@ -46,7 +47,7 @@ public class MdlSemanticHighlightingCalculator extends DefaultSemanticHighlighti
 				acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.KEYWORD_ID);
 			}
 		}
-		super.doProvideHighlightingFor(resource, acceptor);
+		super.provideHighlightingFor(resource, acceptor, ci);
 	}
 	
 }

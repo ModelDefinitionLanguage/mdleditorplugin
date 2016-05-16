@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
@@ -22,7 +21,6 @@ import org.eclipse.xtext.validation.Issue;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Provider;
 
 import eu.ddmore.mdl.scoping.MdlImportURIGlobalScopeProvider;
 
@@ -42,8 +40,8 @@ public class Main {
 	@Inject
     private XtextResourceSet resourceSet;
 
-	@Inject 
-	private Provider<ResourceSet> resourceSetProvider;
+//	@Inject 
+//	private Provider<ResourceSet> resourceSetProvider;
 	
 	@Inject
 	private IResourceValidator validator;

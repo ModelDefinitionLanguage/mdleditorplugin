@@ -4,3 +4,4 @@ Bundle-Name: MDL Language Definitions
 Bundle-SymbolicName: eu.ddmore.mdl.definitions
 Bundle-Version: 1.4.0.qualifier
 Bundle-Vendor: Pfizer Inc
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
