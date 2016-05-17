@@ -37,6 +37,9 @@ import eu.ddmore.mdl.mdl.CategoryValueReference
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.mdl.UnnamedArgument
 import java.util.List
+import eu.ddmore.mdl.mdl.MatrixElement
+import eu.ddmore.mdl.mdl.MatrixLiteral
+import eu.ddmore.mdl.mdl.MatrixRow
 
 class PharmMLExpressionBuilder {
 	
@@ -57,6 +60,8 @@ class PharmMLExpressionBuilder {
 		BlockDefinitionTable::MDL_STRUCT_PARAMS -> 'pm',
 		BlockDefinitionTable::MDL_RND_VARS -> 'pm',
 		BlockDefinitionTable::MDL_GRP_PARAMS -> 'pm',
+		BlockDefinitionTable::PRIOR_VAR_DEFN -> 'pm',
+		BlockDefinitionTable::PRIOR_PARAMS -> 'pm',
 		BlockDefinitionTable::COVARIATE_BLK_NAME -> 'cm',
 		BlockDefinitionTable::IDV_BLK_NAME -> GLOBAL_VAR,
 		BlockDefinitionTable::PARAM_STRUCT_BLK -> 'pm',
@@ -178,6 +183,12 @@ class PharmMLExpressionBuilder {
     		VectorElement:{
     			expr.element.pharmMLExpr
     		}
+    		MatrixLiteral:{
+    			getMatrixLiteralExpression(expr)
+    		}
+    		MatrixElement:{
+    			expr.cell.pharmMLExpr
+    		}
     		BooleanLiteral:{
     			getBooleanLiteral(expr)
     		}
@@ -267,6 +278,22 @@ class PharmMLExpressionBuilder {
 		</ct:Vector>
 	'''
 	
+	def getMatrixLiteralExpression(MatrixLiteral it)'''
+		<ct:Matrix matrixType="Any">
+			«FOR r : rows»
+				«IF r instanceof MatrixRow»
+					<ct:MatrixRow>
+						«FOR e : r.cells»
+							«e.pharmMLExpr»
+						«ENDFOR»
+					</ct:MatrixRow>
+				«ENDIF»
+			«ENDFOR»
+		</ct:Matrix>
+	'''
+	
+
+
 	def getParExpression(ParExpression it)'''
 		«expr.pharmMLExpr»
 	'''
@@ -426,6 +453,12 @@ class PharmMLExpressionBuilder {
 		«ENDIF»
 	'''
     
+    private def writeMatrixUniOp(String opName, UnnamedFuncArguments args)'''
+		<math:MatrixUniop op="«opName»">
+			«args.unnamedArguments»
+		</math:MatrixUniop>
+    '''
+    
     private def CharSequence getFunctionCall(SymbolReference it){
     	val a = argList
     	switch(a){
@@ -443,6 +476,10 @@ class PharmMLExpressionBuilder {
     					writeSequence(a.args)
     				case 'seq':
     					writeSequence(a.args)
+    				case 'inverse',
+    				case 'det',
+    				case 'transpose':
+    					writeMatrixUniOp(func, a)
     				default:{
 		    			val opType = if(a.args.size > 1) "Binop" else "Uniop"
 		    			'''

@@ -1,10 +1,8 @@
 package eu.ddmore.converter.mdl2pharmml08
 
-import eu.ddmore.converter.treerewrite.MdlRootProvider
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
-import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.Statement
 import eu.ddmore.mdl.provider.BlockDefinitionTable
@@ -14,27 +12,28 @@ import eu.ddmore.mdl.utils.ConstantEvaluation
 import eu.ddmore.mdl.utils.MdlUtils
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
+import eu.ddmore.mdl.utils.ExpressionUtils
 
 class ModellingStepsPrinter { 
 	
 	extension MdlUtils mu = new MdlUtils 
-	extension MdlRootProvider mrp = new MdlRootProvider
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension ConstantEvaluation ce = new ConstantEvaluation
 	extension TaskSettingsPrinter tsp = new TaskSettingsPrinter
 	extension BlockUtils bu = new BlockUtils
+	extension ExpressionUtils eu = new ExpressionUtils
 	
 
 	////////////////////////////////////////////////
 	// III Modelling Steps
 	////////////////////////////////////////////////
-	def writeModellingSteps(Mcl it){
-		var mObj = mdlObj
-		var pObj = paramObj
-		var dObj = dataObj
-		var tObj = taskObj
-		var desObj = designObj
+	def writeModellingSteps(MclObject mObj, MclObject pObj, MclObject dObj, MclObject tObj){
+//		var mObj = mdlObj
+//		var pObj = paramObj
+//		var dObj = dataObj
+//		var tObj = taskObj
+//		var desObj = designObj
 
 		var res = "";
 		var dependencies = ""; 
@@ -52,7 +51,7 @@ class ModellingStepsPrinter {
 			}
 			else if( b.blkId.name == BlockDefinitionTable::EVALUATE_BLK || b.blkId.name == BlockDefinitionTable::OPTIMISE_BLK){
 				var oidRef = BLK_ESTIM_STEP + index;
-				res += writeOptimalStep(oidRef, mObj, desObj, pObj, b);
+				res += writeOptimalStep(oidRef, mObj, dObj, pObj, b);
 				dependencies  += 
 					'''
 					<mstep:Step>
@@ -62,7 +61,7 @@ class ModellingStepsPrinter {
 			}
 			else if( b.blkId.name == BlockDefinitionTable::SIMULATE_BLK){
 				var oidRef = BLK_SIMUL_STEP + index;
-				res += writeSimulationStep(oidRef, mObj, desObj, pObj, b);
+				res += writeSimulationStep(oidRef, mObj, dObj, pObj, b);
 				dependencies  += 
 					'''
 					<mstep:Step>
@@ -88,7 +87,11 @@ class ModellingStepsPrinter {
 		<EstimationStep oid="«oidRef»">
 			«taskBlk.statements.writeSettingsFile»
 			«writeExternalDataSetReference(dObj)»
-			«writeParametersToEstimate(pObj, mObj)»
+			«IF pObj.isParamObject»
+				«writeParametersToEstimate(pObj, mObj)»
+			«ELSE»
+				«writePriorsToEstimate(pObj, mObj)»
+			«ENDIF»
 			«taskBlk.statements.writeSettings»
 		</EstimationStep>
 	'''
@@ -150,7 +153,7 @@ class ModellingStepsPrinter {
 			default:''''''
 		}
 	}
-		
+	
 	def private writeParametersToEstimate(MclObject pObj, MclObject mObj)'''
 		<ParametersToEstimate>
 			«FOR stmt: pObj.paramStructuralParams»
@@ -159,6 +162,28 @@ class ModellingStepsPrinter {
 			«FOR stmt: pObj.paramVariabilityParams»
 				«IF (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'corr' && (stmt as ListDefinition).firstAttributeList.getAttributeEnumValue('type') != 'cov'»
 					«stmt.writeParameterEstimate(mObj)»
+				«ENDIF»
+			«ENDFOR»
+		</ParametersToEstimate>
+	'''	
+	
+	
+	def private writePriorsToEstimate(MclObject pObj, MclObject mObj)'''
+		<ParametersToEstimate>
+			«FOR b : pObj.blocks»
+				«IF b.blkId.name != BlockDefinitionTable::PRIOR_SOURCE_BLK»
+					«FOR stmt : b.nonBlockStatements»
+						«IF stmt instanceof EquationDefinition»
+							«IF stmt.expression != null && stmt.expression.isLiteralExpression»
+								<ParameterEstimation>
+									«stmt.getSymbolReference»
+									<InitialEstimate>
+										«stmt.expression.pharmMLExpr»
+									</InitialEstimate>
+								</ParameterEstimation>
+							«ENDIF»
+						«ENDIF»
+					«ENDFOR»
 				«ENDIF»
 			«ENDFOR»
 		</ParametersToEstimate>

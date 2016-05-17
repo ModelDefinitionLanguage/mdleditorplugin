@@ -274,4 +274,19 @@ class Mcl2PharmMLConverterTest {
 	def void testUseCaseSimeoniDesign(){
 		validateConversion("simeoniDesign")
 	}
+
+	@Test
+	def void testUseCase1PRIOR_Cauchy_UNIPV(){
+		validateConversion("UseCase1_PRIOR_Cauchy_UNIPV")
+	}
+
+	@Test
+	def void testUseCase1_PRIOR_NoParObj(){
+		validateConversion("UseCase1_PRIOR_NoParObj")
+	}
+
+	@Test
+	def void testUseCase1_PRIOR_UNIPV(){
+		validateConversion("UseCase1_PRIOR_UNIPV")
+	}
 }

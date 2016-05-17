@@ -44,6 +44,9 @@ import org.eclipse.xtext.EcoreUtil2
 import eu.ddmore.mdl.mdl.FunctionReference
 import eu.ddmore.mdl.mdl.MappingExpression
 import eu.ddmore.mdl.provider.MappingDefinitionProvider
+import eu.ddmore.mdl.mdl.ValuePair
+import eu.ddmore.mdl.mdl.BlockStatement
+import eu.ddmore.mdl.provider.BlockDefinitionTable
 
 public class TypeSystemProvider {
 
@@ -294,6 +297,35 @@ public class TypeSystemProvider {
 			}
 			default:
 				throw new RuntimeException("Unrecognised unary operator.")
+		}
+	}
+	
+	def dispatch TypeInfo typeFor(ValuePair vp){
+		var Object parent = EcoreUtil2.getContainerOfType(vp, SymbolReference)
+		if(parent == null){
+			parent = EcoreUtil2.getContainerOfType(vp, SubListExpression)
+		}
+		if(parent == null){
+			parent = EcoreUtil2.getContainerOfType(vp, AttributeList)
+		}
+		if(parent == null){
+			parent = EcoreUtil2.getContainerOfType(vp, PropertyStatement)
+		}
+		switch(parent){
+			SymbolReference:
+				vp.namedArgumentType
+			AttributeList:
+				vp.getAttributeType
+			SubListExpression:
+				vp.sublistAttributeType
+			PropertyStatement:{
+				val owningBlk = EcoreUtil2.getContainerOfType(parent.eContainer, BlockStatement)
+				if(owningBlk.blkId.name == BlockDefinitionTable::TARGET_SETTINGS)
+					vp.expression.typeFor
+				else vp.typeForProperty
+			}
+			default:
+				UNDEFINED_TYPE
 		}
 	}
 	

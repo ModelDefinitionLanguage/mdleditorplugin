@@ -36,7 +36,6 @@ import eu.ddmore.mdl.mdl.VectorLiteral
 import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.MappingDefinitionProvider
-import eu.ddmore.mdl.provider.PropertyDefinitionProvider
 import eu.ddmore.mdl.provider.SublistDefinitionProvider
 import eu.ddmore.mdl.type.CategoryTypeInfo
 import eu.ddmore.mdl.type.CategoryValueTypeInfo
@@ -70,7 +69,6 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 	extension SublistDefinitionProvider subListProvider = new SublistDefinitionProvider
-	extension PropertyDefinitionProvider propProvider = new PropertyDefinitionProvider
 	extension MdlLibUtils mlu = new MdlLibUtils
 	extension MappingDefinitionProvider mdp = new MappingDefinitionProvider
 	
@@ -600,9 +598,20 @@ class TypeSystemValidator extends AbstractMdlValidator {
 		}
 	}
 
+//		val owningBlk = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
+//		if(owningBlk.blkId.name == BlockDefinitionTable::TARGET_SETTINGS){
+//			
+//		}
+//		else{
+//			matchingPropertyDefn?.propRef.propType.typeInfo ?: TypeSystemProvider::UNDEFINED_TYPE
+//		}
 
 	def checkPropertyAttributeTyping(PropertyStatement stmt, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda){
-		val attType = at.typeForProperty
+//		val owningBlk = EcoreUtil2.getContainerOfType(stmt.eContainer, BlockStatement)
+//		val attType =  if(owningBlk.blkId.name == BlockDefinitionTable::TARGET_SETTINGS)
+//			at.expression.typeFor
+//		else at.typeForProperty
+		val attType = at.typeFor
 		if(at instanceof ValuePair){
 			checkValuePairTyping(at, attType, errorLambda)				
 		}

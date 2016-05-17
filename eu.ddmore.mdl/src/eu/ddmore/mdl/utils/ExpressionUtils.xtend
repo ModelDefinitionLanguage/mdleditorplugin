@@ -12,6 +12,8 @@ import eu.ddmore.mdl.mdl.MatrixElement
 import java.util.ArrayList
 import eu.ddmore.mdl.mdl.IntegerLiteral
 import eu.ddmore.mdl.mdl.RealLiteral
+import eu.ddmore.mdl.mdl.BooleanLiteral
+import eu.ddmore.mdl.mdl.MatrixLiteral
 
 class ExpressionUtils {
 	
@@ -103,6 +105,12 @@ class ExpressionUtils {
 				null
 		}
 	}
+	
+	def boolean isLiteralExpression(Expression ex){
+		ex instanceof IntegerLiteral || ex instanceof RealLiteral || ex instanceof BooleanLiteral
+			|| ex instanceof StringLiteral || ex instanceof VectorLiteral || ex instanceof MatrixLiteral 
+	}
+	
 	
 	
 }

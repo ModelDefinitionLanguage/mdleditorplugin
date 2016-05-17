@@ -22,6 +22,8 @@ class BlockDefinitionTable {
 	public static val ESTIMATE_BLK = "ESTIMATE" 
 	public static val SIMULATE_BLK = "SIMULATE" 
 	public static val PRIOR_SOURCE_BLK = "PRIOR_SOURCE"
+	public static val PRIOR_VAR_DEFN = "PRIOR_VARIABLE_DEFINITION"
+	public static val PRIOR_PARAMS = "PRIOR_PARAMETERS"
 	public static val DES_STUDY_DESIGN = "STUDY_DESIGN"
 	public static val DES_SAMPLING_BLK = "SAMPLING"
 	public static val DES_DESIGN_PARAMS = "DESIGN_PARAMETERS"

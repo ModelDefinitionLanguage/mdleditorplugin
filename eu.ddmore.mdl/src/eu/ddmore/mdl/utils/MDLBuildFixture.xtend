@@ -127,6 +127,20 @@ class MDLBuildFixture {
 		retVal
 	}
 	
+	
+	
+	
+//	def SymbolReference createNamedFunctionCall(FunctionDefnBody fSpec, ValuePair ... funcArgs){
+//		val retVal = MdlFactory.eINSTANCE.createSymbolReference
+//		retVal.ref = fSpec
+//		val namedArgs = MdlFactory.eINSTANCE.createNamedFuncArguments
+//		funcArgs.forEach[
+//			namedArgs.arguments.add(it)
+//		]
+//		retVal.argList = namedArgs
+//		retVal
+//	}
+	
 	def EquationDefinition createEqnDefn(BlockStatement it, String name){
 		val bdy = body as BlockStatementBody
 		val sd = MdlFactory.eINSTANCE.createEquationDefinition
@@ -246,7 +260,7 @@ class MDLBuildFixture {
 		retVal
 	}
 
-	def createNamedFunction(FunctionDefnBody funcDefn, List<ValuePair> argVals){
+	def createNamedFunction(FunctionDefnBody funcDefn, ValuePair ... argVals){
 //		val funcDefn = MdlLibFactory.eINSTANCE.createFunctionDefnBody
 //		funcDefn.name = varName
 //		funcDefn.funcSpec = MdlLibFactory.eINSTANCE.createFunctionSpec
