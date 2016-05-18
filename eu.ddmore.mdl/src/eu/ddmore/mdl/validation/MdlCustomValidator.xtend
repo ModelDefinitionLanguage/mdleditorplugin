@@ -362,14 +362,13 @@ class MdlCustomValidator extends AbstractMdlValidator {
 		}
 	}
 	
-	static val RESERVED_PREFIX = "MDL__" 
 //	static val ReservedWord = #{ 'ordered', 'withOrderedCategories' }
 	static val ReservedWord = Collections::emptySet
 	
 	@Check
 	def validateReservedNamesNotUsed(SymbolDefinition it){
-		if(name.startsWith(RESERVED_PREFIX)){
-			error("Variable names starting with '" + RESERVED_PREFIX + "' are reserved for internal use.",
+		if(name.startsWith(MdlValidator::RESERVED_PREFIX)){
+			error("Variable names starting with '" + MdlValidator::RESERVED_PREFIX + "' are reserved for internal use.",
 				MdlLibPackage::eINSTANCE.symbolDefinition_Name, MdlValidator::RESERVED_PREFIX_USED
 			)
 		}
@@ -382,8 +381,8 @@ class MdlCustomValidator extends AbstractMdlValidator {
 	
 	@Check
 	def validateReservedNamesNotUsed(CategoryValueDefinition it){
-		if(name.startsWith(RESERVED_PREFIX)){
-			error("Variable names starting with '" + RESERVED_PREFIX + "' are reserved for internal use.",
+		if(name.startsWith(MdlValidator::RESERVED_PREFIX)){
+			error("Variable names starting with '" + MdlValidator::RESERVED_PREFIX + "' are reserved for internal use.",
 				MdlPackage::eINSTANCE.categoryValueDefinition_Name, MdlValidator::RESERVED_PREFIX_USED
 			)
 		}

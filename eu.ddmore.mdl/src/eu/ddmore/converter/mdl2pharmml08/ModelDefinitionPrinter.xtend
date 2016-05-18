@@ -9,18 +9,12 @@ import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
-import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.Statement
-import eu.ddmore.mdl.mdl.SymbolReference
-import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.BlockUtils
-import eu.ddmore.mdl.utils.DomainObjectModelUtils
-import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
-import eu.ddmore.mdl.validation.MdlValidator
 import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import java.util.ArrayList
@@ -33,30 +27,16 @@ class ModelDefinitionPrinter {
 	extension TypeSystemProvider tsp = new TypeSystemProvider
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
-	extension DistributionPrinter dp = new DistributionPrinter 
 	extension PKMacrosPrinter pkp = PKMacrosPrinter::INSTANCE
-	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension BlockUtils bu = new BlockUtils
 	extension ListObservationsWriter low = new ListObservationsWriter
 	extension FunctionObservationsWriter fow = new FunctionObservationsWriter
-	extension SimpleParameterWriter spw = new SimpleParameterWriter
-	extension ListIndivParamWriter lip = new ListIndivParamWriter
-	extension ExpressionUtils eu = new ExpressionUtils
-	extension BlockArgumentDefinitionProvider badp = new BlockArgumentDefinitionProvider 
 	
-	
-	var AbstractParameterWriter paramWriter;
 	
 	//////////////////////////////////////
 	// I. Model Definition
 	//////////////////////////////////////	
-	def writeModelDefinition(MclObject mObj, MclObject pObj){
-		if(pObj.objId.name == MdlValidator::PARAMOBJ){
-			paramWriter = new StandardParameterWriter(mObj)
-		}
-		else{
-			paramWriter = new PriorParameterWriter(mObj, pObj)
-		}
+	def writeModelDefinition(MclObject mObj, MclObject pObj, AbstractParameterWriter paramWriter){
 		'''
 		<ModelDefinition xmlns="«xmlns_mdef»">
 			«paramWriter.writeVariabilityModel»
@@ -74,62 +54,7 @@ class ModelDefinitionPrinter {
 		'''
 	}
 
-//	def writeAllVariabilityModels(MclObject mObj){
-//		val vm_err_vars = new HashMap<String, Integer>
-//		val vm_mdl_vars = new HashMap<String, Integer>
-//		for(stmt : mObj.mdlVariabilityLevels){
-//			switch(stmt){
-//				ListDefinition:{
-//					if(stmt.firstAttributeList.getAttributeEnumValue('type') == 'parameter'){
-//						vm_mdl_vars.put(stmt.name, stmt.firstAttributeList.getAttributeExpression('level').convertToInteger)
-//					}
-//					else{
-//						vm_err_vars.put(stmt.name, stmt.firstAttributeList.getAttributeExpression('level').convertToInteger)
-//					}
-//				}
-//			}	
-//		}
-//		var model = "";
-//		if (vm_err_vars.size() > 0){
-//			model = model + vm_err_vars.writeVariabilityModel("vm_err", VAR_TYPE_ERROR);
-//		}		
-//		if (vm_mdl_vars.size() > 0){
-//			model = model + vm_mdl_vars.writeVariabilityModel("vm_mdl", VAR_TYPE_PARAMETER);
-//		}
-//		return model;
-//	}
-//	
-//	def writeVariabilityModel(Map<String, Integer> vars, String blkId, String varType){
-//		var model = "";
-//		if (vars.size() > 0){
-//			var bvc =  new ValueComparator(vars);
-//			var sorted_map = new TreeMap<String, Integer>(bvc);
-//			sorted_map.putAll(vars);
-//			var prev = "";
-//			var levels = "";
-//			for (s: sorted_map.entrySet){
-//				levels = levels +	'''
-//					«IF prev.length > 0»
-//						<Level referenceLevel="«IF s.value == 2»true«ELSE»false«ENDIF»" symbId="«s.key»">
-//							<ParentLevel>
-//								<ct:SymbRef symbIdRef="«prev»"/>
-//							</ParentLevel>
-//						</Level>
-//					«ELSE»
-//						<Level referenceLevel="«IF s.value == 2»true«ELSE»false«ENDIF»" symbId="«s.key»"/>
-//					«ENDIF»
-//				'''
-//				prev = s.key
-//			}			
-//			model = '''
-//				<VariabilityModel blkId="«blkId»" type="«varType»">
-//					«levels»
-//				</VariabilityModel>
-//			'''		
-//		}		
-//		return model;
-//	}
-	
+
     def getCategoryDefinitions(CategoricalDefinitionExpr expr){
     	val retVal = new ArrayList<String>
 		expr.categories.forEach[retVal.add(name)]

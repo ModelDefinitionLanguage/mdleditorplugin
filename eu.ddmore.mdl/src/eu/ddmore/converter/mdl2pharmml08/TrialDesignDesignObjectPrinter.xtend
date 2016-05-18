@@ -101,16 +101,18 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 
 	val MclObject mObj
 	val MclObject designObj
+	val AbstractParameterWriter priorDsWriter
 	
-
-	new(Mcl mdl){
+	new(Mcl mdl, AbstractParameterWriter priorDsWriter){
 		this.mObj = mdl.modelObject
 		this.designObj = mdl.designObject
+		this.priorDsWriter = priorDsWriter
 	}
 
 
 	override writeTrialDesign()'''
 		<TrialDesign xmlns="«xmlns_design»">
+			«priorDsWriter.writeAllDatasets»
 			«IF mObj != null && designObj != null»
 				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_PARAMS)»
 					«blk.writeDesignParameters»

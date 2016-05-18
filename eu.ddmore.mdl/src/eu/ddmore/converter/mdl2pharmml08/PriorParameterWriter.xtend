@@ -5,14 +5,20 @@ import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
+import eu.ddmore.mdl.mdl.StringLiteral
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BlockDefinitionTable
+import eu.ddmore.mdl.provider.ListDefinitionProvider
+import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
-import eu.ddmore.mdllib.mdllib.Expression
+import eu.ddmore.mdl.validation.MdlValidator
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
+import java.util.Collections
 import java.util.HashSet
 import java.util.Set
+import eu.ddmore.mdl.mdl.BlockStatement
+import eu.ddmore.mdl.mdl.AnonymousListStatement
 
 class PriorParameterWriter extends AbstractParameterWriter {
 
@@ -21,6 +27,8 @@ class PriorParameterWriter extends AbstractParameterWriter {
 	extension DistributionPrinter dp = new DistributionPrinter
 	extension ListIndivParamWriter lip = new ListIndivParamWriter
 	extension ExpressionUtils eu = new ExpressionUtils
+	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
+	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 
 	val MclObject priorObject
 	val Set<String> writtenParams
@@ -37,6 +45,11 @@ class PriorParameterWriter extends AbstractParameterWriter {
 		if(!writtenParams.contains(stmt.name)){
 			writtenParams.add(stmt.name)
 			'''
+				«IF priorObjDefn instanceof RandomVariableDefinition»
+					«IF priorObjDefn.isNonParametricDistn»
+						<PopulationParameter symbId="«priorObjDefn.name.weightVar»" />
+					«ENDIF»
+				«ENDIF»
 				«IF priorObjDefn != null»
 					<PopulationParameter symbId="«stmt.name»">
 						«IF priorObjDefn instanceof EquationTypeDefinition»
@@ -65,20 +78,47 @@ class PriorParameterWriter extends AbstractParameterWriter {
 				<ct:VariabilityReference>
 					<ct:SymbRef blkIdRef="vm_mdl" symbIdRef="MDL__prior"/>
 				</ct:VariabilityReference>
-				«IF priorDefn.distn.isPredefinedDistn»
+				«IF priorDefn.isPredefinedDistn»
 					«priorDefn.distn.writeDistribution»
 				«ELSE»
-					«priorDefn.distn.writeDataDrivenDistn»
+					«priorDefn.writeDataDrivenDistn»
 				«ENDIF»
 			'''
 		}
 	}
 	
-	def private writeDataDrivenDistn(Expression ex){
-		
+	def boolean isNonParametricDistn(RandomVariableDefinition rv){
+		val ex = rv.distn
+		if(ex instanceof SymbolReference){
+			val distName = ex.ref.name
+			distName == 'MultiNonParametric' ||
+				distName == 'NonParametric'
+		}
+		else false
 	}
 	
-	def boolean isPredefinedDistn(Expression ex){
+	def private getWeightVar(String varName){
+		MdlValidator::RESERVED_PREFIX + "weight_" + varName
+	}
+	
+	def private writeDataDrivenDistn(RandomVariableDefinition rvd)'''
+		«IF rvd.distn instanceof SymbolReference»
+			<Distribution>
+				<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="RandomSample">
+					«IF rvd.isNonParametricDistn»
+						<Parameter name="weight">
+							<ct:Assign>
+								<ct:SymbRef symbIdRef="«rvd.name.weightVar»"/>
+							</ct:Assign>
+						</Parameter>
+					«ENDIF»
+				</ProbOnto>
+			</Distribution>
+		«ENDIF»
+	'''
+	
+	def boolean isPredefinedDistn(RandomVariableDefinition rv){
+		val ex = rv.distn
 		if(ex instanceof SymbolReference){
 			val distName = ex.ref.name
 			distName != 'MultiNonParametric' &&
@@ -157,5 +197,91 @@ class PriorParameterWriter extends AbstractParameterWriter {
 			«print_mdef_CollerationModel(mdlObj)»
 		</ParameterModel>
   	'''
+	
+	
+	override writeAllDatasets(){
+		val srcBlks = priorObject.getBlocksByName(BlockDefinitionTable::PRIOR_NC_DISTN)
+		'''
+			«FOR ncb : srcBlks»
+				«FOR sb : ncb.statementsFromBlock.filter[blk|
+								if(blk instanceof BlockStatement) blk.blkId.name == BlockDefinitionTable::PRIOR_SOURCE_BLK else false
+						]»
+					«FOR sl : (sb as BlockStatement).nonBlockStatements»
+						«IF sl instanceof ListDefinition»
+							«writeDataset(sl)»
+						«ENDIF»
+					«ENDFOR»
+				«ENDFOR»
+			«ENDFOR»
+		'''
+	}
+	
+	def private writeColumnMapping(ListDefinition dataList){
+		val ncBlks = priorObject.getBlocksByName(BlockDefinitionTable::PRIOR_NC_DISTN)
+		var matColCntr = 1
+		'''
+			«FOR ncBlk : ncBlks»
+				«FOR blk : ncBlk.statementsFromBlock.filter[blk|
+								if(blk instanceof BlockStatement) blk.blkId.name == BlockDefinitionTable::PRIOR_INPUT_DATA else false
+						]»
+					«IF blk instanceof BlockStatement»
+						«FOR inList : blk.nonBlockStatements»
+							«IF inList instanceof AnonymousListStatement»
+								«IF inList.list.getAttributeExpression("src").symbolRef?.ref == dataList»
+									«IF inList.list.hasAttribute('vectorVar')»
+											<ColumnMapping>
+												<ds:ColumnRef columnIdRef="«inList.list.getAttributeExpessionAsString('column')»"/>
+												«inList.list.getAttributeExpression('vectorVar').pharmMLExpr»
+											</ColumnMapping>
+									«ELSE»
+										«FOR col : inList.list.getAttributeExpression('column').vector»
+											«IF col instanceof StringLiteral»
+												<ColumnMapping>
+													<ds:ColumnRef columnIdRef="«col.stringValue»"/>
+													<ct:Assign>
+														<ct:VectorSelector>
+															«inList.list.getAttributeExpression('matrixVar').pharmMLExpr»
+															<ct:Cell>
+																<ct:Int>«matColCntr++»</ct:Int>
+															</ct:Cell>
+														</ct:VectorSelector>
+													</ct:Assign>
+												</ColumnMapping>
+											«ENDIF»
+										«ENDFOR»
+									«ENDIF»
+								«ENDIF»
+							«ENDIF»
+						«ENDFOR»
+					«ENDIF»
+				«ENDFOR»
+			«ENDFOR»
+		'''
+	}
+	
+	def private getSyntheticFileOid(String name){
+		MdlValidator::RESERVED_PREFIX + 'fileOid_' + name
+	}
+	
+	def writeDataset(ListDefinition it){
+		var colIdx = 1
+	'''
+		<ExternalDataSet oid="«name»">
+			«writeColumnMapping»
+			<ds:DataSet>
+				<ds:Definition>
+					«FOR col : firstAttributeList.getAttributeExpression('column').vector ?: Collections::emptyList»
+						«IF col instanceof StringLiteral»
+							<ds:Column columnId="«col.stringValue»" valueType="real" columnNum="«colIdx++»"/>
+						«ENDIF»
+					«ENDFOR»
+				</ds:Definition>
+				<ds:ExternalFile oid="«getSyntheticFileOid(name)»">
+					<ds:path>«firstAttributeList.getAttributeExpression('file').stringValue ?: 'Error!'»</ds:path>
+				</ds:ExternalFile>
+			</ds:DataSet>
+		</ExternalDataSet>
+	'''
+	}
 	
 }

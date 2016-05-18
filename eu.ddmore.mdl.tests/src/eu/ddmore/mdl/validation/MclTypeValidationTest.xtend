@@ -2470,12 +2470,10 @@ warfarin_PK_Compartments_mdl = mdlObj {
 		val mcl = '''
 testprior = priorObj{
 
-	NON_CANONICAL_DISTRIBUTION{
-		INPUT_PRIOR_DATA{
-			bins_k::vector[::real]
-			bins_v::vector[::real]
-			bins_k_v= toMatrixByRow([bins_k, bins_v])
-		}
+	PRIOR_VARIABLE_DEFINITION{
+		bins_k::vector[::real]
+		bins_v::vector[::real]
+		bins_k_v= toMatrixByRow([bins_k, bins_v])
 	}
 }
 		'''.parse

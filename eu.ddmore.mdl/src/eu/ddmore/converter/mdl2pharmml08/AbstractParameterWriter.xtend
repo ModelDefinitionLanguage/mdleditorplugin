@@ -1,9 +1,9 @@
 package eu.ddmore.converter.mdl2pharmml08
 
 import eu.ddmore.mdl.mdl.AnonymousListStatement
-import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
+import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 import eu.ddmore.mdl.provider.BlockDefinitionTable
@@ -19,7 +19,6 @@ import java.util.Map
 import java.util.TreeMap
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
-import eu.ddmore.mdl.mdl.RandomVariableDefinition
 
 abstract class AbstractParameterWriter {
 	extension MdlUtils mu = new MdlUtils
@@ -56,6 +55,8 @@ abstract class AbstractParameterWriter {
 	abstract def String writeSimpleParameter(SymbolDefinition stmt)
 	
 	abstract def String writeParameter(SymbolDefinition stmt)
+	
+	abstract def String writeAllDatasets()
 
 	def writeVariabilityModel(){
 		val vm_err_vars = new HashMap<String, Integer>

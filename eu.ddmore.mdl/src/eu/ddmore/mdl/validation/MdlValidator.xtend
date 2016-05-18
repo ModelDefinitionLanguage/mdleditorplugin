@@ -22,6 +22,8 @@ import org.eclipse.xtext.validation.ComposedChecks
  								MogValidator, 
  								ExpressionValidator, StatementValidator, PropertyValidator ])
 class MdlValidator extends AbstractMdlValidator {
+	public static val RESERVED_PREFIX = "MDL__" 
+
 	public val static MDLOBJ = 'mdlObj'
 	public val static DATAOBJ = 'dataObj'
 	public val static TASKOBJ = 'taskObj'

@@ -30,7 +30,7 @@ _type divUse _enum (covariate, variable, amt, dv, dvid, cmt, mdv, idv, id, rate,
 _type ddvUse _enum (doseTime, doseInterval, covariate, variable, dvid);
 _type varLvlType _enum (parameter, observation);
 _type input _enum (nonmemFormat);
-_type priorInput _enum (RList, csv);
+_type priorInput _enum (/*RList,*/ csv);
 _type cmtType _enum (depot, compartment, elimination, transfer, distribution, direct, effect);
 _type varType _enum (cov, corr, sd, var);
 _type estimateType _enum (scalar, vector, matrix);
@@ -86,10 +86,16 @@ _sublist priorFormat _atts element::string, type::priorElementType
 
 // Priors
 _list PriorTabularSource _super;
-_list PriorSourceRList _atts file::string, inputFormat::priorInput, format::vector[::priorFormat]
-		_sig(file, inputFormat, format);
+//_list PriorSourceRList _atts file::string, inputFormat::priorInput, format::vector[::priorFormat]
+//		_sig(file, inputFormat, format);
 _list PriorSourceCsv _extends PriorTabularSource _atts file::string, inputFormat::priorInput, column::vector[::string]
 		_sig(file, inputFormat, column);
+
+//_type PriorInputType _enum(vector, matrix);
+_list PriorVectorInput _anon _atts vectorVar::reference[::vector[::real]], src::PriorSourceCsv, column::string
+		_sig(vectorVar, src, column);
+_list PriorMatrixInput _anon _atts matrixVar::reference[::matrix[[::real]]], src::PriorSourceCsv, column::vector[::string]
+		_sig(matrixVar, src, column);
 		
 		
 // Random Variables
@@ -483,11 +489,12 @@ _block DESIGN_SPACES (,) _statements (,) _listDefn
 
 _block DESIGN_PARAMETERS (,) _statements (,) _eqnDefn, _eqnDefn+;
 _block PRIOR_PARAMETERS (,) _statements (,) _eqnDefn, _eqnDefn+;
-_block NON_CANONICAL_DISTRIBUTION (,) _statements (,) _eqnDefn, _eqnDefn+;
+_block NON_CANONICAL_DISTRIBUTION (,) _statements (,) _eqnDefn;
 _block PRIOR_VARIABLE_DEFINITION (,) _statements (,) _eqnDefn, _eqnDefn+, _rvDefn;
-_block INPUT_PRIOR_DATA (,) _statements (,) _eqnDefn, _eqnDefn+;
+_block INPUT_PRIOR_DATA (,) _statements (,) _anonList
+	_list _map PriorVectorInput.vectorVar -> PriorVectorInput, PriorMatrixInput.matrixVar->PriorMatrixInput;
 _block PRIOR_SOURCE (,) _statements (,) _listDefn
-	_list _key=inputFormat  priorInput.RList->PriorSourceRList, priorInput.csv->PriorSourceCsv;
+	_list _key=inputFormat  /*priorInput.RList->PriorSourceRList,*/ priorInput.csv->PriorSourceCsv;
 _block POPULATION (,) _statements (,) _listDefn
 	_list _key=type PopnType.template->PopulationTemplate;
 
@@ -498,7 +505,6 @@ _container dataObj _has DATA_INPUT_VARIABLES, DECLARED_VARIABLES, DATA_DERIVED_V
 _container parObj _has VARIABILITY, /*DECLARED_VARIABLES,*/ STRUCTURAL;
 _container taskObj _has ESTIMATE, SIMULATE, OPTIMISE, EVALUATE;
 _container mogObj _has INFO, OBJECTS;
-//_container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, COVARIATES, DESIGN_PARAMETERS, POPULATION;
 _container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, DESIGN_PARAMETERS, POPULATION;
 _container priorObj _has PRIOR_PARAMETERS, NON_CANONICAL_DISTRIBUTION, PRIOR_VARIABLE_DEFINITION;
 _container MODEL_PREDICTION _has DEQ, COMPARTMENT;
@@ -507,7 +513,6 @@ _container ESTIMATE _has TARGET_SETTINGS;
 _container SIMULATE _has TARGET_SETTINGS;
 _container EVALUATE _has TARGET_SETTINGS;
 _container OPTIMISE _has TARGET_SETTINGS;
-
 
 
 _func log (x::real, y::real) _returns ::real;
@@ -686,17 +691,15 @@ _func MultiNonParametric _named
 			_returns ::vector[::pdf];
 _func Empirical _named
 			(
-				data::vector,
-				probability::vector
+				data::vector
 			)
-			_sig(data, probability?)
+			_sig(data)
 			_returns ::pdf;
 _func MultiEmpirical _named
 			(
-				data::matrix,
-				probability::vector
+				data::matrix
 			)	
-			_sig (data, probability?)
+			_sig (data)
 			_returns ::vector[::pdf];		
 
 _func MultivariateNormal1 "Multivariate normal distribution" _named
@@ -873,31 +876,32 @@ _func matrix _named
 ////		_returns ::Real
 //		_returns ::proportionalErrorList
 //;
-_func readVector _named
-			(
-				src::PriorSourceRList,
-				element::string
-			)
-			_sig(src, element)
-			_returns ::vector;
-_func readMatrix _named
-			(
-				src::PriorSourceRList,
-				element::string
-			)
-			_sig(src, element)
-			_returns ::matrix;
-_func readVectorFromTable _named
-			(
-				src::PriorTabularSource,
-				column::vector[::string]
-			)
-			_sig(src, column)
-			_returns ::vector;
-_func readMatrixFromTable _named
-			(
-				src::PriorTabularSource,
-				column::vector[::string]
-			)
-			_sig(src, column)
-			_returns ::matrix;
+//_func readVector _named
+//			(
+//				src::PriorSourceCsv,
+//				column::string
+//				
+//			)
+//			_sig(src, column)
+//			_returns ::vector;
+//_func readMatrix _named
+//			(
+//				src::PriorSourceCsv,
+//				column::vector[::string]
+//			)
+//			_sig(src, column)
+//			_returns ::matrix;
+//_func readVectorFromTable _named
+//			(
+//				src::PriorTabularSource,
+//				column::vector[::string]
+//			)
+//			_sig(src, column)
+//			_returns ::vector;
+//_func readMatrixFromTable _named
+//			(
+//				src::PriorTabularSource,
+//				column::vector[::string]
+//			)
+//			_sig(src, column)
+//			_returns ::matrix;

@@ -40,14 +40,17 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	
 	val MclObject mObj
 	val MclObject dObj
+	val AbstractParameterWriter priorDsWriter
 	
-	new(Mcl mdl){
+	new(Mcl mdl, AbstractParameterWriter priorDsWriter){
 		mObj = mdl.modelObject
 		dObj = mdl.dataObject
+		this.priorDsWriter = priorDsWriter
 	}
 	
 	override writeTrialDesign()'''
 		<TrialDesign xmlns="«xmlns_design»">
+			«priorDsWriter.writeAllDatasets»
 			«IF mObj != null && dObj != null»
 				«writeTargetDataSet»
 			«ENDIF»
@@ -55,7 +58,6 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	'''	
 
 	def private writeTargetDataSet() {
-
 		var res = "";
 		if (dObj != null || mObj != null) {
 			val s = dObj.dataSourceStmt

@@ -99,4 +99,7 @@ class StandardParameterWriter extends AbstractParameterWriter {
 			«print_mdef_CollerationModel(mdlObj)»
 		</ParameterModel>
   	'''
+			
+	override writeAllDatasets()''''''
+			
 }

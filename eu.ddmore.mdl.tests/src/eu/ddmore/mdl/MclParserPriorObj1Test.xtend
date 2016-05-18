@@ -35,26 +35,30 @@ testprior = priorObj{
 
 	NON_CANONICAL_DISTRIBUTION{
 		PRIOR_SOURCE{
-			data : { file="simple3_prior.csv", inputFormat is RList,
-						format=[{element="bins_k", type is vector},
-								{element="p_k", type is vector},
-								{element="data_SIGMA2_RES", type is vector},
-								{element="p_SIGMA2_RES", type is vector}	] }    #the file structure has to be decided
+			data : { file="simple3_prior.csv", inputFormat is csv,
+						column=[ "bins_k", "bins_v", "p_k_v", "data_SIGMA2_RES" ] }
 		}
 
 		INPUT_PRIOR_DATA{
-			bins_k = readVector(src=data, element="bins_k")
-			p_k = readVector(src=data, element="p_k")
-			p_SIGMA2_RES = readVector(src=data, element="p_SIGMA2_RES")
-			data_SIGMA2_RES = readVector(src=data, element="data_SIGMA2_RES")
+			:: { matrixVar=bins_k_v, src=data, column=["bins_k", "bins_v"] }
+			#bins_k_v = readMatrix(src=data, element="bins_k_v")
+			:: { vectorVar=p_k_v, src=data, column="p_k_v" }
+			#p_k = readVector(src=data, element="p_k")
+			#p_SIGMA2_RES = readVector(src=data, element="p_SIGMA2_RES")
+			:: { vectorVar=data_SIGMA2_RES, src=data, column="data_SIGMA2_RES" }
+			#data_SIGMA2_RES = readVector(src=data, element="data_SIGMA2_RES")
 		}
 	}
 
 	PRIOR_VARIABLE_DEFINITION{
-		lnMU_V = MU_V
-		POP_V ~ LogNormal2(meanLog=lnMU_V, varLog=VAR_V)
-		POP_k ~ NonParametric(bins=bins_k, probability=p_k) 
-		invPOP_SIGMA2_RES ~ Empirical(data=data_SIGMA2_RES, probability=p_SIGMA2_RES) 
+		 bins_k_v::matrix
+		 p_k_v::vector
+		 data_SIGMA2_RES::vector
+		 lnMU_V = MU_V
+		 mp ~ MultiNonParametric(bins=bins_k_v, probability=p_k_v)
+		 POP_K = mp[0]
+		 POP_V = mp[1]
+		invPOP_SIGMA2_RES ~ Empirical(data=data_SIGMA2_RES) 
 
 		invOMEGA_V ~ Gamma1(shape=a_OMEGA_V, scale=b_OMEGA_V)
 		invOMEGA_k ~ Gamma1(shape=a_OMEGA_k, scale=b_OMEGA_k)
@@ -63,7 +67,7 @@ testprior = priorObj{
 	
 
 }
-		'''
+	'''
 	
 	@Test
 	def void testParsing(){

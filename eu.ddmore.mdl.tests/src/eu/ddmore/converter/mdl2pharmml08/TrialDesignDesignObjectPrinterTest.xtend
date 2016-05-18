@@ -48,7 +48,7 @@ class TrialDesignDesignObjectPrinterTest {
 		desBlk.createEqnDefn("param1", createRealLiteral(22.0))
 		desBlk.createEqnDefn("param2", createStringLiteral("A Val"))
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeDesignParameters(obj.blocks.head)
 		val expected = '''
 			<mdef:DesignParameter symbId="param1">
@@ -84,7 +84,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
@@ -131,7 +131,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::SSEND_ATT_NAME, createRealLiteral(0.0))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
@@ -177,7 +177,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::SSINTERVAL_ATT_NAME, createRealLiteral(10.0))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
@@ -230,7 +230,7 @@ class TrialDesignDesignObjectPrinterTest {
 										))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
@@ -283,7 +283,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
@@ -340,7 +340,7 @@ class TrialDesignDesignObjectPrinterTest {
 										))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeBolusDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
@@ -390,7 +390,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeInfusionDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
@@ -440,7 +440,7 @@ class TrialDesignDesignObjectPrinterTest {
 										))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeInfusionDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
@@ -493,7 +493,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeInfusionDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
@@ -550,7 +550,7 @@ class TrialDesignDesignObjectPrinterTest {
 										))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeInfusionDosing(adminList)
 		val expected = '''
 			<Administration oid="admin1">
@@ -595,7 +595,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::END_ATT_NAME, createRealLiteral(202.1))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeInterventionCombination(combiList)
 		val expected = '''
 			<InterventionsCombination oid="regimen1">
@@ -628,7 +628,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::START_ATT_NAME, createRealLiteral(10))
 		)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeResetAll(actionList)
 		val expected = '''
 			<Action oid="act1">
@@ -665,7 +665,7 @@ class TrialDesignDesignObjectPrinterTest {
 									)
 								)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeReset(actionList)
 		val expected = '''
 			<Action oid="act1">
@@ -704,7 +704,7 @@ class TrialDesignDesignObjectPrinterTest {
 									)
 								)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeReset(actionList)
 		val expected = '''
 			<Action oid="act1">
@@ -756,7 +756,7 @@ class TrialDesignDesignObjectPrinterTest {
 									)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeReset(actionList)
 		val expected = '''
 			<Action oid="act1">
@@ -827,7 +827,7 @@ class TrialDesignDesignObjectPrinterTest {
 																})))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeStudyDesign(desBlk)
 		val expected = '''
 		<Arms>
@@ -967,7 +967,7 @@ class TrialDesignDesignObjectPrinterTest {
 																})))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeArm(armList)
 		val expected = '''
 			<Arm oid="arm1">
@@ -1056,7 +1056,7 @@ class TrialDesignDesignObjectPrinterTest {
 																))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeArm(armList)
 		val expected = '''
 			<Arm oid="arm1">
@@ -1178,7 +1178,7 @@ class TrialDesignDesignObjectPrinterTest {
 									})))
 							)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeArm(armList)
 		val expected = '''
 			<Arm oid="arm1">
@@ -1299,7 +1299,7 @@ class TrialDesignDesignObjectPrinterTest {
 										}))
 							))
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeArm(armList)
 		val expected = '''
 			<Arm oid="arm1">
@@ -1410,7 +1410,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_OUTCOME, createSymbolRef(rsVar1))
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeSimpleSampling(actionList)
 		val expected = '''
 			<Observation oid="samp1">
@@ -1480,7 +1480,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_RELATIVE, createBooleanLiteral(true))					
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeCombiSampling(combiList)
 		val expected = '''
 			<ObservationsCombination oid="combi1">
@@ -1549,7 +1549,7 @@ class TrialDesignDesignObjectPrinterTest {
 									createAssignPair(TrialDesignDesignObjectPrinter::SAMP_RELATIVE, createBooleanLiteral(true))					
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeSampling(desBlk)
 		val expected = '''
 		<Observations>
@@ -1613,7 +1613,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
 		val covVar1 = desParamsBlk.createEqnDefn("W", createRealLiteral(70.7)) 
 
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeCovariate(covVar1)
 		val expected = '''
 			<Covariate symbId="W">
@@ -1641,7 +1641,7 @@ class TrialDesignDesignObjectPrinterTest {
 		desParamsBlk.createEqnDefn("W", createRealLiteral(70.7)) 
 		desParamsBlk.createEqnDefn("Y", createRealLiteral(88.7)) 
 
-		val tdow = new TrialDesignDesignObjectPrinter(mdl)
+		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
 		val actual = tdow.writeCovariates(desParamsBlk)
 		val expected = '''
 			<Covariates>
