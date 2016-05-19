@@ -299,4 +299,9 @@ class Mcl2PharmMLConverterTest {
 	def void testUseCase1_PRIOR_FromData2(){
 		validateConversion("UseCase1_PRIOR_FromData2")
 	}
+
+	@Test
+	def void testExecutable_Simeoni_2004_oncology_TGI_Prior(){
+		validateConversion("Executable_Simeoni_2004_oncology_TGI_Prior")
+	}
 }

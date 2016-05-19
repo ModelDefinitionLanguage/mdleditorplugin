@@ -75,7 +75,7 @@ abstract class AbstractParameterWriter {
 		}
 		val topLevel = topLevelInsertion
 		if(topLevel != null){
-			val lvlNum = vm_mdl_vars.values.max
+			val lvlNum = if(vm_mdl_vars.isEmpty) if(vm_err_vars.isEmpty) 1 else vm_err_vars.values.max else vm_mdl_vars.values.max
 			vm_mdl_vars.put(topLevel, lvlNum+1)
 		}
 		var model = "";
