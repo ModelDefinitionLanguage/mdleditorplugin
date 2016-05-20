@@ -133,6 +133,9 @@ class PriorParameterWriterTest {
 		val actual = testInstance.writeParameter(parmStmt)
 		val expected = '''
 			<PopulationParameter symbId="p1">
+				<ct:Assign>
+					<ct:Real>2.0</ct:Real>
+				</ct:Assign>
 			</PopulationParameter>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
