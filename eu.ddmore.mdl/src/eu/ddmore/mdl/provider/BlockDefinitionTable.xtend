@@ -35,6 +35,7 @@ class BlockDefinitionTable {
 	public static val DES_DESIGN_SPACE_BLK = "DESIGN_SPACES"
 	public static val EVALUATE_BLK = "EVALUATE" 
 	public static val OPTIMISE_BLK = "OPTIMISE" 
+	public static val MOG_INFO_BLK = 'INFO' 
 	
 //	static val ep = MdlPackage::eINSTANCE 
 
