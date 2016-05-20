@@ -14,6 +14,7 @@ class FunctionIndivParamWriter extends AbstractIndivParamWriter {
 	extension MdlUtils mu = new MdlUtils
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 	extension PharmMLConverterUtils pcu = new PharmMLConverterUtils
+	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder
 
 	def writeIndividualParameter(EquationTypeDefinition it){
 		val expr = it.expression
@@ -39,7 +40,7 @@ class FunctionIndivParamWriter extends AbstractIndivParamWriter {
 				«ENDIF»
 				<LinearCovariate>
 					<PopulationValue>
-						«namedArgList.getArgumentExpression('pop').writeAssignment»
+						«namedArgList.getArgumentExpression('pop').expressionAsAssignment»
 					</PopulationValue>
 					«IF fixEff != null && !fixEff.expressions.isEmpty »
 						«namedArgList.getArgumentExpression('fixEff').writeFixedEffects»
@@ -53,7 +54,7 @@ class FunctionIndivParamWriter extends AbstractIndivParamWriter {
 	
 	def writeExplicitIdv(EquationTypeDefinition it)'''
 		<IndividualParameter symbId="«name»">
-			«expression.writeAssignment»
+			«expression.expressionAsAssignment»
 		</IndividualParameter>
 	''' 
 	
@@ -72,7 +73,7 @@ class FunctionIndivParamWriter extends AbstractIndivParamWriter {
 					<Transformation type="«trans»"/>
 				«ENDIF»
 				<GeneralCovariate>
-					«namedArgList.getArgumentExpression('grp').writeAssignment»
+					«namedArgList.getArgumentExpression('grp').expressionAsAssignment»
 				</GeneralCovariate>
 				«namedArgList.getArgumentExpression('ranEff').writeRandomEffects»
 			</StructuredModel>

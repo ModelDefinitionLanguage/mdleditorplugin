@@ -10,6 +10,7 @@ import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -78,8 +79,8 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 	}
 
 
-	@Test
-	def void testMonolixNotSupportedIdvExplicit(){
+	@Ignore("User defined not supported now")
+	def void testMonolixNotSupportedIdvUserDefined(){
 		val mcl = '''
 		foo = mdlObj{
 			IDV { T }
@@ -108,6 +109,36 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 	}
 
 	@Test
+	def void testMonolixNotSupportedIdvExplicit(){
+		val mcl = '''
+		foo = mdlObj{
+			IDV { T }
+
+			VARIABILITY_LEVELS{
+					ID : { level=1, type is parameter }
+			}
+
+			RANDOM_VARIABLE_DEFINITION(level = ID){
+				eta_a ~ Normal(mean=0, sd=1)
+			}
+			
+			STRUCTURAL_PARAMETERS{
+				d
+			}
+
+			INDIVIDUAL_VARIABLES{
+				a = exp(d * eta_a) 
+			}
+		}
+	'''.parse
+		mcl.assertNoErrors
+		mcl.assertWarning(MdlPackage::eINSTANCE.equationDefinition, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
+			"Explicit individual parameter definition is not currently supported by MONOLIX."
+		)
+	}
+
+
+	@Test
 	def void testMonolixSupportedIfOnlyParamAssignment(){
 		val mcl = '''
 		foo = mdlObj{
@@ -130,10 +161,10 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			}
 		}
 	'''.parse
-		mcl.assertNoIssues
-//		mcl.assertWarning(MdlPackage::eINSTANCE.equationTypeDefinition, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
-//			"Explicit individual parameter definition is not currently supported by MONOLIX."
-//		)
+		mcl.assertNoErrors
+		mcl.assertWarning(MdlPackage::eINSTANCE.equationTypeDefinition, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
+			"Explicit individual parameter definition is not currently supported by MONOLIX."
+		)
 	}
 
 	@Test

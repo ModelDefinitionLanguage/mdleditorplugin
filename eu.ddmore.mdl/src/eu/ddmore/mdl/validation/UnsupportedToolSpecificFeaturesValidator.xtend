@@ -26,6 +26,8 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 		eq != null && eq == 'general'
 	}
 	
+	// note this type is no longer used in the defns, but kept here
+	// in case it is restored.
 	def isUserDefinedIdv(AttributeList it){
 		val eq = getAttributeEnumValue('type')
 		eq != null && eq == 'userDefined'
@@ -62,25 +64,25 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 
 
 
-//	@Check
-//	def checkMonolixUnsupportedIdv(EquationTypeDefinition it){
-//		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
-//		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::MDL_INDIV_PARAMS){
-//			if(expression != null){
-//				// check for explicit and general defns
-////				if(isGeneralIdv){
-////					warning("General individual parameter definition is not currently supported by MONOLIX.", 
-////							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
-////							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
-////				}
-////				else if(isExplicitIdv){
-//					warning("Explicit individual parameter definition is not currently supported by MONOLIX.", 
+	@Check
+	def checkMonolixUnsupportedIdv(EquationTypeDefinition it){
+		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
+		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::MDL_INDIV_PARAMS){
+			if(expression != null){
+				// check for explicit and general defns
+//				if(isGeneralIdv){
+//					warning("General individual parameter definition is not currently supported by MONOLIX.", 
 //							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
 //							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
-////				}
-//			}
-//		}
-//	}
+//				}
+//				else if(isExplicitIdv){
+					warning("Explicit individual parameter definition is not currently supported by MONOLIX.", 
+							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
+							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
+//				}
+			}
+		}
+	}
 	
 	static val StandardErrorFuctions = #{  
 		'combinedError1', 'combinedError2', 'additiveError', 'proportionalError' 

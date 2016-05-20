@@ -19,6 +19,7 @@ import eu.ddmore.mdllib.mdllib.Library
 import org.junit.After
 import eu.ddmore.mdl.MdlTestHelper
 import eu.ddmore.mdl.mdl.Mcl
+import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -206,7 +207,7 @@ class ListIndivParamWriterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
-	@Test
+	@Ignore("Remove support for this")
 	def void testWriteIndivUserDefined(){
 		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_INDIV_PARAMS))
 		val ld = obsBlk.createListDefn('CL', createEnumPair('type', 'userDefined'),

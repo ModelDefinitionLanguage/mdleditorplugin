@@ -21,8 +21,8 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 					attList.writeGeneralIdv(name)
 				case('linear'):
 					attList.writeLinearIdv(name)
-				case('userDefined'):
-					attList.writeUserDefinedIdv(name)
+//				case('userDefined'):
+//					attList.writeUserDefinedIdv(name)
 				default:
 					'''<Error!>'''		
 			}
@@ -39,7 +39,7 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 				«ENDIF»
 				<LinearCovariate>
 					<PopulationValue>
-						«getAttributeExpression('pop').writeAssignment»
+						«getAttributeExpression('pop').expressionAsAssignment»
 					</PopulationValue>
 					«IF fixEff != null && !fixEff.expressions.isEmpty »
 						«getAttributeExpression('fixEff').writeFixedEffects»
@@ -66,7 +66,7 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 					<Transformation type="«trans»"/>
 				«ENDIF»
 				<GeneralCovariate>
-					«getAttributeExpression('grp').writeAssignment»
+					«getAttributeExpression('grp').expressionAsAssignment»
 				</GeneralCovariate>
 				«getAttributeExpression('ranEff').writeRandomEffects»
 			</StructuredModel>
@@ -74,15 +74,15 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 		''' 
 	}
 	
-	def writeUserDefinedIdv(AttributeList it, String name){
-		'''
-		<IndividualParameter symbId="«name»">
-			«IF hasAttribute('value')»
-				«getAttributeExpression('value').expressionAsAssignment»
-			«ELSE»
-				<Error!/>
-			«ENDIF»
-		</IndividualParameter>
-		''' 
-	}
+//	def writeUserDefinedIdv(AttributeList it, String name){
+//		'''
+//		<IndividualParameter symbId="«name»">
+//			«IF hasAttribute('value')»
+//				«getAttributeExpression('value').expressionAsAssignment»
+//			«ELSE»
+//				<Error!/>
+//			«ENDIF»
+//		</IndividualParameter>
+//		''' 
+//	}
 }

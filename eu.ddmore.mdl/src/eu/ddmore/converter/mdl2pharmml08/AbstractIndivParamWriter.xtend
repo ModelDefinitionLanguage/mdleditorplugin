@@ -29,11 +29,11 @@ abstract class AbstractIndivParamWriter {
 		«ENDIF»
 		'''
 
-	def protected writeAssignment(Expression expr)'''
-		<ct:Assign>
-			«expr.pharmMLExpr»
-		</ct:Assign>
-	'''
+//	def protected writeAssignment(Expression expr)'''
+//		<ct:Assign>
+//			«expr.pharmMLExpr»
+//		</ct:Assign>
+//	'''
 
 	def protected writeFixedEffects(Expression expr){
 		val it = expr as VectorLiteral

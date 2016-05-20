@@ -16,6 +16,7 @@ class StandardParameterWriter extends AbstractParameterWriter {
 	extension BlockUtils bu = new BlockUtils
 //	extension SimpleParameterWriter spw = new SimpleParameterWriter
 	extension ListIndivParamWriter lip = new ListIndivParamWriter
+	extension FunctionIndivParamWriter fip = new FunctionIndivParamWriter
 
 	new(MclObject mdlObj){
 		super(mdlObj)
@@ -88,7 +89,7 @@ class StandardParameterWriter extends AbstractParameterWriter {
 						«FOR stmt: b.getNonBlockStatements»
 							«switch(stmt){
 								EquationTypeDefinition:
-									writeParameter(stmt)
+									writeIndividualParameter(stmt)
 								ListDefinition:
 									writeIndividualParameter(stmt)
 							}»

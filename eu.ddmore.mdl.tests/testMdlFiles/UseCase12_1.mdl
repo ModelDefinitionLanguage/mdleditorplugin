@@ -60,7 +60,7 @@ Bernoulli_DIST_mdl = mdlObj{
    }
    
    INDIVIDUAL_VARIABLES{
-     P1 : { type is userDefined, value=POP_BASEP*CP^POP_BETA * eta_PPV_EVENT }
+     P1 = POP_BASEP*CP^POP_BETA * eta_PPV_EVENT
    }# end INDIVIDUAL_VARIABLES
 
 	RANDOM_VARIABLE_DEFINITION(level=DV){

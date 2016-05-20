@@ -109,7 +109,7 @@ _list CorrelationList _anon _atts type::CorrelationEnumType, matrix::matrix, rv1
 
 		
 // Individual Parameters
-_type IndivTypeType _enum (linear, general, userDefined, rv);
+_type IndivTypeType _enum (linear, general, /*userDefined,*/ rv);
 
 _list IndivAbstractList _super _alt ::real;
 
@@ -386,7 +386,7 @@ _block POPULATION_PARAMETERS (,) _statements(,) _eqnDefn+, _anonList _list _key=
 
 _block INDIVIDUAL_VARIABLES (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+
 	_list _key=type IndivTypeType.linear->IndivParamLinear, IndivTypeType.general -> IndivParamGeneral,
-						IndivTypeType.userDefined -> IndivUserDefined, IndivTypeType.rv -> IndivRvList;
+						/*IndivTypeType.userDefined -> IndivUserDefined,*/ IndivTypeType.rv -> IndivRvList;
 
 _block INFO (,) _statements (,) _propStmt _prop name?, problemStmt?;
 
