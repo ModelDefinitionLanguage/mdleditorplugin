@@ -129,6 +129,9 @@ warfarin_PK_ODE_task = taskObj {
 }
 } # end of task object
 warfarin_PK_ODE_mog = mogObj {
+	INFO{
+	}
+
     OBJECTS{
 		warfarin_PK_IVPO_dat : { type is dataObj }
 		warfarin_PK_IVPO_mdl : { type is mdlObj }

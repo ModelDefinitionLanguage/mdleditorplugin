@@ -122,6 +122,10 @@ warfarin_PK_ODE_task = taskObj {
 
 
 warfarin_PK_ODE_mog = mogObj {
+	INFO{
+		set name = "Use Case 1"
+		set problemStmt = "Warfarin estimation  model"
+	}
 	OBJECTS{
 		warfarin_PK_ODE_dat : { type is dataObj }
 		warfarin_PK_ODE_mdl : { type is mdlObj }

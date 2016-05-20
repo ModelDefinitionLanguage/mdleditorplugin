@@ -15,6 +15,11 @@ import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 import eu.ddmore.mdl.mdl.PropertyStatement
+import eu.ddmore.mdl.utils.ExpressionUtils
+import eu.ddmore.mdl.mdl.Statement
+import java.util.List
+import java.util.ArrayList
+import eu.ddmore.mdl.mdl.ValuePair
 
 class Mdl2Pharmml {
 	static val mdlVersion = "6.0"
@@ -26,6 +31,7 @@ class Mdl2Pharmml {
 	extension ModellingStepsPrinter msp = new ModellingStepsPrinter
 	extension FunctionDefinitionPrinter fdp = new FunctionDefinitionPrinter
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+	extension ExpressionUtils eu = new ExpressionUtils
 
 	var Mcl mdlRoot
 
@@ -64,15 +70,36 @@ class Mdl2Pharmml {
 		isObjDefinedInMog(MdlValidator::PARAMOBJ)
 	}
 	
+	def writeDefaultName(MclObject it)'''
+		<ct:Name>Generated from MDL. MOG ID: «name»</ct:Name>
+	'''
+	
+	def getAllProperties(List<Statement> stmts){
+		val retVal = new ArrayList<ValuePair>
+		stmts.forEach[s|
+			if(s instanceof PropertyStatement) s.properties.forEach[p|
+									retVal.add(p)
+								]
+		]
+		retVal
+	}
+	
 	def private getPharmMLInfoHeader(MclObject it)'''
 		«IF getBlocksByName(BlockDefinitionTable::MOG_INFO_BLK) != null»
-			«FOR stmt : getBlocksByName(BlockDefinitionTable::MOG_INFO_BLK).nonBlockStatements»
-				«IF stmt instanceof PropertyStatement»
-				«IF lst.firstAttributeList.getAttributeEnumValue('name')»
-					<Name>«lst.firstAttributeList.hasAttribute('name')»
+			«IF getBlocksByName(BlockDefinitionTable::MOG_INFO_BLK).isEmpty»
+				«writeDefaultName»
+			«ELSE»
+				«IF getBlocksByName(BlockDefinitionTable::MOG_INFO_BLK).head.nonBlockStatements.allProperties.exists[argumentName == 'name']»
+					<ct:Name>«getBlocksByName(BlockDefinitionTable::MOG_INFO_BLK).head.nonBlockStatements.allProperties.findFirst[argumentName == 'name'].expression.stringValue»</ct:Name>
 				«ELSE»
+					«writeDefaultName»
 				«ENDIF»
-			«ENDFOR»
+				«IF getBlocksByName(BlockDefinitionTable::MOG_INFO_BLK).head.nonBlockStatements.allProperties.exists[argumentName == 'problemStmt']»
+					<ct:Description>
+						«getBlocksByName(BlockDefinitionTable::MOG_INFO_BLK).head.nonBlockStatements.allProperties.findFirst[argumentName == 'problemStmt'].expression.stringValue»
+					</ct:Description>
+				«ENDIF»
+			«ENDIF»
 		«ENDIF»
 	'''
 	
@@ -95,7 +122,7 @@ class Mdl2Pharmml {
 			<PharmML 
 				«printPharmMlNameSpaces»
 				writtenVersion="«writtenVersion»">
-				<ct:Name>Generated from MDL. MOG ID: «mog.name»</ct:Name>
+				«mog.pharmMLInfoHeader»
 				<IndependentVariable symbId="«mdlRoot.mdlObj.mdlIdv?.name ?: "T"»"/>
 				«mdlRoot.mdlObj.writeFunctionDefinitions»	
 				«mdlRoot.mdlObj.writeModelDefinition(if(mdlRoot.isParamObjDefined) mdlRoot.paramObj	else mdlRoot.priorObj, paramWriter)»

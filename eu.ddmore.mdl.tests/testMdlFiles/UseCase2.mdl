@@ -117,6 +117,10 @@ warfarin_PK_ODE_task = taskObj {
 } # end of task object
 
 warfarin_PK_ODE_mog = mogObj {
+	INFO{
+		set name = "Use Case 2"
+	}
+
 	OBJECTS{
 		warfarin_PK_ANALYTIC_dat : { type is dataObj }
 		warfarin_PK_ODE_par : { type is parObj }

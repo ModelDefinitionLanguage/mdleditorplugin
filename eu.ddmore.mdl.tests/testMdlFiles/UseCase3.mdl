@@ -165,6 +165,9 @@ ESTIMATE{
 } # end of task object
 
 warfarin_PK_ODE_mog = mogObj {
+	INFO{
+		set problemStmt = "Warfarin estimation Use Case."
+	}
     OBJECTS{
 		warfarin_PKPD_turnover_dat : { type is dataObj }
 		warfarin_PKPD_turnover_mdl : { type is mdlObj }
