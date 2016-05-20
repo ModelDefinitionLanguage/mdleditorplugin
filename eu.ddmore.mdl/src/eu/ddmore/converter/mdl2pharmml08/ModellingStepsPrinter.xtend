@@ -4,6 +4,7 @@ import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
+import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.Statement
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
@@ -12,7 +13,6 @@ import eu.ddmore.mdl.utils.ConstantEvaluation
 import eu.ddmore.mdl.utils.MdlUtils
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
-import eu.ddmore.mdl.utils.ExpressionUtils
 
 class ModellingStepsPrinter { 
 	
@@ -22,7 +22,7 @@ class ModellingStepsPrinter {
 	extension ConstantEvaluation ce = new ConstantEvaluation
 	extension TaskSettingsPrinter tsp = new TaskSettingsPrinter
 	extension BlockUtils bu = new BlockUtils
-	extension ExpressionUtils eu = new ExpressionUtils
+//	extension ExpressionUtils eu = new ExpressionUtils
 	
 
 	////////////////////////////////////////////////
@@ -171,17 +171,12 @@ class ModellingStepsPrinter {
 	def private writePriorsToEstimate(MclObject pObj, MclObject mObj)'''
 		<ParametersToEstimate>
 			«FOR b : pObj.blocks»
-				«IF b.blkId.name != BlockDefinitionTable::PRIOR_SOURCE_BLK»
+				«IF b.blkId.name == BlockDefinitionTable::PRIOR_VAR_DEFN»
 					«FOR stmt : b.nonBlockStatements»
-						«IF stmt instanceof EquationDefinition»
-							«IF stmt.expression != null && stmt.expression.isLiteralExpression»
-								<ParameterEstimation>
-									«stmt.getSymbolReference»
-									<InitialEstimate>
-										«stmt.expression.pharmMLExpr»
-									</InitialEstimate>
-								</ParameterEstimation>
-							«ENDIF»
+						«IF stmt instanceof RandomVariableDefinition»
+							<ParameterEstimation>
+								«stmt.getSymbolReference»
+							</ParameterEstimation>
 						«ENDIF»
 					«ENDFOR»
 				«ENDIF»

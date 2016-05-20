@@ -53,7 +53,7 @@ class PriorParameterWriter extends AbstractParameterWriter {
 				«IF priorObjDefn != null»
 					<PopulationParameter symbId="«stmt.name»">
 						«IF priorObjDefn instanceof EquationTypeDefinition»
-							«IF priorObjDefn.expression != null && !priorObjDefn.expression.isLiteralExpression»
+							«IF priorObjDefn.expression != null /*&& !priorObjDefn.expression.isLiteralExpression*/»
 								«priorObjDefn.priorExpression»
 							«ENDIF»
 						«ELSE»
