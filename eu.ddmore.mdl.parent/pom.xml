@@ -49,24 +49,7 @@
 			<url>s3://repo.mdlteam.ddmore.eu/release</url>
 		</repository>
 	</distributionManagement-->
- 
-	<dependencies>
-		<dependency>
-			<groupId>eu.ddmore.mdllib</groupId>
-			<artifactId>eu.ddmore.mdllib</artifactId>
-			<version>1.2.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.ddmore.mdllib</groupId>
-			<artifactId>eu.ddmore.mdllib.ui</artifactId>
-			<version>1.2.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.ddmore.mdllib</groupId>
-			<artifactId>eu.ddmore.mdllib.tests</artifactId>
-			<version>1.2.2-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
+
     <profiles>
         <profile>
             <id>ci</id>
@@ -223,7 +206,6 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
-					<pomDependencies>consider</pomDependencies>
 					<target>
 						<artifact>
 							<groupId>eu.ddmore</groupId>

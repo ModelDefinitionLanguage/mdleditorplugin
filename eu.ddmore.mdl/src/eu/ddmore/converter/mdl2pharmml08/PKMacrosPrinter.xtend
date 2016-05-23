@@ -23,17 +23,6 @@ class PKMacrosPrinter{
 	extension MdlUtils mu = new MdlUtils
 	extension TypeSystemProvider tsp = new TypeSystemProvider
 	
-//	private val pk_types = newHashMap(
-//		'direct' -> "IV",
-//		'compartment' -> "Compartment",
-//		'distribution' -> "Peripheral",
-////		'input' -> "Absorption",
-//		'depot' -> "Absorption",
-//		'effect' -> "Effect",
-//		'transfer' -> "Transfer",
-//		'elimination' -> "Elimination"
-//	);
-
 	private static var PKMacrosPrinter _INSTANCE = null
 	private static val  COMPARTMENT_TYPE_NAME = 'List:Compartment'
 
