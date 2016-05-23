@@ -29,6 +29,7 @@ class PriorParameterWriter extends AbstractParameterWriter {
 	extension ExpressionUtils eu = new ExpressionUtils
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+	extension FunctionIndivParamWriter fip = new FunctionIndivParamWriter
 
 	val MclObject priorObject
 	val Set<String> writtenParams
@@ -159,11 +160,14 @@ class PriorParameterWriter extends AbstractParameterWriter {
 	
 	def private writeModelParams()'''
 		«FOR b: mdlObj.blocks»
-			«FOR stmt : b.nonBlockStatements»
-				«IF stmt instanceof SymbolDefinition»
-					«writeParameter(stmt)»
-				«ENDIF»
-			«ENDFOR»
+			«IF b.blkId.name == BlockDefinitionTable::MDL_VAR_PARAMS || b.blkId.name == BlockDefinitionTable::MDL_STRUCT_PARAMS
+				|| b.blkId.name == BlockDefinitionTable::MDL_GRP_PARAMS»
+				«FOR stmt : b.nonBlockStatements»
+					«IF stmt instanceof SymbolDefinition»
+						«writeParameter(stmt)»
+					«ENDIF»
+				«ENDFOR»
+			«ENDIF»
 	  	«ENDFOR»
 	'''
 	
@@ -187,7 +191,7 @@ class PriorParameterWriter extends AbstractParameterWriter {
 					«FOR stmt: b.getNonBlockStatements»
 						«switch(stmt){
 							EquationDefinition:
-								writeParameter(stmt)
+								writeIndividualParameter(stmt)
 							ListDefinition:
 								writeIndividualParameter(stmt)
 						}»
