@@ -541,7 +541,7 @@ class MogValidatorTest {
 	
 		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"observation Y has an inconsistent type with its match in the dataObj"
+			"observation Y has an inconsistent type with its match in obj: 'warfarin_PK_ODE_dat'."
 		)
 	}
 
@@ -597,7 +597,7 @@ class MogValidatorTest {
 		'''.parse
 		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
 			MdlValidator::MODEL_DATA_MISMATCH,
-			"observation Y has no match in dataObj"
+			"observation Y has no match in obj: 'warfarin_PK_ODE_dat'."
 		)
 	}
 
@@ -605,10 +605,11 @@ class MogValidatorTest {
 	def void testInvalidSingleObsMismatchedNoData(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Y }
+			DECLARED_VARIABLES{ Y::dosingTarget Z::continuousObs }
 		
 			DATA_INPUT_VARIABLES {
 				AMT : { use is amt, variable = Y }
+				DV : { use is dv, variable = Z }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -616,6 +617,8 @@ class MogValidatorTest {
 			} # end SOURCE
 		}		
 		foo = mdlObj {
+				IDV{ T }
+			
 				VARIABILITY_LEVELS{
 					DV : { type is observation, level = 1 }
 				}
@@ -625,7 +628,7 @@ class MogValidatorTest {
 				}
 		
 				RANDOM_VARIABLE_DEFINITION(level is DV){
-					EPS
+					EPS ~ Normal1(mean=0, stdev=1)
 				}
 		
 				OBSERVATION{
@@ -653,8 +656,8 @@ class MogValidatorTest {
 		'''.parse
 	
 		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
-			MdlValidator::MODEL_DATA_MISMATCH,
-			"observation Y has no match in dataObj"
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"observation Y has an inconsistent type with its match in obj: 'warfarin_PK_ODE_dat'."
 		)
 	}
 
@@ -771,7 +774,7 @@ class MogValidatorTest {
 	
 		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
 			MdlValidator::MODEL_DATA_MISMATCH,
-			"observation Z has no match in dataObj"
+			"observation Z has no match in obj: 'warfarin_PK_ODE_dat'."
 		)
 	}
 
@@ -779,7 +782,7 @@ class MogValidatorTest {
 	def void testInvalidMultiObsContinuousMissing(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Y; Z }
+			DECLARED_VARIABLES{ Y }
 		
 			DATA_INPUT_VARIABLES {
 				DVID : { use is dvid }
@@ -830,7 +833,7 @@ class MogValidatorTest {
 	
 		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
 			MdlValidator::MODEL_DATA_MISMATCH,
-			"observation Z has no match in dataObj"
+			"observation Z has no match in obj: 'warfarin_PK_ODE_dat'."
 		)
 	}
 
@@ -889,7 +892,7 @@ class MogValidatorTest {
 	
 		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"observation Z has an inconsistent type with its match in the dataObj"
+			"observation Z has an inconsistent type with its match in obj: 'warfarin_PK_ODE_dat'."
 		)
 	}
 

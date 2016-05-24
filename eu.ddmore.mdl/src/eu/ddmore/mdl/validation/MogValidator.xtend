@@ -26,6 +26,7 @@ import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.utils.BlockUtils
+import java.util.Collections
 
 class MogValidator extends AbstractDeclarativeValidator {
 
@@ -128,17 +129,19 @@ class MogValidator extends AbstractDeclarativeValidator {
 	}
 	
 	def validateObservations((String, String) => void errorLambda){
-		val dataObs = dataObj.dataObservations
+		val MclObject matchingObj = dataObj ?: designObj 
+		val dataStmts = matchingObj.getBlocksByName(BlockDefinitionTable::DECLARED_VARS_BLK).head?.nonBlockStatements ?: Collections.emptyList
 		for(mdlOb : mdlObj.mdlObservations){
-			if(mdlOb instanceof SymbolDefinition){
-				val dataOb = dataObs.findFirst[name == (mdlOb as SymbolDefinition).name]
-				if(dataOb == null){
-					errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "observation " + mdlOb.name +" has no match in dataObj");
+			if(mdlOb instanceof ListDefinition){
+				val dataSymb = dataStmts.findFirst[st | if(st instanceof SymbolDefinition) st.name == mdlOb.name else false]
+				if(dataSymb == null){
+					errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "observation " + mdlOb.name +" has no match in obj: '" + matchingObj.name + "'.");
 				}
-				else if(!mdlOb.typeFor.isCompatible(dataOb.typeFor)){
-					errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "observation " + mdlOb.name +" has an inconsistent type with its match in the dataObj");
+				else if(!mdlOb.typeFor.isCompatible(dataSymb.typeFor)){
+					errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "observation " + mdlOb.name +" has an inconsistent type with its match in obj: '" + matchingObj.name + "'.");
 				}
 			}
+			//TODO: handle anonymous list obs types.
 		}
 	}
 	

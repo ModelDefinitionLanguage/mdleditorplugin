@@ -268,7 +268,7 @@ warfarin_design = designObj {
 		)
 	}
 
-	@Test
+	@Ignore("Not a problem now. Warning removed.")
 	def void testValidCategorialCovEquality(){
 		val mcl = '''bar = mdlObj {
 			IDV{T}

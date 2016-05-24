@@ -12,6 +12,7 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.provider.ListDefinitionProvider
+import eu.ddmore.mdl.mdl.ListDefinition
 
 class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	
@@ -84,28 +85,29 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 		}
 	}
 	
-	static val StandardErrorFuctions = #{  
-		'combinedError1', 'combinedError2', 'additiveError', 'proportionalError' 
-	}
-	
-
-	def isStandardResidualError(EquationTypeDefinition it){
-		val eq = expression
-		if(eq instanceof SymbolReference){
-			StandardErrorFuctions.contains(eq.func)
-		}
-		else false
-	}
+//	static val StandardErrorFuctions = #{  
+//		'combinedError1', 'combinedError2', 'additiveError', 'proportionalError' 
+//	}
+//	
+//
+//	def isStandardResidualError(EquationTypeDefinition it){
+//		val eq = expression
+//		if(eq instanceof SymbolReference){
+//			StandardErrorFuctions.contains(eq.func)
+//		}
+//		else false
+//	}
 	
 	@Check
-	def checkMonolixUnsupportedObs(EquationTypeDefinition it){
+	def checkMonolixUnsupportedObs(AttributeList it){
 		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::OBS_BLK_NAME){
 			// check for explicit and general defns
-			if(expression != null && !isStandardResidualError){
+			if(getAttributeEnumValue('type') == 'userDefined'){
+				val owningList = EcoreUtil2.getContainerOfType(eContainer, ListDefinition)
 				warning("Only the pre-defined error models are currently supported by MONOLIX.", 
-						MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
-						MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
+						MdlPackage.eINSTANCE.attributeList_Attributes,
+						MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, owningList?.name ?: '<undefined>')
 			}
 		}
 	}

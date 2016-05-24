@@ -26,7 +26,7 @@ _sublist fixEffAtts _atts cov::reference[::real], catCov::reference[::genericCat
 					
 _type priorElementType _enum(matrix, vector);					
 
-_type divUse _enum (covariate, variable, amt, dv, dvid, cmt, mdv, idv, id, rate, ignore, varLevel, catCov, ss, ii, addl, evid);
+_type divUse _enum (covariate, variable, amt, dv, dvid, cmt, mdv, idv, id, rate, ignore, varLevel, catCov, ss, ii, addl, evid, cens);
 _type ddvUse _enum (doseTime, doseInterval, covariate, variable, dvid);
 _type varLvlType _enum (parameter, observation);
 _type input _enum (nonmemFormat);
@@ -62,6 +62,7 @@ _list addl _extends DataColumn _atts use::divUse _sig(use);
 _list Dvid _extends DataColumn _atts use::divUse _sig(use);
 _list ignore _atts use::divUse _sig(use);
 _list Evid _extends DataColumn _atts use::divUse _sig(use);
+_list CensCol _extends DataColumn _atts use::divUse _sig(use);
 _list DataVariable  _extends DataColumn _atts use::divUse, interp::reference[::function(::real, ::real, ::real, ::real, ::real)::real]
 							_sig (use, interp?);
 //_list CensorList _extends DataColumn _atts use::divUse _sig(use); 
@@ -191,17 +192,17 @@ _list Distribution _atts type::cmtType, modelCmt::int, from::reference[::dosingT
 	 
 // Observations
 _list continuousObs _super;
-_list combinedError1List _alt ::real _extends continuousObs
+_list combinedError1List _extends continuousObs
 	_atts type::obstype, trans::transType, lhsTrans::boolean,
 			additive::real, proportional::real, prediction::real, eps::randomVariable[::real]
 		_sig(type, trans?, lhsTrans?, additive, proportional, prediction, eps)
 	;
-_list combinedError2List _alt ::real _extends continuousObs
+_list combinedError2List _extends continuousObs
 	_atts type::obstype, trans::transType, lhsTrans::boolean,
 			additive::real, proportional::real, prediction::real, eps::randomVariable[::real]
 			_sig(type, trans?, lhsTrans?, additive, proportional, prediction, eps)
 	;
-_list additiveErrorList _alt ::real _extends continuousObs
+_list additiveErrorList _extends continuousObs
 	_atts type::obstype, trans::transType, lhsTrans::boolean,
 			additive::real, prediction::real, eps::randomVariable[::real]
 			_sig(type, trans?, lhsTrans?, additive, prediction, eps)
@@ -338,6 +339,9 @@ _sublist PopTmpltCovSublist _atts catCovValue::reference[::genericCategoryValue]
 _list PopulationTemplate _atts type::PopnType, covariate::vector[::PopTmpltCovSublist]
 						 _sig(type, covariate);
 
+_type blkType _enum(m1, m2, m3, m4);
+_list BlqList _atts blqMethod::blkType, llog::real _sig(blqMethod, llog);
+
 							
 _type estAlgo _enum(saem, foce, fo, focei, mcmc);
 _type solverType _enum(stiff, nonStiff);							
@@ -409,7 +413,8 @@ _block DATA_INPUT_VARIABLES (0,) _statements (1,) _listDefn
 								divUse.cmt -> Cmt, divUse.cmt->Cmt, divUse.amt -> Amt, divUse.ii -> ii, divUse.addl -> addl,
 								divUse.id -> Id, divUse.idv -> Idv, divUse.varLevel -> DataVarLevel, divUse.mdv -> Mdv,
 								divUse.rate -> rate, divUse.ignore -> ignore, divUse.dvid -> Dvid, divUse.dv -> Dv,
-								divUse.ss -> ss, divUse.evid->Evid, divUse.variable->DataVariable;
+								divUse.ss -> ss, divUse.evid->Evid, divUse.variable->DataVariable,
+								divUse.cens->CensCol;
 								
 _block DECLARED_VARIABLES (0,) _statements (,) _eqnDefn, _enumDefn;
 
@@ -422,21 +427,14 @@ _block STRUCTURAL (,) _statements (,) _listDefn//, _eqnDefn+
 	_list _map StructuralEstimateReal.value->StructuralEstimateReal, StructuralEstimateVector.vectorValue->StructuralEstimateVector,
 				StructuralEstimateMatrix.matrixValue->StructuralEstimateMatrix;
 
-//_block STRUCTURAL (,) _statements (,) _listDefn//, _eqnDefn+
-//	_list _key=type estimateType.scalar -> ScalarEstimate, estimateType.vector->VectorEstimate, estimateType.matrix->MatrixEstimate;
-
-//_block VARIABILITY (,) _statements (,) _listDefn//, _eqnDefn+
-//	_list _key=type varType.cov->CovarMatrix, varType.corr->CorrMatrix, varType.sd -> SDEstimate, varType.var -> VarEstimate;
-
 _block VARIABILITY (,) _statements (,) _listDefn//, _eqnDefn+
 	_list _map VarEstimateReal.value->VarEstimateReal, VarEstimateVector.vectorValue->VarEstimateVector, VarEstimateMatrix.matrixValue->VarEstimateMatrix;
-	
 
-_block ESTIMATE (,1) _statements (,) _propStmt
-		_prop algo ;
+_block ESTIMATE (,1) _statements (,) _propStmt, _listDefn _prop algo _list BlqList;
 
 _block SIMULATE (,1) _statements (,) _propStmt
 		_prop solver?;
+
 _block EVALUATE (,1) _statements (,) _propStmt
 		_prop graphOnly?, fim?, previousFim?, typeIError?, typeIIError?, powerEquivalence?, powerComparison?, nSubjectsComparison?, equivalenceRange?,
 				nSubjectsEquivalence?, graphLogical?, logLogical?, namesDataX?, namesDataY?, graphInfA?, graphSupA?, subjectsOpt?, lowerA?, upperA?,
@@ -736,6 +734,14 @@ _func MultivariateStudentT2 "Multivariate (Student) T distribution" _named
 			_sig (mean, precisionMatrix, degreesOfFreedom)
 			_returns ::vector[::pdf];
 
+_func NegativeBinomial2 "Negative Binomial" _named
+			(
+				rate::real "Poisson intensity",
+				overdispersion::real "over-dispersion"
+			)
+			_sig (rate, overdispersion)
+			_returns ::pmf;
+
 _func StudentT1 "Student's t-distribution" _named (
 				degreesOfFreedom::real
 			)
@@ -794,10 +800,11 @@ _func CategoricalOrdered1 _named
 			_returns ::pmf;
 			
 _func MixtureDistribution1 _named (
-				weight::vector  "mixing coefficients"
+				weight::vector  "mixing coefficients",
+				distributions::vector[::pdf]
 			)
-			_sig (weight)
-			_returns ::vector[::pdf];
+			_sig (weight, distributions)
+			_returns ::pdf;
 
 _func ZeroInflatedPoisson1 "Sero-inflated Poisson" _named (
 				rate::real "Poisson intensity",

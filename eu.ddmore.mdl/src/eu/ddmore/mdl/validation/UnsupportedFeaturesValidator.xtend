@@ -3,7 +3,6 @@ package eu.ddmore.mdl.validation
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.ElseClause
-import eu.ddmore.mdl.mdl.EqualityExpression
 import eu.ddmore.mdl.mdl.IfExpression
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
@@ -13,9 +12,9 @@ import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.ListDefinitionTable
-import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.ConstantEvaluation
+import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.MdlLibPackage
 import java.util.Collections
@@ -24,15 +23,13 @@ import java.util.Set
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import eu.ddmore.mdl.type.TypeInfoClass
-import eu.ddmore.mdl.utils.DomainObjectModelUtils
 
 class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 	
 	extension MdlUtils mu = new MdlUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension ConstantEvaluation ce = new ConstantEvaluation
-	extension TypeSystemProvider mtp = new TypeSystemProvider 
+//	extension TypeSystemProvider mtp = new TypeSystemProvider 
 	extension BlockUtils bu = new BlockUtils
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	
@@ -149,31 +146,32 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 	}
 	
 	
-	@Check
-	def checkUnsupportedCategoryRelations(EqualityExpression it){
-		val leftType = leftOperand?.typeFor
-		val rightType = rightOperand?.typeFor
-		if((leftType != null && leftType.typeClass == TypeInfoClass.Category)  || 
-			(rightType != null && rightType.typeClass == TypeInfoClass.Category)){
-			warning("Equivalence operators with categorical types are not supported for execution in R.",
-				MdlPackage::eINSTANCE.equalityExpression_Feature,
-				FEATURE_NOT_SUPPORTED, feature)
-		}
-	}
+//	@Check
+//	def checkUnsupportedCategoryRelations(EqualityExpression it){
+//		val leftType = leftOperand?.typeFor
+//		val rightType = rightOperand?.typeFor
+//		if((leftType != null && leftType.typeClass == TypeInfoClass.Category)  || 
+//			(rightType != null && rightType.typeClass == TypeInfoClass.Category)){
+//			warning("Equivalence operators with categorical types are not supported for execution in R.",
+//				MdlPackage::eINSTANCE.equalityExpression_Feature,
+//				FEATURE_NOT_SUPPORTED, feature)
+//		}
+//	}
 	
 
-	static val DataNamingLookup = #{
-		ListDefinitionTable::AMT_USE_VALUE -> 'AMT',
-		ListDefinitionTable::IDV_USE_VALUE -> 'TIME',
-		ListDefinitionTable::ID_USE_VALUE -> 'ID',
-		ListDefinitionTable::CMT_USE_VALUE -> 'CMT',
-		ListDefinitionTable::RATE_USE_VALUE -> 'RATE',
-		ListDefinitionTable::SS_USE_VALUE -> 'SS',
-		ListDefinitionTable::II_USE_VALUE -> 'II',
-		ListDefinitionTable::ADDL_USE_VALUE -> 'ADDL',
-		ListDefinitionTable::MDV_USE_VALUE -> 'MDV',
-		ListDefinitionTable::OBS_USE_VALUE -> 'DV'
-	} 
+	static val Map<String, String> DataNamingLookup = Collections::emptyMap
+//	 #{
+//		ListDefinitionTable::AMT_USE_VALUE -> 'AMT',
+//		ListDefinitionTable::IDV_USE_VALUE -> 'TIME',
+//		ListDefinitionTable::ID_USE_VALUE -> 'ID',
+//		ListDefinitionTable::CMT_USE_VALUE -> 'CMT',
+//		ListDefinitionTable::RATE_USE_VALUE -> 'RATE',
+//		ListDefinitionTable::SS_USE_VALUE -> 'SS',
+//		ListDefinitionTable::II_USE_VALUE -> 'II',
+//		ListDefinitionTable::ADDL_USE_VALUE -> 'ADDL',
+//		ListDefinitionTable::MDV_USE_VALUE -> 'MDV',
+//		ListDefinitionTable::OBS_USE_VALUE -> 'DV'
+//	} 
 	
 	
 	@Check

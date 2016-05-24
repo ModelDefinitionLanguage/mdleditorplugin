@@ -233,14 +233,52 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			}
 			
 			OBSERVATION{
-				z = 1 + 2 * a + eps_a
+				z : { type is userDefined, value=1 + 2 * a + eps_a, weight=2*2, prediction=1 }
 			}
 		}
 	'''.parse
 		mcl.assertNoErrors
-		mcl.assertWarning(MdlPackage::eINSTANCE.equationTypeDefinition, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
+		mcl.assertWarning(MdlPackage::eINSTANCE.attributeList, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
 			"Only the pre-defined error models are currently supported by MONOLIX."
 		)
+	}
+
+	@Test
+	def void testMonolixNoWarningUnsupportedExplicitObs(){
+		val mcl = '''
+		foo = mdlObj{
+			IDV { T }
+
+			VARIABILITY_LEVELS{
+					ID : { level=2, type is parameter }
+					o : { level=1, type is observation }
+			}
+
+			RANDOM_VARIABLE_DEFINITION(level = ID){
+				eta_a ~ Normal(mean=0, sd=1)
+			}
+			
+			RANDOM_VARIABLE_DEFINITION(level = o){
+				eps_a ~ Normal(mean=0, sd=1)
+			}
+			
+			STRUCTURAL_PARAMETERS{
+				d
+			}
+
+			INDIVIDUAL_VARIABLES{
+				a : { type is linear, trans is ln, pop=d, ranEff = [ eta_a ] }
+			}
+			
+			OBSERVATION{
+				z = 1 + 2 * a + eps_a
+			}
+		}
+	'''.parse
+		mcl.assertNoIssues
+//		mcl.assertWarning(MdlPackage::eINSTANCE.equationTypeDefinition, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
+//			"Only the pre-defined error models are currently supported by MONOLIX."
+//		)
 	}
 
 }
