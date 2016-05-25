@@ -1,36 +1,33 @@
 package eu.ddmore.converter.mdl2pharmml08
 
-import eu.ddmore.converter.treerewrite.MdlRootProvider
 import eu.ddmore.converter.treerewrite.VectorAttributeRewrite
-import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
+import eu.ddmore.mdl.mdl.PropertyStatement
+import eu.ddmore.mdl.mdl.Statement
+import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.provider.BlockDefinitionTable
-import eu.ddmore.mdl.provider.ListDefinitionProvider
+import eu.ddmore.mdl.provider.MogDefinitionProvider
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
+import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
-import eu.ddmore.mdl.validation.MdlValidator
+import java.util.ArrayList
+import java.util.List
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
-import eu.ddmore.mdl.mdl.PropertyStatement
-import eu.ddmore.mdl.utils.ExpressionUtils
-import eu.ddmore.mdl.mdl.Statement
-import java.util.List
-import java.util.ArrayList
-import eu.ddmore.mdl.mdl.ValuePair
 
 class Mdl2Pharmml {
-	static val mdlVersion = "6.0"
+//	static val mdlVersion = "6.0"
 	
 	extension MdlUtils mu = new MdlUtils
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
-	extension MdlRootProvider mrp = new MdlRootProvider
+	extension MogDefinitionProvider mrp = new MogDefinitionProvider
 	extension ModelDefinitionPrinter mdp = new ModelDefinitionPrinter
 	extension ModellingStepsPrinter msp = new ModellingStepsPrinter
 	extension FunctionDefinitionPrinter fdp = new FunctionDefinitionPrinter
-	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+//	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension ExpressionUtils eu = new ExpressionUtils
 
 	var Mcl mdlRoot
@@ -49,25 +46,6 @@ class Mdl2Pharmml {
 			if(vectArgR.doSwitch(node) != null) cntr++	
 		}
 //		val finalCount = cntr
-	}
-	
-	def private boolean isDesignObjDefined(Mcl it){
-		isObjDefinedInMog(MdlValidator::DESIGNOBJ)
-	}
-	
-	def private boolean isObjDefinedInMog(Mcl it, String objTypeName){
-		val mogObjBlk = mogObject.getBlocksByName(BlockDefinitionTable::MOG_OBJ_NAME)
-		mogObjBlk.head.statementsFromBlock.exists[stmt|
-			if(stmt instanceof ListDefinition){
-				val objType = stmt.firstAttributeList.getAttributeEnumValue('type')
-				objType == objTypeName
-			}
-			else false
-		]
-	}
-	
-	def private boolean isParamObjDefined(Mcl it){
-		isObjDefinedInMog(MdlValidator::PARAMOBJ)
 	}
 	
 	def writeDefaultName(MclObject it)'''
@@ -107,28 +85,30 @@ class Mdl2Pharmml {
   	def convertToPharmML(MclObject mog) {
   		copyMdl(EcoreUtil2.getContainerOfType(mog.eContainer, Mcl))
   		rewriteTree()
-		val paramWriter = if(mdlRoot.isParamObjDefined){
-			new StandardParameterWriter(mdlRoot.modelObject)
+  		
+		val paramWriter = if(mog.isParamObjDefined){
+			new StandardParameterWriter(mog.mdlObj)
 		}
 		else{
-			new PriorParameterWriter(mdlRoot.modelObject, mdlRoot.priorObj)
+			new PriorParameterWriter(mdlRoot.modelObject, mog.priorObj)
 		}
-		val TrialDesignObjectPrinter trialDesignWriter = if(mdlRoot.isDesignObjDefined)
+		val TrialDesignObjectPrinter trialDesignWriter = if(mog.isDesignObjDefined)
 									new TrialDesignDesignObjectPrinter(mdlRoot, paramWriter)
 								else
 									new TrialDesignDataObjectPrinter(mdlRoot, paramWriter)
+		val mObj = mog.mdlObj
 		'''
 			<?xml version="1.0" encoding="UTF-8"?>
 			<PharmML 
 				«printPharmMlNameSpaces»
 				writtenVersion="«writtenVersion»">
 				«mog.pharmMLInfoHeader»
-				<IndependentVariable symbId="«mdlRoot.mdlObj.mdlIdv?.name ?: "T"»"/>
-				«mdlRoot.mdlObj.writeFunctionDefinitions»	
-				«mdlRoot.mdlObj.writeModelDefinition(if(mdlRoot.isParamObjDefined) mdlRoot.paramObj	else mdlRoot.priorObj, paramWriter)»
+				<IndependentVariable symbId="«mObj.mdlIdv?.name ?: "T"»"/>
+				«mObj.writeFunctionDefinitions»	
+				«mObj.writeModelDefinition(if(mog.isParamObjDefined) mog.paramObj	else mog.priorObj, paramWriter)»
 				«trialDesignWriter.writeTrialDesign»
-				«writeModellingSteps(mdlRoot.mdlObj, if(mdlRoot.isParamObjDefined) mdlRoot.paramObj else mdlRoot.priorObj,
-					if(mdlRoot.isDesignObjDefined) mdlRoot.designObj else mdlRoot.dataObj, mdlRoot.taskObj)»
+				«writeModellingSteps(mObj, if(mog.isParamObjDefined) mog.paramObj else mog.priorObj,
+					if(mog.isDesignObjDefined) mog.designObj else mog.dataObj, mog.taskObj)»
 			</PharmML>
 		'''			
 	}

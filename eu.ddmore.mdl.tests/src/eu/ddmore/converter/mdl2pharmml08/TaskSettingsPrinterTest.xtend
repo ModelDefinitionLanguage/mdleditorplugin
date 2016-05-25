@@ -71,6 +71,26 @@ class TaskSettingsPrinterTest {
 	}
 
 	@Test
+	def void testWriteEstGenericSettingsWithMcMcOnly(){
+		val estBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::ESTIMATE_BLK))
+		val propStatement = estBlk.createPropertyStatement(
+						#[createAssignPair('algo', createStringLiteral("mcmc"))]
+						)
+		
+		val actual = writeSettings(#[propStatement])
+		val expected = '''
+			<Operation order="1" opType="generic">
+				<Property name="algo">
+					<ct:Assign>
+						<ct:String>mcmc</ct:String>
+					</ct:Assign>
+				</Property>
+			</Operation>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
 	def void testWriteEstGenericAndTargetSettings(){
 		val estBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::ESTIMATE_BLK))
 		estBlk.createPropertyStatement(

@@ -6,11 +6,11 @@ class SimpleParameterWriter extends AbstractIndivParamWriter {
 	extension PharmMLExpressionBuilder pcu = new PharmMLExpressionBuilder
 
 	def writeParameter(EquationTypeDefinition it)'''
-		<Parameter symbId="«name»">
+		<PopulationParameter symbId="«name»">
 			«IF expression != null»
 				«expression.expressionAsAssignment»
 			«ENDIF»
-		</Parameter>
+		</PopulationParameter>
 	'''
 		
 	
