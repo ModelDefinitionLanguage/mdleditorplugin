@@ -13,6 +13,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
+import eu.ddmore.mdl.provider.MogDefinitionProvider
+import eu.ddmore.mdl.validation.MogValidator
+import eu.ddmore.mdl.validation.MdlValidator
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -21,7 +24,8 @@ class ConstantEvaluationTest {
 	@Inject extension ValidationTestHelper
 
 	extension MdlUtils mu = new MdlUtils
-	extension ConstantEvaluation ce = new ConstantEvaluation	
+	extension ConstantEvaluation ce = new ConstantEvaluation
+	extension MogDefinitionProvider mdp = new MogDefinitionProvider
 
 	@Test
 	def testValidSimpleMathsContantExpression(){
@@ -36,7 +40,7 @@ class ConstantEvaluationTest {
 		
 		mdl.assertNoErrors
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateMathsExpression
 		assertEquals("Expected result", 7.75, actualResult, 0.000001)
 	}
@@ -54,7 +58,7 @@ class ConstantEvaluationTest {
 		
 		mdl.assertNoErrors
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateMathsExpression
 		assertEquals("Expected result", 23.0/6.0, actualResult, 0.000001)
 	}
@@ -73,7 +77,7 @@ class ConstantEvaluationTest {
 		
 		mdl.assertNoErrors
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateMathsExpression
 		assertEquals("Expected result", 23.0/6.0, actualResult, 0.000001)
 	}
@@ -97,7 +101,7 @@ class ConstantEvaluationTest {
 		
 		mdl.assertNoErrors
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateMathsExpression
 		assertEquals("Expected result", 23.0/6.0, actualResult, 0.000001)
 	}
@@ -121,7 +125,7 @@ class ConstantEvaluationTest {
 		
 		mdl.assertNoErrors
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateMathsExpression
 		assertNull("Expected result", actualResult)
 	}
@@ -140,7 +144,7 @@ class ConstantEvaluationTest {
 		mdl.assertNoErrors(Diagnostic::SYNTAX_DIAGNOSTIC)
 		mdl.assertNoErrors(Diagnostic::LINKING_DIAGNOSTIC)
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateLogicalExpression
 		assertFalse("Expected result", actualResult)
 	}
@@ -159,7 +163,7 @@ class ConstantEvaluationTest {
 		mdl.assertNoErrors(Diagnostic::SYNTAX_DIAGNOSTIC)
 		mdl.assertNoErrors(Diagnostic::LINKING_DIAGNOSTIC)
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateLogicalExpression
 		assertTrue("Expected result", actualResult)
 	}
@@ -178,7 +182,7 @@ class ConstantEvaluationTest {
 		mdl.assertNoErrors(Diagnostic::SYNTAX_DIAGNOSTIC)
 		mdl.assertNoErrors(Diagnostic::LINKING_DIAGNOSTIC)
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateLogicalExpression
 		assertFalse("Expected result", actualResult)
 	}
@@ -196,7 +200,7 @@ class ConstantEvaluationTest {
 		
 		mdl.assertNoErrors(Diagnostic::LINKING_DIAGNOSTIC)
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateLogicalExpression
 		assertNull("Expected result", actualResult)
 	}
@@ -215,7 +219,7 @@ class ConstantEvaluationTest {
 		mdl.assertNoErrors(Diagnostic::SYNTAX_DIAGNOSTIC)
 		mdl.assertNoErrors(Diagnostic::LINKING_DIAGNOSTIC)
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateMathsExpression
 		assertEquals("Expected result", 1.0, actualResult, 0.000001)
 	}
@@ -234,7 +238,7 @@ class ConstantEvaluationTest {
 		mdl.assertNoErrors(Diagnostic::SYNTAX_DIAGNOSTIC)
 		mdl.assertNoErrors(Diagnostic::LINKING_DIAGNOSTIC)
 		
-		val stmt = mdl.modelObject.mdlPredictionVariables.head as EquationDefinition
+		val stmt = mdl.getFirstObjectOfType(MdlValidator::MDLOBJ).mdlPredictionVariables.head as EquationDefinition
 		val actualResult = stmt.expression.evaluateMathsExpression
 		assertEquals("Expected result", 0.0, actualResult, 0.000001)
 	}

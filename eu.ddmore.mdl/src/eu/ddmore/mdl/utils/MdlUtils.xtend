@@ -10,7 +10,6 @@ import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.ListPiecewiseExpression
 import eu.ddmore.mdl.mdl.MappingExpression
 import eu.ddmore.mdl.mdl.MappingPair
-import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.ParExpression
 import eu.ddmore.mdl.mdl.Statement
@@ -65,33 +64,33 @@ class MdlUtils {
 	}
 
 
-	def getModelObject(Mcl mcl){
-		mcl.objects.findFirst[isModelObject]
-	}
-
-	def getDataObject(Mcl mcl){
-		mcl.objects.findFirst[isDataObject]
-	}
-
-	def getDesignObject(Mcl mcl){
-		mcl.objects.findFirst[isDesignObject]
-	}
-
-	def getParamObject(Mcl mcl){
-		mcl.objects.findFirst[isParamObject]
-	}
-
-	def getTaskObject(Mcl mcl){
-		mcl.objects.findFirst[isTaskObject]
-	}
-
-	def getMogObject(Mcl mcl){
-		mcl.objects.findFirst[isMogObject]
-	}
-
-	def getMogObjects(Mcl mcl){
-		mcl.objects.filter[isMogObject]
-	}
+//	def getModelObject(Mcl mcl){
+//		mcl.objects.findFirst[isModelObject]
+//	}
+//
+//	def getDataObject(Mcl mcl){
+//		mcl.objects.findFirst[isDataObject]
+//	}
+//
+//	def getDesignObject(Mcl mcl){
+//		mcl.objects.findFirst[isDesignObject]
+//	}
+//
+//	def getParamObject(Mcl mcl){
+//		mcl.objects.findFirst[isParamObject]
+//	}
+//
+//	def getTaskObject(Mcl mcl){
+//		mcl.objects.findFirst[isTaskObject]
+//	}
+//
+//	def getMogObject(Mcl mcl){
+//		mcl.objects.findFirst[isMogObject]
+//	}
+//
+//	def getMogObjects(Mcl mcl){
+//		mcl.objects.filter[isMogObject]
+//	}
 
 	def getMdlCovariateDefns(MclObject mdlObj){
 		val retVal = new ArrayList<SymbolDefinition>

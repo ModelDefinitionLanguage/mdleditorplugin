@@ -25,11 +25,11 @@ class StandardParameterWriter extends AbstractParameterWriter {
 	override writeSimpleParameter(SymbolDefinition stmt)'''
 		«IF stmt instanceof EquationTypeDefinition»
 			«IF stmt.expression != null»
-				<Parameter symbId = "«stmt.name»">
+				<PopulationParameter symbId = "«stmt.name»">
 					«stmt.expression.expressionAsAssignment»
-				</Parameter>
+				</PopulationParameter>
 			«ELSE»
-				<Parameter symbId = "«stmt.name»"/>
+				<PopulationParameter symbId = "«stmt.name»"/>
 			«ENDIF»
 		«ENDIF»
 	'''

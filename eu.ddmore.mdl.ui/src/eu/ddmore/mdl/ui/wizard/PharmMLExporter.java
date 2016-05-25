@@ -22,7 +22,7 @@ import eu.ddmore.converter.mdl2pharmml08.Mdl2Pharmml;
 import eu.ddmore.mdl.MdlStandaloneSetup;
 import eu.ddmore.mdl.mdl.Mcl;
 import eu.ddmore.mdl.mdl.MclObject;
-import eu.ddmore.mdl.utils.MdlUtils;
+import eu.ddmore.mdl.provider.MogDefinitionProvider;
 
 public class PharmMLExporter {
 
@@ -88,7 +88,7 @@ public class PharmMLExporter {
 
         final Mcl mcl = (Mcl) resource.getContents().get(0);
         
-        final Iterable<MclObject> mogs = new MdlUtils().getMogObjects(mcl);
+        final Iterable<MclObject> mogs = new MogDefinitionProvider().getMogObj(mcl);
         
         // TODO: We're currently making an assumption that there will be a single MOG
         // in the provided file.  This should be fine for Product 4.

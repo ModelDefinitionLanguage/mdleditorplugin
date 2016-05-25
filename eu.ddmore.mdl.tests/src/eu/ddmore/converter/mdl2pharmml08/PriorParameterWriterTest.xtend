@@ -157,11 +157,11 @@ class PriorParameterWriterTest {
 		this.testInstance = new PriorParameterWriter(null, priorObj)
 		val actual = testInstance.writeParameter(parmStmt)
 		val expected = '''
-			<Parameter symbId="p1">
+			<PopulationParameter symbId="p1">
 				<ct:Assign>
 					<ct:Real>22.0</ct:Real>
 				</ct:Assign>
-			</Parameter>
+			</PopulationParameter>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}

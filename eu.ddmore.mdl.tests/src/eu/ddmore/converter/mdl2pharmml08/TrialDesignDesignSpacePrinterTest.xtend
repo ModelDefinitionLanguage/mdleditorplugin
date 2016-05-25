@@ -17,6 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
+import eu.ddmore.mdl.mdl.MclObject
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -41,6 +42,13 @@ class TrialDesignDesignSpacePrinterTest {
 		
 	}
 
+	def private createMogDefn(Mcl it, MclObject desObj){
+		val mogObj = createObject("foo", libDefns.getObjectDefinition("mogObj"))
+		val objBlk = mogObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MOG_OBJ_NAME))
+		objBlk.createListDefn(desObj.name, createEnumPair('type', 'designObj'))
+		return mogObj
+	}
+	
 	@Test
 	def void testWriteDesignSpaceParameterDiscrete(){
 		val mdl = createRoot
@@ -66,7 +74,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -114,7 +122,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -156,7 +164,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -203,7 +211,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -246,7 +254,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -293,7 +301,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -336,7 +344,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -383,7 +391,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -427,7 +435,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -474,7 +482,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -518,7 +526,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -565,7 +573,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -608,7 +616,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -655,7 +663,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -698,7 +706,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -745,7 +753,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -788,7 +796,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -835,7 +843,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -880,7 +888,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -951,7 +959,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpace(dsList.firstAttributeList)
 		val expected = '''
 			<DesignSpace>
@@ -1048,7 +1056,7 @@ class TrialDesignDesignSpacePrinterTest {
 																				)
 									)
 		
-		val tdow = new TrialDesignDesignObjectPrinter(mdl, new StandardParameterWriter(null))
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj), new StandardParameterWriter(null))
 		val actual = tdow.writeDesignSpaces(desBlk)
 		val expected = '''
 			<DesignSpaces>

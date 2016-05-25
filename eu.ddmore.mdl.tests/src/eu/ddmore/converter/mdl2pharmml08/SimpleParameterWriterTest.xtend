@@ -53,8 +53,8 @@ class SimpleParameterWriterTest {
 		
 		val actual = writeParameter(ld)
 		val expected = '''
-			<Parameter symbId="tst">
-			</Parameter>
+			<PopulationParameter symbId="tst">
+			</PopulationParameter>
 			'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
@@ -66,11 +66,11 @@ class SimpleParameterWriterTest {
 		
 		val actual = writeParameter(ld)
 		val expected = '''
-			<Parameter symbId="tst">
+			<PopulationParameter symbId="tst">
 				<ct:Assign>
 					<ct:Real>244.5</ct:Real>
 				</ct:Assign>
-			</Parameter>
+			</PopulationParameter>
 			'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}

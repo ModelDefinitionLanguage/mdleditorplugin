@@ -18,6 +18,7 @@ import eu.ddmore.mdl.mdl.VectorLiteral
 import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.ListDefinitionTable
+import eu.ddmore.mdl.provider.MogDefinitionProvider
 import eu.ddmore.mdl.provider.SublistDefinitionProvider
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.Expression
@@ -27,7 +28,6 @@ import java.util.HashSet
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
-import eu.ddmore.mdl.mdl.Mcl
 
 class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
@@ -35,6 +35,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension SublistDefinitionProvider sldp = new SublistDefinitionProvider
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
+	extension MogDefinitionProvider mdp = new MogDefinitionProvider
 
 	private var mappedColumns = new HashSet<String>
 	
@@ -42,9 +43,9 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	val MclObject dObj
 	val AbstractParameterWriter priorDsWriter
 	
-	new(Mcl mdl, AbstractParameterWriter priorDsWriter){
-		mObj = mdl.modelObject
-		dObj = mdl.dataObject
+	new(MclObject mog, AbstractParameterWriter priorDsWriter){
+		mObj = mog.mdlObj
+		dObj = mog.dataObj
 		this.priorDsWriter = priorDsWriter
 	}
 	

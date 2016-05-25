@@ -45,19 +45,21 @@ class MDLBuildFixture {
 	}
 
 	def MclObject createObject(Mcl mdl, String name, ObjectDefinition oType){
-		val retVal = createObject(name, oType)
+		val retVal = MdlFactory.eINSTANCE.createMclObject
+		retVal.name = name
+		retVal.objId = oType
 		mdl.objects.add(retVal)
 		
 		retVal
 	}
 
-	def MclObject createObject(String name, ObjectDefinition oType){
-		val retVal = MdlFactory.eINSTANCE.createMclObject
-		retVal.name = name
-		retVal.objId = oType
-		
-		retVal
-	}
+//	def MclObject createObject(String name, ObjectDefinition oType){
+//		val retVal = MdlFactory.eINSTANCE.createMclObject
+//		retVal.name = name
+//		retVal.objId = oType
+//		
+//		retVal
+//	}
 
 	def BlockStatement createBlock(MclObject parent, BlockDefinition blkName, ValuePair ... args){
 		val blk = createBlock(blkName, args)

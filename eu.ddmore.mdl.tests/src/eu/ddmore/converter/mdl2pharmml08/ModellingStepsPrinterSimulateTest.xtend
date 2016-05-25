@@ -1,15 +1,15 @@
 package eu.ddmore.converter.mdl2pharmml08
 
 import com.google.inject.Inject
+import eu.ddmore.mdl.MdlAndLibInjectorProvider
+import eu.ddmore.mdl.MdlTestHelper
 import eu.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdl.provider.MogDefinitionProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
-import eu.ddmore.mdl.MdlAndLibInjectorProvider
-import eu.ddmore.mdl.MdlTestHelper
-import eu.ddmore.mdl.utils.MdlUtils
 
 import static org.junit.Assert.assertEquals
 
@@ -18,8 +18,8 @@ import static org.junit.Assert.assertEquals
 class ModellingStepsPrinterSimulateTest {
 	@Inject extension MdlTestHelper<Mcl>
 	@Inject extension ModellingStepsPrinter
-	@Inject extension MdlUtils
 	@Inject extension ValidationTestHelper
+	@Inject extension MogDefinitionProvider
 	
 	@Test
 	def void testSimulationStepTargetSettingsFile(){
@@ -155,9 +155,9 @@ class ModellingStepsPrinterSimulateTest {
 		'''.parse
 		mcl.assertNoErrors
 		
-		val mdlObj = mcl.modelObject
-		val parObj = mcl.paramObject
-		val taskObj = mcl.taskObject
+		val mdlObj = mcl.firstMogObj.mdlObj
+		val parObj = mcl.firstMogObj.paramObj
+		val taskObj = mcl.firstMogObj.taskObj
 		
 		val actual = writeSimulationStep("simOid2", mdlObj, null, parObj, taskObj.blocks.head)
 
@@ -423,9 +423,9 @@ class ModellingStepsPrinterSimulateTest {
 		'''.parse
 		mcl.assertNoErrors
 		
-		val mdlObj = mcl.modelObject
-		val parObj = mcl.paramObject
-		val taskObj = mcl.taskObject
+		val mdlObj = mcl.firstMogObj.mdlObj
+		val parObj = mcl.firstMogObj.paramObj
+		val taskObj = mcl.firstMogObj.taskObj
 		
 		val actual = writeSimulationStep("simOid99", mdlObj, null, parObj, taskObj.blocks.head)
 
@@ -662,9 +662,9 @@ class ModellingStepsPrinterSimulateTest {
 		'''.parse
 		mcl.assertNoErrors
 		
-		val mdlObj = mcl.modelObject
-		val parObj = mcl.paramObject
-		val taskObj = mcl.taskObject
+		val mdlObj = mcl.firstMogObj.mdlObj
+		val parObj = mcl.firstMogObj.paramObj
+		val taskObj = mcl.firstMogObj.taskObj
 		
 		val actual = writeSimulationStep("simOid1", mdlObj, null, parObj, taskObj.blocks.head)
 

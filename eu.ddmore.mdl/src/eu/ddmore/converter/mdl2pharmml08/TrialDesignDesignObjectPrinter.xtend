@@ -4,7 +4,6 @@ import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
-import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.PropertyStatement
 import eu.ddmore.mdl.mdl.SubListExpression
@@ -12,6 +11,7 @@ import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
+import eu.ddmore.mdl.provider.MogDefinitionProvider
 import eu.ddmore.mdl.provider.SublistDefinitionProvider
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
@@ -35,6 +35,7 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 //	extension MdlLibUtils mlu = new MdlLibUtils
 //	extension LibraryUtils lib = new LibraryUtils
 	extension ExpressionUtils eu = new ExpressionUtils
+	extension MogDefinitionProvider mdp = new MogDefinitionProvider
 
 	val public static INTVN_TYPE_ATT_NAME = 'type'
 	val public static INTVN_TYPE_BOLUS_VALUE = 'bolus'
@@ -103,9 +104,9 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val MclObject designObj
 	val AbstractParameterWriter priorDsWriter
 	
-	new(Mcl mdl, AbstractParameterWriter priorDsWriter){
-		this.mObj = mdl.modelObject
-		this.designObj = mdl.designObject
+	new(MclObject mog, AbstractParameterWriter priorDsWriter){
+		this.mObj = mog.mdlObj
+		this.designObj = mog.designObj
 		this.priorDsWriter = priorDsWriter
 	}
 

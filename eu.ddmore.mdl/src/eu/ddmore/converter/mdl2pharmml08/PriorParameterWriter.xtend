@@ -132,9 +132,9 @@ class PriorParameterWriter extends AbstractParameterWriter {
 	
 	override writeSimpleParameter(SymbolDefinition stmt)'''
 		«IF stmt instanceof EquationTypeDefinition»
-			<Parameter symbId="«stmt.name»"«IF stmt.expression !=null»>
+			<PopulationParameter symbId="«stmt.name»"«IF stmt.expression !=null»>
 				«stmt.expression.expressionAsAssignment»
-			</Parameter>«ELSE»/>«ENDIF»
+			</PopulationParameter>«ELSE»/>«ENDIF»
 		«ENDIF»
 	'''
 
