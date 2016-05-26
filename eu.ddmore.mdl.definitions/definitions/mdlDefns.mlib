@@ -621,7 +621,7 @@ _func Normal3 "Normal distribution with precision" _named
 //			_returns ::Real
 //			;
 			
-_func LogNormal1 "Log Normal distribution" _named
+_func LogNormal1 "Log Normal distribution 1" _named
 		(
 			meanLog::real "mean of log",
 			stdevLog::real "shape"
@@ -629,12 +629,20 @@ _func LogNormal1 "Log Normal distribution" _named
 		_sig(meanLog, stdevLog)
 		_returns ::pdf;
 
-_func LogNormal2 "Log Normal distribution" _named
+_func LogNormal2 "Log Normal distribution 2" _named
 		(
 			meanLog::real "mean of log",
 			varLog::real "shape"
 		)
 		_sig(meanLog, varLog)
+		_returns ::pdf;
+
+_func LogNormal3 "Log Normal distribution 3" _named
+		(
+			median::real "median / geometric mean",
+			stdevLog::real "shape"
+		)
+		_sig(median, stdevLog)
 		_returns ::pdf;
 
 _func Bernoulli1 "Bernoulli distributions" _named
@@ -673,6 +681,16 @@ _func Gamma2 _named
 			)
 			_sig(shape, rate)
 			_returns ::pdf;
+			
+_func InverseGamma1 "Inverse Gamma 1" _named
+			(
+				shape::real "shape",
+				scale::real "scale"
+			)
+			_sig(shape, scale)
+			_returns ::pdf;
+			
+
 _func NonParametric _named
 			(
 				bins::vector,
