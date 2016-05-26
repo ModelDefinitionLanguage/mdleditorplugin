@@ -5,12 +5,16 @@ import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.VectorLiteral
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.utils.MdlUtils
+import eu.ddmore.mdl.mdl.SymbolReference
+import eu.ddmore.mdl.mdl.RandomVariableDefinition
+import eu.ddmore.mdl.mdl.AnonymousListStatement
 
 class ListIndivParamWriter extends AbstractIndivParamWriter {
 	extension MdlUtils mu = new MdlUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension PharmMLConverterUtils pcu = new PharmMLConverterUtils
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder
+	extension DistributionPrinter dp = new DistributionPrinter
 
 	def writeIndividualParameter(ListDefinition it){
 		if(attributeLists.size == 1){
@@ -27,6 +31,24 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 					'''<Error!>'''		
 			}
 		}
+	}
+
+	def writeIndividualParameter(AnonymousListStatement it){
+		if(list.getAttributeEnumValue('type') == 'rv'){
+			val rvDefnRef = list.getAttributeExpression('rv')
+			if(rvDefnRef instanceof SymbolReference){
+				val rvDefn = rvDefnRef.ref
+				if(rvDefn instanceof RandomVariableDefinition){
+					return 
+						'''
+						<IndividualParameter id="tst">
+							«rvDefn.distn.writeDistribution»
+						</IndividualParameter>
+						'''
+				}
+			}
+		}
+		''''''
 	}
 
 	def writeLinearIdv(AttributeList it, String name){

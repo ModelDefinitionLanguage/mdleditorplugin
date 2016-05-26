@@ -9,6 +9,7 @@ import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
+import eu.ddmore.mdl.mdl.AnonymousListStatement
 
 class StandardParameterWriter extends AbstractParameterWriter {
 	extension MdlUtils mu = new MdlUtils
@@ -91,6 +92,8 @@ class StandardParameterWriter extends AbstractParameterWriter {
 								EquationTypeDefinition:
 									writeIndividualParameter(stmt)
 								ListDefinition:
+									writeIndividualParameter(stmt)
+								AnonymousListStatement:
 									writeIndividualParameter(stmt)
 							}»
 						«ENDFOR» 

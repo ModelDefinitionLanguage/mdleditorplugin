@@ -225,5 +225,38 @@ class ListIndivParamWriterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
+	@Test
+	def void testWriteIndivParamRv(){
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS))
+		val rvVar = rvBlk.createRandVar("tst", createNamedFunction(libDefns.getFunctionDefinition('Normal1'),
+														createAssignPair("mean", createRealLiteral(70.0)),
+														createAssignPair('stdev', createRealLiteral(10.0))
+														))
+
+		val indivBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_INDIV_PARAMS))
+		val al = indivBlk.createAnonList(createEnumPair('type', 'rv'), createAssignPair('rv', rvVar.createSymbolRef))
+		
+		val actual = writeIndividualParameter(al)
+		val expected = '''
+			<IndividualParameter id="tst">
+				<Distribution>
+					<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Normal1">
+						<Parameter name="mean">
+							<ct:Assign>
+								<ct:Real>70.0</ct:Real>
+							</ct:Assign>
+						</Parameter>
+						<Parameter name="stdev">
+							<ct:Assign>
+								<ct:Real>10.0</ct:Real>
+							</ct:Assign>
+						</Parameter>
+					</ProbOnto>
+				</Distribution>
+			</IndividualParameter>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
 
 }
