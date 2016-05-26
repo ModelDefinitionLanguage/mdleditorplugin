@@ -14,6 +14,7 @@ class BlockDefinitionTable {
 	public static val MDL_STRUCT_PARAMS = "STRUCTURAL_PARAMETERS"
 	public static val MDL_VAR_PARAMS = "VARIABILITY_PARAMETERS"
 	public static val MDL_INDIV_PARAMS = "INDIVIDUAL_VARIABLES"
+	public static val MDL_POPULATION_BLK = "POPULATION_PARAMETER"
 	public static val MDL_GRP_PARAMS = "GROUP_VARIABLES"
 	public static val MDL_RND_VARS = "RANDOM_VARIABLE_DEFINITION"
 	public static val PARAM_STRUCT_BLK = "STRUCTURAL"

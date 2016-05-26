@@ -22,31 +22,32 @@ public class MdlSemanticHighlightingCalculator extends DefaultSemanticHighlighti
 	public void provideHighlightingFor(XtextResource resource,
 			IHighlightedPositionAcceptor acceptor, CancelIndicator ci) {
 		EObject rootObject = resource.getParseResult().getRootASTElement();
-		
-		for (BlockStatement g : EcoreUtil2.getAllContentsOfType(rootObject, BlockStatement.class)) {
-			for (INode node : NodeModelUtils.findNodesForFeature(g, MdlPackage.Literals.BLOCK_STATEMENT__BLK_ID)) {
-				
-				acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.KEYWORD_ID);
+		if(rootObject != null){
+			for (BlockStatement g : EcoreUtil2.getAllContentsOfType(rootObject, BlockStatement.class)) {
+				for (INode node : NodeModelUtils.findNodesForFeature(g, MdlPackage.Literals.BLOCK_STATEMENT__BLK_ID)) {
+					
+					acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.KEYWORD_ID);
+				}
 			}
-		}
-		for (EnumExpression g : EcoreUtil2.getAllContentsOfType(rootObject, EnumExpression.class)) {
-			for (INode node : NodeModelUtils.findNodesForFeature(g, MdlPackage.Literals.ENUM_EXPRESSION__ENUM_VALUE)) {
-				
-				acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.TASK_ID);
+			for (EnumExpression g : EcoreUtil2.getAllContentsOfType(rootObject, EnumExpression.class)) {
+				for (INode node : NodeModelUtils.findNodesForFeature(g, MdlPackage.Literals.ENUM_EXPRESSION__ENUM_VALUE)) {
+					
+					acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.TASK_ID);
+				}
 			}
-		}
-		for (ValuePair g : EcoreUtil2.getAllContentsOfType(rootObject, ValuePair.class)) {
-			for (INode node : NodeModelUtils.findNodesForFeature(g, MdlPackage.Literals.VALUE_PAIR__ARGUMENT_NAME)) {
-				
-				acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.KEYWORD_ID);
+			for (ValuePair g : EcoreUtil2.getAllContentsOfType(rootObject, ValuePair.class)) {
+				for (INode node : NodeModelUtils.findNodesForFeature(g, MdlPackage.Literals.VALUE_PAIR__ARGUMENT_NAME)) {
+					
+					acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.KEYWORD_ID);
+				}
 			}
-		}
-		for (MclObject g : EcoreUtil2.getAllContentsOfType(rootObject, MclObject.class)) {
-			for (INode node : NodeModelUtils.findNodesForFeature(g, MdlPackage.Literals.MCL_OBJECT__OBJ_ID)) {
-				
-				acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.KEYWORD_ID);
+			for (MclObject g : EcoreUtil2.getAllContentsOfType(rootObject, MclObject.class)) {
+				for (INode node : NodeModelUtils.findNodesForFeature(g, MdlPackage.Literals.MCL_OBJECT__OBJ_ID)) {
+					
+					acceptor.addPosition(node.getOffset(), node.getLength(), DefaultHighlightingConfiguration.KEYWORD_ID);
+				}
 			}
-		}
+		}	
 		super.provideHighlightingFor(resource, acceptor, ci);
 	}
 	

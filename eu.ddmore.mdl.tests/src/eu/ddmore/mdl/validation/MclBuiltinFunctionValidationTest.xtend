@@ -451,6 +451,9 @@ class MclBuiltinFunctionValidationTest {
 			RANDOM_VARIABLE_DEFINITION(level=ID){
 				ETA_CL ~ Normal(var=POP_CL)
 			}
+			POPULATION_PARAMETERS{
+				:: { type is continuous, variable=ETA_CL }
+			}
 		}'''.parse
 		
 		assertEquals("expected error num", 1, mcl.validate.size)
@@ -484,6 +487,11 @@ class MclBuiltinFunctionValidationTest {
 			RANDOM_VARIABLE_DEFINITION(level=ID){
 				ETA_CL ~ Normal(var=POP_CL)
 			}
+			
+			POPULATION_PARAMETERS{
+				:: { type is continuous, variable=ETA_CL }
+			}
+			
 		}'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.namedFuncArguments,
@@ -512,6 +520,9 @@ class MclBuiltinFunctionValidationTest {
 			}
 			RANDOM_VARIABLE_DEFINITION(level=ID){
 				ETA_CL ~ Normal(mean=POP_CL)
+			}
+			POPULATION_PARAMETERS{
+				:: { type is continuous, variable=ETA_CL }
 			}
 		}'''.parse
 		

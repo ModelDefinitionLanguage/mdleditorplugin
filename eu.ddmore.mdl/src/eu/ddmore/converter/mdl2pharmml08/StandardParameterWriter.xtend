@@ -10,12 +10,15 @@ import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import eu.ddmore.mdl.mdl.AnonymousListStatement
+import eu.ddmore.mdl.provider.ListDefinitionProvider
+import eu.ddmore.mdl.mdl.SymbolReference
 
 class StandardParameterWriter extends AbstractParameterWriter {
 	extension MdlUtils mu = new MdlUtils
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension BlockUtils bu = new BlockUtils
-//	extension SimpleParameterWriter spw = new SimpleParameterWriter
+	extension DistributionPrinter spw = new DistributionPrinter
+	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension ListIndivParamWriter lip = new ListIndivParamWriter
 	extension FunctionIndivParamWriter fip = new FunctionIndivParamWriter
 
@@ -34,6 +37,27 @@ class StandardParameterWriter extends AbstractParameterWriter {
 			«ENDIF»
 		«ENDIF»
 	'''
+	
+	def private writePopulationParameter(AnonymousListStatement it){
+		val rvDefnRef = if(list.getAttributeEnumValue('type') == 'continuous')
+			 				list.getAttributeExpression('continuous')
+			 			else
+			 				list.getAttributeExpression('categorical')
+
+		if(rvDefnRef instanceof SymbolReference){
+			val rvDefn = rvDefnRef.ref
+			if(rvDefn instanceof RandomVariableDefinition){
+				return 
+					'''
+					<PopulationParameter id="tst">
+						«rvDefn.distn.writeDistribution»
+					</PopulationParameter>
+					'''
+			}
+		}
+		''''''
+	}
+
 	
 	override writeParameter(SymbolDefinition stmt){
 		writeSimpleParameter(stmt)
@@ -95,6 +119,17 @@ class StandardParameterWriter extends AbstractParameterWriter {
 									writeIndividualParameter(stmt)
 								AnonymousListStatement:
 									writeIndividualParameter(stmt)
+							}»
+						«ENDFOR» 
+					«ENDIF»
+«««		  		//POPULATION_PARAMETERS
+««« need to rethink this.  If writing out an anonymous pop or indiv param then we need to prevent the RV being written out.
+««« likewise for the observation, this needs to prevent the RV being written out if use directly in the observation definition.
+					«IF b.identifier == BlockDefinitionTable::MDL_POPULATION_BLK»
+						«FOR stmt: b.getNonBlockStatements»
+							«switch(stmt){
+								AnonymousListStatement:
+									writePopulationParameter(stmt)
 							}»
 						«ENDFOR» 
 					«ENDIF»

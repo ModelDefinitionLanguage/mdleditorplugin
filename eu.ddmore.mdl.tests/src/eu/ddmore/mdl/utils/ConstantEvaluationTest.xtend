@@ -5,6 +5,8 @@ import eu.ddmore.mdl.LibraryTestHelper
 import eu.ddmore.mdl.MdlAndLibInjectorProvider
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.Mcl
+import eu.ddmore.mdl.provider.MogDefinitionProvider
+import eu.ddmore.mdl.validation.MdlValidator
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -13,9 +15,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import eu.ddmore.mdl.provider.MogDefinitionProvider
-import eu.ddmore.mdl.validation.MogValidator
-import eu.ddmore.mdl.validation.MdlValidator
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))

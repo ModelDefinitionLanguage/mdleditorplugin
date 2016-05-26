@@ -1146,4 +1146,45 @@ warfarin_T2E_exact_dat = dataObj{
 			"The keyword 'ordered' is reserved for future use in MDL.")
 	}
 
+	@Test
+	def void testRandomVariableUsed(){
+		val mcl = '''bar = mdlObj {
+			IDV { T }
+			
+			VARIABILITY_LEVELS{
+				a : { level = 2, type is parameter}
+			}
+			RANDOM_VARIABLE_DEFINITION(level=a){
+				ETA ~ Normal1(mean=0, stdev=1)
+			}
+			
+			INDIVIDUAL_VARIABLES{
+				:: { type is rv, variable=ETA }
+			}	
+			
+		}'''.parse
+		
+		mcl.assertNoIssues
+	}
+
+	@Test
+	def void testRandomVariableUnUsed(){
+		val mcl = '''bar = mdlObj {
+			IDV { T }
+			
+			VARIABILITY_LEVELS{
+				a : { level = 2, type is parameter}
+			}
+			RANDOM_VARIABLE_DEFINITION(level=a){
+				ETA ~ Normal1(mean=0, stdev=1)
+			}
+			
+			
+		}'''.parse
+		
+		mcl.assertNoErrors
+		mcl.assertWarning(MdlLibPackage::eINSTANCE.symbolDefinition,
+							MdlValidator::UNUSED_VARIABLE, "Random Variable 'ETA' is not used and may be omitted from a generated model.")
+	}
+
 }
