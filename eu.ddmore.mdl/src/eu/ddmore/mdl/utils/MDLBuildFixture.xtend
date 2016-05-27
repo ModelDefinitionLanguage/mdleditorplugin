@@ -100,8 +100,18 @@ class MDLBuildFixture {
 	}
 	
 	def AssignPair createAssignPair(String name, Expression exprVal){
+		createAssignPair(name, false, exprVal)
+	}
+
+	def AssignPair createAssignPair(String name, boolean isTilde, Expression exprVal){
 		val retVal = MdlFactory.eINSTANCE.createAssignPair
 		retVal.argumentName = name
+		if(isTilde){
+			retVal.assignOp = '~'
+		}
+		else{
+			retVal.assignOp = '='
+		}
 		retVal.expression = exprVal
 		retVal
 	}

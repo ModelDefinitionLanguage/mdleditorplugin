@@ -647,6 +647,10 @@ class MclTypeValidationTest {
 			MdlValidator::INCOMPATIBLE_TYPES,
 			"attribute 'fixEff' expected value of type 'vector:Sublist:fixEffAtts' but was 'ref:Real'"
 		)
+		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"attribute 'ranEff' expected value of type 'vector:RV:real' but was 'ref:Real'"
+		)
 	}
 	
 	@Test

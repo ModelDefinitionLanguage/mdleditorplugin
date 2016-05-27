@@ -114,17 +114,17 @@ _type IndivTypeType _enum (linear, general, /*userDefined,*/ rv);
 
 _list IndivAbstractList _super _alt ::real;
 
-_sublist EtaFreeRanEffSublist _atts var::real, sd::real, varLvl::VarLevel _sig(var, varLvl), (sd, varLvl);
+//_sublist EtaFreeRanEffSublist _atts var::real, sd::real, varLvl::VarLevel _sig(var, varLvl), (sd, varLvl);
 
 _list IndivParamLinear _alt ::real _extends IndivAbstractList
 		_atts type::IndivTypeType, trans::transType,
-				pop::real, fixEff::vector[::fixEffAtts], ranEff::vector[::randomVariable], omega::vector[::EtaFreeRanEffSublist]
-		_sig(type, trans?, pop, fixEff?, ranEff), (type, trans?, pop, fixEff?, omega);
+				pop::real, fixEff::vector[::fixEffAtts], ranEff::vector[::randomVariable] //, omega::vector[::EtaFreeRanEffSublist]
+		_sig(type, trans?, pop, fixEff?, ranEff)/*, (type, trans?, pop, fixEff?, omega)*/;
 		
 _list IndivParamGeneral _alt ::real _extends IndivAbstractList
 		_atts type::IndivTypeType, trans::transType, grp::real,
-				ranEff::vector[::randomVariable], omega::vector[::EtaFreeRanEffSublist]
-			_sig(type, trans?, grp, ranEff), (type, trans?, grp, omega); 
+				ranEff::vector[::randomVariable]  //, omega::vector[::EtaFreeRanEffSublist]
+			_sig(type, trans?, grp, ranEff)/*, (type, trans?, grp, omega)*/; 
 
 _list IndivUserDefined _alt ::real _extends IndivAbstractList
 		_atts type::IndivTypeType, value::real

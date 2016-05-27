@@ -367,12 +367,17 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	@Check
 	def validateListAttributeTypes(ValuePair vp){
 		val parent = vp.eContainer
+		val rvErrorLambda = [TypeInfo attType|
+			error("Inappropriate use of '~' assignment. Expected a '" + attType.typeName + "' on the LHS of assignment.",
+				MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, attType.typeName
+			)
+		]
 		switch(parent){
 			AttributeList:
 				parent.checkAttributeTyping(vp, [e, a|
 					error("attribute '" + vp.argumentName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
 							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, a.typeName)
-				])
+				], rvErrorLambda)
 			NamedFuncArguments:
 				vp.checkNamedFunctionArgumentTyping([e, a|
 					error("argument '" + vp.argumentName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
@@ -382,12 +387,12 @@ class TypeSystemValidator extends AbstractMdlValidator {
 				parent.checkSublistAttributeTyping(vp, [e, a|
 					error("attribute '" + vp.argumentName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
 							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, a.typeName)
-				])
+				], rvErrorLambda)
 			PropertyStatement:
 				parent.checkPropertyAttributeTyping(vp, [e, a|
 					error("property '" + vp.argumentName + "' expected value of type '" + e.typeName + "' but was '" + a.typeName + "'.",
 							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, a.typeName)
-				])
+				], rvErrorLambda)
 		}
 	}
 
@@ -590,11 +595,11 @@ class TypeSystemValidator extends AbstractMdlValidator {
 		} 
 	}
 
-	def checkAttributeTyping(AttributeList attList, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda){
+	def checkAttributeTyping(AttributeList attList, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda, (TypeInfo) => void rvErrorLambda){
 		val listDefn = attList.listDefinition
 		if(listDefn != null && at != null){
 			val attType = listDefn.getAttributeType(at.argumentName)
-			checkValuePairTyping(at, attType, errorLambda)
+			checkValuePairTyping(at, attType, errorLambda, rvErrorLambda)
 		}
 	}
 
@@ -606,18 +611,18 @@ class TypeSystemValidator extends AbstractMdlValidator {
 //			matchingPropertyDefn?.propRef.propType.typeInfo ?: TypeSystemProvider::UNDEFINED_TYPE
 //		}
 
-	def checkPropertyAttributeTyping(PropertyStatement stmt, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda){
+	def checkPropertyAttributeTyping(PropertyStatement stmt, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda, (TypeInfo) => void rvErrorLambda){
 //		val owningBlk = EcoreUtil2.getContainerOfType(stmt.eContainer, BlockStatement)
 //		val attType =  if(owningBlk.blkId.name == BlockDefinitionTable::TARGET_SETTINGS)
 //			at.expression.typeFor
 //		else at.typeForProperty
 		val attType = at.typeFor
 		if(at instanceof ValuePair){
-			checkValuePairTyping(at, attType, errorLambda)				
+			checkValuePairTyping(at, attType, errorLambda, rvErrorLambda)				
 		}
 	}
 
-	def checkValuePairTyping(ValuePair at, TypeInfo attType, (TypeInfo, TypeInfo) => void errorLambda){
+	def checkValuePairTyping(ValuePair at, TypeInfo attType, (TypeInfo, TypeInfo) => void errorLambda, (TypeInfo) => void rvErrorLambda){
 			if(at instanceof AssignPair){
 				if(at.assignOp == '='){
 					if(at.expression instanceof CatValRefMappingExpression)
@@ -629,9 +634,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 						checkRandomVariableAssignmentTypes(attType, at.expression, errorLambda)
 					}
 					else{
-						error("Inappropriate use of '~' assignment. Expected a '" + attType.typeName + "' on the LHS of assignment.",
-							MdlPackage.eINSTANCE.valuePair_Expression, MdlValidator::INCOMPATIBLE_TYPES, attType.typeName
-						)
+						rvErrorLambda.apply(attType)
 					}
 				}
 			}
@@ -641,12 +644,12 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	}
 
 
-	def checkSublistAttributeTyping(SubListExpression it, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda){
+	def checkSublistAttributeTyping(SubListExpression it, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda, (TypeInfo) => void rvErrorLambda){
 		val subListDefn = findSublistMatch
 
 		if(subListDefn != null){
 			val attDefn = subListDefn.attributes.findFirst[name == at.argumentName]
-			checkValuePairTyping(at, attDefn.attType, errorLambda)
+			checkValuePairTyping(at, attDefn.attType, errorLambda, rvErrorLambda)
 //			checkArgumentMatchesAndExpression(attDefn.attType, at.expression, errorLambda)
 		}
 	}

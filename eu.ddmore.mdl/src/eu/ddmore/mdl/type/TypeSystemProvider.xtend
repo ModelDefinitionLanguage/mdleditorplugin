@@ -581,6 +581,32 @@ public class TypeSystemProvider {
 				}
 				else false
 			}
+			VectorTypeInfo:{
+				// if RB then expect the other var ro also be an RV
+				val otherType = valueType.underlyingType
+				switch(otherType){
+					VectorTypeInfo:
+						isArgumentCompatible(argType.elementType, otherType.elementType)
+					RandomVariableTypeInfo:
+						// content of RV are compared if arg type is not an RV
+						isArgumentCompatible(argType, otherType.rvType)
+					default:
+						false
+				}
+			}
+			MatrixTypeInfo:{
+				// if RB then expect the other var ro also be an RV
+				val otherType = valueType.underlyingType
+				switch(otherType){
+					MatrixTypeInfo:
+						isArgumentCompatible(argType.elementType, otherType.elementType)
+					RandomVariableTypeInfo:
+						// content of RV are compared if arg type is not an RV
+						isArgumentCompatible(argType, otherType.rvType)
+					default:
+						false
+				}
+			}
 			default:
 				// no special case handling so check for expression compatibility
 				argType.isCompatible(valueType)
