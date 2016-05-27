@@ -88,11 +88,11 @@ warfarin_UC1_prior = priorObj{
 	   
 	   TAU_X_KA = PRIOR_SCALE_KA^-2
 	   x_KA ~ Normal1(mean=0, stdev=TAU_X_KA)
-	   PPV_KA ~ abs(x_KA) / sqrt(TAU_ETA) 
+	   PPV_KA = abs(x_KA) / sqrt(TAU_ETA) 
 
 	   TAU_X_TLAG = PRIOR_SCALE_TLAG^-2
 	   x_TLAG ~ Normal1(mean=0, stdev=TAU_X_TLAG)
-	   PPV_TLAG ~ abs(x_TLAG) / sqrt(TAU_ETA) 
+	   PPV_TLAG = abs(x_TLAG) / sqrt(TAU_ETA) 
 	
 	   # prior on "SIGMA"  
 	   invRUV_ADD ~ Gamma2(shape=a_POP_RUV_ADD, rate=b_POP_RUV_ADD)
@@ -100,6 +100,9 @@ warfarin_UC1_prior = priorObj{
 	   
 	   RUV_ADD = sqrt(1/invRUV_ADD)
 	   RUV_PROP = sqrt(1/invRUV_PROP)
+		BETA_CL_WT = 1
+		BETA_V_WT = 1
+
     } # end PRIOR_VARIABLE_DEFINITION
 
 
@@ -197,7 +200,7 @@ BUGS_task = taskObj{
 			set NCHAINS = 3,
 			BURNIN = 10000,
 			NITER = 40000,
-			PARAMETERS = "V,CL,KA,TLAG",
+			PARAMETERS = ["V","CL","KA","TLAG"],
 			THIN=1,
 			DIC=true
 		}
@@ -209,7 +212,7 @@ warfarin_PK_ODE_mog = mogObj {
 		warfarin_PK_ODE_dat : { type is dataObj }
 		warfarin_PK_ODE_mdl : { type is mdlObj }
 		warfarin_UC1_prior : { type is priorObj }
-		warfarin_PK_ODE_par : { type is parObj }
+		#warfarin_PK_ODE_par : { type is parObj }
 		BUGS_task : { type is taskObj }
 	}
 }

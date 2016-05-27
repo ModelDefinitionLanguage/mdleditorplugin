@@ -763,6 +763,30 @@ class MclTypeValidationTest {
 	}
 	
 	@Test
+	def void testInValidRVExpression(){
+		val mcl = '''
+		warfarin_PK_SEXAGE_mdl = mdlObj {
+			IDV{ T }
+			
+			VARIABILITY_LEVELS{
+				ID : { type is parameter, level = 1 }
+			}
+		
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				foo ~ 20.0/40.0
+			}
+			
+			
+		} # end of model object
+		'''.parse
+		
+		mcl.assertError(MdlPackage::eINSTANCE.randomVariableDefinition,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"Expected RV:Real type, but was Undefined."
+		)
+	}
+	
+	@Test
 	def void testValidLogNormalDistnFunctionExpression(){
 		val mcl = '''
 		warfarin_PK_SEXAGE_mdl = mdlObj {

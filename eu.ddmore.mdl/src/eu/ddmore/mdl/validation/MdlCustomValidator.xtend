@@ -399,26 +399,29 @@ class MdlCustomValidator extends AbstractMdlValidator {
 	@Check
 	def warnUnusedRandomVariable(RandomVariableDefinition it){
 		// find references to this rv. If none them warn
-		val visitor = new MdlSwitch<Boolean>(){
-			override Boolean caseSymbolReference(SymbolReference ref){
-				if(ref.ref.name == name){
-					Boolean.TRUE
+		val owner = EcoreUtil2.getContainerOfType(eContainer, MclObject)
+		if(owner.isModelObject){
+			val visitor = new MdlSwitch<Boolean>(){
+				override Boolean caseSymbolReference(SymbolReference ref){
+					if(ref.ref.name == name){
+						Boolean.TRUE
+					}
+					else Boolean.FALSE
 				}
-				else Boolean.FALSE
 			}
-		}
-		val parent = EcoreUtil2.getContainerOfType(eContainer, MclObject)
-		val iter = parent?.eAllContents ?: Collections::emptyIterator
-		var found = false
-		while(iter.hasNext && !found){
-			val node = iter.next
-			if(visitor.doSwitch(node) == Boolean.TRUE)
-				found = true	
-		}
-		if(!found){
-			// RV not used so
-			warning("Random Variable '" + name + "' is not used and may be omitted from a generated model.",
-					MdlLibPackage::eINSTANCE.symbolDefinition_Name, MdlValidator::UNUSED_VARIABLE);
+			val parent = EcoreUtil2.getContainerOfType(eContainer, MclObject)
+			val iter = parent?.eAllContents ?: Collections::emptyIterator
+			var found = false
+			while(iter.hasNext && !found){
+				val node = iter.next
+				if(visitor.doSwitch(node) == Boolean.TRUE)
+					found = true	
+			}
+			if(!found){
+				// RV not used so
+				warning("Random Variable '" + name + "' is not used and may be omitted from a generated model.",
+						MdlLibPackage::eINSTANCE.symbolDefinition_Name, MdlValidator::UNUSED_VARIABLE);
+			}
 		}
 	}
 }

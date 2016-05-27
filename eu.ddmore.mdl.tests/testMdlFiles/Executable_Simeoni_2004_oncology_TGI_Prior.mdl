@@ -150,7 +150,7 @@ simeoni2004_mdl = mdlObj{
 	}
 	
 	VARIABILITY_PARAMETERS{
-      SIGMA_RES_W
+      SIGMA_RES_W = 1
 	}
 		
 	

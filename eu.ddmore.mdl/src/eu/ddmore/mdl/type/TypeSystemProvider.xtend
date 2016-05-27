@@ -72,6 +72,7 @@ public class TypeSystemProvider {
 	public static val INT_VECTOR_TYPE = new PrimitiveTypeInfo(TypeInfoClass.Int).makeVector
 	public static val MAPPING_TYPE =  new PrimitiveTypeInfo(TypeInfoClass.Mapping)
 	public static val GENERIC_ENUM_VALUE_TYPE =  new GeneralCategoryTypeInfo
+	public static val RV_REAL_TYPE = new RandomVariableTypeInfo(REAL_TYPE)
 	static val DERIV_LIST_TYPE_NAME = 'List:DerivList' 
 	
 	

@@ -281,30 +281,10 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	def validateCompatibleTypes(RandomVariableDefinition e){
 		if(e.distn != null){
 			val stmtType = e.typeFor
-			if(stmtType instanceof RandomVariableTypeInfo){
+			if(stmtType instanceof RandomVariableTypeInfo)
 				checkRandomVariableAssignmentTypes(stmtType, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-//				val distType = e.distn.typeFor
-//				if(distType.isCompatible(TypeSystemProvider::PDF_TYPE)){
-//					switch(stmtType.underlyingType.typeClass){
-//						case(TypeInfoClass.Matrix):
-//							checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeMatrix, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-//						case(TypeInfoClass.Vector):
-//							checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeVector, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-//						default:
-//							checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-//					}
-//				}
-//				else if(distType.isCompatible(TypeSystemProvider::PMF_TYPE)){
-//					switch(stmtType.rvType){
-//						case(TypeInfoClass.Matrix):
-//							checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE.makeMatrix, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-//						case(TypeInfoClass.Vector):
-//							checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE.makeVector, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-//						default:
-//							checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
-//					}
-//				}
-			}
+			else
+				typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn).apply(TypeSystemProvider::RV_REAL_TYPE, stmtType)
 		}
 	}
 		
