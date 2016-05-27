@@ -25,11 +25,9 @@ class PriorParameterWriter extends AbstractParameterWriter {
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder
 	extension MdlUtils mu = new MdlUtils
 	extension DistributionPrinter dp = new DistributionPrinter
-	extension ListIndivParamWriter lip = new ListIndivParamWriter
 	extension ExpressionUtils eu = new ExpressionUtils
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
-	extension FunctionIndivParamWriter fip = new FunctionIndivParamWriter
 
 	val MclObject priorObject
 	val Set<String> writtenParams
@@ -171,36 +169,40 @@ class PriorParameterWriter extends AbstractParameterWriter {
 	  	«ENDFOR»
 	'''
 	
-	override writeParameterModel()'''		
-		<ParameterModel blkId="pm">
-			«writePriorParams»
-			«writeModelParams»
-			«FOR b: mdlObj.blocks»
-«««				//RANDOM_VARIABLES_DEFINITION
-				«IF b.blkId.name == BlockDefinitionTable::MDL_RND_VARS»
-					«FOR stmt: b.getNonBlockStatements»
-						«switch(stmt){
-							RandomVariableDefinition:{
-								writeRandomVariable(stmt, b.getVarLevel)
-							}
-						}»
-					«ENDFOR» 
-				«ENDIF»
-«««		  		//INDIVIDUAL_VARIABLES
-				«IF b.blkId.name == BlockDefinitionTable::MDL_INDIV_PARAMS»
-					«FOR stmt: b.getNonBlockStatements»
-						«switch(stmt){
-							EquationDefinition:
-								writeIndividualParameter(stmt)
-							ListDefinition:
-								writeIndividualParameter(stmt)
-						}»
-					«ENDFOR» 
-				«ENDIF»
-			«ENDFOR»
-			«print_mdef_CollerationModel(mdlObj)»
-		</ParameterModel>
-  	'''
+	override String writeParameters()'''
+		«writePriorParams»
+		«writeModelParams»
+	'''
+	
+//	override writeParameterModel()'''		
+//		<ParameterModel blkId="pm">
+//			«writeParameters
+//			«FOR b: mdlObj.blocks»
+//«««				//RANDOM_VARIABLES_DEFINITION
+//				«IF b.blkId.name == BlockDefinitionTable::MDL_RND_VARS»
+//					«FOR stmt: b.getNonBlockStatements»
+//						«switch(stmt){
+//							RandomVariableDefinition:{
+//								writeRandomVariable(stmt, b.getVarLevel)
+//							}
+//						}»
+//					«ENDFOR» 
+//				«ENDIF»
+//«««		  		//INDIVIDUAL_VARIABLES
+//				«IF b.blkId.name == BlockDefinitionTable::MDL_INDIV_PARAMS»
+//					«FOR stmt: b.getNonBlockStatements»
+//						«switch(stmt){
+//							EquationDefinition:
+//								writeIndividualParameter(stmt)
+//							ListDefinition:
+//								writeIndividualParameter(stmt)
+//						}»
+//					«ENDFOR» 
+//				«ENDIF»
+//			«ENDFOR»
+//			«print_mdef_CollerationModel(mdlObj)»
+//		</ParameterModel>
+//  	'''
 	
 	
 	override writeAllDatasets(){
