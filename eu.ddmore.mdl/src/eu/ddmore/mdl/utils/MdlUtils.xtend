@@ -31,7 +31,6 @@ class MdlUtils {
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension DependencyWalker dw = new DependencyWalker
 	extension BlockUtils bu = new BlockUtils
-//	extension TypeSystemProvider mtp = new TypeSystemProvider
 	
 	
 	def isMclObjectOfType(MclObject obj, String typeCode){
@@ -64,34 +63,6 @@ class MdlUtils {
 	}
 
 
-//	def getModelObject(Mcl mcl){
-//		mcl.objects.findFirst[isModelObject]
-//	}
-//
-//	def getDataObject(Mcl mcl){
-//		mcl.objects.findFirst[isDataObject]
-//	}
-//
-//	def getDesignObject(Mcl mcl){
-//		mcl.objects.findFirst[isDesignObject]
-//	}
-//
-//	def getParamObject(Mcl mcl){
-//		mcl.objects.findFirst[isParamObject]
-//	}
-//
-//	def getTaskObject(Mcl mcl){
-//		mcl.objects.findFirst[isTaskObject]
-//	}
-//
-//	def getMogObject(Mcl mcl){
-//		mcl.objects.findFirst[isMogObject]
-//	}
-//
-//	def getMogObjects(Mcl mcl){
-//		mcl.objects.filter[isMogObject]
-//	}
-
 	def getMdlCovariateDefns(MclObject mdlObj){
 		val retVal = new ArrayList<SymbolDefinition>
 		mdlObj.blocks.filter[identifier == BlockDefinitionTable::COVARIATE_BLK_NAME].forEach[(body as BlockStatementBody).statements.forEach[retVal.add(it as SymbolDefinition)]]
@@ -101,14 +72,10 @@ class MdlUtils {
 
 	def boolean isDataCovariate(AttributeList it){
 		isMatchingDataUse(ListDefinitionTable::COV_USE_VALUE, ListDefinitionTable::CATCOV_USE_VALUE)
-//		list.attributes.exists[argumentName == ListDefinitionTable::USE_TYPE.enumName && (
-//			expression.convertToString == ListDefinitionTable::COV_USE_VALUE || expression.convertToString == ListDefinitionTable::CATCOV_USE_VALUE)]
 	}
 
 	def boolean isDataObservation(AttributeList it){
 		isMatchingDataUse(ListDefinitionTable::OBS_USE_VALUE)
-//		list.attributes.exists[argumentName == ListDefinitionTable::USE_TYPE.enumName && (
-//			expression.convertToString == ListDefinitionTable::OBS_USE_VALUE)]
 	}
 
 	def boolean isDataSourceBlock(BlockStatement stmt){
@@ -134,18 +101,6 @@ class MdlUtils {
 
 	def getDataCovariateDefns(MclObject it){
 		getDataColumnDefn(ListDefinitionTable::COV_USE_VALUE, ListDefinitionTable::CATCOV_USE_VALUE)
-//		val retVal = new ArrayList<ListDefinition>
-//		dataObj.blocks.filter[identifier == BlockDefinitionProvider::DIV_BLK_NAME].forEach[(body as BlockStatementBody).statements.
-//			filter[st|
-//				switch(st){
-//					ListDefinition:
-//						st.isDataCovariate
-//					default: false
-//				}
-//			]
-//			.forEach[retVal.add(it as ListDefinition)]
-//		]
-//		retVal
 	}
 	
 	def getDataIdv(MclObject it){
@@ -230,20 +185,10 @@ class MdlUtils {
 	
 	def getMdlStructuralParameters(MclObject it){
 		getStatementsInBlock(BlockDefinitionTable::MDL_STRUCT_PARAMS)
-//		val retVal = new ArrayList<Statement>
-//		for(stmt : blocks.filter[identifier == BlockDefinitionProvider::MDL_STRUCT_PARAMS]){
-//			retVal.addAll(stmt.nonBlockStatements)
-//		}
-//		retVal
 	}
 	
 	def getMdlVariabilityParameters(MclObject it){
 		getStatementsInBlock(BlockDefinitionTable::MDL_VAR_PARAMS)
-//		val retVal = new ArrayList<Statement>
-//		for(stmt : blocks.filter[identifier == BlockDefinitionProvider::MDL_VAR_PARAMS]){
-//			retVal.addAll(stmt.nonBlockStatements)
-//		}
-//		retVal
 	}
 	
 	private def getStatementsInBlock(MclObject it, String blkName){
@@ -273,11 +218,6 @@ class MdlUtils {
 
 	def getParamStructuralParameters(MclObject it){
 		getStatementsInBlock(BlockDefinitionTable::PARAM_STRUCT_BLK)
-//		val retVal = new ArrayList<Statement>
-//		for(stmt : blocks.filter[identifier == BlockDefinitionProvider::PARAM_STRUCT_BLK]){
-//			retVal.addAll(stmt.nonBlockStatements)
-//		}
-//		retVal
 	}
 	
 	def getModelPredictionBlocks(MclObject it){
@@ -447,15 +387,6 @@ class MdlUtils {
 
 		retVal
 	}
-
-//	def getDataMappingForDoseVariable(MclObject it, SymbolDefinition doseVar){
-//		val doseColumn = dataColumnDefinitions.findFirst[list.getAttributeEnumValue('use') == ListDefinitionTable::AMT_USE_VALUE]
-//		val mappingAtt = doseColumn.list.getAttributeExpression(ListDefinitionTable::DEFINE_ATT)
-//		if(mappingAtt != null){
-//			
-//		}
-//	}
-
 
 	def findMdlSymbolDefn(MclObject it, String symbolName){
 		for(blk : blocks){
