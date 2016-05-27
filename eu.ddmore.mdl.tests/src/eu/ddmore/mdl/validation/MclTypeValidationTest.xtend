@@ -649,7 +649,7 @@ class MclTypeValidationTest {
 		)
 		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"attribute 'ranEff' expected value of type 'ref:rv:real' but was 'ref:Real'"
+			"attribute 'ranEff' expected value of type 'vector:RV:real' but was 'ref:Real'"
 		)
 	}
 	

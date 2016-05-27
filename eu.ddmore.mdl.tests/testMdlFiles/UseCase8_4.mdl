@@ -136,8 +136,7 @@ warfarin_PK_BOV_mdl = mdlObj{
 
    INDIVIDUAL_VARIABLES{
       # Individual parameters
-      eta_CL = eta_BSV_CL + eta_BOV_CL
-	  CL : { type is general, grp=GRPCL, ranEff = [eta_CL] } ## Type 2 - Guassian with general covariate model
+	  CL : { type is general, grp=GRPCL, ranEff = [eta_BSV_CL + eta_BOV_CL] } ## Type 2 - Guassian with general covariate model
 	  V : { type is general, grp=GRPV, ranEff=[eta_BSV_V,eta_BOV_V] } 
       KA : { type is general, grp=GRPKA, ranEff=[eta_BSV_KA,eta_BOV_KA] } 
       ALAG1 : { type is general, grp=GRPLG, ranEff=[eta_BSV_TLAG,eta_BOV_TLAG] } 

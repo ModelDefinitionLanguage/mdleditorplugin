@@ -515,8 +515,11 @@ warfarin_T2E_exact_dat = dataObj{
 				ID : { level = 1, type is parameter}
 			}
 			
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA ~ Normal1(mean=0, stdev=1)
+			}
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1] }
+				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = ETA }
 			}
 		}'''.parse
 		
@@ -542,8 +545,11 @@ warfarin_T2E_exact_dat = dataObj{
 				ID : { level = 1, type is parameter}
 			}
 			
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA ~ Normal1(mean=0, stdev=1)
+			}
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1] }
+				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = ETA }
 			}
 		}'''.parse
 		
@@ -570,8 +576,12 @@ warfarin_T2E_exact_dat = dataObj{
 				ID : { level = 1, type is parameter}
 			}
 			
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA ~ Normal1(mean=0, stdev=1)
+			}
+			
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1] }
+				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = ETA }
 			}
 		}'''.parse
 		
@@ -596,8 +606,11 @@ warfarin_T2E_exact_dat = dataObj{
 				ID : { level = 1, type is parameter}
 			}
 			
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA ~ Normal1(mean=0, stdev=1)
+			}
 			INDIVIDUAL_VARIABLES{
-				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = [1] }
+				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = ETA }
 			}
 		}'''.parse
 		
