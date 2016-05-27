@@ -1,10 +1,13 @@
 package eu.ddmore.converter.mdl2pharmml08
 
 import eu.ddmore.mdl.mdl.AnonymousListStatement
+import eu.ddmore.mdl.mdl.BlockStatement
+import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.SymbolReference
+import eu.ddmore.mdl.mdl.util.MdlSwitch
 import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
@@ -13,10 +16,12 @@ import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
+import java.util.Collections
 import java.util.Comparator
 import java.util.HashMap
 import java.util.Map
 import java.util.TreeMap
+import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 
@@ -28,6 +33,8 @@ abstract class AbstractParameterWriter {
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension BlockArgumentDefinitionProvider badp = new BlockArgumentDefinitionProvider 
 	extension DistributionPrinter dp = new DistributionPrinter 
+	extension ListIndivParamWriter lip = new ListIndivParamWriter
+	extension FunctionIndivParamWriter fip = new FunctionIndivParamWriter
 	
 	
 	//A helper class for sorting maps (according to their integer values) 
@@ -124,9 +131,110 @@ abstract class AbstractParameterWriter {
 	def MclObject getMdlObj(){
 		this.mObj
 	}
-	
 
-	abstract def String writeParameterModel()
+	abstract def String writeParameters()	
+
+
+	def private boolean isRvUsedDirectly(RandomVariableDefinition it){
+		val visitor = new MdlSwitch<Boolean>(){
+			override Boolean caseSymbolReference(SymbolReference ref){
+				if(ref.ref.name == name){
+					val anonList = EcoreUtil2.getContainerOfType(ref.eContainer, AnonymousListStatement)
+					if(anonList != null){
+						val blk = EcoreUtil2.getContainerOfType(anonList.eContainer, BlockStatement)
+						val blkName = blk.blkId.name
+						if(blkName == BlockDefinitionTable::MDL_POPULATION_BLK || blkName == BlockDefinitionTable::MDL_INDIV_PARAMS
+							|| blkName == BlockDefinitionTable::OBS_BLK_NAME)
+							Boolean.TRUE
+						else
+							Boolean.FALSE
+					}
+					else Boolean.FALSE
+				}
+				else Boolean.FALSE
+			}
+		}
+		val parent = EcoreUtil2.getContainerOfType(eContainer, MclObject)
+		val iter = parent?.eAllContents ?: Collections::emptyIterator
+		var found = false
+		while(iter.hasNext && !found){
+			val node = iter.next
+			if(visitor.doSwitch(node) == Boolean.TRUE)
+				found = true	
+		}
+		found
+	}
+	
+	def writeRandomVariables(BlockStatement b)'''
+		«IF b.blkId.name == BlockDefinitionTable::MDL_RND_VARS»
+			«FOR stmt: b.getNonBlockStatements»
+				«switch(stmt){
+					RandomVariableDefinition:{
+						if(!stmt.isRvUsedDirectly)
+							writeRandomVariable(stmt, b.getVarLevel)
+					}
+				}»
+			«ENDFOR» 
+		«ENDIF»
+	'''
+
+	def writeIndividualParameters(BlockStatement b)'''
+		«IF b.blkId.name == BlockDefinitionTable::MDL_INDIV_PARAMS»
+			«FOR stmt: b.getNonBlockStatements»
+				«switch(stmt){
+					EquationTypeDefinition:
+						writeIndividualParameter(stmt)
+					ListDefinition:
+						writeIndividualParameter(stmt)
+					AnonymousListStatement:
+						writeIndividualParameter(stmt)
+				}»
+			«ENDFOR» 
+		«ENDIF»
+	'''
+
+	def private writePopulationParameter(AnonymousListStatement it){
+		val rvDefnRef = if(list.getAttributeEnumValue('type') == 'continuous')
+			 				list.getAttributeExpression('continuous')
+			 			else
+			 				list.getAttributeExpression('categorical')
+
+		if(rvDefnRef instanceof SymbolReference){
+			val rvDefn = rvDefnRef.ref
+			if(rvDefn instanceof RandomVariableDefinition){
+				return 
+					'''
+					<PopulationParameter id="tst">
+						«rvDefn.distn.writeDistribution»
+					</PopulationParameter>
+					'''
+			}
+		}
+		''''''
+	}
+
+	def writePopulationParameters(BlockStatement b)'''
+		«IF b.blkId.name == BlockDefinitionTable::MDL_POPULATION_BLK»
+			«FOR stmt: b.getNonBlockStatements»
+				«switch(stmt){
+					AnonymousListStatement:
+						writePopulationParameter(stmt)
+				}»
+			«ENDFOR» 
+		«ENDIF»
+	'''
+
+	def writeParameterModel()'''		
+		<ParameterModel blkId="pm">
+			«writeParameters»
+			«FOR b: mdlObj.blocks»
+				«writeRandomVariables(b)»
+				«writePopulationParameters(b)»
+				«writeIndividualParameters(b)»
+			«ENDFOR»
+			«print_mdef_CollerationModel(mdlObj)»
+		</ParameterModel>
+  	'''
 
 //	/////////////////////////////
 //	// I.d_1 CorrelationModel

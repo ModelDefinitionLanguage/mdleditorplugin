@@ -94,6 +94,10 @@ warfarin_UC1_prior = priorObj{
 	   
 	   RUV_ADD = sqrt(1/invRUV_ADD)
 	   RUV_PROP = sqrt(1/invRUV_PROP)
+		BETA_CL_WT = 1
+		BETA_V_WT = 1
+		COV_CL_V = 1
+		PPV_TLAG = 1
     } # end PRIOR_VARIABLE_DEFINITION
 
 
