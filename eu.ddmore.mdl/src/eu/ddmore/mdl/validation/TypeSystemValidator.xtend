@@ -195,8 +195,8 @@ class TypeSystemValidator extends AbstractMdlValidator {
 //	}
 
 
-	def private checkRandomVariableAssignmentTypes(RandomVariableTypeInfo lhs, Expression rhs, (TypeInfo, TypeInfo) => void errorLambda){
-		val lhsRvType = lhs.rvType
+	def private checkRandomVariableAssignmentTypes(TypeInfo lhs, Expression rhs, (TypeInfo, TypeInfo) => void errorLambda){
+		val lhsRvType = lhs
 		val distType = rhs.typeFor.underlyingType
 		if(lhsRvType.isVector){
 			if(distType instanceof VectorTypeInfo){
@@ -226,24 +226,26 @@ class TypeSystemValidator extends AbstractMdlValidator {
 				checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE.makeMatrix, rhs, errorLambda)
 			}
 		}
-		else if(lhsRvType instanceof CategoryTypeInfo){
-			// if categorical on lhs must be pmf on rhs
-			checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, rhs, errorLambda)
-		}
-		else{
-			// must be a scalar so check on that basis.
-			if(distType == TypeSystemProvider::PDF_TYPE){
-				checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE, rhs, errorLambda)
-			}
-			else if(distType == TypeSystemProvider::PMF_TYPE){
+		else if(lhsRvType instanceof RandomVariableTypeInfo){
+			if(lhsRvType instanceof CategoryTypeInfo){
+				// if categorical on lhs must be pmf on rhs
 				checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, rhs, errorLambda)
-			}
-			else if(lhsRvType == TypeSystemProvider::REAL_TYPE){
-				// in order to give a more meaningful error we choose the expected type based in the lhs rv
-				checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE, rhs, errorLambda)
 			}
 			else{
-				checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, rhs, errorLambda)
+				// must be a scalar so check on that basis.
+				if(distType == TypeSystemProvider::PDF_TYPE){
+					checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE, rhs, errorLambda)
+				}
+				else if(distType == TypeSystemProvider::PMF_TYPE){
+					checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, rhs, errorLambda)
+				}
+				else if(lhsRvType.rvType == TypeSystemProvider::REAL_TYPE){
+					// in order to give a more meaningful error we choose the expected type based in the lhs rv
+					checkExpectedAndExpression(TypeSystemProvider::PDF_TYPE, rhs, errorLambda)
+				}
+				else{
+					checkExpectedAndExpression(TypeSystemProvider::PMF_TYPE, rhs, errorLambda)
+				}
 			}
 		}
 	}
@@ -281,7 +283,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	def validateCompatibleTypes(RandomVariableDefinition e){
 		if(e.distn != null){
 			val stmtType = e.typeFor
-			if(stmtType instanceof RandomVariableTypeInfo)
+			if(stmtType.isRandomVariable || stmtType.isVector || stmtType.isMatrix)
 				checkRandomVariableAssignmentTypes(stmtType, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
 			else
 				typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn).apply(TypeSystemProvider::RV_REAL_TYPE, stmtType)

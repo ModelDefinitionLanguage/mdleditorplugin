@@ -96,7 +96,7 @@ public class TypeSystemProvider {
 		ep.multiplicativeExpression -> REAL_TYPE,
 		ep.powerExpression -> REAL_TYPE,
 		ep.transformedDefinition -> REAL_TYPE,
-		ep.randomVariableDefinition -> REAL_TYPE ,
+//		ep.randomVariableDefinition -> REAL_TYPE ,
 //		ep.mappingExpression -> MAPPING_TYPE,
 		ep.catValRefMappingExpression -> MAPPING_TYPE
 //		ep.catValRefMappingExpression -> new MappingTypeInfo(GENERIC_ENUM_VALUE_TYPE)
@@ -178,8 +178,8 @@ public class TypeSystemProvider {
 	private def TypeInfo getIndexedTypeInfo(TypeInfo effectiveSymbType, SymbolReference e){
 		val t = effectiveSymbType
 		switch(t){
-			RandomVariableTypeInfo:
-				t.rvType.getIndexedTypeInfo(e)
+//			RandomVariableTypeInfo:
+//				t.rvType.getIndexedTypeInfo(e)
 			VectorTypeInfo:
 				if(e.indexExpr.isSingleVectorElement)
 					t.elementType.makeReference
@@ -369,8 +369,8 @@ public class TypeSystemProvider {
 						else{
 							val distnType = sd.distn.typeFor.underlyingType
 							switch(distnType){
-								VectorTypeInfo case(distnType.elementType == PDF_TYPE): new RandomVariableTypeInfo(REAL_VECTOR_TYPE)
-								MatrixTypeInfo case(distnType.elementType == PDF_TYPE): new RandomVariableTypeInfo(REAL_MATRIX_TYPE)
+								VectorTypeInfo case(distnType.elementType == PDF_TYPE): new RandomVariableTypeInfo(REAL_TYPE).makeVector
+								MatrixTypeInfo case(distnType.elementType == PDF_TYPE): new RandomVariableTypeInfo(REAL_TYPE).makeMatrix
 								PrimitiveTypeInfo case(distnType == PDF_TYPE): new RandomVariableTypeInfo(REAL_TYPE)
 								PrimitiveTypeInfo case(distnType == PMF_TYPE): new RandomVariableTypeInfo(INT_TYPE)
 								default:
@@ -614,7 +614,7 @@ public class TypeSystemProvider {
 		}
 	}
 	
-		def isVector(TypeInfo ti){
+	def isVector(TypeInfo ti){
 		if(ti instanceof VectorTypeInfo) true
 		else false
 	}
@@ -626,6 +626,11 @@ public class TypeSystemProvider {
 	
 	def isMatrix(TypeInfo ti){
 		if(ti instanceof MatrixTypeInfo) true
+		else false
+	}
+	
+	def isRandomVariable(TypeInfo ti){
+		if(ti instanceof RandomVariableTypeInfo) true
 		else false
 	}
 	

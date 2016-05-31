@@ -1305,7 +1305,7 @@ class MclTypeValidationTest {
 		)
 	}
 	
-	@Ignore("This behaviour is not supported. Expressions evaluate to Real at the moment.")
+	@Test
 	def void testValidIndexExpression1(){
 		val mcl = '''
 		warfarin_PK_SEXAGE_mdl = mdlObj {
@@ -1324,7 +1324,10 @@ class MclTypeValidationTest {
 		} # end of model object
 		'''.parse
 		
-		mcl.assertNoErrors
+		mcl.assertError(MdlPackage::eINSTANCE.indexRange,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"Index value must be an 'Int' type, but was 'Real'."
+		)
 	}
 	
 	@Test
@@ -1429,6 +1432,57 @@ class MclTypeValidationTest {
 			MODEL_PREDICTION{
 				A::vector[::real]
 				C = mean(A)
+			}
+			
+		} # end of model object
+		'''.parse
+		
+		mcl.assertNoErrors
+	}
+	
+	
+	@Test
+	def void testValidVectorIndexString(){
+		val mcl = '''
+		warfarin_PK_SEXAGE_mdl = mdlObj {
+			IDV{ T }
+
+			VARIABILITY_LEVELS{
+			}
+		
+			
+			MODEL_PREDICTION{
+				A = ["A", "C"]
+				C = A[1] * 2.0
+			}
+			
+		} # end of model object
+		'''.parse
+		// Test type is string by checking error message
+		mcl.assertError(MdlPackage::eINSTANCE.multiplicativeExpression,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"Expected Real type, but was ref:String."
+		)
+	}
+	
+	@Test
+	def void testValidVectorIndexRandomVariables(){
+		val mcl = '''
+		warfarin_PK_SEXAGE_mdl = mdlObj {
+			IDV{ T }
+
+			VARIABILITY_LEVELS{
+				ID : { type is parameter, level=1}
+			}
+		
+		
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA ~ MultivariateNormal1(mean=[0.0], covarianceMatrix=[[0.0]])
+			}
+		
+			
+			INDIVIDUAL_VARIABLES{
+				C : { type is general, grp=0, ranEff=ETA[1] }
 			}
 			
 		} # end of model object
