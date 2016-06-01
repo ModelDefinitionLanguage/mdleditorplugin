@@ -80,7 +80,7 @@ warfarin_PK_MVST_mdl = mdlObj {
 	
 	RANDOM_VARIABLE_DEFINITION(level=ID) {
 		## Uses ProbOnto distribution MultivariateStudentT1
-		ETA_CL_V_KA ~ MultivariateStudentT1(mean = [0,0,0], scaleMatrix = PPV_CL_V_KA, degreesOfFreedom=DF_CL_V_KA)
+		ETA_CL_V_KA ~ MultivariateStudentT1(mean = [0,0,0], covarianceMatrix = PPV_CL_V_KA, degreesOfFreedom=DF_CL_V_KA)
 		ETA_TLAG ~ Normal(mean = 0, var = PPV_TLAG)
 	} # end RANDOM_VARIABLE_DEFINITION 
 

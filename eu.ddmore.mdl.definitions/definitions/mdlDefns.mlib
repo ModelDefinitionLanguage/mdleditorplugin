@@ -737,10 +737,10 @@ _func MultivariateNormal2 "Multivariate normal distribution" _named
 _func MultivariateStudentT1 "Multivariate (Student) T distribution" _named
 			(
 				mean::vector "location",
-				scaleMatrix::matrix "scale matrix",
+				covarianceMatrix::matrix "covariance matrix",
 				degreesOfFreedom::real "degrees of freedom"
 			)
-			_sig (mean, scaleMatrix, degreesOfFreedom)
+			_sig (mean, covarianceMatrix, degreesOfFreedom)
 			_returns ::vector[::pdf];
 
 _func MultivariateStudentT2 "Multivariate (Student) T distribution" _named

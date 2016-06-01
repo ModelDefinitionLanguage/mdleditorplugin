@@ -120,7 +120,7 @@ class Mcl2PharmMLConverterTest {
 		validateConversion("UseCase6_2")
 	}
 
-	@Ignore("Triggers bug in libPharmML")
+	@Test
 	def void testUseCase6_3(){
 		validateConversion("UseCase6_3")
 	}
