@@ -24,6 +24,7 @@ import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.xtext.EcoreUtil2
+import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 
 class MdlUtils {
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
@@ -31,6 +32,7 @@ class MdlUtils {
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension DependencyWalker dw = new DependencyWalker
 	extension BlockUtils bu = new BlockUtils
+	extension BlockArgumentDefinitionProvider badp = new BlockArgumentDefinitionProvider
 	
 	
 	def isMclObjectOfType(MclObject obj, String typeCode){
@@ -535,4 +537,12 @@ class MdlUtils {
 		retVal
 	}
 
+    def boolean isIdvDepCovariate(SymbolDefinition it){
+    	val blk = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
+    	if(blk.blkId.name == BlockDefinitionTable::COVARIATE_BLK_NAME){
+    		blk.blkArgs?.getArgumentExpression('type')?.enumValue == 'idvDependent' 
+    	}
+    	else false
+    }
+    
 }

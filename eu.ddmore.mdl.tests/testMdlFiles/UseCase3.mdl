@@ -61,7 +61,7 @@ warfarin_PKPD_turnover_mdl = mdlObj{
 		DV : { level=1, type is observation }	
 	}
 
-	COVARIATES{
+	COVARIATES(type is idvDependent){
 		WT
 		logtWT = ln(WT/70)
 	}

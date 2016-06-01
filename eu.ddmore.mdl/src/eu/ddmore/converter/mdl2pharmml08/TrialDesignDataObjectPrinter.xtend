@@ -597,59 +597,95 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		retVal
 	}
 
-	def boolean isCovariateUsedInSublist(SubListExpression it, String covName){
-		val cov = getAttributeExpression('cov') as SymbolReference
-		var retVal = false
-		if(cov != null){
-			val covDefn = cov.ref
-			if(covDefn instanceof EquationDefinition){
-				if(covDefn.expression == null && covDefn.name == covName){
-					retVal = true
-				}
-				else if(covDefn.expression != null){
-					// this is a transformed cov so let's see if any dependencies match
-					for(depCov : covDefn.expression.covariateDependencies){
-						if(depCov.name == covName) return true
-					}
-				}
-			}
-		}
-		retVal
-	}
-
-	def boolean isCatCovUsedInSublist(SubListExpression it, String covName){
-		val catVal = getAttributeExpression('catCov') as CategoryValueReference
-		val cov = catVal?.symbolDefnFromCatValRef
-		cov != null && cov.name == covName
-	}
-
-	def isCovUsedInIndivParams(ListDefinition it, MclObject mObj){
-		for(stmt : mObj.mdlIndvParams){
-			switch(stmt){
-				EquationTypeDefinition:{
-					if(stmt.expression instanceof SymbolReference){
-						val funcExpr = stmt.expression as SymbolReference
-						if(funcExpr.func == 'linear'){
-							var namedArgList = funcExpr.argList as NamedFuncArguments 
-							val fixEff = namedArgList.getArgumentExpression('fixEff') as VectorLiteral
-							if(fixEff != null && !fixEff.expressions.isEmpty){
-								for(e : fixEff.expressions){
-									switch(e){
-										VectorElement:{
-											if(e.element instanceof SubListExpression &&
-												((e.element as SubListExpression).isCovariateUsedInSublist(name) ||
-												(e.element as SubListExpression).isCatCovUsedInSublist(name)))
-													return true
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		false
+//	def boolean isCovariateUsedInSublist(SubListExpression it, String covName){
+//		val cov = getAttributeExpression('cov') as SymbolReference
+//		var retVal = false
+//		if(cov != null){
+//			val covDefn = cov.ref
+//			if(covDefn instanceof EquationDefinition){
+//				if(covDefn.expression == null && covDefn.name == covName){
+//					retVal = true
+//				}
+//				else if(covDefn.expression != null){
+//					// this is a transformed cov so let's see if any dependencies match
+//					for(depCov : covDefn.expression.covariateDependencies){
+//						if(depCov.name == covName) return true
+//					}
+//				}
+//			}
+//		}
+//		retVal
+//	}
+//
+//	def boolean isCatCovUsedInSublist(SubListExpression it, String covName){
+//		val catVal = getAttributeExpression('catCov') as CategoryValueReference
+//		val cov = catVal?.symbolDefnFromCatValRef
+//		cov != null && cov.name == covName
+//	}
+//
+//	def isCovUsedInIndivParams(ListDefinition it, MclObject mObj){
+//		for(stmt : mObj.mdlIndvParams){
+//			switch(stmt){
+//				EquationTypeDefinition:{
+//					if(stmt.expression instanceof SymbolReference){
+//						val funcExpr = stmt.expression as SymbolReference
+//						if(funcExpr.func == 'linear'){
+//							var namedArgList = funcExpr.argList as NamedFuncArguments 
+//							val fixEff = namedArgList.getArgumentExpression('fixEff') as VectorLiteral
+//							if(fixEff != null && !fixEff.expressions.isEmpty){
+//								for(e : fixEff.expressions){
+//									switch(e){
+//										VectorElement:{
+//											if(e.element instanceof SubListExpression &&
+//												((e.element as SubListExpression).isCovariateUsedInSublist(name) ||
+//												(e.element as SubListExpression).isCatCovUsedInSublist(name)))
+//													return true
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//		false
+//	}
+	
+//	def isCovUsedInIndivParams(ListDefinition it, MclObject mObj){
+//		for(stmt : mObj.mdlIndvParams){
+//			switch(stmt){
+//				EquationTypeDefinition:{
+//					if(stmt.expression instanceof SymbolReference){
+//						val funcExpr = stmt.expression as SymbolReference
+//						if(funcExpr.func == 'linear'){
+//							var namedArgList = funcExpr.argList as NamedFuncArguments 
+//							val fixEff = namedArgList.getArgumentExpression('fixEff') as VectorLiteral
+//							if(fixEff != null && !fixEff.expressions.isEmpty){
+//								for(e : fixEff.expressions){
+//									switch(e){
+//										VectorElement:{
+//											if(e.element instanceof SubListExpression &&
+//												((e.element as SubListExpression).isCovariateUsedInSublist(name) ||
+//												(e.element as SubListExpression).isCatCovUsedInSublist(name)))
+//													return true
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//		false
+//	}
+	
+	def private boolean isTimeDependentCovariate(ListDefinition colCol, MclObject it){
+		val mdlCov = findMdlSymbolDefn(colCol.name)
+		if(mdlCov != null)
+			mdlCov.isIdvDepCovariate
+		else false
 	}
 	
 	def private getIgnoreLineSymbol(){
@@ -670,7 +706,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 			val convertedColType = switch(columnType){
 				case(ListDefinitionTable::COV_USE_VALUE),
 				case(ListDefinitionTable::CATCOV_USE_VALUE):
-					if(isColumnMapped(column.name)) convertEnum(columnType, dosingToCompartmentMacro, !column.isCovUsedInIndivParams(mObj)) else "undefined"
+					if(isColumnMapped(column.name)) convertEnum(columnType, dosingToCompartmentMacro, column.isTimeDependentCovariate(mObj)) else "undefined"
 				default:
 //					if(isColumnMapped(column.name)) convertEnum(columnType, dosingToCompartmentMacro, false) else 'undefined'
 					convertEnum(columnType, dosingToCompartmentMacro, false)
@@ -714,6 +750,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 			case ListDefinitionTable::AMT_USE_VALUE     : "dose"
 			case ListDefinitionTable::DVID_USE_VALUE   : "dvid"
 			case ListDefinitionTable::VARLVL_USE_VALUE: "occasion"
+			case ListDefinitionTable::VARIABLE_USE_VALUE: "undefined"
 			case ListDefinitionTable::COV_USE_VALUE,
 			case ListDefinitionTable::CATCOV_USE_VALUE:
 				if(isRegressor) "reg" else "covariate"

@@ -19,6 +19,7 @@ class ListDefinitionTable {
 	public static val IDV_USE_VALUE = 'idv'
 	public static val ID_USE_VALUE = 'id'
 	public static val VARLVL_USE_VALUE = 'varLevel'
+	public static val VARIABLE_USE_VALUE = "variable"
 	public static val CMT_USE_VALUE = 'cmt'
 	public static val DOSE_TIME_USE_VALUE = 'doseTime'
 	public static val IDV_COL_ATT = 'idvColumn'

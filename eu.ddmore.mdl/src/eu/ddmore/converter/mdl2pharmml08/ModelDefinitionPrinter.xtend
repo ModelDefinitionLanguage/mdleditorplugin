@@ -61,7 +61,6 @@ class ModelDefinitionPrinter {
     	retVal
     }
     
-    
 	def writeCovariateModel(MclObject mObj){
 		var model = "";
 		var skipped = new ArrayList<SymbolDefinition>();
@@ -94,7 +93,7 @@ class ModelDefinitionPrinter {
 					}
 					model = model + '''
 					«IF transformation.length > 0»
-						<Covariate symbId="«transformedCov.name»">
+						<Covariate symbId="«transformedCov.name»"«IF s.isIdvDepCovariate» type="timeDependent"«ENDIF»>
 							«transformation»
 						</Covariate>
 					«ENDIF»	
@@ -108,7 +107,7 @@ class ModelDefinitionPrinter {
 				EquationDefinition:{
 					if (!skipped.contains(s)){
 						model = model + '''
-						<Covariate symbId="«s.name»">
+						<Covariate symbId="«s.name»"«IF s.isIdvDepCovariate» type="timeDependent"«ENDIF»>
 							<Continuous/>
 						</Covariate>
 						'''
@@ -117,7 +116,7 @@ class ModelDefinitionPrinter {
 				EnumerationDefinition:{
 					if (!skipped.contains(s)){
 						model = model + '''
-						<Covariate symbId="«s.name»">
+						<Covariate symbId="«s.name»"«IF s.isIdvDepCovariate» type="timeDependent"«ENDIF»>
 							<Categorical>
 								«FOR c : s.catDefn.getCategoryDefinitions»
 									<Category catId="«c»"/>
