@@ -201,6 +201,17 @@ class MdlCustomValidator extends AbstractMdlValidator {
 						error("Attribute '" + argumentName + "' expects a reference to a covariate. '" + expr.ref.name + "' is not a covariate.",
 							MdlPackage::eINSTANCE.valuePair_Expression,
 							MdlValidator::INCOMPATIBLE_VARIABLE_REF, expr.ref.name)
+					}
+					else{
+						val listDefn = EcoreUtil2.getContainerOfType(eContainer, AttributeList)
+						if(listDefn.getAttributeEnumValue('type') == 'linear'){
+							// now check that the cov is constant. If not then raise an error
+							if(expr.ref.isIdvDepCovariate){
+								error("Attribute '" + argumentName + "' expects a reference to a constant covariate. '" + expr.ref.name + "' is not constant.",
+									MdlPackage::eINSTANCE.valuePair_Expression,
+									MdlValidator::INCOMPATIBLE_VARIABLE_REF, expr.ref.name)
+							}
+						}
 					} 
 				}
 			}

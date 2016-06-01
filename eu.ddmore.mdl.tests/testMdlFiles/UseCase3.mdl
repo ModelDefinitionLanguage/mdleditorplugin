@@ -5,6 +5,7 @@ warfarin_PKPD_turnover_dat = dataObj{
       ID : 	 { use is id }
       TIME : { use is idv }
       WT : 	 { use is covariate }
+      logtWT : 	 { use is covariate }
       AGE :  { use is covariate }
       SEX :  { use is catCov withCategories{female when 0, male when 1} }
       AMT :  { use is amt, variable = GUT }
@@ -63,7 +64,10 @@ warfarin_PKPD_turnover_mdl = mdlObj{
 
 	COVARIATES(type is idvDependent){
 		WT
-		logtWT = ln(WT/70)
+	}
+
+	COVARIATES(type is constant){
+		logtWT
 	}
 	
 # The STRUCTURAL_PARAMETERS Block defines the structural model parameters.
@@ -102,6 +106,10 @@ warfarin_PKPD_turnover_mdl = mdlObj{
       RUV_FX
    }# end VARIABILITY_PARAMETERS
 
+	GROUP_VARIABLES{
+		GRP_CL = BETA_CL_WT * WT
+	}
+
    RANDOM_VARIABLE_DEFINITION(level=ID){
 # The RANDOM_VARIABLE_DEFINITION block is used to define the distribution of random variables.
       ETA_CL ~ Normal( mean=0, var=PPV_CL) 
@@ -118,7 +126,7 @@ warfarin_PKPD_turnover_mdl = mdlObj{
 # The INDIVIDUAL_VARIABLES block is used to express the individual variables and their distribution.
 # If this is not a population model then this block is not required.
 
-	 CL : { type is linear,  trans is ln, pop = POP_CL, fixEff = [{coeff=BETA_CL_WT, cov=logtWT}] , ranEff = [ETA_CL]  }
+	 CL : { type is general,  trans is ln, grp = GRP_CL, ranEff = [ETA_CL]  }
 	 V : { type is linear,  trans is ln, pop = POP_V, fixEff = [{coeff=BETA_V_WT, cov=logtWT}] , ranEff = [ETA_V]  }
 	 TABS : { type is linear,  trans is ln, pop = POP_TABS, ranEff = [ETA_TABS]  }
 	 TLAG : { type is linear,  trans is ln, pop = POP_TLAG, ranEff = [ETA_TLAG]  }

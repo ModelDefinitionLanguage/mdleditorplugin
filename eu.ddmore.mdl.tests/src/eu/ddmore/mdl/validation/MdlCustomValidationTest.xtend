@@ -559,6 +559,37 @@ warfarin_T2E_exact_dat = dataObj{
 	}
 
 	@Test
+	def void testInValidNotConstantCovariateFixedEff(){
+		val mcl = '''bar = mdlObj {
+			IDV { T }
+			
+			COVARIATES(type is idvDependent){
+				W
+			}
+			
+			
+			STRUCTURAL_PARAMETERS{
+				BETA_W
+			}
+			
+			VARIABILITY_LEVELS{
+				ID : { level = 1, type is parameter}
+			}
+			
+			RANDOM_VARIABLE_DEFINITION(level=ID){
+				ETA ~ Normal1(mean=0, stdev=1)
+			}
+			INDIVIDUAL_VARIABLES{
+				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = ETA }
+			}
+		}'''.parse
+		
+		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
+			MdlValidator::INCOMPATIBLE_VARIABLE_REF,
+			"Attribute 'cov' expects a reference to a constant covariate. 'W' is not constant.")
+	}
+
+	@Test
 	def void testValidNoCycle(){
 		val mcl = '''bar = mdlObj {
 			IDV { T }
