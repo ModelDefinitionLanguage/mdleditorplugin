@@ -3,43 +3,46 @@ package eu.ddmore.converter.mdl2pharmml08
 import eu.ddmore.mdl.mdl.AdditiveExpression
 import eu.ddmore.mdl.mdl.AndExpression
 import eu.ddmore.mdl.mdl.BooleanLiteral
+import eu.ddmore.mdl.mdl.CategoryValueReference
 import eu.ddmore.mdl.mdl.ConstantLiteral
 import eu.ddmore.mdl.mdl.EnumExpression
 import eu.ddmore.mdl.mdl.EqualityExpression
 import eu.ddmore.mdl.mdl.IfExprPart
+import eu.ddmore.mdl.mdl.IfExpression
 import eu.ddmore.mdl.mdl.IntegerLiteral
 import eu.ddmore.mdl.mdl.ListDefinition
+import eu.ddmore.mdl.mdl.MatrixElement
+import eu.ddmore.mdl.mdl.MatrixLiteral
+import eu.ddmore.mdl.mdl.MatrixRow
 import eu.ddmore.mdl.mdl.MultiplicativeExpression
 import eu.ddmore.mdl.mdl.NamedFuncArguments
 import eu.ddmore.mdl.mdl.OrExpression
+import eu.ddmore.mdl.mdl.PWClause
 import eu.ddmore.mdl.mdl.ParExpression
+import eu.ddmore.mdl.mdl.PiecewiseExpression
 import eu.ddmore.mdl.mdl.PowerExpression
 import eu.ddmore.mdl.mdl.RealLiteral
 import eu.ddmore.mdl.mdl.RelationalExpression
 import eu.ddmore.mdl.mdl.StringLiteral
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.UnaryExpression
+import eu.ddmore.mdl.mdl.UnnamedArgument
 import eu.ddmore.mdl.mdl.UnnamedFuncArguments
 import eu.ddmore.mdl.mdl.VectorElement
 import eu.ddmore.mdl.mdl.VectorLiteral
 import eu.ddmore.mdl.provider.BlockDefinitionTable
+import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
+import eu.ddmore.mdl.type.TypeSystemProvider
+import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
+import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
-
-import eu.ddmore.mdl.mdl.IfExpression
-import eu.ddmore.mdl.mdl.PiecewiseExpression
-import eu.ddmore.mdl.mdl.PWClause
-import eu.ddmore.mdl.provider.BuiltinFunctionProvider
-import eu.ddmore.mdl.mdl.CategoryValueReference
-import eu.ddmore.mdl.utils.BlockUtils
-import eu.ddmore.mdl.mdl.UnnamedArgument
+import java.util.Deque
+import java.util.LinkedList
 import java.util.List
-import eu.ddmore.mdl.mdl.MatrixElement
-import eu.ddmore.mdl.mdl.MatrixLiteral
-import eu.ddmore.mdl.mdl.MatrixRow
 
 class PharmMLExpressionBuilder {
 	
@@ -48,6 +51,8 @@ class PharmMLExpressionBuilder {
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 	extension MdlUtils mu = new MdlUtils
 	extension BlockUtils bu = new BlockUtils
+	extension TypeSystemProvider tsp = new TypeSystemProvider
+	extension ExpressionUtils eu = new ExpressionUtils
 	
 	static val GLOBAL_VAR = 'global'
 	
@@ -114,11 +119,126 @@ class PharmMLExpressionBuilder {
 //		else blkId
 	}
 	
-	def getSymbolReference(SymbolReference it){
+	def CharSequence getSymbolReference(SymbolReference it){
 		if(isFunction)
 			functionCall
+		else if(indexExpr != null){
+			// referencing of a
+			getIndexedSymbolReference 
+		}
 		else ref.getSymbolReference
 	}
+	
+	def private CharSequence getIndexedSymbolReference(SymbolReference it){
+		val refType = ref.typeFor
+		if(refType.underlyingType.isVector){
+			if(indexExpr.rowIdx.begin == null && indexExpr.rowIdx.begin == null)
+				// if [:] form of indexing then this is a copy so don't bother with vector selection				
+				symbolReference
+			else
+				// Assumes with [x:]. [:y] or [x:y] indexing 
+				getVectorSelectionForSymbolReference
+		}
+		else if(refType.underlyingType.isMatrix){
+			if(indexExpr.rowIdx.begin == null && indexExpr.rowIdx.begin == null)
+				// if [:,:] form of indexing then this is a copy so don't bother with vector selection				
+				symbolReference
+			else
+				// Assumes with [x:]. [:y] or [x:y] indexing 
+				getMatrixSelectionForSymbolReference
+		}
+	}
+	
+	def convertToPharmML(int intVal)'''
+		<ct:Int>1</ct:Int>
+	'''
+		
+	
+	def private getMatrixSelectionForSymbolReference(SymbolReference it)'''
+		<ct:MatrixSelector>
+			«ref.symbolReference»
+			«IF indexExpr.rowIdx.end == null && indexExpr.colIdx.end == null»
+«««				No range so do simple Cell referencing
+				<ct:Cell>
+					<ct:RowIndex>
+						«indexExpr.rowIdx.begin.expressionAsAssignment»
+					</ct:RowIndex>
+					<ct:ColumnIndex>
+						«indexExpr.colIdx.begin.expressionAsAssignment»
+					</ct:ColumnIndex>
+				</ct:Cell>
+			«ELSE»
+				<ct:Block>
+«««					If start is null then indexing is at first  
+					<ct:BlockStartRow>
+						«indexExpr.rowIdx.begin?.expressionAsAssignment ?: 1.convertToPharmML»
+					</ct:BlockStartRow>
+					<ct:BlockStartColumn>
+						«indexExpr.colIdx.begin?.expressionAsAssignment ?: 1.convertToPharmML»
+					</ct:BlockStartColumn>				
+					«IF indexExpr.rowIdx.end == null»
+«««						Not sure how to handle this 
+						<!Error not supported in PharmML/>
+					«ELSE»
+						<ct:RowsNumber>
+							<math:Binop op="plus">
+								<math:Binop op="minus">
+									«indexExpr.rowIdx.end.pharmMLExpr»
+									«indexExpr.rowIdx.begin.pharmMLExpr»
+								</math:Binop>
+								<ct:Int>1</ct:Int>
+							</math:Binop>
+						</ct:RowsNumber>
+					«ENDIF»
+					«IF indexExpr.colIdx.end == null»
+«««						Not sure how to handle this 
+						<!Error not supported in PharmML/>
+					«ELSE»
+						<ct:ColumnsNumber>
+							<math:Binop op="plus">
+								<math:Binop op="minus">
+									«indexExpr.colIdx.end.pharmMLExpr»
+									«indexExpr.colIdx.begin.pharmMLExpr»
+								</math:Binop>
+								<ct:Int>1</ct:Int>
+							</math:Binop>
+						</ct:ColumnsNumber>
+					«ENDIF»
+				</ct:Block>
+			«ENDIF»
+		</ct:MatrixSelector>
+	'''
+	
+	def private getVectorSelectionForSymbolReference(SymbolReference it)'''
+		<ct:VectorSelector>
+			«ref.symbolReference»
+			«IF indexExpr.rowIdx.end == null»
+«««				No range so do simple Cell referencing
+				<ct:Cell>
+					«indexExpr.rowIdx.begin.expressionAsAssignment»
+				</ct:Cell>
+			«ELSE»
+«««				If start is null then indexing is at first  
+				<ct:StartIndex>
+					«indexExpr.rowIdx.begin?.expressionAsAssignment ?: 1.convertToPharmML»
+				</ct:StartIndex>
+				«IF indexExpr.rowIdx.end == null»
+«««					Not sure how to handle this 
+					<!Error not supported in PharmML/>
+				«ELSE»
+					<ct:SegmentLength>
+						<math:Binop op="plus">
+							<math:Binop op="minus">
+								«indexExpr.rowIdx.end.pharmMLExpr»
+								«indexExpr.rowIdx.begin.pharmMLExpr»
+							</math:Binop>
+							<ct:Int>1</ct:Int>
+						</math:Binop>
+					</ct:SegmentLength>
+				«ENDIF»
+			«ENDIF»
+		</ct:VectorSelector>
+	'''
 	
 	def getCategoryValueReference(CategoryValueReference it)'''
 		<ct:CatRef catIdRef="«ref.name»"/>
@@ -480,6 +600,8 @@ class PharmMLExpressionBuilder {
     				case 'det',
     				case 'transpose':
     					writeMatrixUniOp(func, a)
+    				case 'triangle':
+    					writeTriangularMatrix
     				default:{
 		    			val opType = if(a.args.size > 1) "Binop" else "Uniop"
 		    			'''
@@ -491,6 +613,32 @@ class PharmMLExpressionBuilder {
     			}
     		}
     	}
+    }
+    
+    
+    def private writeTriangularMatrix(SymbolReference it){
+    	val a = argList
+    	if(a instanceof UnnamedFuncArguments){
+    		val Deque<Expression> mat = new LinkedList(a.args.get(0).argument.vector)
+    		val p = a.args.get(1).argument.integerValue
+    		val withDiag = a.args.get(2).argument.booleanValue
+    		'''
+				<ct:Matrix matrixType="LowerTriangular">
+					«FOR c : 1 .. p »
+						<ct:MatrixRow>
+							«FOR i : 1 .. c»
+								«IF i == c && !withDiag»
+									<ct:Real>0</ct:Real>
+								«ELSE»
+									«mat.pop.pharmMLExpr»
+								«ENDIF»
+							«ENDFOR»
+						</ct:MatrixRow>
+					«ENDFOR»
+				</ct:Matrix>
+    		'''
+    	}
+    	else ''''''
     }
 
 	def private writeSequence(List<UnnamedArgument> args)'''

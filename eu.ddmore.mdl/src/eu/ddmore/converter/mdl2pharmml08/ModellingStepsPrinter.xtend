@@ -134,14 +134,20 @@ class ModellingStepsPrinter {
 					<ParameterEstimation>
 						«paramVar.getSymbolReference»
 						<InitialEstimate fixed="«stmt.firstAttributeList.getAttributeExpression('fix')?.evaluateLogicalExpression ?: 'false'»">
-							«stmt.firstAttributeList.getAttributeExpression('value').pharmMLExpr»
+							«IF stmt.firstAttributeList.hasAttribute('value')»
+								«stmt.firstAttributeList.getAttributeExpression('value').pharmMLExpr»
+							«ELSEIF stmt.firstAttributeList.hasAttribute('vectorValue')»
+								«stmt.firstAttributeList.getAttributeExpression('vectorValue').pharmMLExpr»
+							«ELSEIF stmt.firstAttributeList.hasAttribute('matrixValue')»
+								«stmt.firstAttributeList.getAttributeExpression('matrixValue').pharmMLExpr»
+							«ENDIF»
 						</InitialEstimate>
-						«IF stmt.firstAttributeList.getAttributeExpression('lo') != null»
+						«IF stmt.firstAttributeList.hasAttribute('lo')»
 							<LowerBound>
 								«stmt.firstAttributeList.getAttributeExpression('lo').pharmMLExpr»
 							</LowerBound>
 						«ENDIF»
-						«IF stmt.firstAttributeList.getAttributeExpression('hi') != null»
+						«IF stmt.firstAttributeList.hasAttribute('hi')»
 							<UpperBound>
 								«stmt.firstAttributeList.getAttributeExpression('hi').pharmMLExpr»
 							</UpperBound>

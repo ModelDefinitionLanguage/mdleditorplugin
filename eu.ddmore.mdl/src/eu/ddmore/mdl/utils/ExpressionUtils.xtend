@@ -79,6 +79,20 @@ class ExpressionUtils {
 		else null
 	} 
 	
+	def Boolean getBooleanValue(Expression expr){
+		if(expr instanceof SymbolReference){
+			val defn = expr.ref
+			if(defn instanceof EquationTypeDefinition){
+				defn.expression.booleanValue
+			}
+			else null
+		}
+		else if(expr instanceof BooleanLiteral){
+			return expr.isIsTrue
+		}
+		else null
+	} 
+	
 	def Double getRealValue(Expression expr){
 		if(expr instanceof SymbolReference){
 			val defn = expr.ref

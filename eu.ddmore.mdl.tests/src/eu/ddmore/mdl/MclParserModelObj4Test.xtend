@@ -54,7 +54,7 @@ warfarin_PK_2Compartments_mdl = mdlObj {
       COV_CL_V
       COV_CL_KA
       COV_V_KA
-      CovMat = triangle([PPV_CL^2, COV_CL_V, PPV_VC^2, COV_CL_KA, COV_V_KA, PPV_KA^2], true) 
+      CovMat = triangle([PPV_CL^2, COV_CL_V, PPV_VC^2, COV_CL_KA, COV_V_KA, PPV_KA^2], 3, true) 
    }# end VARIABILITY_PARAMETERS
 
    GROUP_VARIABLES{

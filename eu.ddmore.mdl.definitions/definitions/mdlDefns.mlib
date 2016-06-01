@@ -562,7 +562,7 @@ _func toMatrixByRow(rows::vector[::vector[::real]]) _returns ::matrix;
 _func toMatrixByCol(cols::vector[::vector[::real]]) _returns ::matrix;
 _func asVector(x::matrix) _returns ::vector;
 _func inverse(x::matrix) _returns ::matrix;
-_func triangle(x::vector, diagonalFlag::boolean) _returns ::matrix;
+_func triangle(x::vector, dim::int, diagonalFlag::boolean) _returns ::matrix;
 _func transpose(x::matrix) _returns ::matrix;
 _func diagonal(x::vector) _returns ::matrix;
 _func gInv "Inversion (Pseudo/general Inverse)" (A::matrix) _returns ::matrix;

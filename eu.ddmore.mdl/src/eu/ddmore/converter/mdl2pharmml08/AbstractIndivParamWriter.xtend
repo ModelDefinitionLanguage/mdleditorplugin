@@ -9,31 +9,59 @@ import eu.ddmore.mdl.provider.SublistDefinitionProvider
 import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import org.eclipse.xtext.EcoreUtil2
+import eu.ddmore.mdl.utils.ExpressionUtils
+import java.util.HashMap
+import java.util.Map
+import eu.ddmore.mdl.mdl.AttributeList
+import eu.ddmore.mdl.provider.ListDefinitionProvider
 
 abstract class AbstractIndivParamWriter {
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension SublistDefinitionProvider sdp = new SublistDefinitionProvider
+	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+	extension ExpressionUtils eu = new ExpressionUtils
 
 	
 	def protected writeRandomEffects(Expression expr)'''
-		«IF expr instanceof VectorLiteral»
-			«FOR e : (expr as VectorLiteral).expressions»
-				<RandomEffects>
-					«IF (e as VectorElement).element instanceof SymbolReference»
-						«(e as VectorElement).element.pharmMLExpr»
-					«ELSE»
-						<ERROR!>
-					«ENDIF»
-				</RandomEffects>
-			«ENDFOR»
-		«ENDIF»
-		'''
+		«FOR e : expr.vector»
+			<RandomEffects>
+				«IF e instanceof SymbolReference»
+					<ct:SymbRef blkIdRef="pm" symbIdRef="«e.tmpRvVar»"/>
+				«ENDIF»
+			</RandomEffects>
+		«ENDFOR»
+	'''
 
-//	def protected writeAssignment(Expression expr)'''
-//		<ct:Assign>
-//			«expr.pharmMLExpr»
-//		</ct:Assign>
-//	'''
+	val Map<SymbolReference, String> rvMap = new HashMap<SymbolReference, String>
+	
+	def createTmpRvVar(SymbolReference it){
+		val retVal = 'MDL__' + ref.name + '_' + indexExpr.rowIdx.begin?.integerValue ?: 'b' + '_' +  indexExpr.rowIdx.end?.integerValue ?: 'e' + '_'
+			+ if(indexExpr.colIdx != null) indexExpr.colIdx.begin?.integerValue ?: 'b' + '_' +  indexExpr.colIdx.end?.integerValue ?: 'e'
+		rvMap.put(it, retVal)
+		retVal
+	}
+	
+	def getTmpRvVar(SymbolReference it){
+		if(rvMap.containsKey(it)){
+			rvMap.get(it)
+		}
+		else it.ref.name
+	}
+
+	def CharSequence writeTmpRandomEffect(AttributeList it){
+		val ranEff = getAttributeExpression('ranEff')
+		'''
+			«FOR v : ranEff.vector»
+				«IF v instanceof SymbolReference»
+					«IF v.indexExpr != null»
+						<PopulationParameter symbId="«v.createTmpRvVar»">
+							«v.expressionAsAssignment»
+						</PopulationParameter>
+					«ENDIF»
+				«ENDIF»
+			«ENDFOR»
+		'''
+	}
 
 	def protected writeFixedEffects(Expression expr){
 		val it = expr as VectorLiteral

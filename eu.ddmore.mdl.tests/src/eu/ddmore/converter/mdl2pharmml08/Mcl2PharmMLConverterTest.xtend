@@ -116,6 +116,16 @@ class Mcl2PharmMLConverterTest {
 	}
 
 	@Test
+	def void testUseCase6_2(){
+		validateConversion("UseCase6_2")
+	}
+
+	@Ignore("Triggers bug in libPharmML")
+	def void testUseCase6_3(){
+		validateConversion("UseCase6_3")
+	}
+
+	@Test
 	def void testUseCase7(){
 		validateConversion("UseCase7")
 	}
@@ -308,5 +318,10 @@ class Mcl2PharmMLConverterTest {
 	@Test
 	def void testExecutable_Simeoni_2004_oncology_TGI_Prior(){
 		validateConversion("Executable_Simeoni_2004_oncology_TGI_Prior")
+	}
+
+	@Test
+	def void testCM3(){
+		validateConversion("CM3")
 	}
 }

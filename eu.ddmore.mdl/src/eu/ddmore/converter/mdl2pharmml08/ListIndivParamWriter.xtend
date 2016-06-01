@@ -1,13 +1,13 @@
 package eu.ddmore.converter.mdl2pharmml08
 
+import eu.ddmore.mdl.mdl.AnonymousListStatement
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.ListDefinition
+import eu.ddmore.mdl.mdl.RandomVariableDefinition
+import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.VectorLiteral
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.utils.MdlUtils
-import eu.ddmore.mdl.mdl.SymbolReference
-import eu.ddmore.mdl.mdl.RandomVariableDefinition
-import eu.ddmore.mdl.mdl.AnonymousListStatement
 
 class ListIndivParamWriter extends AbstractIndivParamWriter {
 	extension MdlUtils mu = new MdlUtils
@@ -54,6 +54,7 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 	def writeLinearIdv(AttributeList it, String name){
 		val fixEff = getAttributeExpression('fixEff') as VectorLiteral
 		'''
+		«writeTmpRandomEffect»
 		<IndividualParameter symbId="«name»">
 			<StructuredModel>
 				«IF getAttributeExpression('trans') != null»
@@ -76,12 +77,8 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 	def writeGeneralIdv(AttributeList it, String name){
 		val transEnum = getAttributeEnumValue('trans')
 		val trans = if(transEnum != null) getPharmMLTransFunc(transEnum) else null
-//		val trans = switch(it){
-//			TransformedDefinition:
-//				getPharmMLTransFunc(transform.name)
-//			default: null
-//		} 
 		'''
+		«writeTmpRandomEffect»
 		<IndividualParameter symbId="«name»">
 			<StructuredModel>
 				«IF trans!= null»
