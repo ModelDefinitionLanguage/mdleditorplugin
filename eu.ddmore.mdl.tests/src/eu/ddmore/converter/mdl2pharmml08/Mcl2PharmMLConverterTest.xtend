@@ -324,4 +324,9 @@ class Mcl2PharmMLConverterTest {
 	def void testCM3(){
 		validateConversion("CM3")
 	}
+
+	@Test
+	def void testMODEL1_design(){
+		validateConversion("MODEL1_design")
+	}
 }

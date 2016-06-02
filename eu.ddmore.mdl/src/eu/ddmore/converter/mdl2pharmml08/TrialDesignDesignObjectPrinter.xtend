@@ -124,16 +124,15 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_SAMPLING_BLK)»
 					«blk.writeSampling»
 				«ENDFOR»
-				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_STUDY_DESIGN)»
-					«blk.writeStudyDesign»
-				«ENDFOR»
 				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::COVARIATE_BLK_NAME)»
 					«blk.writeCovariates»
 				«ENDFOR»
 				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_SPACE_BLK)»
 					«blk.writeDesignSpaces»
 				«ENDFOR»
-			«ENDIF»
+				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_STUDY_DESIGN)»
+					«blk.writeStudyDesign»
+				«ENDFOR»			«ENDIF»
 		</TrialDesign>
 	'''	
 
@@ -265,12 +264,12 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 			«IF hasAttribute(RATE_ATT_NAME)»
 				<Rate>
 					«getAttributeExpression(RATE_ATT_NAME).expressionAsAssignment»
-				</RATE>
+				</Rate>
 			«ENDIF»
 			«IF hasAttribute(DURATION_ATT_NAME)»
 				<Rate>
 					«getAttributeExpression(DURATION_ATT_NAME).expressionAsAssignment»
-				</RATE>
+				</Rate>
 			«ENDIF»
 		</Infusion>
 		'''
