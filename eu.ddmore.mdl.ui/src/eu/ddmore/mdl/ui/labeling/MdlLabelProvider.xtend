@@ -77,6 +77,7 @@ class MdlLabelProvider extends DefaultEObjectLabelProvider {
 			case MdlValidator::TASKOBJ: imageHelper.getImage(getPath(TASK_OBJ))
 			case MdlValidator::MOGOBJ: imageHelper.getImage(getPath(MOG_OBJ))
 			case MdlValidator::DESIGNOBJ: imageHelper.getImage(getPath(DESIGN_OBJ))
+			case MdlValidator::PRIOROBJ: imageHelper.getImage(getPath(PRIOR_OBJ))
 			default: null			
 		}
     }

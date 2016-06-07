@@ -14,6 +14,7 @@ public class Images {
 	public static final String PARAMETER_OBJ ="153-parameter.png";
 	public static final String MODEL_OBJ ="154-model.png";
 	public static final String DESIGN_OBJ ="155.png";
+	public static final String PRIOR_OBJ ="156.png";
 	public static final String DATA_OBJ ="157-data.png";
 	public static final String MOG_OBJ ="160-tel.png";
 
