@@ -113,8 +113,9 @@ class ModellingStepsPrinter {
 		<OptimalDesignStep oid="«oidRef»">
 			«taskBlk.statements.writeSettingsFile»
 			«writeParametersToEstimate(pObj, mObj)»
-			<Operation order="1" opType="«IF taskBlk.isEvaluation»evaluation«ELSE»optimization«ENDIF»"/>
-«««			«taskBlk.statements.writeSettings»
+			<Operation order="1" opType="«IF taskBlk.isEvaluation»evaluation«ELSE»optimization«ENDIF»">
+				«taskBlk.statements.writeOptimalSettings»
+			</Operation>
 		</OptimalDesignStep>
 	'''
 		

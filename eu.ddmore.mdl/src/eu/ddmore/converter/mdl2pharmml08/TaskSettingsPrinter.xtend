@@ -69,6 +69,35 @@ class TaskSettingsPrinter {
 		var order = 1;
 		'''
 			«stmts.writeGenericSettings(order++)»
+			«stmts.writeTargetSettings(order++)»
+		'''
+	}
+
+	def writeOptimalSettings(List<Statement> stmts){
+		'''
+			«FOR settingsBlk : stmts»
+				«IF settingsBlk instanceof BlockStatement»
+					«IF settingsBlk.blkId.name == BlockDefinitionTable::TARGET_SETTINGS»
+						<Algorithm definition="«settingsBlk.getTargetArgument»">
+							«IF fileSettingsLookup.containsKey(settingsBlk)»
+								«writeProperty(SETTINGS_PROP_NAME,
+									createVectorLiteral(createExpressionsFromList(fileSettingsLookup.get(settingsBlk))))»
+							«ENDIF»
+							«FOR stmt : settingsBlk.nonBlockStatements»
+								«IF stmt instanceof PropertyStatement»
+									«writeProperties(stmt)»
+								«ENDIF»
+							«ENDFOR»
+						</Algorithm>
+					«ENDIF»
+				«ENDIF»
+			«ENDFOR»
+		'''
+	}
+
+	def writeTargetSettings(List<Statement> stmts, int startIdx){
+		var order = startIdx
+		'''
 			«FOR settingsBlk : stmts»
 				«IF settingsBlk instanceof BlockStatement»
 					«IF settingsBlk.blkId.name == BlockDefinitionTable::TARGET_SETTINGS»
