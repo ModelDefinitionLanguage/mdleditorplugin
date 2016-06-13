@@ -3,8 +3,6 @@ package eu.ddmore.converter.mdl2pharmml08
 import eu.ddmore.mdl.mdl.AnonymousListStatement
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.BlockStatementBody
-import eu.ddmore.mdl.mdl.CategoricalDefinitionExpr
-import eu.ddmore.mdl.mdl.EnumerationDefinition
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
@@ -16,8 +14,6 @@ import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.Expression
-import eu.ddmore.mdllib.mdllib.SymbolDefinition
-import java.util.ArrayList
 import java.util.List
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
@@ -31,6 +27,7 @@ class ModelDefinitionPrinter {
 	extension BlockUtils bu = new BlockUtils
 	extension ListObservationsWriter low = new ListObservationsWriter
 	extension FunctionObservationsWriter fow = new FunctionObservationsWriter
+	extension CovariateModelWriter cmw = new CovariateModelWriter
 	
 	
 	//////////////////////////////////////
@@ -40,9 +37,9 @@ class ModelDefinitionPrinter {
 		'''
 		<ModelDefinition xmlns="«xmlns_mdef»">
 			«paramWriter.writeVariabilityModel»
-			«IF !mObj.mdlCovariateDefns.isEmpty»
-				«mObj.writeCovariateModel»
-			«ENDIF»
+«««			«IF !mObj.mdlCovariateDefns.isEmpty»
+			«mObj.mdlCovariateDefns.writeCovariateModel»
+«««			«ENDIF»
 			«paramWriter.writeParameterModel»
 			«IF !mObj.modelPredictionBlocks.isEmpty»
 				«mObj.writeStructuralModel»
@@ -55,88 +52,6 @@ class ModelDefinitionPrinter {
 	}
 
 
-    def getCategoryDefinitions(CategoricalDefinitionExpr expr){
-    	val retVal = new ArrayList<String>
-		expr.categories.forEach[retVal.add(name)]
-    	retVal
-    }
-    
-	def writeCovariateModel(MclObject mObj){
-		var model = "";
-		var skipped = new ArrayList<SymbolDefinition>();
-		val covDefns = mObj.mdlCovariateDefns
-		//First print transformed covariates (and exclude them from the list to avoid double defintiion)
-		for(s : covDefns){
-			switch(s){
-				EquationDefinition case(s.expression != null):{
-					var transformation = "";
-					var dependencies = s.expression.getCovariateDependencies;
-					var SymbolDefinition transformedCov = null 
-					var continue = true; //no 'break' command in xText
-					for (v: dependencies){
-						if (covDefns.exists[it == v] && continue){
-							transformedCov = v
-							skipped.add(v); 
-							continue = false;
-						} 
-					}
-					if (transformedCov != null){
-						transformation =  '''
-							<Continuous>
-								<Transformation>
-								    <TransformedCovariate symbId="«s.name»"/>
-									«s.expression.expressionAsEquation»
-								</Transformation>
-							</Continuous>
-							'''
-							skipped.add(s);
-					}
-					model = model + '''
-					«IF transformation.length > 0»
-						<Covariate symbId="«transformedCov.name»"«IF s.isIdvDepCovariate» type="timeDependent"«ENDIF»>
-							«transformation»
-						</Covariate>
-					«ENDIF»	
-					'''
-				}
-			}
-		} 
-		//Then print all remaining covariates
-		for(s : mObj.mdlCovariateDefns){
-			switch(s){
-				EquationDefinition:{
-					if (!skipped.contains(s)){
-						model = model + '''
-						<Covariate symbId="«s.name»"«IF s.isIdvDepCovariate» type="timeDependent"«ENDIF»>
-							<Continuous/>
-						</Covariate>
-						'''
-					}
-				}
-				EnumerationDefinition:{
-					if (!skipped.contains(s)){
-						model = model + '''
-						<Covariate symbId="«s.name»"«IF s.isIdvDepCovariate» type="timeDependent"«ENDIF»>
-							<Categorical>
-								«FOR c : s.catDefn.getCategoryDefinitions»
-									<Category catId="«c»"/>
-								«ENDFOR»
-							</Categorical>
-						</Covariate>
-						'''
-					}
-				}
-			}
-		}
-		if (model.length > 0){
-			model = '''
-				<CovariateModel blkId="cm">
-					«model»
-				</CovariateModel>
-			'''
-		}
-		return model;
-	}	
 		
 		
 	def private writeAssignment(Expression expr)'''
