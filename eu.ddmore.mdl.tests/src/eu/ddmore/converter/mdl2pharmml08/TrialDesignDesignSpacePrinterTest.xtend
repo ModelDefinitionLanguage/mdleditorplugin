@@ -129,12 +129,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<ct:SymbRef symbIdRef="Y"/>
 				<ct:SymbRef symbIdRef="Pa"/>
 				<ct:Assign>
-					<ct:Vector>
-						<ct:VectorElements>
-							<ct:Real>0.0</ct:Real>
-							<ct:Real>20.0</ct:Real>
-						</ct:VectorElements>
-					</ct:Vector>
+					<ct:Interval>
+						<ct:LeftEndpoint>
+							<ct:Assign>
+								<ct:Real>0.0</ct:Real>
+							</ct:Assign>
+						</ct:LeftEndpoint>
+						<ct:RightEndpoint>
+							<ct:Assign>
+								<ct:Real>20.0</ct:Real>
+							</ct:Assign>
+						</ct:RightEndpoint>
+					</ct:Interval>
 				</ct:Assign>
 			</DesignSpace>
 		'''
@@ -218,12 +224,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<InterventionRef oidRef="admin1"/>
 				<DoseAmount>
 					<ct:Assign>
-						<ct:Vector>
-							<ct:VectorElements>
-								<ct:Real>0.0</ct:Real>
-								<ct:Real>20.0</ct:Real>
-							</ct:VectorElements>
-						</ct:Vector>
+						<ct:Interval>
+							<ct:LeftEndpoint>
+								<ct:Assign>
+									<ct:Real>0.0</ct:Real>
+								</ct:Assign>
+							</ct:LeftEndpoint>
+							<ct:RightEndpoint>
+								<ct:Assign>
+									<ct:Real>20.0</ct:Real>
+								</ct:Assign>
+							</ct:RightEndpoint>
+						</ct:Interval>
 					</ct:Assign>
 				</DoseAmount>
 			</DesignSpace>
@@ -308,12 +320,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<InterventionRef oidRef="admin1"/>
 				<DoseAmount>
 					<ct:Assign>
-						<ct:Vector>
-							<ct:VectorElements>
-								<ct:Real>0.0</ct:Real>
-								<ct:Real>20.0</ct:Real>
-							</ct:VectorElements>
-						</ct:Vector>
+						<ct:Interval>
+							<ct:LeftEndpoint>
+								<ct:Assign>
+									<ct:Real>0.0</ct:Real>
+								</ct:Assign>
+							</ct:LeftEndpoint>
+							<ct:RightEndpoint>
+								<ct:Assign>
+									<ct:Real>20.0</ct:Real>
+								</ct:Assign>
+							</ct:RightEndpoint>
+						</ct:Interval>
 					</ct:Assign>
 				</DoseAmount>
 			</DesignSpace>
@@ -398,12 +416,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<InterventionRef oidRef="admin1"/>
 				<Duration>
 					<ct:Assign>
-						<ct:Vector>
-							<ct:VectorElements>
-								<ct:Real>0.0</ct:Real>
-								<ct:Real>20.0</ct:Real>
-							</ct:VectorElements>
-						</ct:Vector>
+						<ct:Interval>
+							<ct:LeftEndpoint>
+								<ct:Assign>
+									<ct:Real>0.0</ct:Real>
+								</ct:Assign>
+							</ct:LeftEndpoint>
+							<ct:RightEndpoint>
+								<ct:Assign>
+									<ct:Real>20.0</ct:Real>
+								</ct:Assign>
+							</ct:RightEndpoint>
+						</ct:Interval>
 					</ct:Assign>
 				</Duration>
 			</DesignSpace>
@@ -489,12 +513,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<ObservationRef oidRef="admin1"/>
 				<ObservationTimes>
 					<ct:Assign>
-						<ct:Vector>
-							<ct:VectorElements>
-								<ct:Real>0.0</ct:Real>
-								<ct:Real>20.0</ct:Real>
-							</ct:VectorElements>
-						</ct:Vector>
+						<ct:Interval>
+							<ct:LeftEndpoint>
+								<ct:Assign>
+									<ct:Real>0.0</ct:Real>
+								</ct:Assign>
+							</ct:LeftEndpoint>
+							<ct:RightEndpoint>
+								<ct:Assign>
+									<ct:Real>20.0</ct:Real>
+								</ct:Assign>
+							</ct:RightEndpoint>
+						</ct:Interval>
 					</ct:Assign>
 				</ObservationTimes>
 			</DesignSpace>
@@ -580,12 +610,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<ObservationRef oidRef="admin1"/>
 				<NumberTimes>
 					<ct:Assign>
-						<ct:Vector>
-							<ct:VectorElements>
-								<ct:Real>0.0</ct:Real>
-								<ct:Real>20.0</ct:Real>
-							</ct:VectorElements>
-						</ct:Vector>
+						<ct:Interval>
+							<ct:LeftEndpoint>
+								<ct:Assign>
+									<ct:Real>0.0</ct:Real>
+								</ct:Assign>
+							</ct:LeftEndpoint>
+							<ct:RightEndpoint>
+								<ct:Assign>
+									<ct:Real>20.0</ct:Real>
+								</ct:Assign>
+							</ct:RightEndpoint>
+						</ct:Interval>
 					</ct:Assign>
 				</NumberTimes>
 			</DesignSpace>
@@ -670,12 +706,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<ArmRef oidRef="admin1"/>
 				<NumberArms>
 					<ct:Assign>
-						<ct:Vector>
-							<ct:VectorElements>
-								<ct:Real>0.0</ct:Real>
-								<ct:Real>20.0</ct:Real>
-							</ct:VectorElements>
-						</ct:Vector>
+						<ct:Interval>
+							<ct:LeftEndpoint>
+								<ct:Assign>
+									<ct:Real>0.0</ct:Real>
+								</ct:Assign>
+							</ct:LeftEndpoint>
+							<ct:RightEndpoint>
+								<ct:Assign>
+									<ct:Real>20.0</ct:Real>
+								</ct:Assign>
+							</ct:RightEndpoint>
+						</ct:Interval>
 					</ct:Assign>
 				</NumberArms>
 			</DesignSpace>
@@ -760,12 +802,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<ArmRef oidRef="admin1"/>
 				<ArmSize>
 					<ct:Assign>
-						<ct:Vector>
-							<ct:VectorElements>
-								<ct:Real>0.0</ct:Real>
-								<ct:Real>20.0</ct:Real>
-							</ct:VectorElements>
-						</ct:Vector>
+						<ct:Interval>
+							<ct:LeftEndpoint>
+								<ct:Assign>
+									<ct:Real>0.0</ct:Real>
+								</ct:Assign>
+							</ct:LeftEndpoint>
+							<ct:RightEndpoint>
+								<ct:Assign>
+									<ct:Real>20.0</ct:Real>
+								</ct:Assign>
+							</ct:RightEndpoint>
+						</ct:Interval>
 					</ct:Assign>
 				</ArmSize>
 			</DesignSpace>
@@ -850,12 +898,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<InterventionRef oidRef="admin1"/>
 				<DosingTimes>
 					<ct:Assign>
-						<ct:Vector>
-							<ct:VectorElements>
-								<ct:Real>0.0</ct:Real>
-								<ct:Real>20.0</ct:Real>
-							</ct:VectorElements>
-						</ct:Vector>
+						<ct:Interval>
+							<ct:LeftEndpoint>
+								<ct:Assign>
+									<ct:Real>0.0</ct:Real>
+								</ct:Assign>
+							</ct:LeftEndpoint>
+							<ct:RightEndpoint>
+								<ct:Assign>
+									<ct:Real>20.0</ct:Real>
+								</ct:Assign>
+							</ct:RightEndpoint>
+						</ct:Interval>
 					</ct:Assign>
 				</DosingTimes>
 			</DesignSpace>
@@ -967,12 +1021,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<CovariateRef symbIdRef="W">
 					<mdef:Continuous>
 						<ct:Assign>
-							<ct:Vector>
-								<ct:VectorElements>
-									<ct:Real>0.0</ct:Real>
-									<ct:Real>20.0</ct:Real>
-								</ct:VectorElements>
-							</ct:Vector>
+							<ct:Interval>
+								<ct:LeftEndpoint>
+									<ct:Assign>
+										<ct:Real>0.0</ct:Real>
+									</ct:Assign>
+								</ct:LeftEndpoint>
+								<ct:RightEndpoint>
+									<ct:Assign>
+										<ct:Real>20.0</ct:Real>
+									</ct:Assign>
+								</ct:RightEndpoint>
+							</ct:Interval>
 						</ct:Assign>
 					</mdef:Continuous>
 				</CovariateRef>
@@ -982,12 +1042,18 @@ class TrialDesignDesignSpacePrinterTest {
 				<CovariateRef symbIdRef="Y">
 					<mdef:Continuous>
 						<ct:Assign>
-							<ct:Vector>
-								<ct:VectorElements>
-									<ct:Real>0.0</ct:Real>
-									<ct:Real>20.0</ct:Real>
-								</ct:VectorElements>
-							</ct:Vector>
+							<ct:Interval>
+								<ct:LeftEndpoint>
+									<ct:Assign>
+										<ct:Real>0.0</ct:Real>
+									</ct:Assign>
+								</ct:LeftEndpoint>
+								<ct:RightEndpoint>
+									<ct:Assign>
+										<ct:Real>20.0</ct:Real>
+									</ct:Assign>
+								</ct:RightEndpoint>
+							</ct:Interval>
 						</ct:Assign>
 					</mdef:Continuous>
 				</CovariateRef>
@@ -1065,12 +1131,18 @@ class TrialDesignDesignSpacePrinterTest {
 					<CovariateRef symbIdRef="W">
 						<mdef:Continuous>
 							<ct:Assign>
-								<ct:Vector>
-									<ct:VectorElements>
-										<ct:Real>0.0</ct:Real>
-										<ct:Real>20.0</ct:Real>
-									</ct:VectorElements>
-								</ct:Vector>
+								<ct:Interval>
+									<ct:LeftEndpoint>
+										<ct:Assign>
+											<ct:Real>0.0</ct:Real>
+										</ct:Assign>
+									</ct:LeftEndpoint>
+									<ct:RightEndpoint>
+										<ct:Assign>
+											<ct:Real>20.0</ct:Real>
+										</ct:Assign>
+									</ct:RightEndpoint>
+								</ct:Interval>
 							</ct:Assign>
 						</mdef:Continuous>
 					</CovariateRef>
@@ -1080,12 +1152,18 @@ class TrialDesignDesignSpacePrinterTest {
 					<CovariateRef symbIdRef="Y">
 						<mdef:Continuous>
 							<ct:Assign>
-								<ct:Vector>
-									<ct:VectorElements>
-										<ct:Real>0.0</ct:Real>
-										<ct:Real>20.0</ct:Real>
-									</ct:VectorElements>
-								</ct:Vector>
+								<ct:Interval>
+									<ct:LeftEndpoint>
+										<ct:Assign>
+											<ct:Real>0.0</ct:Real>
+										</ct:Assign>
+									</ct:LeftEndpoint>
+									<ct:RightEndpoint>
+										<ct:Assign>
+											<ct:Real>20.0</ct:Real>
+										</ct:Assign>
+									</ct:RightEndpoint>
+								</ct:Interval>
 							</ct:Assign>
 						</mdef:Continuous>
 					</CovariateRef>
@@ -1094,12 +1172,18 @@ class TrialDesignDesignSpacePrinterTest {
 					<InterventionRef oidRef="admin1"/>
 					<Duration>
 						<ct:Assign>
-							<ct:Vector>
-								<ct:VectorElements>
-									<ct:Real>0.0</ct:Real>
-									<ct:Real>20.0</ct:Real>
-								</ct:VectorElements>
-							</ct:Vector>
+							<ct:Interval>
+								<ct:LeftEndpoint>
+									<ct:Assign>
+										<ct:Real>0.0</ct:Real>
+									</ct:Assign>
+								</ct:LeftEndpoint>
+								<ct:RightEndpoint>
+									<ct:Assign>
+										<ct:Real>20.0</ct:Real>
+									</ct:Assign>
+								</ct:RightEndpoint>
+							</ct:Interval>
 						</ct:Assign>
 					</Duration>
 				</DesignSpace>

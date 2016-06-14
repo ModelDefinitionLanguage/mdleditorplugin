@@ -43,6 +43,7 @@ import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import java.util.Deque
 import java.util.LinkedList
 import java.util.List
+import java.util.Collections
 
 class PharmMLExpressionBuilder {
 	
@@ -264,6 +265,31 @@ class PharmMLExpressionBuilder {
 			«pharmMLExpr»
 		</ct:Assign>
 	'''
+	
+	def getExpressionAsRange(Expression expr){
+		val rangeVect = if(expr instanceof VectorLiteral) expr.vector else Collections::emptyList
+		'''
+			<ct:Assign>
+				<ct:Interval>
+					«IF expr instanceof VectorLiteral»
+						<ct:LeftEndpoint>
+							<ct:Assign>
+								«if(0 < rangeVect.size) expr.vector.get(0).pharmMLExpr else '<Error!/>'»
+							</ct:Assign>
+						</ct:LeftEndpoint>
+						<ct:RightEndpoint>
+							<ct:Assign>
+								«if(1 < rangeVect.size) expr.vector.get(1).pharmMLExpr else '<Error!/>'»
+							</ct:Assign>
+						</ct:RightEndpoint>
+					«ELSE»
+						<Error!/>
+					«ENDIF»
+				</ct:Interval>
+			</ct:Assign>
+		'''
+	}
+	
 	
     def CharSequence getPharmMLExpr(Expression expr){
     	switch(expr){
