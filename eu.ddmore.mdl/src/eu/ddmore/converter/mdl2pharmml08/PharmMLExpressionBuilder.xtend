@@ -7,6 +7,7 @@ import eu.ddmore.mdl.mdl.CategoryValueReference
 import eu.ddmore.mdl.mdl.ConstantLiteral
 import eu.ddmore.mdl.mdl.EnumExpression
 import eu.ddmore.mdl.mdl.EqualityExpression
+import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.IfExprPart
 import eu.ddmore.mdl.mdl.IfExpression
 import eu.ddmore.mdl.mdl.IntegerLiteral
@@ -40,10 +41,10 @@ import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
+import java.util.Collections
 import java.util.Deque
 import java.util.LinkedList
 import java.util.List
-import java.util.Collections
 
 class PharmMLExpressionBuilder {
 	
@@ -104,20 +105,15 @@ class PharmMLExpressionBuilder {
 				var cntr = 1
 				for(obsStmt : blk.statements){
 					switch(obsStmt){
-						SymbolDefinition:
+						ListDefinition:
 							if(obsStmt.name == name) return blkId + cntr
 					}
-					cntr += 1
+					if(!(obsStmt instanceof EquationDefinition)) cntr++
 				}
+				GLOBAL_VAR
 			}
 			default: blkId
 		}
-//		if(blkId == null && blkName == BlockDefinitionProvider::VAR_LVL_BLK_NAME){
-//			// handle variability model
-//			if((it as ListDefinition).list.getAttributeEnumValue('type') == 'parameter') 'vm_mdl'
-//			else 'vm_err'
-//		}
-//		else blkId
 	}
 	
 	def CharSequence getSymbolReference(SymbolReference it){

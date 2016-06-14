@@ -1,5 +1,6 @@
 package eu.ddmore.mdl.utils
 
+import eu.ddmore.mdl.mdl.AbstractAttributeList
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.BlockStatementBody
@@ -7,6 +8,7 @@ import eu.ddmore.mdl.mdl.CatValRefMappingExpression
 import eu.ddmore.mdl.mdl.CategoryValueReference
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
+import eu.ddmore.mdl.mdl.ListIfExpression
 import eu.ddmore.mdl.mdl.ListPiecewiseExpression
 import eu.ddmore.mdl.mdl.MappingExpression
 import eu.ddmore.mdl.mdl.MappingPair
@@ -15,6 +17,7 @@ import eu.ddmore.mdl.mdl.ParExpression
 import eu.ddmore.mdl.mdl.Statement
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.ValuePair
+import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.ListDefinitionTable
@@ -24,7 +27,6 @@ import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.xtext.EcoreUtil2
-import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 
 class MdlUtils {
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
@@ -224,6 +226,10 @@ class MdlUtils {
 	
 	def getModelPredictionBlocks(MclObject it){
 		blocks.filter[identifier == BlockDefinitionTable::MDL_PRED_BLK_NAME]
+	}
+	
+	def getModelObservationsBlocks(MclObject it){
+		blocks.filter[identifier == BlockDefinitionTable::OBS_BLK_NAME]
 	}
 	
 	def List<Statement> getMdlObservations(MclObject it){
@@ -517,13 +523,18 @@ class MdlUtils {
 	}
 
 	def getAttributeLists(ListDefinition it){
-		val l = list
+		list.attributeLists
+	}
+	
+	def getAttributeLists(AbstractAttributeList l){
 		val retVal = new ArrayList<AttributeList>
 		switch(l){
 			AttributeList:
 				retVal.add(l)
 			ListPiecewiseExpression:
 				retVal.addAll(l.listsFromPiecewise)
+			ListIfExpression:
+				retVal.addAll(l.listsFromIfExpression)
 		}
 		retVal
 	}
@@ -533,6 +544,15 @@ class MdlUtils {
 		when.forEach[ retVal.add(value) ]
 		if(otherwise != null)
 			retVal.add(it.otherwise)
+			
+		retVal
+	}
+
+	def getListsFromIfExpression(ListIfExpression it){
+		val retVal = new ArrayList<AttributeList>
+		ifelseClause.forEach[ retVal.add(value) ]
+		if(it.elseClause != null)
+			retVal.add(it.elseClause.value)
 			
 		retVal
 	}

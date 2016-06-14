@@ -68,7 +68,6 @@ class ListObservationsWriterTest {
 		
 		val actual = writeListObservations(ld, 1)
 		val expected = '''
-		<ObservationModel blkId="om1">
 			<ContinuousData>
 				<Standard symbId="tst">
 					<Output>
@@ -95,7 +94,6 @@ class ListObservationsWriterTest {
 					</ResidualError>
 				</Standard>
 			</ContinuousData>
-		</ObservationModel>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
@@ -121,7 +119,6 @@ class ListObservationsWriterTest {
 		
 		val actual = writeListObservations(ld, 1)
 		val expected = '''
-		<ObservationModel blkId="om1">
 			<ContinuousData>
 				<ct:Variable symbolType="real" symbId="C">
 					<ct:Assign>
@@ -155,7 +152,6 @@ class ListObservationsWriterTest {
 					</ResidualError>
 				</Standard>
 			</ContinuousData>
-		</ObservationModel>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
@@ -183,7 +179,6 @@ class ListObservationsWriterTest {
 		
 		val actual = writeListObservations(ld, 1)
 		val expected = '''
-		<ObservationModel blkId="om1">
 			<ContinuousData>
 				<Standard symbId="tst">
 					<Transformation type="log"/>
@@ -211,7 +206,6 @@ class ListObservationsWriterTest {
 					</ResidualError>
 				</Standard>
 			</ContinuousData>
-		</ObservationModel>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
@@ -239,7 +233,6 @@ class ListObservationsWriterTest {
 		
 		val actual = writeListObservations(anonList, 1)
 		val expected = '''
-		<ObservationModel blkId="om1">
 			<ContinuousData>
 				<General symbId="Y">
 					<ct:VariabilityReference>
@@ -261,7 +254,6 @@ class ListObservationsWriterTest {
 					</Distribution>
 				</General>
 			</ContinuousData>
-		</ObservationModel>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
@@ -289,24 +281,22 @@ class ListObservationsWriterTest {
 		
 		val actual = writeListObservations(anonList, 1)
 		val expected = '''
-			<ObservationModel blkId="om1">
-				<Discrete>
-					<CountData>
-						<CountVariable symbId="Y"/>
-						<PMF transform="identity">
-							<Distribution>
-								<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Poisson1">
-									<Parameter name="rate">
-										<ct:Assign>
-											<ct:SymbRef blkIdRef="sm" symbIdRef="LAMBDA"/>
-										</ct:Assign>
-									</Parameter>
-								</ProbOnto>
-							</Distribution>
-						</PMF>
-					</CountData>
-				</Discrete>
-			</ObservationModel>
+		<Discrete>
+			<CountData>
+				<CountVariable symbId="Y"/>
+				<PMF transform="identity">
+					<Distribution>
+						<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Poisson1">
+							<Parameter name="rate">
+								<ct:Assign>
+									<ct:SymbRef blkIdRef="sm" symbIdRef="LAMBDA"/>
+								</ct:Assign>
+							</Parameter>
+						</ProbOnto>
+					</Distribution>
+				</PMF>
+			</CountData>
+		</Discrete>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
@@ -334,7 +324,6 @@ class ListObservationsWriterTest {
 		
 		val actual = writeListObservations(anonList, 1)
 		val expected = '''
-		<ObservationModel blkId="om1">
 			<Discrete>
 				<CategoricalData ordered="no">
 					<ListOfCategories>
@@ -355,7 +344,6 @@ class ListObservationsWriterTest {
 					</PMF>
 				</CategoricalData>
 			</Discrete>
-		</ObservationModel>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
@@ -384,7 +372,6 @@ class ListObservationsWriterTest {
 		
 		val actual = writeListObservations(anonList, 1)
 		val expected = '''
-		<ObservationModel blkId="om1">
 			<Discrete>
 				<CategoricalData ordered="no">
 					<ListOfCategories>
@@ -410,7 +397,6 @@ class ListObservationsWriterTest {
 					</PMF>
 				</CategoricalData>
 			</Discrete>
-		</ObservationModel>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
@@ -446,7 +432,6 @@ class ListObservationsWriterTest {
 		
 		val actual = writeListObservations(anonList, 1)
 		val expected = '''
-		<ObservationModel blkId="om1">
 			<Discrete>
 				<CategoricalData ordered="no">
 					<ListOfCategories>
@@ -476,7 +461,6 @@ class ListObservationsWriterTest {
 					</PMF>
 				</CategoricalData>
 			</Discrete>
-		</ObservationModel>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}

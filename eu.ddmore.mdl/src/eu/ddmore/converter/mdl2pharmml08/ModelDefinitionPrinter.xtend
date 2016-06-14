@@ -23,7 +23,7 @@ class ModelDefinitionPrinter {
 	extension PKMacrosPrinter pkp = PKMacrosPrinter::INSTANCE
 	extension BlockUtils bu = new BlockUtils
 	extension CovariateModelWriter cmw = new CovariateModelWriter
-	extension ObservationModelWriter omw = new ObservationModelWriter
+	extension ListObservationsWriter omw = new ListObservationsWriter
 	
 	
 	//////////////////////////////////////
@@ -33,16 +33,14 @@ class ModelDefinitionPrinter {
 		'''
 		<ModelDefinition xmlns="«xmlns_mdef»">
 			«paramWriter.writeVariabilityModel»
-«««			«IF !mObj.mdlCovariateDefns.isEmpty»
 			«mObj.mdlCovariateDefns.writeCovariateModel»
-«««			«ENDIF»
 			«paramWriter.writeParameterModel»
 			«IF !mObj.modelPredictionBlocks.isEmpty»
 				«mObj.writeStructuralModel»
 			«ENDIF»
-«««			«IF !mObj.mdlObservations.isEmpty»
-			«mObj.mdlObservations.writeObservationModel»
-«««			«ENDIF»
+			«FOR obsBlk : mObj.modelObservationsBlocks»
+				«obsBlk.writeObservationModel»
+			«ENDFOR»
 		</ModelDefinition>
 		'''
 	}
