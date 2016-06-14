@@ -226,7 +226,7 @@ class MdlUtils {
 		blocks.filter[identifier == BlockDefinitionTable::MDL_PRED_BLK_NAME]
 	}
 	
-	def getMdlObservations(MclObject it){
+	def List<Statement> getMdlObservations(MclObject it){
 		val retVal = new ArrayList<Statement>
 		for(obsStmt : blocks.filter[identifier == BlockDefinitionTable::OBS_BLK_NAME]){
 			val body = obsStmt.body

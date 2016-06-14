@@ -1,10 +1,8 @@
 package eu.ddmore.converter.mdl2pharmml08
 
-import eu.ddmore.mdl.mdl.AnonymousListStatement
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.BlockStatementBody
 import eu.ddmore.mdl.mdl.EquationDefinition
-import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.Statement
@@ -13,7 +11,6 @@ import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.MdlUtils
-import eu.ddmore.mdllib.mdllib.Expression
 import java.util.List
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
@@ -25,9 +22,8 @@ class ModelDefinitionPrinter {
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension PKMacrosPrinter pkp = PKMacrosPrinter::INSTANCE
 	extension BlockUtils bu = new BlockUtils
-	extension ListObservationsWriter low = new ListObservationsWriter
-	extension FunctionObservationsWriter fow = new FunctionObservationsWriter
 	extension CovariateModelWriter cmw = new CovariateModelWriter
+	extension ObservationModelWriter omw = new ObservationModelWriter
 	
 	
 	//////////////////////////////////////
@@ -44,21 +40,21 @@ class ModelDefinitionPrinter {
 			«IF !mObj.modelPredictionBlocks.isEmpty»
 				«mObj.writeStructuralModel»
 			«ENDIF»
-			«IF !mObj.mdlObservations.isEmpty»
-				«mObj.writeObservationModel»
-			«ENDIF»
+«««			«IF !mObj.mdlObservations.isEmpty»
+			«mObj.mdlObservations.writeObservationModel»
+«««			«ENDIF»
 		</ModelDefinition>
 		'''
 	}
 
 
 		
-		
-	def private writeAssignment(Expression expr)'''
-		<ct:Assign>
-			«expr.pharmMLExpr»
-		</ct:Assign>
-	'''
+//		
+//	def private writeAssignment(Expression expr)'''
+//		<ct:Assign>
+//			«expr.pharmMLExpr»
+//		</ct:Assign>
+//	'''
 		
 //	def writeRandomVariable(RandomVariableDefinition stmt, SymbolReference level)'''
 //		<RandomVariable symbId="«stmt.name»">
@@ -144,7 +140,7 @@ class ModelDefinitionPrinter {
 	def writeVariableDefinition(EquationDefinition stmt)'''
 		<ct:Variable symbId="«stmt.name»" symbolType="«IF stmt.typeFor.isVector»ERROR!«ELSE»real«ENDIF»">
 			«IF stmt.expression != null»
-				«stmt.expression.writeAssignment»
+				«stmt.expression.expressionAsAssignment»
 			«ENDIF»
 		</ct:Variable>
 	'''
@@ -163,16 +159,16 @@ class ModelDefinitionPrinter {
 	
 	def writeDerivativeDefinition(ListDefinition stmt, EquationDefinition defaultWrt)'''
 		<ct:DerivativeVariable symbId="«stmt.name»" symbolType="real">
-			«stmt.firstAttributeList.getAttributeExpression("deriv").writeAssignment»
+			«stmt.firstAttributeList.getAttributeExpression("deriv").expressionAsAssignment»
 			<ct:IndependentVariable>
 				«stmt.firstAttributeList.getAttributeExpression("wrt")?.pharmMLExpr ?: defaultWrt.writeDefaultWrt»
 			</ct:IndependentVariable>
 			<ct:InitialCondition>
 				<ct:InitialValue>
-					«stmt.firstAttributeList.getAttributeExpression("init")?.writeAssignment ?: writeAssignZero »
+					«stmt.firstAttributeList.getAttributeExpression("init")?.expressionAsAssignment ?: writeAssignZero »
 				</ct:InitialValue>
 				<ct:InitialTime>
-					«stmt.firstAttributeList.getAttributeExpression("x0")?.writeAssignment ?: writeAssignZero »
+					«stmt.firstAttributeList.getAttributeExpression("x0")?.expressionAsAssignment ?: writeAssignZero »
 				</ct:InitialTime>
 			</ct:InitialCondition>
 		</ct:DerivativeVariable>
@@ -223,32 +219,6 @@ class ModelDefinitionPrinter {
 		'''
 		«stmts.printCompartmentDefinitions»
 		«stmts.printMacros»
-		'''
-	}
-	
-	
-	def writeObservationModel(MclObject mdlObject){
-		var idx = 0
-		'''«FOR stmt : mdlObject.mdlObservations»
-			«switch(stmt){
-				EquationTypeDefinition:
-					'''
-					«writeContinuousObservation(stmt, idx += 1)»
-					'''
-				ListDefinition:
-					'''
-					«writeListObservations(stmt, idx += 1)»
-					'''
-				AnonymousListStatement:
-					'''
-					«writeListObservations(stmt, idx += 1)»
-					'''
-				default:{
-					idx += 1
-					''''''
-				}
-			}»
-		«ENDFOR»
 		'''
 	}
 	
