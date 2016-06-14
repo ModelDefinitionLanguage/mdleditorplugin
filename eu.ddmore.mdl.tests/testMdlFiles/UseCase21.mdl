@@ -1,5 +1,5 @@
-# UseCase16 : BLQ handling 
-# Warfarin population pharmacokinetic model 
+# UseCase21 : Mixture model using ProbOnto mixture distribution definition
+# Warfarin population pharmacokinetic model
 # Dosing regimen: single oral administration (at time 0)
 # Structural model : 1 compartment model (CL,V and TLAG)
 # Covariate model : Weight on V and CL 
@@ -9,7 +9,7 @@
 #   - Combined residual error model
 
   
-warfarin_PK_BLQ_dat = dataObj {
+warfarin_PK_dat = dataObj {
 	DECLARED_VARIABLES{INPUT_KA::dosingTarget Y::continuousObs}
 
 	DATA_INPUT_VARIABLES {
@@ -21,32 +21,23 @@ warfarin_PK_BLQ_dat = dataObj {
 		DV : { use is dv, variable = Y }
 		MDV : { use is mdv }
 		logtWT:{ use is covariate }  
-		BLQ : { use is cens }
 	} # end DATA_INPUT_VARIABLES
 	
-	## NONMEM convention
-	## ID TIME DV BLQ
-	## 1  0    .   1   ## Should take lloq value from Task_Properties blqMethod
-	## 2  1   0.1  0  
-
-	## Monolix convention (DV holds LLOQ when BLQ==1)
-	## ID TIME DV  BLQ
-	## 1  0   0.01  1
-	## 2  1   0.1   0
-	
 	SOURCE {
-	    srcfile : {file = "warfarin_conc_blq.csv", 
+	    srcfile : {file = "warfarin_conc.csv", 
             inputFormat is nonmemFormat } 
 	} # end SOURCE
 } # end data object
 
-warfarin_PK_par = parObj {
+warfarin_PK_MIX_par = parObj {
 	# By default a parameter is to be estimated if fix is omitted
  	STRUCTURAL {
 		POP_CL : { value = 0.1, lo = 0.001 }
+		POP_CL2 : { value = 0.1, lo = 0.001 }
 		POP_V : { value = 8, lo = 0.001 } 
 		POP_KA : { value = 0.362, lo = 0.001 }
 		POP_TLAG : { value = 1, lo = 0.001 }
+		POP_MIX : {value=0.5}
 		BETA_CL_WT : { value = 0.75, fix = true }
 		BETA_V_WT : { value = 1, fix = true } 
 	} # end STRUCTURAL
@@ -55,13 +46,15 @@ warfarin_PK_par = parObj {
 		PPV_V : { value = 0.1}
 		PPV_KA : { value = 0.1}
 		PPV_TLAG : { value = 0.1, fix=true }
-		CORR_CL_V : {value=0.01 }
+		COV_CL_V : {value=0.01 }
+		COV_CL_KA : {value=0.01 }
+		COV_V_KA : {value=0.01 }
 		RUV_PROP : { value = 0.1, lo=0 }
 		RUV_ADD : { value = 0.1, lo=0} 
 	} # end VARIABILITY
 } # end of parameter object 
 
-warfarin_PK_mdl = mdlObj {
+warfarin_PK_MIX_mdl = mdlObj {
 	IDV{ T }
 
 	COVARIATES{
@@ -75,9 +68,11 @@ warfarin_PK_mdl = mdlObj {
 
 	STRUCTURAL_PARAMETERS { 
 		POP_CL
+		POP_CL2
 		POP_V
 		POP_KA
 		POP_TLAG
+		POP_MIX
 		BETA_CL_WT
 		BETA_V_WT
 	} # end STRUCTURAL_PARAMETERS
@@ -85,7 +80,6 @@ warfarin_PK_mdl = mdlObj {
 	VARIABILITY_PARAMETERS {
 		PPV_CL
 		PPV_V
-		CORR_CL_V
 		PPV_KA
 		PPV_TLAG
 		RUV_PROP
@@ -93,9 +87,8 @@ warfarin_PK_mdl = mdlObj {
 	} # end VARIABILITY_PARAMETERS 
 	
 	RANDOM_VARIABLE_DEFINITION(level=ID) {
-		ETA_CL ~ Normal(mean=0, sd = PPV_CL)
+		ETA_CL ~ MixtureDistribution(weight=POP_MIX, distributions=[Normal(mean=0, sd=PPV_CL), Normal1(mean=POP_CL2,stdev=PPV_CL)])
 		ETA_V ~ Normal(mean = 0, sd = PPV_V)
-		::{type is correlation, rv1=ETA_CL, rv2=ETA_V, value=CORR_CL_V}
 		ETA_KA ~ Normal(mean = 0, sd = PPV_KA)
 		ETA_TLAG ~ Normal(mean = 0, sd = PPV_TLAG)
 	} # end RANDOM_VARIABLE_DEFINITION 
@@ -116,42 +109,30 @@ warfarin_PK_mdl = mdlObj {
                      	 :: {type is elimination, modelCmt=2, from=CENTRAL, v=V, cl=CL}
    		}# end COMPARTMENT
 
-	    CC = CENTRAL / V 
+	    CC = CENTRAL / V
 	} # end MODEL_PREDICTION
 	
 	RANDOM_VARIABLE_DEFINITION(level=DV){
-	    EPS_Y ~ Normal(mean = 0, var = 1) # This maps the standard error model in PharmML. The error model is predefined.
-	    # EPS_Y ~ StandardNormal1()
-#	    YstudentT ~ StudentT1(df=k)
+	    EPS_Y ~ Normal(mean = 0, var = 1) 
 	}
 
-	OBSERVATION { 
-	   Y : {type is combinedError1, additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC} 
+	OBSERVATION{
+	    Y : { type is combinedError1, additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC }
 	} # end OBSERVATION
-	
-
 } # end of model object
 
-warfarin_PK_BLQ_task = taskObj {
+warfarin_PK_ODE_task = taskObj {
 	ESTIMATE{ 
 		set algo is saem
-		
-#		Y : { blqMethod is M3} ## Assumes there is a non-missing value in DV when BLQ==1
-		Y : { blqMethod is m3, llog = 0.05 } 
-								## Can be implemented with DV nonmissing
-								## lloq becomes DEFAULT if DV is missing when BLQ==1
-								## For NONMEM: If DV is not missing in data when BLQ =1 then set LLOQ = DV
-#		Y : { blqMethod is M1 } ## NONMEM: IGNORE observations with BLQ==1; Monolix: Filter dataset BEFORE Monolix
-#		Y : { blqMethod is M2, lloq=0.05 } ## Substitute DV= 0.5 * LLOQ in data	
-#		Y : { blqMethod is userDefined, function=&myLOQFunction, lloq=0.05 }
 	}
 } # end of task object
 
-warfarin_PK_ODE_mog = mogObj {
+
+warfarin_PK_MIX_mog = mogObj {
 	OBJECTS{
-		warfarin_PK_BLQ_dat : { type is dataObj }
-		warfarin_PK_mdl : { type is mdlObj }
-		warfarin_PK_par : { type is parObj }
-		warfarin_PK_BLQ_task : { type is taskObj }
+		warfarin_PK_dat : { type is dataObj }
+		warfarin_PK_MIX_mdl : { type is mdlObj }
+		warfarin_PK_MIX_par : { type is parObj }
+		warfarin_PK_ODE_task : { type is taskObj }
 	}
 }

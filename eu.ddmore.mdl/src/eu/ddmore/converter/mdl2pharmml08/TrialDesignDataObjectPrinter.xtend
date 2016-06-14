@@ -113,6 +113,13 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 						saveMappedColumn(column.name)
 					}
 				}
+				case(ListDefinitionTable::VARIABLE_USE_VALUE):{
+					if(isVariableUsedInModel(column, mObj)){
+						res = res + mObj.print_ds_MagicMapping(column)
+						// record that mapping to model found
+						saveMappedColumn(column.name)
+					}
+				}
 				case(ListDefinitionTable::AMT_USE_VALUE):{
 //					Potential bug here. This is meant to ensure that no mapping
 //					is generated if no variables match. @TODO: fix this properly.
@@ -376,7 +383,6 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	}
 
 	def writeMultipleObsMapping(ListDefinition column, Expression dataDefine){
-//		var mdlSymb = mObj.getMdlObservationVariableFromCatValRef(dataDefine as CatValRefMappingExpression)
 		switch(dataDefine){
 			MappingExpression:
 				'''
@@ -402,8 +408,6 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 										«IF mObj.findMdlSymbolDefn((p.rightOperand as CatValRefMappingExpression).attLists.head.catRef.symbolDefnFromCatValRef.name).isCategoricalObs»
 											«mObj.findMdlSymbolDefn((p.rightOperand as CatValRefMappingExpression).attLists.head.catRef.symbolDefnFromCatValRef.name).symbolReference»
 											«printCategoricalObsMapping(p.rightOperand)»
-«««												«ELSEIF mObj.findMdlSymbolDefn(cm.mappedTo.convertToString).isDiscreteBernoulliObs»
-«««													«printDiscreteBernoulliObsMapping»
 										«ENDIF»
 										<math:Condition>
 											<math:LogicBinop op="eq">
@@ -437,57 +441,8 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		}
 	}
 
-//	def print_ds_DvMapping(ListDeclaration dvColumn, DataObject dObj, ModelObject mObj){
-//		val define = dvColumn.list.arguments.getAttributeExpression(AttributeValidator::attr_define.name);
-//		val columnId = dvColumn.name;
-//		if (define != null) {
-//			// Reference or mapped to data
-//			if (define.expression != null)
-//				return '''
-//					<ColumnMapping>
-//					    <ColumnRef xmlns="«xmlns_ds»" columnIdRef="«columnId»"/>
-//						«define.expression.print_Math_Expr»
-//							«IF define.expression.isCategoricalObs(mObj)»
-//							«define.expression.printCategoricalObsMapping(mObj)»
-//			    	   	«ELSEIF define.expression.isDiscreteBernoulliObs(mObj)»
-//							«printDiscreteBernoulliObsMapping»
-//			    	   	«ENDIF»
-//					</ColumnMapping>
-//				  '''
-//			else { 
-//				val pairs = define.getAttributePairs(AttributeValidator::attr_pred.name,
-//					AttributeValidator::attr_predid.name);
-//				val dvidColId = dObj.getUseDvidColumn
-//				return '''
-//					<MultipleDVMapping>
-//						<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«columnId»"/>
-//						<Piecewise xmlns="«xmlns_mstep»">
-//							«FOR p : pairs»
-//							<math:Piece>
-//							   	«p.key.expression.print_Math_Expr»
-//							   	«IF p.key.expression.isCategoricalObs(mObj)»
-//							   		«p.key.expression.printCategoricalObsMapping(mObj)»
-//							   	«ELSEIF p.key.expression.isDiscreteBernoulliObs(mObj)»
-//							   		«printDiscreteBernoulliObsMapping»
-//							   	«ENDIF»
-//							   	<math:Condition>
-//							   		<math:LogicBinop op="eq">
-//							   			<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«dvidColId»"/>
-//							   			«p.value.expression.print_Math_Expr»
-//							   		</math:LogicBinop>
-//							   	</math:Condition>
-//							</math:Piece>
-//					«ENDFOR» 
-//						</Piecewise>
-//					</MultipleDVMapping>
-//				  '''
-//			}
-//		}
-//	}
 
 	def printCategoricalObsMapping(Expression expression){
-//			val define = column.list.getAttributeExpression(ListDefinitionProvider::USE_ATT);
-//			// get an EnumExpression here - use this to get the categories.
 		switch(expression){
 			CatValRefMappingExpression:{
 				return '''
@@ -499,31 +454,9 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 				'''
 			}
 		}
-		
-//		val obsVar = expression.getSymbolReference
-//		val obsExpr = object.getMatchingObservationExpression(obsVar.symbolRef.name)
-//		// assume we have tested that this caregorical
-//		val catsExpr = obsExpr.list.arguments.getAttributeExpression(AttributeValidator::attr_categories.name) 
-//		'''
-//		<ds:CategoryMapping>
-//		«FOR cat : catsExpr.vector.expression.expressions»
-//			<ds:Map dataSymbol="«cat.toStr»" modelSymbol="c«cat.toStr»"/>
-//		«ENDFOR»
-//		</ds:CategoryMapping>
-//		'''
 	}
 	
 	
-//	def printDiscreteBernoulliObsMapping(){
-//		val cat = "cat1"
-//		val catDataValue = 1 
-//		'''
-//		<ds:CategoryMapping>
-//			<ds:Map dataSymbol="«catDataValue»" modelSymbol="«cat»"/>
-//		</ds:CategoryMapping>
-//		'''
-//	}
-
 	private def isDefinedInMdlObservations(MclObject it, Expression testExpr){
 		switch(testExpr){
 			SymbolReference:
@@ -588,89 +521,6 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		retVal
 	}
 
-//	def boolean isCovariateUsedInSublist(SubListExpression it, String covName){
-//		val cov = getAttributeExpression('cov') as SymbolReference
-//		var retVal = false
-//		if(cov != null){
-//			val covDefn = cov.ref
-//			if(covDefn instanceof EquationDefinition){
-//				if(covDefn.expression == null && covDefn.name == covName){
-//					retVal = true
-//				}
-//				else if(covDefn.expression != null){
-//					// this is a transformed cov so let's see if any dependencies match
-//					for(depCov : covDefn.expression.covariateDependencies){
-//						if(depCov.name == covName) return true
-//					}
-//				}
-//			}
-//		}
-//		retVal
-//	}
-//
-//	def boolean isCatCovUsedInSublist(SubListExpression it, String covName){
-//		val catVal = getAttributeExpression('catCov') as CategoryValueReference
-//		val cov = catVal?.symbolDefnFromCatValRef
-//		cov != null && cov.name == covName
-//	}
-//
-//	def isCovUsedInIndivParams(ListDefinition it, MclObject mObj){
-//		for(stmt : mObj.mdlIndvParams){
-//			switch(stmt){
-//				EquationTypeDefinition:{
-//					if(stmt.expression instanceof SymbolReference){
-//						val funcExpr = stmt.expression as SymbolReference
-//						if(funcExpr.func == 'linear'){
-//							var namedArgList = funcExpr.argList as NamedFuncArguments 
-//							val fixEff = namedArgList.getArgumentExpression('fixEff') as VectorLiteral
-//							if(fixEff != null && !fixEff.expressions.isEmpty){
-//								for(e : fixEff.expressions){
-//									switch(e){
-//										VectorElement:{
-//											if(e.element instanceof SubListExpression &&
-//												((e.element as SubListExpression).isCovariateUsedInSublist(name) ||
-//												(e.element as SubListExpression).isCatCovUsedInSublist(name)))
-//													return true
-//										}
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		false
-//	}
-	
-//	def isCovUsedInIndivParams(ListDefinition it, MclObject mObj){
-//		for(stmt : mObj.mdlIndvParams){
-//			switch(stmt){
-//				EquationTypeDefinition:{
-//					if(stmt.expression instanceof SymbolReference){
-//						val funcExpr = stmt.expression as SymbolReference
-//						if(funcExpr.func == 'linear'){
-//							var namedArgList = funcExpr.argList as NamedFuncArguments 
-//							val fixEff = namedArgList.getArgumentExpression('fixEff') as VectorLiteral
-//							if(fixEff != null && !fixEff.expressions.isEmpty){
-//								for(e : fixEff.expressions){
-//									switch(e){
-//										VectorElement:{
-//											if(e.element instanceof SubListExpression &&
-//												((e.element as SubListExpression).isCovariateUsedInSublist(name) ||
-//												(e.element as SubListExpression).isCatCovUsedInSublist(name)))
-//													return true
-//										}
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		false
-//	}
 	
 	def private boolean isTimeDependentCovariate(ListDefinition colCol, MclObject it){
 		val mdlCov = findMdlSymbolDefn(colCol.name)
@@ -733,6 +583,10 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 			}
 		}
 		false
+	}
+	
+	def isVariableUsedInModel(ListDefinition col, MclObject mdlObj){
+		mdlObj.findMdlSymbolDefn(col.name) != null
 	}
 	
 	

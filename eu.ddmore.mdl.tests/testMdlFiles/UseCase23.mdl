@@ -1,5 +1,5 @@
-# UseCase16 : BLQ handling 
-# Warfarin population pharmacokinetic model 
+# UseCase23 : Conditional assignment of observation model
+# Warfarin population pharmacokinetic model
 # Dosing regimen: single oral administration (at time 0)
 # Structural model : 1 compartment model (CL,V and TLAG)
 # Covariate model : Weight on V and CL 
@@ -9,7 +9,7 @@
 #   - Combined residual error model
 
   
-warfarin_PK_BLQ_dat = dataObj {
+warfarin_PK_dat = dataObj {
 	DECLARED_VARIABLES{INPUT_KA::dosingTarget Y::continuousObs}
 
 	DATA_INPUT_VARIABLES {
@@ -21,21 +21,10 @@ warfarin_PK_BLQ_dat = dataObj {
 		DV : { use is dv, variable = Y }
 		MDV : { use is mdv }
 		logtWT:{ use is covariate }  
-		BLQ : { use is cens }
 	} # end DATA_INPUT_VARIABLES
 	
-	## NONMEM convention
-	## ID TIME DV BLQ
-	## 1  0    .   1   ## Should take lloq value from Task_Properties blqMethod
-	## 2  1   0.1  0  
-
-	## Monolix convention (DV holds LLOQ when BLQ==1)
-	## ID TIME DV  BLQ
-	## 1  0   0.01  1
-	## 2  1   0.1   0
-	
 	SOURCE {
-	    srcfile : {file = "warfarin_conc_blq.csv", 
+	    srcfile : {file = "warfarin_conc.csv", 
             inputFormat is nonmemFormat } 
 	} # end SOURCE
 } # end data object
@@ -61,7 +50,7 @@ warfarin_PK_par = parObj {
 	} # end VARIABILITY
 } # end of parameter object 
 
-warfarin_PK_mdl = mdlObj {
+warfarin_PK_condobs_mdl = mdlObj {
 	IDV{ T }
 
 	COVARIATES{
@@ -85,13 +74,13 @@ warfarin_PK_mdl = mdlObj {
 	VARIABILITY_PARAMETERS {
 		PPV_CL
 		PPV_V
-		CORR_CL_V
 		PPV_KA
 		PPV_TLAG
+		CORR_CL_V
 		RUV_PROP
 		RUV_ADD
 	} # end VARIABILITY_PARAMETERS 
-	
+		
 	RANDOM_VARIABLE_DEFINITION(level=ID) {
 		ETA_CL ~ Normal(mean=0, sd = PPV_CL)
 		ETA_V ~ Normal(mean = 0, sd = PPV_V)
@@ -101,7 +90,7 @@ warfarin_PK_mdl = mdlObj {
 	} # end RANDOM_VARIABLE_DEFINITION 
 
 	
-	INDIVIDUAL_VARIABLES { # This maps to the "Type 3" individual parameter definition in PharmML
+	INDIVIDUAL_VARIABLES { 
 		CL : {type is linear, trans is ln, pop = POP_CL, fixEff = {coeff=BETA_CL_WT, cov=logtWT} , ranEff = ETA_CL}
 		V :  {type is linear, trans is ln, pop = POP_V, fixEff = {coeff=BETA_V_WT, cov=logtWT} , ranEff = ETA_V }
 	    KA : {type is linear, trans is ln, pop = POP_KA, ranEff = ETA_KA }
@@ -115,43 +104,32 @@ warfarin_PK_mdl = mdlObj {
 			CENTRAL       : {type is compartment, modelCmt=2}
                      	 :: {type is elimination, modelCmt=2, from=CENTRAL, v=V, cl=CL}
    		}# end COMPARTMENT
-
-	    CC = CENTRAL / V 
+  
+  	    CC = CENTRAL / V 
 	} # end MODEL_PREDICTION
 	
 	RANDOM_VARIABLE_DEFINITION(level=DV){
-	    EPS_Y ~ Normal(mean = 0, var = 1) # This maps the standard error model in PharmML. The error model is predefined.
-	    # EPS_Y ~ StandardNormal1()
-#	    YstudentT ~ StudentT1(df=k)
+	    EPS_Y ~ Normal(mean = 0, var = 1) 
 	}
 
-	OBSERVATION { 
-	   Y : {type is combinedError1, additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC} 
-	} # end OBSERVATION
-	
-
+	OBSERVATION {
+    Y : if (CC < 100) then { type is combinedError1,additive = RUV_ADD, proportional = RUV_PROP, eps = EPS_Y, prediction = CC }
+         else {type is proportionalError, proportional = RUV_PROP, eps = EPS_Y, prediction = CC} 
+} # end OBSERVATION
 } # end of model object
 
-warfarin_PK_BLQ_task = taskObj {
+warfarin_PK_ODE_task = taskObj {
 	ESTIMATE{ 
 		set algo is saem
-		
-#		Y : { blqMethod is M3} ## Assumes there is a non-missing value in DV when BLQ==1
-		Y : { blqMethod is m3, llog = 0.05 } 
-								## Can be implemented with DV nonmissing
-								## lloq becomes DEFAULT if DV is missing when BLQ==1
-								## For NONMEM: If DV is not missing in data when BLQ =1 then set LLOQ = DV
-#		Y : { blqMethod is M1 } ## NONMEM: IGNORE observations with BLQ==1; Monolix: Filter dataset BEFORE Monolix
-#		Y : { blqMethod is M2, lloq=0.05 } ## Substitute DV= 0.5 * LLOQ in data	
-#		Y : { blqMethod is userDefined, function=&myLOQFunction, lloq=0.05 }
 	}
 } # end of task object
 
+
 warfarin_PK_ODE_mog = mogObj {
 	OBJECTS{
-		warfarin_PK_BLQ_dat : { type is dataObj }
-		warfarin_PK_mdl : { type is mdlObj }
+		warfarin_PK_dat : { type is dataObj }
+		warfarin_PK_condobs_mdl : { type is mdlObj }
 		warfarin_PK_par : { type is parObj }
-		warfarin_PK_BLQ_task : { type is taskObj }
+		warfarin_PK_ODE_task : { type is taskObj }
 	}
 }

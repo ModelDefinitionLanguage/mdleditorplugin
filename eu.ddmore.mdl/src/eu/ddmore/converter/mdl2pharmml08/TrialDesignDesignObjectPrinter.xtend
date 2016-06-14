@@ -368,9 +368,11 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 
 	def writeArm(ListDefinition it)'''
 		<Arm oid="«name»">
-			<ArmSize>
-				«firstAttributeList.getAttributeExpression(ARM_SIZE_ATT).expressionAsAssignment»
-			</ArmSize>
+			«IF firstAttributeList.hasAttribute(ARM_SIZE_ATT)»
+				<ArmSize>
+					«firstAttributeList.getAttributeExpression(ARM_SIZE_ATT).expressionAsAssignment»
+				</ArmSize>
+			«ENDIF»
 			«IF firstAttributeList.hasAttribute(INTSEQ_ATT)»
 				«FOR intSeqSl : firstAttributeList.getAttributeExpression(INTSEQ_ATT).vector»
 					<InterventionSequence>
@@ -465,6 +467,8 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 				writeProperty('NumberSamples', expression)
 			case(SAME_TIMES_PROP):
 				writeProperty('SameTimes', expression)
+			case(ARM_SIZE_ATT):
+				writeProperty('ArmSize', expression)
 		}
 	}
 	

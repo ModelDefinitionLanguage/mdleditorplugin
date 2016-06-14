@@ -817,7 +817,7 @@ _func CategoricalOrdered1 _named
 			_sig (categoryProb)
 			_returns ::pmf;
 			
-_func MixtureDistribution1 _named (
+_func MixtureDistribution _named (
 				weight::vector  "mixing coefficients",
 				distributions::vector[::pdf]
 			)
