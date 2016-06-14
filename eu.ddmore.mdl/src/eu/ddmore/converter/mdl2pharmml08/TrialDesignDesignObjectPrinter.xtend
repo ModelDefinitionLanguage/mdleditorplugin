@@ -91,7 +91,7 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static COV_MOD_OID = "desCovModOid"
 
 	val public static DS_DISCRETE_ATT = 'discrete'
-	val public static DS_RANGE_ATT = 'discrete'
+	val public static DS_RANGE_ATT = 'range'
 	val public static DS_OBJREF_ATT = 'objRef'
 
 	val public static TOTAL_SIZE_PROP = 'totalSize'
@@ -579,7 +579,7 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 		«IF hasAttribute(DS_DISCRETE_ATT)»
 			«getAttributeExpression(DS_DISCRETE_ATT).expressionAsAssignment»
 		«ELSEIF hasAttribute(DS_RANGE_ATT)»
-			«getAttributeExpression(DS_RANGE_ATT).expressionAsAssignment»
+			«getAttributeExpression(DS_RANGE_ATT).expressionAsRange»
 		«ENDIF»
 	'''
 

@@ -165,33 +165,35 @@ class MogValidator extends AbstractDeclarativeValidator {
 					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
 			]
 		if(isMogObject){
-			val dataVarLvls = dataObj.dataVariabilityLevels
-			for(mdlOb : mdlObj.mdlVariabilityLevels){
-				if(mdlOb instanceof SymbolDefinition){
-					val dataOb = dataVarLvls.findFirst[name == (mdlOb as ListDefinition).name]
-					if(dataOb == null){
-						errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in dataObj");
-					}
-					else if(mdlOb.isParameterVarLevel){
-						if(!dataOb.firstAttributeList.isMatchingDataUse(ListDefinitionTable::ID_USE_VALUE, ListDefinitionTable::VARLVL_USE_VALUE)){
-							errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the dataObj");
+			if(dataObj != null){
+				val dataVarLvls = dataObj.dataVariabilityLevels
+				for(mdlOb : mdlObj.mdlVariabilityLevels){
+					if(mdlOb instanceof SymbolDefinition){
+						val dataOb = dataVarLvls.findFirst[name == (mdlOb as ListDefinition).name]
+						if(dataOb == null){
+							errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in dataObj");
 						}
-					}
-					else if(mdlOb.isObservationVarLevel)
-						if(!dataOb.firstAttributeList.isMatchingDataUse(ListDefinitionTable::OBS_USE_VALUE)){
-							errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the dataObj");
+						else if(mdlOb.isParameterVarLevel){
+							if(!dataOb.firstAttributeList.isMatchingDataUse(ListDefinitionTable::ID_USE_VALUE, ListDefinitionTable::VARLVL_USE_VALUE)){
+								errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the dataObj");
+							}
 						}
+						else if(mdlOb.isObservationVarLevel)
+							if(!dataOb.firstAttributeList.isMatchingDataUse(ListDefinitionTable::OBS_USE_VALUE)){
+								errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the dataObj");
+							}
+					}
 				}
 			}
 		}
 	}
 	
 	@Check
-	def validateIndividualVariable(MclObject it){
+	def validateIndependentVariable(MclObject it){
 		val (String, String) => void errorLambda = [
 					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
 			]
-		if(isMogObject){
+		if(isMogObject && dataObj != null){
 			val dataOb = dataObj.dataIdv
 			val mdlOb = mdlObj.mdlIdv
 			if(mdlOb != null){
@@ -211,7 +213,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 			]
 		if(isMogObject){
 			val mdlStmts = mdlObj.mdlPredictionVariables
-			for(dataDose : dataObj.dataDosingVariables){
+			for(dataDose : dataObj?.dataDosingVariables ?: Collections::emptyList){
 				val stmt = mdlStmts.findFirst[if(it instanceof SymbolDefinition) (it as SymbolDefinition).name == dataDose.name else false]
 				if(stmt == null){
 					errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "dosing variable " + dataDose.name +" has no match in mdlObj");
