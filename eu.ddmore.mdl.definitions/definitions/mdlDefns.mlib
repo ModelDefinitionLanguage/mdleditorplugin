@@ -27,7 +27,7 @@ _sublist fixEffAtts _atts cov::reference[::real], catCov::reference[::genericCat
 _type priorElementType _enum(matrix, vector);					
 
 _type divUse _enum (covariate, variable, amt, dv, dvid, cmt, mdv, idv, id, rate, ignore, varLevel, catCov, ss, ii, addl, evid, cens);
-_type ddvUse _enum (doseTime, doseInterval, covariate, variable, dvid);
+_type ddvUse _enum (doseTime, doseInterval, covariate, catCov, variable, dvid);
 _type varLvlType _enum (parameter, observation);
 _type input _enum (nonmemFormat);
 _type priorInput _enum (/*RList,*/ csv);
@@ -79,6 +79,7 @@ _list DoseInterval _atts use::ddvUse, idvColumn::reference[::Idv], amtColumn::re
 	_sig (use, idvColumn, amtColumn);
 _list DDVariable _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
 _list DDCovariate _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
+_list DDCatCovariate _atts use::ddvUse _cat use::int _sig (use);  
 
 // Source
 _list Source _atts file::string, inputFormat::input _sig(file, inputFormat);
@@ -423,7 +424,8 @@ _block DATA_INPUT_VARIABLES (0,) _statements (1,) _listDefn
 _block DECLARED_VARIABLES (0,) _statements (,) _eqnDefn, _enumDefn;
 
 _block DATA_DERIVED_VARIABLES (0,) _statements (,) _listDefn
-	_list _key=use ddvUse.doseTime->DoseTime, ddvUse.variable->DDVariable, ddvUse.covariate->DDCovariate, ddvUse.doseInterval->DoseInterval;
+	_list _key=use ddvUse.doseTime->DoseTime, ddvUse.variable->DDVariable,
+				ddvUse.covariate->DDCovariate, ddvUse.catCov->DDCatCovariate, ddvUse.doseInterval->DoseInterval;
 _block SOURCE (1,1) _statements (1,1) _listDefn
 		_list Source;
 		
