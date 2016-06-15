@@ -27,6 +27,7 @@ class CategoryTypeInfo extends AbstractCategoryTypeInfo {
 	
 	
 	def boolean isCompatibleCategories(CategoryTypeInfo otherType){
+		if(this.categories.size != otherType.categories.size) return false
 		for(cat : categories){
 			if(!otherType.categories.exists[it == cat]) return false
 		}

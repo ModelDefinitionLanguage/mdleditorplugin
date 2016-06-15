@@ -12,7 +12,7 @@ _type vector _vector;
 _type matrix _matrix;
 _type function _function;
 _type reference _reference;
-//_type Mapping _mapping;
+_type Mapping _mapping;
 _type undefined _undef;
 _type genericEnum _category;
 _type genericCategoryValue _categoryValue;
@@ -44,12 +44,17 @@ _type objType _enum (mdlObj, dataObj, parObj, taskObj, designObj, priorObj);
 _mapping DoseMapping _data ::int _col ::Cmt _tgt ::reference[::dosingTarget]; 
 _mapping ObsMapping _data ::int _col ::Dvid _tgt ::reference[::continuousObs]; 
 
+//_sublist ObsMapping _atts dvid::int, variable::continuousObs, countVar::countObs _sig(dvid, variable), (dvid, countVar);
+
 _list DataColumn _super;
 _list Covariate _alt ::real _extends DataColumn _atts use::divUse, interp::reference[::function(::real, ::real, ::real, ::real, ::real)::real]
 							_sig (use, interp?);  
 _list CatCovariate _extends DataColumn _atts use::divUse _cat use::int _sig (use);  
 _list Amt _extends DataColumn _atts use::divUse, define::DoseMapping, variable::reference[::dosingTarget] _sig (use, define), (use, variable);
-_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, variable::reference[::continuousObs] _sig (use, define), (use, variable);
+//_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, countVar::reference[::countObs], variable::reference[::continuousObs]
+//			_sig (use, define), (use, variable), (use, countVar);
+_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, variable::reference[::continuousObs]
+			_sig (use, define), (use, variable);
 _list Idv _extends DataColumn _atts use::divUse _sig(use);
 _list Cmt _extends DataColumn _atts use::divUse _sig(use);
 _list Id _extends DataColumn _atts use::divUse _sig(use);
@@ -212,9 +217,9 @@ _list proportionalErrorList _extends continuousObs
 			proportional::real, prediction::real, eps::randomVariable[::real]
 			_sig(type, trans?, lhsTrans?, proportional, prediction, eps)
 	;
-_list CatObs _anon _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
-_list CountObs _anon _atts type::obstype, variable::randomVariable[::int] _sig(type, variable);
-_list DiscreteObs _anon _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
+_list CatObs _anon _extends continuousObs _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
+_list CountObs _anon  _extends continuousObs _atts type::obstype, variable::randomVariable[::int] _sig(type, variable);
+_list DiscreteObs _anon  _extends continuousObs _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
 _list TteObs _extends continuousObs _atts type::obstype, hazard::reference[::real], maxEvent::real _sig(type, hazard, maxEvent?);
 _list ContinuousObsList _anon _extends continuousObs _atts type::obstype, variable::randomVariable[::real] _sig(type, variable);
 _list UserDefinedObsList _extends continuousObs _atts type::obstype, value::real, prediction::real, weight::real
@@ -271,7 +276,7 @@ _sublist intSeqAtts _atts admin::vector[::reference[::AdminSuperList]], start::v
 
 _sublist sampSeqAtts _atts sample::vector[::reference[::SamplingSuper]], start::vector
 					_sig (sample, start);
-_sublist OccSeqSubList _atts occasion::vector, level::reference[::VarLevel], start::vector
+_sublist OccSeqSubList _atts occasion::vector[::int], level::reference[::VarLevel], start::vector
 					_sig (occasion, level, start?);
 _list StudyDesign _atts armSize::int, sameTimes::boolean, 
 						occasionSequence::vector[::OccSeqSubList], interventionSequence::vector[::intSeqAtts], samplingSequence::vector[::sampSeqAtts],
@@ -318,16 +323,12 @@ _list SamplingSuper _super;
 _list SimpleSamplingList _extends SamplingSuper _atts type::sampletype, outcome::reference[::continuousObs], sampleTime::vector,
 								numberTimes::int, deltaTime::real, blq::real, ulq::real
 							_sig(type, outcome, sampleTime?, numberTimes?, deltaTime?, blq?, ulq?);
-//_list ComplexSamplingList _extends SamplingSuper _atts type::sampletype, combination::Vector[::sampSeqAtts], numberTimes::Int
-//							_sig(type,combination, numberTimes?);
 _list DerivedSamplingList _extends SamplingSuper _atts type::sampletype, combination::vector[::reference[::SamplingSuper]],
 														numberTimes::int, start::vector[::real], relative::boolean
 							_sig(type,combination, numberTimes?, start?, relative?);
 
-_type covArgEnumType _enum(constant, idvDependent); //, occDependent); 
+_type covArgEnumType _enum(constant, idvDependent); 
 
-//_type likelihoodType _enum(blq, likelihood);
-//_list LikelihoodBlq _atts type::likelihoodType, function::Reference[::Function(::Real,::Real,::Real)::Real], limit::Real _sig(type, function, limit);
 _type blkMethodType _enum(m1, m2, m3, m4); 
 _list blkDefn _atts type::blkMethodType, llq::real _sig(type, llq); 
 

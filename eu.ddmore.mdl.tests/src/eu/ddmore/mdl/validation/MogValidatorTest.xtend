@@ -11,7 +11,6 @@ import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -896,11 +895,11 @@ class MogValidatorTest {
 		)
 	}
 
-	@Ignore("need to implement RV typing properly")
-	def void testValidDiscreteType(){
+	@Test
+	def void testValidCountType(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Z }
+			DECLARED_VARIABLES{ Z::continuousObs }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
@@ -953,6 +952,306 @@ class MogValidatorTest {
 		'''.parse
 	
 		mcl.assertNoErrors
+	}
+
+	@Test
+	def void testValidDiscreteType(){
+		val mcl = '''
+		warfarin_PK_ODE_dat = dataObj {
+			DECLARED_VARIABLES{ Z withCategories {male, female} }
+		
+			DATA_INPUT_VARIABLES {
+				T : { use is idv }
+				DVID : { use is dvid }
+				DV : { use is dv, define = { Z.male when 1, Z.female when 2 } }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		foo = mdlObj {
+				IDV{T}
+				
+				VARIABILITY_LEVELS{
+					DV : { type is observation, level = 1 }
+				}
+		
+				MODEL_PREDICTION{
+					F = 1
+				}
+		
+				RANDOM_VARIABLE_DEFINITION(level is DV){
+					EPS ~ Normal(mean=0, sd=1)
+					Z withCategories {male, female} ~ Bernoulli1(probability=0.5)
+				}
+		
+				OBSERVATION{
+					:: { type is discrete, variable=Z }
+				}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				warfarin_PK_ODE_dat : { type is dataObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertNoErrors
+	}
+
+	@Test
+	def void testInvalidDiscreteInconsistentCategoriesType(){
+		val mcl = '''
+		warfarin_PK_ODE_dat = dataObj {
+			DECLARED_VARIABLES{ Z withCategories {male, female, none} }
+		
+			DATA_INPUT_VARIABLES {
+				T : { use is idv }
+				DVID : { use is dvid }
+				DV : { use is dv, define = { Z.male when 1, Z.female when 2, Z.none when 3 } }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		foo = mdlObj {
+				IDV{T}
+				
+				VARIABILITY_LEVELS{
+					DV : { type is observation, level = 1 }
+				}
+		
+				MODEL_PREDICTION{
+					F = 1
+				}
+		
+				RANDOM_VARIABLE_DEFINITION(level is DV){
+					EPS ~ Normal(mean=0, sd=1)
+					Z withCategories {male, female} ~ Bernoulli1(probability=0.5)
+				}
+		
+				OBSERVATION{
+					:: { type is discrete, variable=Z }
+				}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				warfarin_PK_ODE_dat : { type is dataObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"observation Z has an inconsistent type with its match in obj: 'warfarin_PK_ODE_dat'.")
+	}
+
+	@Test
+	def void testInvalidDiscreteType(){
+		val mcl = '''
+		warfarin_PK_ODE_dat = dataObj {
+			DECLARED_VARIABLES{ Z::continuousObs }
+		
+			DATA_INPUT_VARIABLES {
+				T : { use is idv }
+				DVID : { use is dvid }
+				DV : { use is dv, variable = Z }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		foo = mdlObj {
+				IDV{T}
+				
+				VARIABILITY_LEVELS{
+					DV : { type is observation, level = 1 }
+				}
+		
+				MODEL_PREDICTION{
+					F = 1
+				}
+		
+				RANDOM_VARIABLE_DEFINITION(level is DV){
+					EPS ~ Normal(mean=0, sd=1)
+					Z withCategories {male, female} ~ Bernoulli1(probability=0.5)
+				}
+		
+				OBSERVATION{
+					:: { type is discrete, variable=Z }
+				}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				warfarin_PK_ODE_dat : { type is dataObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"observation Z has an inconsistent type with its match in obj: 'warfarin_PK_ODE_dat'.")
+	}
+
+	@Test
+	def void testValidContinuousType(){
+		val mcl = '''
+		warfarin_PK_ODE_dat = dataObj {
+			DECLARED_VARIABLES{ Z::continuousObs }
+		
+			DATA_INPUT_VARIABLES {
+				T : { use is idv }
+				DVID : { use is dvid }
+				DV : { use is dv, variable = Z }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		foo = mdlObj {
+				IDV{T}
+				
+				VARIABILITY_LEVELS{
+					DV : { type is observation, level = 1 }
+				}
+		
+				MODEL_PREDICTION{
+					F = 1
+				}
+		
+				RANDOM_VARIABLE_DEFINITION(level is DV){
+					Z ~ Normal(mean=0, sd=1)
+				}
+		
+				OBSERVATION{
+					:: { type is continuous, variable=Z }
+				}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				warfarin_PK_ODE_dat : { type is dataObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertNoErrors
+	}
+
+	@Test
+	def void testInvalidContinuousType(){
+		val mcl = '''
+		warfarin_PK_ODE_dat = dataObj {
+			DECLARED_VARIABLES{ Z::continuousObs }
+		
+			DATA_INPUT_VARIABLES {
+				T : { use is idv }
+				DVID : { use is dvid }
+				DV : { use is dv, variable = Z }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		foo = mdlObj {
+				IDV{T}
+				
+				VARIABILITY_LEVELS{
+					DV : { type is observation, level = 1 }
+				}
+		
+				MODEL_PREDICTION{
+					F = 1
+				}
+		
+				RANDOM_VARIABLE_DEFINITION(level is DV){
+					EPS ~ Normal(mean=0, sd=1)
+				}
+		
+				OBSERVATION{
+					:: { type is continuous, variable=EPS }
+				}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				warfarin_PK_ODE_dat : { type is dataObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::MODEL_DATA_MISMATCH,
+			"observation EPS has no match in obj: 'warfarin_PK_ODE_dat'."
+		)
 	}
 
 	@Test
