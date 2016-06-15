@@ -1830,6 +1830,7 @@ d1g=designObj{
 		Conc
 		Effect
 		Cmt::dosingTarget
+		ID::VarLevel
 	}
 	INTERVENTION{
 		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
@@ -1840,6 +1841,7 @@ d1g=designObj{
 		DS1 : { objRef=[dose1], element is infAmt, discrete=[10,100,200] }
 	}
 	STUDY_DESIGN{
+		set idLevel = ID
 	}
 }
 		'''.parse
@@ -2208,9 +2210,10 @@ warfarin_PK_v2_dat = dataObj{
 				Conc
 				Effect
 				Cmt::dosingTarget
+				ID::VarLevel
 			}
 			
-			STUDY_DESIGN{}
+			STUDY_DESIGN{ set idLevel=ID }
 			
 			INTERVENTION{
 				dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
@@ -2509,6 +2512,105 @@ d1g=designObj{
 }		'''.parse
 		
 		mcl.assertNoErrors
+	}
+
+	@Test
+	def void testValidVectorOfCategoryValues(){
+		val mcl = '''
+warfarin_PK_BOV_design = designObj{
+  DECLARED_VARIABLES{
+  	INPUT_KA :: dosingTarget
+  	Y::continuousObs
+  	OCC1_COV withCategories { occ1, occ2 }
+  	OCC2_COV withCategories { occ1, occ2 }
+  	STUDY_COV withCategories { c1, c2 }
+  	CENTER::VarLevel
+  	ID::VarLevel
+  	OCC1::VarLevel
+  	OCC2::VarLevel
+  }
+
+  INTERVENTION{
+ 	admin1 : {type is bolus, input=INPUT_KA, amount=100, doseTime=[0] }
+  }
+  SAMPLING{
+	window1 : {type is simple, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120], outcome=Y }
+  }
+  
+  
+  DESIGN_VARIABILITY{
+  	occ1 : { varLevel = OCC1, catCov=OCC1_COV }
+  }
+  
+  STUDY_DESIGN{
+  	set idLevel = ID
+	arm1 : {
+		armSize=33,
+		interventionSequence=[{
+			admin=[admin1,admin1],
+			start=0
+		}],
+		samplingSequence=[{
+			sample=[window1,window1],
+			start=0
+		}],
+		occasionSequence={ level=occ1, occasion=[OCC1_COV.occ1, OCC1_COV.occ2], start=[0, 20] }
+	}
+  }
+}'''.parse
+		
+		mcl.assertNoErrors
+	}
+
+	@Test
+	def void testInvalidVectorOfDiffCategoryValues(){
+		val mcl = '''
+warfarin_PK_BOV_design = designObj{
+  DECLARED_VARIABLES{
+  	INPUT_KA :: dosingTarget
+  	Y::continuousObs
+  	OCC1_COV withCategories { occ1, occ2 }
+  	OCC2_COV withCategories { occ1, occ2 }
+  	STUDY_COV withCategories { c1, c2 }
+  	CENTER::VarLevel
+  	ID::VarLevel
+  	OCC1::VarLevel
+  	OCC2::VarLevel
+  }
+
+  INTERVENTION{
+ 	admin1 : {type is bolus, input=INPUT_KA, amount=100, doseTime=[0] }
+  }
+  SAMPLING{
+	window1 : {type is simple, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120], outcome=Y }
+  }
+  
+  
+  DESIGN_VARIABILITY{
+  	occ1 : { varLevel = OCC1, catCov=OCC1_COV }
+  }
+  
+  STUDY_DESIGN{
+  	set idLevel = ID
+	arm1 : {
+		armSize=33,
+		interventionSequence=[{
+			admin=[admin1,admin1],
+			start=0
+		}],
+		samplingSequence=[{
+			sample=[window1,window1],
+			start=0
+		}],
+		occasionSequence={ level=occ1, occasion=[OCC1_COV.occ1, OCC2_COV.occ2], start=[0, 20] }
+	}
+  }
+}'''.parse
+		
+		mcl.assertError(MdlPackage::eINSTANCE.vectorElement,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"Element type 'ref:Category:OCC2_COV:occ2' is incompatible with vector type 'vector:ref:Category:OCC1_COV:occ1'."
+		)
 	}
 
 	@Test

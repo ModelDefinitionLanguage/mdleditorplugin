@@ -124,9 +124,13 @@ public class TypeSystemProvider {
 		var TypeInfo refType = null
 		var allRefs = true
 		for(e : elements){
-			val origType = e.typeFor
+			var origType = e.typeFor
 			// check to see if amy non refs present. If so resulting array type will be non-ref
-			if(!(origType instanceof ReferenceTypeInfo)) allRefs = false  
+			if(!(origType instanceof ReferenceTypeInfo)) allRefs = false
+//			val underLyingOrig = origType.underlyingType 
+//			origType = if(underLyingOrig instanceof CategoryValueTypeInfo)
+//						underLyingOrig.owningCategory
+//					else underLyingOrig
 			val exprType = origType.underlyingType // just in case it is a reference
 			if(refType == null)
 				refType = exprType

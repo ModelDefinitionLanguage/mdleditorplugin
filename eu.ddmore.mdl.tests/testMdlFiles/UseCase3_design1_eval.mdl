@@ -4,6 +4,7 @@ warfarin_PKPD_turnover_design = designObj{
   	CENTRAL :: dosingTarget
   	CP_obs :: continuousObs
   	PCA_obs :: continuousObs
+  	ID::VarLevel
   }
 
   INTERVENTION{
@@ -35,6 +36,7 @@ warfarin_PKPD_turnover_design = designObj{
     sampPKPD : {type is combi, combination=[winPK,winPD] }
   }
   STUDY_DESIGN{
+  	set idLevel = ID
     set armSize=1
 	arm3 : {
 		interventionSequence=[{

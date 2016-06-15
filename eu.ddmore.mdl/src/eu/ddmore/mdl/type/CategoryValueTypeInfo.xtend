@@ -32,7 +32,7 @@ class CategoryValueTypeInfo extends TypeInfo {
 		switch(otherType){
 			CategoryValueTypeInfo:
 				this.owningCategory == otherType.owningCategory
-				&& this.valueName == otherType.valueName
+				//&& this.valueName == otherType.valueName
 			ReferenceTypeInfo:
 				isCompatible(otherType.underlyingType)
 			default:

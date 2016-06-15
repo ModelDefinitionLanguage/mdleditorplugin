@@ -276,17 +276,20 @@ _sublist intSeqAtts _atts admin::vector[::reference[::AdminSuperList]], start::v
 
 _sublist sampSeqAtts _atts sample::vector[::reference[::SamplingSuper]], start::vector
 					_sig (sample, start);
-_sublist OccSeqSubList _atts occasion::vector[::int], level::reference[::VarLevel], start::vector
-					_sig (occasion, level, start?);
+
+//_sublist OccSeqSubList _atts occasion::vector[::int], level::reference[::VarLevel], start::vector
+//					_sig (occasion, level, start?);
+_sublist OccSeqSubList _atts level::reference[::DesignVariabilityList], occasion::vector[::reference[::genericCategoryValue]], start::vector
+					_sig (occasion, level, start);
+
 _list StudyDesign _atts armSize::int, sameTimes::boolean, 
 						occasionSequence::vector[::OccSeqSubList], interventionSequence::vector[::intSeqAtts], samplingSequence::vector[::sampSeqAtts],
 						population::reference[::PopulationTemplate]
 		_sig (interventionSequence, samplingSequence, occasionSequence?, armSize?, sameTimes?, population?);
 
+_list DesignVariabilityList _atts varLevel::reference[::VarLevel], catCov::reference[::genericEnum]
+					_sig (varLevel, catCov);
 
-//_list DesignSpaceCatCov _atts objRef::GenericEnum, element::sampleelement, discrete::Vector, range::Vector
-//						_sig (objRef, element, discrete),
-//							(objRef, element, range);
 _list DesignSpaceCov _atts objRef::vector[::reference[::real]], element::sampleElement, discrete::vector, range::vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
@@ -349,7 +352,7 @@ _type solverType _enum(stiff, nonStiff);
 _type OptAlgoType _enum(simplex, fw);
 
 _prop algo::estAlgo, solver::solverType, armSize::int, totalSize::int, numberSamples::vector[::int], totalCost::real, numberArms::vector[::int],
-				sameTimes::boolean;
+				sameTimes::boolean, idLevel::reference[::VarLevel];
 
 _prop name::string, problemStmt::string;
 
@@ -470,8 +473,11 @@ _block INTERVENTION (1, ) _statements (,) _listDefn
 						AdminTypeType.combi->AdminComplexList, AdminTypeType.resetAll->AdminResetAllList,
 						AdminTypeType.reset->AdminResetList, AdminTypeType.resetAll->AdminResetAllList, AdminTypeType.reset->AdminResetList;
 
+_block DESIGN_VARIABILITY (,) _statements (,) _listDefn
+	_list DesignVariabilityList;
+
 _block STUDY_DESIGN (,) _statements (,) _listDefn
-		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?, sameTimes?
+		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?, sameTimes?, idLevel
 		_list StudyDesign;
 
 _block SAMPLING (,) _statements (,) _listDefn
@@ -504,7 +510,7 @@ _container dataObj _has DATA_INPUT_VARIABLES, DECLARED_VARIABLES, DATA_DERIVED_V
 _container parObj _has VARIABILITY, /*DECLARED_VARIABLES,*/ STRUCTURAL;
 _container taskObj _has ESTIMATE, SIMULATE, OPTIMISE, EVALUATE;
 _container mogObj _has INFO, OBJECTS;
-_container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, DESIGN_PARAMETERS, POPULATION;
+_container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, DESIGN_PARAMETERS, POPULATION, DESIGN_VARIABILITY;
 _container priorObj _has PRIOR_PARAMETERS, NON_CANONICAL_DISTRIBUTION, PRIOR_VARIABLE_DEFINITION;
 _container MODEL_PREDICTION _has DEQ, COMPARTMENT;
 _container NON_CANONICAL_DISTRIBUTION _has PRIOR_SOURCE, INPUT_PRIOR_DATA;

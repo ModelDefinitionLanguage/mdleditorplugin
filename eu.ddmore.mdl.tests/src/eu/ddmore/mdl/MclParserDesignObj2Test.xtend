@@ -25,6 +25,7 @@ d1g=designObj{
 		Conc::continuousObs
 		Effect::continuousObs
 		Cmt::dosingTarget
+		ID::VarLevel
 	}
 	INTERVENTION{
 		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
@@ -66,6 +67,7 @@ d1g=designObj{
 		DS15 : { objRef=[sampPK,sampPD], element is numberTimes, discrete=dseq(4,8,1) }
 	}
 	STUDY_DESIGN{
+		set idLevel = ID
 		set totalSize=100
 		arm1 : {
 			armSize=100,
