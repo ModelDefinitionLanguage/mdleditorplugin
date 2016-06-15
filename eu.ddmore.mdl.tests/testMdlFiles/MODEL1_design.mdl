@@ -5,7 +5,8 @@ MODEL1_dsgn = designObj{
 	DECLARED_VARIABLES {
 		A1_D::dosingTarget
 		A1_E::dosingTarget
-		Y::continuousObs 
+		Y::continuousObs
+		ID::VarLevel
 	}
 
 	DESIGN_PARAMETERS{
@@ -47,6 +48,7 @@ MODEL1_dsgn = designObj{
   }
 
 	STUDY_DESIGN{
+		set idLevel = ID
 		armA : { armSize = 1, interventionSequence = { admin=[combA], start=0 }, samplingSequence={ sample=sampl1, start=0 } }
 	}
 

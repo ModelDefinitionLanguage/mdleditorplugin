@@ -1830,6 +1830,7 @@ d1g=designObj{
 		Conc
 		Effect
 		Cmt::dosingTarget
+		ID::VarLevel
 	}
 	INTERVENTION{
 		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
@@ -1840,6 +1841,7 @@ d1g=designObj{
 		DS1 : { objRef=[dose1], element is infAmt, discrete=[10,100,200] }
 	}
 	STUDY_DESIGN{
+		set idLevel = ID
 	}
 }
 		'''.parse
@@ -2208,9 +2210,12 @@ warfarin_PK_v2_dat = dataObj{
 				Conc
 				Effect
 				Cmt::dosingTarget
+				ID::VarLevel
 			}
 			
-			STUDY_DESIGN{}
+			STUDY_DESIGN{
+				set idLevel = ID
+			}
 			
 			INTERVENTION{
 				dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 

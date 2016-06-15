@@ -26,6 +26,12 @@ import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 import java.util.List
+import eu.ddmore.mdl.mdl.AnonymousListStatement
+import eu.ddmore.mdl.utils.ExpressionUtils
+import eu.ddmore.mdl.utils.MdlLibUtils
+import eu.ddmore.mdl.utils.LibraryUtils
+import eu.ddmore.mdl.type.TypeInfo
+import eu.ddmore.mdl.type.RandomVariableTypeInfo
 
 class MogValidator extends AbstractDeclarativeValidator {
 
@@ -37,58 +43,20 @@ class MogValidator extends AbstractDeclarativeValidator {
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension BlockUtils bu = new BlockUtils
 	extension MogDefinitionProvider mdp = new MogDefinitionProvider
-
-
-
-//	public var MclObject mdlObj
-//	public var MclObject dataObj
-//	public var MclObject paramObj
-//	public var MclObject taskObj
-//	public var MclObject designObj
+	extension ExpressionUtils eu = new ExpressionUtils
+	extension MdlLibUtils mlu = new MdlLibUtils 
+	extension LibraryUtils lu = new LibraryUtils
 	
-//	new(){
-//		
-//	}
-	
+	val static String COUNT_OBS_TYPE_NAME = 'CountObs'
+//	val static String DISCRETE_OBS_TYPE_NAME = 'DiscreteObs'
+	val static String CONTINUOUS_OBS_TYPE_NAME = 'ContinuousObsList'
+
+
 	def findMdlObject(MclObject obj, String name, String mdlType){
 		val mcl = EcoreUtil2.getContainerOfType(obj, Mcl)
 		mcl.objects.findFirst[mdlObjType == mdlType && it.name == name]
 	}
 
-//	def getMdlObjectOfType(MclObject obj, String mdlType){
-//		val mcl = EcoreUtil2.getContainerOfType(obj, Mcl)
-//		mcl.objects.findFirst[mdlObjType == mdlType]
-//	}
-
-//	def buildMog(MclObject it){
-//		val objDefns = getBlocksByName(BlockDefinitionTable::MOG_OBJ_NAME)
-//		for(obj : objDefns){
-//			if(obj.body instanceof BlockStatementBody){
-//				for(stmt : (obj.body as BlockStatementBody).statements)
-//					if(stmt instanceof ListDefinition){
-//						val lst = stmt.list as AttributeList // expect att list here - no piecewise
-//						val enumExpr = lst.getAttributeExpression('type')
-//						val objType = switch(enumExpr){
-//							EnumExpression:
-//								enumExpr.enumValue
-//							default: null
-//						}
-//						switch(objType){
-//							case(MdlValidator::MDLOBJ):
-//								mdlObj = getMdlObjectOfType(objType)
-//							case(MdlValidator::DATAOBJ):
-//								dataObj = getMdlObjectOfType(objType)
-//							case(MdlValidator::PARAMOBJ):
-//								paramObj = getMdlObjectOfType(objType)
-//							case(MdlValidator::TASKOBJ):
-//								taskObj = getMdlObjectOfType(objType)
-//							case(MdlValidator::DESIGNOBJ):
-//								designObj = getMdlObjectOfType(objType)
-//						}
-//					}
-//			}
-//		}
-//	}
 	
 	// MOG validation rules
 	// for data object
@@ -154,7 +122,30 @@ class MogValidator extends AbstractDeclarativeValidator {
 						errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "observation " + mdlOb.name +" has an inconsistent type with its match in obj: '" + matchingObj.name + "'.");
 					}
 				}
-				//TODO: handle anonymous list obs types.
+				if(mdlOb instanceof AnonymousListStatement){
+					// expect all lists to have a variable att
+					val rvVar = mdlOb.list.getAttributeExpression('variable').symbolRef
+					val rv = rvVar?.ref
+					if(rv != null){
+						val rvType = rv.typeFor
+						val libDefn = getLibraryForObject
+						val obsTypeName = mdlOb.list.getAttributeEnumValue('type')
+						val TypeInfo obsActualType = switch(obsTypeName){
+							case(ListDefinitionTable::COUNT_OBS_VALUE): libDefn.getListDefinition(COUNT_OBS_TYPE_NAME).typeInfo
+							case(ListDefinitionTable::DISCRETE_OBS_VALUE): if(rvType instanceof RandomVariableTypeInfo) rvType.rvType else TypeSystemProvider::UNDEFINED_TYPE
+							case(ListDefinitionTable::CATEGORICAL_OBS_VALUE): if(rvType instanceof RandomVariableTypeInfo) rvType.rvType else TypeSystemProvider::UNDEFINED_TYPE 
+							case(ListDefinitionTable::CONTINUOUS_OBS_VALUE): libDefn.getListDefinition(CONTINUOUS_OBS_TYPE_NAME).typeInfo
+							default: TypeSystemProvider::UNDEFINED_TYPE
+						}
+						val dataSymb = dataStmts.findFirst[st | if(st instanceof SymbolDefinition) st.name == rv.name else false]
+						if(dataSymb == null){
+							errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "observation " + rv.name +" has no match in obj: '" + matchingObj.name + "'.");
+						}
+						else if(!obsActualType.isCompatible(dataSymb.typeFor)){
+							errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "observation " + rv.name +" has an inconsistent type with its match in obj: '" + matchingObj.name + "'.");
+						}
+					}
+				}
 			}
 		}
 	}
@@ -266,29 +257,6 @@ class MogValidator extends AbstractDeclarativeValidator {
 		if(isMogObject && priorObj != null){
 			validateModelAndPriorParams(mdlObj.mdlStructuralParameters)
 		}
-//		val (String, String) => void errorLambda = [ 
-//					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
-//				]
-//		val (String, String) => void warningLambda = [
-//					warningCode, errMsg| warning(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, warningCode, '')
-//				]
-//		if(isMogObject && priorObj != null){
-//			for(mdlStmt : mdlObj.mdlStructuralParameters){
-//				if(mdlStmt instanceof SymbolDefinition){
-//					val parStmt = priorObj.findMdlSymbolDefn(mdlStmt.name)
-//					if(parStmt == null){
-//						if(!mdlStmt.isAssigned) 
-//							errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "parameter '" + mdlStmt.name +"' has no match in priorObj");
-//					}
-//					else if(!mdlStmt.typeFor.isCompatible(parStmt.typeFor)){
-//						errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "parameter '" + parStmt.name +"' has an inconsistent type with its match in the priorObj");
-//					}
-//					else if(mdlStmt.isAssigned){
-//						warningLambda.apply(MdlValidator::MASKING_PARAM_ASSIGNMENT, "value assigned to parameter '" + parStmt.name +"' in mdlObj is overridden by value in priorObj");
-//					}
-//				}
-//			}
-//		}
 	}
 	
 	@Check
@@ -390,46 +358,5 @@ class MogValidator extends AbstractDeclarativeValidator {
 				error("Both a paramObj and a priorObj defined in mogObj '" + name + "'. You can only use one.", MdlPackage::eINSTANCE.mclObject_Blocks, MdlValidator::MOGOBJ_MALFORMED)
 		}
 	}
-	
-	
-//	@Check
-//	def validateMog(MclObject it){
-//		if(isMogObject){
-////			val mogValidator = new MogValidator
-////			mogValidator.buildMog(mogObj)
-//			validateMogComposition()
-//			if(mdlObj != null && dataObj != null && paramObj != null && taskObj != null){
-//				// assume has a data obj and mdl obj
-////				validateCovariates[
-////					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
-////				]
-////				validateObservations[
-////					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
-////				]
-////				validateVariabilityLevels[
-////					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
-////				]
-////				validateIndividualVariable[
-////					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
-////				]
-////				validateDosing[
-////					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
-////				]
-////				validateStructuralParameters([
-////					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
-////				],
-////				[
-////					warningCode, errMsg| warning(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, warningCode, '')
-////				]
-////				) 
-////				validateVariabilityParameters([
-////					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
-////				],
-////				[
-////					warningCode, errMsg| warning(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, warningCode, '')
-////				])
-//			}
-//		}
-//	}
 	
 }

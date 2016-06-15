@@ -12,7 +12,7 @@ _type vector _vector;
 _type matrix _matrix;
 _type function _function;
 _type reference _reference;
-//_type Mapping _mapping;
+_type Mapping _mapping;
 _type undefined _undef;
 _type genericEnum _category;
 _type genericCategoryValue _categoryValue;
@@ -27,7 +27,7 @@ _sublist fixEffAtts _atts cov::reference[::real], catCov::reference[::genericCat
 _type priorElementType _enum(matrix, vector);					
 
 _type divUse _enum (covariate, variable, amt, dv, dvid, cmt, mdv, idv, id, rate, ignore, varLevel, catCov, ss, ii, addl, evid, cens);
-_type ddvUse _enum (doseTime, doseInterval, covariate, variable, dvid);
+_type ddvUse _enum (doseTime, doseInterval, covariate, catCov, variable, dvid);
 _type varLvlType _enum (parameter, observation);
 _type input _enum (nonmemFormat);
 _type priorInput _enum (/*RList,*/ csv);
@@ -44,12 +44,17 @@ _type objType _enum (mdlObj, dataObj, parObj, taskObj, designObj, priorObj);
 _mapping DoseMapping _data ::int _col ::Cmt _tgt ::reference[::dosingTarget]; 
 _mapping ObsMapping _data ::int _col ::Dvid _tgt ::reference[::continuousObs]; 
 
+//_sublist ObsMapping _atts dvid::int, variable::continuousObs, countVar::countObs _sig(dvid, variable), (dvid, countVar);
+
 _list DataColumn _super;
 _list Covariate _alt ::real _extends DataColumn _atts use::divUse, interp::reference[::function(::real, ::real, ::real, ::real, ::real)::real]
 							_sig (use, interp?);  
 _list CatCovariate _extends DataColumn _atts use::divUse _cat use::int _sig (use);  
 _list Amt _extends DataColumn _atts use::divUse, define::DoseMapping, variable::reference[::dosingTarget] _sig (use, define), (use, variable);
-_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, variable::reference[::continuousObs] _sig (use, define), (use, variable);
+//_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, countVar::reference[::countObs], variable::reference[::continuousObs]
+//			_sig (use, define), (use, variable), (use, countVar);
+_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, variable::reference[::continuousObs]
+			_sig (use, define), (use, variable);
 _list Idv _extends DataColumn _atts use::divUse _sig(use);
 _list Cmt _extends DataColumn _atts use::divUse _sig(use);
 _list Id _extends DataColumn _atts use::divUse _sig(use);
@@ -74,6 +79,7 @@ _list DoseInterval _atts use::ddvUse, idvColumn::reference[::Idv], amtColumn::re
 	_sig (use, idvColumn, amtColumn);
 _list DDVariable _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
 _list DDCovariate _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
+_list DDCatCovariate _atts use::ddvUse _cat use::int _sig (use);  
 
 // Source
 _list Source _atts file::string, inputFormat::input _sig(file, inputFormat);
@@ -212,9 +218,9 @@ _list proportionalErrorList _extends continuousObs
 			proportional::real, prediction::real, eps::randomVariable[::real]
 			_sig(type, trans?, lhsTrans?, proportional, prediction, eps)
 	;
-_list CatObs _anon _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
-_list CountObs _anon _atts type::obstype, variable::randomVariable[::int] _sig(type, variable);
-_list DiscreteObs _anon _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
+_list CatObs _anon _extends continuousObs _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
+_list CountObs _anon  _extends continuousObs _atts type::obstype, variable::randomVariable[::int] _sig(type, variable);
+_list DiscreteObs _anon  _extends continuousObs _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
 _list TteObs _extends continuousObs _atts type::obstype, hazard::reference[::real], maxEvent::real _sig(type, hazard, maxEvent?);
 _list ContinuousObsList _anon _extends continuousObs _atts type::obstype, variable::randomVariable[::real] _sig(type, variable);
 _list UserDefinedObsList _extends continuousObs _atts type::obstype, value::real, prediction::real, weight::real
@@ -271,17 +277,20 @@ _sublist intSeqAtts _atts admin::vector[::reference[::AdminSuperList]], start::v
 
 _sublist sampSeqAtts _atts sample::vector[::reference[::SamplingSuper]], start::vector
 					_sig (sample, start);
-_sublist OccSeqSubList _atts occasion::vector, level::reference[::VarLevel], start::vector
+
+_sublist OccSeqSubList _atts occasion::vector[::int], level::reference[::VarLevel], start::vector
 					_sig (occasion, level, start?);
+//_sublist OccSeqSubList _atts level::reference[::DesignVariabilityList], occasion::vector[::reference[::genericCategoryValue]], start::vector
+//					_sig (occasion, level, start);
+
 _list StudyDesign _atts armSize::int, sameTimes::boolean, 
 						occasionSequence::vector[::OccSeqSubList], interventionSequence::vector[::intSeqAtts], samplingSequence::vector[::sampSeqAtts],
 						population::reference[::PopulationTemplate]
 		_sig (interventionSequence, samplingSequence, occasionSequence?, armSize?, sameTimes?, population?);
 
+//_list DesignVariabilityList _atts varLevel::reference[::VarLevel], catCov::reference[::genericEnum]
+//					_sig (varLevel, catCov);
 
-//_list DesignSpaceCatCov _atts objRef::GenericEnum, element::sampleelement, discrete::Vector, range::Vector
-//						_sig (objRef, element, discrete),
-//							(objRef, element, range);
 _list DesignSpaceCov _atts objRef::vector[::reference[::real]], element::sampleElement, discrete::vector, range::vector
 						_sig (objRef, element, discrete),
 							(objRef, element, range);
@@ -318,16 +327,12 @@ _list SamplingSuper _super;
 _list SimpleSamplingList _extends SamplingSuper _atts type::sampletype, outcome::reference[::continuousObs], sampleTime::vector,
 								numberTimes::int, deltaTime::real, blq::real, ulq::real
 							_sig(type, outcome, sampleTime?, numberTimes?, deltaTime?, blq?, ulq?);
-//_list ComplexSamplingList _extends SamplingSuper _atts type::sampletype, combination::Vector[::sampSeqAtts], numberTimes::Int
-//							_sig(type,combination, numberTimes?);
 _list DerivedSamplingList _extends SamplingSuper _atts type::sampletype, combination::vector[::reference[::SamplingSuper]],
 														numberTimes::int, start::vector[::real], relative::boolean
 							_sig(type,combination, numberTimes?, start?, relative?);
 
-_type covArgEnumType _enum(constant, idvDependent); //, occDependent); 
+_type covArgEnumType _enum(constant, idvDependent); 
 
-//_type likelihoodType _enum(blq, likelihood);
-//_list LikelihoodBlq _atts type::likelihoodType, function::Reference[::Function(::Real,::Real,::Real)::Real], limit::Real _sig(type, function, limit);
 _type blkMethodType _enum(m1, m2, m3, m4); 
 _list blkDefn _atts type::blkMethodType, llq::real _sig(type, llq); 
 
@@ -348,7 +353,7 @@ _type solverType _enum(stiff, nonStiff);
 _type OptAlgoType _enum(simplex, fw);
 
 _prop algo::estAlgo, solver::solverType, armSize::int, totalSize::int, numberSamples::vector[::int], totalCost::real, numberArms::vector[::int],
-				sameTimes::boolean;
+				sameTimes::boolean, idLevel::reference[::VarLevel];
 
 _prop name::string, problemStmt::string;
 
@@ -419,7 +424,8 @@ _block DATA_INPUT_VARIABLES (0,) _statements (1,) _listDefn
 _block DECLARED_VARIABLES (0,) _statements (,) _eqnDefn, _enumDefn;
 
 _block DATA_DERIVED_VARIABLES (0,) _statements (,) _listDefn
-	_list _key=use ddvUse.doseTime->DoseTime, ddvUse.variable->DDVariable, ddvUse.covariate->DDCovariate, ddvUse.doseInterval->DoseInterval;
+	_list _key=use ddvUse.doseTime->DoseTime, ddvUse.variable->DDVariable,
+				ddvUse.covariate->DDCovariate, ddvUse.catCov->DDCatCovariate, ddvUse.doseInterval->DoseInterval;
 _block SOURCE (1,1) _statements (1,1) _listDefn
 		_list Source;
 		
@@ -469,8 +475,11 @@ _block INTERVENTION (1, ) _statements (,) _listDefn
 						AdminTypeType.combi->AdminComplexList, AdminTypeType.resetAll->AdminResetAllList,
 						AdminTypeType.reset->AdminResetList, AdminTypeType.resetAll->AdminResetAllList, AdminTypeType.reset->AdminResetList;
 
+//_block DESIGN_VARIABILITY (,) _statements (,) _listDefn
+//	_list DesignVariabilityList;
+
 _block STUDY_DESIGN (,) _statements (,) _listDefn
-		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?, sameTimes?
+		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?, sameTimes?, idLevel
 		_list StudyDesign;
 
 _block SAMPLING (,) _statements (,) _listDefn
@@ -503,7 +512,7 @@ _container dataObj _has DATA_INPUT_VARIABLES, DECLARED_VARIABLES, DATA_DERIVED_V
 _container parObj _has VARIABILITY, /*DECLARED_VARIABLES,*/ STRUCTURAL;
 _container taskObj _has ESTIMATE, SIMULATE, OPTIMISE, EVALUATE;
 _container mogObj _has INFO, OBJECTS;
-_container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, DESIGN_PARAMETERS, POPULATION;
+_container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, DESIGN_PARAMETERS, POPULATION; //, DESIGN_VARIABILITY;
 _container priorObj _has PRIOR_PARAMETERS, NON_CANONICAL_DISTRIBUTION, PRIOR_VARIABLE_DEFINITION;
 _container MODEL_PREDICTION _has DEQ, COMPARTMENT;
 _container NON_CANONICAL_DISTRIBUTION _has PRIOR_SOURCE, INPUT_PRIOR_DATA;
