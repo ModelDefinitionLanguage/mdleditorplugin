@@ -173,4 +173,23 @@ warfarin_PK_ODE_mdl = dataObj {
 	}
 
 	
+	@Test
+	def void testConverter8(){
+		val mcl =  '''
+warfarin_UC1_prior = priorObj{
+ PRIOR_PARAMETERS{
+	   MU_R_CL = 0.2 
+	   MU_R_V  = 0.2 
+	   MU_R_V_CL  = 0
+   }
+   PRIOR_VARIABLE_DEFINITION{
+R_mat =       [[ MU_R_CL, MU_R_V_CL;
+	   			  	    MU_R_V_CL, MU_R_V ]]
+	   			  	    }
+	   			  	    
+	   			  	    }
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("[[MU_R_CL,MU_R_V_CL];[MU_R_V_CL,MU_R_V]]", eqn.expression.convertToString)
+	}
 }
