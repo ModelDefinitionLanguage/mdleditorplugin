@@ -277,7 +277,6 @@ _sublist intSeqAtts _atts admin::vector[::reference[::AdminSuperList]], start::v
 
 _sublist sampSeqAtts _atts sample::vector[::reference[::SamplingSuper]], start::vector
 					_sig (sample, start);
-
 _sublist OccSeqSubList _atts occasion::vector[::int], level::reference[::VarLevel], start::vector
 					_sig (occasion, level, start?);
 //_sublist OccSeqSubList _atts level::reference[::DesignVariabilityList], occasion::vector[::reference[::genericCategoryValue]], start::vector
