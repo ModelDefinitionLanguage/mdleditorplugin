@@ -9,7 +9,7 @@
 
 warfarin_PK_SSADDL_dat = dataObj{
 
-   DECLARED_VARIABLES{GUT::dosingTarget Y::continuousObs}
+   DECLARED_VARIABLES{GUT::dosingTarget Y::observation}
 
    DATA_INPUT_VARIABLES{
 		ID : { use is id }

@@ -3,7 +3,7 @@
 #
 
 cm_dat = dataObj {
-	DECLARED_VARIABLES{Q1::dosingTarget Y::continuousObs}
+	DECLARED_VARIABLES{Q1::dosingTarget Y::observation}
 
 	DATA_INPUT_VARIABLES {
 		ID : { use is id }

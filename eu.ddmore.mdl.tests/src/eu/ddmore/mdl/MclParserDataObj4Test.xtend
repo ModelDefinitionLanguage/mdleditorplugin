@@ -18,7 +18,7 @@ class MclParserDataObj4Test {
 	
 	val static CODE_SNIPPET = '''
 warfarin_PK_v2_dat = dataObj{
-	DECLARED_VARIABLES{ Y::continuousObs; GUT::dosingTarget; PCA withCategories {dead, alive}; OTHER withCategories {dead, alive} }
+	DECLARED_VARIABLES{ Y::observation; GUT::dosingTarget; PCA withCategories {dead, alive}; OTHER withCategories {dead, alive} }
 	
 	FUNCTIONS{
 		myInterp::function(t::real, x0::real, t0::real, x1::real, t1::real)::real is

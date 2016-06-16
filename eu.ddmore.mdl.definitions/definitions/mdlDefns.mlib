@@ -42,7 +42,7 @@ _type objType _enum (mdlObj, dataObj, parObj, taskObj, designObj, priorObj);
 // Data input variables
 
 _mapping DoseMapping _data ::int _col ::Cmt _tgt ::reference[::dosingTarget]; 
-_mapping ObsMapping _data ::int _col ::Dvid _tgt ::reference[::continuousObs]; 
+_mapping ObsMapping _data ::int _col ::Dvid _tgt ::reference[::observation]; 
 
 //_sublist ObsMapping _atts dvid::int, variable::continuousObs, countVar::countObs _sig(dvid, variable), (dvid, countVar);
 
@@ -53,7 +53,7 @@ _list CatCovariate _extends DataColumn _atts use::divUse _cat use::int _sig (use
 _list Amt _extends DataColumn _atts use::divUse, define::DoseMapping, variable::reference[::dosingTarget] _sig (use, define), (use, variable);
 //_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, countVar::reference[::countObs], variable::reference[::continuousObs]
 //			_sig (use, define), (use, variable), (use, countVar);
-_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, variable::reference[::continuousObs]
+_list Dv _extends DataColumn _atts use::divUse, define::ObsMapping, variable::reference[::observation]
 			_sig (use, define), (use, variable);
 _list Idv _extends DataColumn _atts use::divUse _sig(use);
 _list Cmt _extends DataColumn _atts use::divUse _sig(use);
@@ -154,7 +154,7 @@ _list PopnCategoricalList _anon
 
 // Model
 	
-_list VarLevel _atts type::varLvlType, level::int
+_list varLevel _atts type::varLvlType, level::int
 	_sig(type, level);
 _list dosingTarget _super;
 _list DerivList _alt ::deriv _extends dosingTarget _atts deriv::real, init::real, x0::real, wrt::reference[::real]
@@ -197,33 +197,33 @@ _list Distribution _atts type::cmtType, modelCmt::int, from::reference[::dosingT
 
 	 
 // Observations
-_list continuousObs _super;
-_list combinedError1List _extends continuousObs
+_list observation _super;
+_list combinedError1List _extends observation
 	_atts type::obstype, trans::transType, lhsTrans::boolean,
 			additive::real, proportional::real, prediction::real, eps::randomVariable[::real]
 		_sig(type, trans?, lhsTrans?, additive, proportional, prediction, eps)
 	;
-_list combinedError2List _extends continuousObs
+_list combinedError2List _extends observation
 	_atts type::obstype, trans::transType, lhsTrans::boolean,
 			additive::real, proportional::real, prediction::real, eps::randomVariable[::real]
 			_sig(type, trans?, lhsTrans?, additive, proportional, prediction, eps)
 	;
-_list additiveErrorList _extends continuousObs
+_list additiveErrorList _extends observation
 	_atts type::obstype, trans::transType, lhsTrans::boolean,
 			additive::real, prediction::real, eps::randomVariable[::real]
 			_sig(type, trans?, lhsTrans?, additive, prediction, eps)
 	;
-_list proportionalErrorList _extends continuousObs
+_list proportionalErrorList _extends observation
 	_atts type::obstype, trans::transType, lhsTrans::boolean,
 			proportional::real, prediction::real, eps::randomVariable[::real]
 			_sig(type, trans?, lhsTrans?, proportional, prediction, eps)
 	;
-_list CatObs _anon _extends continuousObs _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
-_list CountObs _anon  _extends continuousObs _atts type::obstype, variable::randomVariable[::int] _sig(type, variable);
-_list DiscreteObs _anon  _extends continuousObs _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
-_list TteObs _extends continuousObs _atts type::obstype, hazard::reference[::real], maxEvent::real _sig(type, hazard, maxEvent?);
-_list ContinuousObsList _anon _extends continuousObs _atts type::obstype, variable::randomVariable[::real] _sig(type, variable);
-_list UserDefinedObsList _extends continuousObs _atts type::obstype, value::real, prediction::real, weight::real
+_list CatObs _anon _extends observation _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
+_list CountObs _anon  _extends observation _atts type::obstype, variable::randomVariable[::int] _sig(type, variable);
+_list DiscreteObs _anon  _extends observation _atts type::obstype, variable::randomVariable[::genericEnum] _sig(type, variable);
+_list TteObs _extends observation _atts type::obstype, hazard::reference[::real], maxEvent::real _sig(type, hazard, maxEvent?);
+_list ContinuousObsList _anon _extends observation _atts type::obstype, variable::randomVariable[::real] _sig(type, variable);
+_list UserDefinedObsList _extends observation _atts type::obstype, value::real, prediction::real, weight::real
 									_sig(type, value, prediction, weight);
 
 _list StructuralEstimateReal _alt ::real _atts value::real, lo::real, hi::real, fix::boolean
@@ -277,7 +277,7 @@ _sublist intSeqAtts _atts admin::vector[::reference[::AdminSuperList]], start::v
 
 _sublist sampSeqAtts _atts sample::vector[::reference[::SamplingSuper]], start::vector
 					_sig (sample, start);
-_sublist OccSeqSubList _atts occasion::vector[::int], level::reference[::VarLevel], start::vector
+_sublist OccSeqSubList _atts occasion::vector[::int], level::reference[::varLevel], start::vector
 					_sig (occasion, level, start?);
 //_sublist OccSeqSubList _atts level::reference[::DesignVariabilityList], occasion::vector[::reference[::genericCategoryValue]], start::vector
 //					_sig (occasion, level, start);
@@ -323,7 +323,7 @@ _list DesignSpaceParam _atts objRef::vector[::reference[::real]], element::sampl
 
 _list SamplingSuper _super;
 
-_list SimpleSamplingList _extends SamplingSuper _atts type::sampletype, outcome::reference[::continuousObs], sampleTime::vector,
+_list SimpleSamplingList _extends SamplingSuper _atts type::sampletype, outcome::reference[::observation], sampleTime::vector,
 								numberTimes::int, deltaTime::real, blq::real, ulq::real
 							_sig(type, outcome, sampleTime?, numberTimes?, deltaTime?, blq?, ulq?);
 _list DerivedSamplingList _extends SamplingSuper _atts type::sampletype, combination::vector[::reference[::SamplingSuper]],
@@ -352,7 +352,7 @@ _type solverType _enum(stiff, nonStiff);
 _type OptAlgoType _enum(simplex, fw);
 
 _prop algo::estAlgo, solver::solverType, armSize::int, totalSize::int, numberSamples::vector[::int], totalCost::real, numberArms::vector[::int],
-				sameTimes::boolean, idLevel::reference[::VarLevel];
+				sameTimes::boolean, idLevel::reference[::varLevel];
 
 _prop name::string, problemStmt::string;
 
@@ -379,13 +379,13 @@ _block COVARIATES (0,)
 	_statements (0,) _eqnDefn, _eqnDefn+, _enumDefn, _rvDefn;
 
 _block VARIABILITY_LEVELS (0,) _statements (0,) _listDefn
-	_list VarLevel;
+	_list varLevel;
 	
 _block STRUCTURAL_PARAMETERS (0,) _statements (0,) _eqnDefn, _eqnDefn+;
 
 _block VARIABILITY_PARAMETERS (0,) _statements (0,) _eqnDefn, _eqnDefn+;
 
-_block RANDOM_VARIABLE_DEFINITION (0,) _arguments level::VarLevel _statements (0,) 
+_block RANDOM_VARIABLE_DEFINITION (0,) _arguments level::varLevel _statements (0,) 
 					_rvDefn, _enumDefn, _anonList
 					_list _key=type CorrelationEnumType.covariance->CovarianceList, CorrelationEnumType.correlation->CorrelationList;
 

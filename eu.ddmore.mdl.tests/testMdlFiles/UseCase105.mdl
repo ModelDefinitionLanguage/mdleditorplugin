@@ -1,6 +1,6 @@
 drugX_delAbs_1occ_v1_dat = dataObj{
 
-   DECLARED_VARIABLES{Cc_obs::continuousObs}
+   DECLARED_VARIABLES{Cc_obs::observation}
 
    DATA_INPUT_VARIABLES{
       ID: {use is id}

@@ -143,7 +143,7 @@ class MclListAttributeValidationTest {
 	@Test
 	def void testValidSrcDvColumn(){
 		val mcl = '''bar = dataObj {
-			DECLARED_VARIABLES{ D::continuousObs }
+			DECLARED_VARIABLES{ D::observation }
 			
 			DATA_INPUT_VARIABLES{
 				CMT : { use is dvid }
@@ -635,7 +635,7 @@ foo = mdlObj {
 	def void testValidRandomAttributes(){
 		val mcl = '''
 			des = designObj{
-				DECLARED_VARIABLES{ dose::dosingTarget Y::continuousObs W }
+				DECLARED_VARIABLES{ dose::dosingTarget Y::observation W }
 				
 				INTERVENTION{
 					treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}
@@ -656,7 +656,7 @@ foo = mdlObj {
 	def void testInvalidRandomAttributeAssignment(){
 		val mcl = '''
 			des = designObj{
-				DECLARED_VARIABLES{ dose::dosingTarget Y::continuousObs W }
+				DECLARED_VARIABLES{ dose::dosingTarget Y::observation W }
 				
 				INTERVENTION{
 					treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}
@@ -675,7 +675,7 @@ foo = mdlObj {
 	def void testInvalidRandomAttributeEqualsAssignment(){
 		val mcl = '''
 			des = designObj{
-				DECLARED_VARIABLES{ dose::dosingTarget Y::continuousObs W }
+				DECLARED_VARIABLES{ dose::dosingTarget Y::observation W }
 				
 				INTERVENTION{
 					treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}
@@ -696,7 +696,7 @@ foo = mdlObj {
 	def void testInvalidRandomAttributRvAssignmentToNonDistn(){
 		val mcl = '''
 			des = designObj{
-				DECLARED_VARIABLES{ dose::dosingTarget Y::continuousObs W }
+				DECLARED_VARIABLES{ dose::dosingTarget Y::observation W }
 				
 				INTERVENTION{
 					treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}

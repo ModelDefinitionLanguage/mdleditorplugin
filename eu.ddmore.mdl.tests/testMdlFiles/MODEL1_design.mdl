@@ -5,8 +5,8 @@ MODEL1_dsgn = designObj{
 	DECLARED_VARIABLES {
 		A1_D::dosingTarget
 		A1_E::dosingTarget
-		Y::continuousObs
-		ID::VarLevel
+		Y::observation
+		ID::varLevel
 	}
 
 	DESIGN_PARAMETERS{

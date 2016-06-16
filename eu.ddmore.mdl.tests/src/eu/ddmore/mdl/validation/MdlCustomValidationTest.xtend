@@ -261,7 +261,7 @@ class MdlCustomValidationTest {
 		val mcl = '''
 warfarin_T2E_exact_dat = dataObj{
 
-   DECLARED_VARIABLES{ Y::continuousObs; INPUT::dosingTarget }
+   DECLARED_VARIABLES{ Y::observation; INPUT::dosingTarget }
 
    DATA_INPUT_VARIABLES{
       ID: {use is id}
@@ -407,7 +407,7 @@ warfarin_T2E_exact_dat = dataObj{
 		val mcl = '''
 warfarin_T2E_exact_dat = dataObj{
 
-   DECLARED_VARIABLES{ Y::continuousObs; INPUT::dosingTarget }
+   DECLARED_VARIABLES{ Y::observation; INPUT::dosingTarget }
 
    DATA_INPUT_VARIABLES{
       ID: {use is id}

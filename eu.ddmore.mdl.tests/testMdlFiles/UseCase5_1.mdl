@@ -10,7 +10,7 @@
 
 warfarin_PK_ODE_v2b_dat = dataObj {
 	DECLARED_VARIABLES{
-		GUT::dosingTarget Y::continuousObs
+		GUT::dosingTarget Y::observation
 	}
 
 	DATA_INPUT_VARIABLES {

@@ -88,7 +88,7 @@ class ModellingStepsPrinterSimulateTest {
 			}
 			
 			dobj = dataObj {
-				DECLARED_VARIABLES{GUT::dosingTarget Y::continuousObs}
+				DECLARED_VARIABLES{GUT::dosingTarget Y::observation}
 			
 				DATA_INPUT_VARIABLES {
 					ID : { use is id }
@@ -357,7 +357,7 @@ class ModellingStepsPrinterSimulateTest {
 			}
 			
 			dobj = dataObj {
-				DECLARED_VARIABLES{GUT::dosingTarget Y::continuousObs}
+				DECLARED_VARIABLES{GUT::dosingTarget Y::observation}
 			
 				DATA_INPUT_VARIABLES {
 					ID : { use is id }
@@ -606,7 +606,7 @@ class ModellingStepsPrinterSimulateTest {
 			}
 			
 			dobj = dataObj {
-				DECLARED_VARIABLES{GUT::dosingTarget Y::continuousObs}
+				DECLARED_VARIABLES{GUT::dosingTarget Y::observation}
 			
 				DATA_INPUT_VARIABLES {
 					ID : { use is id }

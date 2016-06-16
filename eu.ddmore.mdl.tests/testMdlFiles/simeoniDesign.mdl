@@ -23,7 +23,7 @@
 #
 
 simeoni2004_design = designObj{
-	DECLARED_VARIABLES{ dose::dosingTarget Y::continuousObs ID::VarLevel }
+	DECLARED_VARIABLES{ dose::dosingTarget Y::observation ID::varLevel }
 	
 	INTERVENTION{
 		treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}

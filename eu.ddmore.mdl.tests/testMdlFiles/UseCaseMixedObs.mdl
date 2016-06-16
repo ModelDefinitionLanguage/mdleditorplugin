@@ -5,7 +5,7 @@
 # link not specified in OBSERVATION definition
 
 Categorical_DIST_dat = dataObj{
-   DECLARED_VARIABLES{ Y::continuousObs ; PAIN withCategories {mild, moderate, severe, missing} }
+   DECLARED_VARIABLES{ Y::observation ; PAIN withCategories {mild, moderate, severe, missing} }
 	
    DATA_INPUT_VARIABLES{
       ID:{ use is id }

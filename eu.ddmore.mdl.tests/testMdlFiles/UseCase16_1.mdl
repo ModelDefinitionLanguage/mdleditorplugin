@@ -6,10 +6,10 @@
 Hansson2013_data = dataObj{
 	DECLARED_VARIABLES{
 		DOSE::dosingTarget
-		LNVEGF_obs::continuousObs
-		LNsVEGFR2_obs::continuousObs
-		LNsVEGFR3_obs::continuousObs
-		LNsKIT_obs::continuousObs
+		LNVEGF_obs::observation
+		LNsVEGFR2_obs::observation
+		LNsVEGFR3_obs::observation
+		LNsKIT_obs::observation
 	} 
 
    DATA_INPUT_VARIABLES{

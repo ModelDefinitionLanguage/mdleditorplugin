@@ -3,7 +3,7 @@
 # Assumes dosing time is at TIME = 0
 
 warfarin_PK_ANALYTIC_dat = dataObj {
-	DECLARED_VARIABLES{D::dosingTarget Y::continuousObs}
+	DECLARED_VARIABLES{D::dosingTarget Y::observation}
 
 	DATA_INPUT_VARIABLES {
 		ID : { use is id }

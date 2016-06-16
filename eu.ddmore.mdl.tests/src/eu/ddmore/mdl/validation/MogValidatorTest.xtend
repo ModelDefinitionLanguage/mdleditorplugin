@@ -375,7 +375,7 @@ class MogValidatorTest {
 	def void testValidSingleObsMatching(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Y::continuousObs }
+			DECLARED_VARIABLES{ Y::observation }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
@@ -604,7 +604,7 @@ class MogValidatorTest {
 	def void testInvalidSingleObsMismatchedNoData(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Y::dosingTarget Z::continuousObs }
+			DECLARED_VARIABLES{ Y::dosingTarget Z::observation }
 		
 			DATA_INPUT_VARIABLES {
 				AMT : { use is amt, variable = Y }
@@ -664,7 +664,7 @@ class MogValidatorTest {
 	def void testValidMultiObsContinuousMatching(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Y::continuousObs; Z::continuousObs }
+			DECLARED_VARIABLES{ Y::observation; Z::observation }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
@@ -899,7 +899,7 @@ class MogValidatorTest {
 	def void testValidCountType(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Z::continuousObs }
+			DECLARED_VARIABLES{ Z::observation }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
@@ -1078,7 +1078,7 @@ class MogValidatorTest {
 	def void testInvalidDiscreteType(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Z::continuousObs }
+			DECLARED_VARIABLES{ Z::observation }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
@@ -1139,7 +1139,7 @@ class MogValidatorTest {
 	def void testValidContinuousType(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Z::continuousObs }
+			DECLARED_VARIABLES{ Z::observation }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
@@ -1197,7 +1197,7 @@ class MogValidatorTest {
 	def void testInvalidContinuousType(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Z::continuousObs }
+			DECLARED_VARIABLES{ Z::observation }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
@@ -1258,7 +1258,7 @@ class MogValidatorTest {
 	def void testValidVariabilityLevelsMatch(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{ Y::continuousObs }
+			DECLARED_VARIABLES{ Y::observation }
 		
 			DATA_INPUT_VARIABLES {
 				ID : { use is id }

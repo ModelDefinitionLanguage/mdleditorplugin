@@ -4,7 +4,7 @@
 # ensures LAMBDA is positive so link=identity in OBSERVATION definition
 
 Poisson_DIST_dat = dataObj{
-   DECLARED_VARIABLES{ Y::continuousObs }
+   DECLARED_VARIABLES{ Y::observation }
 	
    DATA_INPUT_VARIABLES{
       ID:{ use is id }

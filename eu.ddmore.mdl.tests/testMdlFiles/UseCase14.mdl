@@ -5,7 +5,7 @@
 
 warfarin_T2E_exact_dat = dataObj{
 
-   DECLARED_VARIABLES{ Y::continuousObs ; INPUT }
+   DECLARED_VARIABLES{ Y::observation ; INPUT }
 
    DATA_INPUT_VARIABLES{
       ID: {use is id}

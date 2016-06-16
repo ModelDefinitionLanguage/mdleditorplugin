@@ -13,7 +13,7 @@
 # Passing PK parameters from the dataset to drive the PK model
 
 warfarin_PKPD_turnover_dat = dataObj{
-     DECLARED_VARIABLES{PCA_obs::continuousObs; INPUT_KA::dosingTarget }
+     DECLARED_VARIABLES{PCA_obs::observation; INPUT_KA::dosingTarget }
 
      DATA_INPUT_VARIABLES{
       ID : 	 { use is id }

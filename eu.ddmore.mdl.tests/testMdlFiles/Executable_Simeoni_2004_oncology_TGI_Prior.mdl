@@ -26,7 +26,7 @@
 
 simeoni2004_data = dataObj{
 
-DECLARED_VARIABLES{Y::continuousObs Q1::dosingTarget}
+DECLARED_VARIABLES{Y::observation Q1::dosingTarget}
 
    DATA_INPUT_VARIABLES{
       ID:{use is id}

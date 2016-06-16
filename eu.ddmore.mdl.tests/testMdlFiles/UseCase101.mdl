@@ -8,7 +8,7 @@
 
 UC001_09_Holford_PK_DEQ_genCov_genErr_Tlag_dat = dataObj{
 
-   DECLARED_VARIABLES{INPUT_GUT::dosingTarget CC_obs::continuousObs}
+   DECLARED_VARIABLES{INPUT_GUT::dosingTarget CC_obs::observation}
 
    DATA_INPUT_VARIABLES{
       ID: {use is id}
