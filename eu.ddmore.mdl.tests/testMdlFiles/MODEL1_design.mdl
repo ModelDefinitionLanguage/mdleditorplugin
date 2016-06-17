@@ -96,6 +96,7 @@ MODEL1_mdl = mdlObj {
 
 	# Levels of random variability define here
 	VARIABILITY_LEVELS{
+		ID : { level = 2, type is parameter }
 		DV : { level=1, type is observation }
 	}
 

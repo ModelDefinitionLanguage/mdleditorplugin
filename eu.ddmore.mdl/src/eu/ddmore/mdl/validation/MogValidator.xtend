@@ -176,6 +176,44 @@ class MogValidator extends AbstractDeclarativeValidator {
 					}
 				}
 			}
+			else if(designObj != null){
+				val libDefn = getLibraryForObject
+				val varLvlTypeInfo = libDefn.getListDefinition('varLevel')?.typeInfo ?: TypeSystemProvider::UNDEFINED_TYPE
+				val dvBlk = designObj.getBlocksByName(BlockDefinitionTable::DECLARED_VARS_BLK)?.head
+				val dvStmts = dvBlk.statementsFromBlock
+				val mVarLvls = mdlObj.mdlVariabilityLevels 
+				for(mdlOb : mVarLvls){
+					if(mdlOb instanceof SymbolDefinition){
+						val dataOb = dvStmts.findFirst[stmt|
+							if(stmt instanceof SymbolDefinition) stmt.name == mdlOb.name else false
+						]
+						if(dataOb == null){
+							if(mdlOb.isParameterVarLevel)
+								errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in designObj");
+						}
+						else if(dataOb instanceof SymbolDefinition){
+							if(dataOb.typeFor != varLvlTypeInfo){
+								errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the designObj");
+							}
+						}
+					}
+				}
+				for(desStmt : dvStmts){
+					if(desStmt instanceof SymbolDefinition){
+						val desStmtType = desStmt.typeFor
+						if(!mVarLvls.exists[mVStmt|
+							if(mVStmt instanceof SymbolDefinition){
+								if(desStmtType == varLvlTypeInfo)
+									desStmt.name == mVStmt.name
+								else true
+							}
+							else true
+						]){
+							errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + desStmt.name +" in object '" + designObj.name + "' has no match in modelObj");
+						}
+					}
+				}
+			}
 		}
 	}
 	
