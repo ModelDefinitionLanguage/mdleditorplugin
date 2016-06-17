@@ -402,6 +402,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val declDoseVar = desParamsBlk.createEqnDefn("Admin1Dose") 
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_INFUSION_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::RATE_ATT_NAME, createRealLiteral(2.0)),
 									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
@@ -429,6 +430,11 @@ class TrialDesignDesignObjectPrinterTest {
 							</ct:Vector>
 						</ct:Assign>
 					</DosingTimes>
+					<Rate>
+						<ct:Assign>
+							<ct:Real>2.0</ct:Real>
+						</ct:Assign>
+					</Rate>
 				</Infusion>
 			</Administration>
 		'''
@@ -450,6 +456,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_INFUSION_VALUE),
 									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::RATE_ATT_NAME, createRealLiteral(3.0)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, 
 										createVectorLiteral(
@@ -482,6 +489,11 @@ class TrialDesignDesignObjectPrinterTest {
 							</ct:Vector>
 						</ct:Assign>
 					</DosingTimes>
+					<Rate>
+						<ct:Assign>
+							<ct:Real>3.0</ct:Real>
+						</ct:Assign>
+					</Rate>
 				</Infusion>
 			</Administration>
 		'''
@@ -506,6 +518,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_INFUSION_VALUE),
 									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::DURATION_ATT_NAME, createRealLiteral(3.0)),
 									createAssignPair(TrialDesignDesignObjectPrinter::SCALE_ATT_NAME, wtCovar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
 							)
@@ -535,6 +548,11 @@ class TrialDesignDesignObjectPrinterTest {
 							</ct:Vector>
 						</ct:Assign>
 					</DosingTimes>
+					<Duration>
+						<ct:Assign>
+							<ct:Real>3.0</ct:Real>
+						</ct:Assign>
+					</Duration>
 				</Infusion>
 			</Administration>
 		'''
@@ -560,6 +578,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_INFUSION_VALUE),
 									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::DURATION_ATT_NAME, createRealLiteral(3.0)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, 
 										createVectorLiteral(
@@ -592,6 +611,11 @@ class TrialDesignDesignObjectPrinterTest {
 							</ct:Vector>
 						</ct:Assign>
 					</DosingTimes>
+					<Duration>
+						<ct:Assign>
+							<ct:Real>3.0</ct:Real>
+						</ct:Assign>
+					</Duration>
 				</Infusion>
 			</Administration>
 		'''

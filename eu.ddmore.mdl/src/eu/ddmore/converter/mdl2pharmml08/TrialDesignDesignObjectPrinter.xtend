@@ -267,9 +267,9 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 				</Rate>
 			«ENDIF»
 			«IF hasAttribute(DURATION_ATT_NAME)»
-				<Rate>
+				<Duration>
 					«getAttributeExpression(DURATION_ATT_NAME).expressionAsAssignment»
-				</Rate>
+				</Duration>
 			«ENDIF»
 		</Infusion>
 		'''
