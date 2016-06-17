@@ -64,7 +64,7 @@ class PriorParameterWriterTest {
 		val parmStmt = paramBlk.createEqnDefn('p1')
 		
 		
-		this.testInstance = new PriorParameterWriter(null, priorObj)
+		this.testInstance = new PriorParameterWriter(null, priorObj, [null])
 		val actual = testInstance.writeParameter(parmStmt)
 		val expected = '''
 			<PopulationParameter symbId="p1">
@@ -104,7 +104,7 @@ class PriorParameterWriterTest {
 		val parmStmt = paramBlk.createEqnDefn('p1')
 		
 		
-		this.testInstance = new PriorParameterWriter(null, priorObj)
+		this.testInstance = new PriorParameterWriter(null, priorObj, [null])
 		val actual = testInstance.writeParameter(parmStmt)
 		val expected = '''
 			<PopulationParameter symbId="p1">
@@ -129,7 +129,7 @@ class PriorParameterWriterTest {
 		val parmStmt = paramBlk.createEqnDefn('p1')
 		
 		
-		this.testInstance = new PriorParameterWriter(null, priorObj)
+		this.testInstance = new PriorParameterWriter(null, priorObj, [null])
 		val actual = testInstance.writeParameter(parmStmt)
 		val expected = '''
 			<PopulationParameter symbId="p1">
@@ -154,7 +154,7 @@ class PriorParameterWriterTest {
 		val parmStmt = paramBlk.createEqnDefn('p1', createRealLiteral(22.0))
 		
 		
-		this.testInstance = new PriorParameterWriter(null, priorObj)
+		this.testInstance = new PriorParameterWriter(null, priorObj, [null])
 		val actual = testInstance.writeParameter(parmStmt)
 		val expected = '''
 			<PopulationParameter symbId="p1">
@@ -182,7 +182,7 @@ class PriorParameterWriterTest {
 		val parmStmt = paramBlk.createEqnDefn('p1', createRealLiteral(22.0))
 		
 		
-		this.testInstance = new PriorParameterWriter(null, priorObj)
+		this.testInstance = new PriorParameterWriter(null, priorObj, [null])
 		val actual = testInstance.writeParameter(parmStmt)
 		val expected = '''
 			<PopulationParameter symbId="p1"/>
@@ -200,7 +200,7 @@ class PriorParameterWriterTest {
 		val varLvlBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::VAR_LVL_BLK_NAME))
 		varLvlBlk.createListDefn("bsv", createEnumPair('type', 'parameter'), createAssignPair('level', createIntLiteral(1)))
 		
-		this.testInstance = new PriorParameterWriter(mdlObj, priorObj)
+		this.testInstance = new PriorParameterWriter(mdlObj, priorObj, [null])
 		val actual = testInstance.writeVariabilityModel
 		val expected = '''
 			<VariabilityModel blkId="vm_mdl" type="parameterVariability">

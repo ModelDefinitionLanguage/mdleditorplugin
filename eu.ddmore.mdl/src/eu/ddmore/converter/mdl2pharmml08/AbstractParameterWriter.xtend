@@ -54,9 +54,11 @@ abstract class AbstractParameterWriter {
 	
 	
 	var MclObject mObj
+	val () => SymbolDefinition findMatchingIdLevelInBlockLambda
 	
-	new(MclObject mdlObj){
+	new(MclObject mdlObj, () => SymbolDefinition findMatchingIdLevelInBlockLambda){
 		mObj = mdlObj
+		this.findMatchingIdLevelInBlockLambda = findMatchingIdLevelInBlockLambda
 	}
 
 	abstract def String writeSimpleParameter(SymbolDefinition stmt)
@@ -97,6 +99,13 @@ abstract class AbstractParameterWriter {
 	
 	abstract def String getTopLevelInsertion()
 	
+	
+	def private boolean isReferenceLevel(String levelName){
+		val sd = findMatchingIdLevelInBlockLambda.apply()
+		sd != null && sd.name == levelName
+	}
+	
+	
 	def private writeVariabilityModel(Map<String, Integer> vars, String blkId, String varType){
 		var model = "";
 		if (vars.size() > 0){
@@ -108,13 +117,13 @@ abstract class AbstractParameterWriter {
 			for (s: sorted_map.entrySet){
 				levels = levels +	'''
 					«IF prev.length > 0»
-						<Level referenceLevel="false" symbId="«s.key»">
+						<Level referenceLevel="«isReferenceLevel(s.key)»" symbId="«s.key»">
 							<ParentLevel>
 								<ct:SymbRef symbIdRef="«prev»"/>
 							</ParentLevel>
 						</Level>
 					«ELSE»
-						<Level referenceLevel="false" symbId="«s.key»"/>
+						<Level referenceLevel="«isReferenceLevel(s.key)»" symbId="«s.key»"/>
 					«ENDIF»
 				'''
 				prev = s.key
