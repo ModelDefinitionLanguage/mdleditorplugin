@@ -192,4 +192,28 @@ R_mat =       [[ MU_R_CL, MU_R_V_CL;
 		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
 		Assert::assertEquals("[[MU_R_CL,MU_R_V_CL];[MU_R_V_CL,MU_R_V]]", eqn.expression.convertToString)
 	}
+	
+	@Test
+	def void testConverter9(){
+		val mcl =  '''
+warfarin_PK_SEX_design = designObj{
+  DECLARED_VARIABLES{
+  	INPUT_KA :: dosingTarget
+  	INPUT_CENTRAL :: dosingTarget
+  	Y :: continuousObs
+  	SEX withCategories{female, male}
+  	WT
+  }
+
+  POPULATION{
+  	default : { type is template, covariate=[{ catCov=SEX, discreteRv ~ Bernoulli1(probability = 0.5) },
+  						{ cov = WT, rv ~ Normal1(mean=piecewise{{ 70 when SEX==SEX.male; otherwise 60 }}, stdev=10) }] }
+	   			  	    }
+	   			  	    
+	   			  	    }
+	   			  	    }
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as ListDefinition
+		Assert::assertEquals("[{catCov=SEX, discreteRv=Bernoulli1(probability=0.5)},{cov=WT, rv=Normal1(mean=piecewise{{70 when SEX==SEX.male ; otherwise 60}}, stdev=10)}]", (eqn.firstAttributeList.attributes.last as ValuePair).expression.convertToString)
+	}
 }
