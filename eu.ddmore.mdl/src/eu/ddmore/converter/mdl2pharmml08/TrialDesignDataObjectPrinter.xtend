@@ -21,12 +21,15 @@ import java.util.HashSet
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
+import eu.ddmore.mdl.utils.DomainObjectModelUtils
+import eu.ddmore.mdl.provider.BlockDefinitionTable
 
 class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension MogDefinitionProvider mdp = new MogDefinitionProvider
+	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 
 	private var mappedColumns = new HashSet<String>
 	
@@ -57,11 +60,20 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 			if (s != null){
 				if(s.firstAttributeList.getAttributeEnumValue('inputFormat') == 'nonmemFormat') {
 					var content = print_ds_NONMEM_DataSet;
-					res = res + writeExternalDataSet(content, "NONMEM", BLK_DS_NONMEM_DATASET);
+					res = res + writeExternalDataSet(content, if(modelContainsAdministrationMacros) "Monolix" else "NONMEM", BLK_DS_NONMEM_DATASET);
 				}
 			}
 		}
 		return res;
+	}
+	
+	def modelContainsAdministrationMacros(){
+		mObj.mdlCompartmentStatements.exists[stmt|
+			if(stmt instanceof ListDefinition){
+				stmt.isAdministrationMacro
+			}
+			else false
+		]
 	}
 
 	def private writeExternalDataSet(String content, String toolName, String oid) '''
@@ -121,13 +133,9 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 					}
 				}
 				case(ListDefinitionTable::AMT_USE_VALUE):{
-//					Potential bug here. This is meant to ensure that no mapping
-//					is generated if no variables match. @TODO: fix this properly.
-//					if(mObj.findMdlSymbolDefn(column.name) != null){
-						res = res + column.print_ds_AmtMapping
-						// record that mapping to model found
-						saveMappedColumn(column.name)
-//					}
+					res = res + column.print_ds_AmtMapping
+					// record that mapping to model found
+					saveMappedColumn(column.name)
 				}
 				case(ListDefinitionTable::OBS_USE_VALUE):{
 					res = res + column.print_ds_DvMapping
@@ -202,21 +210,23 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 				    <ColumnRef xmlns="«xmlns_ds»" columnIdRef="«column.name»"/>
 					<math:Piecewise>
 						«FOR p : dataDefine.attList»
-							<math:Piece>
-								«mObj.findMdlSymbolDefn(p.mappedSymbol.ref.name).symbolReference»
-							   	<math:Condition>
-							   		<math:LogicBinop op="and">
-							   			<math:LogicBinop op="eq">
-											<ds:ColumnRef columnIdRef="«p.srcColumn.ref.name»"/>
-								   			«p.leftOperand.pharmMLExpr»
+							«IF !mObj.isCompartmentInput(mObj.findMdlSymbolDefn(p.mappedSymbol.ref.name))»
+								<math:Piece>
+									«mObj.findMdlSymbolDefn(p.mappedSymbol.ref.name).symbolReference»
+								   	<math:Condition>
+								   		<math:LogicBinop op="and">
+								   			<math:LogicBinop op="eq">
+												<ds:ColumnRef columnIdRef="«p.srcColumn.ref.name»"/>
+									   			«p.leftOperand.pharmMLExpr»
+											</math:LogicBinop>
+								   			<math:LogicBinop op="gt">
+												<ds:ColumnRef columnIdRef="«column.name»"/>
+									   			<ct:Int>0</ct:Int>
+											</math:LogicBinop>
 										</math:LogicBinop>
-							   			<math:LogicBinop op="gt">
-											<ds:ColumnRef columnIdRef="«column.name»"/>
-								   			<ct:Int>0</ct:Int>
-										</math:LogicBinop>
-									</math:LogicBinop>
-							   	</math:Condition>
-							</math:Piece>
+								   	</math:Condition>
+								</math:Piece>
+							«ENDIF»
 						«ENDFOR» 
 					</math:Piecewise>
 				</ColumnMapping>
@@ -225,10 +235,11 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		}
 	}
 	
-	def hasCompartmentDosing(MappingExpression me){
+	def private hasOdeDosing(MappingExpression me){
 		me.attList.exists[
 			val mdlSymb = mObj.findMdlSymbolDefn(mappedSymbol.ref.name)
-			mdlSymb instanceof ListDefinition && (mdlSymb as ListDefinition).isAdministrationMacro
+			val owningBlkName = mdlSymb.owningBlock?.blkId.name
+			owningBlkName == BlockDefinitionTable::MDL_PRED_BLK_NAME || owningBlkName == BlockDefinitionTable::MDL_DEQ_BLK 
 		]
 	}
 	
@@ -247,7 +258,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 				}
 			}
 		}
-		else if(!hasCompartmentDosing(define as MappingExpression)){
+		else if(hasOdeDosing((define as MappingExpression))){
 			writeMultiDoseMapping(amtColumn, define)
 		}
 	}

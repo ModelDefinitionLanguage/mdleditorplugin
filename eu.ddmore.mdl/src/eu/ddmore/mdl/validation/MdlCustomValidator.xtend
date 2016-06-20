@@ -7,21 +7,26 @@ import eu.ddmore.mdl.mdl.CategoryValueDefinition
 import eu.ddmore.mdl.mdl.EnumPair
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
+import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.MdlPackage
+import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.RelationalExpression
 import eu.ddmore.mdl.mdl.Statement
 import eu.ddmore.mdl.mdl.SubListExpression
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.TransformedDefinition
 import eu.ddmore.mdl.mdl.ValuePair
+import eu.ddmore.mdl.mdl.util.MdlSwitch
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.ListDefinitionTable
+import eu.ddmore.mdl.type.TypeInfoClass
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.ConstantEvaluation
 import eu.ddmore.mdl.utils.CycleDetectionUtils
+import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.MdlLibPackage
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
@@ -29,12 +34,6 @@ import java.util.Collections
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import eu.ddmore.mdl.type.TypeInfoClass
-import eu.ddmore.mdl.utils.ExpressionUtils
-import eu.ddmore.mdl.mdl.RandomVariableDefinition
-import eu.ddmore.mdl.mdl.util.MdlSwitch
-import eu.ddmore.mdl.mdl.MclObject
-import eu.ddmore.mdl.provider.MogDefinitionProvider
 
 class MdlCustomValidator extends AbstractMdlValidator {
 

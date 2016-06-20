@@ -14,7 +14,7 @@
 warfarin_PK_IVPO_dat = dataObj {
 	DECLARED_VARIABLES{
 		INPUT_KA :: dosingTarget
-		INPUT_CENTRAL :: dosingTarget
+		CENTRAL :: dosingTarget
 		Y :: observation
 	}
 
@@ -22,7 +22,7 @@ warfarin_PK_IVPO_dat = dataObj {
       ID: 	{ use is id }
       TIME: { use is idv }
       WT: 	{ use is covariate }
-      AMT: {use is amt, define= {1 in CMT as INPUT_KA, 2 in CMT as INPUT_CENTRAL} }
+      AMT: {use is amt, define= {1 in CMT as INPUT_KA, 2 in CMT as CENTRAL} }
       RATE: { use is rate }
       CMT: 	{ use is cmt }
       DV: 	{ use is dv, variable=Y}
@@ -115,7 +115,6 @@ warfarin_PK_IVPO_mdl = mdlObj {
 		## However this model correctly handles multiple dosing.
 		COMPARTMENT{
 			INPUT_KA      : {type is depot, to=CENTRAL, ka=KA, tlag=TLAG, finput=FORAL}
-			INPUT_CENTRAL : {type is direct, to = CENTRAL}
 		}
 		DEQ{
 			CENTRAL : { deriv =( - CL * CENTRAL / V), init = 0, x0 = 0 } 
