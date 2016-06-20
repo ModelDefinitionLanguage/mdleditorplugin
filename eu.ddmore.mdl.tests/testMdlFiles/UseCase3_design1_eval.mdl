@@ -1,7 +1,6 @@
 warfarin_PKPD_turnover_design = designObj{
   DECLARED_VARIABLES{
   	INPUT_KA :: dosingTarget
-  	CENTRAL :: dosingTarget
   	CP_obs :: observation
   	PCA_obs :: observation
   	ID::varLevel

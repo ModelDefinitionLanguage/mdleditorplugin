@@ -635,7 +635,7 @@ foo = mdlObj {
 	def void testValidRandomAttributes(){
 		val mcl = '''
 			des = designObj{
-				DECLARED_VARIABLES{ dose::dosingTarget Y::observation W }
+				DECLARED_VARIABLES{ dose::dosingTarget W }
 				
 				INTERVENTION{
 					treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}

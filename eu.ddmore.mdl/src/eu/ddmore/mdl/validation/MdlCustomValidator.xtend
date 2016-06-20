@@ -34,6 +34,7 @@ import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.util.MdlSwitch
 import eu.ddmore.mdl.mdl.MclObject
+import eu.ddmore.mdl.provider.MogDefinitionProvider
 
 class MdlCustomValidator extends AbstractMdlValidator {
 
@@ -272,37 +273,6 @@ class MdlCustomValidator extends AbstractMdlValidator {
 								MdlValidator::INVALID_CYCLE, name)], [!it.isDerivativeDefinition])
 	}
 	
-//	@Check
-//	def validateReferenceNotCircular(SymbolDefinition it){
-//		if(!isDerivativeDefinition){
-//			val startVar = name
-//			val stack = new LinkedList<SymbolDefinition>
-//			val visited = new HashSet<String>
-//			it.getSymbolReferences.forEach[stack.push(it)]
-//			var cycle = false
-//			while(!stack.isEmpty && !cycle){
-//				val currRef = stack.pop
-//				val alreadyVisited = !visited.add(currRef.name)
-//				if(!alreadyVisited && !currRef.isDerivativeDefinition){
-//					if(startVar == currRef.name){
-//						// cycle detected!
-//						cycle = true
-//						error("Symbol '" + name + "' contains an expression that refers to itself.",
-//								MdlLibPackage::eINSTANCE.symbolDefinition_Name,
-//								MdlValidator::INVALID_CYCLE, name)
-//					}
-//					else{
-//						val newRefs = currRef.getSymbolReferences
-//						// skip derivatives from cycle detection
-//						newRefs.forEach[
-//							stack.push(it)
-//						]
-//					}
-//				}
-//			}
-//		}
-//	}
-	
 	
 	def findVarLevelDefnsOfType(BlockStatement blk, String type){
 		blk.nonBlockStatements.filter[l|
@@ -374,6 +344,33 @@ class MdlCustomValidator extends AbstractMdlValidator {
 			}
 			
 		}
+	}
+	
+	
+	@Check
+	def validateDeclaredVariablesUsed(EquationDefinition it){
+		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
+		if(owningBlock.blkId.name == BlockDefinitionTable::DECLARED_VARS_BLK){
+			// check design obj
+//			val owningObj = EcoreUtil2.getContainerOfType(eContainer, MclObject)
+//			if(owningObj.name == MdlValidator::DESIGNOBJ){
+				val visitor = new MdlSwitch<SymbolReference>(){
+					override caseSymbolReference(SymbolReference sr){
+						if(sr.ref.name == name) sr else null
+					}
+				}
+				val iter = EcoreUtil2.getAllContents(owningBlock.eContainer, true)
+				var SymbolReference sr = null
+				while(iter.hasNext && sr == null){
+					sr = visitor.doSwitch(iter.next)
+				}
+				if(sr == null){
+				 	error("Variability Level '" + name + "' must be used within the object.",
+				 			MdlLibPackage::eINSTANCE.symbolDefinition_Name, MdlValidator::UNUSED_VARIABLE, name)
+				}
+//			}
+		}
+		
 	}
 	
 //	static val ReservedWord = #{ 'ordered', 'withOrderedCategories' }

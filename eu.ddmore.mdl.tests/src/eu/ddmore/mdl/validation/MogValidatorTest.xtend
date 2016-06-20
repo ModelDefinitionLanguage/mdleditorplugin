@@ -80,7 +80,7 @@ class MogValidatorTest {
 	def void testValidCovariateMatchingWithMatchingDayaVar(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{GUT Y}
+			DECLARED_VARIABLES{}
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
@@ -1667,7 +1667,7 @@ class MogValidatorTest {
 	def void testValidDosingNoMdlMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { Y }
+			DECLARED_VARIABLES { }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				foo1 : { use is ignore }

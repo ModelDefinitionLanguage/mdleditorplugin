@@ -1827,8 +1827,6 @@ class MclTypeValidationTest {
 		val mcl = '''
 d1g=designObj{
 	DECLARED_VARIABLES{
-		Conc
-		Effect
 		Cmt::dosingTarget
 		ID::varLevel
 	}
@@ -2115,7 +2113,7 @@ warfarin_PK_v2_dat = dataObj{
 	def void testValidSimpleDataWhenExpression(){
 		val mcl = '''
 warfarin_PK_v2_dat = dataObj{
-	DECLARED_VARIABLES{ GUT}
+	DECLARED_VARIABLES{ }
 	
 	DATA_INPUT_VARIABLES {
 		SEX : { use is catCov withCategories {male when 0, female when 1} }
@@ -2156,7 +2154,7 @@ warfarin_PK_v2_dat = dataObj{
 	def void testValidDataMappingWhenExpression(){
 		val mcl = '''
 warfarin_PK_v2_dat = dataObj{
-	DECLARED_VARIABLES{ Y::observation; GUT; PCA withCategories {dead, alive}; OTHER withCategories {dead, alive} }
+	DECLARED_VARIABLES{ Y::observation; PCA withCategories {dead, alive}; OTHER withCategories {dead, alive} }
 	
 	DATA_INPUT_VARIABLES {
 		DVID : { use  is dvid }
@@ -2207,8 +2205,6 @@ warfarin_PK_v2_dat = dataObj{
 		val mcl = '''
 		foo = designObj{
 			DECLARED_VARIABLES{
-				Conc
-				Effect
 				Cmt::dosingTarget
 				ID::varLevel
 			}
@@ -2405,7 +2401,6 @@ warfarin_PK_v2_dat = dataObj{
 d1g=designObj{
 	DECLARED_VARIABLES{
 		Conc::observation
-		Effect
 		Cmt::dosingTarget
 	}
 	INTERVENTION{
@@ -2432,7 +2427,6 @@ d1g=designObj{
 d1g=designObj{
 	DECLARED_VARIABLES{
 		Conc::observation
-		Effect
 		Cmt::dosingTarget
 	}
 	INTERVENTION{
@@ -2477,7 +2471,6 @@ d1g=designObj{
 d1g=designObj{
 	DECLARED_VARIABLES{
 		Conc::observation
-		Effect
 		Cmt::dosingTarget
 	}
 	INTERVENTION{
