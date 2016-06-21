@@ -137,7 +137,7 @@ warfarin_PK_BLQ_task = taskObj {
 		set algo is saem
 		
 #		Y : { blqMethod is M3} ## Assumes there is a non-missing value in DV when BLQ==1
-		Y : { blqMethod is m3, llog = 0.05 } 
+		Y : { blqMethod is m3, lloq = 0.05 } 
 								## Can be implemented with DV nonmissing
 								## lloq becomes DEFAULT if DV is missing when BLQ==1
 								## For NONMEM: If DV is not missing in data when BLQ =1 then set LLOQ = DV
