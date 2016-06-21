@@ -210,12 +210,14 @@ class Mcl2PharmMLConverterTest {
 		validateConversion("UseCase14")
 	}
 
-	@Ignore("Not supported at present")
+//	@Ignore("Not supported at present")
+	@Test
 	def void testUseCase14_1(){
 		validateConversion("UseCase14_1")
 	}
 
-	@Ignore("Not supported at present")
+//	@Ignore("Not supported at present")
+	@Test
 	def void testUseCase14_2(){
 		validateConversion("UseCase14_2")
 	}
@@ -250,7 +252,7 @@ class Mcl2PharmMLConverterTest {
 		validateConversion("UseCase21")
 	}
 
-	@Ignore
+	@Test
 	def void testUseCase23(){
 		validateConversion("UseCase23")
 	}

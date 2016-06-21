@@ -48,9 +48,11 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 						<Error!/>
 					«ENDIF»
 				«ENDFOR»
-				<math:Else>
-					«writeInivParam(it, attList.elseClause.value, true)»
-				</math:Else>
+				«IF attList.elseClause != null»
+					<math:Else>
+						«writeInivParam(it, attList.elseClause.value, true)»
+					</math:Else>
+				«ENDIF»
 			</ConditionalStatement>
 			'''
 		}
@@ -81,9 +83,11 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 					«ENDIF»
 						«writeInivParam(it, iec.value, true)»
 				«ENDFOR»
-				<math:Else>
-					«writeInivParam(it, attList.otherwise, true)»
-				</math:Else>
+				«IF attList.otherwise != null»
+					<math:Else>
+						«writeInivParam(it, attList.otherwise, true)»
+					</math:Else>
+				«ENDIF»
 			</ConditionalStatement>
 			'''
 		}

@@ -7,6 +7,9 @@ import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.EnumerationDefinition
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
+import eu.ddmore.mdl.mdl.ListElifClause
+import eu.ddmore.mdl.mdl.ListIfClause
+import eu.ddmore.mdl.mdl.ListIfExpression
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.util.MdlSwitch
@@ -36,6 +39,8 @@ class ListObservationsWriter {
 	extension PharmMLConverterUtils pcu = new PharmMLConverterUtils
 	extension FunctionDefinitionPrinter fdp = new FunctionDefinitionPrinter
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
+
+//	var idx = 1
 	
 	
 	def writeObservationModel(BlockStatement obsBlock){
@@ -45,17 +50,23 @@ class ListObservationsWriter {
 			«IF !obsStmts.isEmpty»
 				«FOR stmt : obsStmts»
 					«IF stmt instanceof ListDefinition || stmt instanceof AnonymousListStatement»
-						<ObservationModel blkId="om«idx»">
-							«switch(stmt){
-								ListDefinition:
-									writeListObservations(stmt, idx += 1)
-								AnonymousListStatement:
-									writeListObservations(stmt, idx += 1)
-							}»
-						</ObservationModel>
+						«switch(stmt){
+							ListDefinition:
+								writeListObservations(stmt, idx++)
+							AnonymousListStatement:
+								writeListObservations(stmt, idx++)
+						}»
 					«ENDIF»
 				«ENDFOR»
 			«ENDIF»
+		'''
+	}
+	
+	def private writeObservationModelBoilerPlate(String blkId, String modelBody){
+		'''
+		<ObservationModel blkId="«blkId»">
+			«modelBody»
+		</ObservationModel>
 		'''
 	}
 	
@@ -124,7 +135,8 @@ class ListObservationsWriter {
 	}
 
 
-	def writeUserDefinedObservation(AttributeList attList, String name, int idx){
+	def writeUserDefinedObservation(AttributeList attList, String name, String blkId){
+		writeObservationModelBoilerPlate(blkId,
 		'''
 		<ContinuousData>
 			«writeDependentVariables(attList)»
@@ -135,10 +147,12 @@ class ListObservationsWriter {
 			</General>
 		</ContinuousData>
 		'''
+		)
 	}
 
-	def writeContinuousObservation(AttributeList attList, String name, int idx){
+	def writeContinuousObservation(AttributeList attList, String name, String blkId){
 		val predictionExpr = attList.getAttributeExpression('prediction')
+		writeObservationModelBoilerPlate(blkId,
 		'''
 		<ContinuousData>
 			«writeDependentVariables(attList)»
@@ -171,40 +185,114 @@ class ListObservationsWriter {
 			«ENDIF»
 		</ContinuousData>
 		'''
+		)
 	} 
 	
 	def writeListObservations(AnonymousListStatement it, int idx){
+		val blkId = "om" + idx
 		val type = list.getAttributeEnumValue('type')
 			switch(type){
 				case ListDefinitionTable::COUNT_OBS_VALUE:
-					list.writeCountObservation
+					list.writeCountObservation(blkId)
 				case ListDefinitionTable::DISCRETE_OBS_VALUE:
-					list.writeDiscreteObservation
+					list.writeDiscreteObservation(blkId)
 				case ListDefinitionTable::CATEGORICAL_OBS_VALUE:
-					list.writeDiscreteObservation
+					list.writeDiscreteObservation(blkId)
 				case ListDefinitionTable::CONTINUOUS_OBS_VALUE:
-					list.writeContinuousObWithRv
+					list.writeContinuousObWithRv(blkId)
 				
 				default:
 					"<Error!>"
 			}
 	}
 	
+	def private getSubmodelBlkId(String blkId, int idx){
+		blkId + "_" + idx
+	}
+	
 	def writeListObservations(ListDefinition s, int idx){
-		if(s.attributeLists.size == 1){
-			val type = s.attributeLists.head.getAttributeEnumValue('type')
-				switch(type){
-					case ListDefinitionTable::TTE_OBS_VALUE:
-						s.print_mdef_TimeToEventObservations
-					case ListDefinitionTable::USER_DEFINED_OBS_VALUE:
-						writeUserDefinedObservation(s.attributeLists.head, s.name, idx)
-					default:
-						writeContinuousObservation(s.attributeLists.head, s.name, idx)
-				}
+		val attList = s.list
+		val blkId = "om" + idx
+		if(attList instanceof AttributeList){
+			s.writeObs(attList, blkId)
+		}
+		else if(attList instanceof ListIfExpression){
+			var i = 1
+			'''
+				«FOR iec : attList.ifelseClause»
+					«IF iec instanceof ListIfClause»
+						«writeObs(s, iec.value, getSubmodelBlkId(blkId, i++))»
+					«ELSEIF iec instanceof ListElifClause»
+						«writeObs(s, iec.value, getSubmodelBlkId(blkId, i++))»
+					«ELSE»
+						<Error!/>
+					«ENDIF»
+				«ENDFOR»
+				«IF attList.elseClause != null»
+					«writeObs(s, attList.elseClause.value, getSubmodelBlkId(blkId, i++))»
+				«ENDIF»
+				«writeConditionalObs(s, attList, blkId)»
+			'''
 		}
 		else{
 			'''<Error!>'''
 		}
+	}
+	
+	def private writeConditionalObs(SymbolDefinition s, ListIfExpression ifExpr, String blkId){
+		var idx = 1
+		writeObservationModelBoilerPlate(blkId,
+			'''
+				<ContinuousData>
+					<General symbId="«s.name»">
+						<ct:Assign>
+							<math:Piecewise>
+								«FOR iec : ifExpr.ifelseClause»
+									«IF iec instanceof ListIfClause»
+										<math:Piece>
+											<ct:SymbRef blkIdRef="«getSubmodelBlkId(blkId, idx++)»" symbIdRef="«s.name»"/>
+											<math:Condition>
+												«iec.cond.pharmMLExpr»
+											</math:Condition>
+										</math:Piece>
+									«ELSEIF iec instanceof ListElifClause»
+										<math:Piece>
+											<ct:SymbRef blkIdRef="«getSubmodelBlkId(blkId, idx++)»" symbIdRef="«s.name»"/>
+											<math:Condition>
+												«iec.cond.pharmMLExpr»
+											</math:Condition>
+										</math:Piece>
+									«ELSE»
+										<Error!/>
+									«ENDIF»
+								«ENDFOR»
+								«IF ifExpr.elseClause != null»
+									<math:Piece>
+										<ct:SymbRef blkIdRef="«getSubmodelBlkId(blkId, idx++)»" symbIdRef="«s.name»"/>
+										<math:Condition>
+											<math:Otherwise/>
+										</math:Condition>
+									</math:Piece>
+								«ENDIF»
+							</math:Piecewise>
+						</ct:Assign>
+					</General>
+				</ContinuousData>
+			'''
+		)
+	}
+	
+	
+	def private writeObs(SymbolDefinition s, AttributeList attList, String blkId){
+			val type = attList.getAttributeEnumValue('type')
+			switch(type){
+				case ListDefinitionTable::TTE_OBS_VALUE:
+					print_mdef_TimeToEventObservations(s, attList, blkId)
+				case ListDefinitionTable::USER_DEFINED_OBS_VALUE:
+					writeUserDefinedObservation(attList, s.name, blkId)
+				default:
+					writeContinuousObservation(attList, s.name, blkId)
+			}
 	}
 	
 	def private isStandardErrorDefinition(AttributeList attList){
@@ -221,11 +309,12 @@ class ListObservationsWriter {
 		 attList.getAttributeEnumValue('trans') != null
 	}
 	
-	private def writeCountObservation(AttributeList it) {
+	private def writeCountObservation(AttributeList it, String blkId) {
 		val rvSymbolRef = getAttributeExpression('variable')
 		if(rvSymbolRef instanceof SymbolReference){
 			val rvDefn = rvSymbolRef.ref
 			if(rvDefn instanceof RandomVariableDefinition){
+				writeObservationModelBoilerPlate(blkId,
 				'''
 					<Discrete>
 						<CountData>
@@ -237,6 +326,7 @@ class ListObservationsWriter {
 						</CountData>
 					</Discrete>
 				'''
+				)
 			}
 			else ERROR_MSG
 		}
@@ -244,13 +334,14 @@ class ListObservationsWriter {
 	}
 	
 	
-	private def writeDiscreteObservation(AttributeList it) {
+	private def writeDiscreteObservation(AttributeList it, String blkId) {
 		val rvSymbolRef = getAttributeExpression('variable')
 		if(rvSymbolRef instanceof SymbolReference){
 			val rvDefn = rvSymbolRef.ref
 			if(rvDefn instanceof EnumerationDefinition){
 				val categories = rvDefn.catDefn.categories
 				val distn = rvDefn.distn
+				writeObservationModelBoilerPlate(blkId,
 				'''
 					<Discrete>
 						<CategoricalData ordered="no">
@@ -271,21 +362,23 @@ class ListObservationsWriter {
 						</CategoricalData>
 					</Discrete>
 				'''
+				)
 			}
 			else ERROR_MSG
 		}
 		else ERROR_MSG
 	}
 	
-	private def print_mdef_TimeToEventObservations(ListDefinition s) {
+	private def print_mdef_TimeToEventObservations(SymbolDefinition s, AttributeList attList, String blkId) {
 		var name = s.name
-		val haz = s.firstAttributeList.getAttributeExpression('hazard');
-		val event = s.firstAttributeList.getAttributeEnumValue('event');
-		val maxEvent = s.firstAttributeList.getAttributeExpression('maxEvent');
+		val haz = attList.getAttributeExpression('hazard');
+		val event = attList.getAttributeEnumValue('event');
+		val maxEvent = attList.getAttributeExpression('maxEvent');
+		writeObservationModelBoilerPlate(blkId,
 		'''
 			<Discrete>
 				<TimeToEventData>
-					«writeDependentVariables(s.list)»
+					«writeDependentVariables(attList)»
 					<EventVariable symbId="«name»"/>
 					<HazardFunction symbId="«haz.convertToString»">
 						<ct:Assign>
@@ -303,6 +396,7 @@ class ListObservationsWriter {
 				</TimeToEventData>
 			</Discrete>
 		'''
+		)
 	}
 	
 	
@@ -315,23 +409,25 @@ class ListObservationsWriter {
 	}
 	
 	
-	def private writeContinuousObWithRv(AttributeList it){
+	def private writeContinuousObWithRv(AttributeList it, String blkId){
 		val rvSymbolRef = getAttributeExpression('variable')
 		if(rvSymbolRef instanceof SymbolReference){
 			val rvDefn = rvSymbolRef.ref
 			if(rvDefn instanceof RandomVariableDefinition){
 				val blk = rvDefn.parentBlock
-				'''
-				<ContinuousData>
-					«writeDependentVariables(it)»
-					<General symbId="«rvDefn.name»">
-						<ct:VariabilityReference>
-							«blk.varLevelFromRvBlock.symbolReference»
-						</ct:VariabilityReference>
-						«rvDefn.distn.writeDistribution»
-					</General>
-				</ContinuousData>
-				'''
+				writeObservationModelBoilerPlate(blkId,
+					'''
+					<ContinuousData>
+						«writeDependentVariables(it)»
+						<General symbId="«rvDefn.name»">
+							<ct:VariabilityReference>
+								«blk.varLevelFromRvBlock.symbolReference»
+							</ct:VariabilityReference>
+							«rvDefn.distn.writeDistribution»
+						</General>
+					</ContinuousData>
+					'''
+				)
 			}
 			else ERROR_MSG
 		}
