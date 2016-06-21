@@ -238,7 +238,7 @@ class ListIndivParamWriterTest {
 		
 		val actual = writeIndividualParameter(al)
 		val expected = '''
-			<IndividualParameter id="tst">
+			<IndividualParameter symbId="tst">
 				<Distribution>
 					<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Normal1">
 						<Parameter name="mean">

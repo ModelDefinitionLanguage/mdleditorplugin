@@ -3,35 +3,104 @@ package eu.ddmore.converter.mdl2pharmml08
 import eu.ddmore.mdl.mdl.AnonymousListStatement
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.ListDefinition
+import eu.ddmore.mdl.mdl.ListElifClause
+import eu.ddmore.mdl.mdl.ListIfClause
+import eu.ddmore.mdl.mdl.ListIfExpression
+import eu.ddmore.mdl.mdl.ListPWClause
+import eu.ddmore.mdl.mdl.ListPiecewiseExpression
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.VectorLiteral
 import eu.ddmore.mdl.provider.ListDefinitionProvider
-import eu.ddmore.mdl.utils.MdlUtils
+import eu.ddmore.mdllib.mdllib.SymbolDefinition
 
 class ListIndivParamWriter extends AbstractIndivParamWriter {
-	extension MdlUtils mu = new MdlUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension PharmMLConverterUtils pcu = new PharmMLConverterUtils
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder
 	extension DistributionPrinter dp = new DistributionPrinter
 
 	def writeIndividualParameter(ListDefinition it){
-		if(attributeLists.size == 1){
-			val attList = attributeLists.head
+		val attList = it.list
+		if(attList instanceof AttributeList){
+			writeInivParam(it, attList, false)
+		}
+		else if(attList instanceof ListIfExpression){
+			'''
+			<IndividualParameter symbId="«name»"/>
+			<ConditionalStatement>
+				«FOR iec : attList.ifelseClause»
+					«IF iec instanceof ListIfClause»
+						<math:If>
+							<math:Condition>
+								«iec.cond.pharmMLExpr»
+							</math:Condition>
+							«writeInivParam(it, iec.value, true)»
+						</math:If>
+					«ELSEIF iec instanceof ListElifClause»
+						<math:ElseIf>
+							<math:Condition>
+								«iec.cond.pharmMLExpr»
+							</math:Condition>
+							«writeInivParam(it, iec.value, true)»
+						</math:ElseIf>
+					«ELSE»
+						<Error!/>
+					«ENDIF»
+				«ENDFOR»
+				<math:Else>
+					«writeInivParam(it, attList.elseClause.value, true)»
+				</math:Else>
+			</ConditionalStatement>
+			'''
+		}
+		else if(attList instanceof ListPiecewiseExpression){
+			var cntr = 0
+			'''
+			<IndividualParameter symbId="«name»"/>
+			<ConditionalStatement>
+				«FOR iec : attList.when»
+					«IF iec instanceof ListPWClause»
+						«IF cntr++ == 0»
+							<math:If>
+								<math:Condition>
+									«iec.cond.pharmMLExpr»
+								</math:Condition>
+								«writeInivParam(it, iec.value, true)»
+							</math:If>
+						«ELSE»
+							<math:ElseIf>
+								<math:Condition>
+									«iec.cond.pharmMLExpr»
+								</math:Condition>
+								«writeInivParam(it, iec.value, true)»
+							</math:ElseIf>
+						«ENDIF»
+					«ELSE»
+						<Error!/>
+					«ENDIF»
+						«writeInivParam(it, iec.value, true)»
+				«ENDFOR»
+				<math:Else>
+					«writeInivParam(it, attList.otherwise, true)»
+				</math:Else>
+			</ConditionalStatement>
+			'''
+		}
+	}
+
+	def private writeInivParam(SymbolDefinition idvVar, AttributeList attList, boolean isRef){
 			val typeVal =  attList.getAttributeEnumValue('type')
 			switch(typeVal){
 				case('general'):
-					attList.writeGeneralIdv(name)
+					attList.writeGeneralIdv(idvVar.name, isRef)
 				case('linear'):
-					attList.writeLinearIdv(name)
-//				case('userDefined'):
-//					attList.writeUserDefinedIdv(name)
+					attList.writeLinearIdv(idvVar.name, isRef)
 				default:
 					'''<Error!>'''		
 			}
-		}
 	}
+
 
 	def writeIndividualParameter(AnonymousListStatement it){
 		if(list.getAttributeEnumValue('type') == 'rv'){
@@ -41,7 +110,7 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 				if(rvDefn instanceof RandomVariableDefinition){
 					return 
 						'''
-						<IndividualParameter id="tst">
+						<IndividualParameter symbId="tst">
 							«rvDefn.distn.writeDistribution»
 						</IndividualParameter>
 						'''
@@ -51,11 +120,11 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 		''''''
 	}
 
-	def writeLinearIdv(AttributeList it, String name){
+	def writeLinearIdv(AttributeList it, String name, boolean isRef){
 		val fixEff = getAttributeExpression('fixEff') as VectorLiteral
 		'''
 		«writeTmpRandomEffect»
-		<IndividualParameter symbId="«name»">
+		<IndividualParameter symbId«IF isRef»Ref«ENDIF»="«name»">
 			<StructuredModel>
 				«IF getAttributeExpression('trans') != null»
 					<Transformation type="«getAttributeEnumValue('trans').getPharmMLTransFunc»" />
@@ -74,12 +143,12 @@ class ListIndivParamWriter extends AbstractIndivParamWriter {
 		''' 
 	}
 	
-	def writeGeneralIdv(AttributeList it, String name){
+	def writeGeneralIdv(AttributeList it, String name, boolean isRef){
 		val transEnum = getAttributeEnumValue('trans')
 		val trans = if(transEnum != null) getPharmMLTransFunc(transEnum) else null
 		'''
 		«writeTmpRandomEffect»
-		<IndividualParameter symbId="«name»">
+		<IndividualParameter symbId«IF isRef»Ref«ENDIF»="«name»">
 			<StructuredModel>
 				«IF trans!= null»
 					<Transformation type="«trans»"/>
