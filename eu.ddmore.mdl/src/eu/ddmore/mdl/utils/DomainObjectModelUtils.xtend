@@ -19,6 +19,8 @@ import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import java.util.Collections
 import org.eclipse.xtext.EcoreUtil2
 import eu.ddmore.mdl.mdl.ListDefinition
+import java.util.List
+import java.util.ArrayList
 
 class DomainObjectModelUtils {
 	extension BlockUtils bu = new BlockUtils
@@ -126,8 +128,10 @@ class DomainObjectModelUtils {
 		}
 	}
 	
-	def getBlocksByName(MclObject mdlObj, String blkName){
-		mdlObj.blocks.filter[identifier == blkName]
+	def List<BlockStatement> getBlocksByName(MclObject mdlObj, String blkName){
+		val retVal = new ArrayList<BlockStatement>
+		mdlObj.blocks.filter[identifier == blkName].forEach[retVal.add(it)]
+		retVal
 	}
 
 	def getStatementsFromBlock(BlockStatement it){

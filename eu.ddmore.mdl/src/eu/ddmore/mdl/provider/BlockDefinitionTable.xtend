@@ -31,6 +31,7 @@ class BlockDefinitionTable {
 	public static val DES_SAMPLING_BLK = "SAMPLING"
 	public static val DES_DESIGN_PARAMS = "DESIGN_PARAMETERS"
 	public static val DES_INTERVENTION_BLK = "INTERVENTION"
+	public static val DES_POPULATION_BLK = "POPULATION"
 	public static val TARGET_SETTINGS = "TARGET_SETTINGS"
 	public static val DECLARED_VARS_BLK = "DECLARED_VARIABLES"
 	public static val DES_DESIGN_SPACE_BLK = "DESIGN_SPACES"

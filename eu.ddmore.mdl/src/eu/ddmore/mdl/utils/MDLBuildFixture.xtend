@@ -23,6 +23,10 @@ import eu.ddmore.mdllib.mdllib.TypeDefinition
 import java.util.ArrayList
 import java.util.List
 import java.util.Map
+import eu.ddmore.mdl.mdl.CategoryValueReference
+import eu.ddmore.mdl.mdl.CategoricalDefinitionExpr
+import eu.ddmore.mdl.mdl.EnumerationDefinition
+import eu.ddmore.mdl.mdl.CategoryValueDefinition
 
 class MDLBuildFixture {
 //	val public static String REAL_TYPE_NAME = "Real"
@@ -113,6 +117,14 @@ class MDLBuildFixture {
 			retVal.assignOp = '='
 		}
 		retVal.expression = exprVal
+		retVal
+	}
+	
+	def CategoryValueReference createCatValueRef(EnumerationDefinition catDefn, String valueName){
+		val retVal = MdlFactory::eINSTANCE.createCategoryValueReference
+		val catValDefn = catDefn.catDefn.categories.findFirst[name == valueName]
+		retVal.ref = catValDefn
+		
 		retVal
 	}
 	

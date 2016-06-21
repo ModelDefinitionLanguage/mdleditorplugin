@@ -19,6 +19,7 @@ import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.Expression
 import java.util.Collections
+import java.util.List
 import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
@@ -36,6 +37,7 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 //	extension LibraryUtils lib = new LibraryUtils
 	extension ExpressionUtils eu = new ExpressionUtils
 	extension MogDefinitionProvider mdp = new MogDefinitionProvider
+	extension CovariateModelWriter cmw = new CovariateModelWriter
 
 	val public static INTVN_TYPE_ATT_NAME = 'type'
 	val public static INTVN_TYPE_BOLUS_VALUE = 'bolus'
@@ -124,9 +126,7 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_SAMPLING_BLK)»
 					«blk.writeSampling»
 				«ENDFOR»
-				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::COVARIATE_BLK_NAME)»
-					«blk.writeCovariates»
-				«ENDFOR»
+				«designObj.getBlocksByName(BlockDefinitionTable::DES_POPULATION_BLK).writeCovariateBlock»
 				«FOR blk : designObj.getBlocksByName(BlockDefinitionTable::DES_DESIGN_SPACE_BLK)»
 					«blk.writeDesignSpaces»
 				«ENDFOR»
@@ -622,23 +622,43 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 			«ENDFOR»
 		</DesignSpaces>
 	'''
-		
-	def writeCovariate(EquationDefinition it)'''
-		<Covariate symbId="«name»">
-			<mdef:Continuous>
-				«expression.expressionAsAssignment»
-			</mdef:Continuous>
-		</Covariate>
-	'''
-
-	def writeCovariates(BlockStatement it)'''
+	
+	def writeCovariatesFromSublist(SubListExpression it){
+		if(hasAttribute('cov')){
+			val covRef = getAttributeExpression('cov').symbolRef
+			// expect a value for it
+			if(hasAttribute('rv')){
+				covRef?.ref.writeNonTransdNonCatCovariate(getAttributeExpression('rv'))
+			}
+			else{
+				covRef?.ref.writeNonTransdNonCatCovariate(getAttributeExpression('value'))
+			}
+		}
+//		else if(){
+//			
+//		}
+		null
+//		getSublistAttributeType()
+	}
+	
+	
+	
+	def writeCovariateBlock(List<BlockStatement> popBlks)'''
 		<Covariates>
 			<CovariateModel oid="«COV_MOD_OID»">
 				<CovariateModelRef blkIdRef="cm"/>
-				«FOR stmt : statements»
-					«IF stmt instanceof EquationDefinition»
-						«writeCovariate(stmt)»
-					«ENDIF»
+				«FOR popBlk : popBlks»
+					«FOR stmt : popBlk.statementsFromBlock»
+						«IF stmt instanceof ListDefinition»
+							«FOR sl : stmt.firstAttributeList.getAttributeExpression('covariate')?.vector ?: Collections::emptyList»
+								«IF sl instanceof SubListExpression»
+									«sl.writeCovariatesFromSublist»
+								«ELSE»
+									<Error!/>
+								«ENDIF»
+							«ENDFOR»
+						«ENDIF»
+					«ENDFOR»
 				«ENDFOR»
 			</CovariateModel>
 		</Covariates>

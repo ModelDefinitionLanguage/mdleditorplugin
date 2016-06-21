@@ -1643,47 +1643,103 @@ class TrialDesignDesignObjectPrinterTest {
 	}
 
 	@Test
-	def void testWriteCovariate(){
+	def void testWriteCategoricalCovariatesWithValues(){
 		val mdl = createRoot
 		
-		val mObj = mdl.createObject("mFoo", libDefns.getObjectDefinition("mdlObj"))
-		val covBlk = mObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
-		covBlk.createEqnDefn("W") 
+//		val mObj = mdl.createObject("mFoo", libDefns.getObjectDefinition("mdlObj"))
+//		val covBlk = mObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
+//		covBlk.createEqnDefn("W") 
 
 		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
-		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
-		val covVar1 = desParamsBlk.createEqnDefn("W", createRealLiteral(70.7)) 
+		
+		val desDeclVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val declW = desDeclVarBlk.createCategoricalDefinition('W', 'a', 'b')
+		
+		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_POPULATION_BLK))
+		val tmplt1List = desParamsBlk.createListDefn('TEMPLATE', createAssignPair('covariate',
+										createVectorLiteral(createSublist(#{
+											'catCovValue' -> declW.createCatValueRef('a')
+										})
+										)
+									))
+		val tmplt2List = desParamsBlk.createListDefn('TEMPLATE', createAssignPair('covariate',
+										createVectorLiteral(createSublist(#{
+											'catCovValue' -> declW.createCatValueRef('b')
+										})
+										)
+									))
+		
+		val studyBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
+		val arm1 = studyBlk.createListDefn("arm1", createAssignPair('population',
+																tmplt1List.createSymbolRef
+																)
+										)
+		val arm2 = studyBlk.createListDefn("arm2", createAssignPair('population',
+																tmplt2List.createSymbolRef
+																)
+										)
 
 		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj, mObj), new StandardParameterWriter(null, [null]))
-		val actual = tdow.writeCovariate(covVar1)
+		val actual = tdow.writeCovariateBlock(#[ desParamsBlk ])
 		val expected = '''
-			<Covariate symbId="W">
-				<mdef:Continuous>
-					<ct:Assign>
-						<ct:Real>70.7</ct:Real>
-					</ct:Assign>
-				</mdef:Continuous>
-			</Covariate>
+			<Covariates>
+				<CovariateModel oid="«TrialDesignDesignObjectPrinter::COV_MOD_OID»">
+					<CovariateModelRef blkIdRef="cm"/>
+					<Covariate symbId="W">
+						<mdef:Categorical>
+							<mdef:Category catId="a">
+						</mdef:Categorical>
+					</Covariate>
+				</CovariateModel>
+			</Covariates>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
 	@Test
-	def void testWriteCovariates(){
+	def void testWriteCategoricalCovariatesWithDistribution(){
 		val mdl = createRoot
 		
 		val mObj = mdl.createObject("mFoo", libDefns.getObjectDefinition("mdlObj"))
 		val covBlk = mObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
 		covBlk.createEqnDefn("W") 
-		covBlk.createEqnDefn("Y") 
 
 		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
-		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
-		desParamsBlk.createEqnDefn("W", createRealLiteral(70.7)) 
-		desParamsBlk.createEqnDefn("Y", createRealLiteral(88.7)) 
+		
+		val desDeclVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val declW = desDeclVarBlk.createEqnDefn('W')
+		
+		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_POPULATION_BLK))
+		val tmplt1List = desParamsBlk.createListDefn('TEMPLATE', createAssignPair('covariate',
+										createVectorLiteral(createSublist(#{
+											'cov' -> declW.createSymbolRef,
+											'rv' -> createNamedFunction(libDefns.getFunctionDefinition('Normal1'),
+																		createAssignPair('mean', createRealLiteral(77.0)),
+																		createAssignPair('stdev', createRealLiteral(10.0))
+																		)
+										})
+										)
+									))
+		val tmplt2List = desParamsBlk.createListDefn('TEMPLATE', createAssignPair('covariate',
+										createVectorLiteral(createSublist(#{
+											'cov' -> declW.createSymbolRef,
+											'value' -> createRealLiteral(70.0)
+										})
+										)
+									))
+		
+		val studyBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
+		val arm1 = studyBlk.createListDefn("arm1", createAssignPair('population',
+																tmplt1List.createSymbolRef
+																)
+										)
+		val arm2 = studyBlk.createListDefn("arm2", createAssignPair('population',
+																tmplt2List.createSymbolRef
+																)
+										)
 
 		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj, mObj), new StandardParameterWriter(null, [null]))
-		val actual = tdow.writeCovariates(desParamsBlk)
+		val actual = tdow.writeCovariateBlock(#[ desParamsBlk ])
 		val expected = '''
 			<Covariates>
 				<CovariateModel oid="«TrialDesignDesignObjectPrinter::COV_MOD_OID»">
@@ -1691,14 +1747,205 @@ class TrialDesignDesignObjectPrinterTest {
 					<Covariate symbId="W">
 						<mdef:Continuous>
 							<ct:Assign>
-								<ct:Real>70.7</ct:Real>
+								<math:Piecewise>
+									<math:Piece>
+										<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Normal1">
+											<Parameter name="mean">
+												<ct:Assign>
+													<ct:Real>77.0</ct:Real>
+												</ct:Assign>
+											</Parameter>
+											<Parameter name="stdev">
+												<ct:Assign>
+													<ct:Real>10.0</ct:Real>
+												</ct:Assign>
+											</Parameter>
+										</ProbOnto>
+										<math:Condition>
+											<math:LogicBinop op="eq">
+												<math:ArmRef oidRef="arm1"/>
+												<ct:True/>
+											</math:LogicBinop>
+										</math:Condition>
+									</math:Piece>
+									<math:Piece>
+										<ct:Real>70.0</ct:Real>
+										<math:Condition>
+											<math:LogicBinop op="eq">
+												<math:ArmRef oidRef="arm2"/>
+												<ct:True/>
+											</math:LogicBinop>
+										</math:Condition>
+									</math:Piece>
+								</math:Piecewise>
 							</ct:Assign>
 						</mdef:Continuous>
 					</Covariate>
-					<Covariate symbId="Y">
+				</CovariateModel>
+			</Covariates>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteContinuousCovariatesWithDistribution(){
+		val mdl = createRoot
+		
+		val mObj = mdl.createObject("mFoo", libDefns.getObjectDefinition("mdlObj"))
+		val covBlk = mObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
+		covBlk.createEqnDefn("W") 
+
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		
+		val desDeclVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val declW = desDeclVarBlk.createEqnDefn('W')
+		
+		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_POPULATION_BLK))
+		val tmplt1List = desParamsBlk.createListDefn('TEMPLATE', createAssignPair('covariate',
+										createVectorLiteral(createSublist(#{
+											'cov' -> declW.createSymbolRef,
+											'rv' -> createNamedFunction(libDefns.getFunctionDefinition('Normal1'),
+																		createAssignPair('mean', createRealLiteral(77.0)),
+																		createAssignPair('stdev', createRealLiteral(10.0))
+																		)
+										})
+										)
+									))
+		val tmplt2List = desParamsBlk.createListDefn('TEMPLATE', createAssignPair('covariate',
+										createVectorLiteral(createSublist(#{
+											'cov' -> declW.createSymbolRef,
+											'value' -> createRealLiteral(70.0)
+										})
+										)
+									))
+		
+		val studyBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
+		val arm1 = studyBlk.createListDefn("arm1", createAssignPair('population',
+																tmplt1List.createSymbolRef
+																)
+										)
+		val arm2 = studyBlk.createListDefn("arm2", createAssignPair('population',
+																tmplt2List.createSymbolRef
+																)
+										)
+
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj, mObj), new StandardParameterWriter(null, [null]))
+		val actual = tdow.writeCovariateBlock(#[ desParamsBlk ])
+		val expected = '''
+			<Covariates>
+				<CovariateModel oid="«TrialDesignDesignObjectPrinter::COV_MOD_OID»">
+					<CovariateModelRef blkIdRef="cm"/>
+					<Covariate symbId="W">
 						<mdef:Continuous>
 							<ct:Assign>
-								<ct:Real>88.7</ct:Real>
+								<math:Piecewise>
+									<math:Piece>
+										<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="Normal1">
+											<Parameter name="mean">
+												<ct:Assign>
+													<ct:Real>77.0</ct:Real>
+												</ct:Assign>
+											</Parameter>
+											<Parameter name="stdev">
+												<ct:Assign>
+													<ct:Real>10.0</ct:Real>
+												</ct:Assign>
+											</Parameter>
+										</ProbOnto>
+										<math:Condition>
+											<math:LogicBinop op="eq">
+												<math:ArmRef oidRef="arm1"/>
+												<ct:True/>
+											</math:LogicBinop>
+										</math:Condition>
+									</math:Piece>
+									<math:Piece>
+										<ct:Real>70.0</ct:Real>
+										<math:Condition>
+											<math:LogicBinop op="eq">
+												<math:ArmRef oidRef="arm2"/>
+												<ct:True/>
+											</math:LogicBinop>
+										</math:Condition>
+									</math:Piece>
+								</math:Piecewise>
+							</ct:Assign>
+						</mdef:Continuous>
+					</Covariate>
+				</CovariateModel>
+			</Covariates>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteContinuousCovariatesWithValues(){
+		val mdl = createRoot
+		
+		val mObj = mdl.createObject("mFoo", libDefns.getObjectDefinition("mdlObj"))
+		val covBlk = mObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::COVARIATE_BLK_NAME))
+		covBlk.createEqnDefn("W") 
+
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		
+		val desDeclVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val declW = desDeclVarBlk.createEqnDefn('W')
+		
+		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_POPULATION_BLK))
+		val tmplt1List = desParamsBlk.createListDefn('TEMPLATE', createAssignPair('covariate',
+										createVectorLiteral(createSublist(#{
+											'cov' -> declW.createSymbolRef,
+											'value' -> createRealLiteral(2.0)
+										})
+										)
+									))
+		val tmplt2List = desParamsBlk.createListDefn('TEMPLATE', createAssignPair('covariate',
+										createVectorLiteral(createSublist(#{
+											'cov' -> declW.createSymbolRef,
+											'value' -> createRealLiteral(70.0)
+										})
+										)
+									))
+		
+		val studyBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_STUDY_DESIGN))
+		val arm1 = studyBlk.createListDefn("arm1", createAssignPair('population',
+																tmplt1List.createSymbolRef
+																)
+										)
+		val arm2 = studyBlk.createListDefn("arm2", createAssignPair('population',
+																tmplt2List.createSymbolRef
+																)
+										)
+
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj, mObj), new StandardParameterWriter(null, [null]))
+		val actual = tdow.writeCovariateBlock(#[ desParamsBlk ])
+		val expected = '''
+			<Covariates>
+				<CovariateModel oid="«TrialDesignDesignObjectPrinter::COV_MOD_OID»">
+					<CovariateModelRef blkIdRef="cm"/>
+					<Covariate symbId="W">
+						<mdef:Continuous>
+							<ct:Assign>
+								<math:Piecewise>
+									<math:Piece>
+										<ct:Real>2.0</ct:Real>
+										<math:Condition>
+											<math:LogicBinop op="eq">
+												<math:ArmRef oidRef="arm1"/>
+												<ct:True/>
+											</math:LogicBinop>
+										</math:Condition>
+									</math:Piece>
+									<math:Piece>
+										<ct:Real>70</ct:Real>
+										<math:Condition>
+											<math:LogicBinop op="eq">
+												<math:ArmRef oidRef="arm2"/>
+												<ct:True/>
+											</math:LogicBinop>
+										</math:Condition>
+									</math:Piece>
+								</math:Piecewise>
 							</ct:Assign>
 						</mdef:Continuous>
 					</Covariate>

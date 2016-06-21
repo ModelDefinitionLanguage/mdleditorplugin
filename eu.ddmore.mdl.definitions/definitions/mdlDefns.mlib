@@ -344,7 +344,7 @@ _list PopulationTemplate _atts type::PopnType, covariate::vector[::PopTmpltCovSu
 						 _sig(type, covariate);
 
 _type blkType _enum(m1, m2, m3, m4);
-_list BlqList _atts blqMethod::blkType, llog::real _sig(blqMethod, llog);
+_list BlqList _atts blqMethod::blkType, lloq::real _sig(blqMethod, lloq);
 
 							
 _type estAlgo _enum(saem, foce, fo, focei, mcmc);
