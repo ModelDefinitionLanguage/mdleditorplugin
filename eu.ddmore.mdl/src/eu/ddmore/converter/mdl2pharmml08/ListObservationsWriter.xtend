@@ -25,6 +25,9 @@ import java.util.Set
 import org.eclipse.xtext.EcoreUtil2
 
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
+import eu.ddmore.mdl.mdl.ListPiecewiseExpression
+import eu.ddmore.mdl.mdl.ListPWClause
+import eu.ddmore.mdl.mdl.PWClause
 
 class ListObservationsWriter {
 	static var ERROR_MSG = "<Error!>"
@@ -234,6 +237,24 @@ class ListObservationsWriter {
 				«writeConditionalObs(s, attList, blkId)»
 			'''
 		}
+		else if(attList instanceof ListPiecewiseExpression){
+			var i = 1
+			'''
+				«FOR iec : attList.when»
+					«IF iec instanceof ListPWClause»
+						«writeObs(s, iec.value, getSubmodelBlkId(blkId, i++))»
+					«ELSEIF iec instanceof ListElifClause»
+						«writeObs(s, iec.value, getSubmodelBlkId(blkId, i++))»
+					«ELSE»
+						<Error!/>
+					«ENDIF»
+				«ENDFOR»
+				«IF attList.otherwise != null»
+					«writeObs(s, attList.otherwise, getSubmodelBlkId(blkId, i++))»
+				«ENDIF»
+				«writeConditionalObs(s, attList, blkId)»
+			'''
+		}
 		else{
 			'''<Error!>'''
 		}
@@ -282,6 +303,42 @@ class ListObservationsWriter {
 		)
 	}
 	
+	
+	def private writeConditionalObs(SymbolDefinition s, ListPiecewiseExpression ifExpr, String blkId){
+		var idx = 1
+		writeObservationModelBoilerPlate(blkId,
+			'''
+				<ContinuousData>
+					<General symbId="«s.name»">
+						<ct:Assign>
+							<math:Piecewise>
+								«FOR iec : ifExpr.when»
+									«IF iec instanceof PWClause»
+										<math:Piece>
+											<ct:SymbRef blkIdRef="«getSubmodelBlkId(blkId, idx++)»" symbIdRef="«s.name»"/>
+											<math:Condition>
+												«iec.cond.pharmMLExpr»
+											</math:Condition>
+										</math:Piece>
+									«ELSE»
+										<Error!/>
+									«ENDIF»
+								«ENDFOR»
+								«IF ifExpr.otherwise != null»
+									<math:Piece>
+										<ct:SymbRef blkIdRef="«getSubmodelBlkId(blkId, idx++)»" symbIdRef="«s.name»"/>
+										<math:Condition>
+											<math:Otherwise/>
+										</math:Condition>
+									</math:Piece>
+								«ENDIF»
+							</math:Piecewise>
+						</ct:Assign>
+					</General>
+				</ContinuousData>
+			'''
+		)
+	}
 	
 	def private writeObs(SymbolDefinition s, AttributeList attList, String blkId){
 			val type = attList.getAttributeEnumValue('type')
