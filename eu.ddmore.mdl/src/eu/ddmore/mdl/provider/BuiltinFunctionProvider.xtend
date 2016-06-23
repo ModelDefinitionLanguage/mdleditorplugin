@@ -27,6 +27,7 @@ import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.eclipse.xtext.EcoreUtil2
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdllib.mdllib.FunctionSpec
+import eu.ddmore.mdl.type.BuiltinEnumTypeInfo
 
 class BuiltinFunctionProvider {
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
@@ -410,7 +411,9 @@ class BuiltinFunctionProvider {
 //		val defnType = attEnumTypes.get(blockName)?.get(enumValue) ?: TypeSystemProvider::UNDEFINED_TYPE
 //		defnType
 		val fDefn = funct.findFuncDefn
-		fDefn.getArgumentType(vp.argumentName)
+		val retVal = fDefn.getArgumentType(vp.argumentName)
+		if(retVal instanceof BuiltinEnumTypeInfo) retVal
+		else TypeSystemProvider::UNDEFINED_TYPE
 	}
 
 	def boolean isValidTransform(TransformedDefinition it){

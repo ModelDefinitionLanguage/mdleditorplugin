@@ -621,6 +621,72 @@ class MclTypeValidationTest {
 	}
 	
 	@Test
+	def void testValidNamedFunctionArgument(){
+		val mcl = '''
+		warfarin_PK_SEXAGE_mdl = mdlObj {
+			IDV{ T }
+			
+			VARIABILITY_LEVELS{
+			}
+		
+			
+			MODEL_PREDICTION{
+				foo = matrix(vector=[0.0, 2.0], ncol=1, byRow = true)
+			}
+			
+		} # end of model object
+		'''.parse
+		
+		mcl.assertNoErrors
+	}
+	
+	@Test
+	def void testInValidNamedFunctionArgument(){
+		val mcl = '''
+		warfarin_PK_SEXAGE_mdl = mdlObj {
+			IDV{ T }
+			
+			VARIABILITY_LEVELS{
+			}
+		
+			
+			MODEL_PREDICTION{
+				foo = matrix(vector=[0.0, 2.0], ncol=1, byRow is TRUE)
+			}
+			
+		} # end of model object
+		'''.parse
+		
+		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"argument 'byRow' expected value of type 'Boolean' but was 'Undefined'."
+		)
+	}
+	
+	@Test
+	def void testInValidNamedFunctionArgument2(){
+		val mcl = '''
+		warfarin_PK_SEXAGE_mdl = mdlObj {
+			IDV{ T }
+			
+			VARIABILITY_LEVELS{
+			}
+		
+			
+			MODEL_PREDICTION{
+				foo = matrix(vector=[0.0, 2.0], ncol=1, byRow = "foo")
+			}
+			
+		} # end of model object
+		'''.parse
+		
+		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"argument 'byRow' expected value of type 'Boolean' but was 'String'."
+		)
+	}
+	
+	@Test
 	def void testInValidNamedFunctionSublistArgumentType(){
 		val mcl = '''bar = mdlObj {
 			IDV{ T }

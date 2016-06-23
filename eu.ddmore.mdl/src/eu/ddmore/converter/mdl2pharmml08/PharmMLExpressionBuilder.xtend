@@ -45,6 +45,7 @@ import java.util.Collections
 import java.util.Deque
 import java.util.LinkedList
 import java.util.List
+import java.util.ArrayList
 
 class PharmMLExpressionBuilder {
 	
@@ -605,13 +606,17 @@ class PharmMLExpressionBuilder {
     	val a = argList
     	switch(a){
     		NamedFuncArguments:
-    			'''
-				<math:FunctionCall>
-					«func.localSymbolReference»
-					«a.namedArguments»
-				</math:FunctionCall>
-    			''' 
-    			
+    			switch(func){
+    				case 'matrix':
+    					writeMatrixConverter
+					default:    				
+	    			'''
+					<math:FunctionCall>
+						«func.localSymbolReference»
+						«a.namedArguments»
+					</math:FunctionCall>
+	    			''' 
+ 				}   			
     		UnnamedFuncArguments:{
     			switch(func){
     				case 'dseq':
@@ -659,6 +664,51 @@ class PharmMLExpressionBuilder {
 					«ENDFOR»
 				</ct:Matrix>
     		'''
+    	}
+    	else ''''''
+    }
+
+	def private writeFullMatrix(List<List<Expression>> matVals){
+		'''
+		<ct:Matrix matrixType="Any">
+			«FOR r : matVals»
+				<ct:MatrixRow>
+					«FOR c : r»
+						«c.pharmMLExpr»
+					«ENDFOR»
+				</ct:MatrixRow>
+			«ENDFOR»
+		</ct:Matrix>
+		'''
+	}
+
+    def private writeMatrixConverter(SymbolReference it){
+    	val a = argList
+    	if(a instanceof NamedFuncArguments){
+    		val vectorArg = a.getArgumentExpression('vector').vector
+    		val ncol = a.getArgumentExpression('ncol').integerValue
+    		val isByRow = a.getArgumentExpression('byRow').booleanValue
+    		val int numRows = vectorArg.length/ncol
+    		val List<List<Expression>> matVals = new ArrayList<List<Expression>>
+    		for(var r = 0; r < numRows; r++){
+    			val row = new ArrayList<Expression>(ncol)
+    			matVals.add(row)
+    			for(var c = 0; c < if(isByRow) ncol else numRows; c++){
+    				row.add(null)
+    			}
+    		}
+    		var i = 0
+    		for(var r = 0; r < if(isByRow) numRows else ncol; r++){
+    			for(var c = 0; c < if(isByRow) ncol else numRows; c++){
+    				if(isByRow){
+    					matVals.get(r).set(c, vectorArg.get(i++))
+    				}
+    				else{
+    					matVals.get(c).set(r, vectorArg.get(i++))
+    				}
+    			}
+    		}
+    		writeFullMatrix(matVals)
     	}
     	else ''''''
     }
