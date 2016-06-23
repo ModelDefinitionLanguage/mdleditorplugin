@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
 <!-- generated with https://github.com/mbarbero/fr.obeo.releng.targetplatform -->
-<target name="MDL Editor Target" sequenceNumber="1462283563">
+<target name="MDL Editor Target" sequenceNumber="1466593190">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.jdt.feature.group" version="3.11.2.v20160212-1500"/>
@@ -80,8 +80,8 @@
       <repository id="orbit-tools-deps" location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="eu.ddmore.libpharmml.feature.feature.group" version="0.7.0.v20160418-1445"/>
-      <repository id="libpharmml-repo" location="http://sourceforge.net/projects/ddmore/files/update/libpharmml/0.7-1"/>
+      <unit id="eu.ddmore.libpharmml.feature.feature.group" version="0.7.2"/>
+      <repository id="libpharmml-repo" location="http://sourceforge.net/projects/ddmore/files/update/libpharmml/0.7.2"/>
     </location>
   </locations>
 </target>

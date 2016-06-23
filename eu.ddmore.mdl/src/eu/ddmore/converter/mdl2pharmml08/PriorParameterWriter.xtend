@@ -44,11 +44,11 @@ class PriorParameterWriter extends AbstractParameterWriter {
 		if(!writtenParams.contains(stmt.name)){
 			writtenParams.add(stmt.name)
 			'''
-				«IF priorObjDefn instanceof RandomVariableDefinition»
-					«IF priorObjDefn.isNonParametricDistn»
-						<PopulationParameter symbId="«priorObjDefn.name.weightVar»" />
-					«ENDIF»
-				«ENDIF»
+«««				«IF priorObjDefn instanceof RandomVariableDefinition»
+«««					«IF priorObjDefn.isNonParametricDistn»
+«««						<PopulationParameter symbId="«priorObjDefn.name.weightVar»" />
+«««					«ENDIF»
+«««				«ENDIF»
 				«IF priorObjDefn != null»
 					<PopulationParameter symbId="«stmt.name»">
 						«IF priorObjDefn instanceof EquationTypeDefinition»
@@ -96,25 +96,26 @@ class PriorParameterWriter extends AbstractParameterWriter {
 		else false
 	}
 	
-	def private getWeightVar(String varName){
-		MdlValidator::RESERVED_PREFIX + "weight_" + varName
-	}
+//	def private getWeightVar(String varName){
+//		MdlValidator::RESERVED_PREFIX + "weight_" + varName
+//	}
 	
-	def private writeDataDrivenDistn(RandomVariableDefinition rvd)'''
-		«IF rvd.distn instanceof SymbolReference»
+	def private writeDataDrivenDistn(RandomVariableDefinition rvd){
+	val distnFunc = rvd.distn 
+	'''
+		«IF distnFunc instanceof SymbolReference»
 			<Distribution>
 				<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="RandomSample">
 					«IF rvd.isNonParametricDistn»
 						<Parameter name="weight">
-							<ct:Assign>
-								<ct:SymbRef symbIdRef="«rvd.name.weightVar»"/>
-							</ct:Assign>
+							«distnFunc.getFunctionArgumentValue('probability').expressionAsAssignment»
 						</Parameter>
 					«ENDIF»
 				</ProbOnto>
 			</Distribution>
 		«ENDIF»
 	'''
+	}
 	
 	def boolean isPredefinedDistn(RandomVariableDefinition rv){
 		val ex = rv.distn

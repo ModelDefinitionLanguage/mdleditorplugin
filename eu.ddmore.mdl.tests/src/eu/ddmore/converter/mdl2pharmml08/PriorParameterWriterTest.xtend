@@ -166,30 +166,288 @@ class PriorParameterWriterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
-	@Ignore("Not sure how to encode in PharmML at the moment")
+	@Test
 	def void testWriteParamFromData(){
 		val root = createRoot
 		val priorObj = root.createObject("pObj", libDefns.getObjectDefinition('priorObj'))
-//		val priorSrcBlk = priorObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::PRIOR_SOURCE_BLK))
-		
-		
-		
-		val priorBlk = priorObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::PRIOR_VAR_DEFN))
-		priorBlk.createEqnDefn('p111',createRealLiteral(2.0))
+		val priorSrcBlk = priorObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::PRIOR_SOURCE_BLK))
+		val dataList = priorSrcBlk.createListDefn('PriorSourceCsv', createAssignPair('file', createStringLiteral("simple3_prior.csv")),
+														createEnumPair('inputFormat', 'csv'),
+														createAssignPair('column',
+																		createVectorLiteral(createStringLiteral("bin_ka"),
+																							createStringLiteral("bin_v"),
+																							createStringLiteral("bin_tlag")
+																		)
+														)
+													)
+													
+		val priorVariableBlk = priorObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::PRIOR_VAR_DEFN))
+		val kaVBins = priorVariableBlk.createEqnDefn('KA_V_BINS')
+		val empRv = priorVariableBlk.createRandVar('empVar', createNamedFunction(
+																libDefns.getFunctionDefinition('Empirical'),
+																createAssignPair('data', kaVBins.createSymbolRef)
+															)
+													)
+													
+		val priorInputBlk = priorObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::PRIOR_INPUT_DATA))
+		priorInputBlk.createAnonList(createAssignPair('matrixVar', kaVBins.createSymbolRef),
+										createAssignPair('data', dataList.createSymbolRef),
+										createAssignPair('column', createVectorLiteral(createStringLiteral("bin_ka"),
+																						createStringLiteral("bin_v"))
+														)
+										)
 		
 		val mdlObj = root.createObject("mObj", libDefns.getObjectDefinition('mdlObj'))
 		val paramBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
-		val parmStmt = paramBlk.createEqnDefn('p1', createRealLiteral(22.0))
+		val parmStmt = paramBlk.createEqnDefn('empVar')
 		
 		
-		this.testInstance = new PriorParameterWriter(null, priorObj, [null])
-		val actual = testInstance.writeParameter(parmStmt)
+		this.testInstance = new PriorParameterWriter(mdlObj, priorObj, [null])
+		val actual = testInstance.writeParameterModel
 		val expected = '''
-			<PopulationParameter symbId="p1"/>
+			<ParameterModel blkId="pm">
+				<PopulationParameter symbId="empVar">
+					<ct:VariabilityReference>
+						<ct:SymbRef blkIdRef="vm_mdl" symbIdRef="MDL__prior"/>
+					</ct:VariabilityReference>
+					<Distribution>
+						<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="RandomSample">
+						</ProbOnto>
+					</Distribution>
+				</PopulationParameter>
+			</ParameterModel>
 		'''
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
+	@Test
+	def void testWriteParamWithWeightedEmpirical(){
+		val root = createRoot
+		val priorObj = root.createObject("pObj", libDefns.getObjectDefinition('priorObj'))
+		val priorSrcBlk = priorObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::PRIOR_SOURCE_BLK))
+		val dataList = priorSrcBlk.createListDefn('PriorSourceCsv', createAssignPair('file', createStringLiteral("simple3_prior.csv")),
+														createEnumPair('inputFormat', 'csv'),
+														createAssignPair('column',
+																		createVectorLiteral(createStringLiteral("p_ka_v"),
+																							createStringLiteral("bin_ka"),
+																							createStringLiteral("bin_v"),
+																							createStringLiteral("bin_tlag")
+																		)
+														)
+													)
+													
+		val priorVariableBlk = priorObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::PRIOR_VAR_DEFN))
+		val kaVBins = priorVariableBlk.createEqnDefn('KA_V_BINS')
+		val kaVProbs = priorVariableBlk.createEqnDefn('KA_V_PROBS')
+		val empRv = priorVariableBlk.createRandVar('empVar', createNamedFunction(
+																libDefns.getFunctionDefinition('MultiNonParametric'),
+																createAssignPair('bins', kaVBins.createSymbolRef),
+																createAssignPair('probability', kaVProbs.createSymbolRef)
+															)
+													)
+													
+		val priorInputBlk = priorObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::PRIOR_INPUT_DATA))
+		priorInputBlk.createAnonList(createAssignPair('matrixVar', kaVBins.createSymbolRef),
+										createAssignPair('data', dataList.createSymbolRef),
+										createAssignPair('column', createVectorLiteral(createStringLiteral("bin_ka"),
+																						createStringLiteral("bin_v"))
+														)
+										)
+		priorInputBlk.createAnonList(createAssignPair('vectorVar', kaVProbs.createSymbolRef),
+										createAssignPair('data', dataList.createSymbolRef),
+										createAssignPair('column', createStringLiteral("p_ka_v"))
+										)
+		
+		val mdlObj = root.createObject("mObj", libDefns.getObjectDefinition('mdlObj'))
+		val paramBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val parmStmt = paramBlk.createEqnDefn('empVar')
+		
+		
+		this.testInstance = new PriorParameterWriter(mdlObj, priorObj, [null])
+		val actual = testInstance.writeParameterModel
+		val expected = '''
+			<ParameterModel blkId="pm">
+				<PopulationParameter symbId="KA_V_PROBS">
+				</PopulationParameter>
+				<PopulationParameter symbId="empVar">
+					<ct:VariabilityReference>
+						<ct:SymbRef blkIdRef="vm_mdl" symbIdRef="MDL__prior"/>
+					</ct:VariabilityReference>
+					<Distribution>
+						<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="RandomSample">
+							<Parameter name="weight">
+								<ct:Assign>
+									<ct:SymbRef symbIdRef="MDL__weight_empVar"/>
+								</ct:Assign>
+							</Parameter>
+						</ProbOnto>
+					</Distribution>
+				</PopulationParameter>
+			</ParameterModel>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteParamFromInlineData(){
+		val root = createRoot
+		val priorObj = root.createObject("pObj", libDefns.getObjectDefinition('priorObj'))
+													
+		val priorVariableBlk = priorObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::PRIOR_VAR_DEFN))
+		val kaVBins = priorVariableBlk.createEqnDefn('KA_V_BINS', createMatrixLiteral(
+																	#[createRealLiteral(12), createRealLiteral(33)],
+																	#[createRealLiteral(34), createRealLiteral(67)],
+																	#[createRealLiteral(35), createRealLiteral(78)]
+																	))
+		val empRv = priorVariableBlk.createRandVar('empVar', createNamedFunction(
+																libDefns.getFunctionDefinition('Empirical'),
+																createAssignPair('data', kaVBins.createSymbolRef)
+															)
+													)
+													
+		val mdlObj = root.createObject("mObj", libDefns.getObjectDefinition('mdlObj'))
+		val paramBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val parmStmt = paramBlk.createEqnDefn('empVar')
+		
+		
+		this.testInstance = new PriorParameterWriter(mdlObj, priorObj, [null])
+		val actual = testInstance.writeParameterModel
+		val expected = '''
+			<ParameterModel blkId="pm">
+				<PopulationParameter symbId="empVar">
+					<ct:VariabilityReference>
+						<ct:SymbRef blkIdRef="vm_mdl" symbIdRef="MDL__prior"/>
+					</ct:VariabilityReference>
+					<Distribution>
+						<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="RandomSample">
+							<ColumnMapping>
+								<ds:ColumnRef columnIdRef="lPOP_TLAG1"/>
+								<ct:Assign>
+									<ct:VectorSelector>
+										<ct:SymbRef symbIdRef="lPOP_TLAG"/>
+										<ct:Cell>
+											<ct:Int>1</ct:Int>
+										</ct:Cell>
+									</ct:VectorSelector>
+								</ct:Assign>
+							</ColumnMapping>
+							<ColumnMapping>
+								<ds:ColumnRef columnIdRef="lPOP_TLAG2"/>
+								<ct:Assign>
+									<ct:VectorSelector>
+										<ct:SymbRef symbIdRef="lPOP_TLAG"/>
+										<ct:Cell>
+											<ct:Int>2</ct:Int>
+										</ct:Cell>
+									</ct:VectorSelector>
+								</ct:Assign>
+							</ColumnMapping>
+							<ds:DataSet>
+								<ds:Definition>
+									<ds:Column columnId="lPOP_TLAG1" valueType="real" columnNum="1"/>
+									<ds:Column columnId="lPOP_TLAG2" valueType="real" columnNum="2"/>
+								</ds:Definition>
+								<ds:Table>
+									<ds:Row><ct:Real>12</ct:Real><ct:Real>33</ct:Real></ds:Row>
+									<ds:Row><ct:Real>34</ct:Real><ct:Real>67</ct:Real></ds:Row>
+									<ds:Row><ct:Real>35</ct:Real><ct:Real>78</ct:Real></ds:Row>
+								</ds:Table>
+							</ds:DataSet>
+						</ProbOnto>
+					</Distribution>
+				</PopulationParameter>
+			</ParameterModel>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteParamWithWeightedEmpiricalInlineData(){
+		val root = createRoot
+		val priorObj = root.createObject("pObj", libDefns.getObjectDefinition('priorObj'))
+													
+		val priorVariableBlk = priorObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::PRIOR_VAR_DEFN))
+		val kaVBins = priorVariableBlk.createEqnDefn('KA_V_BINS', createMatrixLiteral(
+																	#[createRealLiteral(12), createRealLiteral(33)],
+																	#[createRealLiteral(34), createRealLiteral(67)],
+																	#[createRealLiteral(35), createRealLiteral(78)]
+																	))
+		val kaVProbs = priorVariableBlk.createEqnDefn('KA_V_PROBS', createVectorLiteral(
+																	createRealLiteral(0.12), createRealLiteral(0.23),
+																	createRealLiteral(0.24)
+																	)
+													)
+		val empRv = priorVariableBlk.createRandVar('empVar', createNamedFunction(
+																libDefns.getFunctionDefinition('MultiNonParametric'),
+																createAssignPair('bins', kaVBins.createSymbolRef),
+																createAssignPair('probability', kaVProbs.createSymbolRef)
+															)
+													)
+													
+		val mdlObj = root.createObject("mObj", libDefns.getObjectDefinition('mdlObj'))
+		val paramBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val parmStmt = paramBlk.createEqnDefn('empVar')
+		
+		
+		this.testInstance = new PriorParameterWriter(mdlObj, priorObj, [null])
+		val actual = testInstance.writeParameterModel
+		val expected = '''
+			<ParameterModel blkId="pm">
+				<PopulationParameter symbId="KA_V_PROBS">
+				</PopulationParameter>
+				<PopulationParameter symbId="lPOP_TLAG">
+					<ct:VariabilityReference>
+						<ct:SymbRef blkIdRef="vm_mdl" symbIdRef="MDL__prior"/>
+					</ct:VariabilityReference>
+					<Distribution>
+						<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="RandomSample">
+							<ColumnMapping>
+								<ds:ColumnRef columnIdRef="lPOP_TLAG1"/>
+								<ct:Assign>
+									<ct:VectorSelector>
+										<ct:SymbRef symbIdRef="lPOP_TLAG"/>
+										<ct:Cell>
+											<ct:Int>1</ct:Int>
+										</ct:Cell>
+									</ct:VectorSelector>
+								</ct:Assign>
+							</ColumnMapping>
+							<ColumnMapping>
+								<ds:ColumnRef columnIdRef="lPOP_TLAG2"/>
+								<ct:Assign>
+									<ct:VectorSelector>
+										<ct:SymbRef symbIdRef="lPOP_TLAG"/>
+										<ct:Cell>
+											<ct:Int>2</ct:Int>
+										</ct:Cell>
+									</ct:VectorSelector>
+								</ct:Assign>
+							</ColumnMapping>
+							<ColumnMapping>
+								<ds:ColumnRef columnIdRef="KA_V_PROBS"/>
+								<ct:Assign>
+									<ct:SymbRef symbIdRef="KA_V_PROBS"/>
+								</ct:Assign>
+							</ColumnMapping>
+							<ds:DataSet>
+								<ds:Definition>
+									<ds:Column columnId="lPOP_TLAG1" valueType="real" columnNum="1"/>
+									<ds:Column columnId="lPOP_TLAG2" valueType="real" columnNum="2"/>
+									<ds:Column columnId="KA_V_PROBS" valueType="real" columnNum="3"/>
+								</ds:Definition>
+								<ds:Table>
+									<ds:Row><ct:Real>12</ct:Real><ct:Real>33</ct:Real><ct:Real>0.12</ct:Real></ds:Row>
+									<ds:Row><ct:Real>34</ct:Real><ct:Real>67</ct:Real><ct:Real>0.23</ct:Real></ds:Row>
+									<ds:Row><ct:Real>35</ct:Real><ct:Real>78</ct:Real><ct:Real>0.24</ct:Real></ds:Row>
+								</ds:Table>
+							</ds:DataSet>
+						</ProbOnto>
+					</Distribution>
+				</PopulationParameter>
+			</PopulationModel>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
 
 	@Test
 	def void testWriteVarLevels(){

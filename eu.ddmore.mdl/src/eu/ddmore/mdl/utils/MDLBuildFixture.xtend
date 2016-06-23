@@ -23,6 +23,7 @@ import eu.ddmore.mdllib.mdllib.TypeDefinition
 import java.util.ArrayList
 import java.util.List
 import java.util.Map
+import eu.ddmore.mdl.mdl.MatrixLiteral
 
 class MDLBuildFixture {
 //	val public static String REAL_TYPE_NAME = "Real"
@@ -191,6 +192,20 @@ class MDLBuildFixture {
 			val vEl = MdlFactory.eINSTANCE.createVectorElement
 			vEl.element = el
 			retVal.expressions.add(vEl)
+		}
+		retVal
+	}
+
+	def MatrixLiteral createMatrixLiteral(Expression[] ... elements){
+		val retVal = MdlFactory.eINSTANCE.createMatrixLiteral
+		for(el : elements){
+			val mRow = MdlFactory::eINSTANCE.createMatrixRow
+			retVal.rows.add(mRow)
+			for(cell : el){
+				val vEl = MdlFactory.eINSTANCE.createMatrixElement
+				vEl.cell = cell
+				mRow.cells.add(vEl)
+			}
 		}
 		retVal
 	}
