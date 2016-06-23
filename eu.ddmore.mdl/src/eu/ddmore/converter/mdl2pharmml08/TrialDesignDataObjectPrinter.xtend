@@ -23,6 +23,7 @@ import static eu.ddmore.converter.mdl2pharmml08.Constants.*
 import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.provider.BlockDefinitionTable
+import eu.ddmore.mdl.mdl.FunctionReference
 
 class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
@@ -113,7 +114,12 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 				}
 				case(ListDefinitionTable::COV_USE_VALUE):{
 					if(isCovariateUsedInModel(column, mObj)){
-						res = res + mObj.print_ds_MagicMapping(column)
+						var String transformId = null
+						if(column.firstAttributeList.hasAttribute('interp')){
+							transformId = "MDL__" + column.name
+							res = res + writeInterpolationTransform(column, transformId)
+						}
+						res = res + mObj.print_ds_MagicMapping(column, transformId)
 						// record that mapping to model found
 						saveMappedColumn(column.name)
 					}
@@ -152,7 +158,36 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		}
 		res += print_ds_DataSet;
 	}
+	
+	val interpLookup = #{
+		'contantInterp' -> 'constant',
+		'linearInterp' -> 'linear',
+		'lastValueInterp' -> 'lastValue',
+		'nearestInterp' -> 'nearest',
+		'cubicInterp' -> 'cubic',
+		'pchipInterp' -> 'pchip',
+		'splineInterp' -> 'spline'
+	}
+	
+	def String getInterpType(Expression interpType){
+		if(interpType instanceof FunctionReference){
+			val lookupVal = interpType.ref.name
+			interpLookup.get(lookupVal) ?: 'Error!'
+		}
+		else 'Error!'
+	}
 
+	def writeInterpolationTransform(ListDefinition it, String transformId){
+		'''
+			<ColumnTransformation transformId="«transformId»">
+				<ct:Assign>
+					<ct:Interpolation>
+						<ct:Algorithm>«firstAttributeList.getAttributeExpression('interp').interpType»</ct:Algorithm>
+					</ct:Interpolation>
+				</ct:Assign>
+			</ColumnTransformation>
+		'''
+	}
 
 	def CharSequence writeDoseTimeMapping(ListDefinition column){
 		var idvCol = column.firstAttributeList.getAttributeExpression(ListDefinitionTable::IDV_COL_ATT)
@@ -342,9 +377,13 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		return res;
 	}
 
-	protected def print_ds_ColumnMapping(ListDefinition column, SymbolDefinition mdlSymb, String complexMapping) '''
+	protected def print_ds_ColumnMapping(ListDefinition column, SymbolDefinition mdlSymb, String complexMapping){
+		print_ds_ColumnMapping(column, mdlSymb, complexMapping, null)
+	}
+
+	protected def print_ds_ColumnMapping(ListDefinition column, SymbolDefinition mdlSymb, String complexMapping, String transformId) '''
 		<ColumnMapping>
-			<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«column.name»"/>
+			<ColumnRef xmlns="«xmlns_ds»"«IF transformId != null» transformIdRef="«transformId»"«ENDIF» columnIdRef="«column.name»"/>
 			«mdlSymb.symbolReference»
 			«IF complexMapping.length > 0»
 				«complexMapping»
@@ -353,8 +392,12 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	'''
 
 	def print_ds_MagicMapping(MclObject mdlObj, ListDefinition column) {
+		print_ds_MagicMapping(mdlObj, column, null)
+	}
+
+	def print_ds_MagicMapping(MclObject mdlObj, ListDefinition column, String transformId) {
 		var mdlSymb = mdlObj.findMdlSymbolDefn(column.name)
-		print_ds_ColumnMapping(column, mdlSymb, "").toString
+		print_ds_ColumnMapping(column, mdlSymb, "", transformId).toString
 	}
 	
 	def writeIdvMapping(MclObject mdlObj, ListDefinition column) {
