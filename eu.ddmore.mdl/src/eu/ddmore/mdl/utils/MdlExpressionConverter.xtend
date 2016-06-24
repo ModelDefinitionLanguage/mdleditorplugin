@@ -18,6 +18,7 @@ import eu.ddmore.mdl.mdl.MatrixElement
 import eu.ddmore.mdl.mdl.MatrixLiteral
 import eu.ddmore.mdl.mdl.MatrixRow
 import eu.ddmore.mdl.mdl.NamedFuncArguments
+import eu.ddmore.mdl.mdl.PiecewiseExpression
 import eu.ddmore.mdl.mdl.StringLiteral
 import eu.ddmore.mdl.mdl.SubListExpression
 import eu.ddmore.mdl.mdl.UnnamedFuncArguments
@@ -96,6 +97,9 @@ public class MdlExpressionConverter extends ExpressionConverter {
 	
 	def dispatch String getString(MatrixElement exp)'''
 		«exp.cell.getString»'''
+		
+	def dispatch String getString(PiecewiseExpression exp)'''
+		piecewise{{«FOR e : exp.getWhen() SEPARATOR '; '»«e.getValue().getString» when «e.getCond().getString» «ENDFOR»; otherwise «exp.getOtherwise().getString»}}'''
 		
     override dispatch String getString(SubListExpression expr)'''
         {«FOR c : expr.attributes SEPARATOR ', '»«c.getString»«ENDFOR»}'''
