@@ -7,7 +7,6 @@ rocchetti2013_dsgn = designObj{
 		Y::observation 
 		Q0_A::dosingTarget 
 		Q0_B::dosingTarget
-		ID::varLevel
 	}
 
 	DESIGN_PARAMETERS{
@@ -59,7 +58,6 @@ rocchetti2013_dsgn = designObj{
   }
 
 	STUDY_DESIGN{
-		set idLevel = ID
 		armA : { armSize = 1, interventionSequence = { admin=[combA], start=0 }, samplingSequence={ sample=sampl1, start=0 } }
 	}
 

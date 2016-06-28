@@ -23,7 +23,7 @@
 #
 
 simeoni2004_design = designObj{
-	DECLARED_VARIABLES{ dose::dosingTarget Y::observation ID::varLevel }
+	DECLARED_VARIABLES{ dose::dosingTarget Y::observation }
 	
 	INTERVENTION{
 		treated : {type is bolus, input=dose, amount=60*10^6, doseTime=[8,12,16]}
@@ -31,7 +31,6 @@ simeoni2004_design = designObj{
 	}
 	
 	STUDY_DESIGN{
-		set idLevel = ID
 		treatedArm : {armSize = 1, interventionSequence = {admin=treated, start=0},
 							 samplingSequence = {sample=sampleTreated,start=0}}	
 		controlArm : {armSize = 1, interventionSequence = {admin=control, start=0}, samplingSequence={sample=sampleControl,start=0}}
@@ -63,7 +62,6 @@ simeoni2004_mdl = mdlObj{
  	IDV { t }
  	
  	VARIABILITY_LEVELS{
- 	ID : { level = 2, type is parameter }
    	DV : { level=1, type is observation }
    }
 

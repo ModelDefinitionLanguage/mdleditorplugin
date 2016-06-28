@@ -1894,7 +1894,6 @@ class MclTypeValidationTest {
 d1g=designObj{
 	DECLARED_VARIABLES{
 		Cmt::dosingTarget
-		ID::varLevel
 	}
 	INTERVENTION{
 		dose1 : {type is infusion, input=Cmt, amount=100, doseTime=[0], duration=[1]} 
@@ -1903,9 +1902,6 @@ d1g=designObj{
 	}
 	DESIGN_SPACES{
 		DS1 : { objRef=[dose1], element is infAmt, discrete=[10,100,200] }
-	}
-	STUDY_DESIGN{
-		set idLevel = ID
 	}
 }
 		'''.parse
@@ -2266,7 +2262,7 @@ warfarin_PK_v2_dat = dataObj{
 	}
 
 
-	@Test
+	@Ignore("Removed this now.")
 	def void testValidExpectedRefTypeAttribute(){
 		val mcl = '''
 		foo = designObj{

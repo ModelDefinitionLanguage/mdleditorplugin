@@ -162,7 +162,7 @@ _list PopnCategoricalList _anon
 
 // Model
 	
-_list varLevel _atts type::varLvlType, level::int
+_list varLevel "Specifies a variability level" _atts type::varLvlType "The type of variability level", level::int "The position in the variability hierarchy."
 	_sig(type, level);
 _list dosingTarget _super;
 _list DerivList _alt ::deriv _extends dosingTarget _atts deriv::real, init::real, x0::real, wrt::reference[::real]
@@ -360,7 +360,8 @@ _type solverType _enum(stiff, nonStiff);
 _type OptAlgoType _enum(simplex, fw);
 
 _prop algo::estAlgo, solver::solverType, armSize::int, totalSize::int, numberSamples::vector[::int], totalCost::real, numberArms::vector[::int],
-				sameTimes::boolean, idLevel::reference[::varLevel];
+				sameTimes::boolean//, idLevel::reference[::varLevel]
+				;
 
 _prop name::string, problemStmt::string;
 
@@ -386,7 +387,7 @@ _block COVARIATES "Defined covariates" (0,)
 	_arguments  type::covArgEnumType?
 	_statements (0,) _eqnDefn, _eqnDefn+, _enumDefn, _rvDefn;
 
-_block VARIABILITY_LEVELS "Defined variability levels "(0,) _statements (0,) _listDefn
+_block VARIABILITY_LEVELS "Defines variability levels "(0,) _arguments reference::varLevel? "Variability level to use as reference (typically BSV)" _statements (0,) _listDefn
 	_list varLevel;
 	
 _block STRUCTURAL_PARAMETERS "Defines structural parameters" (0,) _statements (0,) _eqnDefn, _eqnDefn+;
@@ -486,7 +487,7 @@ _block INTERVENTION (1, ) _statements (,) _listDefn
 //	_list DesignVariabilityList;
 
 _block STUDY_DESIGN (,) _statements (,) _listDefn
-		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?, sameTimes?, idLevel
+		_prop armSize?, totalSize?, numberSamples?, totalCost?, numberArms?, sameTimes?//, idLevel
 		_list StudyDesign;
 
 _block SAMPLING (,) _statements (,) _listDefn

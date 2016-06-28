@@ -187,11 +187,12 @@ class MogValidator extends AbstractDeclarativeValidator {
 						val dataOb = dvStmts.findFirst[stmt|
 							if(stmt instanceof SymbolDefinition) stmt.name == mdlOb.name else false
 						]
-						if(dataOb == null){
-							if(mdlOb.isParameterVarLevel)
-								errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in designObj");
-						}
-						else if(dataOb instanceof SymbolDefinition){
+//						if(dataOb == null){
+//							if(mdlOb.isParameterVarLevel)
+//								errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in designObj");
+//						}
+//						else
+						if(dataOb instanceof SymbolDefinition){
 							if(dataOb.typeFor != varLvlTypeInfo){
 								errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the designObj");
 							}

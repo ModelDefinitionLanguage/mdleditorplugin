@@ -6,7 +6,6 @@ MODEL1_dsgn = designObj{
 		A1_D::dosingTarget
 		A1_E::dosingTarget
 		Y::observation
-		ID::varLevel
 	}
 
 	DESIGN_PARAMETERS{
@@ -48,7 +47,6 @@ MODEL1_dsgn = designObj{
   }
 
 	STUDY_DESIGN{
-		set idLevel = ID
 		armA : { armSize = 1, interventionSequence = { admin=[combA], start=0 }, samplingSequence={ sample=sampl1, start=0 } }
 	}
 
@@ -96,7 +94,6 @@ MODEL1_mdl = mdlObj {
 
 	# Levels of random variability define here
 	VARIABILITY_LEVELS{
-		ID : { level = 2, type is parameter }
 		DV : { level=1, type is observation }
 	}
 
