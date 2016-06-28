@@ -54,11 +54,11 @@ abstract class AbstractParameterWriter {
 	
 	
 	var MclObject mObj
-	val () => SymbolDefinition findMatchingIdLevelInBlockLambda
+//	val () => SymbolDefinition findMatchingIdLevelInBlockLambda
 	
-	new(MclObject mdlObj, () => SymbolDefinition findMatchingIdLevelInBlockLambda){
+	new(MclObject mdlObj){ //}, () => SymbolDefinition findMatchingIdLevelInBlockLambda){
 		mObj = mdlObj
-		this.findMatchingIdLevelInBlockLambda = findMatchingIdLevelInBlockLambda
+//		this.findMatchingIdLevelInBlockLambda = findMatchingIdLevelInBlockLambda
 	}
 
 	abstract def String writeSimpleParameter(SymbolDefinition stmt)
@@ -89,10 +89,10 @@ abstract class AbstractParameterWriter {
 		}
 		var model = "";
 		if (vm_err_vars.size() > 0){
-			model = model + vm_err_vars.writeVariabilityModel("vm_err", VAR_TYPE_ERROR);
+			model = model + mObj.writeVariabilityModel(vm_err_vars, "vm_err", VAR_TYPE_ERROR);
 		}		
 		if (vm_mdl_vars.size() > 0){
-			model = model + vm_mdl_vars.writeVariabilityModel("vm_mdl", VAR_TYPE_PARAMETER);
+			model = model + mObj.writeVariabilityModel(vm_mdl_vars, "vm_mdl", VAR_TYPE_PARAMETER);
 		}
 		return model;
 	}
@@ -100,13 +100,19 @@ abstract class AbstractParameterWriter {
 	abstract def String getTopLevelInsertion()
 	
 	
-	def private boolean isReferenceLevel(String levelName){
-		val sd = findMatchingIdLevelInBlockLambda.apply()
-		sd != null && sd.name == levelName
+	def private boolean isReferenceLevel(MclObject mdlObject, String levelName){
+//		val sd = findMatchingIdLevelInBlockLambda.apply()
+//		sd != null && sd.name == levelName
+		val varLvlBlk = mdlObject.getBlocksByName(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		if(!varLvlBlk.isEmpty){
+			val refId = varLvlBlk.head.blkArgs?.getArgumentExpression('reference')?.symbolRef
+			refId != null && refId.ref.name == levelName
+		}
+		else false
 	}
 	
 	
-	def private writeVariabilityModel(Map<String, Integer> vars, String blkId, String varType){
+	def private writeVariabilityModel(MclObject mdlObj, Map<String, Integer> vars, String blkId, String varType){
 		var model = "";
 		if (vars.size() > 0){
 			var bvc =  new ValueComparator(vars);
@@ -117,13 +123,13 @@ abstract class AbstractParameterWriter {
 			for (s: sorted_map.entrySet){
 				levels = levels +	'''
 					«IF prev.length > 0»
-						<Level referenceLevel="«isReferenceLevel(s.key)»" symbId="«s.key»">
+						<Level referenceLevel="«mdlObj.isReferenceLevel(s.key)»" symbId="«s.key»">
 							<ParentLevel>
 								<ct:SymbRef symbIdRef="«prev»"/>
 							</ParentLevel>
 						</Level>
 					«ELSE»
-						<Level referenceLevel="«isReferenceLevel(s.key)»" symbId="«s.key»"/>
+						<Level referenceLevel="«mdlObj.isReferenceLevel(s.key)»" symbId="«s.key»"/>
 					«ENDIF»
 				'''
 				prev = s.key

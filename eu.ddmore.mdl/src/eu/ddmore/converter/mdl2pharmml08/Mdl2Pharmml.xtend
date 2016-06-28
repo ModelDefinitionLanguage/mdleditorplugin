@@ -1,27 +1,22 @@
 package eu.ddmore.converter.mdl2pharmml08
 
 import eu.ddmore.converter.treerewrite.VectorAttributeRewrite
-import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.PropertyStatement
 import eu.ddmore.mdl.mdl.Statement
 import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.provider.BlockDefinitionTable
-import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.MogDefinitionProvider
-import eu.ddmore.mdl.provider.PropertyDefinitionProvider
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
-import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
-import eu.ddmore.mdl.provider.ListDefinitionTable
 
 class Mdl2Pharmml {
 //	static val mdlVersion = "6.0"
@@ -34,8 +29,8 @@ class Mdl2Pharmml {
 	extension FunctionDefinitionPrinter fdp = new FunctionDefinitionPrinter
 //	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension ExpressionUtils eu = new ExpressionUtils
-	extension PropertyDefinitionProvider pdp = new PropertyDefinitionProvider
-	extension ListDefinitionProvider lad = new ListDefinitionProvider
+//	extension PropertyDefinitionProvider pdp = new PropertyDefinitionProvider
+//	extension ListDefinitionProvider lad = new ListDefinitionProvider
 
 	var Mcl mdlRoot
 
@@ -95,36 +90,36 @@ class Mdl2Pharmml {
   		val mog = mdlRoot.getMogObj(mogInput.name)
 		val mObj = mog.mdlObj
   		
-  		val () => SymbolDefinition idLambda = if(mog.isDesignObjDefined){
-  			val dObj = mog.designObj;
-  			[
-  				for(blk : dObj.getBlocksByName(BlockDefinitionTable::DES_STUDY_DESIGN)){
-  					for(stmt : blk.statementsFromBlock){
-	  					val idLevelSymb = if(stmt instanceof PropertyStatement) stmt.getPropertyExpression('idLevel')?.symbolRef else null;
-	  					if(idLevelSymb != null) return idLevelSymb?.ref
-  					}
-  				}
-				null
-  			]
-  		}
-  		else{
-  			val dObj = mog.dataObj;
-  			[
-  				for(blk : dObj.getBlocksByName(BlockDefinitionTable::DIV_BLK_NAME)){
-  					for(stmt : blk.statementsFromBlock){
-	  					val idLevelSymb = if(stmt instanceof ListDefinition) if(stmt.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT) == ListDefinitionTable::ID_USE_VALUE) stmt else null else null;
-	  					if(idLevelSymb != null) return idLevelSymb
-  					}
-  				}
-  				null
-  			]
-  		}
+//  		val () => SymbolDefinition idLambda = if(mog.isDesignObjDefined){
+//  			val dObj = mog.designObj;
+//  			[
+//  				for(blk : dObj.getBlocksByName(BlockDefinitionTable::DES_STUDY_DESIGN)){
+//  					for(stmt : blk.statementsFromBlock){
+//	  					val idLevelSymb = if(stmt instanceof PropertyStatement) stmt.getPropertyExpression('idLevel')?.symbolRef else null;
+//	  					if(idLevelSymb != null) return idLevelSymb?.ref
+//  					}
+//  				}
+//				null
+//  			]
+//  		}
+//  		else{
+//  			val dObj = mog.dataObj;
+//  			[
+//  				for(blk : dObj.getBlocksByName(BlockDefinitionTable::DIV_BLK_NAME)){
+//  					for(stmt : blk.statementsFromBlock){
+//	  					val idLevelSymb = if(stmt instanceof ListDefinition) if(stmt.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT) == ListDefinitionTable::ID_USE_VALUE) stmt else null else null;
+//	  					if(idLevelSymb != null) return idLevelSymb
+//  					}
+//  				}
+//  				null
+//  			]
+//  		}
   		
 		val paramWriter = if(mog.isParamObjDefined){
-			new StandardParameterWriter(mog.mdlObj, idLambda)
+			new StandardParameterWriter(mog.mdlObj)//, idLambda)
 		}
 		else{
-			new PriorParameterWriter(mObj, mog.priorObj, idLambda)
+			new PriorParameterWriter(mObj, mog.priorObj) //, idLambda)
 		}
 		val TrialDesignObjectPrinter trialDesignWriter = if(mog.isDesignObjDefined)
 									new TrialDesignDesignObjectPrinter(mog, paramWriter)

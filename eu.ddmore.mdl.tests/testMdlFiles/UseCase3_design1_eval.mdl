@@ -341,7 +341,7 @@ warfarin_PKPD_turnover_par = parObj{
 warfarin_PKPD_turnover_mdl = mdlObj{
 	IDV { T }
 
-	VARIABILITY_LEVELS{
+	VARIABILITY_LEVELS(reference=ID){
 		ID : { level=2, type is parameter }
 		DV : { level=1, type is observation }	
 	}

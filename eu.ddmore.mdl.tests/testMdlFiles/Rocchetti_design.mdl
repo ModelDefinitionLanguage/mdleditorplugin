@@ -86,7 +86,6 @@ rocchetti2013_mdl = mdlObj{
 	IDV{ T }
 	
     VARIABILITY_LEVELS{
-    	ID : { level = 2, type is parameter }
 		DV: {level=1, type is observation}	
 	}
 	

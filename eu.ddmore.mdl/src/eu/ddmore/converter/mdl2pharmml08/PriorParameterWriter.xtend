@@ -32,8 +32,8 @@ class PriorParameterWriter extends AbstractParameterWriter {
 	val MclObject priorObject
 	val Set<String> writtenParams
 	
-	new(MclObject mO, MclObject pO, () => SymbolDefinition findMatchingIdLevelInBlockLambda){
-		super(mO, findMatchingIdLevelInBlockLambda)
+	new(MclObject mO, MclObject pO){ //}, () => SymbolDefinition findMatchingIdLevelInBlockLambda){
+		super(mO) //, findMatchingIdLevelInBlockLambda)
 		this.priorObject = pO
 		this.writtenParams = new HashSet<String>
 	}

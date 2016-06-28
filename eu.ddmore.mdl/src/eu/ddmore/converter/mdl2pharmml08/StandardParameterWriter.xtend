@@ -13,8 +13,8 @@ class StandardParameterWriter extends AbstractParameterWriter {
 	extension PharmMLExpressionBuilder peb = new PharmMLExpressionBuilder 
 	extension BlockUtils bu = new BlockUtils
 
-	new(MclObject mdlObj, () => SymbolDefinition findMatchingIdLevelInBlockLambda){
-		super(mdlObj, findMatchingIdLevelInBlockLambda)
+	new(MclObject mdlObj){ //}, () => SymbolDefinition findMatchingIdLevelInBlockLambda){
+		super(mdlObj) //, findMatchingIdLevelInBlockLambda)
 	}
 	
 	override writeSimpleParameter(SymbolDefinition stmt)'''

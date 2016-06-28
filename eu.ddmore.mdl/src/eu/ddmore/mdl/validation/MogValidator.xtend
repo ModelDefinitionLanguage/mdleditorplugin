@@ -1,5 +1,6 @@
 package eu.ddmore.mdl.validation
 
+import eu.ddmore.mdl.mdl.AnonymousListStatement
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.EnumerationDefinition
 import eu.ddmore.mdl.mdl.EquationDefinition
@@ -9,29 +10,30 @@ import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.MdlPackage
 import eu.ddmore.mdl.mdl.Statement
+import eu.ddmore.mdl.mdl.SymbolReference
+import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.ListDefinitionTable
 import eu.ddmore.mdl.provider.MogDefinitionProvider
+import eu.ddmore.mdl.type.RandomVariableTypeInfo
+import eu.ddmore.mdl.type.TypeInfo
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
+import eu.ddmore.mdl.utils.ExpressionUtils
+import eu.ddmore.mdl.utils.LibraryUtils
+import eu.ddmore.mdl.utils.MdlLibUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdllib.mdllib.MdlLibPackage
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import java.util.ArrayList
 import java.util.Collections
+import java.util.List
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import java.util.List
-import eu.ddmore.mdl.mdl.AnonymousListStatement
-import eu.ddmore.mdl.utils.ExpressionUtils
-import eu.ddmore.mdl.utils.MdlLibUtils
-import eu.ddmore.mdl.utils.LibraryUtils
-import eu.ddmore.mdl.type.TypeInfo
-import eu.ddmore.mdl.type.RandomVariableTypeInfo
 
 class MogValidator extends AbstractDeclarativeValidator {
 
@@ -46,6 +48,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 	extension ExpressionUtils eu = new ExpressionUtils
 	extension MdlLibUtils mlu = new MdlLibUtils 
 	extension LibraryUtils lu = new LibraryUtils
+	extension BlockArgumentDefinitionProvider bdp = new BlockArgumentDefinitionProvider 
 	
 	val static String COUNT_OBS_TYPE_NAME = 'CountObs'
 //	val static String DISCRETE_OBS_TYPE_NAME = 'DiscreteObs'
@@ -156,23 +159,38 @@ class MogValidator extends AbstractDeclarativeValidator {
 					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
 			]
 		if(isMogObject){
+			val varBlk = mdlObj.getBlocksByName(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+			var SymbolReference refId = null
+			if(!varBlk.isEmpty){
+				refId = varBlk.head.blkArgs.getArgumentExpression('reference')?.symbolRef
+			}
 			if(dataObj != null){
 				val dataVarLvls = dataObj.dataVariabilityLevels
+				if(refId != null){
+					// check that data obj has an id level. If so then good.
+					if(!dataVarLvls.exists[
+						firstAttributeList.isMatchingDataUse(ListDefinitionTable::ID_USE_VALUE)
+					]){
+						errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "An 'id' variability level is required in dataObj: '" + dataObj.name + "'")
+					}
+				}
 				for(mdlOb : mdlObj.mdlVariabilityLevels){
 					if(mdlOb instanceof SymbolDefinition){
-						val dataOb = dataVarLvls.findFirst[name == (mdlOb as ListDefinition).name]
-						if(dataOb == null){
-							errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in dataObj");
-						}
-						else if(mdlOb.isParameterVarLevel){
-							if(!dataOb.firstAttributeList.isMatchingDataUse(ListDefinitionTable::ID_USE_VALUE, ListDefinitionTable::VARLVL_USE_VALUE)){
-								errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the dataObj");
+						if(refId == null || refId.ref != mdlOb){ 
+							val dataOb = dataVarLvls.findFirst[name == (mdlOb as ListDefinition).name]
+							if(dataOb == null){
+								errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in dataObj");
 							}
-						}
-						else if(mdlOb.isObservationVarLevel)
-							if(!dataOb.firstAttributeList.isMatchingDataUse(ListDefinitionTable::OBS_USE_VALUE)){
-								errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the dataObj");
+							else if(mdlOb.isParameterVarLevel){
+								if(!dataOb.firstAttributeList.isMatchingDataUse(ListDefinitionTable::ID_USE_VALUE, ListDefinitionTable::VARLVL_USE_VALUE)){
+									errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the dataObj");
+								}
 							}
+							else if(mdlOb.isObservationVarLevel)
+								if(!dataOb.firstAttributeList.isMatchingDataUse(ListDefinitionTable::OBS_USE_VALUE)){
+									errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the dataObj");
+								}
+						}
 					}
 				}
 			}
@@ -183,18 +201,19 @@ class MogValidator extends AbstractDeclarativeValidator {
 				val dvStmts = dvBlk.statementsFromBlock
 				val mVarLvls = mdlObj.mdlVariabilityLevels 
 				for(mdlOb : mVarLvls){
-					if(mdlOb instanceof SymbolDefinition){
-						val dataOb = dvStmts.findFirst[stmt|
-							if(stmt instanceof SymbolDefinition) stmt.name == mdlOb.name else false
-						]
-//						if(dataOb == null){
-//							if(mdlOb.isParameterVarLevel)
-//								errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in designObj");
-//						}
-//						else
-						if(dataOb instanceof SymbolDefinition){
-							if(dataOb.typeFor != varLvlTypeInfo){
-								errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the designObj");
+					if(refId == null || refId.ref != mdlOb){
+						if(mdlOb instanceof SymbolDefinition){
+							val dataOb = dvStmts.findFirst[stmt|
+								if(stmt instanceof SymbolDefinition) stmt.name == mdlOb.name else false
+							]
+							if(dataOb == null){
+								if(mdlOb.isParameterVarLevel)
+									errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in designObj");
+							}
+							else if(dataOb instanceof SymbolDefinition){
+								if(dataOb.typeFor != varLvlTypeInfo){
+									errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "variability level " + mdlOb.name +" has an inconsistent type with its match in the designObj");
+								}
 							}
 						}
 					}

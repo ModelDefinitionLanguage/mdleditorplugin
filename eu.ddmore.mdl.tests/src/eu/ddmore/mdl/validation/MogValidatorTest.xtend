@@ -1255,6 +1255,188 @@ class MogValidatorTest {
 	}
 
 	@Test
+	def void testValidVariabilityLevelsDesignMatch(){
+		val mcl = '''
+		d1 = designObj{
+		  DECLARED_VARIABLES{
+		  	INPUT_KA :: dosingTarget
+		  	CP_obs :: observation
+		  }
+		  INTERVENTION{
+		 	admin1 : {type is bolus, input=INPUT_KA, amount=100, doseTime=[0] }
+		  }
+		  SAMPLING{
+			winPK : {type is simple, outcome=CP_obs, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120] }
+		  }
+		  STUDY_DESIGN{
+			arm1 : {
+				armSize = 3,
+				interventionSequence=[{
+					admin=admin1,
+					start=0
+				}],
+				samplingSequence=[{
+					sample=winPK,
+					start=0
+				}]
+			}
+		  }
+		}
+		foo = mdlObj {
+				IDV{T}
+				
+				VARIABILITY_LEVELS(reference=ID){
+					ID : { type is parameter, level = 2 }
+					DV : { type is observation, level = 1 }
+				}
+		
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				d1 : { type is designObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertNoErrors
+	}
+
+	@Test
+	def void testValidVariabilityLevelsDesignMatchNoId(){
+		val mcl = '''
+		d1 = designObj{
+		  DECLARED_VARIABLES{
+		  	INPUT_KA :: dosingTarget
+		  	CP_obs :: observation
+		  }
+		  INTERVENTION{
+		 	admin1 : {type is bolus, input=INPUT_KA, amount=100, doseTime=[0] }
+		  }
+		  SAMPLING{
+			winPK : {type is simple, outcome=CP_obs, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120] }
+		  }
+		  STUDY_DESIGN{
+			arm1 : {
+				armSize = 3,
+				interventionSequence=[{
+					admin=admin1,
+					start=0
+				}],
+				samplingSequence=[{
+					sample=winPK,
+					start=0
+				}]
+			}
+		  }
+		}
+		foo = mdlObj {
+				IDV{T}
+				
+				VARIABILITY_LEVELS{
+					DV : { type is observation, level = 1 }
+				}
+		
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				d1 : { type is designObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertNoErrors
+	}
+
+	@Test
+	def void testValidVariabilityLevelsDesignMatchUnusedLevel(){
+		val mcl = '''
+		d1 = designObj{
+		  DECLARED_VARIABLES{
+		  	INPUT_KA :: dosingTarget
+		  	CP_obs :: observation
+		  }
+		  INTERVENTION{
+		 	admin1 : {type is bolus, input=INPUT_KA, amount=100, doseTime=[0] }
+		  }
+		  SAMPLING{
+			winPK : {type is simple, outcome=CP_obs, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120] }
+		  }
+		  STUDY_DESIGN{
+			arm1 : {
+				armSize = 3,
+				interventionSequence=[{
+					admin=admin1,
+					start=0
+				}],
+				samplingSequence=[{
+					sample=winPK,
+					start=0
+				}]
+			}
+		  }
+		}
+		foo = mdlObj {
+				IDV{T}
+				
+				VARIABILITY_LEVELS{
+					ID : { type is parameter, level = 2 }
+					DV : { type is observation, level = 1 }
+				}
+		
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				d1 : { type is designObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::MODEL_DATA_MISMATCH,
+			"variability level ID has no match in designObj"
+		)
+	}
+
+	@Test
 	def void testValidVariabilityLevelsMatch(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
@@ -1302,6 +1484,97 @@ class MogValidatorTest {
 		'''.parse
 	
 		mcl.assertNoErrors
+	}
+
+	@Test
+	def void testValidVariabilityLevelsIdDiffNames(){
+		val mcl = '''
+		warfarin_PK_ODE_dat = dataObj {
+		
+			DATA_INPUT_VARIABLES {
+				TC : { use is idv }
+				ID2 : { use is id }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		foo = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS(reference=ID){
+					ID : { type is parameter, level = 2 }
+				}
+		
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				warfarin_PK_ODE_dat : { type is dataObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertNoErrors
+	}
+
+	@Test
+	def void testValidVariabilityLevelsMissingId(){
+		val mcl = '''
+		warfarin_PK_ODE_dat = dataObj {
+			DECLARED_VARIABLES{ Y }
+		
+			DATA_INPUT_VARIABLES {
+				ID2 : { use is idv }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		foo = mdlObj {
+				VARIABILITY_LEVELS(reference=ID){
+					ID : { type is parameter, level = 2 }
+					DV : { type is observation, level = 1 }
+				}
+		
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				warfarin_PK_ODE_dat : { type is dataObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::MODEL_DATA_MISMATCH,
+			"An 'id' variability level is required in dataObj: 'warfarin_PK_ODE_dat'"
+		)
 	}
 
 	@Test
