@@ -97,3 +97,7 @@ org.slf4j.api
 location "http://sourceforge.net/projects/ddmore/files/update/libpharmml/0.7-1" libpharmml-repo {  
 eu.ddmore.libpharmml.feature.feature.group
 } 
+
+location "http://sourceforge.net/projects/ddmore/files/update/mdllib-plugin/snapshot" mdllib-repo {
+	eu.ddmore.mdllib.sdk.feature.group
+}

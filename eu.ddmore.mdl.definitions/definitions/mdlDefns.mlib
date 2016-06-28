@@ -1,32 +1,40 @@
 // Production MDL definitions.
 
 
-_type int _int;
-_type real _real;
-_type boolean _bool;
-_type string _str;
-_type pdf _pdf;
-_type pmf _pmf;
-_type deriv _deriv;
-_type vector _vector;
-_type matrix _matrix;
-_type function _function;
-_type reference _reference;
-_type Mapping _mapping;
-_type undefined _undef;
-_type genericEnum _category;
-_type genericCategoryValue _categoryValue;
-_type randomVariable _rv;
+_type int "Integer type" _int;
+_type real "Real number type" _real;
+_type boolean "Boolean type" _bool;
+_type string "String type" _str;
+_type pdf "Probability Density Function type" _pdf;
+_type pmf "Probability Mass Function type" _pmf;
+_type deriv "Derivative type" _deriv;
+_type vector "Vector type" _vector;
+_type matrix "Matrix type" _matrix;
+_type function "Function type" _function;
+_type reference "Reference type" _reference;
+_type Mapping "Mapping type" _mapping;
+_type undefined "Undefined type" _undef;
+_type genericEnum "Generic categorical type" _category;
+_type genericCategoryValue "Generic categorical type" _categoryValue;
+_type randomVariable "Random variable type" _rv;
 
 
 // Custom Types
-_type transType _enum (none, ln, logit, probit);
-_sublist fixEffAtts _atts cov::reference[::real], catCov::reference[::genericCategoryValue], coeff::reference[::real]
+_type transType "Transformation type" _enum (none "No transformation", ln "Natural log", logit "Logit", probit "Probit");
+_sublist fixEffAtts "Fixed effect attribute" _atts cov::reference[::real] "Covariate",
+						catCov::reference[::genericCategoryValue] "Categorical covariate",
+						coeff::reference[::real] "Fixed effect coefficient"
 					_sig (cov, coeff), (catCov, coeff);
 					
-_type priorElementType _enum(matrix, vector);					
+_type priorElementType "Prior element" _enum(matrix "Matrix", vector "Vector");					
 
-_type divUse _enum (covariate, variable, amt, dv, dvid, cmt, mdv, idv, id, rate, ignore, varLevel, catCov, ss, ii, addl, evid, cens);
+_type divUse "Column use in DIV block" _enum (covariate "continuous covariate", variable "variable", amt "Dosing amount",
+											dv "Dependent variable", dvid "Dependent variable identifier", cmt "Compartment",
+											mdv "Dependent variable not used", idv "Independent variable", id "Individual identifier",
+											rate "Rate of infusion", ignore "Ignore column", varLevel "Variability level",
+											catCov "Categorical covariate", ss "Steady state", ii "Steady state interval",
+											addl "Additional dose", evid "Event id", cens "Censoring flag"
+);
 _type ddvUse _enum (doseTime, doseInterval, covariate, catCov, variable, dvid);
 _type varLvlType _enum (parameter, observation);
 _type input _enum (nonmemFormat);
@@ -365,54 +373,54 @@ _prop optAlgo::OptAlgoType, fim::string, previousFim::string, graphOnly::boolean
 		
 _prop amount::real, duration::real, sampleTime::real, numberTimes::int, doseTime::real;
 
-_object mdlObj;
-_object dataObj;
-_object priorObj;
-_object taskObj;
-_object designObj;
-_object parObj;
-_object mogObj;
+_object mdlObj "Model object";
+_object dataObj "Data object";
+_object priorObj "Prior object";
+_object taskObj "Task object";
+_object designObj "Design object";
+_object parObj "Parameter object";
+_object mogObj "Model Object Group object";
 
 
-_block COVARIATES (0,)
+_block COVARIATES "Defined covariates" (0,)
 	_arguments  type::covArgEnumType?
 	_statements (0,) _eqnDefn, _eqnDefn+, _enumDefn, _rvDefn;
 
-_block VARIABILITY_LEVELS (0,) _statements (0,) _listDefn
+_block VARIABILITY_LEVELS "Defined variability levels "(0,) _statements (0,) _listDefn
 	_list varLevel;
 	
-_block STRUCTURAL_PARAMETERS (0,) _statements (0,) _eqnDefn, _eqnDefn+;
+_block STRUCTURAL_PARAMETERS "Defines structural parameters" (0,) _statements (0,) _eqnDefn, _eqnDefn+;
 
-_block VARIABILITY_PARAMETERS (0,) _statements (0,) _eqnDefn, _eqnDefn+;
+_block VARIABILITY_PARAMETERS "Defines variability parameters" (0,) _statements (0,) _eqnDefn, _eqnDefn+;
 
-_block RANDOM_VARIABLE_DEFINITION (0,) _arguments level::varLevel _statements (0,) 
+_block RANDOM_VARIABLE_DEFINITION "Defines random variables" (0,) _arguments level::varLevel "Variability level" _statements (0,) 
 					_rvDefn, _enumDefn, _anonList
 					_list _key=type CorrelationEnumType.covariance->CovarianceList, CorrelationEnumType.correlation->CorrelationList;
 
-_block POPULATION_PARAMETERS (,) _statements(,) _anonList _list _key=type
+_block POPULATION_PARAMETERS "Defines population parameters" (,) _statements(,) _anonList _list _key=type
 			 PopnTypeType.continuous -> PopnContinuousList, PopnTypeType.categorical->PopnCategoricalList;
 
-_block INDIVIDUAL_VARIABLES (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+, _anonList
+_block INDIVIDUAL_VARIABLES "Defines individual parameters" (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+, _anonList
 	_list _key=type IndivTypeType.linear->IndivParamLinear, IndivTypeType.general -> IndivParamGeneral,
 						/*IndivTypeType.userDefined -> IndivUserDefined,*/ IndivTypeType.rv -> IndivRvList;
 
-_block INFO (,) _statements (,) _propStmt _prop name?, problemStmt?;
+_block INFO "Contains information about the model." (,) _statements (,) _propStmt _prop name?, problemStmt?;
 
-_block MODEL_PREDICTION (0,) _statements (0,) _eqnDefn, _eqnDefn+, _listDefn
+_block MODEL_PREDICTION "Defines the model prediction" (0,) _statements (0,) _eqnDefn, _eqnDefn+, _listDefn
 	_list DerivList;
 	
-_block OBSERVATION (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+, _anonList
+_block OBSERVATION "Defines observations" (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+, _anonList
 		_list _key=type obstype.count->CountObs, obstype.categorical->CatObs, obstype.discrete->DiscreteObs, obstype.tte->TteObs,
 						obstype.combinedError1->combinedError1List, obstype.combinedError2->combinedError2List,
 						obstype.additiveError->additiveErrorList, obstype.proportionalError->proportionalErrorList,
 						obstype.continuous -> ContinuousObsList, obstype.userDefined -> UserDefinedObsList
 		;
 
-_block GROUP_VARIABLES (0,) _statements (0,) _eqnDefn+, _eqnDefn;
+_block GROUP_VARIABLES "Defines group variables" (0,) _statements (0,) _eqnDefn+, _eqnDefn;
 
-_block IDV (1,1) _statements (1,1) _eqnDefn;
+_block IDV "Defines the individual variable of the model" (1,1) _statements (1,1) _eqnDefn;
 
-_block DATA_INPUT_VARIABLES (0,) _statements (1,) _listDefn
+_block DATA_INPUT_VARIABLES "Defines data columns" (0,) _statements (1,) _listDefn
 	_list _key=use divUse.covariate -> Covariate, divUse.catCov -> CatCovariate,
 								divUse.cmt -> Cmt, divUse.cmt->Cmt, divUse.amt -> Amt, divUse.ii -> ii, divUse.addl -> addl,
 								divUse.id -> Id, divUse.idv -> Idv, divUse.varLevel -> DataVarLevel, divUse.mdv -> Mdv,
@@ -420,9 +428,9 @@ _block DATA_INPUT_VARIABLES (0,) _statements (1,) _listDefn
 								divUse.ss -> ss, divUse.evid->Evid, divUse.variable->DataVariable,
 								divUse.cens->CensCol;
 								
-_block DECLARED_VARIABLES (0,) _statements (,) _eqnDefn, _enumDefn;
+_block DECLARED_VARIABLES "Declares variables defined in another object" (0,) _statements (,) _eqnDefn, _enumDefn;
 
-_block DATA_DERIVED_VARIABLES (0,) _statements (,) _listDefn
+_block DATA_DERIVED_VARIABLES "Defines addition column mappings" (0,) _statements (,) _listDefn
 	_list _key=use ddvUse.doseTime->DoseTime, ddvUse.variable->DDVariable,
 				ddvUse.covariate->DDCovariate, ddvUse.catCov->DDCatCovariate, ddvUse.doseInterval->DoseInterval;
 _block SOURCE (1,1) _statements (1,1) _listDefn
@@ -472,7 +480,7 @@ _block FUNCTIONS (,) _statements (,) _eqnDefn;
 _block INTERVENTION (1, ) _statements (,) _listDefn
 	_list _key=type AdminTypeType.bolus->AdminBolusList, AdminTypeType.infusion -> AdminInfusionList, 
 						AdminTypeType.combi->AdminComplexList, AdminTypeType.resetAll->AdminResetAllList,
-						AdminTypeType.reset->AdminResetList, AdminTypeType.resetAll->AdminResetAllList, AdminTypeType.reset->AdminResetList;
+						AdminTypeType.reset->AdminResetList;
 
 //_block DESIGN_VARIABILITY (,) _statements (,) _listDefn
 //	_list DesignVariabilityList;
