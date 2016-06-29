@@ -61,8 +61,8 @@ warfarin_PRED_mdl = mdlObj{
       WT
    }# end COVARIATES
 
-   VARIABILITY_LEVELS{
-      ID: {type is parameter, level=2}
+   VARIABILITY_LEVELS(reference=BSV){
+      BSV: {type is parameter, level=2}
       DV: {type is observation, level=1}
    }# end VARIABILITY_LEVELS
 
@@ -93,7 +93,7 @@ warfarin_PRED_mdl = mdlObj{
    }# end GROUP_VARIABLES
 
 
-   RANDOM_VARIABLE_DEFINITION (level=ID) {
+   RANDOM_VARIABLE_DEFINITION (level=BSV) {
       eta_PPV_CL ~ Normal(mean=0, var=PPV_CL)
       eta_PPV_V ~ Normal(mean=0, var=PPV_V)
       eta_PPV_KA ~ Normal(mean=0, var=PPV_KA)

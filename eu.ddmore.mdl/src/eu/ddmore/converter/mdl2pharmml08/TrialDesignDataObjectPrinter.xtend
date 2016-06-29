@@ -24,6 +24,8 @@ import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.mdl.FunctionReference
+import eu.ddmore.mdl.utils.ExpressionUtils
+import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 
 class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
@@ -31,6 +33,8 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension MogDefinitionProvider mdp = new MogDefinitionProvider
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
+	extension ExpressionUtils eu = new ExpressionUtils
+	extension BlockArgumentDefinitionProvider badp = new BlockArgumentDefinitionProvider
 
 	private var mappedColumns = new HashSet<String>
 	
@@ -91,12 +95,42 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		mappedColumns.contains(colName)
 	}
 
+	def private writeIdVarLevel(MclObject it, ListDefinition dataVar){
+		var retVal = ''''''
+		val varBlks = getBlocksByName(BlockDefinitionTable::VAR_LVL_BLK_NAME)
+		if(!varBlks.isEmpty){
+			val refId  = varBlks.head.blkArgs.getArgumentExpression("reference").symbolRef
+			if(refId != null){
+				retVal += print_ds_ColumnMapping(dataVar, refId.ref, '')
+				saveMappedColumn(dataVar.name)
+			}
+			else{
+				// not refernce so rely on magix mapping
+				if(mObj.mdlVariabilityLevels.exists[name == dataVar.name]){
+					// only generate mapping if equivalent variable exists in model
+					retVal += mObj.print_ds_MagicMapping(dataVar)
+					// record that mapping to model found
+					saveMappedColumn(dataVar.name)
+				}
+			}
+		}
+		retVal
+	}
+
 	def print_ds_NONMEM_DataSet() {
 		var res = "";
 		for (column : dObj.dataColumnDefinitions) {
 			val use = column.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT);
 			switch(use){
-				case(ListDefinitionTable::ID_USE_VALUE),
+				case(ListDefinitionTable::ID_USE_VALUE):{
+					res += mObj.writeIdVarLevel(column)
+//					if(mObj.mdlVariabilityLevels.exists[name == column.name]){
+//						// only generate mapping if equivalent variable exists in model
+//						res += mObj.print_ds_MagicMapping(column)
+//						// record that mapping to model found
+//						saveMappedColumn(column.name)
+//					}
+				}
 				case(ListDefinitionTable::VARLVL_USE_VALUE):{
 					if(mObj.mdlVariabilityLevels.exists[name == column.name]){
 						// only generate mapping if equivalent variable exists in model
