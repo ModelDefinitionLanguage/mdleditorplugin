@@ -662,6 +662,22 @@ _func LogNormal3 "Log Normal distribution 3" _named
 		_sig(median, stdevLog)
 		_returns ::pdf;
 
+_func LogNormal4 "Log Normal distribution 4" _named
+		(
+			median::real "median / geometric mean",
+			coefVar::real "coefficient of variation"
+		)
+		_sig(median, coefVar)
+		_returns ::pdf;
+
+_func LogNormal5 "Log Normal distribution 5" _named
+		(
+			meanLog::real "mean of log(x)",
+			precision::real "precision"
+		)
+		_sig(meanLog, precision)
+		_returns ::pdf;
+
 _func Bernoulli1 "Bernoulli distributions" _named
 				(
 					probability::real
@@ -676,6 +692,14 @@ _func Poisson1 "Poisson distribution" _named
 			)
 			_sig (rate)
 			_returns ::pmf;
+			
+_func Beta1 "Beta distribution" _named
+			(
+				alpha::real "shape",
+				beta::real "shape"
+			)
+			_sig(alpha, beta)
+			_returns ::pdf;
 
 _func Binomial1 " Bernouli distributon with parameters n and p" _named
 			(
@@ -776,6 +800,22 @@ _func NegativeBinomial2 "Negative Binomial" _named
 			)
 			_sig (rate, overdispersion)
 			_returns ::pmf;
+
+_func StandardNormal1 "Standard normal distribution" _named
+			(
+				mean::real "mean",
+				stdev::real "standard deviation"
+			)
+			_sig(mean, stdev)
+			_returns ::pdf;
+
+_func StandardUniform1 "Standard uniform distribution" _named
+			(
+				minimum::real "minimum",
+				maximum::real "maximum"
+			)
+			_sig(minimum, maximum)
+			_returns ::pdf;
 
 _func StudentT1 "Student's t-distribution" _named (
 				degreesOfFreedom::real
