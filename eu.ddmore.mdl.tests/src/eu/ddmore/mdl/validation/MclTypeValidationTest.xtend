@@ -41,6 +41,11 @@ class MclTypeValidationTest {
 				A = B + C - 22
 			}
 			
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		} # end of model object
 		'''.parse
 		
@@ -63,7 +68,12 @@ class MclTypeValidationTest {
 				A = B + C - 22.02e-5
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -85,7 +95,12 @@ class MclTypeValidationTest {
 				A = B + C - 22.02e555
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.realLiteral,
@@ -111,7 +126,12 @@ class MclTypeValidationTest {
 				A = B + C - 22.02e-555777
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.realLiteral,
@@ -136,7 +156,12 @@ class MclTypeValidationTest {
 				A = B + C - 2220000000000000000000000000000000000000000000000000000000
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.integerLiteral, Diagnostic::SYNTAX_DIAGNOSTIC)
@@ -151,14 +176,18 @@ class MclTypeValidationTest {
 			VARIABILITY_LEVELS{
 			}
 		
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 			
 			MODEL_PREDICTION{
 				B
 				C
 				A = if(B > 0 && false) then B + C - 22 elseif(C == B || 22 < inf) then B^180 else 22
 			}
-			
-		} # end of model object
+			} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -183,6 +212,10 @@ class MclTypeValidationTest {
 			VARIABILITY_LEVELS{
 			}
 		
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 			
 			MODEL_PREDICTION{
 				DEQ{
@@ -217,13 +250,16 @@ class MclTypeValidationTest {
 			VARIABILITY_LEVELS{
 			}
 		
-			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
+
 			MODEL_PREDICTION{
 				B
 				C
 				A = piecewise{{ B + C - 22 when (B > 0 && false); B^180 when (C == B || 22 < inf); otherwise 22 }}
 			}
-			
 		} # end of model object
 		'''.parse
 		
@@ -249,14 +285,18 @@ class MclTypeValidationTest {
 			VARIABILITY_LEVELS{
 			}
 		
-			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
+		
 			MODEL_PREDICTION{
 				DEQ{
 					B : { deriv = C, init = 33 }
 				}
 				C
-				A = piecewise{{ B + C - 22 when (B > 0 && false); B^180 when (C == B || 22 < inf); otherwise 22 }}			}
-			
+				A = piecewise{{ B + C - 22 when (B > 0 && false); B^180 when (C == B || 22 < inf); otherwise 22 }}
+			}
 		} # end of model object
 		'''.parse
 		
@@ -290,7 +330,12 @@ class MclTypeValidationTest {
 				}
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -312,7 +357,12 @@ class MclTypeValidationTest {
 				}
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -337,7 +387,12 @@ class MclTypeValidationTest {
 				A = if(B > 0 && false) then B + C - 22 elseif(C == B || 22 < 0) then B^180 else 22
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.assignPair,
@@ -370,7 +425,12 @@ class MclTypeValidationTest {
 				A = C == "B"
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.equalityExpression,
@@ -393,7 +453,12 @@ class MclTypeValidationTest {
 				B = if(!true) then 0 else 1
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -413,7 +478,12 @@ class MclTypeValidationTest {
 				B = !0
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.unaryExpression,
@@ -436,7 +506,12 @@ class MclTypeValidationTest {
 				B = +true
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.unaryExpression,
@@ -459,7 +534,12 @@ class MclTypeValidationTest {
 				B = +
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.unaryExpression,
@@ -482,7 +562,12 @@ class MclTypeValidationTest {
 				B = !
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.unaryExpression,
@@ -507,7 +592,12 @@ class MclTypeValidationTest {
 				A = if("false") then B + C - 22 elseif(C == B || 22 < 0) then B^180 else 22
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoError(Diagnostic.SYNTAX_DIAGNOSTIC)
@@ -533,7 +623,12 @@ class MclTypeValidationTest {
 				A = piecewise{{ B when "false"; B^180 when (C == B || 22 < 0); otherwise 22 }}
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoError(Diagnostic.SYNTAX_DIAGNOSTIC)
@@ -559,7 +654,12 @@ class MclTypeValidationTest {
 				A = piecewise{{ "B" when A > 0; B^180 when (C == B || 22 < 0); otherwise 22 }}
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoError(Diagnostic.SYNTAX_DIAGNOSTIC)
@@ -585,7 +685,12 @@ class MclTypeValidationTest {
 				A = piecewise{{ B when B < C; (C == B || 22 < 0) when B^180; otherwise "A String" }}
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoError(Diagnostic.SYNTAX_DIAGNOSTIC)
@@ -611,7 +716,12 @@ class MclTypeValidationTest {
 				log(A) =  exp("B") + C - 22
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.unnamedArgument,
@@ -634,7 +744,12 @@ class MclTypeValidationTest {
 				foo = matrix(vector=[0.0, 2.0], ncol=1, byRow = true)
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -654,7 +769,12 @@ class MclTypeValidationTest {
 				foo = matrix(vector=[0.0, 2.0], ncol=1, byRow is TRUE)
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
@@ -677,7 +797,12 @@ class MclTypeValidationTest {
 				foo = matrix(vector=[0.0, 2.0], ncol=1, byRow = "foo")
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.valuePair,
@@ -745,7 +870,7 @@ class MclTypeValidationTest {
 		)
 	}
 	
-	@Test
+	@Ignore("Ignore feature not used now.")
 	def void testInValidNamedFunctionSublistNotVectType(){
 		val mcl = '''bar = mdlObj {
 			IDV { T }
@@ -770,6 +895,10 @@ class MclTypeValidationTest {
 			
 			INDIVIDUAL_VARIABLES{
 				Cl : { type is linear, pop = POP_CL, fixEff = {coeff=BETA_CL_WT, cov=logtWT}, ranEff = ETA_CL }
+			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 			}
 		}'''.parse
 		
@@ -821,6 +950,10 @@ class MclTypeValidationTest {
 				foo ~ Normal(mean=0, sd=1)
 			}
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 			
 		} # end of model object
 		'''.parse
@@ -872,7 +1005,12 @@ class MclTypeValidationTest {
 			}
 			
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -894,7 +1032,12 @@ class MclTypeValidationTest {
 				A=  [ 20, C, B]
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 //		mcl.assertError(MdlPackage::eINSTANCE.equationDefinition, MdlValidator::UNUSED_FEATURE)
@@ -916,7 +1059,12 @@ class MclTypeValidationTest {
 				A =  inverse(B)
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -937,6 +1085,10 @@ class MclTypeValidationTest {
 				A =  inverse(B)
 			}
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		} # end of model object
 		'''.parse
 		
@@ -958,7 +1110,12 @@ class MclTypeValidationTest {
 				A =  inverse(B)
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.unnamedArgument,
@@ -983,6 +1140,11 @@ class MclTypeValidationTest {
 				A =  [[ 20, C, B; 1, 2, 5.7 ]]
 			}
 			
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		} # end of model object
 		'''.parse
 		
@@ -1004,6 +1166,11 @@ class MclTypeValidationTest {
 				C = ln(A[2, 2])
 			}
 			
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		} # end of model object
 		'''.parse
 		
@@ -1025,7 +1192,12 @@ class MclTypeValidationTest {
 				C = inverse(A[1:2, 2])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -1046,7 +1218,12 @@ class MclTypeValidationTest {
 				C = inverse(A[1:2, 2])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -1067,7 +1244,12 @@ class MclTypeValidationTest {
 				C = inverse(A[1:2, 2:3])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -1088,7 +1270,12 @@ class MclTypeValidationTest {
 				C = inverse(A[1:2, ])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -1109,7 +1296,12 @@ class MclTypeValidationTest {
 				C = inverse(A[, 2:3])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -1130,7 +1322,12 @@ class MclTypeValidationTest {
 				C = ln(A[1.3, 2])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.indexRange,
@@ -1154,7 +1351,12 @@ class MclTypeValidationTest {
 				C = exp(A[1.3:3, 2])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.indexRange,
@@ -1179,7 +1381,12 @@ class MclTypeValidationTest {
 				A =  [[ 20, C, B; 1, 2, 5.7 ]]
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.matrixElement,
@@ -1202,7 +1409,12 @@ class MclTypeValidationTest {
 				A =  [[ 20, 2.1, 45; 1, 2]]
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.matrixLiteral,
@@ -1225,6 +1437,11 @@ class MclTypeValidationTest {
 				A = [[]]
 			}
 			
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		} # end of model object
 		'''.parse
 		
@@ -1243,6 +1460,11 @@ class MclTypeValidationTest {
 			
 			MODEL_PREDICTION{
 				A = []
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 			}
 			
 		} # end of model object
@@ -1267,7 +1489,12 @@ class MclTypeValidationTest {
 				A =  [ 20, true, B]
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.vectorElement,
@@ -1292,7 +1519,12 @@ class MclTypeValidationTest {
 				A =  [ 20, true, B]
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.vectorElement,
@@ -1316,6 +1548,10 @@ class MclTypeValidationTest {
 				C = ln(A[1])
 			}
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		} # end of model object
 		'''.parse
 		
@@ -1337,7 +1573,12 @@ class MclTypeValidationTest {
 				C = ln(A[1.0])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.indexRange,
@@ -1362,7 +1603,12 @@ class MclTypeValidationTest {
 				C = ln(A[B])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.indexRange,
@@ -1387,7 +1633,12 @@ class MclTypeValidationTest {
 				C = ln(A[1 + 4 * B])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.indexRange,
@@ -1412,6 +1663,10 @@ class MclTypeValidationTest {
 				C = ln(A[B])
 			}
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		} # end of model object
 		'''.parse
 		
@@ -1435,6 +1690,10 @@ class MclTypeValidationTest {
 				C = ln(A[toInt(1 + 4 * B)])
 			}
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		} # end of model object
 		'''.parse
 		
@@ -1456,7 +1715,12 @@ class MclTypeValidationTest {
 				C = mean(A[1:2])
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -1478,7 +1742,12 @@ class MclTypeValidationTest {
 				C = mean(A)
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -1500,7 +1769,12 @@ class MclTypeValidationTest {
 				C = mean(A)
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -1522,7 +1796,12 @@ class MclTypeValidationTest {
 				C = A[1] * 2.0
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		// Test type is string by checking error message
 		mcl.assertError(MdlPackage::eINSTANCE.multiplicativeExpression,
@@ -1551,7 +1830,12 @@ class MclTypeValidationTest {
 				C : { type is general, grp=0, ranEff=ETA[1] }
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -1573,7 +1857,12 @@ class MclTypeValidationTest {
 				C = mean(A)
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.unnamedArgument,
@@ -1597,7 +1886,12 @@ class MclTypeValidationTest {
 				A =  [ 20, [ 0 ], 26]
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.vectorElement,
@@ -1621,7 +1915,12 @@ class MclTypeValidationTest {
 				C = [ 1, 2, 3]
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.vectorElement,
@@ -1702,6 +2001,10 @@ class MclTypeValidationTest {
 				V = if(SEX == SEX.male) then 1 else 0
 			}
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		} # end of model object
 		'''.parse
 		
@@ -1726,7 +2029,12 @@ class MclTypeValidationTest {
 				V = if(SEX == 2) then 1 else 0
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.equalityExpression,
@@ -1754,7 +2062,12 @@ class MclTypeValidationTest {
 				V = if(SEX == SEX2.male) then 1 else 0
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.equalityExpression,
@@ -1782,7 +2095,12 @@ class MclTypeValidationTest {
 				V = if(SEX == SEX2.female2) then 1 else 0
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.equalityExpression,
@@ -1810,7 +2128,12 @@ class MclTypeValidationTest {
 				V = if(SEX == SEX2) then 1 else 0
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.equalityExpression,
@@ -1837,7 +2160,12 @@ class MclTypeValidationTest {
 				V = if(2 == SEX) then 1 else 0
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.equalityExpression,
@@ -1864,7 +2192,12 @@ class MclTypeValidationTest {
 				V = if(SEX == "2") then 1 else 0
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.equalityExpression,
@@ -2427,6 +2760,10 @@ warfarin_PK_v2_dat = dataObj{
 					IN : { type is direct, to = V }
 				}
 			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 			
 		} # end of model object
 		'''.parse
@@ -2451,7 +2788,12 @@ warfarin_PK_v2_dat = dataObj{
 				}
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors
@@ -2521,7 +2863,12 @@ d1g=designObj{
 				A =  C
 			}
 			
-		} # end of model object
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}		} # end of model object
+
 		'''.parse
 		
 		mcl.assertNoErrors

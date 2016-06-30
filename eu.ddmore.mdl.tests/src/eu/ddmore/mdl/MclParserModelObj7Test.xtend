@@ -40,6 +40,10 @@ warfarin_PK_SEXAGE_mdl = mdlObj {
 	MODEL_PREDICTION{
 		A = [1.0, 1.02, B0, B2]
 	}# end MODEL_PREDICTION
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 
 } # end of model object
 '''

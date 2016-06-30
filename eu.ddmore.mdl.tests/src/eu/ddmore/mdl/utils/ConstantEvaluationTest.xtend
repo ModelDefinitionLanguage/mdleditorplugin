@@ -34,6 +34,10 @@ class ConstantEvaluationTest {
 				MODEL_PREDICTION{
 					x = 23 * 1 / 4 + 2
 				}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 			}
 		'''.parse
 		
@@ -52,6 +56,10 @@ class ConstantEvaluationTest {
 				MODEL_PREDICTION{
 					x = 23 * 1 / (4 + 2)
 				}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 			}
 		'''.parse
 		
@@ -71,6 +79,10 @@ class ConstantEvaluationTest {
 					x = 23 * 1 / (4 + y)
 					y = 2
 				}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 			}
 		'''.parse
 		
@@ -95,6 +107,10 @@ class ConstantEvaluationTest {
 					x = 23 * 1 / (4 + y)
 					y = 2 ^ a
 				}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 			}
 		'''.parse
 		
@@ -119,6 +135,10 @@ class ConstantEvaluationTest {
 					x = 23 * 1 / (4 + y)
 					y = 2 ^ a
 				}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 			}
 		'''.parse
 		

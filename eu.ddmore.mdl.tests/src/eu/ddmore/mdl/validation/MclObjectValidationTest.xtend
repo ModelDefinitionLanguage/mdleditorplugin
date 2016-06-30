@@ -29,6 +29,10 @@ class MclObjectValidationTest {
 			
 			RANDOM_VARIABLE_DEFINITION(level=ID){
 			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors

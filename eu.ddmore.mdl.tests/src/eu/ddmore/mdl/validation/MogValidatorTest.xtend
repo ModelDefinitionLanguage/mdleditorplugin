@@ -29,11 +29,13 @@ class MogValidatorTest {
 	def void testValidCovariateMatching(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
+			DECLARED_VARIABLES{ Y::observation }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				SEX : { use is catCov withCategories{male when 0, female when 1} }
 				WT : { use is covariate }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -50,6 +52,11 @@ class MogValidatorTest {
 					WT
 					logWT = ln(WT/70)
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		p1 = parObj{
 			
@@ -80,12 +87,13 @@ class MogValidatorTest {
 	def void testValidCovariateMatchingWithMatchingDayaVar(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-			DECLARED_VARIABLES{}
+			DECLARED_VARIABLES{ Y::observation }
 		
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				logWT : { use is covariate }
 				WT : { use is covariate }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -102,6 +110,11 @@ class MogValidatorTest {
 					WT
 					logWT = ln(WT/70)
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		
 		p1 = parObj{
@@ -180,10 +193,11 @@ class MogValidatorTest {
 	def void testValidCovariateNoMdlCovars(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-		
+			DECLARED_VARIABLES{ Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				WT : { use is covariate }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -198,6 +212,11 @@ class MogValidatorTest {
 		
 				COVARIATES{
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		p1 = parObj{
 			
@@ -227,11 +246,12 @@ class MogValidatorTest {
 	def void testValidCovariateNoMatchingDataCovars(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-		
+			DECLARED_VARIABLES{ Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				SEX : { use is catCov withCategories{male when 0, female when 1} }
 				WT : { use is covariate }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -246,6 +266,11 @@ class MogValidatorTest {
 				COVARIATES{
 					logWT = 70
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		p1 = parObj{
 			
@@ -1289,6 +1314,11 @@ class MogValidatorTest {
 					ID : { type is parameter, level = 2 }
 					DV : { type is observation, level = 1 }
 				}
+			
+			OBSERVATION{
+				F = 1
+				CP_obs : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -1349,6 +1379,11 @@ class MogValidatorTest {
 					DV : { type is observation, level = 1 }
 				}
 		
+			
+			OBSERVATION{
+				F = 1
+				CP_obs : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		p1 = parObj{
 			
@@ -1461,6 +1496,11 @@ class MogValidatorTest {
 					ID : { type is parameter, level = 2 }
 					DV : { type is observation, level = 1 }
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -1490,10 +1530,11 @@ class MogValidatorTest {
 	def void testValidVariabilityLevelsIdDiffNames(){
 		val mcl = '''
 		warfarin_PK_ODE_dat = dataObj {
-		
+			DECLARED_VARIABLES{ Y::observation }
 			DATA_INPUT_VARIABLES {
 				TC : { use is idv }
 				ID2 : { use is id }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -1505,6 +1546,11 @@ class MogValidatorTest {
 				VARIABILITY_LEVELS(reference=ID){
 					ID : { type is parameter, level = 2 }
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -1720,8 +1766,11 @@ class MogValidatorTest {
 	def void testValidIdvMatchInMog(){
 		val mcl = '''
 		testData = dataObj {
+			DECLARED_VARIABLES{ Y::observation }
+			
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
+						DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -1733,6 +1782,11 @@ class MogValidatorTest {
 				}
 		
 				IDV{ T }
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 
 		p1 = parObj{
@@ -1759,11 +1813,13 @@ class MogValidatorTest {
 	}
 
 	@Test
-	def void testInvalidIdvMismatchInMog(){
+	def void testValidIdvMismatchInMog(){
 		val mcl = '''
 		testData = dataObj {
+			DECLARED_VARIABLES{ Y::observation }
 			DATA_INPUT_VARIABLES {
 				TTI : { use is idv }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -1775,6 +1831,10 @@ class MogValidatorTest {
 				}
 		
 				IDV{ T }
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 
 		p1 = parObj{
@@ -1849,8 +1909,10 @@ class MogValidatorTest {
 	def void testValidIdvMissingInModelMog(){
 		val mcl = '''
 		testData = dataObj {
+			DECLARED_VARIABLES { Y::observation }
 			DATA_INPUT_VARIABLES {
 				TTI : { use is idv }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -1861,7 +1923,10 @@ class MogValidatorTest {
 				IDV{T}
 				VARIABILITY_LEVELS{
 				}
-		
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		p1 = parObj{
 			
@@ -1890,10 +1955,11 @@ class MogValidatorTest {
 	def void testValidSingleSimpleDosingMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -1907,10 +1973,14 @@ class MogValidatorTest {
 				}
 				
 				MODEL_PREDICTION{
-					Y = A + D
+					Y1 = A + D
 					A
 					D::dosingVar
 				}
+			
+			OBSERVATION{
+				Y : { type is userDefined, prediction=Y1, value=Y1, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -1940,10 +2010,11 @@ class MogValidatorTest {
 	def void testValidDosingNoMdlMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { }
+			DECLARED_VARIABLES { Y1::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				foo1 : { use is ignore }
+				DV : { use is dv, variable=Y1 }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -1961,6 +2032,11 @@ class MogValidatorTest {
 					D
 				}
 		
+			
+			OBSERVATION{
+				F = 1
+				Y1 : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		p1 = parObj{
 			
@@ -1989,10 +2065,11 @@ class MogValidatorTest {
 	def void testValidSingleOdeDosingMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2009,9 +2086,12 @@ class MogValidatorTest {
 						D : { deriv=1 }
 						X : { deriv=1 }
 					}
-					Y
+					Y1
 				}
-		
+			OBSERVATION{
+				F = Y1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		p1 = parObj{
 			
@@ -2040,10 +2120,11 @@ class MogValidatorTest {
 	def void testValidSingleCompartmentDosingMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2063,6 +2144,11 @@ class MogValidatorTest {
 				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 					}
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -2190,10 +2276,11 @@ class MogValidatorTest {
 	def void testValidSingleCompartmentDosingMissingModelMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2212,7 +2299,11 @@ class MogValidatorTest {
 				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 			         }
 				}
-		
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		p1 = parObj{
 			
@@ -2241,11 +2332,12 @@ class MogValidatorTest {
 	def void testValidMultiDosingMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget; D2::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget; D2::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				CMT : { use is cmt }
 				AMT : { use is amt, define = { 1 in CMT as D, 2 in CMT as D2 } }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2266,6 +2358,11 @@ class MogValidatorTest {
 			             ::   {type is elimination, from=CENTRAL, v=1, cl=1}
 						}
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -2454,10 +2551,11 @@ class MogValidatorTest {
 	def void testValidModelStructParamMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2480,6 +2578,10 @@ class MogValidatorTest {
 				      CENTRAL:    {type is compartment, modelCmt=2}
 				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 			         }
+				}
+				OBSERVATION{
+					F = 1
+					Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 				}
 		
 		}
@@ -2513,10 +2615,11 @@ class MogValidatorTest {
 	def void testValidModelStructParamMatchMatrixTypeMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2540,6 +2643,11 @@ class MogValidatorTest {
 				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 			         }
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -2572,10 +2680,11 @@ class MogValidatorTest {
 	def void testValidModelStructParamWithAssignmentInModelMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2599,7 +2708,11 @@ class MogValidatorTest {
 				      CENTRAL:    {type is compartment, modelCmt=2}
 				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 			         }
-				}
+			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -2752,10 +2865,11 @@ class MogValidatorTest {
 	def void testValidWithWarningMogModelStructParamMatchMaskedAssignmentinMdl(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2780,6 +2894,11 @@ class MogValidatorTest {
 				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 			         }
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -2818,10 +2937,11 @@ class MogValidatorTest {
 	def void testValidModelVarParamMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2845,7 +2965,10 @@ class MogValidatorTest {
 				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 			         }
 				}
-		
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		p1 = parObj{
 			VARIABILITY{
@@ -2877,10 +3000,11 @@ class MogValidatorTest {
 	def void testValidModelVarParamWithAssignmentInModelMatch(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2904,6 +3028,10 @@ class MogValidatorTest {
 				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 			         }
 				}
+			OBSERVATION{
+				F = CENTRAL
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -3059,10 +3187,11 @@ class MogValidatorTest {
 	def void testValidWithWarningMogModelVarParamMatchMaskedAssignmentinMdl(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -3086,6 +3215,11 @@ class MogValidatorTest {
 				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 			         }
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{
@@ -3152,6 +3286,11 @@ class MogValidatorTest {
 				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 			         }
 				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		
 		}
 		p1 = parObj{

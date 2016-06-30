@@ -93,6 +93,7 @@ class MdlValidator extends AbstractMdlValidator {
 	public static val VARIABILITY_LEVELS_MALFORMED = "eu.ddmore.mdl.validation.custom.variability_levels.malformed"
 	public static val RESERVED_PREFIX_USED = "eu.ddmore.mdl.validation.custom.reserved.prefix.used"
 	public static val RESERVED_WORD_USED = "eu.ddmore.mdl.validation.custom.reserved.word.used"
+	public static val OBS_MISSING = "eu.ddmore.mdl.validation.observation.missing"
 
 	// Warnings
 	public static val MASKING_PARAM_ASSIGNMENT = "eu.ddmore.mdl.validation.mog.paramValueMasked"

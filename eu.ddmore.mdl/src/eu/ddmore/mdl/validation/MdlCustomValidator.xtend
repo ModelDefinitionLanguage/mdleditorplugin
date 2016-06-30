@@ -34,6 +34,7 @@ import java.util.Collections
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
+import eu.ddmore.mdl.mdl.AnonymousListStatement
 
 class MdlCustomValidator extends AbstractMdlValidator {
 
@@ -428,6 +429,20 @@ class MdlCustomValidator extends AbstractMdlValidator {
 				// RV not used so
 				warning("Random Variable '" + name + "' is not used and may be omitted from a generated model.",
 						MdlLibPackage::eINSTANCE.symbolDefinition_Name, MdlValidator::UNUSED_VARIABLE);
+			}
+		}
+	}
+
+	@Check
+	def validatedObservationPresent(BlockStatement it){
+		if(blkId.name == BlockDefinitionTable::OBS_BLK_NAME){
+			if(!statements.exists[s|
+				if(s instanceof ListDefinition || s instanceof AnonymousListStatement) return true
+				return false
+			]){
+				error("Observation block must contain at least one observation.",
+					MdlPackage::eINSTANCE.blockStatement_BlkId, MdlValidator::OBS_MISSING
+				)
 			}
 		}
 	}

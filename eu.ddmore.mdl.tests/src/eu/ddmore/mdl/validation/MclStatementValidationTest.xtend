@@ -31,6 +31,10 @@ class MclStatementValidationTest {
 			COVARIATES{
 				SEX withCategories { male, female}
 			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -242,6 +246,10 @@ class MclStatementValidationTest {
 				foo = if(true) then 1 else 0
 			}# end MODEL_PREDICTION
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		'''.parse
 		
@@ -261,6 +269,10 @@ class MclStatementValidationTest {
 				foo = if(true) then 1 elseif(false) then 0
 			}# end MODEL_PREDICTION
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		'''.parse
 		
@@ -342,6 +354,10 @@ class MclStatementValidationTest {
 			MODEL_PREDICTION{
 				foo::vector
 			}# end MODEL_PREDICTION
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		'''.parse
 
@@ -363,6 +379,10 @@ class MclStatementValidationTest {
 				foo = piecewise{{ 1 when true ; otherwise 0 }}
 			}# end MODEL_PREDICTION
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		'''.parse
 		
@@ -382,6 +402,10 @@ class MclStatementValidationTest {
 				foo = piecewise{{ 1 when true; 0 when false }}
 			}# end MODEL_PREDICTION
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}
 		'''.parse
 		

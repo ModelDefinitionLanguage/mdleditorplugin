@@ -128,6 +128,10 @@ warfarin_design = designObj {
 				Y
 				X : { deriv = 1, wrt = Y }
 			}
+			OBSERVATION{
+				F = 1
+				Z : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -160,7 +164,7 @@ warfarin_design = designObj {
 		)
 	}
 
-	@Test
+	@Ignore("No warning now given")
 	def void testNoWarningWhenZerox0(){
 		val mcl = '''bar = mdlObj {
 			IDV{ T }

@@ -35,6 +35,10 @@ warfarin_PK_ODE_mdl = mdlObj {
 		ID : { level=2, type is parameter }
 		DV : { level=1, type is observation }
 	} 
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 
 }
 		'''

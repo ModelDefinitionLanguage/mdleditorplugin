@@ -35,6 +35,10 @@ class MclBuiltinFunctionValidationTest {
 			
 			VARIABILITY_LEVELS{
 			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, value=F, prediction=F, weight=0 }
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -53,6 +57,10 @@ class MclBuiltinFunctionValidationTest {
 				A = tanh(3.2)
 				B = cosh(3.2)
 				C = sinh(3.2)
+			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, value=F, prediction=F, weight=0 }
 			}
 		}'''.parse
 		
@@ -75,6 +83,10 @@ class MclBuiltinFunctionValidationTest {
 			
 			VARIABILITY_LEVELS{
 			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, value=F, prediction=F, weight=0 }
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -95,6 +107,16 @@ class MclBuiltinFunctionValidationTest {
 			}
 			
 			VARIABILITY_LEVELS{
+				DV : { type is observation, level=1 }
+			}
+			
+			RANDOM_VARIABLE_DEFINITION(level=DV){
+				EPS~Normal(mean=0, sd=1)
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is additiveError, additive=0, prediction=F, eps=EPS }
 			}
 		}'''.parse
 		
@@ -224,6 +246,16 @@ class MclBuiltinFunctionValidationTest {
 			}
 			
 			VARIABILITY_LEVELS{
+				DV : { type is observation, level=1 }
+			}
+			
+			RANDOM_VARIABLE_DEFINITION(level=DV){
+				EPS~Normal(mean=0, sd=1)
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is additiveError, additive=0, prediction=F, eps=EPS }
 			}
 		}'''.parse
 		
@@ -253,6 +285,16 @@ class MclBuiltinFunctionValidationTest {
 			}
 			
 			VARIABILITY_LEVELS{
+				DV : { type is observation, level=1 }
+			}
+			
+			RANDOM_VARIABLE_DEFINITION(level=DV){
+				EPS~Normal(mean=0, sd=1)
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is additiveError, additive=0, prediction=F, eps=EPS }
 			}
 		}'''.parse
 		
@@ -287,6 +329,10 @@ class MclBuiltinFunctionValidationTest {
 			}
 			RANDOM_VARIABLE_DEFINITION(level=ID){
 				ETA_CL ~ Normal(mean = POP_CL, var=POP_CL)
+			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, value=F, prediction=F, weight=0 }
 			}
 		}'''.parse
 		
@@ -383,6 +429,10 @@ class MclBuiltinFunctionValidationTest {
 				foo ~ Normal(mean=0, sd=1)
 				foo2 ~ Normal(mean=0, var=1)
 			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, value=F, prediction=F, weight=0 }
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -454,6 +504,10 @@ class MclBuiltinFunctionValidationTest {
 			POPULATION_PARAMETERS{
 				:: { type is continuous, variable=ETA_CL }
 			}
+			OBSERVATION{
+				F = 1
+				Y : { type is additiveError, additive=0, prediction=F, eps=ETA_CL }
+			}
 		}'''.parse
 		
 		assertEquals("expected error num", 1, mcl.validate.size)
@@ -492,6 +546,10 @@ class MclBuiltinFunctionValidationTest {
 				:: { type is continuous, variable=ETA_CL }
 			}
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is additiveError, additive=0, prediction=F, eps=ETA_CL }
+			}
 		}'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.namedFuncArguments,
@@ -524,6 +582,10 @@ class MclBuiltinFunctionValidationTest {
 			POPULATION_PARAMETERS{
 				:: { type is continuous, variable=ETA_CL }
 			}
+			OBSERVATION{
+				F = 1
+				Y : { type is additiveError, additive=0, prediction=F, eps=ETA_CL }
+			}
 		}'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.namedFuncArguments,
@@ -552,6 +614,10 @@ class MclBuiltinFunctionValidationTest {
 			}
 			RANDOM_VARIABLE_DEFINITION(level=ID){
 				ETA_CL ~ Bernoulli1(probability=POP_CL)
+			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, value=F, prediction=F, weight=0 }
 			}
 		}
 		'''.parse

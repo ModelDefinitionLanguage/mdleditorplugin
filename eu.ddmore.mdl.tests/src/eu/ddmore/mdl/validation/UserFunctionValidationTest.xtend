@@ -124,6 +124,10 @@ warfarin_PK_ODE_mdl = mdlObj {
 			# the function can contain only a single expression
 		    arg1
 	}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } # end of model object
 '''.parse
 		
@@ -143,6 +147,10 @@ warfarin_PK_ODE_mdl = mdlObj {
 			# the function can contain only a single expression
 		    [[arg1;arg2]]
 	}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } # end of model object
 '''.parse
 		
@@ -162,6 +170,10 @@ warfarin_PK_ODE_mdl = mdlObj {
 			# the function can contain only a single expression
 		    [ arg1, arg2 ]
 	}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } # end of model object
 '''.parse
 		
@@ -181,6 +193,10 @@ warfarin_PK_ODE_mdl = mdlObj {
 			# the function can contain only a single expression
 		    arg1[1]
 	}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } # end of model object
 '''.parse
 		
@@ -201,6 +217,10 @@ warfarin_PK_ODE_mdl = mdlObj {
 		    arg1[1,1]
 	}
 	
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } # end of model object
 '''.parse
 		
@@ -270,6 +290,10 @@ warfarin_PK_ODE_mdl = mdlObj {
 	VARIABILITY_LEVELS{
 		ID : { level=2, type is parameter }
 	} 
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } # end of model object
 '''.parse
 		
@@ -298,6 +322,10 @@ warfarin_PK_ODE_mdl = mdlObj {
 	VARIABILITY_LEVELS{
 		ID : { level=2, type is parameter }
 	} 
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } # end of model object
 '''.parse
 		

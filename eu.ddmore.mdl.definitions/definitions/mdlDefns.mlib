@@ -410,7 +410,7 @@ _block INFO "Contains information about the model." (,) _statements (,) _propStm
 _block MODEL_PREDICTION "Defines the model prediction" (0,) _statements (0,) _eqnDefn, _eqnDefn+, _listDefn
 	_list DerivList;
 	
-_block OBSERVATION "Defines observations" (0,) _statements (0,) _eqnDefn+, _transDefn, _listDefn+, _anonList
+_block OBSERVATION "Defines observations" (1,) _statements (1,) _eqnDefn+, _transDefn, _listDefn+, _anonList
 		_list _key=type obstype.count->CountObs, obstype.categorical->CatObs, obstype.discrete->DiscreteObs, obstype.tte->TteObs,
 						obstype.combinedError1->combinedError1List, obstype.combinedError2->combinedError2List,
 						obstype.additiveError->additiveErrorList, obstype.proportionalError->proportionalErrorList,

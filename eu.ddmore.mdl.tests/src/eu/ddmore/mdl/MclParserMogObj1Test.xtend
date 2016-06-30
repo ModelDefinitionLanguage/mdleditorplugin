@@ -19,13 +19,21 @@ mobj = mdlObj {
 	IDV{T}
 	VARIABILITY_LEVELS{
 	} 
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 }
 
 pobj = parObj {
 }
 
 dobj = dataObj {
-	DATA_INPUT_VARIABLES{  foo : { use is idv } }
+	DECLARED_VARIABLES{ Y::observation }
+	DATA_INPUT_VARIABLES{
+		foo : { use is idv }
+		DV : { use is dv, variable = Y }
+	}
 	SOURCE{  SrcFile : { file="warfarin_conc_sex.csv", inputFormat  is nonmemFormat } }
 }
 

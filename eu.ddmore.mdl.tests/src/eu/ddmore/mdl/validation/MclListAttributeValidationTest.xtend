@@ -294,6 +294,10 @@ class MclListAttributeValidationTest {
    				}# end COMPARTMENT
 				CONC=CENTRAL/V
 			} # end MODEL_PREDICTION
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -569,6 +573,10 @@ foo = mdlObj {
    INDIVIDUAL_VARIABLES{
       CL : { type is linear, pop = POP_CL, fixEff = [{coeff=POP_BETA_CL_WT, cov=WT}] , ranEff = [eta_PPV_CL] }
    }# end INDIVIDUAL_VARIABLES
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } 
 		'''.parse
 		

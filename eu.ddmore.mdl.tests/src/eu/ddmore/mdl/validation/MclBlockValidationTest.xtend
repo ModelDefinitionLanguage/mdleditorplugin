@@ -197,6 +197,10 @@ class MclBlockValidationTest {
 				DEQ{}
 				COMPARTMENT{}
 			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		mcl.assertNoErrors
 	}

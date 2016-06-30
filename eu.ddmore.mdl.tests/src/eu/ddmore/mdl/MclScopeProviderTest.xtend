@@ -54,6 +54,10 @@ warfarin_PK_SEXAGE_mdl2 = mdlObj {
 	GROUP_VARIABLES{
 		FSEXCL = if(SEX == SEX.female) then POP_FCL_FEM  else 1
 	}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } # end of model object
 
 warfarin_PK_SEXAGE_mdl = mdlObj {
@@ -86,9 +90,10 @@ warfarin_PK_SEXAGE_mdl = mdlObj {
 		}
 	}
 	
-	OBSERVATION{
-		foo = 1
-	}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } # end of model object
 '''
 	

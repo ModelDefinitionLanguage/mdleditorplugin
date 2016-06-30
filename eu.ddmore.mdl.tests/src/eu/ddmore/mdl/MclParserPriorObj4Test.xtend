@@ -126,6 +126,10 @@ example332_mdl = mdlObj{
 	   SD_ADD = sqrt(1/TAU)
    }# end INDIVIDUAL_VARIABLES
 
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 } # end of model object
 
 		'''

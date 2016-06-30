@@ -30,6 +30,10 @@ warfarin_PK_ODE_mdl = mdlObj {
    MODEL_PREDICTION{
 	  P1 = userFunc(0, 1.2, "A")
    }# end MODEL_PREDICTION
+	OBSERVATION{
+		F = 1
+		Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+	}
 } # end of model object
 		'''
 	

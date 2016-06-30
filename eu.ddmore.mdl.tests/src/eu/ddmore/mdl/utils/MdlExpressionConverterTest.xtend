@@ -40,7 +40,9 @@ warfarin_PK_ODE_mdl = mdlObj {
 			TLAG = GUT-1
 			RATEIN = if(T >= TLAG) then GUT * KA else 0
 	} # end MODEL_PREDICTION
-	
+	OBSERVATION{
+		Y : { type is userDefined, value=RATEIN, prediction=RATEIN, weight=0 }
+	}
 } # end of model object
 		'''.parse
 		

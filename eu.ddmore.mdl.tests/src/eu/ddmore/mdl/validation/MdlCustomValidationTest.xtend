@@ -219,10 +219,10 @@ class MdlCustomValidationTest {
 				TSEX = if(sex == sex.f) then 1 else 0
 			}
 			
-			
-«««			INDIVIDUAL_VARIABLES{
-«««				BETA_CL_WT : { type is general, grp=1, ranEff = [1]
-«««			}
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -521,6 +521,11 @@ warfarin_T2E_exact_dat = dataObj{
 			INDIVIDUAL_VARIABLES{
 				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = ETA }
 			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -613,6 +618,11 @@ warfarin_T2E_exact_dat = dataObj{
 			
 			INDIVIDUAL_VARIABLES{
 				BETA_CL_WT : { type is linear, pop=1, fixEff=[{cov=W, coeff=BETA_W}], ranEff = ETA }
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 			}
 		}'''.parse
 		
@@ -843,6 +853,10 @@ warfarin_T2E_exact_dat = dataObj{
 				RATE : { deriv = -RATE }
 			}
 			
+			OBSERVATION{
+				F = 1
+				Z : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -855,6 +869,11 @@ warfarin_T2E_exact_dat = dataObj{
 			
 			VARIABILITY_LEVELS{
 				ID : { level = 1, type is parameter}
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 			}
 		}'''.parse
 		
@@ -869,6 +888,11 @@ warfarin_T2E_exact_dat = dataObj{
 			VARIABILITY_LEVELS{
 				a : { level = 2, type is parameter}
 				b : { level = 1, type is observation}
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 			}
 		}'''.parse
 		
@@ -885,6 +909,11 @@ warfarin_T2E_exact_dat = dataObj{
 				b : { level = 2, type is parameter}
 				c : { level = 1, type is observation}
 			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -900,6 +929,11 @@ warfarin_T2E_exact_dat = dataObj{
 				b : { level = 21, type is parameter}
 				c : { level = 1, type is observation}
 			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -912,6 +946,11 @@ warfarin_T2E_exact_dat = dataObj{
 			
 			VARIABILITY_LEVELS{
 				c : { level = 1, type is observation}
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 			}
 		}'''.parse
 		
@@ -926,6 +965,11 @@ warfarin_T2E_exact_dat = dataObj{
 			VARIABILITY_LEVELS{
 				a : { level = 1, type is parameter}
 				b : { level = 2, type is observation}
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 			}
 		}'''.parse
 		
@@ -943,6 +987,11 @@ warfarin_T2E_exact_dat = dataObj{
 				a : { level = 2, type is parameter}
 				b : { level = 2, type is parameter}
 				c : { level = 1, type is observation}
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 			}
 		}'''.parse
 		
@@ -1002,6 +1051,11 @@ warfarin_T2E_exact_dat = dataObj{
 			
 			VARIABILITY_LEVELS{
 				a : { level = 2, type is parameter}
+			}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 			}
 		}'''.parse
 		
@@ -1084,6 +1138,11 @@ warfarin_T2E_exact_dat = dataObj{
 				MDL_ = 1
 			}
 			
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
@@ -1206,6 +1265,10 @@ warfarin_T2E_exact_dat = dataObj{
 				:: { type is rv, variable=ETA }
 			}	
 			
+			OBSERVATION{
+				F = 1
+				Y : { type is additiveError, prediction=F, additive=0, eps=ETA } 
+			}
 		}'''.parse
 		
 		mcl.assertNoIssues
@@ -1223,12 +1286,38 @@ warfarin_T2E_exact_dat = dataObj{
 				ETA ~ Normal1(mean=0, stdev=1)
 			}
 			
-			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
 		}'''.parse
 		
 		mcl.assertNoErrors
 		mcl.assertWarning(MdlLibPackage::eINSTANCE.symbolDefinition,
 							MdlValidator::UNUSED_VARIABLE, "Random Variable 'ETA' is not used and may be omitted from a generated model.")
+	}
+
+	@Test
+	def void testObservationDoesNotContainObsDefn(){
+		val mcl = '''bar = mdlObj {
+			IDV { T }
+			
+			VARIABILITY_LEVELS{
+				a : { level = 2, type is parameter}
+			}
+			RANDOM_VARIABLE_DEFINITION(level=a){
+				ETA ~ Normal1(mean=0, stdev=1)
+			}
+			
+			OBSERVATION{
+				X = ETA
+			}
+			
+			
+		}'''.parse
+		
+		mcl.assertError(MdlPackage::eINSTANCE.blockStatement,
+							MdlValidator::OBS_MISSING, "Observation block must contain at least one observation.")
 	}
 
 }

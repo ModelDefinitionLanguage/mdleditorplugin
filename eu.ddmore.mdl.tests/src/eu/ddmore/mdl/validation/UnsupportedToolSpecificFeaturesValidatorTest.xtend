@@ -41,6 +41,10 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			INDIVIDUAL_VARIABLES{
 				a : { type is linear, trans is ln, pop=d, ranEff = [ eta_a ] }
 			}
+			
+			OBSERVATION{
+				z : {type is additiveError, prediction = a, additive=1 + 2, eps=eta_a }
+			}
 		}
 	'''.parse
 		mcl.assertNoIssues
@@ -69,6 +73,10 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 
 			INDIVIDUAL_VARIABLES{
 				a : { type is general, trans is ln, grp=d, ranEff = [ eta_a ] }
+			}
+			
+			OBSERVATION{
+				z : {type is additiveError, prediction = a, additive=1 + 2, eps=eta_a }
 			}
 		}
 	'''.parse
@@ -129,6 +137,10 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			INDIVIDUAL_VARIABLES{
 				a = exp(d * eta_a) 
 			}
+			
+			OBSERVATION{
+				z : {type is additiveError, prediction = a, additive=1 + 2, eps=eta_a }
+			}
 		}
 	'''.parse
 		mcl.assertNoErrors
@@ -158,6 +170,10 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 
 			INDIVIDUAL_VARIABLES{
 				a = d 
+			}
+			
+			OBSERVATION{
+				z : {type is additiveError, prediction = a, additive=1 + 2, eps=eta_a }
 			}
 		}
 	'''.parse
@@ -271,7 +287,7 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			}
 			
 			OBSERVATION{
-				z = 1 + 2 * a + eps_a
+				z : {type is additiveError, prediction = a, additive=1 + 2, eps=eps_a }
 			}
 		}
 	'''.parse
