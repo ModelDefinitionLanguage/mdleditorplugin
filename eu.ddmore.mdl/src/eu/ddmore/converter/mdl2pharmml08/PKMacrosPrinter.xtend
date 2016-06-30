@@ -61,7 +61,8 @@ class PKMacrosPrinter{
 		'kt' -> "kt",
 		'ka' -> "ka",
 		'vm' -> "Vm",
-		'km' -> "Km"
+		'km' -> "Km",
+		'modelDur' -> 'Tk0'
 	);
 	
 
