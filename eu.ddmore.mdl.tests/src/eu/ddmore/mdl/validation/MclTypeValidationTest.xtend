@@ -1971,7 +1971,7 @@ class MclTypeValidationTest {
 			
 			SAMPLING{
 			 	pkwin1 : { type is simple, outcome=Conc, sampleTime = [0.5] }
-				pkwin2 : { type is simple, outcome=Conc, numberTimes = 0, sampleTime = 0 }
+				pkwin2 : { type is simple, outcome=Conc, numberTimes = 1 }
 			}
 			DESIGN_SPACES{
 				DS3 : { objRef=[pkwin1,pkwin2], element is numberTimes, discrete = [1] }
@@ -2812,7 +2812,7 @@ d1g=designObj{
 	}
 	SAMPLING{
 	 	pkwin1 : { type is simple, outcome=Conc, sampleTime = [0.5,2] }
-		pkwin2 : { type is simple, outcome=Conc, numberTimes=0, sampleTime = 30 }
+		pkwin2 : { type is simple, outcome=Conc, sampleTime = 30 }
 		pkwin3 : { type is simple, outcome=Conc, sampleTime = [30]}
 	# Create sampling for PK and PD by stringing windows
 		sampPK : {  type is combi, combination=[pkwin1,pkwin2] }
@@ -2838,7 +2838,7 @@ d1g=designObj{
 	}
 	SAMPLING{
 	 	pkwin1 : { type is simple, outcome=Conc, sampleTime = [0.5,2] }
-		pkwin2 : { type is simple, outcome=Conc, numberTimes=0, sampleTime=0 }
+		pkwin2 : { type is simple, outcome=Conc, sampleTime=0 }
 	# Create sampling for PK and PD by stringing windows
 		sampPK : {  type is combi, combination=[pkwin1,pkwin2] }
 		sampPD : { type is combi, combination=[pkwin1,pkwin2] }
@@ -2886,7 +2886,7 @@ d1g=designObj{
 		dose1 : { type is infusion, input=Cmt, amount=100, doseTime=0, duration=1} 
 	}
 	SAMPLING{
-		pkwin2 : { type is simple, outcome=Conc, numberTimes=0, sampleTime=30 }
+		pkwin2 : { type is simple, outcome=Conc, sampleTime=30 }
 	}
 }		'''.parse
 		

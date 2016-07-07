@@ -333,10 +333,11 @@ _list SamplingSuper _super;
 
 _list SimpleSamplingList _extends SamplingSuper _atts type::sampletype, outcome::reference[::observation], sampleTime::vector,
 								numberTimes::int, deltaTime::real, blq::real, ulq::real
-							_sig(type, outcome, sampleTime?, numberTimes?, deltaTime?, blq?, ulq?);
+							_sig(type, outcome, numberTimes, deltaTime?, blq?, ulq?),
+								(type, outcome, sampleTime, deltaTime?, blq?, ulq?);
 _list DerivedSamplingList _extends SamplingSuper _atts type::sampletype, combination::vector[::reference[::SamplingSuper]],
-														numberTimes::int, start::vector[::real], relative::boolean
-							_sig(type,combination, numberTimes?, start?, relative?);
+														start::vector[::real], relative::boolean
+							_sig(type,combination, start?, relative?);
 
 _type covArgEnumType _enum(constant, idvDependent); 
 
