@@ -1,28 +1,27 @@
 package eu.ddmore.converter.mdl2pharmml08
 
+import eu.ddmore.mdl.mdl.AnonymousListStatement
+import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
+import eu.ddmore.mdl.mdl.Statement
 import eu.ddmore.mdl.mdl.StringLiteral
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BlockDefinitionTable
+import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdl.validation.MdlValidator
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
+import java.util.ArrayList
 import java.util.Collections
 import java.util.HashSet
 import java.util.Set
-import eu.ddmore.mdl.mdl.BlockStatement
-import eu.ddmore.mdl.mdl.AnonymousListStatement
-import eu.ddmore.mdl.provider.BuiltinFunctionProvider
-import java.util.ArrayList
-import eu.ddmore.mdl.mdl.Statement
-import eu.ddmore.mdl.provider.BlockDefinitionProvider
 
 class PriorParameterWriter extends AbstractParameterWriter {
 
@@ -33,7 +32,6 @@ class PriorParameterWriter extends AbstractParameterWriter {
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
-	extension BlockDefinitionProvider bdp = new BlockDefinitionProvider
 
 	val MclObject priorObject
 	val Set<String> writtenParams
