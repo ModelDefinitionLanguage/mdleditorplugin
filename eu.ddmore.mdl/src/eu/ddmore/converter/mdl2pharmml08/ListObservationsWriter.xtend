@@ -28,6 +28,8 @@ import static extension eu.ddmore.mdl.utils.ExpressionConverter.convertToString
 import eu.ddmore.mdl.mdl.ListPiecewiseExpression
 import eu.ddmore.mdl.mdl.ListPWClause
 import eu.ddmore.mdl.mdl.PWClause
+import eu.ddmore.mdllib.mdllib.Expression
+import eu.ddmore.mdl.utils.ConstantEvaluation
 
 class ListObservationsWriter {
 	static var ERROR_MSG = "<Error!>"
@@ -42,6 +44,7 @@ class ListObservationsWriter {
 	extension PharmMLConverterUtils pcu = new PharmMLConverterUtils
 	extension FunctionDefinitionPrinter fdp = new FunctionDefinitionPrinter
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
+	extension ConstantEvaluation ce = new ConstantEvaluation
 
 //	var idx = 1
 	
@@ -356,13 +359,20 @@ class ListObservationsWriter {
 		true
 	}
 	
+	def private boolean isLhsTransformed(Expression expr){
+		if(expr != null){
+			expr.evaluateLogicalExpression
+		}
+		else true
+	}
+	
 	def private isTransformedBothSides(AttributeList attList){
-		attList.getAttributeEnumValue('lhsTrans') != null &&
+		attList.getAttributeExpression('lhsTrans').isLhsTransformed &&
 		 attList.getAttributeEnumValue('trans') != null
 	}
 
 	def private isTransformedOnlyRhsSide(AttributeList attList){
-		attList.getAttributeEnumValue('lhsTrans') == null &&
+		!attList.getAttributeExpression('lhsTrans').isLhsTransformed &&
 		 attList.getAttributeEnumValue('trans') != null
 	}
 	

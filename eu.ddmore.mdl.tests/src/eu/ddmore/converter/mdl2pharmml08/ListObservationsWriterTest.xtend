@@ -114,6 +114,7 @@ class ListObservationsWriterTest {
 		ld.list = attList
 		attList.attributes.add(createEnumPair('type', 'combinedError2'))
 		attList.attributes.add(createEnumPair('trans', 'ln'))
+		attList.attributes.add(createAssignPair('lhsTrans', createBooleanLiteral(false)))
 		attList.attributes.add(createAssignPair('additive', mParamsBlk.createSymbolRef('A')))
 		attList.attributes.add(createAssignPair('proportional', mParamsBlk.createSymbolRef('B')))
 		attList.attributes.add(createAssignPair('eps', rvBlk.createSymbolRef('E')))
@@ -174,7 +175,61 @@ class ListObservationsWriterTest {
 		ld.setName("tst")
 		ld.list = attList
 		attList.attributes.add(createEnumPair('type', 'combinedError2'))
-		attList.attributes.add(createEnumPair('lhsTrans', 'ln'))
+		attList.attributes.add(createAssignPair('lhsTrans', createBooleanLiteral(true)))
+		attList.attributes.add(createEnumPair('trans', 'ln'))
+		attList.attributes.add(createAssignPair('additive', mParamsBlk.createSymbolRef('A')))
+		attList.attributes.add(createAssignPair('proportional', mParamsBlk.createSymbolRef('B')))
+		attList.attributes.add(createAssignPair('eps', rvBlk.createSymbolRef('E')))
+		attList.attributes.add(createAssignPair('prediction', mPredBlk.createSymbolRef('C')))
+		
+		val actual = writeListObservations(ld, 1)
+		val expected = '''
+		<ObservationModel blkId="om1">
+			<ContinuousData>
+				<Standard symbId="tst">
+					<Transformation type="log"/>
+					<Output>
+						<ct:SymbRef blkIdRef="sm" symbIdRef="C"/>
+					</Output>
+					<ErrorModel>
+						<ct:Assign>
+							<math:FunctionCall>
+								<ct:SymbRef symbIdRef="combinedError2Log"/>
+								<math:FunctionArgument symbId="additive">
+									<ct:SymbRef blkIdRef="pm" symbIdRef="A"/>
+								</math:FunctionArgument>
+								<math:FunctionArgument symbId="proportional">
+									<ct:SymbRef blkIdRef="pm" symbIdRef="B"/>
+								</math:FunctionArgument>
+								<math:FunctionArgument symbId="f">
+									<ct:SymbRef blkIdRef="sm" symbIdRef="C"/>
+								</math:FunctionArgument>
+							</math:FunctionCall>
+						</ct:Assign>
+					</ErrorModel>
+					<ResidualError>
+						<ct:SymbRef blkIdRef="pm" symbIdRef="E"/>
+					</ResidualError>
+				</Standard>
+			</ContinuousData>
+		</ObservationModel>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteCombinedError2LogBothTransAttOmitted(){
+		val obsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::OBS_BLK_NAME))
+		val mPredBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		val mParamsBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_STRUCT_PARAMS))
+		val rvBlk = createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_RND_VARS))
+		val ld = MdlFactory.eINSTANCE.createListDefinition
+		val bdy = (obsBlk.body as BlockStatementBody)
+		bdy.statements.add(ld)
+		val attList = MdlFactory.eINSTANCE.createAttributeList
+		ld.setName("tst")
+		ld.list = attList
+		attList.attributes.add(createEnumPair('type', 'combinedError2'))
 		attList.attributes.add(createEnumPair('trans', 'ln'))
 		attList.attributes.add(createAssignPair('additive', mParamsBlk.createSymbolRef('A')))
 		attList.attributes.add(createAssignPair('proportional', mParamsBlk.createSymbolRef('B')))

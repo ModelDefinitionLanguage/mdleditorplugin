@@ -234,8 +234,8 @@ Hansson2013_mdl = mdlObj{
    OBSERVATION{
       LNVEGF_obs : { type is combinedError2, trans is ln, additive=0, proportional=POP_RES_VEGF_PROP, prediction=VEGF, eps=eps_RES_W }
       LNsVEGFR2_obs : { type is combinedError2, trans is ln, additive=POP_RES_sVEGFR2_ADD, proportional=POP_RES_sVEGFR2_PROP, prediction=sVEGFR2, eps=eps_RES_W }
-      LNsVEGFR3_obs : { type is combinedError2, trans is ln, additive=0, proportional=POP_RES_sVEGFR3_PROP, prediction=sVEGFR3, eps=eps_RES_W }
-      LNsKIT_obs : { type is combinedError2, trans is ln, additive=0, proportional=POP_RES_sKIT_PROP, prediction=sKIT, eps=eps_RES_W }
+      LNsVEGFR3_obs : { type is combinedError2, trans is ln, lhsTrans=true, additive=0, proportional=POP_RES_sVEGFR3_PROP, prediction=sVEGFR3, eps=eps_RES_W }
+      LNsKIT_obs : { type is combinedError2, trans is ln, lhsTrans=false, additive=0, proportional=POP_RES_sKIT_PROP, prediction=sKIT, eps=eps_RES_W }
    }# end OBSERVATION
 
 } # end of model object
