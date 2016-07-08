@@ -94,13 +94,18 @@ class MogValidator extends AbstractDeclarativeValidator {
 					}
 				]
 				val dataCovars = dataObj.dataCovariateDefns
+				val ddvCovars = dataObj.ddvCovariateDefns
 				for(mdlCov : expectedMdlCovars){
 					val dataCovar = dataCovars.findFirst[name == mdlCov.name]
-					if(dataCovar == null){
+					val ddvCovar = ddvCovars.findFirst[name == mdlCov.name]
+					if(dataCovar == null && ddvCovar == null){
 						errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "covariate " + mdlCov.name +" has no match in dataObj");
 					}
-					else if(!mdlCov.typeFor.isCompatible(dataCovar.typeFor)){
-						errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "covariate " + mdlCov.name +" has an inconsistent type with its match in the dataObj");
+					else{
+						val covar = if(dataCovar != null) dataCovar else ddvCovar
+						if(!mdlCov.typeFor.isCompatible(covar.typeFor)){
+							errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "covariate " + mdlCov.name +" has an inconsistent type with its match in the dataObj");
+						}
 					}
 				}
 			}

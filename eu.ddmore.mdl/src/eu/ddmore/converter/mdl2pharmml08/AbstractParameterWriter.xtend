@@ -101,8 +101,6 @@ abstract class AbstractParameterWriter {
 	
 	
 	def private boolean isReferenceLevel(MclObject mdlObject, String levelName){
-//		val sd = findMatchingIdLevelInBlockLambda.apply()
-//		sd != null && sd.name == levelName
 		val varLvlBlk = mdlObject.getBlocksByName(BlockDefinitionTable::VAR_LVL_BLK_NAME)
 		if(!varLvlBlk.isEmpty){
 			val refId = varLvlBlk.head.blkArgs?.getArgumentExpression('reference')?.symbolRef
@@ -123,13 +121,13 @@ abstract class AbstractParameterWriter {
 			for (s: sorted_map.entrySet){
 				levels = levels +	'''
 					«IF prev.length > 0»
-						<Level referenceLevel="«mdlObj.isReferenceLevel(s.key)»" symbId="«s.key»">
+						<Level «IF mdlObj.isReferenceLevel(s.key)»referenceLevel="true" «ENDIF»symbId="«s.key»">
 							<ParentLevel>
 								<ct:SymbRef symbIdRef="«prev»"/>
 							</ParentLevel>
 						</Level>
 					«ELSE»
-						<Level referenceLevel="«mdlObj.isReferenceLevel(s.key)»" symbId="«s.key»"/>
+						<Level «IF mdlObj.isReferenceLevel(s.key)»referenceLevel="true" «ENDIF»symbId="«s.key»"/>
 					«ENDIF»
 				'''
 				prev = s.key

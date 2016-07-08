@@ -18,6 +18,10 @@ warfarin_PK_ODE_dat = dataObj {
 		logtWT:{ use is covariate }  
 	} # end DATA_INPUT_VARIABLES
 	
+	DATA_DERIVED_VARIABLES{
+		CENTRAL : { use is variable, column=DV }
+	}
+	
 	SOURCE {
 	    srcfile : {file = "warfarin_conc.csv", 
             inputFormat is nonmemFormat  } 

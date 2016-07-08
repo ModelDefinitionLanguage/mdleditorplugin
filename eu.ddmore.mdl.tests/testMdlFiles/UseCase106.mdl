@@ -20,7 +20,11 @@ warfarin_PK_IVPO_dat = dataObj {
       DV: {use is dv, variable=Y}
       logtWT: {use is covariate}
    }# end DATA_INPUT_VARIABLES
-
+	DATA_DERIVED_VARIABLES{
+		AMTCOV : { use is covariate, column = AMT }
+	}
+	
+	
    SOURCE{
       srcFile : {file="warfarin_infusion_oral.csv",
       			inputFormat is nonmemFormat}
@@ -58,6 +62,7 @@ warfarin_PK_IVPO_mdl = mdlObj {
 
 	COVARIATES{
 		logtWT
+		AMTCOV
 	}
 
 	VARIABILITY_LEVELS{

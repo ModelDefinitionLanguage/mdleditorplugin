@@ -107,6 +107,10 @@ class MdlUtils {
 		getDataColumnDefn(ListDefinitionTable::COV_USE_VALUE, ListDefinitionTable::CATCOV_USE_VALUE)
 	}
 	
+	def ddvCovariateDefns(MclObject it){
+		getDdvColumnDefn(ListDefinitionTable::COV_USE_VALUE, ListDefinitionTable::CATCOV_USE_VALUE)
+	}
+	
 	def getDataIdv(MclObject it){
 		val idvs = getDataColumnDefn(ListDefinitionTable::IDV_USE_VALUE)
 		if(idvs.empty) null
@@ -342,9 +346,13 @@ class MdlUtils {
 		enumValue == 'observation'
 	}
 
-	def getDataColumnDefn(MclObject dataObj, String ... useValue){
+	def getDdvColumnDefn(MclObject it, String ... useValue){
+		getGeneralDataColumns(BlockDefinitionTable::DATA_DERIV_BLK_NAME, useValue)
+	}
+
+	def private getGeneralDataColumns(MclObject dataObj, String blkName, String ... useValue){
 		val retVal = new ArrayList<ListDefinition>
-		for(divBlk : dataObj.blocks.filter[identifier == BlockDefinitionTable::DIV_BLK_NAME]){
+		for(divBlk : dataObj.blocks.filter[identifier == blkName]){
 			if(divBlk.body instanceof BlockStatementBody){
 				for(divList : (divBlk.body as BlockStatementBody).statements){
 					switch(divList){
@@ -358,6 +366,25 @@ class MdlUtils {
 		}
 
 		retVal
+	}
+
+	def getDataColumnDefn(MclObject it, String ... useValue){
+		getGeneralDataColumns(BlockDefinitionTable::DIV_BLK_NAME, useValue)
+//		val retVal = new ArrayList<ListDefinition>
+//		for(divBlk : dataObj.blocks.filter[identifier == BlockDefinitionTable::DIV_BLK_NAME]){
+//			if(divBlk.body instanceof BlockStatementBody){
+//				for(divList : (divBlk.body as BlockStatementBody).statements){
+//					switch(divList){
+//						ListDefinition case(divList.firstAttributeList.isMatchingDataUse(useValue)):{
+//							retVal.add(divList)
+//						}
+//					}
+//				}
+//				
+//			}
+//		}
+//
+//		retVal
 	}
 	
 	def getDataColumnDefinitions(MclObject it){

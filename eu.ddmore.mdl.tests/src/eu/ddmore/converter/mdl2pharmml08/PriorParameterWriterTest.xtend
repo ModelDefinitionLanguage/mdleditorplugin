@@ -204,8 +204,33 @@ class PriorParameterWriterTest {
 		val actual = testInstance.writeVariabilityModel
 		val expected = '''
 			<VariabilityModel blkId="vm_mdl" type="parameterVariability">
-				<Level referenceLevel="false" symbId="MDL__prior"/>
-				<Level referenceLevel="false" symbId="bsv">
+				<Level symbId="MDL__prior"/>
+				<Level symbId="bsv">
+					<ParentLevel>
+						<ct:SymbRef symbIdRef="MDL__prior"/>
+					</ParentLevel>
+				</Level>
+			</VariabilityModel>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteVarLevelWithReference(){
+		val root = createRoot
+		val priorObj = root.createObject("pObj", libDefns.getObjectDefinition('priorObj'))
+		
+		val mdlObj = root.createObject("mObj", libDefns.getObjectDefinition('mdlObj'))
+		val varLvlBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::VAR_LVL_BLK_NAME))
+		val bsvLvl = varLvlBlk.createListDefn("bsv", createEnumPair('type', 'parameter'), createAssignPair('level', createIntLiteral(1)))
+		varLvlBlk.addArguments(createAssignPair('reference', bsvLvl.createSymbolRef))
+		
+		this.testInstance = new PriorParameterWriter(mdlObj, priorObj)
+		val actual = testInstance.writeVariabilityModel
+		val expected = '''
+			<VariabilityModel blkId="vm_mdl" type="parameterVariability">
+				<Level symbId="MDL__prior"/>
+				<Level referenceLevel="true" symbId="bsv">
 					<ParentLevel>
 						<ct:SymbRef symbIdRef="MDL__prior"/>
 					</ParentLevel>

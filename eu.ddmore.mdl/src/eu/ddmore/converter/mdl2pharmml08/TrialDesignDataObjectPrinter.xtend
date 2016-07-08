@@ -188,6 +188,22 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 				case(ListDefinitionTable::DOSE_TIME_USE_VALUE):{
 					res += column.writeDoseTimeMapping
 				}
+				case(ListDefinitionTable::COV_USE_VALUE):{
+					res += mObj.writeDerivedMapping(column)
+				}
+				case(ListDefinitionTable::VARIABLE_USE_VALUE):{
+					res += mObj.writeDerivedMapping(column)
+				}
+				case(ListDefinitionTable::DOSE_INTERVAL_USE_VALUE):{
+					res += '<Error!/>'
+				}
+				case(ListDefinitionTable::CATCOV_USE_VALUE):{
+					var mdlSymb = mObj.findMdlSymbolDefn(column.name)
+					var divCol = column.firstAttributeList.getAttributeExpression('column').symbolRef?.ref
+					if(divCol instanceof ListDefinition){
+						res += print_ds_CategoricalMagicMapping(mdlSymb, divCol, column)
+					}
+				}
 			}
 		}
 		res += print_ds_DataSet;
@@ -221,6 +237,18 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 				</ct:Assign>
 			</ColumnTransformation>
 		'''
+	}
+	
+	def CharSequence writeDerivedMapping(MclObject mdlObj, ListDefinition column){
+		var divCol = column.firstAttributeList.getAttributeExpression('column').symbolRef?.ref
+		if(divCol != null){
+			var mdlSymb = mdlObj.findMdlSymbolDefn(column.name)
+			if(divCol instanceof ListDefinition)
+				print_ds_ColumnMapping(divCol, mdlSymb, "")
+			else '<Error!>'
+		}
+		else
+			'<Error!>'
 	}
 
 	def CharSequence writeDoseTimeMapping(ListDefinition column){
@@ -442,8 +470,14 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	
 	def print_ds_CategoricalMagicMapping(MclObject mdlObj, ListDefinition column){
 		var mdlSymb = mdlObj.findMdlSymbolDefn(column.name)
-		var categoricalMapping = column.print_ds_CategoricalMapping
-		print_ds_ColumnMapping(column, mdlSymb, categoricalMapping)
+		print_ds_CategoricalMagicMapping(mdlSymb, column, column)
+//		var categoricalMapping = column.print_ds_CategoricalMapping
+//		print_ds_ColumnMapping(column, mdlSymb, categoricalMapping)
+	}
+
+	def print_ds_CategoricalMagicMapping(SymbolDefinition mdlCatCov, ListDefinition dataColumn, ListDefinition catCol){
+		var categoricalMapping = catCol.print_ds_CategoricalMapping
+		print_ds_ColumnMapping(dataColumn, mdlCatCov, categoricalMapping)
 	}
 
 	def writeSingleObsMapping(ListDefinition column, Expression dataVariable){

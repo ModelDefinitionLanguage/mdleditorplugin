@@ -297,4 +297,41 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 //		)
 	}
 
+	@Test
+	def void testPharmMLUnsupportedDoseInterval(){
+		val mcl = '''
+		warfarin_PK_IVPO_dat = dataObj {
+			DECLARED_VARIABLES{
+				INPUT_KA::dosingTarget
+				Y::observation
+				FOO::dosingTarget
+			}
+		
+		  DATA_INPUT_VARIABLES{
+		      ID: {use is id}
+		      TIME: {use is idv}
+		      WT: {use is covariate}
+		      AMT: {use is amt, define= {1 in CMT as INPUT_KA, 2 in CMT as FOO} }
+		      RATE: {use is rate}
+		      CMT: {use is cmt}
+		      DV: {use is dv, variable=Y}
+		      logtWT: {use is covariate}
+		   }# end DATA_INPUT_VARIABLES
+			DATA_DERIVED_VARIABLES{
+				DI : { use is doseInterval, amtColumn=AMT, idvColumn = TIME }
+			}
+			
+			
+		   SOURCE{
+		      srcFile : {file="warfarin_infusion_oral.csv",
+		      			inputFormat is nonmemFormat}
+		   }# end SOURCE
+		} # end data object
+	'''.parse
+		mcl.assertNoErrors
+		mcl.assertWarning(MdlPackage::eINSTANCE.attributeList, MdlValidator::FEATURE_NOT_SUPPORTED_PHARMML,
+			"The doseInterval use type is not currently supported by PharmML."
+		)
+	}
+
 }

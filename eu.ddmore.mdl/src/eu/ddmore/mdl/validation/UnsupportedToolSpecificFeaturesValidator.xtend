@@ -13,6 +13,7 @@ import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.mdl.ListDefinition
+import eu.ddmore.mdl.provider.ListDefinitionTable
 
 class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	
@@ -108,6 +109,20 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 				warning("Only the pre-defined error models are currently supported by MONOLIX.", 
 						MdlPackage.eINSTANCE.attributeList_Attributes,
 						MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, owningList?.name ?: '<undefined>')
+			}
+		}
+	}
+
+	@Check
+	def checkPharmMLUnsupportedDosingInterval(AttributeList it){
+		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
+		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::DATA_DERIV_BLK_NAME){
+			// check for explicit and general defns
+			if(getAttributeEnumValue(ListDefinitionTable::USE_ATT) == ListDefinitionTable::DOSE_INTERVAL_USE_VALUE){
+				val owningList = EcoreUtil2.getContainerOfType(eContainer, ListDefinition)
+				warning("The " + ListDefinitionTable::DOSE_INTERVAL_USE_VALUE + " use type is not currently supported by PharmML.", 
+						MdlPackage.eINSTANCE.attributeList_Attributes,
+						MdlValidator::FEATURE_NOT_SUPPORTED_PHARMML, owningList?.name ?: '<undefined>')
 			}
 		}
 	}

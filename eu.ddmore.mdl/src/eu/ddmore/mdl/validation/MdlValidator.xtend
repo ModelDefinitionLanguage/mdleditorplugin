@@ -37,6 +37,7 @@ class MdlValidator extends AbstractMdlValidator {
 	public static val EXPERIMENTAL_FEATURE = "eu.ddmore.mdl.validation.experimental.feature"
 	public static val FEATURE_NOT_SUPPORTED_MONOLIX = "eu.ddmore.mdl.validation.unsupported.feature.monolix"
 	public static val FEATURE_NOT_SUPPORTED_NONMEM = "eu.ddmore.mdl.validation.unsupported.feature.nonmem"
+	public static val FEATURE_NOT_SUPPORTED_PHARMML = "eu.ddmore.mdl.validation.unsupported.feature.pharmml"
 	
 	// List attribute validation
 	public static val UNRECOGNIZED_PROPERTY_ATT  = "eu.ddmore.mdl.validation.UnrecognisedProperty"

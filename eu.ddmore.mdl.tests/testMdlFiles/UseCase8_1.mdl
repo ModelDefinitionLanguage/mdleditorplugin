@@ -18,6 +18,9 @@ warfarin_PK_BOV_dat = dataObj{
       DV : { use is dv, variable = Y }
       MDV : { use is mdv }
    }# end DATA_INPUT_VARIABLES
+	DATA_DERIVED_VARIABLES{
+		OCCVAR : { use is catCov withCategories { occ1 when 1, occ2 when 2 }, column=OCC }
+	}
 
 	SOURCE {
 	    srcfile: {file = "warfarin_conc_bov_P4.csv",
@@ -72,6 +75,7 @@ warfarin_PK_BOV_mdl = mdlObj{
    COVARIATES{
 	WT
 	logtWT = ln(WT/70)
+	OCCVAR withCategories { occ1, occ2 }
    }
 
    VARIABILITY_LEVELS{

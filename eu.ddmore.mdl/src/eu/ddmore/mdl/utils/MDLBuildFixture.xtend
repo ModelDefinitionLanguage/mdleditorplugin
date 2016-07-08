@@ -81,14 +81,22 @@ class MDLBuildFixture {
 		val retVal = MdlFactory.eINSTANCE.createBlockStatement
 		retVal.blkId = blkDefn
 		retVal.body = MdlFactory.eINSTANCE.createBlockStatementBody
-		if(args.size > 0){
+//		if(args.size > 0){
 			retVal.blkArgs = MdlFactory.eINSTANCE.createBlockArguments
 			for(a : args){
 				retVal.blkArgs.args.add(a)
 			}
-		}
+//		}
 		retVal
 	}
+	
+	def BlockStatement addArguments(BlockStatement it, ValuePair ... args){
+		for(a : args){
+			blkArgs.args.add(a)
+		}
+		it
+	}
+	
 	
 	def EnumPair createEnumPair(String name, String value){
 		val retVal = MdlFactory.eINSTANCE.createEnumPair

@@ -85,9 +85,9 @@ _list DoseTime _atts use::ddvUse, idvColumn::reference[::Idv], amtColumn::refere
 	_sig (use, idvColumn, amtColumn);
 _list DoseInterval _atts use::ddvUse, idvColumn::reference[::Idv], amtColumn::reference[::Amt]
 	_sig (use, idvColumn, amtColumn);
-_list DDVariable _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
-_list DDCovariate _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
-_list DDCatCovariate _atts use::ddvUse _cat use::int _sig (use);  
+_list DDVariable  _alt ::real _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
+_list DDCovariate  _alt ::real _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
+_list DDCatCovariate _atts use::ddvUse, column::reference[::DataColumn] _cat use::int _sig (use, column);  
 
 // Source
 _list Source _atts file::string, inputFormat::input _sig(file, inputFormat);
@@ -495,8 +495,7 @@ _block SAMPLING (,) _statements (,) _listDefn
 		_list _key=type sampletype.simple->SimpleSamplingList, sampletype.combi->DerivedSamplingList;
 
 _block DESIGN_SPACES (,) _statements (,) _listDefn
-		_list _key=element //sampleelement.catCov->DesignSpaceCatCov, 
-							sampleElement.covariate->DesignSpaceCov, sampleElement.bolusAmt->DesignSpaceBolusAmt,
+		_list _key=element		sampleElement.covariate->DesignSpaceCov, sampleElement.bolusAmt->DesignSpaceBolusAmt,
 								sampleElement.infAmt->DesignSpaceInfAmt,
 								sampleElement.doseTime -> DesignSpaceDoseTime, sampleElement.duration->DesignSpaceDuration,
 								sampleElement.numberTimes->DesignSpaceNumTimes, sampleElement.sampleTime->DesignSpaceSampleTimes,
@@ -518,7 +517,7 @@ _block POPULATION (,) _statements (,) _listDefn
 _container mdlObj _has COVARIATES, VARIABILITY_LEVELS, STRUCTURAL_PARAMETERS, VARIABILITY_PARAMETERS, RANDOM_VARIABLE_DEFINITION,
 					INDIVIDUAL_VARIABLES, MODEL_PREDICTION, OBSERVATION, GROUP_VARIABLES, IDV, FUNCTIONS, POPULATION_PARAMETERS;
 _container dataObj _has DATA_INPUT_VARIABLES, DECLARED_VARIABLES, DATA_DERIVED_VARIABLES, SOURCE, FUNCTIONS;
-_container parObj _has VARIABILITY, /*DECLARED_VARIABLES,*/ STRUCTURAL;
+_container parObj _has VARIABILITY, STRUCTURAL;
 _container taskObj _has ESTIMATE, SIMULATE, OPTIMISE, EVALUATE;
 _container mogObj _has INFO, OBJECTS;
 _container designObj _has DECLARED_VARIABLES, INTERVENTION, STUDY_DESIGN, SAMPLING, DESIGN_SPACES, DESIGN_PARAMETERS, POPULATION; //, DESIGN_VARIABILITY;
