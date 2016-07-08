@@ -194,7 +194,8 @@ public class PharmMLExportProcess implements IRunnableWithProgress {
         IPath fullPath = location.append(file.getName());
         monitor.subTask(file.getFullPath().toString());
         String properPathString = fullPath.toOSString();
-        File targetFile = new File(properPathString);
+//        File targetFile = new File(properPathString);
+        final File targetFile = fullPath.removeFileExtension().addFileExtension("xml").toFile();
 
         if (targetFile.exists()) {
             if (!targetFile.canWrite()) {
