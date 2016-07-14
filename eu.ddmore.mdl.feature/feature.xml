@@ -59,6 +59,9 @@ It is your obligation to read and accept all such terms and conditions prior to 
 
    <url>
       <discovery label="DDMoRe Project" url="http://www.ddmore.eu"/>
+      <!-- Externalized url doesn't pass the Feature Editor validation,
+      don't commit removal of url="%updateUrl"-->
+      <update label="%updateLabel" url="%updateUrl"/>
    </url>
 
    <includes
