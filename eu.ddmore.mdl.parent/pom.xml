@@ -7,7 +7,7 @@
 	<!-- Parent POM for all MDL Editor sub-projects -->
 	<groupId>eu.ddmore</groupId>
 	<artifactId>eu.ddmore.mdl.parent</artifactId>
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.6.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -54,17 +54,17 @@
 		<dependency>
 			<groupId>eu.ddmore.mdllib</groupId>
 			<artifactId>eu.ddmore.mdllib</artifactId>
-			<version>1.2.2-SNAPSHOT</version>
+			<version>1.3.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.ddmore.mdllib</groupId>
 			<artifactId>eu.ddmore.mdllib.ui</artifactId>
-			<version>1.2.2-SNAPSHOT</version>
+			<version>1.3.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.ddmore.mdllib</groupId>
 			<artifactId>eu.ddmore.mdllib.tests</artifactId>
-			<version>1.2.2-SNAPSHOT</version>
+			<version>1.3.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
     <profiles>
@@ -80,8 +80,8 @@
         <profile>
             <id>release</id>
             <properties>
-                 <version.no-snapshot>1.5.0</version.no-snapshot>
-                 <p2.repository.url>${sf.publish.location}/${version.no-snapshot}/release/</p2.repository.url>
+                 <version.no-snapshot>1.6.0</version.no-snapshot>
+                 <p2.repository.url>${sf.publish.location}/${version.no-snapshot}/</p2.repository.url>
             </properties>
         </profile>
     </profiles>
@@ -228,7 +228,7 @@
 						<artifact>
 							<groupId>eu.ddmore</groupId>
 							<artifactId>eu.ddmore.mdl.target</artifactId>
-							<version>1.5.0-SNAPSHOT</version>
+							<version>1.6.0-SNAPSHOT</version>
 						</artifact>
 					</target>
 					<environments>
