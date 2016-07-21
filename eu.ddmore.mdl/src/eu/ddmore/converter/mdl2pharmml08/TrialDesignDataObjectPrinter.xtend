@@ -510,7 +510,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 				'''
 				<MultipleDVMapping>
 					<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«column.name»"/>
-					<math:Piecewise>
+					<Piecewise>
 						«FOR p : dataDefine.attList»
 							«IF p.rightOperand instanceof SymbolReference»
 								«IF mObj.isDefinedInMdlObservations(p.mappedSymbol)»
@@ -541,7 +541,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 								«ENDIF»
 							«ENDIF»
 						«ENDFOR» 
-					</math:Piecewise>
+					</Piecewise>
 				</MultipleDVMapping>
 				'''
 			CatValRefMappingExpression:{
@@ -601,26 +601,30 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	
 	private def isMultiObsMappingDefinedInMdlObs(MclObject it, Expression testExpr){
 		switch(testExpr){
-			MappingExpression:
+			MappingExpression:{
 				for(p : testExpr.attList){
 				//@TODO fix this for new obs types 
 					if(mdlObservations.exists[o|
 						if(o instanceof SymbolDefinition)
-							name == p.mappedSymbol?.ref?.name
+							o.name == p.mappedSymbol?.ref?.name
 						else false
 					])
 						return true
 				}
-			CatValRefMappingExpression:
+				false
+			}
+			CatValRefMappingExpression:{
 				for(p : testExpr.attLists){
 				//@TODO fix this for new obs types 
 					if(mdlObservations.exists[o|
 						if(o instanceof SymbolDefinition)
-							name == p.catRef.getSymbolDefnFromCatValRef.name
+							o.name == p.catRef.getSymbolDefnFromCatValRef.name
 						else false
 					])
 						return true
 				}
+				false
+			}
 			default: false
 		}
 	}
