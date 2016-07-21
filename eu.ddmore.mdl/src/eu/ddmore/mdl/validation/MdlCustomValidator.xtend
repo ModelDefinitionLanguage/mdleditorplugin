@@ -35,6 +35,7 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 import eu.ddmore.mdl.mdl.AnonymousListStatement
+import org.eclipse.emf.ecore.EObject
 
 class MdlCustomValidator extends AbstractMdlValidator {
 
@@ -347,6 +348,20 @@ class MdlCustomValidator extends AbstractMdlValidator {
 	}
 	
 	
+	def private isSymbolReferenced(EObject containerToSearch, SymbolDefinition it, (SymbolReference) => boolean predicate){
+		val visitor = new MdlSwitch<SymbolReference>(){
+			override caseSymbolReference(SymbolReference sr){
+				if(sr.ref.name == name && predicate.apply(sr)) sr else null
+			}
+		}
+		val iter = EcoreUtil2.getAllContents(containerToSearch, true)
+		var SymbolReference sr = null
+		while(iter.hasNext && sr == null){
+			sr = visitor.doSwitch(iter.next)
+		}
+		sr != null
+	}
+	
 	@Check
 	def validateDeclaredVariablesUsed(EquationDefinition it){
 		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
@@ -354,21 +369,47 @@ class MdlCustomValidator extends AbstractMdlValidator {
 			// check design obj
 //			val owningObj = EcoreUtil2.getContainerOfType(eContainer, MclObject)
 //			if(owningObj.name == MdlValidator::DESIGNOBJ){
-				val visitor = new MdlSwitch<SymbolReference>(){
-					override caseSymbolReference(SymbolReference sr){
-						if(sr.ref.name == name) sr else null
-					}
-				}
-				val iter = EcoreUtil2.getAllContents(owningBlock.eContainer, true)
-				var SymbolReference sr = null
-				while(iter.hasNext && sr == null){
-					sr = visitor.doSwitch(iter.next)
-				}
-				if(sr == null){
-				 	error("Variability Level '" + name + "' must be used within the object.",
+//				val visitor = new MdlSwitch<SymbolReference>(){
+//					override caseSymbolReference(SymbolReference sr){
+//						if(sr.ref.name == name) sr else null
+//					}
+//				}
+//				val iter = EcoreUtil2.getAllContents(owningBlock.eContainer, true)
+//				var SymbolReference sr = null
+//				while(iter.hasNext && sr == null){
+//					sr = visitor.doSwitch(iter.next)
+//				}
+//				if(sr == null){
+				if(!isSymbolReferenced(owningBlock.eContainer, it, [true])){
+				 	error("Declared variable '" + name + "' must be used within the object.",
 				 			MdlLibPackage::eINSTANCE.symbolDefinition_Name, MdlValidator::UNUSED_VARIABLE, name)
 				}
 //			}
+		}
+		
+	}
+	
+	@Check
+	def validateCompartmentMacroInitialised(ListDefinition it){
+		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
+		if(owningBlock.blkId.name == BlockDefinitionTable::MDL_CMT_BLK){
+			if(firstAttributeList.getAttributeEnumValue(ListDefinitionTable::CMT_TYPE_ATT) == ListDefinitionTable::CMT_CMT_VALUE){
+				val owningObj = EcoreUtil2.getContainerOfType(owningBlock.eContainer, MclObject)
+				if(owningObj != null && !isSymbolReferenced(owningObj, it, [sr|
+					val localBlk = EcoreUtil2.getContainerOfType(sr.eContainer, BlockStatement)
+					if(localBlk != null && localBlk.blkId.name == BlockDefinitionTable::MDL_CMT_BLK){
+						//is a compartment macro so now look for a to attribute
+						val kvp =  EcoreUtil2.getContainerOfType(sr.eContainer, ValuePair)
+						kvp.argumentName == ListDefinitionTable::CMT_TO_ATT
+					}
+					else
+						// if not references in a compartment macro then this is initialising the macro
+					 	true
+				])){
+				 	error("Compartment macro '" + name + "' is not initialised.",
+				 			MdlLibPackage::eINSTANCE.symbolDefinition_Name, MdlValidator::SYMBOL_NOT_INITIALISED, name)
+				}
+			} 
 		}
 		
 	}

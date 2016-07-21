@@ -76,14 +76,14 @@ _list Dvid _extends DataColumn _atts use::divUse _sig(use);
 _list ignore _atts use::divUse _sig(use);
 _list Evid _extends DataColumn _atts use::divUse _sig(use);
 _list CensCol _extends DataColumn _atts use::divUse _sig(use);
-_list DataVariable  _extends DataColumn _atts use::divUse, interp::reference[::function(::real, ::real, ::real, ::real, ::real)::real]
+_list DataVariable _alt ::real _extends DataColumn _atts use::divUse, interp::reference[::function(::real, ::real, ::real, ::real, ::real)::real]
 							_sig (use, interp?);
 //_list CensorList _extends DataColumn _atts use::divUse _sig(use); 
 
 // data derived variables
-_list DoseTime _atts use::ddvUse, idvColumn::reference[::Idv], amtColumn::reference[::Amt]
+_list DoseTime _alt ::real _atts use::ddvUse, idvColumn::reference[::Idv], amtColumn::reference[::Amt]
 	_sig (use, idvColumn, amtColumn);
-_list DoseInterval _atts use::ddvUse, idvColumn::reference[::Idv], amtColumn::reference[::Amt]
+_list DoseInterval _alt ::real _atts use::ddvUse, idvColumn::reference[::Idv], amtColumn::reference[::Amt]
 	_sig (use, idvColumn, amtColumn);
 _list DDVariable  _alt ::real _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
 _list DDCovariate  _alt ::real _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);

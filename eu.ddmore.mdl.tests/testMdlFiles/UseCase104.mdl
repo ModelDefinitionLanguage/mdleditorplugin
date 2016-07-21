@@ -19,7 +19,7 @@ warfarin_PK_ODE_dat = dataObj {
 	} # end DATA_INPUT_VARIABLES
 	
 	DATA_DERIVED_VARIABLES{
-		CENTRAL : { use is variable, column=DV }
+		FOO : { use is variable, column=DV }
 	}
 	
 	SOURCE {
@@ -107,6 +107,7 @@ warfarin_PK_ODE_mdl = mdlObj {
 			CENTRAL : { deriv =(RATEIN - CL * CENTRAL / V), init = 0, x0 = 0 } 
 		}
 	    CC = CENTRAL / V 
+	    FOO
 	} # end MODEL_PREDICTION
 	
 	RANDOM_VARIABLE_DEFINITION(level=DV){

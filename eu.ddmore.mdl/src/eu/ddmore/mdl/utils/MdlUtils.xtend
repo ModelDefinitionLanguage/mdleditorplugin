@@ -36,7 +36,6 @@ class MdlUtils {
 	extension BlockUtils bu = new BlockUtils
 	extension BlockArgumentDefinitionProvider badp = new BlockArgumentDefinitionProvider
 	
-	
 	def isMclObjectOfType(MclObject obj, String typeCode){
 		obj.mdlObjType == typeCode	
 	} 

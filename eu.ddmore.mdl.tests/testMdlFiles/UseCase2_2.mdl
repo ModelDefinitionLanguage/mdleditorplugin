@@ -11,7 +11,7 @@ warfarin_PK_ODE_dat = dataObj {
 		TIME : { use is idv }
 		DT : {use is covariate}
 		WT : {use is covariate }
-		D : { use is covariate}
+		D : { use is variable}
 		DVID : { use is dvid}
 		DV : { use is dv, variable = Y }
 		MDV : { use is mdv }
@@ -98,7 +98,7 @@ warfarin_PK_ANALYTIC_mdl = mdlObj {
 	} # end INDIVIDUAL_VARIABLES
 	
 	MODEL_PREDICTION {
-		D::dosingVar
+		D
 	    k = CL/V
 	    CC = if ( T - DT < TLAG) then 0
 	         else (D/V) * KA/(KA-k) * (exp(-k * (T -DT-TLAG))- exp(-KA*(T-DT-TLAG)) )

@@ -26,6 +26,7 @@ class ListDefinitionTable {
 	public static val IDV_COL_ATT = 'idvColumn'
 	public static val AMT_COL_ATT = 'amtColumn'
 	public static val CMT_TYPE_ATT = 'type'
+	public static val CMT_TO_ATT = 'to'
 	public static val OBS_TYPE_ATT = 'type'
 	public static val VAR_LVL_TYPE_ATT = 'type'
 	public static val VAR_LVL_LEVEL_ATT = 'level'
@@ -50,6 +51,7 @@ class ListDefinitionTable {
 	
 	public static val CMT_DIRECT_VALUE = 'direct'
 	public static val CMT_DEPOT_VALUE = 'depot'
+	public static val CMT_CMT_VALUE = "compartment"
 	
 	public static val DISCRETE_LIST_TYPE = "List:DiscreteObs"
 	public static val CATEGORICAL_LIST_TYPE = "List:CatObs"
