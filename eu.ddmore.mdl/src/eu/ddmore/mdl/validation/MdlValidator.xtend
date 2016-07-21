@@ -81,6 +81,7 @@ class MdlValidator extends AbstractMdlValidator {
 	public static val MODEL_DATA_MISMATCH = "eu.ddmore.mdl.validation.mog.mismatch_mod_data"
 	public static val MCLOBJ_REF_UNRESOLVED = "eu.ddmore.mdl.validation.mog.missingObj"
 	public static val MOGOBJ_MALFORMED = "eu.ddmore.mdl.validation.mog.malformed"
+	public static val SYMBOL_NOT_INITIALISED = "eu.ddmore.mdl.validation.mog.symbol.uninitialised"
 
 	// Selection value
 	public static val DUPLICATE_SELECTION_TEST_VALUE = "eu.ddmore.mdl.validation.selector.testvalue.duplicate"

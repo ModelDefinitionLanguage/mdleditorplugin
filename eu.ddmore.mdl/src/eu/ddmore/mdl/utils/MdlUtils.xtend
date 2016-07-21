@@ -524,7 +524,7 @@ class MdlUtils {
     	owningBlock.identifier == BlockDefinitionTable::MDL_CMT_BLK
     }
     
-    static val dosingMacros = #{ ListDefinitionTable::CMT_DIRECT_VALUE, ListDefinitionTable::CMT_DEPOT_VALUE }
+    private static val dosingMacros = #{ ListDefinitionTable::CMT_DIRECT_VALUE, ListDefinitionTable::CMT_DEPOT_VALUE }
     
     def isCmtDosingMacro(Statement it){
     	val stmt = it

@@ -1320,4 +1320,37 @@ warfarin_T2E_exact_dat = dataObj{
 							MdlValidator::OBS_MISSING, "Observation block must contain at least one observation.")
 	}
 
+	@Test
+	def void testInvalidMogCompartmentVarNotInitialisedInData(){
+		val mcl = '''
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				VARIABILITY_PARAMETERS { 
+					POP_CL
+					POP_V
+				} 
+
+				MODEL_PREDICTION{
+					COMPARTMENT{
+				      CENTRAL:    {type is compartment, modelCmt=2}
+				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
+			         }
+				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
+		
+		}
+		'''.parse
+	
+		mcl.assertError(MdlLibPackage::eINSTANCE.symbolDefinition,
+			MdlValidator::SYMBOL_NOT_INITIALISED,
+			"compartment macro 'CENTRAL' is not initialised.")
+	}
+	
 }

@@ -172,14 +172,14 @@ _list dosingVar _alt ::real _extends dosingTarget _atts value::real _sig(value);
 
 // Compartments
 
-_list CmtDirect _alt ::real _atts type::cmtType, modelCmt::int, to::reference[::dosingTarget],
+_list CmtDirect _alt ::real _extends dosingTarget _atts type::cmtType, modelCmt::int, to::reference[::dosingTarget],
 		modelDur::real, tlag::real, finput::real
 		_sig(type, modelCmt?, to, modelDur?, tlag?, finput?);
 
 _list Effect _alt ::real _atts type::cmtType, modelCmt::int, from::reference[::dosingTarget], keq::real
 			_sig (type, modelCmt?, from, keq);
 			
-_list Depot _alt ::real _atts type::cmtType, modelCmt::int, to::reference[::dosingTarget], ka::real,
+_list Depot  _alt ::real _extends dosingTarget _atts type::cmtType, modelCmt::int, to::reference[::dosingTarget], ka::real,
 						modelDur::real, tlag::real, finput::real, ktr::real, mtt::real
 			_sig (type, modelCmt?, to, ka, tlag?, finput?),
 				 (type, modelCmt?, to, ka, ktr, mtt),
@@ -411,7 +411,7 @@ _block INFO "Contains information about the model." (,) _statements (,) _propStm
 _block MODEL_PREDICTION "Defines the model prediction" (0,) _statements (0,) _eqnDefn, _eqnDefn+, _listDefn
 	_list DerivList;
 	
-_block OBSERVATION "Defines observations" (1,) _statements (1,) _eqnDefn+, _transDefn, _listDefn+, _anonList
+_block OBSERVATION "Defines observations" (1,) _statements (1,) _eqnDefn+, /*_transDefn, */ _listDefn+, _anonList
 		_list _key=type obstype.count->CountObs, obstype.categorical->CatObs, obstype.discrete->DiscreteObs, obstype.tte->TteObs,
 						obstype.combinedError1->combinedError1List, obstype.combinedError2->combinedError2List,
 						obstype.additiveError->additiveErrorList, obstype.proportionalError->proportionalErrorList,
