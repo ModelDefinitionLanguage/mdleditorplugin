@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/eu.ddmore.mdl.feature_1.5.0.qualifier.jar" id="eu.ddmore.mdl.feature" version="1.5.0.qualifier">
+   <feature url="features/eu.ddmore.mdl.feature_1.6.0.qualifier.jar" id="eu.ddmore.mdl.feature" version="1.6.0.qualifier">
       <category name="eu.ddmore.mdl"/>
    </feature>
    <category-def name="eu.ddmore.mdl" label="MDL Language Editor"/>
