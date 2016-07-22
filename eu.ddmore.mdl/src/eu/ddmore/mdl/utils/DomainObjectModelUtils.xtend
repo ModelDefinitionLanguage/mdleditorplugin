@@ -126,8 +126,12 @@ class DomainObjectModelUtils {
 		}
 	}
 	
-	def getBlocksByName(MclObject mdlObj, String blkName){
-		mdlObj.blocks.filter[identifier == blkName]
+	def getBlocksByName(MclObject mdlObj, String ... blkName){
+		mdlObj.blocks.filter[
+			blkName.exists[n|
+				identifier == n
+			]
+		]
 	}
 
 	def getStatementsFromBlock(BlockStatement it){

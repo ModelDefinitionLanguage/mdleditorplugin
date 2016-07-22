@@ -104,7 +104,7 @@ warfarin_PK_MIX_mdl = mdlObj {
 	MODEL_PREDICTION {
 		COMPARTMENT {
 			INPUT_KA      : {type is depot, modelCmt=1, to=CENTRAL, ka=KA, tlag=TLAG}
-			INPUT_CENTRAL : {type is direct, to = CENTRAL}
+			#INPUT_CENTRAL : {type is direct, to = CENTRAL}
 			CENTRAL       : {type is compartment, modelCmt=2}
                      	 :: {type is elimination, modelCmt=2, from=CENTRAL, v=V, cl=CL}
    		}# end COMPARTMENT

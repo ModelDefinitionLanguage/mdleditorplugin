@@ -226,16 +226,15 @@ class MogValidator extends AbstractDeclarativeValidator {
 				for(desStmt : dvStmts){
 					if(desStmt instanceof SymbolDefinition){
 						val desStmtType = desStmt.typeFor
-						if(!mVarLvls.exists[mVStmt|
-							if(mVStmt instanceof SymbolDefinition){
-								if(desStmtType == varLvlTypeInfo)
+						if(desStmtType.isCompatible(varLvlTypeInfo))
+							if(!mVarLvls.exists[mVStmt|
+								if(mVStmt instanceof SymbolDefinition){
 									desStmt.name == mVStmt.name
+								}
 								else true
+							]){
+								errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + desStmt.name +" in object '" + designObj.name + "' has no match in modelObj");
 							}
-							else true
-						]){
-							errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + desStmt.name +" in object '" + designObj.name + "' has no match in modelObj");
-						}
 					}
 				}
 			}
@@ -260,6 +259,21 @@ class MogValidator extends AbstractDeclarativeValidator {
 		}
 	}
 	
+	def getDosingVariables(MclObject it){
+		val dosingSuperType = libraryForObject.getListDefinition('dosingTarget')?.typeInfo ?: TypeSystemProvider::UNDEFINED_TYPE
+		val List<SymbolDefinition> retVal = new ArrayList<SymbolDefinition>
+		val blks = getBlocksByName(BlockDefinitionTable::DECLARED_VARS_BLK)
+		blks.forEach[b|
+			b.statements.forEach[s|
+				if(s instanceof SymbolDefinition){
+					if(dosingSuperType.isCompatible(s.typeFor))
+						retVal.add(s)
+				}
+			]
+		]
+		retVal
+	}
+
 	@Check
 	def validateDosing(MclObject it){
 		val (String, String) => void errorLambda = [
@@ -267,8 +281,14 @@ class MogValidator extends AbstractDeclarativeValidator {
 			]
 		if(isMogObject){
 			val mdlStmts = mdlObj.mdlPredictionVariables
-			for(dataDose : dataObj?.dataDosingVariables ?: Collections::emptyList){
-				val stmt = mdlStmts.findFirst[if(it instanceof SymbolDefinition) (it as SymbolDefinition).name == dataDose.name else false]
+			var obj = dataObj
+			if(obj == null)
+				obj = designObj
+			
+			for(dataDose : obj?.getDosingVariables ?: Collections::emptyList){
+				val stmt = mdlStmts.findFirst[st|
+					if(st instanceof SymbolDefinition) st.name == dataDose.name else false
+				]
 				if(stmt == null){
 					errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "dosing variable " + dataDose.name +" has no match in mdlObj");
 				}
@@ -403,6 +423,203 @@ class MogValidator extends AbstractDeclarativeValidator {
 			}
 		}
 	}
+	
+	
+	def private getDataVariableTypes(MclObject dataObject){
+		val List<SymbolDefinition> retVal = new ArrayList<SymbolDefinition>
+		dataObject.getBlocksByName(BlockDefinitionTable::DECLARED_VARS_BLK).forEach[blk|
+			blk.statements.forEach[st|
+				if(st instanceof SymbolDefinition) retVal.add(st)
+			]
+		]
+		dataObject.getBlocksByName(BlockDefinitionTable::DIV_BLK_NAME, BlockDefinitionTable::DATA_DERIV_BLK_NAME).forEach[blk|
+			blk.statements.filter[st|
+				if(st instanceof ListDefinition) 
+					st.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT) == ListDefinitionTable::VARIABLE_USE_VALUE
+					|| st.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT) == ListDefinitionTable::DOSE_TIME_USE_VALUE
+					|| st.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT) == ListDefinitionTable::DOSE_INTERVAL_USE_VALUE
+				else false
+			].forEach[st|
+				if(st instanceof SymbolDefinition) retVal.add(st)
+				]
+		]
+		retVal
+	}
+	
+	
+	def private getDesignVariableTypes(MclObject desObject){
+		val List<SymbolDefinition> retVal = new ArrayList<SymbolDefinition>
+		desObject.getBlocksByName(BlockDefinitionTable::DECLARED_VARS_BLK).forEach[blk|
+			blk.statements.forEach[st|
+				if(st instanceof SymbolDefinition) retVal.add(st)
+			]
+		]
+		retVal
+	}
+	
+	
+	def private checkInitialisingVars(MclObject it, SymbolDefinition stmt, MclObject otherObject, List<SymbolDefinition> matchingVars, 
+										(String, String) => void uninitLambda,
+										(String, String, String) => void typeErrorLambda){
+		// check if initialised elsewhere.
+		val matchingVar = matchingVars.findFirst[
+			name == stmt.name
+		]
+		if(matchingVar == null){
+			uninitLambda.apply(stmt.name, mdlObj.name)
+		}
+		else{
+			if(!matchingVar.typeFor.underlyingType.isCompatible(stmt.typeFor.underlyingType)){
+				typeErrorLambda.apply(stmt.name, mdlObj.name, otherObject.name)
+			}
+		}
+	}
+	
+	@Check
+	def validateVariablesInitialised(MclObject it){
+		if(isMogObject){
+			
+			val mObj = mdlObj
+			if(mObj != null){
+				for(mBlk : mObj.modelPredictionBlocks){
+					for(stmt : mBlk.statements){
+						if(stmt instanceof EquationTypeDefinition){
+							if(stmt.expression == null){
+								if(dataObj != null){
+									val dObj = dataObj
+									checkInitialisingVars(stmt, dObj, dObj.dataVariableTypes, 
+										[s, o|
+										error("variable '" + s + "' in object '" + o + "' is not initialised",
+												MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::SYMBOL_NOT_INITIALISED, s)
+									],
+									 [s, o, d|
+										error("variable '" + s +"' in object '" + o + "' has an inconsistent type with its match in '" + d + "'.",
+											MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, s)
+									])
+								}
+								else if(designObj != null){
+									val dObj = designObj
+									checkInitialisingVars(stmt, dObj, dObj.designVariableTypes, 
+										[s, o|
+										error("variable '" + s + "' in object '" + o + "' is not initialised",
+												MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::SYMBOL_NOT_INITIALISED, s)
+									],
+									 [s, o, d|
+										error("variable '" + s +"' in object '" + o + "' has an inconsistent type with its match in '" + d + "'.",
+											MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, s)
+									])
+								}
+							}
+						}
+						else if(stmt instanceof BlockStatement){
+							if(stmt.blkId.name == BlockDefinitionTable::MDL_CMT_BLK){
+								for(cmtStmt : stmt.statements){
+									if(cmtStmt instanceof ListDefinition){
+										if(cmtStmt.isCmtDosingMacro){
+											if(dataObj != null){
+												val dObj = dataObj
+												checkInitialisingVars(cmtStmt, dObj, dObj.dataVariableTypes,
+													[s, o|
+														error("dosing macro '" + s + "' in object '" + o + "' is not initialised",
+																MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::SYMBOL_NOT_INITIALISED, s)
+													],
+													 [s, o, d|
+														error("dosing macro '" + s +"' in object '" + o + "' has an inconsistent type with its match in '" + d + "'.",
+															MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, s)
+													]
+												)
+											}
+											else if(designObj != null){
+												val dObj = designObj
+												checkInitialisingVars(cmtStmt, dObj, dObj.designVariableTypes, 
+													[s, o|
+													error("variable '" + s + "' in object '" + o + "' is not initialised",
+															MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::SYMBOL_NOT_INITIALISED, s)
+												],
+												 [s, o, d|
+													error("variable '" + s +"' in object '" + o + "' has an inconsistent type with its match in '" + d + "'.",
+														MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, s)
+												])
+											}
+										}
+									}
+								}
+							}
+							else if(stmt.blkId.name == BlockDefinitionTable::MDL_DEQ_BLK){
+								for(cmtStmt : stmt.statements){
+									if(cmtStmt instanceof ListDefinition){
+										if(dataObj != null){
+											val dObj = dataObj
+											checkDerivInitialised(cmtStmt, dObj, dObj.dataVariableTypes,
+												[s, o, d|
+													error("variable '" + s +"' in object '" + o + "' has an inconsistent type with its match in '" + d + "'.",
+														MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, s)
+												]
+											)
+										}
+										else if(designObj != null){
+											val dObj = designObj
+											checkDerivInitialised(cmtStmt, dObj, dObj.designVariableTypes,
+												[s, o, d|
+													error("variable '" + s +"' in object '" + o + "' has an inconsistent type with its match in '" + d + "'.",
+														MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, s)
+												]
+											)
+										}
+									}
+								}
+							}
+						}
+						else if(stmt instanceof ListDefinition){
+							if(dataObj != null){
+								val dObj = dataObj
+								checkDerivInitialised(stmt, dObj, dObj.dataVariableTypes,
+									[s, o, d|
+										error("variable '" + s +"' in object '" + o + "' has an inconsistent type with its match in '" + d + "'.",
+											MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, s)
+									]
+								)
+							}
+							else if(designObj != null){
+								val dObj = designObj
+								checkDerivInitialised(stmt, dObj, dObj.designVariableTypes,
+									[s, o, d|
+										error("variable '" + s +"' in object '" + o + "' has an inconsistent type with its match in '" + d + "'.",
+											MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, s)
+									]
+								)
+							}
+						}
+					}
+				}
+			}
+			
+		}
+	}
+	
+	def private checkDerivInitialised(MclObject it, ListDefinition stmt, MclObject otherObject, List<SymbolDefinition> matchingVars, 
+										(String, String, String) => void typeErrorLambda){
+		val mObj = mdlObj
+		val derivListType = libraryForObject.getListDefinition('DerivList').typeInfo
+		val listType = stmt.typeFor
+		if(listType == derivListType){
+				val matchingVar = matchingVars.findFirst[
+					name == stmt.name
+				]
+//				if(matchingVar == null){
+//					error("variable '" + stmt.name + "' in object '" + mObj.name + "' is not initialised",
+//							MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::SYMBOL_NOT_INITIALISED, stmt.name)
+//				}
+//				else{
+					if(matchingVar != null && !matchingVar.typeFor.underlyingType.isCompatible(stmt.typeFor.underlyingType)){
+						typeErrorLambda.apply(stmt.name, mObj.name, otherObject.name)
+//						error("variable '" + stmt.name +"' in object '" + mObj.name + "' has an inconsistent type with its match in '" + dObj.name + "'.",
+//							MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, stmt.name)
+					}
+//				}
+		}
+	}
+	
 	
 	@Check
 	def validateMogComposition(MclObject it){

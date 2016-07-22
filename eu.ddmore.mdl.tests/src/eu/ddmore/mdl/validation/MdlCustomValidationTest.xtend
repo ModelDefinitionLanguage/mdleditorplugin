@@ -1320,4 +1320,108 @@ warfarin_T2E_exact_dat = dataObj{
 							MdlValidator::OBS_MISSING, "Observation block must contain at least one observation.")
 	}
 
+	@Test
+	def void testInvalidMogCompartmentVarNotInitialisedInData(){
+		val mcl = '''
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				VARIABILITY_PARAMETERS { 
+					POP_CL
+					POP_V
+				} 
+
+				MODEL_PREDICTION{
+					COMPARTMENT{
+				      CENTRAL:    {type is compartment, modelCmt=2}
+				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
+			         }
+				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
+		
+		}
+		'''.parse
+	
+		mcl.assertError(MdlLibPackage::eINSTANCE.symbolDefinition,
+			MdlValidator::SYMBOL_NOT_INITIALISED,
+			"compartment macro 'CENTRAL' is not initialised.")
+	}
+	
+	@Test
+	def void testValidUnusedObsDeclaration(){
+		val mcl = '''
+		d1 = designObj{
+		  DECLARED_VARIABLES{
+		  	INPUT_KA :: dosingTarget
+		  	Y :: observation
+		  	Y1 :: observation
+		  }
+		  INTERVENTION{
+		 	admin1 : {type is bolus, input=INPUT_KA, amount=100, doseTime=[0] }
+		  }
+		  SAMPLING{
+			winPK : {type is simple, outcome=Y, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120] }
+		  }
+		  STUDY_DESIGN{
+			arm1 : {
+				armSize = 3,
+				interventionSequence=[{
+					admin=admin1,
+					start=0
+				}],
+				samplingSequence=[{
+					sample=winPK,
+					start=0
+				}]
+			}
+		  }
+		}
+		'''.parse
+	
+		mcl.assertError(MdlLibPackage::eINSTANCE.symbolDefinition,
+			MdlValidator::UNUSED_VARIABLE,
+			"Declared variable 'Y1' must be used within the object.")
+	}
+	
+	@Test
+	def void testInvalidUnusedVarLvlDeclaration(){
+		val mcl = '''
+		d1 = designObj{
+		  DECLARED_VARIABLES{
+		  	INPUT_KA :: dosingTarget
+		  	Y :: observation
+		  	Y1 :: varLevel
+		  }
+		  INTERVENTION{
+		 	admin1 : {type is bolus, input=INPUT_KA, amount=100, doseTime=[0] }
+		  }
+		  SAMPLING{
+			winPK : {type is simple, outcome=Y, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120] }
+		  }
+		  STUDY_DESIGN{
+			arm1 : {
+				armSize = 3,
+				interventionSequence=[{
+					admin=admin1,
+					start=0
+				}],
+				samplingSequence=[{
+					sample=winPK,
+					start=0
+				}]
+			}
+		  }
+		}
+		'''.parse
+	
+		mcl.assertError(MdlLibPackage::eINSTANCE.symbolDefinition,
+			MdlValidator::UNUSED_VARIABLE,
+			"Declared variable 'Y1' must be used within the object.")
+	}
 }

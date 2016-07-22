@@ -1315,6 +1315,10 @@ class MogValidatorTest {
 					DV : { type is observation, level = 1 }
 				}
 			
+				MODEL_PREDICTION{
+					INPUT_KA::dosingVar
+				}
+
 			OBSERVATION{
 				F = 1
 				CP_obs : { type is userDefined, prediction=F, value=F, weight=0 } 
@@ -1378,7 +1382,9 @@ class MogValidatorTest {
 				VARIABILITY_LEVELS{
 					DV : { type is observation, level = 1 }
 				}
-		
+				MODEL_PREDICTION{
+					INPUT_KA::dosingVar
+				}
 			
 			OBSERVATION{
 				F = 1
@@ -1974,7 +1980,7 @@ class MogValidatorTest {
 				
 				MODEL_PREDICTION{
 					Y1 = A + D
-					A
+					A = 1
 					D::dosingVar
 				}
 			
@@ -2027,9 +2033,9 @@ class MogValidatorTest {
 				}
 				
 				MODEL_PREDICTION{
-					Y
-					A
-					D
+					Y = 1
+					A = 1
+					D = 1
 				}
 		
 			
@@ -2086,10 +2092,9 @@ class MogValidatorTest {
 						D : { deriv=1 }
 						X : { deriv=1 }
 					}
-					Y1
 				}
 			OBSERVATION{
-				F = Y1
+				F = 1
 				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
 			}
 		}
@@ -2223,12 +2228,14 @@ class MogValidatorTest {
 	}
 
 	@Test
-	def void testValidSingleOdeDosingMissingModelMatchMog(){
+	def void testInvalidSingleOdeDosingMissingModelMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D::dosingTarget }
+			DECLARED_VARIABLES { D::dosingTarget; Y::observation }
 			DATA_INPUT_VARIABLES {
 				AMT : { use is amt, variable=D }
+				T : { use is idv }
+				DV : { use is dv, variable = Y }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2236,16 +2243,19 @@ class MogValidatorTest {
 			} # end SOURCE
 		}		
 		testMdl = mdlObj {
+				IDV{T}
 				VARIABILITY_LEVELS{
 				}
 				
 				MODEL_PREDICTION{
 					DEQ{
-						X : { type is deriv, value=1 }
+						X : { deriv = 1 }
 					}
-					Y
 				}
 		
+			OBSERVATION{
+				Y : { type is userDefined, prediction=X, value=X, weight=0 } 
+			}
 		}
 		p1 = parObj{
 			
@@ -2270,6 +2280,308 @@ class MogValidatorTest {
 		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
 			MdlValidator::MODEL_DATA_MISMATCH,
 			"dosing variable D has no match in mdlObj")
+//		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+//			MdlValidator::SYMBOL_NOT_INITIALISED,
+//			"variable 'X' in object 'testMdl' is not initialised")
+	}
+
+	@Test
+	def void testInvalidSingleOdeDosingTypeMisMatchDeqMog(){
+		val mcl = '''
+		testData = dataObj {
+			DECLARED_VARIABLES { Y::observation }
+			DATA_INPUT_VARIABLES {
+				AMT : { use is amt, variable=D }
+				T : { use is idv }
+				DV : { use is dv, variable = Y }
+				X : { use is variable }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				MODEL_PREDICTION{
+					DEQ{
+						X : { deriv = 1 }
+					}
+				}
+		
+			OBSERVATION{
+				Y : { type is userDefined, prediction=X, value=X, weight=0 } 
+			}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				testData : { type is dataObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"variable 'X' in object 'testMdl' has an inconsistent type with its match in 'testData'.")
+	}
+
+	@Test
+	def void testInvalidSingleOdeDosingTypeMisMatchMog(){
+		val mcl = '''
+		testData = dataObj {
+			DECLARED_VARIABLES { Y::observation }
+			DATA_INPUT_VARIABLES {
+				AMT : { use is amt, variable=D }
+				T : { use is idv }
+				DV : { use is dv, variable = Y }
+				X : { use is variable }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				MODEL_PREDICTION{
+					X : { deriv = 1 }
+				}
+		
+			OBSERVATION{
+				Y : { type is userDefined, prediction=X, value=X, weight=0 } 
+			}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				testData : { type is dataObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"variable 'X' in object 'testMdl' has an inconsistent type with its match in 'testData'.")
+	}
+
+	@Test
+	def void testInvalidSingleOdeDosingMissingModelNoDEQBlkMatchMog(){
+		val mcl = '''
+		testData = dataObj {
+			DECLARED_VARIABLES { D::dosingTarget; Y1::observation; Y::observation }
+			DATA_INPUT_VARIABLES {
+				AMT : { use is amt, variable=D }
+				T : { use is idv }
+				DV : { use is dv, variable = Y }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				MODEL_PREDICTION{
+					X : { deriv = 1 }
+					Y1 : { deriv = 1 }
+				}
+				OBSERVATION{
+					Y : { type is userDefined, value=X, prediction=X, weight = 0 } 
+				}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				testData : { type is dataObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::MODEL_DATA_MISMATCH,
+			"dosing variable D has no match in mdlObj")
+//		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+//			MdlValidator::SYMBOL_NOT_INITIALISED,
+//			"variable 'X' in object 'testMdl' is not initialised")
+	}
+
+	@Test
+	def void testInvalidSingleOdeDosingTypeMisMatchDesignObjMog(){
+		val mcl = '''
+		d1 = designObj{
+		  DECLARED_VARIABLES{
+		  	INPUT_KA :: dosingTarget
+		  	Y :: observation
+		  	Y1 :: observation
+		  }
+		  INTERVENTION{
+		 	admin1 : {type is bolus, input=INPUT_KA, amount=100, doseTime=[0] }
+		  }
+		  SAMPLING{
+			winPK : {type is simple, outcome=Y, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120] }
+		  }
+		  STUDY_DESIGN{
+			arm1 : {
+				armSize = 3,
+				interventionSequence=[{
+					admin=admin1,
+					start=0
+				}],
+				samplingSequence=[{
+					sample=winPK,
+					start=0
+				}]
+			}
+		  }
+		}
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				MODEL_PREDICTION{
+					INPUT_KA : { deriv = 1 }
+					Y1 : { deriv = 1 }
+				}
+		
+			OBSERVATION{
+				Y : { type is userDefined, prediction=Y1, value=Y1, weight=0 } 
+			}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				d1 : { type is designObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"variable 'Y1' in object 'testMdl' has an inconsistent type with its match in 'd1'.")
+	}
+
+	@Test
+	def void testInvalidSingleOdeDosingMissingModelNoDEQBlkMatchDesignObjMog(){
+		val mcl = '''
+		d1 = designObj{
+		  DECLARED_VARIABLES{
+		  	INPUT_KA :: dosingTarget
+		  	Y :: observation
+		  }
+		  INTERVENTION{
+		 	admin1 : {type is bolus, input=INPUT_KA, amount=100, doseTime=[0] }
+		  }
+		  SAMPLING{
+			winPK : {type is simple, outcome=CP_obs, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120] }
+		  }
+		  STUDY_DESIGN{
+			arm1 : {
+				armSize = 3,
+				interventionSequence=[{
+					admin=admin1,
+					start=0
+				}],
+				samplingSequence=[{
+					sample=winPK,
+					start=0
+				}]
+			}
+		  }
+		}
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				MODEL_PREDICTION{
+					X : { deriv = 1 }
+				}
+				OBSERVATION{
+					Y : { type is userDefined, value=X, prediction=X, weight = 0 } 
+				}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				d1 : { type is designObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::MODEL_DATA_MISMATCH,
+			"dosing variable INPUT_KA has no match in mdlObj")
 	}
 
 	@Test
@@ -2392,11 +2704,11 @@ class MogValidatorTest {
 	def void testInvalidMultiDosingToCompMacroMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D; CENTRAL; Y }
+			DECLARED_VARIABLES { D::dosingTarget; CENTRAL::dosingTarget }
 			DATA_INPUT_VARIABLES {
 				T : { use is idv }
 				CMT : { use is cmt }
-				AMT : { use is amt, define = { 1 in CMT as D, 2 in CMT as CENTRAL, 3 in CMT as Y } }
+				AMT : { use is amt, define = { 1 in CMT as D, 2 in CMT as CENTRAL } }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2445,13 +2757,13 @@ class MogValidatorTest {
 	}
 
 	@Test
-	def void testValidMultiDosingMisMatchMog(){
+	def void testInvalidMultiDosingMisMatchMog(){
 		val mcl = '''
 		testData = dataObj {
-			DECLARED_VARIABLES { D, CENTRAL, Y }
+			DECLARED_VARIABLES { D::dosingTarget; Y::dosingTarget }
 			DATA_INPUT_VARIABLES {
 				CMT : { use is cmt }
-				AMT : { use is amt, define = { 1 in CMT as D, 2 in CMT as CENTRAL, 3 in CMT as Y } }
+				AMT : { use is amt, define = { 1 in CMT as D, 3 in CMT as Y } }
 			} # end DATA_INPUT_VARIABLES
 			SOURCE {
 			    foo : {file = "warfarin_conc.csv", 
@@ -2464,7 +2776,7 @@ class MogValidatorTest {
 				
 				MODEL_PREDICTION{
 					DEQ{
-						D:   {type is depot, modelCmt=1, to=CENTRAL, ka=1, tlag=1}
+						D :  {type is depot, modelCmt=1, to=CENTRAL, ka=1, tlag=1}
 				     	CENTRAL:    {type is compartment, modelCmt=2}
 			             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
 						}
@@ -2518,6 +2830,57 @@ class MogValidatorTest {
 				
 				MODEL_PREDICTION{
 			      D::vector
+				}
+		
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				testData : { type is dataObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"dosing variable D has an inconsistent type with its match in the mdlObj")
+	}
+
+	
+	@Test
+	def void testInvalidSingleDosingIntialisedIncompatibleTypesMog(){
+		val mcl = '''
+		testData = dataObj {
+			DECLARED_VARIABLES { D::dosingTarget }
+			DATA_INPUT_VARIABLES {
+				TIME : { use is idv }
+				AMT : { use is amt, variable=D }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		testMdl = mdlObj {
+				IDV{ T }
+			
+				VARIABILITY_LEVELS{
+				}
+				
+				MODEL_PREDICTION{
+			      D = 1
 				}
 		
 		}
@@ -3321,5 +3684,428 @@ class MogValidatorTest {
 			"the object 'missing' cannot be found")
 	}
 
+	
+	@Test
+	def void testInvalidMogVarUnitialisedInMdl(){
+		val mcl = '''
+		testData = dataObj {
+			DECLARED_VARIABLES { D::dosingTarget Y::observation }
+			DATA_INPUT_VARIABLES {
+				T : { use is idv }
+				AMT : { use is amt, variable=D }
+				DV : { use is dv, variable=Y }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				VARIABILITY_PARAMETERS { 
+					POP_CL
+					POP_V
+				} 
+
+				MODEL_PREDICTION{
+					Z
+					COMPARTMENT{
+				      D:   {type is depot, modelCmt=1, to=CENTRAL, ka=1, tlag=1}
+				      CENTRAL:    {type is compartment, modelCmt=2}
+				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
+			         }
+				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
+		
+		}
+		p1 = parObj{
+			VARIABILITY{
+				POP_CL: { value = 1, type is sd }
+				POP_V : { value = 2, type is sd }
+			}
+			
+			STRUCTURAL{
+			}
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				testData : { type is dataObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::SYMBOL_NOT_INITIALISED,
+			"variable 'Z' in object 'testMdl' is not initialised")
+	}
+
+	
+	@Test
+	def void testInvalidMogDosingVarNotCompatibleWithVariableMdl(){
+		val mcl = '''
+		testData = dataObj {
+			DECLARED_VARIABLES { Y::observation }
+			DATA_INPUT_VARIABLES {
+				T : { use is idv }
+				DV : { use is dv, variable=Y }
+				Z : { use is variable }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				VARIABILITY_PARAMETERS { 
+					POP_CL
+					POP_V
+				} 
+
+				MODEL_PREDICTION{
+					Z::dosingTarget
+					F = 0
+				}
+			
+			OBSERVATION{
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
+		
+		}
+		p1 = parObj{
+			VARIABILITY{
+				POP_CL: { value = 1, type is sd }
+				POP_V : { value = 2, type is sd }
+			}
+			
+			STRUCTURAL{
+			}
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				testData : { type is dataObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"variable 'Z' in object 'testMdl' has an inconsistent type with its match in 'testData'.")
+	}
+
+	
+	@Test
+	def void testInvalidMogVarNotCompatibleWithVariableMdl(){
+		val mcl = '''
+		testData = dataObj {
+			DECLARED_VARIABLES { Y::observation }
+			DATA_INPUT_VARIABLES {
+				T : { use is idv }
+				DV : { use is dv, variable=Y }
+				D : { use is variable }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				VARIABILITY_PARAMETERS { 
+					POP_CL
+					POP_V
+				} 
+
+				MODEL_PREDICTION{
+					COMPARTMENT{
+				      D:   {type is depot, modelCmt=1, to=CENTRAL, ka=1, tlag=1}
+				      CENTRAL:    {type is compartment, modelCmt=2}
+				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
+			         }
+				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
+		
+		}
+		p1 = parObj{
+			VARIABILITY{
+				POP_CL: { value = 1, type is sd }
+				POP_V : { value = 2, type is sd }
+			}
+			
+			STRUCTURAL{
+			}
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				testData : { type is dataObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"dosing macro 'D' in object 'testMdl' has an inconsistent type with its match in 'testData'")
+	}
+
+
+	@Test
+	def void testInvalidMogCompartmentDosingMacroNotInitialisedInData(){
+		val mcl = '''
+		testData = dataObj {
+			DECLARED_VARIABLES { Y::observation }
+			DATA_INPUT_VARIABLES {
+				T : { use is idv }
+				DV : { use is dv, variable=Y }
+			} # end DATA_INPUT_VARIABLES
+			SOURCE {
+			    foo : {file = "warfarin_conc.csv", 
+			       		inputFormat  is nonmemFormat } 
+			} # end SOURCE
+		}		
+		testMdl = mdlObj {
+				IDV{T}
+				VARIABILITY_LEVELS{
+				}
+				
+				VARIABILITY_PARAMETERS { 
+					POP_CL
+					POP_V
+				} 
+
+				MODEL_PREDICTION{
+					COMPARTMENT{
+				      D:   {type is depot, modelCmt=1, to=CENTRAL, ka=1, tlag=1}
+				      CENTRAL:    {type is compartment, modelCmt=2}
+				             ::   {type is elimination, modelCmt=2, from=CENTRAL, v=1, cl=1}
+			         }
+				}
+			
+			OBSERVATION{
+				F = 1
+				Y : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
+		
+		}
+		p1 = parObj{
+			VARIABILITY{
+				POP_CL: { value = 1, type is sd }
+				POP_V : { value = 2, type is sd }
+			}
+			
+			STRUCTURAL{
+			}
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				testData : { type is dataObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::SYMBOL_NOT_INITIALISED,
+			"dosing macro 'D' in object 'testMdl' is not initialised")
+	}
+
+
+
+		@Test
+	def void testInvalidDosingDesignMisMatch(){
+		val mcl = '''
+		d1 = designObj{
+		  DECLARED_VARIABLES{
+		  	INPUT_KA :: dosingTarget
+		  	CP_obs :: observation
+		  }
+		  INTERVENTION{
+		 	admin1 : {type is bolus, input=INPUT_KA, amount=100, doseTime=[0] }
+		  }
+		  SAMPLING{
+			winPK : {type is simple, outcome=CP_obs, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120] }
+		  }
+		  STUDY_DESIGN{
+			arm1 : {
+				armSize = 3,
+				interventionSequence=[{
+					admin=admin1,
+					start=0
+				}],
+				samplingSequence=[{
+					sample=winPK,
+					start=0
+				}]
+			}
+		  }
+		}
+		foo = mdlObj {
+				IDV{T}
+				
+				VARIABILITY_LEVELS(reference=ID){
+					ID : { type is parameter, level = 2 }
+					DV : { type is observation, level = 1 }
+				}
+			
+			OBSERVATION{
+				F = 1
+				CP_obs : { type is userDefined, prediction=F, value=F, weight=0 } 
+			}
+		
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				d1 : { type is designObj }
+				foo : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::MODEL_DATA_MISMATCH,
+			"dosing variable INPUT_KA has no match in mdlObj")
+	}
+
+	@Test
+	def void testInvalidDosingToCmtFromDesign(){
+		val mcl = '''
+		d1 = designObj{
+		  DECLARED_VARIABLES{
+		  	CENTRAL :: dosingTarget
+		  	CP_obs :: observation
+		  }
+		  INTERVENTION{
+		 	admin1 : {type is bolus, input=CENTRAL, amount=100, doseTime=[0] }
+		  }
+		  SAMPLING{
+			winPK : {type is simple, outcome=CP_obs, sampleTime = [0.0001, 24, 36, 48, 72, 96, 120] }
+		  }
+		  STUDY_DESIGN{
+			arm1 : {
+				armSize = 3,
+				interventionSequence=[{
+					admin=admin1,
+					start=0
+				}],
+				samplingSequence=[{
+					sample=winPK,
+					start=0
+				}]
+			}
+		  }
+		}
+		testMdl = mdlObj {
+				IDV{T}
+				
+				VARIABILITY_LEVELS{
+				}
+				
+				MODEL_PREDICTION{
+					COMPARTMENT{
+						D:   {type is depot, to=CENTRAL, ka=1, tlag=1}
+						CENTRAL:    {type is compartment, modelCmt=2}
+			             ::   {type is elimination, from=CENTRAL, v=1, cl=1}
+						}
+					Y = 1
+				}
+				OBSERVATION{
+					CP_obs : { type is userDefined, prediction=CENTRAL, weight=0, value=CENTRAL }
+				}
+		}
+		p1 = parObj{
+			
+		}
+		
+		t1 = taskObj{
+			ESTIMATE{
+				set algo is saem
+			}
+		}
+		
+		mog = mogObj{
+			OBJECTS{
+				d1 : { type is designObj }
+				testMdl : { type is mdlObj }
+				p1 : { type is parObj }
+				t1 : { type is taskObj }
+			}
+		}
+		'''.parse
+	
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::INCOMPATIBLE_TYPES,
+			"dosing variable 'CENTRAL' can only dose to a dosing compartment macro.")
+		mcl.assertError(MdlPackage::eINSTANCE.mclObject,
+			MdlValidator::SYMBOL_NOT_INITIALISED,
+			"variable 'D' in object 'testMdl' is not initialised")
+	}
+	
 	
 }

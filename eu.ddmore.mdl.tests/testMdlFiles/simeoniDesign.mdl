@@ -103,7 +103,7 @@ simeoni2004_mdl = mdlObj{
   		alpha = k21*k/beta
   		A = 1/V*(alpha-k21)/(alpha-beta)
   		B = 1/V*(beta-k21)/(beta-alpha)
-  		dose = 30*(10^6)
+  		dose::dosingVar
       	tau=4
       	C = piecewise{{0 when t<8; 
       	dose*(A*exp(-alpha*(t-8))+B*exp(-beta*(t-8))) when (t>=8 && t<8+tau);
