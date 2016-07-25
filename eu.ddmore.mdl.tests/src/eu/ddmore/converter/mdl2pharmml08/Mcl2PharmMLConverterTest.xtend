@@ -347,7 +347,7 @@ class Mcl2PharmMLConverterTest {
 		validateConversion("UseCase1_PRIOR_UNIPV")
 	}
 
-	@Ignore("Fails because of a bug in PharmML")
+	@Test
 	def void testUseCase1_PRIOR_FromData(){
 		validateConversion("UseCase1_PRIOR_FromData")
 	}
