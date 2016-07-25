@@ -45,6 +45,7 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 	val public static INPUT_ATT_NAME = 'input'
 	val public static AMT_ATT_NAME = 'amount'
 	val public static DOSE_TIME_ATT_NAME = 'doseTime'
+	val public static DOSE_TIME_VAR_ATT_NAME = 'lastDoseTimeVar'
 	val public static RATE_ATT_NAME = 'rate'
 	val public static DURATION_ATT_NAME = 'duration'
 	val public static SCALE_ATT_NAME = 'p'
@@ -241,6 +242,9 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 			«ENDIF»
 			«IF hasAttribute(DOSE_TIME_ATT_NAME)»
 				<DosingTimes>
+					«IF hasAttribute('lastDoseTimeVar')»
+						«mObj.findMdlSymbolDefn(getAttributeExpression('lastDoseTimeVar').symbolRef.ref.name).symbolReference»
+					«ENDIF»
 					«getAttributeExpression(DOSE_TIME_ATT_NAME).expressionAsAssignment»
 				</DosingTimes>
 			«ENDIF»	'''

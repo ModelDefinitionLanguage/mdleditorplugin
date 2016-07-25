@@ -17,6 +17,7 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
 import eu.ddmore.mdl.mdl.MclObject
+import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))
@@ -115,6 +116,58 @@ class TrialDesignDesignObjectPrinterTest {
 						</ct:Assign>
 					</DoseAmount>
 					<DosingTimes>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>0.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</DosingTimes>
+				</Bolus>
+			</Administration>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteAdministrationBolusSimpleWithDoseTimeVar(){
+		val mdl = createRoot
+		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
+		val mdlPredBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		mdlPredBlk.createEqnDefn("Gut")
+		mdlPredBlk.createEqnDefn("DT")
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_DESIGN_PARAMS))
+		val declVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val declDoseVar = desParamsBlk.createEqnDefn("Admin1Dose") 
+		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
+		val declDTVar = declVarBlk.createEqnDefn("DT") 
+		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0))),
+									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_VAR_ATT_NAME, declDTVar.createSymbolRef)
+							)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj, mdlObj)
+, new StandardParameterWriter(null))
+		val actual = tdow.writeBolusDosing(adminList)
+		val expected = '''
+			<Administration oid="admin1">
+				<Bolus>
+					<DoseAmount>
+						<TargetMapping blkIdRef="sm">
+							<ds:Map modelSymbol="Gut"/>
+						</TargetMapping>
+						<ct:Assign>
+							<ct:SymbRef symbIdRef="Admin1Dose"/>
+						</ct:Assign>
+					</DoseAmount>
+					<DosingTimes>
+						<ct:SymbRef blkIdRef="sm" symbIdRef="DT"/>
 						<ct:Assign>
 							<ct:Vector>
 								<ct:VectorElements>
@@ -1642,7 +1695,7 @@ class TrialDesignDesignObjectPrinterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
-	@Test
+	@Ignore("Not used in design object")
 	def void testWriteCovariate(){
 		val mdl = createRoot
 		
@@ -1668,7 +1721,7 @@ class TrialDesignDesignObjectPrinterTest {
 		assertEquals("Output as expected", expected, actual.toString)
 	}
 
-	@Test
+	@Ignore("Not used in design object")
 	def void testWriteCovariates(){
 		val mdl = createRoot
 		
