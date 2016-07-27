@@ -83,8 +83,8 @@ _list DataVariable _alt ::real _extends DataColumn _atts use::divUse, interp::re
 // data derived variables
 _list DoseTime _alt ::real _atts use::ddvUse, idvColumn::reference[::Idv], dosingVar::reference[::dosingTarget]
 	_sig (use, idvColumn, dosingVar);
-_list DoseInterval _alt ::real _atts use::ddvUse, idvColumn::reference[::Idv], amtColumn::reference[::Amt]
-	_sig (use, idvColumn, amtColumn);
+_list DoseInterval _alt ::real _atts use::ddvUse, idvColumn::reference[::Idv], dosingVar::reference[::dosingTarget]
+	_sig (use, idvColumn, dosingVar);
 _list DDVariable  _alt ::real _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
 _list DDCovariate  _alt ::real _atts use::ddvUse, column::reference[::DataColumn] _sig(use, column);
 _list DDCatCovariate _atts use::ddvUse, column::reference[::DataColumn] _cat use::int _sig (use, column);  

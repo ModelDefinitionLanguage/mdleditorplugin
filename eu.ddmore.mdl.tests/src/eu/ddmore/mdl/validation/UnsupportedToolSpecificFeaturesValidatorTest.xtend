@@ -318,7 +318,7 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 		      logtWT: {use is covariate}
 		   }# end DATA_INPUT_VARIABLES
 			DATA_DERIVED_VARIABLES{
-				DI : { use is doseInterval, amtColumn=AMT, idvColumn = TIME }
+				DI : { use is doseInterval, dosingVar=INPUT_KA, idvColumn = TIME }
 			}
 			
 			
