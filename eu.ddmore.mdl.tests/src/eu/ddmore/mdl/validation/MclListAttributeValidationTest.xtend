@@ -97,7 +97,7 @@ class MclListAttributeValidationTest {
 				TIME : { use is idv }
 			}
 			DATA_DERIVED_VARIABLES{
-				DT : { use is doseTime, idvColumn = TIME, amtColumn = AMT }
+				DT : { use is doseTime, idvColumn = TIME, dosingVar = D }
 			}
 			
 			SOURCE{  SrcFile : { file="warfarin_conc_sex.csv", inputFormat  is nonmemFormat } }

@@ -2323,7 +2323,7 @@ d1g=designObj{
 				c2 : { use is amt, variable=D }
 			}
 			DATA_DERIVED_VARIABLES{
-				DT : { use is doseTime, idvColumn = TIME, amtColumn = c2 }
+				DT : { use is doseTime, idvColumn = TIME, dosingVar = D }
 			}
 			
 			SOURCE{  SrcFile : { file="warfarin_conc_sex.csv", inputFormat  is nonmemFormat } }
@@ -2399,7 +2399,7 @@ d1g=designObj{
 				TIME : { use is idv }
 			}
 			DATA_DERIVED_VARIABLES{
-				DT : { use is doseTime, idvColumn = TIME, amtColumn = D + 0 - 2 }
+				DT : { use is doseTime, idvColumn = TIME, dosingVar = D + 0 - 2 }
 			}
 			
 			SOURCE{  SrcFile : { file="warfarin_conc_sex.csv", inputFormat  is nonmemFormat } }
@@ -2407,7 +2407,7 @@ d1g=designObj{
 		
 		mcl.assertError(MdlPackage::eINSTANCE.assignPair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"attribute 'amtColumn' expected value of type 'ref:List:Amt' but was 'Real'"
+			"attribute 'dosingVar' expected value of type 'ref:ListSubtype:dosingTarget' but was 'Real'"
 		)
 	}
 

@@ -21,6 +21,12 @@ warfarin_PK_IVPO_dat = dataObj {
       logtWT: { use is covariate }
    }# end DATA_INPUT_VARIABLES
 
+   DATA_DERIVED_VARIABLES{
+        # This is an idea of how to solve the dose time problem.  Like 'use is amt' we assume that the DT variable is
+        # only assigned when AMT > 0.  The typing ensured that the attributes reference a column with the correct 'use'.
+        DT : { use is doseTime, idvColumn=TIME, dosingVar=GUT }
+   }
+        
    SOURCE{
       srcfile : { file="warfarin_infusion_oral.csv",
       			  inputFormat is nonmemFormat}
@@ -106,7 +112,8 @@ warfarin_PK_IVPO_mdl = mdlObj {
 
 	MODEL_PREDICTION {
 		DEQ{
-			RATEIN = if(T >= TLAG) then GUT * KA * FORAL 
+			DT
+			RATEIN = if(T-DT >= TLAG) then GUT * KA * FORAL 
 					 else 0
 			GUT : { deriv =(- RATEIN), init = 0, x0 = 0 }
 			CENTRAL : { deriv =(RATEIN - CL * CENTRAL / V), init = 0, x0 = 0 } 
