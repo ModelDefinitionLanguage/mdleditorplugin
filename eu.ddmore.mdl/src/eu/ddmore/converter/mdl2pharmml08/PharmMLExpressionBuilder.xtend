@@ -415,7 +415,7 @@ class PharmMLExpressionBuilder {
 		<ct:Vector>
 			<ct:VectorElements>
 				«FOR e : expressions»
-					«e.pharmMLExpr»
+					«e.expressionAsAssignment»
 				«ENDFOR»
 			</ct:VectorElements>
 		</ct:Vector>
@@ -427,7 +427,7 @@ class PharmMLExpressionBuilder {
 				«IF r instanceof MatrixRow»
 					<ct:MatrixRow>
 						«FOR e : r.cells»
-							«e.pharmMLExpr»
+							«e.expressionAsAssignment»
 						«ENDFOR»
 					</ct:MatrixRow>
 				«ENDIF»
