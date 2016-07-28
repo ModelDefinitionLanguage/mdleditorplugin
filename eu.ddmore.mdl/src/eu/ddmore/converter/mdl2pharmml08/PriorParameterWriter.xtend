@@ -1,24 +1,27 @@
 package eu.ddmore.converter.mdl2pharmml08
 
+import eu.ddmore.mdl.mdl.AnonymousListStatement
+import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
+import eu.ddmore.mdl.mdl.Statement
 import eu.ddmore.mdl.mdl.StringLiteral
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BlockDefinitionTable
+import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.utils.DomainObjectModelUtils
 import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import eu.ddmore.mdl.validation.MdlValidator
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
+import java.util.ArrayList
 import java.util.Collections
 import java.util.HashSet
 import java.util.Set
-import eu.ddmore.mdl.mdl.BlockStatement
-import eu.ddmore.mdl.mdl.AnonymousListStatement
 
 class PriorParameterWriter extends AbstractParameterWriter {
 
@@ -28,6 +31,7 @@ class PriorParameterWriter extends AbstractParameterWriter {
 	extension ExpressionUtils eu = new ExpressionUtils
 	extension DomainObjectModelUtils domu = new DomainObjectModelUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 
 	val MclObject priorObject
 	val Set<String> writtenParams
@@ -44,11 +48,11 @@ class PriorParameterWriter extends AbstractParameterWriter {
 		if(!writtenParams.contains(stmt.name)){
 			writtenParams.add(stmt.name)
 			'''
-				«IF priorObjDefn instanceof RandomVariableDefinition»
-					«IF priorObjDefn.isNonParametricDistn»
-						<PopulationParameter symbId="«priorObjDefn.name.weightVar»" />
-					«ENDIF»
-				«ENDIF»
+«««				«IF priorObjDefn instanceof RandomVariableDefinition»
+«««					«IF priorObjDefn.isNonParametricDistn»
+«««						<PopulationParameter symbId="«priorObjDefn.name»" />
+«««					«ENDIF»
+«««				«ENDIF»
 				«IF priorObjDefn != null»
 					<PopulationParameter symbId="«stmt.name»">
 						«IF priorObjDefn instanceof EquationTypeDefinition»
@@ -96,20 +100,31 @@ class PriorParameterWriter extends AbstractParameterWriter {
 		else false
 	}
 	
-	def private getWeightVar(String varName){
-		MdlValidator::RESERVED_PREFIX + "weight_" + varName
+	def private boolean isMultiVariate(RandomVariableDefinition rv){
+		val ex = rv.distn
+		if(ex instanceof SymbolReference){
+			val distName = ex.ref.name
+			distName == 'MultiNonParametric' ||
+				distName == 'MultiEmpirical'
+		}
+		else false
 	}
 	
 	def private writeDataDrivenDistn(RandomVariableDefinition rvd)'''
 		«IF rvd.distn instanceof SymbolReference»
 			<Distribution>
-				<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="RandomSample">
+				<ProbOnto xmlns="http://www.pharmml.org/probonto/ProbOnto" name="RandomSample" type="«IF rvd.isMultiVariate»multivariate«ELSE»univariate«ENDIF»">
+					<Realisation>
+						«IF rvd.isNonParametricDistn»
+							«rvd.distn.symbolRef.getArgumentExpression('bins').expressionAsAssignment»
+						«ELSE»
+							«rvd.distn.symbolRef.getArgumentExpression('data').expressionAsAssignment»
+						«ENDIF»
+					</Realisation>
 					«IF rvd.isNonParametricDistn»
-						<Parameter name="weight">
-							<ct:Assign>
-								<ct:SymbRef symbIdRef="«rvd.name.weightVar»"/>
-							</ct:Assign>
-						</Parameter>
+						<Weight>
+							«rvd.distn.symbolRef.getArgumentExpression('probability').expressionAsAssignment»
+						</Weight>
 					«ENDIF»
 				</ProbOnto>
 			</Distribution>
@@ -271,23 +286,34 @@ class PriorParameterWriter extends AbstractParameterWriter {
 	
 	def writeDataset(ListDefinition it){
 		var colIdx = 1
-	'''
-		<ExternalDataSet oid="«name»">
-			«writeColumnMapping»
-			<ds:DataSet>
-				<ds:Definition>
-					«FOR col : firstAttributeList.getAttributeExpression('column').vector ?: Collections::emptyList»
-						«IF col instanceof StringLiteral»
-							<ds:Column columnId="«col.stringValue»" valueType="real" columnNum="«colIdx++»"/>
-						«ENDIF»
-					«ENDFOR»
-				</ds:Definition>
-				<ds:ExternalFile oid="«getSyntheticFileOid(name)»">
-					<ds:path>«firstAttributeList.getAttributeExpression('file').stringValue ?: 'Error!'»</ds:path>
-				</ds:ExternalFile>
-			</ds:DataSet>
-		</ExternalDataSet>
-	'''
+		val ncBlks = priorObject.getBlocksByName(BlockDefinitionTable::PRIOR_NC_DISTN)
+		val inputStmts = new ArrayList<Statement>
+		ncBlks.forEach[ncBlk|
+			ncBlk.statementsFromBlock.filter[blk|
+					if(blk instanceof BlockStatement) blk.blkId.name == BlockDefinitionTable::PRIOR_INPUT_DATA else false
+			].forEach[stmt|
+				inputStmts.add(stmt)
+			]
+		]
+		'''
+			«IF !inputStmts.isEmpty»
+				<ExternalDataSet oid="«name»">
+					«writeColumnMapping»
+					<ds:DataSet>
+						<ds:Definition>
+							«FOR col : firstAttributeList.getAttributeExpression('column').vector ?: Collections::emptyList»
+								«IF col instanceof StringLiteral»
+									<ds:Column columnId="«col.stringValue»" valueType="real" columnNum="«colIdx++»"/>
+								«ENDIF»
+							«ENDFOR»
+						</ds:Definition>
+						<ds:ExternalFile oid="«getSyntheticFileOid(name)»">
+							<ds:path>«firstAttributeList.getAttributeExpression('file').stringValue ?: 'Error!'»</ds:path>
+						</ds:ExternalFile>
+					</ds:DataSet>
+				</ExternalDataSet>
+			«ENDIF»
+		'''
 	}
 	
 }

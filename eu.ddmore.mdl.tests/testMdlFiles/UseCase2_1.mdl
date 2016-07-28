@@ -21,7 +21,7 @@ warfarin_PK_analytic_DerivedDT_dat = dataObj {
 	DATA_DERIVED_VARIABLES{
 		# This is an idea of how to solve the dose time problem.  Like 'use is amt' we assume that the DT variable is
 		# only assigned when AMT > 0.  The typing ensured that the attributes reference a column with the correct 'use'.
-		DT : { use is doseTime, idvColumn=TIME, amtColumn=AMT }
+		DT : { use is doseTime, idvColumn=TIME, dosingVar=D }
 	}
 
 	SOURCE {

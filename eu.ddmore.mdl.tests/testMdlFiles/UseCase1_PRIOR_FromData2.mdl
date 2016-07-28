@@ -65,7 +65,6 @@ warfarin_UC1_prior = priorObj{
 		}
 
 		INPUT_PRIOR_DATA{
-			:: { vectorVar = TLAG_BINS, src=data, column="bin_tlag" }
 		}
 	}
 
@@ -83,7 +82,7 @@ warfarin_UC1_prior = priorObj{
 	   lPOP_KA ~ Normal(mean=lMU_POP_KA, var=VAR_POP_KA)
 	   POP_KA = exp(lPOP_KA)
 
-	   TLAG_BINS::vector
+	   TLAG_BINS = [ 22, 23, 45, 67, 88.0, 99.0, 200.0 ]
 	   lMU_POP_TLAG = ln(MU_POP_TLAG)
 	   lPOP_TLAG ~ Empirical(data=TLAG_BINS)
 	   POP_TLAG = exp(lPOP_TLAG)

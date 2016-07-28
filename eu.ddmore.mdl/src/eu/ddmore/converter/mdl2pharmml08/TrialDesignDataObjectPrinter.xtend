@@ -240,7 +240,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	}
 	
 	def CharSequence writeDerivedMapping(MclObject mdlObj, ListDefinition column){
-		var divCol = column.firstAttributeList.getAttributeExpression('column').symbolRef?.ref
+		val divCol = column.firstAttributeList.getAttributeExpression('column').symbolRef?.ref
 		if(divCol != null){
 			var mdlSymb = mdlObj.findMdlSymbolDefn(column.name)
 			if(divCol instanceof ListDefinition)
@@ -251,22 +251,52 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 			'<Error!>'
 	}
 
+	def private int getDosingIdFromDosingVar(ListDefinition amtCol, SymbolDefinition dosingVar){
+		val defineAtt = amtCol.firstAttributeList.getAttributeExpression(ListDefinitionTable::DEFINE_ATT)
+		if(defineAtt instanceof MappingExpression){
+			val mapping = defineAtt.attList.findFirst[mp|
+				mp.rightOperand.symbolRef?.ref.name == dosingVar.name
+			]
+			if(mapping != null)
+				return mapping.leftOperand.integerValue
+		}
+		return -1
+	}
+
 	def CharSequence writeDoseTimeMapping(ListDefinition column){
-		var idvCol = column.firstAttributeList.getAttributeExpression(ListDefinitionTable::IDV_COL_ATT)
-		var amtCol = column.firstAttributeList.getAttributeExpression(ListDefinitionTable::AMT_COL_ATT)
-		var mdlDtSymb = mObj.findMdlSymbolDefn(column.name)
+		val idvCol = column.firstAttributeList.getAttributeExpression(ListDefinitionTable::IDV_COL_ATT).symbolRef
+		val localDosingVar = column.firstAttributeList.getAttributeExpression(ListDefinitionTable::DOSE_VAR_ATT).symbolRef
+		val dosingVar = mObj.findMdlSymbolDefn(localDosingVar.ref.name)
+		val amtCol = dObj.getDataColumnDefn(ListDefinitionTable::AMT_USE_VALUE).head
+		val cmtCols = dObj.getDataColumnDefn(ListDefinitionTable::CMT_USE_VALUE)
+		var ListDefinition cmtCol = null
+		if(!cmtCols.isEmpty) cmtCol = cmtCols.head
+		val mdlDtSymb = mObj.findMdlSymbolDefn(column.name)
 		'''
 		<!-- doseTime=«mdlDtSymb.name» -->
 		<ColumnMapping>
-			<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«idvCol.convertToString»"/>
+			<ColumnRef xmlns="«xmlns_ds»" columnIdRef="«idvCol.ref.name»"/>
 			<math:Piecewise>
 				<math:Piece>
 					«mdlDtSymb.symbolReference»
 					<math:Condition>
-						<math:LogicBinop op="gt">
-							<ds:ColumnRef columnIdRef="«amtCol.convertToString»"/>
-							<ct:Int>0</ct:Int>
-						</math:LogicBinop>
+						«IF cmtCol != null»
+							<math:LogicBinop op="and">
+								<math:LogicBinop op="gt">
+									<ds:ColumnRef columnIdRef="«amtCol.name»"/>
+									<ct:Int>0</ct:Int>
+								</math:LogicBinop>
+								<math:LogicBinop op="eq">
+									<ds:ColumnRef columnIdRef="«cmtCol.name»"/>
+									<ct:Int>«getDosingIdFromDosingVar(amtCol, dosingVar)»</ct:Int>
+								</math:LogicBinop>
+							</math:LogicBinop>
+						«ELSE»
+							<math:LogicBinop op="gt">
+								<ds:ColumnRef columnIdRef="«amtCol.name»"/>
+								<ct:Int>0</ct:Int>
+							</math:LogicBinop>
+						«ENDIF»
 					</math:Condition>
 				</math:Piece>
 			</math:Piecewise>

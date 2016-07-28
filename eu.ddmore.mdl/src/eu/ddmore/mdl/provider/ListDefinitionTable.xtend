@@ -23,6 +23,7 @@ class ListDefinitionTable {
 	public static val CMT_USE_VALUE = 'cmt'
 	public static val DOSE_TIME_USE_VALUE = 'doseTime'
 	public static val DOSE_INTERVAL_USE_VALUE = 'doseInterval'
+	public static val DOSE_VAR_ATT = 'dosingVar'
 	public static val IDV_COL_ATT = 'idvColumn'
 	public static val AMT_COL_ATT = 'amtColumn'
 	public static val CMT_TYPE_ATT = 'type'

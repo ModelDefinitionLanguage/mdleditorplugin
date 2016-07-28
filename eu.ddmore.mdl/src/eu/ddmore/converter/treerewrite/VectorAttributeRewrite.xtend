@@ -18,7 +18,7 @@ class VectorAttributeRewrite extends MdlSwitch<Boolean> {
 	override caseValuePair(ValuePair it){
 		val argType = typeFor
 		if(argType instanceof VectorTypeInfo){
-			if(!(expression.typeFor instanceof VectorTypeInfo)){
+			if(!(expression.typeFor.underlyingType instanceof VectorTypeInfo)){
 				val fact = MdlPackage.eINSTANCE.mdlFactory
 				val vect = fact.createVectorLiteral
 				val el = fact.createVectorElement

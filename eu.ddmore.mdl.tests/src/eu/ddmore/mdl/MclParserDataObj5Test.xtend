@@ -36,7 +36,7 @@ warfarin_PK_v2_dat = dataObj{
 
 	DATA_DERIVED_VARIABLES{
 		OCCCOV : { use is catCov withCategories { treatAB when 1, treatBA when 2 }, column=OCC }
-		DI : { use is doseInterval, amtColumn = AMT, idvColumn=TIME }
+		DI : { use is doseInterval, dosingVar = GUT, idvColumn=TIME }
 		AMTCOV : { use is covariate, column = AMT }
 		PKVAR : { use is variable, column = PK }
 	}
