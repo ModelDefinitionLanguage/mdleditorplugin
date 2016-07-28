@@ -46,6 +46,7 @@ import java.util.Deque
 import java.util.LinkedList
 import java.util.List
 import java.util.ArrayList
+import eu.ddmore.mdl.utils.ConstantEvaluation
 
 class PharmMLExpressionBuilder {
 	
@@ -56,6 +57,7 @@ class PharmMLExpressionBuilder {
 	extension BlockUtils bu = new BlockUtils
 	extension TypeSystemProvider tsp = new TypeSystemProvider
 	extension ExpressionUtils eu = new ExpressionUtils
+	extension ConstantEvaluation ce = new ConstantEvaluation 
 	
 	static val GLOBAL_VAR = 'global'
 	
@@ -415,7 +417,23 @@ class PharmMLExpressionBuilder {
 		<ct:Vector>
 			<ct:VectorElements>
 				«FOR e : expressions»
-					«e.expressionAsAssignment»
+					«IF e.symbolRef == null»
+						«IF e.evaluateMathsExpression == null»
+							«IF e.evaluateLogicalExpression == null»
+								«IF e.evaluateStringExpression == null»
+									«e.expressionAsAssignment»
+								«ELSE»
+									«e.pharmMLExpr»
+								«ENDIF»
+							«ELSE»
+								«e.pharmMLExpr»
+							«ENDIF»
+						«ELSE»
+							«e.pharmMLExpr»
+						«ENDIF»
+					«ELSE»
+						«e.pharmMLExpr»
+					«ENDIF»
 				«ENDFOR»
 			</ct:VectorElements>
 		</ct:Vector>

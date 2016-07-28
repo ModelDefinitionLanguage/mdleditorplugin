@@ -269,9 +269,7 @@ class ModellingStepsPrinterSimulateTest {
 					<ct:Assign>
 						<ct:Vector>
 							<ct:VectorElements>
-								<ct:Assign>
-									<ct:String>oid_estimStep_1</ct:String>
-								</ct:Assign>
+								<ct:String>oid_estimStep_1</ct:String>
 							</ct:VectorElements>
 						</ct:Vector>
 					</ct:Assign>

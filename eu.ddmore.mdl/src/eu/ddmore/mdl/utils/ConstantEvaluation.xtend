@@ -21,6 +21,7 @@ import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.UnaryExpression
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdllib.mdllib.Expression
+import eu.ddmore.mdl.mdl.VectorElement
 
 class ConstantEvaluation {
 	
@@ -58,6 +59,9 @@ class ConstantEvaluation {
 	    		SymbolReference:{
 	    			getSymbolReference(expr)
 	    		}
+	    		VectorElement:{
+	    			evaluateMathsExpression(expr.element)
+	    		}
 	    		default:
 	    			null
 			}
@@ -86,16 +90,22 @@ class ConstantEvaluation {
 	    		BooleanLiteral:{
 	    			getBooleanLiteral(expr)
 	    		}
+	    		VectorElement:{
+	    			expr.element.evaluateLogicalExpression
+	    		}
 	    		default: null
 	    	}
     	}
     	else null
 	} 
 	
-	def evaluateStringExpression(Expression expr){
+	def String evaluateStringExpression(Expression expr){
 		if(expr != null){
 			if(expr instanceof StringLiteral){
 				return expr.value
+			}
+			else if(expr instanceof VectorElement){
+				return expr.element.evaluateStringExpression
 			}
 		}
 		null
