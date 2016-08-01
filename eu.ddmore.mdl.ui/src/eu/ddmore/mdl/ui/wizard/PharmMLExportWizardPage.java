@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -41,6 +42,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardExportResourcesPage;
+import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 
 
 public class PharmMLExportWizardPage extends WizardExportResourcesPage {
@@ -107,7 +109,7 @@ public class PharmMLExportWizardPage extends WizardExportResourcesPage {
         data.widthHint = SIZING_TEXT_FIELD_WIDTH;
         destinationNameField.setLayoutData(data);
         destinationNameField.setFont(font);
-//        BidiUtils.applyBidiProcessing(destinationNameField, StructuredTextTypeHandlerFactory.FILE);
+        BidiUtils.applyBidiProcessing(destinationNameField, StructuredTextTypeHandlerFactory.FILE);
 
         // destination browse button
         destinationBrowseButton = new Button(destinationSelectionGroup, SWT.PUSH);
@@ -548,7 +550,8 @@ public class PharmMLExportWizardPage extends WizardExportResourcesPage {
     private String getOverlappingProjectName(String targetDirectory){
     	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     	IPath testPath = new Path(targetDirectory);
-    	IContainer[] containers = root.findContainersForLocation(testPath);
+    	@SuppressWarnings("deprecation")
+		IContainer[] containers = root.findContainersForLocation(testPath);
     	if(containers.length > 0){
     		return containers[0].getProject().getName();
     	}

@@ -10,10 +10,13 @@
  *******************************************************************************/
 package eu.ddmore.mdl.ui.wizard;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+
+import eu.ddmore.mdl.ui.internal.MdlActivator;
 
 public class PharmMLExportWizard extends Wizard implements IExportWizard {
 	
@@ -36,6 +39,9 @@ public class PharmMLExportWizard extends Wizard implements IExportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Export PharmML Wizard"); //NON-NLS-1
 		setNeedsProgressMonitor(true);
+//		DialogSettings ds = new DialogSettings("PharmML Export Wizard");
+		IDialogSettings ds = MdlActivator.getInstance().getDialogSettings();
+		setDialogSettings(ds);
 		mainPage = new PharmMLExportWizardPage("Export PharmML File",selection); //NON-NLS-1
 	}
 	
