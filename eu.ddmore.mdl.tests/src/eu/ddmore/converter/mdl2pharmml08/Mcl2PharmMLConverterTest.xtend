@@ -383,6 +383,11 @@ class Mcl2PharmMLConverterTest {
 	}
 
 	@Test
+	def void testExample332_design(){
+		validateConversion("example332")
+	}
+
+	@Test
 	def void testComplex_PK_Model(){
 		validateConversion("Complex_PK_Model")
 	}

@@ -431,6 +431,8 @@ class PharmMLExpressionBuilder {
 						«ELSE»
 							«e.pharmMLExpr»
 						«ENDIF»
+					«ELSEIF e.symbolRef.isFunction»
+						«e.expressionAsAssignment»
 					«ELSE»
 						«e.pharmMLExpr»
 					«ENDIF»
