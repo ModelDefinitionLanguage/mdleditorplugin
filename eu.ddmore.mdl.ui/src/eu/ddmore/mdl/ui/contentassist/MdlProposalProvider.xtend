@@ -20,6 +20,7 @@ import eu.ddmore.mdl.type.BuiltinEnumTypeInfo
 import eu.ddmore.mdl.type.TypeInfo
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.MdlLibUtils
+import eu.ddmore.mdllib.mdllib.BlockContainer
 import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import eu.ddmore.mdllib.mdllib.TypeDefinition
@@ -195,4 +196,27 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 			acceptor.accept(p);
 		}
 	}
+	
+	override completeBlockStatement_BlkId(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		val parent = model.eContainer
+		val BlockContainer container = switch(parent){
+			MclObject:
+				parent.objId
+			BlockStatement:
+				parent.blkId
+			default:
+				null
+		}
+		val Predicate<IEObjectDescription> filter = new Predicate<IEObjectDescription>(){
+			
+			override apply(IEObjectDescription input) {
+				if(container != null)
+					container.canContainBlock(input.name.lastSegment)
+				else false						
+			}
+			
+		}
+		lookupCrossReference((assignment.getTerminal() as CrossReference), context, acceptor, filter)
+	}
+	
 }

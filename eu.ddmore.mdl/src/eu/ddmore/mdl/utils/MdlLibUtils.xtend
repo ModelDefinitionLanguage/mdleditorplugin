@@ -245,10 +245,21 @@ class MdlLibUtils {
 	}
 
 	def boolean canContainBlock(BlockContainer it, BlockDefinition blkDefn){
+		canContainBlock(blkDefn.name)
+//		val cd = containmentDefnForObj
+//		if(cd != null){
+//			cd.blkRefs.exists[
+//				name == blkDefn.name
+//			]
+//		}
+//		else false
+	}
+
+	def boolean canContainBlock(BlockContainer it, String blkName){
 		val cd = containmentDefnForObj
 		if(cd != null){
 			cd.blkRefs.exists[
-				name == blkDefn.name
+				name == blkName
 			]
 		}
 		else false
