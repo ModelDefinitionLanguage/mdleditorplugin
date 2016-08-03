@@ -16,4 +16,6 @@ public class NullGlobalScopeProvider implements IGlobalScopeProvider {
 		return IScope.NULLSCOPE;
 	}
 
+	
+
 }

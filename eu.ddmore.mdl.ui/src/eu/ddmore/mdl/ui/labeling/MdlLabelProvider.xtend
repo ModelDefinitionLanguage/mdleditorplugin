@@ -22,6 +22,10 @@ import org.eclipse.xtext.ui.IImageHelper
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
 
 import static eu.ddmore.mdl.ui.outline.Images.*
+import eu.ddmore.mdllib.mdllib.FunctionDefnBody
+import eu.ddmore.mdllib.mdllib.NamedFuncArgs
+import eu.ddmore.mdl.mdl.SymbolReference
+import eu.ddmore.mdl.mdl.NamedFuncArguments
 
 /**
  * Provides labels for a EObjects.
@@ -43,7 +47,9 @@ class MdlLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	private def printType(SymbolDefinition it){
-		"::" + typeFor?.typeName ?: "<error!>"
+		if(it != null)
+			"::" + typeFor?.typeName ?: "<error!>"
+		else ""
 	}
 
 	def text(EquationDefinition ele) {
@@ -61,6 +67,14 @@ class MdlLabelProvider extends DefaultEObjectLabelProvider {
 	def text(BlockStatement it) {
 		blkId?.name ?: '<undefined>'
 	}
+
+	def text(SymbolReference it)'''
+		«ref.name»(«IF argList instanceof NamedFuncArguments»«FOR a : (argList as NamedFuncArguments).arguments SEPARATOR ", "»«a.argumentName»«ENDFOR»)«ENDIF»
+	'''
+
+	def text(FunctionDefnBody it)'''
+		«name»(«FOR a : funcSpec.argument.arguments SEPARATOR ", "»«a.name»::«a.typeSpec.typeName.name»«ENDFOR»::«funcSpec.returnType.typeName.name»
+	'''
 
 	@Inject IImageHelper imageHelper;
 

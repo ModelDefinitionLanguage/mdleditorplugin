@@ -47,6 +47,7 @@ import eu.ddmore.mdl.provider.MappingDefinitionProvider
 import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.provider.BlockDefinitionTable
+import eu.ddmore.mdl.mdl.BlockStatementBody
 
 public class TypeSystemProvider {
 
@@ -480,6 +481,10 @@ public class TypeSystemProvider {
 			ListTypeInfo: type
 			default: UNDEFINED_TYPE
 		}
+	}
+	
+	def dispatch TypeInfo typeFor(BlockStatementBody it){
+		UNDEFINED_TYPE
 	}
 	
 	def dispatch TypeInfo typeFor(ListPiecewiseExpression it){
