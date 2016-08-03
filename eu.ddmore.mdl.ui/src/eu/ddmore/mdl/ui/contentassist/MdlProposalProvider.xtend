@@ -34,6 +34,10 @@ import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
 
 import static extension org.eclipse.xtext.EcoreUtil2.getContainerOfType
+import org.eclipse.xtext.Keyword
+import org.eclipse.jface.text.contentassist.ICompletionProposal
+import eu.ddmore.mdllib.mdllib.Expression
+import eu.ddmore.mdl.mdl.ValuePair
 
 /**
  * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant
@@ -59,12 +63,14 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 //	 							default:
 //	 								TypeSystemProvider::UNDEFINED_TYPE
 //							}
-	 	val expectedType = model.typeFor ?: TypeSystemProvider::UNDEFINED_TYPE
+	 	val expectedType = if(model instanceof SymbolDefinition || model instanceof Expression
+	 							 || model instanceof ValuePair) model.typeFor ?: TypeSystemProvider::UNDEFINED_TYPE
+	 						else TypeSystemProvider::UNDEFINED_TYPE
 	 	val booleanFilter = new Predicate<IEObjectDescription>()
 	 	{
 				override apply(IEObjectDescription input) {
 					val s = input.EObjectOrProxy
-						if(s instanceof SymbolDefinition){
+					if(s instanceof SymbolDefinition){
 						val sOwningObj = s.eContainer.getContainerOfType(MclObject)
 						if(sOwningObj != null){
 							if(sOwningObj == owningObj){
@@ -246,20 +252,20 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 		lookupCrossReference((assignment.getTerminal() as CrossReference), context, acceptor, filter)
 	}
 	
-//	override completeTransformedDefinition_Transform(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+	override completeTransformedDefinition_Transform(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 //		addProposals(context, acceptor, #['ln', 'logit', 'probit'], null)
 ////		lookupCrossReference(((CrossReference)assignment.getTerminal()), context, acceptor);
-//		
-//	}
+		
+	}
 
 	
-//	override void completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext,
-//			ICompletionProposalAcceptor acceptor) {
-////		val ICompletionProposal proposal = createCompletionProposal(keyword.getValue(), getKeywordDisplayString(keyword),
-////				getImage(keyword), contentAssistContext);
-////		getPriorityHelper().adjustKeywordPriority(proposal, contentAssistContext.getPrefix());
-////		acceptor.accept(proposal);
+	override void completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext,
+			ICompletionProposalAcceptor acceptor) {
+//		val ICompletionProposal proposal = createCompletionProposal(keyword.getValue(), getKeywordDisplayString(keyword),
+//				getImage(keyword), contentAssistContext);
+//		getPriorityHelper().adjustKeywordPriority(proposal, contentAssistContext.getPrefix());
+//		acceptor.accept(proposal);
 //		return
-//	}
+	}
 
 }

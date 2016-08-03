@@ -20,12 +20,15 @@ import java.util.List
 import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
 import eu.ddmore.mdl.mdl.EnumerationDefinition
+import eu.ddmore.mdl.mdl.Statement
+import eu.ddmore.mdllib.mdllib.Expression
+import java.util.Collections
 
 @Singleton
 class MdlTemplateProposalProvider extends DefaultTemplateProposalProvider {
 	
 	extension MdlLibUtils mlu = new MdlLibUtils
-//	extension TypeSystemProvider tsp = new TypeSystemProvider
+	extension TypeSystemProvider tsp = new TypeSystemProvider
 	
 	val MdlDynamicTemplateStore ts
 	
@@ -39,10 +42,16 @@ class MdlTemplateProposalProvider extends DefaultTemplateProposalProvider {
 	override protected void createTemplates(TemplateContext templateContext, ContentAssistContext context, ITemplateAcceptor acceptor) {
 		val TemplateContextType contextType = templateContext.getContextType();
 		val obj = EcoreUtil2.getContainerOfType(context.currentModel, MclObject)
-		val expectedTypes = getExpectedTypesForStatement(context.currentModel)
 		val lib = obj.libraryForObject
 		ts.libDefns = lib
 		val templates = ts.getTemplates(contextType.getId());
+		var List<TypeInfo> expectedTypes = Collections.emptyList
+		if(context.currentModel instanceof Statement){
+			expectedTypes = getExpectedTypesForStatement(context.currentModel)
+		}
+		else if(context.currentModel instanceof Expression){
+			expectedTypes = #[ context.currentModel.typeFor ]
+		}
 		for (Template template : templates) {
 			if (!acceptor.canAcceptMoreTemplates())
 				return;
