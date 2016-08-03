@@ -85,8 +85,8 @@ class BlockValidator extends AbstractDeclarativeValidator{
 		val parent = parentOfBlockStatement
 		switch(parent){
 			MclObject case parent.mdlObjType != null && !isModelBlock:
-					error("block '" + identifier + "' cannot be used in an object of type " + parent.mdlObjType,
-						MdlPackage.eINSTANCE.blockStatement_BlkId, UNKNOWN_BLOCK, identifier)
+					error("block '" + identifier ?: "" + "' cannot be used in an object of type " + parent.mdlObjType,
+						MdlPackage.eINSTANCE.blockStatement_BlkId, UNKNOWN_BLOCK, identifier ?: '')
 			BlockStatement: {
 				val owningObject = EcoreUtil2.getContainerOfType(eContainer, MclObject)
 				if (!isModelSubBlock(owningObject)) {
@@ -156,12 +156,14 @@ class BlockValidator extends AbstractDeclarativeValidator{
 	
 	@Check
 	def validateMdlObjectHasCorrectBlocks(MclObject it){
-		// check if mandatory blocks missing
-		unusedMandatoryBlocks.forEach[blk, mand| error("mandatory block '" + blk + "' is missing in mdlObj '" + name + "'",
-					MdlPackage.eINSTANCE.mclObject_Blocks, MANDATORY_BLOCK_MISSING, blk) ]
-		// 		[expectedType, actualType |error("Expected " + expectedType.typeName + " type, but was " + actualType.typeName + ".", feature, INCOMPATIBLE_TYPES, expectedType.typeName) ]
-		validateBlocksCounts([blk, maxLimit| error("block '" + blk + "' is used more than is allowed. A maximum of " + maxLimit + " blocks are allowed",
-					MdlPackage.eINSTANCE.mclObject_Blocks, BLOCK_COUNT_EXCEEDED, blk) ])
+		if(objId != null){
+			// check if mandatory blocks missing
+			unusedMandatoryBlocks.forEach[blk, mand| error("mandatory block '" + blk + "' is missing in mdlObj '" + name + "'",
+						MdlPackage.eINSTANCE.mclObject_Blocks, MANDATORY_BLOCK_MISSING, blk) ]
+			// 		[expectedType, actualType |error("Expected " + expectedType.typeName + " type, but was " + actualType.typeName + ".", feature, INCOMPATIBLE_TYPES, expectedType.typeName) ]
+			validateBlocksCounts([blk, maxLimit| error("block '" + blk + "' is used more than is allowed. A maximum of " + maxLimit + " blocks are allowed",
+						MdlPackage.eINSTANCE.mclObject_Blocks, BLOCK_COUNT_EXCEEDED, blk) ])
+		}
 	}
 
 	

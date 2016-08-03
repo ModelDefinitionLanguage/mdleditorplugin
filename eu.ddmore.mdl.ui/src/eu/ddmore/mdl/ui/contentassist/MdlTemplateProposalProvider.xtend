@@ -23,6 +23,9 @@ import eu.ddmore.mdl.mdl.EnumerationDefinition
 import eu.ddmore.mdl.mdl.Statement
 import eu.ddmore.mdllib.mdllib.Expression
 import java.util.Collections
+import eu.ddmore.mdl.type.ListTypeInfo
+import eu.ddmore.mdl.provider.BlockListDefinition
+import eu.ddmore.mdl.mdl.BlockStatement
 
 @Singleton
 class MdlTemplateProposalProvider extends DefaultTemplateProposalProvider {
@@ -52,12 +55,19 @@ class MdlTemplateProposalProvider extends DefaultTemplateProposalProvider {
 		else if(context.currentModel instanceof Expression){
 			expectedTypes = #[ context.currentModel.typeFor ]
 		}
+		val owningBlock = EcoreUtil2.getContainerOfType(context.currentModel, BlockStatement)
+		val blkDefn = BlockListDefinition::create(owningBlock)
 		for (Template template : templates) {
 			if (!acceptor.canAcceptMoreTemplates())
 				return;
 			if (validate(template, templateContext)) {
 				if(template instanceof TypefulTemplate){
-					if(expectedTypes.exists[isCompatible(template.matchType)]){
+					if(template.matchType instanceof ListTypeInfo){
+						if(blkDefn.listDefns.exists[listType == template.matchType]){
+							acceptor.accept(createProposal(template, templateContext, context, getImage(template), getRelevance(template)));
+						}
+					}
+					else if(expectedTypes.exists[isCompatible(template.matchType)]){
 						acceptor.accept(createProposal(template, templateContext, context, getImage(template), getRelevance(template)));
 					}
 				}

@@ -537,7 +537,7 @@ public class TypeSystemProvider {
 	
 	
 	def TypeInfo getTypeOfList(ListDefinition it){
-		it.list.typeFor
+		it?.list?.typeFor ?: UNDEFINED_TYPE
 	}
 	
 	private def TypeInfo getPopulatedType(AttributeList it, ListDefInfo listDefn){

@@ -204,6 +204,7 @@ class MdlLibUtils {
 	}
 	
 	def Library getLibraryForObject(MclObject obj){
+
 		EcoreUtil2.getContainerOfType(obj.objId.eContainer, Library)
 	}
 	

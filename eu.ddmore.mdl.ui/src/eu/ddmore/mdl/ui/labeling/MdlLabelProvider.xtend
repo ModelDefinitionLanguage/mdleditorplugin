@@ -10,22 +10,21 @@ import eu.ddmore.mdl.mdl.EquationDefinition
 import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
+import eu.ddmore.mdl.mdl.NamedFuncArguments
 import eu.ddmore.mdl.mdl.RandomVariableDefinition
+import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.mdl.TransformedDefinition
 import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.BlockUtils
 import eu.ddmore.mdl.validation.MdlValidator
+import eu.ddmore.mdllib.mdllib.FunctionDefnBody
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.IImageHelper
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
 
 import static eu.ddmore.mdl.ui.outline.Images.*
-import eu.ddmore.mdllib.mdllib.FunctionDefnBody
-import eu.ddmore.mdllib.mdllib.NamedFuncArgs
-import eu.ddmore.mdl.mdl.SymbolReference
-import eu.ddmore.mdl.mdl.NamedFuncArguments
 
 /**
  * Provides labels for a EObjects.
@@ -68,13 +67,11 @@ class MdlLabelProvider extends DefaultEObjectLabelProvider {
 		blkId?.name ?: '<undefined>'
 	}
 
-	def text(SymbolReference it)'''
-		«ref.name»(«IF argList instanceof NamedFuncArguments»«FOR a : (argList as NamedFuncArguments).arguments SEPARATOR ", "»«a.argumentName»«ENDFOR»)«ENDIF»
-	'''
+	def text(SymbolReference it)
+		'''«ref.name»(«IF argList instanceof NamedFuncArguments»«FOR a : (argList as NamedFuncArguments).arguments SEPARATOR ", "»«a.argumentName»«ENDFOR»)«ENDIF»'''
 
-	def text(FunctionDefnBody it)'''
-		«name»(«FOR a : funcSpec.argument.arguments SEPARATOR ", "»«a.name»::«a.typeSpec.typeName.name»«ENDFOR»::«funcSpec.returnType.typeName.name»
-	'''
+	def text(FunctionDefnBody it)
+		'''«name»(«FOR a : funcSpec.argument.arguments SEPARATOR ", "»«a.name»::«a.typeSpec.typeName.name»«ENDFOR»::«funcSpec.returnType.typeName.name»'''
 
 	@Inject IImageHelper imageHelper;
 

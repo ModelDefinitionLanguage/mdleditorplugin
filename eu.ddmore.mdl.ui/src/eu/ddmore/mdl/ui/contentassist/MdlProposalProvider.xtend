@@ -11,6 +11,7 @@ import eu.ddmore.mdl.mdl.EnumPair
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.PropertyStatement
 import eu.ddmore.mdl.mdl.SymbolReference
+import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.provider.BuiltinFunctionProvider
 import eu.ddmore.mdl.provider.ListDefinitionProvider
 import eu.ddmore.mdl.provider.PropertyDefinitionProvider
@@ -19,6 +20,7 @@ import eu.ddmore.mdl.type.TypeInfo
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.MdlLibUtils
 import eu.ddmore.mdllib.mdllib.BlockContainer
+import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import eu.ddmore.mdllib.mdllib.TypeDefinition
 import java.util.ArrayList
@@ -29,15 +31,12 @@ import org.eclipse.swt.graphics.Image
 import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.CrossReference
 import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
 
 import static extension org.eclipse.xtext.EcoreUtil2.getContainerOfType
-import org.eclipse.xtext.Keyword
-import org.eclipse.jface.text.contentassist.ICompletionProposal
-import eu.ddmore.mdllib.mdllib.Expression
-import eu.ddmore.mdl.mdl.ValuePair
 
 /**
  * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant
@@ -53,16 +52,6 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 
 	 public override void completeSymbolReference_Ref(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 	 	val owningObj = model.getContainerOfType(MclObject)
-//	 	val expectedType = switch(model){
-//	 							ValuePair:
-//	 								model.attributeType
-//	 							EquationTypeDefinition:
-//	 								model.typeFor
-//	 							Expression:
-//	 								model.typeFor
-//	 							default:
-//	 								TypeSystemProvider::UNDEFINED_TYPE
-//							}
 	 	val expectedType = if(model instanceof SymbolDefinition || model instanceof Expression
 	 							 || model instanceof ValuePair) model.typeFor ?: TypeSystemProvider::UNDEFINED_TYPE
 	 						else TypeSystemProvider::UNDEFINED_TYPE
@@ -89,26 +78,6 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 				
 	 	}
 	 	lookupCrossReference((assignment.getTerminal() as CrossReference), context, acceptor, booleanFilter)
-//		lookupCrossReference((assignment.getTerminal() as CrossReference), context, acceptor, booleanFilter,
-//								new Function<IEObjectDescription, ICompletionProposal> (){
-//									override ICompletionProposal apply(IEObjectDescription candidate) {
-//					if (candidate == null)
-//						return null;
-//					var String proposal = qualifiedNameConverter.toString(candidate.getName());
-//					val EObject objectOrProxy = candidate.getEObjectOrProxy();
-//					val StyledString displayString = getStyledDisplayString(candidate);
-//					val Image image = getImage(objectOrProxy);
-//					val ICompletionProposal resu = createCompletionProposal(proposal, displayString, image, context);
-//					if (resu instanceof ConfigurableCompletionProposal) {
-//						resu.setProposalContextResource(context.getResource());
-//						resu.setAdditionalProposalInfo(objectOrProxy);
-//						resu.setHover(hover);
-//					}
-//					getPriorityHelper().adjustCrossReferencePriority(resu, context.getPrefix());
-//					return resu;
-//				}
-//			}
-//		)
 	}
 
 	public override void completeCategoryValueReference_Ref(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
