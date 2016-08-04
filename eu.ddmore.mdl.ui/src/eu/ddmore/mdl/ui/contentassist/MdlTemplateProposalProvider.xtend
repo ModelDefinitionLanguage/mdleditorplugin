@@ -44,6 +44,9 @@ class MdlTemplateProposalProvider extends DefaultTemplateProposalProvider {
 
 	override protected void createTemplates(TemplateContext templateContext, ContentAssistContext context, ITemplateAcceptor acceptor) {
 		val TemplateContextType contextType = templateContext.getContextType();
+//		if(contextType.name == "eu.ddmore.mdl.Mdl.AttributeList"){
+//			createAttListTemplates()
+//		}
 		val obj = EcoreUtil2.getContainerOfType(context.currentModel, MclObject)
 		val lib = obj.libraryForObject
 		ts.libDefns = lib
@@ -76,6 +79,45 @@ class MdlTemplateProposalProvider extends DefaultTemplateProposalProvider {
 			}
 		}
 	}
+
+//	def private void createAttributeListTemplates(TemplateContext templateContext, ContentAssistContext context, ITemplateAcceptor acceptor){
+//	}
+	
+	def private void createExpressionTypeTemplates(TemplateContext templateContext, ContentAssistContext context, ITemplateAcceptor acceptor){
+		val TemplateContextType contextType = templateContext.getContextType();
+		val obj = EcoreUtil2.getContainerOfType(context.currentModel, MclObject)
+		val lib = obj.libraryForObject
+		ts.libDefns = lib
+		val templates = ts.getTemplates(contextType.getId());
+		var List<TypeInfo> expectedTypes = Collections.emptyList
+		if(context.currentModel instanceof Statement){
+			expectedTypes = getExpectedTypesForStatement(context.currentModel)
+		}
+		else if(context.currentModel instanceof Expression){
+			expectedTypes = #[ context.currentModel.typeFor ]
+		}
+		val owningBlock = EcoreUtil2.getContainerOfType(context.currentModel, BlockStatement)
+		val blkDefn = BlockListDefinition::create(owningBlock)
+		for (Template template : templates) {
+			if (!acceptor.canAcceptMoreTemplates())
+				return;
+			if (validate(template, templateContext)) {
+				if(template instanceof TypefulTemplate){
+					if(template.matchType instanceof ListTypeInfo){
+						if(blkDefn.listDefns.exists[listType == template.matchType]){
+							acceptor.accept(createProposal(template, templateContext, context, getImage(template), getRelevance(template)));
+						}
+					}
+					else if(expectedTypes.exists[isCompatible(template.matchType)]){
+						acceptor.accept(createProposal(template, templateContext, context, getImage(template), getRelevance(template)));
+					}
+				}
+				else
+					acceptor.accept(createProposal(template, templateContext, context, getImage(template), getRelevance(template)));
+			}
+		}
+	}
+	
 	
 	private def List<TypeInfo> getExpectedTypesForStatement(EObject stmt){
 		switch(stmt){
