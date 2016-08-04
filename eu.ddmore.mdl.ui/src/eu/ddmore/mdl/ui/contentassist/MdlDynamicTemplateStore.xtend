@@ -28,7 +28,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 	val private List<Template> templateCache
 	
 	public val static String SYMBOL_REF = "eu.ddmore.mdl.Mdl.SymbolReference"
-	public val static String ATT_LIST_DEFN = "eu.ddmore.mdl.Mdl.AtrributeList"
+	public val static String ATT_LIST_DEFN = "eu.ddmore.mdl.Mdl.AttributeList"
 	
 	@Inject
 	new(ContextTypeRegistry registry, IPreferenceStore store, String key, AbstractUIPlugin plugin) {
@@ -36,23 +36,6 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 		this.templateCache = new ArrayList<Template>
 	}
 
-//	override protected void loadContributedTemplates() throws IOException {
-//		for(t : this.templateCache ?: Collections.emptyList){
-//			internalAdd(new TemplatePersistenceData(t, true))
-//		}
-////		var URL res
-////		val TemplateReaderWriter reader = new TemplateReaderWriter();
-////		var InputStream openStream = null;
-////		openStream = res.openStream();
-////		try {
-////			val TemplatePersistenceData[] read = reader.read(openStream, null);
-////			for (TemplatePersistenceData templatePersistenceData : read) {
-////				internalAdd(templatePersistenceData);
-////			}
-////		} finally {
-////			openStream.close();
-////		}
-//	}
 	
 //	override Template[] getTemplates(String contextTypeId) {
 //		val List<Template> retVal = new ArrayList<Template>(super.getTemplates(contextTypeId));
@@ -93,9 +76,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 				«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ENDIF»«ENDFOR»
 			'''
 			var cntr = 1
-			val pattern = '''
-				«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ELSE»${attVal«cntr++»}«ENDIF»«ENDFOR»
-			'''
+			val pattern = '''«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ELSE»${attVal«cntr++»}«ENDIF»«ENDFOR»'''
 			retVal.add(new TypefulTemplate(name, if(defns.descn != null) defns.descn else "", ATT_LIST_DEFN, pattern, true, defns.typeInfo))
 		}
 		retVal
@@ -146,7 +127,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 		if(this.libDefns != defn){
 			this.libDefns = defn
 			if(this.libDefns != null){
-//				this.templateCache.addAll(buildFunctionTemplatesFromLibrary())
+				this.templateCache.addAll(buildFunctionTemplatesFromLibrary())
 				this.templateCache.addAll(buildListTemplatesFromLibrary())
 				for(t : this.templateCache){
 					internalAdd(new TemplatePersistenceData(t, true, ATT_LIST_DEFN + "." + t.name))
