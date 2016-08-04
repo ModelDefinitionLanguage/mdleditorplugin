@@ -215,14 +215,35 @@ class TrialDesignDesignObjectPrinter implements TrialDesignObjectPrinter {
 				<DoseAmount>
 					«writeTargetMapping»
 					«IF hasAttribute(SCALE_ATT_NAME)»
-						<ct:Assign>
-							<math:Binop op="times">
-								«getAttributeExpression(AMT_ATT_NAME).pharmMLExpr»
-								«getAttributeExpression(SCALE_ATT_NAME).pharmMLExpr»
-							</math:Binop>
-						</ct:Assign>
+						«IF getAttributeExpression(AMT_ATT_NAME).vector.size == 1»
+							<ct:Assign>
+								<math:Binop op="times">
+									«getAttributeExpression(AMT_ATT_NAME).vector.get(0).pharmMLExpr»
+									«getAttributeExpression(SCALE_ATT_NAME).pharmMLExpr»
+								</math:Binop>
+							</ct:Assign>
+						«ELSE»
+							<ct:Assign>
+								<ct:Vector>
+									<ct:VectorElements>
+										«FOR e : getAttributeExpression(AMT_ATT_NAME).vector»
+											<ct:Assign>
+												<math:Binop op="times">
+													«e.pharmMLExpr»
+													«getAttributeExpression(SCALE_ATT_NAME).pharmMLExpr»
+												</math:Binop>
+											</ct:Assign>
+										«ENDFOR»
+									</ct:VectorElements>
+								</ct:Vector>
+							</ct:Assign>
+						«ENDIF»
 					«ELSE»
-						«getAttributeExpression(AMT_ATT_NAME).expressionAsAssignment»
+						«IF getAttributeExpression(AMT_ATT_NAME).vector.size == 1»
+							«getAttributeExpression(AMT_ATT_NAME).vector.get(0).expressionAsAssignment»
+						«ELSE»
+							«getAttributeExpression(AMT_ATT_NAME).expressionAsAssignment»
+						«ENDIF»
 					«ENDIF»
 				</DoseAmount>
 			«ENDIF»

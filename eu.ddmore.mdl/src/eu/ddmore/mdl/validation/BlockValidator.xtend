@@ -85,7 +85,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 		val parent = parentOfBlockStatement
 		switch(parent){
 			MclObject case parent.mdlObjType != null && !isModelBlock:
-					error("block '" + identifier ?: "" + "' cannot be used in an object of type " + parent.mdlObjType,
+					error("block '" + (identifier ?: "") + "' cannot be used in an object of type " + parent.mdlObjType,
 						MdlPackage.eINSTANCE.blockStatement_BlkId, UNKNOWN_BLOCK, identifier ?: '')
 			BlockStatement: {
 				val owningObject = EcoreUtil2.getContainerOfType(eContainer, MclObject)
