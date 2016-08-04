@@ -63,7 +63,7 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 						val sOwningObj = s.eContainer.getContainerOfType(MclObject)
 						if(sOwningObj != null){
 							if(sOwningObj == owningObj){
-								s.typeFor.isCompatible(expectedType)
+								expectedType.isCompatible(s.typeFor)
 							}
 							else false
 						}

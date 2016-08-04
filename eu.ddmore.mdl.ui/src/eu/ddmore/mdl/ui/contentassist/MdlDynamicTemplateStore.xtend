@@ -2,8 +2,11 @@ package eu.ddmore.mdl.ui.contentassist
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import eu.ddmore.mdl.type.BuiltinEnumTypeInfo
 import eu.ddmore.mdl.utils.MdlLibUtils
+import eu.ddmore.mdllib.mdllib.EnumValue
 import eu.ddmore.mdllib.mdllib.Library
+import eu.ddmore.mdllib.mdllib.ListAttributeRef
 import eu.ddmore.mdllib.mdllib.ListTypeDefinition
 import eu.ddmore.mdllib.mdllib.NamedFuncArgs
 import eu.ddmore.mdllib.mdllib.UnnamedFuncArgs
@@ -12,11 +15,9 @@ import java.util.List
 import org.eclipse.jface.preference.IPreferenceStore
 import org.eclipse.jface.text.templates.ContextTypeRegistry
 import org.eclipse.jface.text.templates.Template
+import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData
 import org.eclipse.ui.plugin.AbstractUIPlugin
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateStore
-import eu.ddmore.mdllib.mdllib.ListAttributeRef
-import eu.ddmore.mdl.type.BuiltinEnumTypeInfo
-import eu.ddmore.mdllib.mdllib.EnumValue
 
 @Singleton
 class MdlDynamicTemplateStore extends XtextTemplateStore {
@@ -27,7 +28,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 	val private List<Template> templateCache
 	
 	public val static String SYMBOL_REF = "eu.ddmore.mdl.Mdl.SymbolReference"
-	public val static String LIST_DEFN = "eu.ddmore.mdl.Mdl.ListDefinition"
+	public val static String ATT_LIST_DEFN = "eu.ddmore.mdl.Mdl.AttributeList"
 	
 	@Inject
 	new(ContextTypeRegistry registry, IPreferenceStore store, String key, AbstractUIPlugin plugin) {
@@ -36,13 +37,13 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 	}
 
 	
-	override Template[] getTemplates(String contextTypeId) {
-		val List<Template> retVal = new ArrayList<Template>(super.getTemplates(contextTypeId));
-		if(libDefns != null)
-			retVal.addAll(templateCache)
-
-		return retVal;
-	}
+//	override Template[] getTemplates(String contextTypeId) {
+//		val List<Template> retVal = new ArrayList<Template>(super.getTemplates(contextTypeId));
+//		if(libDefns != null)
+//			retVal.addAll(templateCache)
+//
+//		return retVal;
+//	}
 
 	def private List<Template> buildListTemplatesFromLibrary(){
 		val List<Template> retVal = new ArrayList<Template>
@@ -75,10 +76,8 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 				«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ENDIF»«ENDFOR»
 			'''
 			var cntr = 1
-			val pattern = '''
-				«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ELSE»${attVal«cntr++»}«ENDIF»«ENDFOR»
-			'''
-			retVal.add(new TypefulTemplate(name, if(defns.descn != null) defns.descn else "", SYMBOL_REF, pattern, true, defns.typeInfo))
+			val pattern = '''«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ELSE»${attVal«cntr++»}«ENDIF»«ENDFOR»'''
+			retVal.add(new TypefulTemplate(name, if(defns.descn != null) defns.descn else "", ATT_LIST_DEFN, pattern, true, defns.typeInfo))
 		}
 		retVal
 	}
@@ -130,6 +129,9 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 			if(this.libDefns != null){
 				this.templateCache.addAll(buildFunctionTemplatesFromLibrary())
 				this.templateCache.addAll(buildListTemplatesFromLibrary())
+				for(t : this.templateCache){
+					internalAdd(new TemplatePersistenceData(t, true, ATT_LIST_DEFN + "." + t.name))
+				}
 			}
 			else
 				this.templateCache.clear
