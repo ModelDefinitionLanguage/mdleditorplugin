@@ -24,6 +24,7 @@ import eu.ddmore.mdl.type.MatrixTypeInfo
 
 @Singleton
 class MdlDynamicTemplateStore extends XtextTemplateStore {
+	static val TEMPL_AUTO_INSERT = false
 	
 	extension MdlLibUtils mlu = new MdlLibUtils
 	
@@ -80,7 +81,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 			'''
 			var cntr = 1
 			val pattern = '''«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ELSE»«fad.typeInfo.LBrace»${attVal«cntr++»}«fad.typeInfo.RBrace»«ENDIF»«ENDFOR»'''
-			retVal.add(new TypefulTemplate(name, if(defns.descn != null) defns.descn else "", ATT_LIST_DEFN, pattern, true, defns.typeInfo))
+			retVal.add(new TypefulTemplate(name, if(defns.descn != null) defns.descn else "", ATT_LIST_DEFN, pattern, TEMPL_AUTO_INSERT, defns.typeInfo))
 		}
 		retVal
 	}
@@ -131,7 +132,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 				val pattern = '''
 					«methName»«FOR fad : args.arguments BEFORE "(" SEPARATOR ", " AFTER ")"»${«fad.name»}«ENDFOR»
 				'''
-				retVal.add(new TypefulTemplate(name, if(spec.descn != null) spec.descn else "", SYMBOL_REF, pattern, true, spec.returnType.typeInfo))
+				retVal.add(new TypefulTemplate(name, if(spec.descn != null) spec.descn else "", SYMBOL_REF, pattern, TEMPL_AUTO_INSERT, spec.returnType.typeInfo))
 			}
 			else if(args instanceof NamedFuncArgs){
 				for(sig : args.sigLists){
@@ -142,7 +143,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 					val pattern = '''
 						«methName»«FOR fad : sig.argRefs BEFORE "(" SEPARATOR ", " AFTER ")"»«fad.argRef.name»«IF fad.argRef.typeSpec.typeInfo instanceof BuiltinEnumTypeInfo» is «ELSE» = «ENDIF»«fad.argRef.typeSpec.typeInfo.LBrace»${argVal«cntr++»}«fad.argRef.typeSpec.typeInfo.RBrace»«ENDFOR»
 					'''
-					retVal.add(new TypefulTemplate(name, if(spec.descn != null) spec.descn else "", SYMBOL_REF, pattern, true, spec.returnType.typeInfo))
+					retVal.add(new TypefulTemplate(name, if(spec.descn != null) spec.descn else "", SYMBOL_REF, pattern, TEMPL_AUTO_INSERT, spec.returnType.typeInfo))
 				}
 			}
 		}
