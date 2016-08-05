@@ -117,7 +117,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 		ar.attRef.attType.typeInfo instanceof BuiltinEnumTypeInfo
 	}
 	
-
+	
 	def private List<Template> buildFunctionTemplatesFromLibrary(){
 		val List<Template> retVal = new ArrayList<Template>
 		for(defns : libDefns.getFuncDefns()){
@@ -140,7 +140,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 					'''
 					var cntr = 1
 					val pattern = '''
-						«methName»«FOR fad : sig.argRefs BEFORE "(" SEPARATOR ", " AFTER ")"»«fad.argRef.name»=${argVal«cntr++»}«ENDFOR»
+						«methName»«FOR fad : sig.argRefs BEFORE "(" SEPARATOR ", " AFTER ")"»«fad.argRef.name»«IF fad.argRef.typeSpec.typeInfo instanceof BuiltinEnumTypeInfo» is «ELSE» = «ENDIF»«fad.argRef.typeSpec.typeInfo.LBrace»${argVal«cntr++»}«fad.argRef.typeSpec.typeInfo.RBrace»«ENDFOR»
 					'''
 					retVal.add(new TypefulTemplate(name, if(spec.descn != null) spec.descn else "", SYMBOL_REF, pattern, true, spec.returnType.typeInfo))
 				}

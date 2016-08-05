@@ -206,7 +206,7 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 	}
 	
 	override completeBlockStatement_BlkId(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		val parent = model.eContainer
+		val parent = EcoreUtil2.getContainerOfType(model, MclObject)
 		val BlockContainer container = switch(parent){
 			MclObject:
 				parent.objId
