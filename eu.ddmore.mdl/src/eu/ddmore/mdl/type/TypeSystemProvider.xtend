@@ -47,6 +47,7 @@ import eu.ddmore.mdl.provider.MappingDefinitionProvider
 import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.provider.BlockDefinitionTable
+import eu.ddmore.mdl.mdl.BlockStatementBody
 
 public class TypeSystemProvider {
 
@@ -482,6 +483,10 @@ public class TypeSystemProvider {
 		}
 	}
 	
+	def dispatch TypeInfo typeFor(BlockStatementBody it){
+		UNDEFINED_TYPE
+	}
+	
 	def dispatch TypeInfo typeFor(ListPiecewiseExpression it){
 		val valueList = new ArrayList<AbstractAttributeList>
 		when.forEach[
@@ -532,7 +537,7 @@ public class TypeSystemProvider {
 	
 	
 	def TypeInfo getTypeOfList(ListDefinition it){
-		it.list.typeFor
+		it?.list?.typeFor ?: UNDEFINED_TYPE
 	}
 	
 	private def TypeInfo getPopulatedType(AttributeList it, ListDefInfo listDefn){

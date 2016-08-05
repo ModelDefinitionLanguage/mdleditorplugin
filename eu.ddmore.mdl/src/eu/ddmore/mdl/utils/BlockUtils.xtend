@@ -14,7 +14,7 @@ class BlockUtils {
 	}
 	
 	def String getMdlObjType(MclObject it){
-		objId.name
+		objId?.name
 	}
 	
 	def List<Statement> getStatements(BlockStatement it){

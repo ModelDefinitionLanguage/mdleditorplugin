@@ -9,10 +9,6 @@ import eu.ddmore.mdl.type.VectorTypeInfo
 class VectorAttributeRewrite extends MdlSwitch<Boolean> {
 	
 	extension TypeSystemProvider tsp = new TypeSystemProvider
-//	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
-//	extension ListDefinitionProvider ldp = new ListDefinitionProvider
-//	extension SublistDefinitionProvider sdp = new SublistDefinitionProvider
-//	extension PropertyDefinitionProvider pdp = new PropertyDefinitionProvider
 	
 	// this assumes that the AST is valid 
 	override caseValuePair(ValuePair it){
@@ -30,22 +26,5 @@ class VectorAttributeRewrite extends MdlSwitch<Boolean> {
 		}
 		
 	}
-	
-	
-//	private def TypeInfo getArgumentType(ValuePair it){
-//		val parent = eContainer
-//		switch(parent){
-//			NamedFuncArguments:
-//				namedArgumentType
-//			AttributeList:
-//				attributeType
-//			SubListExpression:
-//				sublistAttributeType
-//			PropertyStatement:
-//				typeForProperty
-//			default:
-//				TypeSystemProvider::UNDEFINED_TYPE
-//		}
-//	}
-	
+		
 }

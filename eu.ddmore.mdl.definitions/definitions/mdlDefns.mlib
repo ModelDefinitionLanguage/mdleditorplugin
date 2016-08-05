@@ -255,12 +255,12 @@ _type AdminTypeType _enum (bolus, infusion, combi, resetAll, reset);
 
 // Design Objects
 _list AdminSuperList _super;
-_list AdminBolusList _extends AdminSuperList _atts type::AdminTypeType, input::reference[::dosingTarget], amount::real,
+_list AdminBolusList _extends AdminSuperList _atts type::AdminTypeType, input::reference[::dosingTarget], amount::vector[::real],
 						p::real, doseTime::vector, ssInterval::real, timeLastSSDose::real, doseIntervalVar::reference, lastDoseTimeVar::reference
 						_sig (type, input, amount, p?, doseTime, doseIntervalVar?, lastDoseTimeVar?),
 							(type, input, amount, p?, ssInterval?, timeLastSSDose) ;
 
-_list AdminInfusionList _extends AdminSuperList _atts type::AdminTypeType, input::reference[::dosingTarget], amount::real,
+_list AdminInfusionList _extends AdminSuperList _atts type::AdminTypeType, input::reference[::dosingTarget], amount::vector[::real],
 						rate::vector, p::real, doseTime::vector, duration::vector,
 						ssInterval::real, timeLastSSDose::real, timeStopSSInfusion::real,
 						doseIntervalVar::reference, lastDoseTimeVar::reference

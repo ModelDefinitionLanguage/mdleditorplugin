@@ -26,6 +26,11 @@ class MclBlockValidationTest {
 			
 			DATA_INPUT_VARIABLES{  foo : { use is ignore } }
 			
+			OBSERVATION{
+				Y : { type is userDefined, prediction=1, weight=0, value=1 }
+				
+			}
+			
 		}'''.parse
 		
 		mcl.assertError(MdlPackage::eINSTANCE.blockStatement,

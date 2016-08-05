@@ -96,7 +96,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val declDoseVar = desParamsBlk.createEqnDefn("Admin1Dose") 
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
 							)
@@ -131,6 +131,139 @@ class TrialDesignDesignObjectPrinterTest {
 	}
 
 	@Test
+	def void testWriteAdministrationBolusMultiDoseAmts(){
+		val mdl = createRoot
+		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
+		val mdlPredBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		mdlPredBlk.createEqnDefn("Gut")
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+//		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_DESIGN_PARAMS))
+		val declVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
+		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(
+										createRealLiteral(10.0), createRealLiteral(20.0), createRealLiteral(30.0), createRealLiteral(40.0)
+									)),
+									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
+							)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj, mdlObj)
+, new StandardParameterWriter(null))
+		val actual = tdow.writeBolusDosing(adminList)
+		val expected = '''
+			<Administration oid="admin1">
+				<Bolus>
+					<DoseAmount>
+						<TargetMapping blkIdRef="sm">
+							<ds:Map modelSymbol="Gut"/>
+						</TargetMapping>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>10.0</ct:Real>
+									<ct:Real>20.0</ct:Real>
+									<ct:Real>30.0</ct:Real>
+									<ct:Real>40.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</DoseAmount>
+					<DosingTimes>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>0.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</DosingTimes>
+				</Bolus>
+			</Administration>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
+	def void testWriteAdministrationBolusMultiDoseAmtsWithScale(){
+		val mdl = createRoot
+		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
+		val mdlPredBlk = mdlObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::MDL_PRED_BLK_NAME))
+		mdlPredBlk.createEqnDefn("Gut")
+		
+		val obj = mdl.createObject("foo", libDefns.getObjectDefinition("designObj"))
+		val desBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_INTERVENTION_BLK))
+//		val desParamsBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DES_DESIGN_PARAMS))
+		val declVarBlk = obj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DECLARED_VARS_BLK))
+		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
+		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(
+										createRealLiteral(10.0), createRealLiteral(20.0), createRealLiteral(30.0), createRealLiteral(40.0)
+									)),
+									createAssignPair(TrialDesignDesignObjectPrinter::SCALE_ATT_NAME, createRealLiteral(10.0)),
+									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
+							)
+		
+		val tdow = new TrialDesignDesignObjectPrinter(mdl.createMogDefn(obj, mdlObj)
+, new StandardParameterWriter(null))
+		val actual = tdow.writeBolusDosing(adminList)
+		val expected = '''
+			<Administration oid="admin1">
+				<Bolus>
+					<DoseAmount>
+						<TargetMapping blkIdRef="sm">
+							<ds:Map modelSymbol="Gut"/>
+						</TargetMapping>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Assign>
+										<math:Binop op="times">
+											<ct:Real>10.0</ct:Real>
+											<ct:Real>10.0</ct:Real>
+										</math:Binop>
+									</ct:Assign>
+									<ct:Assign>
+										<math:Binop op="times">
+											<ct:Real>20.0</ct:Real>
+											<ct:Real>10.0</ct:Real>
+										</math:Binop>
+									</ct:Assign>
+									<ct:Assign>
+										<math:Binop op="times">
+											<ct:Real>30.0</ct:Real>
+											<ct:Real>10.0</ct:Real>
+										</math:Binop>
+									</ct:Assign>
+									<ct:Assign>
+										<math:Binop op="times">
+											<ct:Real>40.0</ct:Real>
+											<ct:Real>10.0</ct:Real>
+										</math:Binop>
+									</ct:Assign>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</DoseAmount>
+					<DosingTimes>
+						<ct:Assign>
+							<ct:Vector>
+								<ct:VectorElements>
+									<ct:Real>0.0</ct:Real>
+								</ct:VectorElements>
+							</ct:Vector>
+						</ct:Assign>
+					</DosingTimes>
+				</Bolus>
+			</Administration>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
 	def void testWriteAdministrationBolusSimpleWithDoseTimeVar(){
 		val mdl = createRoot
 		val mdlObj = mdl.createObject("m", libDefns.getObjectDefinition("mdlObj"))
@@ -146,7 +279,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val declDTVar = declVarBlk.createEqnDefn("DT") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0))),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_VAR_ATT_NAME, declDTVar.createSymbolRef)
@@ -196,7 +329,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val declDoseVar = desParamsBlk.createEqnDefn("Admin1Dose") 
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::SSEND_ATT_NAME, createRealLiteral(0.0))
 							)
@@ -241,7 +374,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val declDoseVar = desParamsBlk.createEqnDefn("Admin1Dose") 
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::SSEND_ATT_NAME, createRealLiteral(0.0)),
 									createAssignPair(TrialDesignDesignObjectPrinter::SSINTERVAL_ATT_NAME, createRealLiteral(10.0))
@@ -292,7 +425,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val declDoseVar = desParamsBlk.createEqnDefn("Admin1Dose") 
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, 
 										createVectorLiteral(
@@ -347,7 +480,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val wtCovar = desCovarBlk.createEqnDefn("WT") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::SCALE_ATT_NAME, wtCovar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
@@ -402,7 +535,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val declDoseVar = desParamsBlk.createEqnDefn("Admin1Dose") 
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_BOLUS_VALUE),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, 
 										createVectorLiteral(
@@ -456,7 +589,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_INFUSION_VALUE),
 									createAssignPair(TrialDesignDesignObjectPrinter::RATE_ATT_NAME, createRealLiteral(2.0)),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, createVectorLiteral(createRealLiteral(0.0)))
 							)
@@ -508,7 +641,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val declDoseVar = desParamsBlk.createEqnDefn("Admin1Dose") 
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_INFUSION_VALUE),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::RATE_ATT_NAME, createRealLiteral(3.0)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, 
@@ -569,7 +702,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val wtCovar = desCovarBlk.createEqnDefn("WT") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_INFUSION_VALUE),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DURATION_ATT_NAME, createRealLiteral(3.0)),
 									createAssignPair(TrialDesignDesignObjectPrinter::SCALE_ATT_NAME, wtCovar.createSymbolRef),
@@ -630,7 +763,7 @@ class TrialDesignDesignObjectPrinterTest {
 		val declDoseVar = desParamsBlk.createEqnDefn("Admin1Dose") 
 		val doseTargetVar = declVarBlk.createEqnDefn("Gut") 
 		val adminList = desBlk.createListDefn("admin1", createEnumPair(TrialDesignDesignObjectPrinter::INTVN_TYPE_ATT_NAME, TrialDesignDesignObjectPrinter::INTVN_TYPE_INFUSION_VALUE),
-									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, declDoseVar.createSymbolRef),
+									createAssignPair(TrialDesignDesignObjectPrinter::AMT_ATT_NAME, createVectorLiteral(declDoseVar.createSymbolRef)),
 									createAssignPair(TrialDesignDesignObjectPrinter::DURATION_ATT_NAME, createRealLiteral(3.0)),
 									createAssignPair(TrialDesignDesignObjectPrinter::INPUT_ATT_NAME, doseTargetVar.createSymbolRef),
 									createAssignPair(TrialDesignDesignObjectPrinter::DOSE_TIME_ATT_NAME, 

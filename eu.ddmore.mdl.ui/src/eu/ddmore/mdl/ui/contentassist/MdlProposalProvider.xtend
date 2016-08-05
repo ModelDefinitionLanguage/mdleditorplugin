@@ -8,7 +8,6 @@ import com.google.common.base.Predicate
 import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.EnumPair
-import eu.ddmore.mdl.mdl.EquationTypeDefinition
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.PropertyStatement
 import eu.ddmore.mdl.mdl.SymbolReference
@@ -20,6 +19,7 @@ import eu.ddmore.mdl.type.BuiltinEnumTypeInfo
 import eu.ddmore.mdl.type.TypeInfo
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.MdlLibUtils
+import eu.ddmore.mdllib.mdllib.BlockContainer
 import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.SymbolDefinition
 import eu.ddmore.mdllib.mdllib.TypeDefinition
@@ -31,6 +31,7 @@ import org.eclipse.swt.graphics.Image
 import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.CrossReference
 import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
@@ -48,33 +49,35 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 	extension BuiltinFunctionProvider bfp = new BuiltinFunctionProvider
 	extension MdlLibUtils mlu = new MdlLibUtils
 
+
 	 public override void completeSymbolReference_Ref(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 	 	val owningObj = model.getContainerOfType(MclObject)
-	 	val expectedType = switch(model){
-	 							ValuePair:
-	 								model.attributeType
-	 							EquationTypeDefinition:
-	 								model.typeFor
-	 							Expression:
-	 								model.typeFor
-	 							default:
-	 								TypeSystemProvider::UNDEFINED_TYPE
-							}
+	 	val expectedType = if(model instanceof SymbolDefinition || model instanceof Expression
+	 							 || model instanceof ValuePair) model.typeFor ?: TypeSystemProvider::UNDEFINED_TYPE
+	 						else TypeSystemProvider::UNDEFINED_TYPE
 	 	val booleanFilter = new Predicate<IEObjectDescription>()
 	 	{
 				override apply(IEObjectDescription input) {
 					val s = input.EObjectOrProxy
 					if(s instanceof SymbolDefinition){
 						val sOwningObj = s.eContainer.getContainerOfType(MclObject)
-						if(sOwningObj != null && sOwningObj == owningObj){
-							return s.typeFor.isCompatible(expectedType)
+						if(sOwningObj != null){
+							if(sOwningObj == owningObj){
+								expectedType.isCompatible(s.typeFor)
+							}
+							else false
 						}
+//						else if(s instanceof FunctionDefnBody){
+//							val retType = s.funcSpec.returnType.typeInfo
+//							retType.isCompatible(expectedType)
+//  						}
+  						else false
 					}
-					false
+					else false
 				}
 				
 	 	}
-		lookupCrossReference((assignment.getTerminal() as CrossReference), context, acceptor, booleanFilter)
+	 	lookupCrossReference((assignment.getTerminal() as CrossReference), context, acceptor, booleanFilter)
 	}
 
 	public override void completeCategoryValueReference_Ref(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
@@ -195,4 +198,43 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 			acceptor.accept(p);
 		}
 	}
+	
+	override completeBlockStatement_BlkId(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		val parent = model.eContainer
+		val BlockContainer container = switch(parent){
+			MclObject:
+				parent.objId
+			BlockStatement:
+				parent.blkId
+			default:
+				null
+		}
+		val Predicate<IEObjectDescription> filter = new Predicate<IEObjectDescription>(){
+			
+			override apply(IEObjectDescription input) {
+				if(container != null)
+					container.canContainBlock(input.name.lastSegment)
+				else false						
+			}
+			
+		}
+		lookupCrossReference((assignment.getTerminal() as CrossReference), context, acceptor, filter)
+	}
+	
+	override completeTransformedDefinition_Transform(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+//		addProposals(context, acceptor, #['ln', 'logit', 'probit'], null)
+////		lookupCrossReference(((CrossReference)assignment.getTerminal()), context, acceptor);
+		
+	}
+
+	
+	override void completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext,
+			ICompletionProposalAcceptor acceptor) {
+//		val ICompletionProposal proposal = createCompletionProposal(keyword.getValue(), getKeywordDisplayString(keyword),
+//				getImage(keyword), contentAssistContext);
+//		getPriorityHelper().adjustKeywordPriority(proposal, contentAssistContext.getPrefix());
+//		acceptor.accept(proposal);
+//		return
+	}
+
 }

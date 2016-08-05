@@ -3,16 +3,20 @@
  */
 package eu.ddmore.mdl.ui;
 
+import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.DefaultSemanticHighlightingCalculator;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
 import org.eclipse.xtext.ui.editor.autoedit.DefaultAutoEditStrategyProvider;
-import org.eclipse.xtext.ide.editor.syntaxcoloring.DefaultSemanticHighlightingCalculator;
+import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.wizard.IProjectCreator;
 
 import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
+import eu.ddmore.mdl.ui.contentassist.MdlDynamicTemplateStore;
+import eu.ddmore.mdl.ui.contentassist.MdlTemplateProposalProvider;
 import eu.ddmore.mdl.ui.wizard.NonJDTProjectCreator;
 
 /**
@@ -45,6 +49,12 @@ public class MdlUiModule extends eu.ddmore.mdl.ui.AbstractMdlUiModule {
     	return NonJDTProjectCreator.class;
     }
     
+    
+	public Class<? extends ITemplateProposalProvider> bindITemplateProposalProvider() {
+		return MdlTemplateProposalProvider.class;
+	}
+
+    
     @Override
     public Provider<IAllContainersState> provideIAllContainersState(){
     	return org.eclipse.xtext.ui.shared.Access.getWorkspaceProjectsState();
@@ -57,6 +67,13 @@ public class MdlUiModule extends eu.ddmore.mdl.ui.AbstractMdlUiModule {
         binder.bind(DefaultAutoEditStrategyProvider.class).to(MDLAutoEditStartegyProvider.class).in(Singleton.class);
         binder.bind(DefaultSemanticHighlightingCalculator.class).to(MdlSemanticHighlightingCalculator.class);
     }
+ 
+    @Override
+	public Class<? extends TemplateStore> bindTemplateStore() {
+		return MdlDynamicTemplateStore.class;
+	}
+
+
 
 //    public void init() {
 //        if (System.getProperty(MIF_ENCRYPTION_KEY) != null) {

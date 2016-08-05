@@ -675,7 +675,7 @@ foo = mdlObj {
 		
 		mcl.assertError(MdlPackage::eINSTANCE.assignPair,
 			MdlValidator::INCOMPATIBLE_TYPES,
-			"Inappropriate use of '~' assignment. Expected a 'Real' on the LHS of assignment."
+			"Inappropriate use of '~' assignment. Expected a 'vector:Real' on the LHS of assignment."
 		)
 	}
 

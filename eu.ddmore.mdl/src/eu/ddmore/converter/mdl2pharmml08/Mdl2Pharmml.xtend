@@ -1,6 +1,6 @@
 package eu.ddmore.converter.mdl2pharmml08
 
-import eu.ddmore.converter.treerewrite.VectorAttributeRewrite
+import eu.ddmore.converter.treerewrite.TreeRewriteUtils
 import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MclObject
 import eu.ddmore.mdl.mdl.PropertyStatement
@@ -13,7 +13,6 @@ import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.utils.MdlUtils
 import java.util.ArrayList
 import java.util.List
-import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
@@ -27,29 +26,11 @@ class Mdl2Pharmml {
 	extension ModelDefinitionPrinter mdp = new ModelDefinitionPrinter
 	extension ModellingStepsPrinter msp = new ModellingStepsPrinter
 	extension FunctionDefinitionPrinter fdp = new FunctionDefinitionPrinter
-//	extension ListDefinitionProvider ldp = new ListDefinitionProvider
 	extension ExpressionUtils eu = new ExpressionUtils
-//	extension PropertyDefinitionProvider pdp = new PropertyDefinitionProvider
-//	extension ListDefinitionProvider lad = new ListDefinitionProvider
+	extension TreeRewriteUtils tru = new TreeRewriteUtils
 
 	var Mcl mdlRoot
 
-	private def copyMdl(Mcl orig){
-		mdlRoot = EcoreUtil.copy(orig)
-//		mdlRoot = orig
-	}
-
-	private def rewriteTree(){
-		val vectArgR = new VectorAttributeRewrite
-		var cntr = 0
-		val iter = mdlRoot.eAllContents
-		while(iter.hasNext){
-			val node = iter.next
-			if(vectArgR.doSwitch(node) != null) cntr++	
-		}
-//		val finalCount = cntr
-	}
-	
 	def writeDefaultName(MclObject it)'''
 		<ct:Name>Generated from MDL. MOG ID: «name»</ct:Name>
 	'''
@@ -85,8 +66,7 @@ class Mdl2Pharmml {
 	
 
   	def convertToPharmML(MclObject mogInput) {
-  		copyMdl(EcoreUtil2.getContainerOfType(mogInput.eContainer, Mcl))
-  		rewriteTree()
+  		mdlRoot = rewriteTree(EcoreUtil2.getContainerOfType(mogInput.eContainer, Mcl))
   		val mog = mdlRoot.getMogObj(mogInput.name)
 		val mObj = mog.mdlObj
   		
