@@ -59,11 +59,17 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 	 	{
 				override apply(IEObjectDescription input) {
 					val s = input.EObjectOrProxy
-					if(s instanceof SymbolDefinition){
+//					if(s instanceof SymbolDefinition){
 						val sOwningObj = s.eContainer.getContainerOfType(MclObject)
 						if(sOwningObj != null){
 							if(sOwningObj == owningObj){
-								expectedType.isCompatible(s.typeFor)
+								if(expectedType.isCompatible(s.typeFor)){
+									true
+								}
+								else if(expectedType.isVector || expectedType.isMatrix){
+									expectedType.isCompatibleElement(s.typeFor)
+								}
+								else false
 							}
 							else false
 						}
@@ -72,8 +78,8 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 //							retType.isCompatible(expectedType)
 //  						}
   						else false
-					}
-					else false
+//					}
+//					else false
 				}
 				
 	 	}

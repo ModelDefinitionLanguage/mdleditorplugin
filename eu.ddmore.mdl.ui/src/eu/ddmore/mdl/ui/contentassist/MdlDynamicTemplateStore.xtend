@@ -18,6 +18,9 @@ import org.eclipse.jface.text.templates.Template
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData
 import org.eclipse.ui.plugin.AbstractUIPlugin
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateStore
+import eu.ddmore.mdl.type.TypeInfo
+import eu.ddmore.mdl.type.VectorTypeInfo
+import eu.ddmore.mdl.type.MatrixTypeInfo
 
 @Singleton
 class MdlDynamicTemplateStore extends XtextTemplateStore {
@@ -76,18 +79,42 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 				«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ENDIF»«ENDFOR»
 			'''
 			var cntr = 1
-			val pattern = '''«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ELSE»${attVal«cntr++»}«ENDIF»«ENDFOR»'''
+			val pattern = '''«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ELSE»«fad.typeInfo.LBrace»${attVal«cntr++»}«fad.typeInfo.RBrace»«ENDIF»«ENDFOR»'''
 			retVal.add(new TypefulTemplate(name, if(defns.descn != null) defns.descn else "", ATT_LIST_DEFN, pattern, true, defns.typeInfo))
 		}
 		retVal
 	}
 	
+	def private getLBrace(TypeInfo argType){
+		switch(argType){
+			VectorTypeInfo:
+				'['
+			MatrixTypeInfo:
+				'[['
+			default:
+				''
+		}
+	}
+	
+	def private getRBrace(TypeInfo argType){
+		switch(argType){
+			VectorTypeInfo:
+				']'
+			MatrixTypeInfo:
+				']]'
+			default:
+				''
+		}
+	}
+	
+	
+	def private TypeInfo getTypeInfo(ListAttributeRef it){
+		attRef.attType.typeInfo
+	}
+	
 	
 	def private boolean isBuiltinEnum(ListTypeDefinition it, ListAttributeRef ar){
-		val att = it.attributes.findFirst[
-			name == ar.attRef.name
-		]
-		att.attType.typeInfo instanceof BuiltinEnumTypeInfo
+		ar.attRef.attType.typeInfo instanceof BuiltinEnumTypeInfo
 	}
 	
 
