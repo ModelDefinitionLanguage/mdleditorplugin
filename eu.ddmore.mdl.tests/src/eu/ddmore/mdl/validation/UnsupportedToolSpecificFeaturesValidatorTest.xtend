@@ -177,10 +177,7 @@ class UnsupportedToolSpecificFeaturesValidatorTest {
 			}
 		}
 	'''.parse
-		mcl.assertNoErrors
-		mcl.assertWarning(MdlPackage::eINSTANCE.equationTypeDefinition, MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX,
-			"Explicit individual parameter definition is not currently supported by MONOLIX."
-		)
+		mcl.assertNoIssues
 	}
 
 	@Test

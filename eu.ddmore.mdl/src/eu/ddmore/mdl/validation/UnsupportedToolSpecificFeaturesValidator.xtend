@@ -1,27 +1,27 @@
 package eu.ddmore.mdl.validation
 
+import eu.ddmore.mdl.mdl.AttributeList
 import eu.ddmore.mdl.mdl.BlockStatement
 import eu.ddmore.mdl.mdl.EquationTypeDefinition
+import eu.ddmore.mdl.mdl.ListDefinition
 import eu.ddmore.mdl.mdl.MdlPackage
 import eu.ddmore.mdl.mdl.SymbolReference
 import eu.ddmore.mdl.provider.BlockDefinitionTable
-import eu.ddmore.mdl.utils.MdlUtils
+import eu.ddmore.mdl.provider.ListDefinitionProvider
+import eu.ddmore.mdl.provider.ListDefinitionTable
+import eu.ddmore.mdl.type.TypeSystemProvider
+import eu.ddmore.mdl.utils.BlockUtils
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import eu.ddmore.mdl.utils.BlockUtils
-import eu.ddmore.mdl.mdl.AttributeList
-import eu.ddmore.mdl.provider.ListDefinitionProvider
-import eu.ddmore.mdl.mdl.ListDefinition
-import eu.ddmore.mdl.provider.ListDefinitionTable
 
 class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	
 	override register(EValidatorRegistrar registrar){}
 	
-	extension MdlUtils mu = new MdlUtils
 	extension BlockUtils bu = new BlockUtils
 	extension ListDefinitionProvider ldp = new ListDefinitionProvider
+	extension TypeSystemProvider tsp = new TypeSystemProvider
 	
 	def isGeneralIdv(AttributeList it){
 		val eq = getAttributeEnumValue('type')
@@ -37,10 +37,18 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	
 	def isExplicitIdv(EquationTypeDefinition it){
 		val eq = expression
-		if(eq instanceof SymbolReference){
-			eq.func != 'linear' && eq.func != 'general'
+		val allContents = eq.eAllContents
+		var retVal = false
+		 while(allContents.hasNext && !retVal){
+		 	val expr = allContents.next
+			if(expr instanceof SymbolReference){
+				val exprType = expr.typeFor
+				if(exprType.underlyingType.isRandomVariable){
+					retVal = true
+				}
+			}
 		}
-		else true
+		retVal
 	}
 	
 	
@@ -77,11 +85,12 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 //							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
 //							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
 //				}
-//				else if(isExplicitIdv){
+//				else
+				if(isExplicitIdv){
 					warning("Explicit individual parameter definition is not currently supported by MONOLIX.", 
 							MdlPackage.eINSTANCE.equationTypeDefinition_Expression,
 							MdlValidator::FEATURE_NOT_SUPPORTED_MONOLIX, name)
-//				}
+				}
 			}
 		}
 	}
