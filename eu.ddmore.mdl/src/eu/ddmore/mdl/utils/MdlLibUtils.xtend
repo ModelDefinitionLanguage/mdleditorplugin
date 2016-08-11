@@ -204,8 +204,9 @@ class MdlLibUtils {
 	}
 	
 	def Library getLibraryForObject(MclObject obj){
-
-		EcoreUtil2.getContainerOfType(obj.objId.eContainer, Library)
+		if(obj?.objId != null)
+			EcoreUtil2.getContainerOfType(obj.objId.eContainer, Library)
+		else null
 	}
 	
 	def Library getLibraryFromBlock(BlockStatement blk){

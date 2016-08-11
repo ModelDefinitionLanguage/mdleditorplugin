@@ -90,38 +90,59 @@ class MdlTemplateProposalProvider extends DefaultTemplateProposalProvider {
 		val TemplateContextType contextType = templateContext.getContextType();
 		val obj = EcoreUtil2.getContainerOfType(context.currentModel, MclObject)
 		val lib = obj.libraryForObject
-		ts.libDefns = lib
-		val templates = ts.getTemplates(contextType.getId());
-		var List<TypeInfo> expectedTypes = Collections.emptyList
-		if(STATEMENTS.exists[id| id == contextType.getId]){
-			expectedTypes = getExpectedTypesForStatement(context.currentModel)
-		}
-		else if(EXPRESSIONS.exists[id| id == contextType.getId]){
-			expectedTypes = #[ context.currentModel.typeFor ]
-		}
-		val owningBlock = EcoreUtil2.getContainerOfType(context.currentModel, BlockStatement)
-		val blkDefn = BlockListDefinition::create(owningBlock)
-		for (Template template : templates) {
-			if (!acceptor.canAcceptMoreTemplates())
-				return;
-			if (validate(template, templateContext)) {
-				if(template instanceof TypefulTemplate){
-					if(template.matchType instanceof ListTypeInfo){
-						if(blkDefn.listDefns.exists[listType == template.matchType]){
+		if(lib != null){
+			ts.libDefns = lib
+			val templates = ts.getTemplates(contextType.getId());
+			var List<TypeInfo> expectedTypes = Collections.emptyList
+			if(STATEMENTS.exists[id| id == contextType.getId]){
+				expectedTypes = getExpectedTypesForStatement(context.currentModel)
+			}
+			else if(EXPRESSIONS.exists[id| id == contextType.getId]){
+				expectedTypes = getExpectedTypesForExpression(context.currentModel)
+//				expectedTypes = #[ context.currentModel.typeFor ]
+			}
+			val owningBlock = EcoreUtil2.getContainerOfType(context.currentModel, BlockStatement)
+			val blkDefn = BlockListDefinition::create(owningBlock)
+			for (Template template : templates) {
+				if (!acceptor.canAcceptMoreTemplates())
+					return;
+				if (validate(template, templateContext)) {
+					if(template instanceof TypefulTemplate){
+						if(template.matchType instanceof ListTypeInfo){
+							if(blkDefn.listDefns.exists[listType == template.matchType]){
+								acceptor.accept(createProposal(template, templateContext, context, getImage(template), getRelevance(template)));
+							}
+						}
+						else if(expectedTypes.exists[isCompatible(template.matchType)]){
 							acceptor.accept(createProposal(template, templateContext, context, getImage(template), getRelevance(template)));
 						}
 					}
-					else if(expectedTypes.exists[isCompatible(template.matchType)]){
+					else
 						acceptor.accept(createProposal(template, templateContext, context, getImage(template), getRelevance(template)));
-					}
 				}
-				else
-					acceptor.accept(createProposal(template, templateContext, context, getImage(template), getRelevance(template)));
 			}
 		}
 	}
 
 	
+	private def List<TypeInfo> getExpectedTypesForExpression(EObject stmt){
+		switch(stmt){
+			EquationTypeDefinition:
+				#[ TypeSystemProvider::REAL_TYPE, TypeSystemProvider::INT_TYPE, TypeSystemProvider::STRING_TYPE, TypeSystemProvider::BOOLEAN_TYPE,
+					TypeSystemProvider::REAL_VECTOR_TYPE, TypeSystemProvider::REAL_MATRIX_TYPE
+				]
+			RandomVariableDefinition:
+				#[ TypeSystemProvider::PDF_TYPE, TypeSystemProvider::PDF_TYPE.makeVector, TypeSystemProvider::PDF_TYPE.makeMatrix,
+					TypeSystemProvider::PMF_TYPE, TypeSystemProvider::PMF_TYPE.makeVector, TypeSystemProvider::PMF_TYPE.makeMatrix
+				]
+			EnumerationDefinition:
+				#[ TypeSystemProvider::PMF_TYPE, TypeSystemProvider::PMF_TYPE.makeVector, TypeSystemProvider::PMF_TYPE.makeMatrix
+				]
+			default:
+				#[ stmt.typeFor ]
+		}
+	}
+
 	private def List<TypeInfo> getExpectedTypesForStatement(EObject stmt){
 		switch(stmt){
 			EquationTypeDefinition:

@@ -59,11 +59,17 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 	 	{
 				override apply(IEObjectDescription input) {
 					val s = input.EObjectOrProxy
-					if(s instanceof SymbolDefinition){
+//					if(s instanceof SymbolDefinition){
 						val sOwningObj = s.eContainer.getContainerOfType(MclObject)
 						if(sOwningObj != null){
 							if(sOwningObj == owningObj){
-								expectedType.isCompatible(s.typeFor)
+								if(expectedType.isCompatible(s.typeFor)){
+									true
+								}
+								else if(expectedType.isVector || expectedType.isMatrix){
+									expectedType.isCompatibleElement(s.typeFor)
+								}
+								else false
 							}
 							else false
 						}
@@ -72,8 +78,8 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 //							retType.isCompatible(expectedType)
 //  						}
   						else false
-					}
-					else false
+//					}
+//					else false
 				}
 				
 	 	}
@@ -199,26 +205,43 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 		}
 	}
 	
+	def private getParentBlock(EObject model){
+		// in some cases for example when first block in object the parent of Mcl.
+		// in this return the model as the parent
+		val retVal = model.eContainer
+		if(retVal instanceof MclObject || retVal instanceof BlockStatement){
+			retVal
+		}
+		else if(model instanceof MclObject){
+			model
+		}
+		else{
+			null
+		}
+	}
+	
 	override completeBlockStatement_BlkId(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		val parent = model.eContainer
-		val BlockContainer container = switch(parent){
-			MclObject:
-				parent.objId
-			BlockStatement:
-				parent.blkId
-			default:
-				null
-		}
-		val Predicate<IEObjectDescription> filter = new Predicate<IEObjectDescription>(){
-			
-			override apply(IEObjectDescription input) {
-				if(container != null)
-					container.canContainBlock(input.name.lastSegment)
-				else false						
+		val parent = getParentBlock(model)
+		if(parent != null){
+			val BlockContainer container = switch(parent){
+				MclObject:
+					parent.objId
+				BlockStatement:
+					parent.blkId
+				default:
+					null
 			}
-			
+			val Predicate<IEObjectDescription> filter = new Predicate<IEObjectDescription>(){
+				
+				override apply(IEObjectDescription input) {
+					if(container != null)
+						container.canContainBlock(input.name.lastSegment)
+					else false						
+				}
+				
+			}
+			lookupCrossReference((assignment.getTerminal() as CrossReference), context, acceptor, filter)
 		}
-		lookupCrossReference((assignment.getTerminal() as CrossReference), context, acceptor, filter)
 	}
 	
 	override completeTransformedDefinition_Transform(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
