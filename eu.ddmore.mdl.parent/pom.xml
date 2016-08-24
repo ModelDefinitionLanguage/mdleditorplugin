@@ -23,7 +23,7 @@
 		<xtend.repo.url>http://build.eclipse.org/common/xtend/maven/</xtend.repo.url>
 		<xtend.version>2.9.1</xtend.version>
 		<fornax.repo.url>https://projects.itemis.de/nexus/content/groups/public/</fornax.repo.url>
-		<fornax.version>3.4.0</fornax.version>
+		<fornax.version>3.6.0</fornax.version>
         <xtext.version>${xtend.version}</xtext.version>
 		<antlr.version>3.2</antlr.version>
 		<!-- Sonar -->
