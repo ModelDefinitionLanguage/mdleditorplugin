@@ -39,6 +39,17 @@
  		<mars-repo.url>http://download.eclipse.org/releases/mars</mars-repo.url>
      </properties>
 
+  <modules>
+  		
+		<module>eu.ddmore.mdl.target</module>
+		<module>eu.ddmore.mdl.definitions</module>
+		<module>eu.ddmore.mdl</module>
+		<module>eu.ddmore.mdl.ui</module>
+		<module>eu.ddmore.mdl.tests</module>
+		<module>eu.ddmore.mdl.feature</module>
+		<module>eu.ddmore.mdl.updatesite</module>
+  </modules>
+
 	<!-- distributionManagement>
 		<snapshotRepository>
 			<id>repo.mdlteam.ddmore.eu</id>
