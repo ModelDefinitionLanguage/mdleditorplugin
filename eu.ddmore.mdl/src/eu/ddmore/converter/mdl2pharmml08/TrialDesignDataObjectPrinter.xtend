@@ -29,6 +29,7 @@ import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
 import java.nio.file.Paths
 import java.nio.file.Files
 import java.nio.file.LinkOption
+import java.nio.file.Path
 
 class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
@@ -44,23 +45,20 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	val MclObject mObj
 	val MclObject dObj
 	val AbstractParameterWriter priorDsWriter
-	var boolean useAbsoluteDataPathFlag = false
+	val Path referencePath;
+	
 	
 	new(MclObject mog, AbstractParameterWriter priorDsWriter){
-		this(mog, priorDsWriter, false)
+		this(mog, priorDsWriter, null)
 	}
 	
-	new(MclObject mog, AbstractParameterWriter priorDsWriter, boolean absoluteFlag){
+	new(MclObject mog, AbstractParameterWriter priorDsWriter, Path referencePath){
 		mObj = mog.mdlObj
 		dObj = mog.dataObj
 		this.priorDsWriter = priorDsWriter
-		this.useAbsoluteDataPathFlag = absoluteFlag
+		this.referencePath = referencePath
 	}
 
-	def useAbsoluteDataPath(boolean absoluteFlag){
-		this.useAbsoluteDataPathFlag = absoluteFlag
-	}
-	
 	override writeTrialDesign()'''
 		<TrialDesign xmlns="«xmlns_design»">
 			«priorDsWriter.writeAllDatasets»
@@ -818,11 +816,17 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		val s = dObj.getDataSourceStmt
 		var file = "";
 		file = s.firstAttributeList.getAttributeExpression('file').convertToString
-		val dataPath = Paths.get(file)
-		if(Files.exists(dataPath, #[ LinkOption.NOFOLLOW_LINKS ])){
-			if(useAbsoluteDataPathFlag){
-				file = dataPath.toAbsolutePath().normalize().toString()
+		var dataPath = Paths.get(file)
+		if(!dataPath.isAbsolute){
+			if(this.referencePath != null){
+				dataPath = Paths.get(this.referencePath.toString, dataPath.toString)
+				if(Files.exists(dataPath, #[ LinkOption.NOFOLLOW_LINKS ])){
+					file = dataPath.toAbsolutePath().normalize().toString()
+				}
 			}
+		}
+		else{
+			file = dataPath.toString
 		}
 		if (file.length > 0) {
 			res = res + '''				

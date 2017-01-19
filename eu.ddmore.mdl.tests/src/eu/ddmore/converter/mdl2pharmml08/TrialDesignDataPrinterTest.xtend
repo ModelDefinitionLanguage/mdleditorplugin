@@ -116,6 +116,40 @@ class TrialDesignDataPrinterTest {
 	}
 
 	@Test
+	def void testWriteDesignParametersRelativeExistsMdlInSame(){
+		val mdl = createRoot
+		val dataObj = mdl.createObject("foo", libDefns.getObjectDefinition("dataObj"))
+		val mdlObj = mdl.createObject("foo2", libDefns.getObjectDefinition("mdlObj"))
+		val mog = createMogDefn(mdl, dataObj, mdlObj)
+		val desBlk = dataObj.createBlock(libDefns.getBlockDefinition(BlockDefinitionTable::DATA_SRC_BLK))
+		var fileName = "bar.txt"
+		val tstDataFile = folder.newFile(fileName)
+		val tstMdlFile = folder.newFile("test.mdl").toPath
+		val pwd = Paths.get("").toAbsolutePath()
+		val relative = pwd.relativize(tstDataFile.toPath)
+		desBlk.createListDefn(dataObj.name, createAssignPair("file", createStringLiteral(fileName)),
+			createEnumPair("inputFormat", "nonmemFormat")
+		)
+		
+		val tdow = new TrialDesignDataObjectPrinter(mog, new StandardParameterWriter(null), tstMdlFile.parent)
+		val actual = tdow.writeTargetDataSet()
+		val expected = '''
+			<ExternalDataSet toolName="NONMEM" oid="nm_ds">
+				<DataSet xmlns="http://www.pharmml.org/pharmml/0.8/Dataset">
+					<Definition>
+					</Definition>
+					<ExternalFile oid="id">
+						<path>«relative.toAbsolutePath.normalize.toString»</path>
+						<format>CSV</format>
+						<delimiter>COMMA</delimiter>
+					</ExternalFile>
+				</DataSet>
+			</ExternalDataSet>
+		'''
+		assertEquals("Output as expected", expected, actual.toString)
+	}
+
+	@Test
 	def void testWriteDesignParametersToAbsoluteExists(){
 		val mdl = createRoot
 		val dataObj = mdl.createObject("foo", libDefns.getObjectDefinition("dataObj"))
@@ -129,8 +163,7 @@ class TrialDesignDataPrinterTest {
 			createEnumPair("inputFormat", "nonmemFormat")
 		)
 		
-		val tdow = new TrialDesignDataObjectPrinter(mog, new StandardParameterWriter(null))
-		tdow.useAbsoluteDataPath(true)
+		val tdow = new TrialDesignDataObjectPrinter(mog, new StandardParameterWriter(null), pwd)
 		val actual = tdow.writeTargetDataSet()
 		val expectedFName = tstFile.absolutePath
 		val expected = '''
