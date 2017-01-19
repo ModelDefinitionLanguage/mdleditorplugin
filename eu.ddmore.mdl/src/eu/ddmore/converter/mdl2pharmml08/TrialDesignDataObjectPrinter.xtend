@@ -26,6 +26,9 @@ import eu.ddmore.mdl.provider.BlockDefinitionTable
 import eu.ddmore.mdl.mdl.FunctionReference
 import eu.ddmore.mdl.utils.ExpressionUtils
 import eu.ddmore.mdl.provider.BlockArgumentDefinitionProvider
+import java.nio.file.Paths
+import java.nio.file.Files
+import java.nio.file.LinkOption
 
 class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	extension MdlUtils mu = new MdlUtils 
@@ -41,11 +44,21 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 	val MclObject mObj
 	val MclObject dObj
 	val AbstractParameterWriter priorDsWriter
+	var boolean useAbsoluteDataPathFlag = false
 	
 	new(MclObject mog, AbstractParameterWriter priorDsWriter){
+		this(mog, priorDsWriter, false)
+	}
+	
+	new(MclObject mog, AbstractParameterWriter priorDsWriter, boolean absoluteFlag){
 		mObj = mog.mdlObj
 		dObj = mog.dataObj
 		this.priorDsWriter = priorDsWriter
+		this.useAbsoluteDataPathFlag = absoluteFlag
+	}
+
+	def useAbsoluteDataPath(boolean absoluteFlag){
+		this.useAbsoluteDataPathFlag = absoluteFlag
 	}
 	
 	override writeTrialDesign()'''
@@ -57,7 +70,7 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		</TrialDesign>
 	'''	
 
-	def private writeTargetDataSet() {
+	def writeTargetDataSet() {
 		var res = "";
 		if (dObj != null || mObj != null) {
 			val s = dObj.dataSourceStmt
@@ -805,6 +818,12 @@ class TrialDesignDataObjectPrinter implements TrialDesignObjectPrinter {
 		val s = dObj.getDataSourceStmt
 		var file = "";
 		file = s.firstAttributeList.getAttributeExpression('file').convertToString
+		val dataPath = Paths.get(file)
+		if(Files.exists(dataPath, #[ LinkOption.NOFOLLOW_LINKS ])){
+			if(useAbsoluteDataPathFlag){
+				file = dataPath.toAbsolutePath().normalize().toString()
+			}
+		}
 		if (file.length > 0) {
 			res = res + '''				
 				<ExternalFile oid="«BLK_DS_IMPORT_DATA»">

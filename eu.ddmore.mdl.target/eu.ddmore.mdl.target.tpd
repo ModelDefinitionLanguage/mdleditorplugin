@@ -80,6 +80,6 @@ location "http://downloads.mdl.community/repository/libpharmml/releases/0.7.4.v2
 	eu.ddmore.libpharmml.feature.feature.group
 } 
 
-location "http://downloads.mdl.community/repository/mdllib/releases/1.3.0.v20161121-2237/" mdllib-repo {
+location "http://downloads.mdl.community/repository/mdllib/releases/1.3.0/" mdllib-repo {
 	eu.ddmore.mdllib.sdk.feature.group
 }

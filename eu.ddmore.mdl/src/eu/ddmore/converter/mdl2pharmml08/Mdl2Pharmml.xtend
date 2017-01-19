@@ -66,34 +66,13 @@ class Mdl2Pharmml {
 	
 
   	def convertToPharmML(MclObject mogInput) {
+  		convertToPharmML(mogInput, false)
+  	}
+  	
+  	def convertToPharmML(MclObject mogInput, boolean useAbsolutePaths) {
   		mdlRoot = rewriteTree(EcoreUtil2.getContainerOfType(mogInput.eContainer, Mcl))
   		val mog = mdlRoot.getMogObj(mogInput.name)
 		val mObj = mog.mdlObj
-  		
-//  		val () => SymbolDefinition idLambda = if(mog.isDesignObjDefined){
-//  			val dObj = mog.designObj;
-//  			[
-//  				for(blk : dObj.getBlocksByName(BlockDefinitionTable::DES_STUDY_DESIGN)){
-//  					for(stmt : blk.statementsFromBlock){
-//	  					val idLevelSymb = if(stmt instanceof PropertyStatement) stmt.getPropertyExpression('idLevel')?.symbolRef else null;
-//	  					if(idLevelSymb != null) return idLevelSymb?.ref
-//  					}
-//  				}
-//				null
-//  			]
-//  		}
-//  		else{
-//  			val dObj = mog.dataObj;
-//  			[
-//  				for(blk : dObj.getBlocksByName(BlockDefinitionTable::DIV_BLK_NAME)){
-//  					for(stmt : blk.statementsFromBlock){
-//	  					val idLevelSymb = if(stmt instanceof ListDefinition) if(stmt.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT) == ListDefinitionTable::ID_USE_VALUE) stmt else null else null;
-//	  					if(idLevelSymb != null) return idLevelSymb
-//  					}
-//  				}
-//  				null
-//  			]
-//  		}
   		
 		val paramWriter = if(mog.isParamObjDefined){
 			new StandardParameterWriter(mog.mdlObj)//, idLambda)
@@ -104,7 +83,7 @@ class Mdl2Pharmml {
 		val TrialDesignObjectPrinter trialDesignWriter = if(mog.isDesignObjDefined)
 									new TrialDesignDesignObjectPrinter(mog, paramWriter)
 								else
-									new TrialDesignDataObjectPrinter(mog, paramWriter)
+									new TrialDesignDataObjectPrinter(mog, paramWriter, useAbsolutePaths)
 		'''
 			<?xml version="1.0" encoding="UTF-8"?>
 			<PharmML 
