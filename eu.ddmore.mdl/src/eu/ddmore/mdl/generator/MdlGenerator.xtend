@@ -9,6 +9,7 @@ import eu.ddmore.mdl.provider.MogDefinitionProvider
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
+import java.nio.file.Paths
 
 //import static extension EcoreUtils2
 
@@ -20,6 +21,8 @@ import org.eclipse.xtext.generator.IGenerator
 class MdlGenerator implements IGenerator {
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
+		val resFileStr = resource.URI.toString 
+		val mdlFileName = Paths.get(resFileStr)
         val mcl = resource.getContents().head as Mcl;
         
         val mogs = new MogDefinitionProvider().getMogObj(mcl);
@@ -39,6 +42,6 @@ class MdlGenerator implements IGenerator {
 //        final CharSequence converted = xtendConverter.convertToPharmML(mog);
 //       	val newDest = dest.removeFileExtension().addFileExtension("xml");
 
-		fsa.generateFile('output.xml', xtendConverter.convertToPharmML(mog))
+		fsa.generateFile('output.xml', xtendConverter.convertToPharmML(mog, mdlFileName.parent.toAbsolutePath.normalize.toString))
 	}
 }

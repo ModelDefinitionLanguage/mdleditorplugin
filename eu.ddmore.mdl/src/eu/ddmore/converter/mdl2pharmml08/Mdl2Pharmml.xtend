@@ -16,6 +16,7 @@ import java.util.List
 import org.eclipse.xtext.EcoreUtil2
 
 import static eu.ddmore.converter.mdl2pharmml08.Constants.*
+import java.nio.file.Paths
 
 class Mdl2Pharmml {
 //	static val mdlVersion = "6.0"
@@ -66,10 +67,10 @@ class Mdl2Pharmml {
 	
 
   	def convertToPharmML(MclObject mogInput) {
-  		convertToPharmML(mogInput, false)
+  		convertToPharmML(mogInput, null)
   	}
   	
-  	def convertToPharmML(MclObject mogInput, boolean useAbsolutePaths) {
+  	def convertToPharmML(MclObject mogInput, String mdlParentPath) {
   		mdlRoot = rewriteTree(EcoreUtil2.getContainerOfType(mogInput.eContainer, Mcl))
   		val mog = mdlRoot.getMogObj(mogInput.name)
 		val mObj = mog.mdlObj
@@ -83,7 +84,7 @@ class Mdl2Pharmml {
 		val TrialDesignObjectPrinter trialDesignWriter = if(mog.isDesignObjDefined)
 									new TrialDesignDesignObjectPrinter(mog, paramWriter)
 								else
-									new TrialDesignDataObjectPrinter(mog, paramWriter, useAbsolutePaths)
+									new TrialDesignDataObjectPrinter(mog, paramWriter, if(mdlParentPath != null) Paths.get(mdlParentPath) else null)
 		'''
 			<?xml version="1.0" encoding="UTF-8"?>
 			<PharmML 
