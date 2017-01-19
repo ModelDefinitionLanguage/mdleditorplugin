@@ -13,7 +13,7 @@
   </parent>
   
   <modules>
-  		<module>../eu.ddmore.mdl.parent</module>
+  		
 		<module>../eu.ddmore.mdl.target</module>
 		<module>../eu.ddmore.mdl.definitions</module>
 		<module>../eu.ddmore.mdl</module>
