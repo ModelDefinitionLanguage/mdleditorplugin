@@ -1,24 +1,24 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Mdl2pharmml
+Bundle-Name: Mdl2pharmml Converter
 Bundle-SymbolicName: eu.ddmore.mdl.converter.mdl2pharmml
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.6.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: eu.ddmore.mdl;bundle-version="1.6.1",
+Require-Bundle: eu.ddmore.mdl,
  org.eclipse.xtext.xbase;visibility:=reexport,
  org.eclipse.xtext.generator,
- org.eclipse.emf.mwe2.launch;bundle-version="2.4.0";visibility:=reexport,
- org.apache.log4j;bundle-version="1.2.15",
- org.apache.commons.logging;bundle-version="1.1.1",
+ org.eclipse.emf.mwe2.launch;visibility:=reexport,
+ org.apache.log4j,
+ org.apache.commons.logging,
  org.eclipse.xtext,
  org.eclipse.xtext.util,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
  org.antlr.runtime,
  org.eclipse.xtext.common.types,
- org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
- org.eclipse.core.resources;bundle-version="3.9.1",
- org.eclipse.core.runtime;bundle-version="3.8.0",
+ org.objectweb.asm,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
  eu.ddmore.mdllib;visibility:=reexport,
  org.eclipse.xtext.xbase.lib,
  eu.ddmore.mdl.definitions;visibility:=reexport

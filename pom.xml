@@ -48,6 +48,8 @@
 		<module>eu.ddmore.mdl.tests</module>
 		<module>eu.ddmore.mdl.feature</module>
 		<module>eu.ddmore.mdl.updatesite</module>
+		<module>eu.ddmore.mdl.converter.mdl2pharmml</module>
+		<module>eu.ddmore.mdl.converter.mdl2pharmml.ui</module>
   </modules>
 
 	<!-- distributionManagement>
