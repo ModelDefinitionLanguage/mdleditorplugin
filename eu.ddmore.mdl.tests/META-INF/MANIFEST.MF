@@ -22,7 +22,7 @@ Require-Bundle: eu.ddmore.mdl,
  eu.ddmore.mdllib,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.emf.ecore,
- eu.ddmore.mdl.converter.mdl2pharmml;bundle-version="1.0.0"
+ eu.ddmore.mdl.converter.mdl2pharmml
 Import-Package: org.apache.commons.io;version="2.0.1",
  org.apache.log4j;version="1.2.15",
  org.eclipse.xtext.junit4,
@@ -34,4 +34,6 @@ Import-Package: org.apache.commons.io;version="2.0.1",
  org.junit.runners.model;version="4.5.0",
  org.hamcrest.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: eu.ddmore.mdl
+Export-Package: eu.ddmore.mdl,
+ eu.ddmore.mdl.utils,
+ eu.ddmore.mdl.validation

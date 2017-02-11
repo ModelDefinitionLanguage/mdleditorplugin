@@ -10,7 +10,7 @@
 		<version>1.6.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>eu.ddmore.mdl.tests</artifactId>
+	<artifactId>eu.ddmore.mdl.converter.mdl2pharmml.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 	
 	<build>
