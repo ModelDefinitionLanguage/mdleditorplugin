@@ -73,6 +73,9 @@ public class MdlUiModule extends eu.ddmore.mdl.ui.AbstractMdlUiModule {
 		return MdlDynamicTemplateStore.class;
 	}
 
+    public org.eclipse.core.resources.IWorkspaceRoot bindIWorkspaceRootToInstance() {
+        return org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot();
+    }
 
 
 //    public void init() {

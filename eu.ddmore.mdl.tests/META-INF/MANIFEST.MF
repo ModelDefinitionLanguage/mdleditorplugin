@@ -21,7 +21,8 @@ Require-Bundle: eu.ddmore.mdl,
  eu.ddmore.mdllib.tests,
  eu.ddmore.mdllib,
  org.eclipse.xtext.xbase.lib,
- org.eclipse.emf.ecore
+ org.eclipse.emf.ecore,
+ eu.ddmore.mdl.converter.mdl2pharmml;bundle-version="1.0.0"
 Import-Package: org.apache.commons.io;version="2.0.1",
  org.apache.log4j;version="1.2.15",
  org.eclipse.xtext.junit4,
