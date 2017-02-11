@@ -3,15 +3,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>eu.ddmore</groupId>
 		<artifactId>eu.ddmore.mdl.parent</artifactId>
 		<version>1.6.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>eu.ddmore.mdl.tests</artifactId>
-	<packaging>eclipse-test-plugin</packaging>
+	<artifactId>eu.ddmore.mdl.converter.mdl2pharmml.ui</artifactId>
+	<packaging>eclipse-plugin</packaging>
 	
 	<build>
 		<plugins>
@@ -25,17 +25,9 @@
 					</execution>
 				</executions>
 			</plugin>
-            <plugin>
-                <groupId>org.eclipse.xtend</groupId>
-                <artifactId>xtend-maven-plugin</artifactId>
-            </plugin>
 			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-surefire-plugin</artifactId>
-				<configuration>
-					<useUIHarness>false</useUIHarness>
-					<useUIThread>false</useUIThread>
-				</configuration>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

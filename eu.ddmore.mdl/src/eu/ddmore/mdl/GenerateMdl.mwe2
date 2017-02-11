@@ -86,9 +86,9 @@ Workflow {
                 }
     
                     // generator API
-                fragment = generator.GeneratorFragment auto-inject {
-                	generateJavaMain = true
-                }
+//                fragment = generator.GeneratorFragment auto-inject {
+//                	generateJavaMain = true
+//                }
     
                 // The antlr parser generator fragment.
                 fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {
