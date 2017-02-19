@@ -5,3 +5,4 @@ Bundle-SymbolicName: eu.ddmore.mdl.definitions
 Bundle-Version: 1.6.1.qualifier
 Bundle-Vendor: Pfizer Inc
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: definitions

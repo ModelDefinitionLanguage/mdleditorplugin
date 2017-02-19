@@ -8,6 +8,7 @@
 		<groupId>eu.ddmore</groupId>
 		<artifactId>eu.ddmore.mdl.parent</artifactId>
 		<version>1.6.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>eu.ddmore.mdl.tests</artifactId>
