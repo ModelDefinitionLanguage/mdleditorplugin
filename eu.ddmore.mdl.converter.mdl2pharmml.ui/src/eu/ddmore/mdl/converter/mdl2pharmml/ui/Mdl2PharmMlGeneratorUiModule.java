@@ -1,4 +1,4 @@
-package eu.ddmore.mdl.comverter.mdl2pharmml.ui;
+package eu.ddmore.mdl.converter.mdl2pharmml.ui;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

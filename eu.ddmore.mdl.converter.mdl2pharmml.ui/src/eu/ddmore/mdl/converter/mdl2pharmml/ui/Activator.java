@@ -1,4 +1,4 @@
-package eu.ddmore.mdl.comverter.mdl2pharmml.ui;
+package eu.ddmore.mdl.converter.mdl2pharmml.ui;
 
 import org.apache.log4j.Logger;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

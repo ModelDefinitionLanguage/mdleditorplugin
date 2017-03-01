@@ -609,17 +609,4 @@
           </perspectiveShortcut>
        </perspectiveExtension>
     </extension>
-    <extension
-          point="org.eclipse.ui.exportWizards">
-       <wizard
-             category="eu.ddmore.mdl.ui.exportwiz.ddmore"
-             class="eu.ddmore.mdl.ui.wizard.PharmMLExportWizard"
-             id="eu.ddmore.mdl.ui.wizard.export.pharmml"
-             name="PharmML Export">
-       </wizard>
-       <category
-             id="eu.ddmore.mdl.ui.exportwiz.ddmore"
-             name="DDMoRe">
-       </category>
-    </extension>
 </plugin>

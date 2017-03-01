@@ -16,7 +16,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
-import eu.ddmore.mdl.ui.internal.MdlActivator;
+import eu.ddmore.mdl.converter.mdl2pharmml.ui.Activator;
 
 public class PharmMLExportWizard extends Wizard implements IExportWizard {
 	
@@ -40,7 +40,7 @@ public class PharmMLExportWizard extends Wizard implements IExportWizard {
 		setWindowTitle("Export PharmML Wizard"); //NON-NLS-1
 		setNeedsProgressMonitor(true);
 //		DialogSettings ds = new DialogSettings("PharmML Export Wizard");
-		IDialogSettings ds = MdlActivator.getInstance().getDialogSettings();
+		IDialogSettings ds = Activator.getInstance().getDialogSettings();
 		setDialogSettings(ds);
 		mainPage = new PharmMLExportWizardPage("Export PharmML File",selection); //NON-NLS-1
 	}

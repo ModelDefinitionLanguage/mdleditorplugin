@@ -46,9 +46,9 @@
 		<module>eu.ddmore.mdl</module>
 		<module>eu.ddmore.mdl.ui</module>
 		<module>eu.ddmore.mdl.tests</module>
-		<module>eu.ddmore.mdl.converter.mdl2pharmml</module>
-		<module>eu.ddmore.mdl.converter.mdl2pharmml.ui</module>
-		<module>eu.ddmore.mdl.converter.mdl2pharmml.tests</module>
+		
+		
+		
 		<module>eu.ddmore.mdl.feature</module>
 		<module>eu.ddmore.mdl.updatesite</module>
   </modules>
