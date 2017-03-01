@@ -6,11 +6,14 @@
       provider-name="DDMoRe Project">
 
    <description>
-      This feature provides an Eclipse Editor for the Model Description Language. This a language developed by the DDMoRe project to describe Pharmacometric models and can be used to produce models compatibl with standard M&amp;S tools.
+      This feature provides an Eclipse Editor for the Model Description
+Language. This a language developed by the DDMoRe project to
+describe Pharmacometric models and can be used to produce models
+compatible with standard M&amp;S tools.
    </description>
 
    <copyright>
-      Copyright Pfizer Inc 2015-2016 and Leiden University 2014-2015
+      Copyright Pfizer Inc 2015-2017 and Leiden University 2014-2015
    </copyright>
 
    <license url="%licenseUrl">
@@ -58,14 +61,16 @@ It is your obligation to read and accept all such terms and conditions prior to 
    </license>
 
    <url>
+      <update label="MDL Community Downloads" url="http://downloads.mdl.community/repository/mdleditor"/>
       <discovery label="DDMoRe Project" url="http://www.ddmore.eu"/>
-      <!-- Externalized url doesn't pass the Feature Editor validation,
-      don't commit removal of url="%updateUrl"-->
-      <update label="%updateLabel" url="%updateUrl"/>
    </url>
 
    <includes
          id="eu.ddmore.libpharmml.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="eu.ddmore.mdllib.sdk"
          version="0.0.0"/>
 
    <requires>
@@ -88,7 +93,14 @@ It is your obligation to read and accept all such terms and conditions prior to 
          unpack="false"/>
 
    <plugin
-         id="eu.ddmore.mdllib"
+         id="eu.ddmore.mdl.definitions"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.ddmore.mdl.tests"
          download-size="0"
          install-size="0"
          version="0.0.0"

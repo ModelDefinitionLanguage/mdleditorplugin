@@ -5,3 +5,9 @@ Bundle-SymbolicName: eu.ddmore.mdl.definitions
 Bundle-Version: 1.6.1.qualifier
 Bundle-Vendor: Pfizer Inc
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.core.runtime,
+ eu.ddmore.mdllib,
+ com.google.inject,
+ org.eclipse.ui,
+ org.eclipse.core.resources,
+ org.eclipse.ui.ide
