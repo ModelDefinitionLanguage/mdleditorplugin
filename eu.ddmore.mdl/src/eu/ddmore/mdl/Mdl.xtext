@@ -346,12 +346,12 @@ FunctionReference:
 ;
 
 IndexSpec:
-		{IndexSpec} rowIdx = IndexRange? (',' colIdx = IndexRange?)? 
+		{IndexSpec} rowIdx = IndexRange? (isMatrix?=',' colIdx = IndexRange?)? 
 			;
 
 IndexRange:
 		{IndexRange} (
-			begin=Expression (':' end=Expression)?
+			begin=Expression (isRange?=':' end=Expression)?
 		)
 		;
 

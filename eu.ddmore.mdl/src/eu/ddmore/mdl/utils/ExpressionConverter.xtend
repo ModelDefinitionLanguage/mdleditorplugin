@@ -25,6 +25,8 @@ import eu.ddmore.mdl.mdl.ValuePair
 import eu.ddmore.mdl.mdl.VectorElement
 import eu.ddmore.mdllib.mdllib.Expression
 import org.eclipse.emf.ecore.EObject
+import eu.ddmore.mdl.mdl.IndexRange
+import eu.ddmore.mdl.mdl.IndexSpec
 
 public class ExpressionConverter {
 
@@ -87,7 +89,13 @@ public class ExpressionConverter {
 		(«exp.expr.getString»)'''
 		
 	def dispatch String getString(SymbolReference exp)'''
-		«exp.ref.name»«IF exp.argList != null»(«exp.argList.getString»)«ENDIF»'''
+		«exp.ref.name»«IF exp.indexExpr != null»[«exp.indexExpr.index»]«ENDIF»«IF exp.argList != null»(«exp.argList.getString»)«ENDIF»'''
+	
+	private def String getIndex(IndexSpec ir)'''
+		«IF !ir.isMatrix»«ir.rowIdx.indexRange»«ELSE»«IF ir.rowIdx != null»«ir.rowIdx.indexRange»«ENDIF»,«IF ir.colIdx != null»«ir.colIdx.indexRange»«ENDIF»«ENDIF»'''
+	
+	private def String getIndexRange(IndexRange rng)'''
+		«IF !rng.isIsRange»«rng.getBegin().string»«ELSE»«IF rng.getBegin() != null»«rng.getBegin().string»«ENDIF»:«IF rng.getEnd() != null»«rng.getEnd().string»«ENDIF»«ENDIF»'''
 	
 //	def static dispatch String getString(BuiltinFunctionCall exp)'''
 //		«exp.func»(«exp.argList.getString»)'''

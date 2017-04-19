@@ -218,4 +218,109 @@ warfarin_PK_SEX_design = designObj{
 		val eqn = mcl.objects.head.blocks.last.statements.last as ListDefinition
 		Assert::assertEquals("[{catCov=SEX, discreteRv=Bernoulli1(probability=0.5)},{cov=WT, rv=Normal1(mean=piecewise{{70 when SEX==SEX.male ; otherwise 60}}, stdev=10)}]", (eqn.firstAttributeList.attributes.last as ValuePair).expression.convertToString)
 	}
+
+	@Test
+	def void testConverter10(){
+		val mcl =  '''
+warfarin_PK_SEX_design = priorObj{
+		PRIOR_VARIABLE_DEFINITION{
+			OMEGA_CL_V::matrix
+			CL = OMEGA_CL_V[1,2]
+		}
+  }
+}
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("OMEGA_CL_V[1,2]", eqn.expression.convertToString)
+	}
+
+	@Test
+	def void testConverter11(){
+		val mcl =  '''
+warfarin_PK_SEX_design = priorObj{
+		PRIOR_VARIABLE_DEFINITION{
+			OMEGA_CL_V::matrix
+			CL = OMEGA_CL_V[1,]
+		}
+  }
+}
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("OMEGA_CL_V[1,]", eqn.expression.convertToString)
+	}
+
+	@Test
+	def void testConverter12(){
+		val mcl =  '''
+warfarin_PK_SEX_design = priorObj{
+		PRIOR_VARIABLE_DEFINITION{
+			OMEGA_CL_V::matrix
+			CL = OMEGA_CL_V[,3]
+		}
+  }
+}
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("OMEGA_CL_V[,3]", eqn.expression.convertToString)
+	}
+
+	@Test
+	def void testConverter13(){
+		val mcl =  '''
+warfarin_PK_SEX_design = priorObj{
+		PRIOR_VARIABLE_DEFINITION{
+			OMEGA_CL_V::matrix
+			CL = OMEGA_CL_V[,]
+		}
+  }
+}
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("OMEGA_CL_V[,]", eqn.expression.convertToString)
+	}
+
+	@Test
+	def void testConverter14(){
+		val mcl =  '''
+warfarin_PK_SEX_design = priorObj{
+		PRIOR_VARIABLE_DEFINITION{
+			OMEGA_CL_V::matrix
+			CL = OMEGA_CL_V[2:3,4:]
+		}
+  }
+}
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("OMEGA_CL_V[2:3,4:]", eqn.expression.convertToString)
+	}
+
+	@Test
+	def void testConverter15(){
+		val mcl =  '''
+warfarin_PK_SEX_design = priorObj{
+		PRIOR_VARIABLE_DEFINITION{
+			OMEGA_CL_V::matrix
+			CL = OMEGA_CL_V[2:,4:6]
+		}
+  }
+}
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("OMEGA_CL_V[2:,4:6]", eqn.expression.convertToString)
+	}
+
+	@Test
+	def void testConverter21(){
+		val mcl =  '''
+warfarin_PK_SEX_design = priorObj{
+		PRIOR_VARIABLE_DEFINITION{
+			OMEGA_CL_V::vector
+			CL = OMEGA_CL_V[1]
+		}
+  }
+}
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("OMEGA_CL_V[1]", eqn.expression.convertToString)
+	}
 }
