@@ -90,10 +90,10 @@ public class MdlExpressionConverter extends ExpressionConverter {
 		[«FOR e : exp.expressions SEPARATOR ','»«e.getString»«ENDFOR»]'''
 	
 	def dispatch String getString(MatrixLiteral exp)'''
-		[«FOR e : exp.getRows() SEPARATOR ';'»«e.getString»«ENDFOR»]'''
+		[[«FOR e : exp.getRows() SEPARATOR ';'»«e.getString»«ENDFOR»]]'''
 	
 	def dispatch String getString(MatrixRow exp)'''
-		[«FOR e : exp.cells SEPARATOR ','»«e.getString»«ENDFOR»]'''
+		«FOR e : exp.cells SEPARATOR ','»«e.getString»«ENDFOR»'''
 	
 	def dispatch String getString(MatrixElement exp)'''
 		«exp.cell.getString»'''

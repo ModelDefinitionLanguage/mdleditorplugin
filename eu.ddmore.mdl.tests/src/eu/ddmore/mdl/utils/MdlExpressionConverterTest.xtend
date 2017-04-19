@@ -192,7 +192,7 @@ R_mat =       [[ MU_R_CL, MU_R_V_CL;
 	   			  	    }
 		'''.parse
 		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
-		Assert::assertEquals("[[MU_R_CL,MU_R_V_CL];[MU_R_V_CL,MU_R_V]]", eqn.expression.convertToString)
+		Assert::assertEquals("[[MU_R_CL,MU_R_V_CL;MU_R_V_CL,MU_R_V]]", eqn.expression.convertToString)
 	}
 	
 	@Test
@@ -322,5 +322,68 @@ warfarin_PK_SEX_design = priorObj{
 		'''.parse
 		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
 		Assert::assertEquals("OMEGA_CL_V[1]", eqn.expression.convertToString)
+	}
+
+		@Test
+	def void testConverterVector(){
+		val mcl =  '''
+warfarin_UC1_prior = priorObj{
+ PRIOR_PARAMETERS{
+	   MU_R_CL = 0.2 
+	   MU_R_V  = 0.2 
+	   MU_R_V_CL  = 0
+   }
+   PRIOR_VARIABLE_DEFINITION{
+R_mat =       [ MU_R_CL, MU_R_V_CL,
+	   			  	    MU_R_V_CL, MU_R_V ]
+	   }
+
+}
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("[MU_R_CL,MU_R_V_CL,MU_R_V_CL,MU_R_V]", eqn.expression.convertToString)
+	}
+	
+		@Test
+	def void testConverterVectorIndexing(){
+		val mcl =  '''
+warfarin_UC1_prior = priorObj{
+ PRIOR_PARAMETERS{
+	   MU_R_CL = 0.2 
+	   MU_R_V  = 0.2 
+	   MU_R_V_CL  = 0
+   }
+   PRIOR_VARIABLE_DEFINITION{
+Rvect =       [ MU_R_CL, MU_R_V_CL,
+	   			  	    MU_R_V_CL, MU_R_V ]
+	   		Rval = Rvect[0]
+	   }
+
+}
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("Rvect[0]", eqn.expression.convertToString)
+	}
+	
+		@Test
+	def void testConverterMatrixIndexing(){
+		val mcl =  '''
+warfarin_UC1_prior = priorObj{
+ PRIOR_PARAMETERS{
+	   MU_R_CL = 0.2 
+	   MU_R_V  = 0.2 
+	   MU_R_V_CL  = 0
+   }
+   PRIOR_VARIABLE_DEFINITION{
+		R_mat =       [[ MU_R_CL, MU_R_V_CL;
+	   			  	    MU_R_V_CL, MU_R_V ]]
+	   	R = R_mat[1,2]
+
+	   			  	    }
+	   			  	    
+	   			  	    }
+		'''.parse
+		val eqn = mcl.objects.head.blocks.last.statements.last as EquationDefinition
+		Assert::assertEquals("R_mat[1,2]", eqn.expression.convertToString)
 	}
 }
