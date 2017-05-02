@@ -242,7 +242,7 @@
 						<artifact>
 							<groupId>eu.ddmore</groupId>
 							<artifactId>eu.ddmore.mdl.target</artifactId>
-							<version>1.6.0-SNAPSHOT</version>
+							<version>1.6.1-SNAPSHOT</version>
 						</artifact>
 					</target>
 					<environments>
