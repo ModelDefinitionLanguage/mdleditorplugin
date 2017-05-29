@@ -100,7 +100,7 @@
         </profile>
     </profiles>
     
-	<repositories>
+	<!--repositories-->
 		<!--repository>
 			<id>repo.mdlteam.ddmore.eu</id>
 			<releases>
@@ -120,13 +120,13 @@
             <url>${mars-repo.url}</url>
             <layout>p2</layout>
         </repository-->
-	</repositories>
-	<pluginRepositories>
+	<!--/repositories-->
+	<!--pluginRepositories>
 		<pluginRepository>
 			<id>fornax.plugin.repository</id>
 			<name>Fornax Plugin Repository</name>
 			<url>${fornax.repo.url}</url>
-		</pluginRepository>
+		</pluginRepository-->
 		<!-- pluginRepository>
 			<id>xtend</id>
 			<url>${xtend.repo.url}</url>
@@ -141,7 +141,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</pluginRepository-->
-	</pluginRepositories>
+	<!--/pluginRepositoriesi-->
 	<build>
 		<extensions>
 			<extension>
