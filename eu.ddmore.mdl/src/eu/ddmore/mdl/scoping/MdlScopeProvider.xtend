@@ -21,9 +21,9 @@ class MdlScopeProvider extends AbstractDeclarativeScopeProvider {
 //	def scope_SymbolReference_ref(Expression context, EReference reference){
 //		val parentScope = context.eContainer.findDeclarationsInContext(context)
 //		val listDefn = EcoreUtil2.getContainerOfType(context.eContainer, ListDefinition)
-//		if(listDefn != null){
+//		if(listDefn !== null){
 //			val catDefn = EcoreUtil2.getAllContentsOfType(listDefn, CategoricalDefinitionExpr)?.head
-//			if(catDefn != null){
+//			if(catDefn !== null){
 //				return Scopes::scopeFor(catDefn.categories, parentScope)
 //			}
 //		}
@@ -37,9 +37,9 @@ class MdlScopeProvider extends AbstractDeclarativeScopeProvider {
 //		retVal
 ////		val parentScope = context.eContainer.getScope(reference)
 ////		val listDefn = EcoreUtil2.getContainerOfType(context.eContainer, ListDefinition)
-////		if(listDefn != null){
+////		if(listDefn !== null){
 ////			val catDefn = EcoreUtil2.getAllContentsOfType(listDefn, CategoricalDefinitionExpr)?.head
-////			if(catDefn != null){
+////			if(catDefn !== null){
 ////				return Scopes::scopeFor(catDefn.categories, parentScope)
 //////				return Scopes::scopeFor(EcoreUtil2.getAllContentsOfType(listDefn, CategoricalDefinitionExpr))
 ////			}

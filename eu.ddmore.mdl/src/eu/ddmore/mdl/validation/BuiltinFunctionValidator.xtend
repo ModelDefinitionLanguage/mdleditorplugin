@@ -29,7 +29,7 @@ class BuiltinFunctionValidator extends AbstractDeclarativeValidator{
 	def validateFunctionCall(SymbolReference sr){
 		val ref = sr.ref
 		if(ref instanceof FunctionDefnBody){
-			if(sr.argList == null || sr.argList instanceof UnnamedFuncArguments){
+			if(sr.argList === null || sr.argList instanceof UnnamedFuncArguments){
 				checkUnnamedFunctionDefn(ref.name, ref.funcSpec, sr.argList,
 					[fName| error("Simple function '" + fName + "' is not recognised.",
 	//					MdlPackage.eINSTANCE.builtinFunctionCall_Func, MdlValidator::UNRECOGNIZED_FUNCTION_NAME, fName)],
@@ -46,11 +46,11 @@ class BuiltinFunctionValidator extends AbstractDeclarativeValidator{
 						)
 			}
 		}
-		else if(sr.argList != null){
+		else if(sr.argList !== null){
 			var foundFunc = false
 			// this looks like a function but is not linked to a library function so this could be a user defined func
 			if(ref instanceof EquationDefinition){
-				if(sr.argList instanceof UnnamedFuncArguments && ref.typeSpec != null && ref.typeSpec.functionSpec != null){
+				if(sr.argList instanceof UnnamedFuncArguments && ref.typeSpec !== null && ref.typeSpec.functionSpec !== null){
 					checkUnnamedFunctionDefn(ref.name, ref.typeSpec.functionSpec, sr.argList,
 						[fName| error("Simple function '" + fName + "' is not recognised.",
 							MdlPackage.eINSTANCE.symbolReference_Ref, MdlValidator::UNRECOGNIZED_FUNCTION_NAME, fName)],
@@ -76,7 +76,7 @@ class BuiltinFunctionValidator extends AbstractDeclarativeValidator{
 	@Check
 	def validateFunctionArgument(ValuePair it){
 		val parentFunc = EcoreUtil2.getContainerOfType(eContainer, SymbolReference)
-		if(parentFunc != null){
+		if(parentFunc !== null){
 			val ref = parentFunc.ref
 			if(ref instanceof FunctionDefnBody){
 				if(eContainer instanceof NamedFuncArguments){
@@ -94,7 +94,7 @@ class BuiltinFunctionValidator extends AbstractDeclarativeValidator{
 	@Check
 	def validateNamedFunctionArguments(NamedFuncArguments it){
 		val parentFunc = EcoreUtil2.getContainerOfType(eContainer, SymbolReference)
-		if(parentFunc != null)
+		if(parentFunc !== null)
 			missingMandatoryArgumentNames.forEach[arg, mand| error("mandatory argument '" + arg + "' is missing.",
 						MdlPackage.eINSTANCE.namedFuncArguments_Arguments, MdlValidator::MANDATORY_NAMED_FUNC_ARG_MISSING, arg) ]
 	}
@@ -105,7 +105,7 @@ class BuiltinFunctionValidator extends AbstractDeclarativeValidator{
 		if(ref instanceof FunctionDefnBody){
 			// assume that this is a named argument to a function
 			val funcDefn = ref.funcSpec.funcDefn
-			if(funcDefn != null && funcDefn instanceof NamedArgFuncDefn){
+			if(funcDefn !== null && funcDefn instanceof NamedArgFuncDefn){
 				val namedFuncDefn = funcDefn as NamedArgFuncDefn
 				if(!namedFuncDefn.hasArgument(argumentName)){
 					unkArgError.apply(argumentName)
@@ -126,13 +126,13 @@ class BuiltinFunctionValidator extends AbstractDeclarativeValidator{
 	// precondition - this is a unnamed function 	
 	def checkUnnamedFunctionDefn(String name, FunctionSpec ref, FuncArguments argList, (String) => void unkFuncErr, (String, int) => void incorrectNumArgsErr){
 		val FunctDefn funcDefn = ref.funcDefn
-		if(funcDefn == null || !(funcDefn instanceof SimpleFuncDefn)){
+		if(funcDefn === null || !(funcDefn instanceof SimpleFuncDefn)){
 			unkFuncErr.apply(name)
 		}
 		else {
 			val funcArgList = argList
 			switch(funcArgList){
-				case funcArgList == null && funcDefn.numArgs != 0:
+				case funcArgList === null && funcDefn.numArgs != 0:
 					incorrectNumArgsErr.apply(name, funcDefn.numArgs)
 				UnnamedFuncArguments case funcArgList.args.size != funcDefn.numArgs:
 					incorrectNumArgsErr.apply(name, funcDefn.numArgs)
@@ -143,7 +143,7 @@ class BuiltinFunctionValidator extends AbstractDeclarativeValidator{
 	
 	def checkNamedFunctionDefn(FunctionDefnBody ref, (String) => void unkFuncErr){
 		val funcDefn = ref.funcSpec.funcDefn
-		if(funcDefn == null || !(funcDefn instanceof NamedArgFuncDefn)){
+		if(funcDefn === null || !(funcDefn instanceof NamedArgFuncDefn)){
 			unkFuncErr.apply(ref.name)
 		}
 	}

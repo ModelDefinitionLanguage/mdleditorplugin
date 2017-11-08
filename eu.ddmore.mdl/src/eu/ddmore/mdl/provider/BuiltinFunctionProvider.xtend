@@ -46,7 +46,7 @@ class BuiltinFunctionProvider {
 
 		def int getNumArgs(){
 //			argTypes.size
-			if(funcBody.argument != null)
+			if(funcBody.argument !== null)
 				funcBody.argument.arguments.size
 			else 0
 		}
@@ -208,7 +208,7 @@ class BuiltinFunctionProvider {
 
 //	def getTransformFunctionType(String fName){
 //		val defns = functDefns.get(fName)
-//		if(defns != null)
+//		if(defns !== null)
 ////			if(defns.size > 1)
 ////				TypeSystemProvider::UNDEFINED_TYPE
 ////			else
@@ -268,7 +268,7 @@ class BuiltinFunctionProvider {
 	
 	public def getFuncDefn(FunctionSpec fDefn){
 		val argSpec = fDefn.argument
-		if(argSpec == null){
+		if(argSpec === null){
 			new SimpleFuncDefn(fDefn)
 		}
 		else{
@@ -288,7 +288,7 @@ class BuiltinFunctionProvider {
 			ref.funcSpec.funcDefn
 		}
 		else if(ref instanceof EquationDefinition){
-			if(ref.typeSpec != null && ref.typeSpec.functionSpec != null){
+			if(ref.typeSpec !== null && ref.typeSpec.functionSpec !== null){
 				ref.typeSpec.functionSpec.funcDefn
 			}
 			else null
@@ -297,7 +297,7 @@ class BuiltinFunctionProvider {
 //		functDefns.get(func)
 //		val availableDefns = functDefns.get(func)
 //		var FunctDefn retVal = null
-//		if(availableDefns != null){
+//		if(availableDefns !== null){
 //			val firstDefn = availableDefns
 //			retVal = switch(firstDefn){
 //				SimpleFuncDefn: firstDefn
@@ -305,7 +305,7 @@ class BuiltinFunctionProvider {
 //					case firstDefn.signatures.size == 1: firstDefn
 //				NamedArgFuncDefn
 //					case firstDefn.signatures.size > 1:{
-//						if(argList == null) firstDefn
+//						if(argList === null) firstDefn
 //						else if(argList instanceof NamedFuncArguments){
 //							(argList as NamedFuncArguments).chooseBestMatchingArguments(firstDefn)
 //						}
@@ -324,7 +324,7 @@ class BuiltinFunctionProvider {
 		if(funcDefn instanceof NamedArgFuncDefn){
 			val signature = chooseBestMatchingArguments(funcDefn)
 			// store all the mandatory argument names
-			funcDefn.arguments.forEach[arg, fa| val mand = signature.get(arg) if(mand != null && mand) mandatoryArgs.add(arg) ]
+			funcDefn.arguments.forEach[arg, fa| val mand = signature.get(arg) if(mand !== null && mand) mandatoryArgs.add(arg) ]
 			// remove those that are used
 			arguments.forEach[vp| mandatoryArgs.remove(vp.argumentName)]
 		}
@@ -341,12 +341,12 @@ class BuiltinFunctionProvider {
 	
 	def isNamedArgFunction(SymbolReference it){
 		val funcDefn = findFuncDefn
-		funcDefn != null && funcDefn instanceof NamedArgFuncDefn
+		funcDefn !== null && funcDefn instanceof NamedArgFuncDefn
 	}
 	
 	def isFunction(SymbolReference it){
 		val funcDefn = findFuncDefn
-		funcDefn != null
+		funcDefn !== null
 	}
 	
 	
@@ -421,7 +421,7 @@ class BuiltinFunctionProvider {
 	}
 
 	def boolean isValidTransformFunction(String fName){
-		if(fName != null) BuiltinFunctionTable::TRANSFORM_FUNCS.contains(fName)
+		if(fName !== null) BuiltinFunctionTable::TRANSFORM_FUNCS.contains(fName)
 		else false
 	}
 

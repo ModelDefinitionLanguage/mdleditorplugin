@@ -89,7 +89,7 @@ class BuiltinEnumTypeInfo extends TypeInfo{
 
 	override int hashCode() {
 	    val int prime = 31
-	    var result = prime + if(this.enumName == null)  0 else this.enumName.hashCode()
+	    var result = prime + if(this.enumName === null)  0 else this.enumName.hashCode()
 	    result
 	}
 }

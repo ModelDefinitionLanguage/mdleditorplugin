@@ -70,7 +70,7 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 		if(wrtExpr instanceof SymbolReference){
 			val mdlObj = EcoreUtil2::getContainerOfType(eContainer, MclObject)
 			val idvName = mdlObj?.mdlIdv?.name
-			if(idvName != null && wrtExpr.ref.name != null && idvName != wrtExpr.ref.name){
+			if(idvName !== null && wrtExpr.ref.name !== null && idvName != wrtExpr.ref.name){
 				warning("Derivative variables with an independent variable different to the model's IDV cannot be executed in R.", 
 						MdlPackage.eINSTANCE.valuePair_Expression,
 						FEATURE_NOT_SUPPORTED, wrtExpr.ref.name)
@@ -80,9 +80,9 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 	
 	private def validateInitTime(AttributeList it){
 		val x0Expr = getAttributeExpression(ListDefinitionTable::DERIV_INIT_TIME_ATT)
-		if(x0Expr != null){
+		if(x0Expr !== null){
 			val x0Value = x0Expr.evaluateMathsExpression 
-			if(x0Value != null && x0Value.compareTo(PERMITTED_X0_VALUE) != 0){
+			if(x0Value !== null && x0Value.compareTo(PERMITTED_X0_VALUE) != 0){
 				warning("Derivative variables with a non-zero initial time cannot be executed in R.", 
 						MdlPackage.eINSTANCE.valuePair_Expression,
 						FEATURE_NOT_SUPPORTED, x0Value.toString)
@@ -97,7 +97,7 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 			val blk = EcoreUtil2::getContainerOfType(eContainer, BlockStatement)
 			val attList = EcoreUtil2::getContainerOfType(eContainer, AttributeList)
 			// check first that this is a well constructed derivative list in the correct block etc.
-			if(blk != null && attList != null){
+			if(blk !== null && attList !== null){
 				validateWrt(attList)
 				validateInitTime(attList)
 			}
@@ -106,7 +106,7 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 
 	@Check
 	def checkUnsupportedIfElse(ElseClause it){
-		if(value != null){
+		if(value !== null){
 			if(value instanceof IfExpression){
 				warning("Nested conditional expression cannot be executed in R. Consider changing to 'elseif'.", 
 						MdlPackage.eINSTANCE.elseClause_Value,
@@ -121,9 +121,9 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 	def checkUnsupportedAttributes(ValuePair it){
 		val blk = owningBlock?.identifier
 		val nm = argumentName
-		if(blk != null && nm != null){
+		if(blk !== null && nm !== null){
 			val attMap = unsupportedAttributes.get(blk)
-			if(attMap != null && attMap.contains(nm)){
+			if(attMap !== null && attMap.contains(nm)){
 				warning("Attribute name '" + nm + "' is not currently supported for execution in R.", 
 						MdlPackage.eINSTANCE.valuePair_ArgumentName,
 						FEATURE_NOT_SUPPORTED, nm)
@@ -150,8 +150,8 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 //	def checkUnsupportedCategoryRelations(EqualityExpression it){
 //		val leftType = leftOperand?.typeFor
 //		val rightType = rightOperand?.typeFor
-//		if((leftType != null && leftType.typeClass == TypeInfoClass.Category)  || 
-//			(rightType != null && rightType.typeClass == TypeInfoClass.Category)){
+//		if((leftType !== null && leftType.typeClass == TypeInfoClass.Category)  || 
+//			(rightType !== null && rightType.typeClass == TypeInfoClass.Category)){
 //			warning("Equivalence operators with categorical types are not supported for execution in R.",
 //				MdlPackage::eINSTANCE.equalityExpression_Feature,
 //				FEATURE_NOT_SUPPORTED, feature)
@@ -177,11 +177,11 @@ class UnsupportedFeaturesValidator extends AbstractMdlValidator  {
 	@Check
 	def checkUnsupportedColumnName(ListDefinition it){
 		val blk = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
-		if(blk != null && blk.identifier == BlockDefinitionTable::DIV_BLK_NAME){
+		if(blk !== null && blk.identifier == BlockDefinitionTable::DIV_BLK_NAME){
 			// data mapping block
 			val useValue = firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT)
 			val expectedColumnName = DataNamingLookup.get(useValue)
-			if(expectedColumnName != null && expectedColumnName != name){
+			if(expectedColumnName !== null && expectedColumnName != name){
 				warning("Column definitions with use '" + useValue + "' must be named '" + expectedColumnName + "' otherwise execution in R will fail.",
 					MdlLibPackage::eINSTANCE.symbolDefinition_Name,
 					FEATURE_NOT_SUPPORTED, useValue)

@@ -164,7 +164,7 @@ class BuiltinFunctionTable {
 //	private static var BuiltinFunctionTable anInstance
 //
 //	static def getInstance(){
-//		if(anInstance == null){
+//		if(anInstance === null){
 //			anInstance = new BuiltinFunctionTable
 //		}
 //		anInstance

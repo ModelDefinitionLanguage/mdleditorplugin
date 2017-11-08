@@ -92,14 +92,14 @@ class DependencyWalker {
     			for(w : expr.ifelseClause){
     				retVal.addAll(w.symbolReferences)
     			}
-    			if(expr.elseClause != null)
+    			if(expr.elseClause !== null)
     				retVal.addAll(expr.elseClause?.value?.symbolReferences ?: Collections::emptyList)
     		}
     		PiecewiseExpression:{
     			for(w : expr.when){
     				retVal.addAll(w.symbolReferences)
     			}
-    			if(expr.otherwise != null)
+    			if(expr.otherwise !== null)
     				retVal.addAll(expr.otherwise?.symbolReferences ?: Collections::emptyList)
     		}
     		VectorLiteral:{
@@ -111,8 +111,8 @@ class DependencyWalker {
     			retVal.addAll(expr.element?.symbolReferences ?: Collections::emptyList)
     		}
     		SymbolReference:{
-//    			if(expr.ref != null) retVal.add(expr.ref)
-    			if(expr.ref != null) retVal.addAll(expr.ref.symbolReferences)
+//    			if(expr.ref !== null) retVal.add(expr.ref)
+    			if(expr.ref !== null) retVal.addAll(expr.ref.symbolReferences)
     		}
     			
     	}
@@ -131,7 +131,7 @@ class DependencyWalker {
 		for(w : expr.when){
 			retVal.addAll(w.symbolReferences)
 		}
-		if(expr.otherwise != null)
+		if(expr.otherwise !== null)
 			retVal.addAll(expr.otherwise?.symbolReferences ?: Collections::emptyList)
 		retVal    			
     }
@@ -141,7 +141,7 @@ class DependencyWalker {
 		for(w : expr.ifelseClause){
 			retVal.addAll(w.symbolReferences)
 		}
-		if(expr.elseClause != null)
+		if(expr.elseClause !== null)
 			retVal.addAll(expr.elseClause?.value?.symbolReferences ?: Collections::emptyList)
 		retVal    			
     }
@@ -178,7 +178,7 @@ class DependencyWalker {
     def dispatch List<SymbolDefinition> getSymbolReferences(SymbolReference it){
     	val retVal = new ArrayList<SymbolDefinition>
     	retVal.add(ref)
-    	if(argList != null){
+    	if(argList !== null){
 	    	val a = argList
 	    	switch(a){
 	    		NamedFuncArguments:{
@@ -193,7 +193,7 @@ class DependencyWalker {
 	    		}
 	    	}
     	}
-    	if(indexExpr != null){
+    	if(indexExpr !== null){
     		retVal.addAll(indexExpr.rowIdx?.defsFromIndex ?: Collections::emptyList)
     		retVal.addAll(indexExpr.colIdx?.defsFromIndex ?: Collections::emptyList)
     	}

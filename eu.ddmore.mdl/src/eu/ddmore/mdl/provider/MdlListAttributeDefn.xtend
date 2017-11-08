@@ -45,7 +45,7 @@ class MdlListAttributeDefn{
 
 	override int hashCode() {
 	    val int prime = 31
-	    var result = prime + if(this._lad == null)  0 else this._lad.hashCode()
+	    var result = prime + if(this._lad === null)  0 else this._lad.hashCode()
 	    result
 	}
 	

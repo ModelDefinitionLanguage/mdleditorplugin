@@ -24,7 +24,7 @@ class ValueSelectorValidator extends AbstractMdlValidator {
 		var valCntr = 0
 		for(mp : attList){
 			val mapValue = mp.leftOperand.evaluateMathsExpression
-			if(mapValue != null && mapValue.intValue == value) valCntr++
+			if(mapValue !== null && mapValue.intValue == value) valCntr++
 		}
 		return valCntr
 	}
@@ -33,7 +33,7 @@ class ValueSelectorValidator extends AbstractMdlValidator {
 	def validateUniqueTestValues(MappingPair it){
 		val mapExpr = EcoreUtil2.getContainerOfType(eContainer, MappingExpression)
 		val mapValue = leftOperand.evaluateMathsExpression
-		if(mapValue != null && mapExpr.numValues(mapValue.intValue) > 1){
+		if(mapValue !== null && mapExpr.numValues(mapValue.intValue) > 1){
 			error("Test value '" + mapValue.intValue + "' cannot be used more than once in the same value selection expression.",
 					MdlPackage.eINSTANCE.mappingPair_LeftOperand,
 					MdlValidator::DUPLICATE_SELECTION_TEST_VALUE, mapValue.intValue.toString)
@@ -45,7 +45,7 @@ class ValueSelectorValidator extends AbstractMdlValidator {
 		var valCntr = 0
 		for(mp : attList){
 			val mapValue = mp.rightOperand.singleSymbolRef
-			if(mapValue != null && mapValue == value) valCntr++
+			if(mapValue !== null && mapValue == value) valCntr++
 		}
 		return valCntr
 	}
@@ -54,7 +54,7 @@ class ValueSelectorValidator extends AbstractMdlValidator {
 	def validateUniqueSelectionRef(MappingPair it){
 		val mapExpr = EcoreUtil2.getContainerOfType(eContainer, MappingExpression)
 		val mapValue = rightOperand.singleSymbolRef
-		if(mapValue != null && mapExpr.numRefs(mapValue) > 1){
+		if(mapValue !== null && mapExpr.numRefs(mapValue) > 1){
 			error("Selection variable '" + mapValue.name + "' cannot be used more than once in the same value selection expression.",
 					MdlPackage.eINSTANCE.mappingPair_LeftOperand,
 					MdlValidator::DUPLICATE_SELECTION_REF, mapValue.name)
@@ -64,9 +64,9 @@ class ValueSelectorValidator extends AbstractMdlValidator {
 	private def numValues(CategoricalDefinitionExpr it, int value){
 		var valCntr = 0
 		for(mp : categories){
-			if(mp.mappedTo != null && mp.mappedTo.singleSymbolRef == null){
+			if(mp.mappedTo !== null && mp.mappedTo.singleSymbolRef === null){
 				val mapValue = mp.mappedTo.evaluateMathsExpression
-				if(mapValue != null && mapValue.intValue == value) valCntr++
+				if(mapValue !== null && mapValue.intValue == value) valCntr++
 			}
 		}
 		return valCntr
@@ -75,9 +75,9 @@ class ValueSelectorValidator extends AbstractMdlValidator {
 	private def numRefs(CategoricalDefinitionExpr it, SymbolDefinition value){
 		var valCntr = 0
 		for(mp : categories){
-			if(mp.mappedTo != null && mp.mappedTo.singleSymbolRef != null){
+			if(mp.mappedTo !== null && mp.mappedTo.singleSymbolRef !== null){
 				val mapValue = mp.mappedTo.singleSymbolRef
-				if(mapValue != null && mapValue == value) valCntr++
+				if(mapValue !== null && mapValue == value) valCntr++
 			}
 		}
 		return valCntr
@@ -85,12 +85,12 @@ class ValueSelectorValidator extends AbstractMdlValidator {
 	
 	@Check
 	def validateUniqueTestValues(CategoryValueDefinition it){
-		if(mappedTo != null){
+		if(mappedTo !== null){
 			val mapExpr = EcoreUtil2.getContainerOfType(eContainer, CategoricalDefinitionExpr)
 			val ref = mappedTo.singleSymbolRef
-			if(ref == null){
+			if(ref === null){
 				val mapValue = mappedTo.evaluateMathsExpression
-				if(mapValue != null && mapExpr.numValues(mapValue.intValue) > 1){
+				if(mapValue !== null && mapExpr.numValues(mapValue.intValue) > 1){
 					error("Test value '" + mapValue.intValue + "' cannot be used more than once in the same category definition expression.",
 						MdlPackage.eINSTANCE.categoryValueDefinition_MappedTo,
 						MdlValidator::DUPLICATE_SELECTION_TEST_VALUE, mapValue.intValue.toString)

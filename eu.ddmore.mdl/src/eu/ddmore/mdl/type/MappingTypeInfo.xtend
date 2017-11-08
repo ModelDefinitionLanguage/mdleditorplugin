@@ -41,7 +41,7 @@ class MappingTypeInfo extends SublistTypeInfo{
 //	override boolean isCompatible(TypeInfo otherType){
 //		// use underlying type in case it is a reference 
 ////		val otherType = other.underlyingType
-//		if(otherType != null){
+//		if(otherType !== null){
 //			switch(otherType){
 //				// if both vectors then check type compatibility
 //				MappingTypeInfo: mapTargetType.isCompatible(otherType.mapTargetType)
@@ -92,7 +92,7 @@ class MappingTypeInfo extends SublistTypeInfo{
 //
 //	override int hashCode() {
 //	    val int prime = 31
-//	    var result = prime + if(this.mapTargetType == null)  0 else this.mapTargetType.hashCode()
+//	    var result = prime + if(this.mapTargetType === null)  0 else this.mapTargetType.hashCode()
 //	    result
 //	}
 //	

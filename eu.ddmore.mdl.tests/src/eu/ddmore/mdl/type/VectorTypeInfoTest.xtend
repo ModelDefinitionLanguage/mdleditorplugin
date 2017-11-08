@@ -64,7 +64,7 @@ class VectorTypeInfoTest {
 	
 	@Test
 	def void testNotEqualsNull(){
-		assertFalse("not same as null", testInstance == null)
+		assertFalse("not same as null", testInstance === null)
 	}
 	
 	@Test

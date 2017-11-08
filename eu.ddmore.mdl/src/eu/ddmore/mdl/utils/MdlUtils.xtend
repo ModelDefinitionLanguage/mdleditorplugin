@@ -127,7 +127,7 @@ class MdlUtils {
 		val retVal = new ArrayList<SymbolDefinition>
 		for(dataLst :getDataColumnDefn(ListDefinitionTable::OBS_USE_VALUE)){
 			val varRef = dataLst.firstAttributeList.getAttributeExpression('variable')
-			if(varRef != null){
+			if(varRef !== null){
 				retVal.add(varRef.singleSymbolRef) // expect a var ref here.
 			}
 			else{
@@ -142,7 +142,7 @@ class MdlUtils {
 		val retVal = new ArrayList<SymbolDefinition>
 		for(dataLst :getDataColumnDefn(ListDefinitionTable::AMT_USE_VALUE)){
 			val varRef = dataLst.firstAttributeList.getAttributeExpression('variable')
-			if(varRef != null){
+			if(varRef !== null){
 				retVal.add(varRef.singleSymbolRef) // expect a var ref here.
 			}
 			else{
@@ -430,7 +430,7 @@ class MdlUtils {
 					default: false
 				}
 			]
-			if(retVal != null) return retVal as SymbolDefinition
+			if(retVal !== null) return retVal as SymbolDefinition
 		}
 		null
 	}
@@ -568,7 +568,7 @@ class MdlUtils {
 	def getListsFromPiecewise(ListPiecewiseExpression it){
 		val retVal = new ArrayList<AttributeList>
 		when.forEach[ retVal.add(value) ]
-		if(otherwise != null)
+		if(otherwise !== null)
 			retVal.add(it.otherwise)
 			
 		retVal
@@ -577,7 +577,7 @@ class MdlUtils {
 	def getListsFromIfExpression(ListIfExpression it){
 		val retVal = new ArrayList<AttributeList>
 		ifelseClause.forEach[ retVal.add(value) ]
-		if(it.elseClause != null)
+		if(it.elseClause !== null)
 			retVal.add(it.elseClause.value)
 			
 		retVal

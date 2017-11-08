@@ -18,14 +18,14 @@ class BlockListDefinition {
 
 
 	static def create(BlockStatement bs){
-		if(bs != null){
+		if(bs !== null){
 			new BlockListDefinition(bs.blkId)
 		}
 	}
 
 	new(BlockDefinition bd){
 		_key = bd.keyAttName
-		if(bd.listType != null){
+		if(bd.listType !== null){
 			_sglListDefn = new ListDefInfo(bd.listType)
 			_listDefns = Collections::emptyMap
 			_attMappingDefns = Collections::emptyMap 
@@ -49,11 +49,11 @@ class BlockListDefinition {
 	}
 	
 	def requiresAttributeMapping(){
-		_sglListDefn == null && !_attMappingDefns.isEmpty && _listDefns.isEmpty
+		_sglListDefn === null && !_attMappingDefns.isEmpty && _listDefns.isEmpty
 	}
 	
 	def requiresNoKeyAttribute(){
-		_sglListDefn != null && _attMappingDefns.isEmpty && _listDefns.isEmpty
+		_sglListDefn !== null && _attMappingDefns.isEmpty && _listDefns.isEmpty
 	}
 	
 	def getSglListDefn(){
@@ -61,7 +61,7 @@ class BlockListDefinition {
 	}
 
 	def List<ListDefInfo> getListDefns(){
-		if(_sglListDefn != null)
+		if(_sglListDefn !== null)
 			newArrayList(_sglListDefn)
 		else
 			new ArrayList<ListDefInfo>(this._listDefns.values)
@@ -84,7 +84,7 @@ class BlockListDefinition {
 //		val vp = attributes.findFirst[
 //			_attMappingDefns.containsKey(argumentName)
 //		]
-//		if(vp != null) _attMappingDefns.get(vp.argumentName) else null
+//		if(vp !== null) _attMappingDefns.get(vp.argumentName) else null
 //	}
 	
 }

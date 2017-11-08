@@ -71,7 +71,7 @@ class SublistDefinitionProvider {
 				val nameSetIter = nameSet.keySet.iterator
 				while(nameSetIter.hasNext && isCandidate){
 					val expectedName = nameSetIter.next
-					if(attNames.findFirst[it == expectedName ] == null && nameSet.get(expectedName)){
+					if(attNames.findFirst[it == expectedName ] === null && nameSet.get(expectedName)){
 						isCandidate = false
 					}
 				}
@@ -105,7 +105,7 @@ class SublistDefinitionProvider {
 	def TypeInfo getSublistAttributeType(ValuePair vp){
 		val attList = EcoreUtil2.getContainerOfType(vp.eContainer, SubListExpression)
 		val subListDefn = attList.findSublistMatch
-		if(subListDefn != null){
+		if(subListDefn !== null){
 			val attDefn = subListDefn.attributes.findFirst[name == vp.argumentName]
 			attDefn?.attType ?: TypeSystemProvider::UNDEFINED_TYPE
 		}

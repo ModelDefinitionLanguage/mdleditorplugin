@@ -49,7 +49,7 @@ public class MdlExpressionConverter extends ExpressionConverter {
         withCategories {«FOR catValDefn : defn.categories SEPARATOR ', '»«catValDefn.getString»«ENDFOR»}'''
 
     def dispatch override String getString(CategoryValueDefinition catValDefn) {
-        catValDefn.name + if (catValDefn.mappedTo != null) " when " + catValDefn.mappedTo.getString else ""
+        catValDefn.name + if (catValDefn.mappedTo !== null) " when " + catValDefn.mappedTo.getString else ""
     }
     
     def dispatch String getString(CatValRefMappingExpression catValRefMappingExpr)'''
@@ -62,7 +62,7 @@ public class MdlExpressionConverter extends ExpressionConverter {
         «catValRef.getSymbolDefnFromCatValRef.name».«catValRef.ref.getString»'''
 
 	override dispatch String getString(EnumExpression exp){
-        exp.enumValue + (if (exp.catDefn != null) " " + exp.catDefn.getString else "")
+        exp.enumValue + (if (exp.catDefn !== null) " " + exp.catDefn.getString else "")
 	}
 	
 //	def dispatch String getString(BuiltinFunctionCall exp)'''

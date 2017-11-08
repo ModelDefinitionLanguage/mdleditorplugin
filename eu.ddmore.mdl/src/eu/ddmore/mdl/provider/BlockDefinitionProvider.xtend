@@ -41,7 +41,7 @@ class BlockDefinitionProvider {
 		
 		def dispatch boolean isValidStatement(EquationDefinition stmt){
 			if(stmt.eClass == statementType){
-				(expectHasRhs && stmt.expression != null) || (!expectHasRhs && stmt.expression == null) 
+				(expectHasRhs && stmt.expression !== null) || (!expectHasRhs && stmt.expression === null) 
 			}
 			else false
 		}

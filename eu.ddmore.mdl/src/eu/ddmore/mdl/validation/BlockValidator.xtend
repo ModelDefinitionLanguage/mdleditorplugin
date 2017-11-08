@@ -56,7 +56,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 
 	@Check
 	def validateMdlObjArguments(MclObject it){
-		if (mdlObjType != null) {
+		if (mdlObjType !== null) {
 			if (!VALID_OBJECT_TYPES.contains(mdlObjType)) {
 				error("unrecognised object type '" + mdlObjType + "'", MdlPackage.eINSTANCE.mclObject_ObjId,
 					UNRECOGNISED_OBJECT_TYPE, mdlObjType)
@@ -84,7 +84,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 	def validateMdlObjBlocks(BlockStatement it){
 		val parent = parentOfBlockStatement
 		switch(parent){
-			MclObject case parent.mdlObjType != null && !isModelBlock:
+			MclObject case parent.mdlObjType !== null && !isModelBlock:
 					error("block '" + (identifier ?: "") + "' cannot be used in an object of type " + parent.mdlObjType,
 						MdlPackage.eINSTANCE.blockStatement_BlkId, UNKNOWN_BLOCK, identifier ?: '')
 			BlockStatement: {
@@ -131,7 +131,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 			AnonymousListStatement: MdlPackage.eINSTANCE.anonymousListStatement_List 
 			default: null
 		}
-		if(feature != null)
+		if(feature !== null)
 			validateExpectedStatementType[blk| error("block '" + blk + "' does not permit statements of this type",
 						feature, BLOCK_INVALID_STATEMENT_TYPE, blk)]
 	}
@@ -156,7 +156,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 	
 	@Check
 	def validateMdlObjectHasCorrectBlocks(MclObject it){
-		if(objId != null){
+		if(objId !== null){
 			// check if mandatory blocks missing
 			unusedMandatoryBlocks.forEach[blk, mand| error("mandatory block '" + blk + "' is missing in mdlObj '" + name + "'",
 						MdlPackage.eINSTANCE.mclObject_Blocks, MANDATORY_BLOCK_MISSING, blk) ]
@@ -177,7 +177,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 		// now check if counts exceed maximums
 		blkCount.keySet.forEach[blkDefn|
 			val defn = getBlockDefn(blkDefn)
-			if(defn != null){
+			if(defn !== null){
 				if(blkCount.get(blkDefn) > defn.maxNum)
 					errLambda.apply(blkDefn.name, defn.maxNum)
 			}
@@ -187,7 +187,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 	def validateMaxBlocksStatementCounts(BlockStatementBody it, (String, int) => void errLambda){
 		val blk = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 		val defn = getBlockDefn(blk.blkId)
-		if(defn != null)
+		if(defn !== null)
 			if(statements.size > defn.maxStmtNum){
 				errLambda.apply(blk.identifier, defn.maxStmtNum)
 			}		
@@ -196,7 +196,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 	def validateMinBlocksStatementCounts(BlockStatementBody it, (String, int) => void errLambda){
 		val blk = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 		val defn = getBlockDefn(blk.blkId)
-		if(defn != null)
+		if(defn !== null)
 			if(statements.size < defn.minStmtNum){
 				errLambda.apply(blk.identifier, defn.minStmtNum)
 			}		
@@ -205,7 +205,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 	def validateExpectedStatementType(Statement it, (String) => void errLambda){
 		val blk = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 		val defn = getBlockDefn(blk.blkId)
-		if(defn != null){
+		if(defn !== null){
 			for(stmtSpec : defn.validStatementTypes){
 				if(stmtSpec.isValidStatement(it)) return
 			}	
@@ -216,7 +216,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 	def validateBlockBodyType(BlockStatementBody it, (String) => void errLambda){
 		val blk = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 		val defn = getBlockDefn(blk.blkId)
-		if(defn != null){
+		if(defn !== null){
 			if(!defn.isStmtBlk) errLambda.apply(blk.identifier)
 		}
 	}
@@ -224,7 +224,7 @@ class BlockValidator extends AbstractDeclarativeValidator{
 	def validateBlockBodyType(BlockTextBody it, (String) => void errLambda){
 		val blk = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 		val defn = getBlockDefn(blk.blkId)
-		if(defn != null){
+		if(defn !== null){
 			if(defn.isStmtBlk) errLambda.apply(blk.identifier)
 		}
 	}

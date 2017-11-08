@@ -25,14 +25,14 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	
 	def isGeneralIdv(AttributeList it){
 		val eq = getAttributeEnumValue('type')
-		eq != null && eq == 'general'
+		eq !== null && eq == 'general'
 	}
 	
 	// note this type is no longer used in the defns, but kept here
 	// in case it is restored.
 	def isUserDefinedIdv(AttributeList it){
 		val eq = getAttributeEnumValue('type')
-		eq != null && eq == 'userDefined'
+		eq !== null && eq == 'userDefined'
 	}
 	
 	def isExplicitIdv(EquationTypeDefinition it){
@@ -55,8 +55,8 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	@Check
 	def checkMonolixUnsupportedIdv(AttributeList it){
 		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
-		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::MDL_INDIV_PARAMS){
-			if(attributes != null){
+		if(owningBlock !== null && owningBlock.identifier == BlockDefinitionTable::MDL_INDIV_PARAMS){
+			if(attributes !== null){
 				// check for explicit and general defns
 				if(isGeneralIdv){
 					warning("General individual parameter definition is not currently supported by MONOLIX.", 
@@ -77,8 +77,8 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	@Check
 	def checkMonolixUnsupportedIdv(EquationTypeDefinition it){
 		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
-		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::MDL_INDIV_PARAMS){
-			if(expression != null){
+		if(owningBlock !== null && owningBlock.identifier == BlockDefinitionTable::MDL_INDIV_PARAMS){
+			if(expression !== null){
 				// check for explicit and general defns
 //				if(isGeneralIdv){
 //					warning("General individual parameter definition is not currently supported by MONOLIX.", 
@@ -111,7 +111,7 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	@Check
 	def checkMonolixUnsupportedObs(AttributeList it){
 		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
-		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::OBS_BLK_NAME){
+		if(owningBlock !== null && owningBlock.identifier == BlockDefinitionTable::OBS_BLK_NAME){
 			// check for explicit and general defns
 			if(getAttributeEnumValue('type') == 'userDefined'){
 				val owningList = EcoreUtil2.getContainerOfType(eContainer, ListDefinition)
@@ -125,7 +125,7 @@ class UnsupportedToolSpecificFeaturesValidator extends AbstractMdlValidator  {
 	@Check
 	def checkPharmMLUnsupportedDosingInterval(AttributeList it){
 		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
-		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::DATA_DERIV_BLK_NAME){
+		if(owningBlock !== null && owningBlock.identifier == BlockDefinitionTable::DATA_DERIV_BLK_NAME){
 			// check for explicit and general defns
 			if(getAttributeEnumValue(ListDefinitionTable::USE_ATT) == ListDefinitionTable::DOSE_INTERVAL_USE_VALUE){
 				val owningList = EcoreUtil2.getContainerOfType(eContainer, ListDefinition)

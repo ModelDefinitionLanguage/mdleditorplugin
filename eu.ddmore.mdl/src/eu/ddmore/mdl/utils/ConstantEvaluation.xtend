@@ -28,7 +28,7 @@ class ConstantEvaluation {
 	extension TypeSystemProvider mtp = new TypeSystemProvider
 	
 	def Double evaluateMathsExpression(Expression expr){
-		if(expr != null && TypeSystemProvider::REAL_TYPE.isCompatible(expr.typeFor)){
+		if(expr !== null && TypeSystemProvider::REAL_TYPE.isCompatible(expr.typeFor)){
 			switch(expr){
 	    		AdditiveExpression:{
 	    			getAdditiveExpression(expr)
@@ -71,7 +71,7 @@ class ConstantEvaluation {
 	
 	
 	def Boolean evaluateLogicalExpression(Expression expr){
-		if(expr != null && TypeSystemProvider::BOOLEAN_TYPE.isCompatible(expr.typeFor)){
+		if(expr !== null && TypeSystemProvider::BOOLEAN_TYPE.isCompatible(expr.typeFor)){
 			switch(expr){
     			OrExpression:
     				getOrExpression(expr)
@@ -100,7 +100,7 @@ class ConstantEvaluation {
 	} 
 	
 	def String evaluateStringExpression(Expression expr){
-		if(expr != null){
+		if(expr !== null){
 			if(expr instanceof StringLiteral){
 				return expr.value
 			}
@@ -147,7 +147,7 @@ class ConstantEvaluation {
 	def evaluateBinaryBooleanOp(String operator, Expression lhs, Expression rhs){
 		val lhsResult = lhs?.evaluateLogicalExpression
 		val rhsResult = rhs?.evaluateLogicalExpression
-		if(lhs != null && rhs != null){
+		if(lhs !== null && rhs !== null){
 			switch(operator){
 				case '||':
 					lhsResult || rhsResult
@@ -163,7 +163,7 @@ class ConstantEvaluation {
 	def evaluateBinaryRelationalOp(String operator, Expression lhs, Expression rhs){
 		val lhsResult = lhs?.evaluateMathsExpression
 		val rhsResult = rhs?.evaluateMathsExpression
-		if(lhs != null && rhs != null){
+		if(lhs !== null && rhs !== null){
 			switch(operator){
 				case '<':
 					lhsResult < rhsResult
@@ -185,7 +185,7 @@ class ConstantEvaluation {
 	}
 	
 	def evaluateBinaryLogicalOp(String operator, Expression lhs, Expression rhs){
-		if(lhs != null && rhs != null){
+		if(lhs !== null && rhs !== null){
 			switch(operator){
 				case '||',
 				case '&&':
@@ -207,7 +207,7 @@ class ConstantEvaluation {
 	def evaluateBinaryMathsOp(String operator, Expression lhs, Expression rhs){
 		val lhsResult = lhs?.evaluateMathsExpression
 		val rhsResult = rhs?.evaluateMathsExpression
-		if(lhsResult != null && rhsResult != null){
+		if(lhsResult !== null && rhsResult !== null){
 			switch(operator){
 				case '+':
 					lhsResult + rhsResult 

@@ -36,7 +36,7 @@ class LibraryTestHelper<T extends EObject> {
 	}
 
 	def private InputStream getAsStream(CharSequence text) {
-		return new LazyStringInputStream(if(text == null) "" else text.toString());
+		return new LazyStringInputStream(if(text === null) "" else text.toString());
 	}
 
 

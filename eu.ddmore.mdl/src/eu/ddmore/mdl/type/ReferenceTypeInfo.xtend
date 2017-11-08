@@ -61,7 +61,7 @@ class ReferenceTypeInfo extends TypeInfo{
 
 	override int hashCode() {
 	    val int prime = 31
-	    var result = prime + if(this.elementType == null)  0 else this.elementType.hashCode()
+	    var result = prime + if(this.elementType === null)  0 else this.elementType.hashCode()
 	    result
 	}
 }

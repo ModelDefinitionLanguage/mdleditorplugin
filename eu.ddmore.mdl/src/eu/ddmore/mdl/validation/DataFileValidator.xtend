@@ -31,10 +31,10 @@ class DataFileValidator extends AbstractMdlValidator  {
 	def checkSourceFiles(ValuePair p){
 		val blk = p.owningBlock
 		val lst = p.owningListDefinition
-		if(blk != null && blk.isDataSourceBlock && lst != null && p.argumentName == 'file'){
+		if(blk !== null && blk.isDataSourceBlock && lst !== null && p.argumentName == 'file'){
 			val dataPath = p.expression.stringValue
 			val dataFile = getFile(p, dataPath);
-			if (dataFile == null || !dataFile.exists()){
+			if (dataFile === null || !dataFile.exists()){
 				warning(MSG_DATA_FILE_NOT_FOUND, 
 					MdlPackage.eINSTANCE.valuePair_Expression,
 					DATA_FILE_NOT_FOUND, dataPath)
@@ -61,7 +61,7 @@ class DataFileValidator extends AbstractMdlValidator  {
     	} else { // Triggered from 'external' converter code
             modelFile = new File(resource.URI.toFileString())
     	}
-    	val java.nio.file.Path pf = if(modelFile.parentFile == null) Paths.get(".") else modelFile.parentFile.toPath()
+    	val java.nio.file.Path pf = if(modelFile.parentFile === null) Paths.get(".") else modelFile.parentFile.toPath()
     	val dataFile = pf.resolve(filePath).toFile().canonicalFile
     	return dataFile
     }

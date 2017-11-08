@@ -13,7 +13,7 @@ class GeneralCategoryTypeInfo extends AbstractCategoryTypeInfo {
 	}
 	
 	override isCompatible(TypeInfo otherType){
-		if(otherType != null){
+		if(otherType !== null){
 			switch(otherType){
 				AbstractCategoryTypeInfo: true
 				ReferenceTypeInfo:

@@ -81,9 +81,9 @@ class FunctionTypeInfo extends TypeInfo {
 
 	override int hashCode() {
     	val prime = 31;
-    	var result = prime + if(this.typeClass == null)  0 else this.typeClass.hashCode()
-    	result = prime * result + if(this.rtnType == null)  0 else this.rtnType.hashCode()
-    	result = prime * result + if(this.argTypes == null)  0 else this.argTypes.hashCode()
+    	var result = prime + if(this.typeClass === null)  0 else this.typeClass.hashCode()
+    	result = prime * result + if(this.rtnType === null)  0 else this.rtnType.hashCode()
+    	result = prime * result + if(this.argTypes === null)  0 else this.argTypes.hashCode()
     	return result;
 	}
 }

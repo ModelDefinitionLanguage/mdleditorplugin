@@ -84,12 +84,12 @@ class MogValidator extends AbstractDeclarativeValidator {
 					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
 			]
 		if(isMogObject){
-			if(mdlObj != null && dataObj != null){
+			if(mdlObj !== null && dataObj !== null){
 				val expectedMdlCovars = new ArrayList<SymbolDefinition>
 				
 				mdlObj.mdlCovariateDefns.forEach[
 					switch(it){
-						EquationDefinition case expression == null: expectedMdlCovars.add(it)
+						EquationDefinition case expression === null: expectedMdlCovars.add(it)
 						EnumerationDefinition: expectedMdlCovars.add(it)
 					}
 				]
@@ -98,11 +98,11 @@ class MogValidator extends AbstractDeclarativeValidator {
 				for(mdlCov : expectedMdlCovars){
 					val dataCovar = dataCovars.findFirst[name == mdlCov.name]
 					val ddvCovar = ddvCovars.findFirst[name == mdlCov.name]
-					if(dataCovar == null && ddvCovar == null){
+					if(dataCovar === null && ddvCovar === null){
 						errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "covariate " + mdlCov.name +" has no match in dataObj");
 					}
 					else{
-						val covar = if(dataCovar != null) dataCovar else ddvCovar
+						val covar = if(dataCovar !== null) dataCovar else ddvCovar
 						if(!mdlCov.typeFor.isCompatible(covar.typeFor)){
 							errorLambda.apply(MdlValidator::INCOMPATIBLE_TYPES, "covariate " + mdlCov.name +" has an inconsistent type with its match in the dataObj");
 						}
@@ -123,7 +123,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 			for(mdlOb : mdlObj.mdlObservations){
 				if(mdlOb instanceof ListDefinition){
 					val dataSymb = dataStmts.findFirst[st | if(st instanceof SymbolDefinition) st.name == mdlOb.name else false]
-					if(dataSymb == null){
+					if(dataSymb === null){
 						errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "observation " + mdlOb.name +" has no match in obj: '" + matchingObj.name + "'.");
 					}
 					else if(!mdlOb.typeFor.isCompatible(dataSymb.typeFor)){
@@ -134,7 +134,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 					// expect all lists to have a variable att
 					val rvVar = mdlOb.list.getAttributeExpression('variable').symbolRef
 					val rv = rvVar?.ref
-					if(rv != null){
+					if(rv !== null){
 						val rvType = rv.typeFor
 						val libDefn = getLibraryForObject
 						val obsTypeName = mdlOb.list.getAttributeEnumValue('type')
@@ -146,7 +146,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 							default: TypeSystemProvider::UNDEFINED_TYPE
 						}
 						val dataSymb = dataStmts.findFirst[st | if(st instanceof SymbolDefinition) st.name == rv.name else false]
-						if(dataSymb == null){
+						if(dataSymb === null){
 							errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "observation " + rv.name +" has no match in obj: '" + matchingObj.name + "'.");
 						}
 						else if(!obsActualType.isCompatible(dataSymb.typeFor)){
@@ -169,9 +169,9 @@ class MogValidator extends AbstractDeclarativeValidator {
 			if(!varBlk.isEmpty){
 				refId = varBlk.head.blkArgs.getArgumentExpression('reference')?.symbolRef
 			}
-			if(dataObj != null){
+			if(dataObj !== null){
 				val dataVarLvls = dataObj.dataVariabilityLevels
-				if(refId != null){
+				if(refId !== null){
 					// check that data obj has an id level. If so then good.
 					if(!dataVarLvls.exists[
 						firstAttributeList.isMatchingDataUse(ListDefinitionTable::ID_USE_VALUE)
@@ -181,9 +181,9 @@ class MogValidator extends AbstractDeclarativeValidator {
 				}
 				for(mdlOb : mdlObj.mdlVariabilityLevels){
 					if(mdlOb instanceof SymbolDefinition){
-						if(refId == null || refId.ref != mdlOb){ 
+						if(refId === null || refId.ref != mdlOb){ 
 							val dataOb = dataVarLvls.findFirst[name == (mdlOb as ListDefinition).name]
-							if(dataOb == null){
+							if(dataOb === null){
 								errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in dataObj");
 							}
 							else if(mdlOb.isParameterVarLevel){
@@ -199,19 +199,19 @@ class MogValidator extends AbstractDeclarativeValidator {
 					}
 				}
 			}
-			else if(designObj != null){
+			else if(designObj !== null){
 				val libDefn = getLibraryForObject
 				val varLvlTypeInfo = libDefn.getListDefinition('varLevel')?.typeInfo ?: TypeSystemProvider::UNDEFINED_TYPE
 				val dvBlk = designObj.getBlocksByName(BlockDefinitionTable::DECLARED_VARS_BLK)?.head
 				val dvStmts = dvBlk.statementsFromBlock
 				val mVarLvls = mdlObj.mdlVariabilityLevels 
 				for(mdlOb : mVarLvls){
-					if(refId == null || refId.ref != mdlOb){
+					if(refId === null || refId.ref != mdlOb){
 						if(mdlOb instanceof SymbolDefinition){
 							val dataOb = dvStmts.findFirst[stmt|
 								if(stmt instanceof SymbolDefinition) stmt.name == mdlOb.name else false
 							]
-							if(dataOb == null){
+							if(dataOb === null){
 								if(mdlOb.isParameterVarLevel)
 									errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "variability level " + mdlOb.name +" has no match in designObj");
 							}
@@ -246,13 +246,13 @@ class MogValidator extends AbstractDeclarativeValidator {
 		val (String, String) => void errorLambda = [
 					errorCode, errMsg| error(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, errorCode, '')
 			]
-		if(isMogObject && dataObj != null){
+		if(isMogObject && dataObj !== null){
 			val dataOb = dataObj.dataIdv
 			val mdlOb = mdlObj.mdlIdv
-			if(mdlOb != null){
+			if(mdlOb !== null){
 				val mdlIdvName = (mdlOb as EquationDefinition).name
 				// idv does not need to have the same name
-				if(dataOb == null){ //} || dataOb.name != mdlIdvName){
+				if(dataOb === null){ //} || dataOb.name != mdlIdvName){
 					errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "independent variable " + mdlIdvName +" has no match in dataObj");
 				}
 			}
@@ -282,14 +282,14 @@ class MogValidator extends AbstractDeclarativeValidator {
 		if(isMogObject){
 			val mdlStmts = mdlObj.mdlPredictionVariables
 			var obj = dataObj
-			if(obj == null)
+			if(obj === null)
 				obj = designObj
 			
 			for(dataDose : obj?.getDosingVariables ?: Collections::emptyList){
 				val stmt = mdlStmts.findFirst[st|
 					if(st instanceof SymbolDefinition) st.name == dataDose.name else false
 				]
-				if(stmt == null){
+				if(stmt === null){
 					errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "dosing variable " + dataDose.name +" has no match in mdlObj");
 				}
 				else if(stmt.isMdlCompartmentMacro){
@@ -306,7 +306,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 	
 	def boolean isAssigned(Statement stmt){
 		switch(stmt){
-			EquationTypeDefinition: stmt.expression != null
+			EquationTypeDefinition: stmt.expression !== null
 			default: true
 		}
 	}
@@ -321,7 +321,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 		for(mdlStmt : mdlParamStatements){
 			if(mdlStmt instanceof SymbolDefinition){
 				val parStmt = priorObj.findMdlSymbolDefn(mdlStmt.name)
-				if(parStmt == null){
+				if(parStmt === null){
 					if(!mdlStmt.isAssigned) 
 						errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "parameter '" + mdlStmt.name +"' has no match in priorObj");
 				}
@@ -337,14 +337,14 @@ class MogValidator extends AbstractDeclarativeValidator {
 	
 	@Check
 	def validateStructuralParametersWithPrior(MclObject it){
-		if(isMogObject && priorObj != null){
+		if(isMogObject && priorObj !== null){
 			validateModelAndPriorParams(mdlObj.mdlStructuralParameters)
 		}
 	}
 	
 	@Check
 	def validateVariabilityParametersWithPrior(MclObject it){
-		if(isMogObject && priorObj != null){
+		if(isMogObject && priorObj !== null){
 			validateModelAndPriorParams(mdlObj.mdlVariabilityParameters)
 		}
 	}
@@ -357,11 +357,11 @@ class MogValidator extends AbstractDeclarativeValidator {
 		val (String, String) => void warningLambda = [
 					warningCode, errMsg| warning(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, warningCode, '')
 				]
-		if(isMogObject && paramObj != null){
+		if(isMogObject && paramObj !== null){
 			for(mdlStmt : mdlObj.mdlStructuralParameters){
 				if(mdlStmt instanceof SymbolDefinition){
 					val parStmt = paramObj.findMdlSymbolDefn(mdlStmt.name)
-					if(parStmt == null){
+					if(parStmt === null){
 						if(!mdlStmt.isAssigned) 
 							errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "parameter '" + mdlStmt.name +"' has no match in parObj");
 					}
@@ -387,11 +387,11 @@ class MogValidator extends AbstractDeclarativeValidator {
 		val (String, String) => void warningLambda = [
 					warningCode, errMsg| warning(errMsg, MdlPackage.eINSTANCE.mclObject_Blocks, warningCode, '')
 				]
-		if(isMogObject && paramObj != null){
+		if(isMogObject && paramObj !== null){
 			for(mdlStmt : mdlObj.mdlVariabilityParameters){
 				if(mdlStmt instanceof SymbolDefinition){
 					val parStmt = paramObj.findMdlSymbolDefn(mdlStmt.name)
-					if(parStmt == null){
+					if(parStmt === null){
 						if(!mdlStmt.isAssigned) 
 							errorLambda.apply(MdlValidator::MODEL_DATA_MISMATCH, "parameter '" + mdlStmt.name +"' has no match in parObj");
 					}
@@ -417,7 +417,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 		if(blk?.identifier == BlockDefinitionTable::MOG_OBJ_NAME){
 			val mogObj = EcoreUtil2.getContainerOfType(eContainer, MclObject)
 			val objType = firstAttributeList.getAttributeEnumValue('type')
-			if(findMdlObject(mogObj, name, objType) == null){
+			if(findMdlObject(mogObj, name, objType) === null){
 				error("the object '" + name + "' cannot be found",
 						MdlLibPackage.eINSTANCE.symbolDefinition_Name, MdlValidator::MCLOBJ_REF_UNRESOLVED, name)
 			}
@@ -465,7 +465,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 		val matchingVar = matchingVars.findFirst[
 			name == stmt.name
 		]
-		if(matchingVar == null){
+		if(matchingVar === null){
 			uninitLambda.apply(stmt.name, mdlObj.name)
 		}
 		else{
@@ -480,12 +480,12 @@ class MogValidator extends AbstractDeclarativeValidator {
 		if(isMogObject){
 			
 			val mObj = mdlObj
-			if(mObj != null){
+			if(mObj !== null){
 				for(mBlk : mObj.modelPredictionBlocks){
 					for(stmt : mBlk.statements){
 						if(stmt instanceof EquationTypeDefinition){
-							if(stmt.expression == null){
-								if(dataObj != null){
+							if(stmt.expression === null){
+								if(dataObj !== null){
 									val dObj = dataObj
 									checkInitialisingVars(stmt, dObj, dObj.dataVariableTypes, 
 										[s, o|
@@ -497,7 +497,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 											MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, s)
 									])
 								}
-								else if(designObj != null){
+								else if(designObj !== null){
 									val dObj = designObj
 									checkInitialisingVars(stmt, dObj, dObj.designVariableTypes, 
 										[s, o|
@@ -516,7 +516,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 								for(cmtStmt : stmt.statements){
 									if(cmtStmt instanceof ListDefinition){
 										if(cmtStmt.isCmtDosingMacro){
-											if(dataObj != null){
+											if(dataObj !== null){
 												val dObj = dataObj
 												checkInitialisingVars(cmtStmt, dObj, dObj.dataVariableTypes,
 													[s, o|
@@ -529,7 +529,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 													]
 												)
 											}
-											else if(designObj != null){
+											else if(designObj !== null){
 												val dObj = designObj
 												checkInitialisingVars(cmtStmt, dObj, dObj.designVariableTypes, 
 													[s, o|
@@ -548,7 +548,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 							else if(stmt.blkId.name == BlockDefinitionTable::MDL_DEQ_BLK){
 								for(cmtStmt : stmt.statements){
 									if(cmtStmt instanceof ListDefinition){
-										if(dataObj != null){
+										if(dataObj !== null){
 											val dObj = dataObj
 											checkDerivInitialised(cmtStmt, dObj, dObj.dataVariableTypes,
 												[s, o, d|
@@ -557,7 +557,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 												]
 											)
 										}
-										else if(designObj != null){
+										else if(designObj !== null){
 											val dObj = designObj
 											checkDerivInitialised(cmtStmt, dObj, dObj.designVariableTypes,
 												[s, o, d|
@@ -571,7 +571,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 							}
 						}
 						else if(stmt instanceof ListDefinition){
-							if(dataObj != null){
+							if(dataObj !== null){
 								val dObj = dataObj
 								checkDerivInitialised(stmt, dObj, dObj.dataVariableTypes,
 									[s, o, d|
@@ -580,7 +580,7 @@ class MogValidator extends AbstractDeclarativeValidator {
 									]
 								)
 							}
-							else if(designObj != null){
+							else if(designObj !== null){
 								val dObj = designObj
 								checkDerivInitialised(stmt, dObj, dObj.designVariableTypes,
 									[s, o, d|
@@ -606,12 +606,12 @@ class MogValidator extends AbstractDeclarativeValidator {
 				val matchingVar = matchingVars.findFirst[
 					name == stmt.name
 				]
-//				if(matchingVar == null){
+//				if(matchingVar === null){
 //					error("variable '" + stmt.name + "' in object '" + mObj.name + "' is not initialised",
 //							MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::SYMBOL_NOT_INITIALISED, stmt.name)
 //				}
 //				else{
-					if(matchingVar != null && !matchingVar.typeFor.underlyingType.isCompatible(stmt.typeFor.underlyingType)){
+					if(matchingVar !== null && !matchingVar.typeFor.underlyingType.isCompatible(stmt.typeFor.underlyingType)){
 						typeErrorLambda.apply(stmt.name, mObj.name, otherObject.name)
 //						error("variable '" + stmt.name +"' in object '" + mObj.name + "' has an inconsistent type with its match in '" + dObj.name + "'.",
 //							MdlPackage.eINSTANCE.mclObject_Name, MdlValidator::INCOMPATIBLE_TYPES, stmt.name)
@@ -624,17 +624,17 @@ class MogValidator extends AbstractDeclarativeValidator {
 	@Check
 	def validateMogComposition(MclObject it){
 		if(isMogObject){
-			if(mdlObj == null)
+			if(mdlObj === null)
 				error("A mdlObj is not defined in mogObj '" + name + "'.", MdlPackage::eINSTANCE.mclObject_Blocks, MdlValidator::MOGOBJ_MALFORMED)
-			if(taskObj == null)
+			if(taskObj === null)
 				error("A taskObj is not defined in mogObj '" + name + "'.", MdlPackage::eINSTANCE.mclObject_Blocks, MdlValidator::MOGOBJ_MALFORMED)
-			if(dataObj == null && designObj == null)
+			if(dataObj === null && designObj === null)
 				error("Neither a dataObj not a designObj. You must define one to make mogObj '" + name + "' valid.", MdlPackage::eINSTANCE.mclObject_Blocks, MdlValidator::MOGOBJ_MALFORMED)
-			if(dataObj != null && designObj != null)
+			if(dataObj !== null && designObj !== null)
 				error("Both a dataObj and a designObj defined in mogObj '" + name + "'. You can only use one.", MdlPackage::eINSTANCE.mclObject_Blocks, MdlValidator::MOGOBJ_MALFORMED)
-			if(paramObj == null && priorObj == null)
+			if(paramObj === null && priorObj === null)
 				error("Neither a paramObj not a priorObj. You must define one to make mogObj '" + name + "' valid.", MdlPackage::eINSTANCE.mclObject_Blocks, MdlValidator::MOGOBJ_MALFORMED)
-			if(paramObj != null && priorObj != null)
+			if(paramObj !== null && priorObj !== null)
 				error("Both a paramObj and a priorObj defined in mogObj '" + name + "'. You can only use one.", MdlPackage::eINSTANCE.mclObject_Blocks, MdlValidator::MOGOBJ_MALFORMED)
 		}
 	}

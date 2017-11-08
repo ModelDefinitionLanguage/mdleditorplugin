@@ -17,15 +17,15 @@ class StatementValidator extends AbstractDeclarativeValidator{
 	
 	@Check
 	def validateCatDefinitionUsedCorrectlyInStatement(CategoryValueDefinition e){
-		if(EcoreUtil2.getContainerOfType(e, EnumerationDefinition) != null && e.mappedTo != null){
+		if(EcoreUtil2.getContainerOfType(e, EnumerationDefinition) !== null && e.mappedTo !== null){
 			error("Cannot use category mappings in a statement.",
 					MdlPackage.eINSTANCE.categoryValueDefinition_MappedTo, MdlValidator::INCORRECT_STATEMENT_CONTEXT, e.name)
 		}
-		else if(e.isMappingMandatory && e.mappedTo == null){
+		else if(e.isMappingMandatory && e.mappedTo === null){
 			error("A category definition must have a mapping in this context.",
 					MdlPackage.eINSTANCE.categoryValueDefinition_Name, MdlValidator::INCORRECT_LIST_CONTEXT, e.name)
 		}
-		else if(e.isMappingForbidden && e.mappedTo != null){
+		else if(e.isMappingForbidden && e.mappedTo !== null){
 			error("A category definition cannot have a mapping in this context.",
 					MdlPackage.eINSTANCE.categoryValueDefinition_Name, MdlValidator::INCORRECT_LIST_CONTEXT, e.name)
 		}

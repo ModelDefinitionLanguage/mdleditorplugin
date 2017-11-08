@@ -129,11 +129,11 @@ public class TypeSystemProvider {
 			// check to see if amy non refs present. If so resulting array type will be non-ref
 			if(!(origType instanceof ReferenceTypeInfo)) allRefs = false  
 			val exprType = origType.underlyingType // just in case it is a reference
-			if(refType == null)
+			if(refType === null)
 				refType = exprType
 			else{
 				val promotedType = refType.getRichestPromotableType(exprType)
-				if(promotedType != null && refType != promotedType)
+				if(promotedType !== null && refType != promotedType)
 					refType = promotedType
 			}
 		}
@@ -159,16 +159,16 @@ public class TypeSystemProvider {
 	
 	
 	private def isSingleVectorElement(IndexSpec it){
-		rowIdx != null && rowIdx.begin != null && rowIdx.end == null
+		rowIdx !== null && rowIdx.begin !== null && rowIdx.end === null
 	}
 	
 	private def isSingleMatrixElement(IndexSpec it){
-		rowIdx != null && rowIdx.begin != null && rowIdx.end == null &&
-		colIdx != null && colIdx.begin != null && colIdx.end == null
+		rowIdx !== null && rowIdx.begin !== null && rowIdx.end === null &&
+		colIdx !== null && colIdx.begin !== null && colIdx.end === null
 	}
 	
 	private def TypeInfo getTypeOfSymbolRef(SymbolReference e){
-		if(e.indexExpr == null)
+		if(e.indexExpr === null)
 			e.ref.typeFor.makeReference
 		else{
 			val t = e.ref.typeFor
@@ -200,8 +200,8 @@ public class TypeSystemProvider {
 			FunctionDefnBody:
 				ref?.funcSpec?.typeInfo.makeReference ?: UNDEFINED_TYPE
 			EquationDefinition:{
-				if(ref.typeSpec != null){
-					if(ref.typeSpec.functionSpec != null){
+				if(ref.typeSpec !== null){
+					if(ref.typeSpec.functionSpec !== null){
 						// need to get the function return type
 						ref?.typeSpec?.functionSpec?.typeInfo.makeReference ?: UNDEFINED_TYPE
 					}
@@ -224,7 +224,7 @@ public class TypeSystemProvider {
 
 	
 	def dispatch TypeInfo typeFor(Expression e){
-		if(e == null) return UNDEFINED_TYPE 
+		if(e === null) return UNDEFINED_TYPE 
 		switch(e){
 			SymbolReference:
 				e.typeOfSymbolRef
@@ -258,16 +258,16 @@ public class TypeSystemProvider {
 	def dispatch TypeInfo typeFor(EnumExpression e){
 //		var Object parent = EcoreUtil2.getContainerOfType(e, BuiltinFunctionCall)
 		var Object parent = EcoreUtil2.getContainerOfType(e, SymbolReference)
-		if(parent == null){
+		if(parent === null){
 			parent = EcoreUtil2.getContainerOfType(e, SubListExpression)
 		}
-		if(parent == null){
+		if(parent === null){
 			parent = EcoreUtil2.getContainerOfType(e, ListDefinition)
 		}
-		if(parent == null){
+		if(parent === null){
 			parent = EcoreUtil2.getContainerOfType(e, AnonymousListStatement)
 		}
-		if(parent == null){
+		if(parent === null){
 			parent = EcoreUtil2.getContainerOfType(e, PropertyStatement)
 		}
 		switch(parent){
@@ -304,13 +304,13 @@ public class TypeSystemProvider {
 	
 	def dispatch TypeInfo typeFor(ValuePair vp){
 		var Object parent = EcoreUtil2.getContainerOfType(vp, SymbolReference)
-		if(parent == null){
+		if(parent === null){
 			parent = EcoreUtil2.getContainerOfType(vp, SubListExpression)
 		}
-		if(parent == null){
+		if(parent === null){
 			parent = EcoreUtil2.getContainerOfType(vp, AttributeList)
 		}
-		if(parent == null){
+		if(parent === null){
 			parent = EcoreUtil2.getContainerOfType(vp, PropertyStatement)
 		}
 		switch(parent){
@@ -335,7 +335,7 @@ public class TypeSystemProvider {
 		val retVal = switch(sd){
 			EquationDefinition:
 				{
-					if(sd.expression != null){
+					if(sd.expression !== null){
 						// type inferred from assigned type
 						if(sd.hasNonDerivCycle([], [!it.isDerivativeDefinition]))
 							// can't infer type if cycle in definition
@@ -346,8 +346,8 @@ public class TypeSystemProvider {
 					else{
 						// not assigned value so defaults to REAL unless
 						// an explicit type is declared
-						if(sd.typeSpec != null){
-							if(sd.typeSpec.functionSpec != null){
+						if(sd.typeSpec !== null){
+							if(sd.typeSpec.functionSpec !== null){
 								// need to get the function return type
 								sd.typeSpec.functionSpec.returnType.typeInfo
 							}
@@ -363,7 +363,7 @@ public class TypeSystemProvider {
 				typeTable.get(sd.eClass)
 			RandomVariableDefinition:
 				{
-					if(sd.distn != null){
+					if(sd.distn !== null){
 						if(sd.hasNonDerivCycle([], [!it.isDerivativeDefinition]))
 							// can't infer type if cycle in definition
 							UNDEFINED_TYPE
@@ -387,7 +387,7 @@ public class TypeSystemProvider {
 					switch(defn){
 						CategoricalDefinitionExpr:{
 							val catType = new CategoryTypeInfo(sd.name, defn.getCategoryNames)
-							if(sd.distn != null)
+							if(sd.distn !== null)
 								if(sd.distn.typeFor.underlyingType == PMF_TYPE)
 									new RandomVariableTypeInfo(catType)
 								else UNDEFINED_TYPE
@@ -410,17 +410,17 @@ public class TypeSystemProvider {
 	
 //	def dispatch TypeInfo typeFor(TypeSpec it){
 		
-//		if(elementType == null && cellType == null){
+//		if(elementType === null && cellType === null){
 //			typeFromSpecName(typeName.name)
 //		}
-//		else if(elementType != null){
+//		else if(elementType !== null){
 //			if(typeName == '::vector'){
 //				val elType = elementType.typeFor
 //				elType.makeVector
 //			}
 //			else UNDEFINED_TYPE
 //		}
-//		else if(cellType != null){
+//		else if(cellType !== null){
 //			if(typeName == '::matrix'){
 //				val elType = cellType.typeFor
 //				elType.makeMatrix
@@ -450,7 +450,7 @@ public class TypeSystemProvider {
 		if(sd instanceof CategoryValueDefinition){
 			val enumDefn = EcoreUtil2.getContainerOfType(sd.eContainer, SymbolDefinition)
 			val catDefn = EcoreUtil2.getContainerOfType(sd.eContainer, CategoricalDefinitionExpr)
-			if(enumDefn != null && catDefn != null){
+			if(enumDefn !== null && catDefn !== null){
 				val catType = enumDefn.typeFor
 				return switch(catType){
 					CategoryTypeInfo:
@@ -492,7 +492,7 @@ public class TypeSystemProvider {
 		when.forEach[
 			valueList.add(it.value)
 		]
-		if(otherwise != null)
+		if(otherwise !== null)
 			valueList.add(otherwise)
 		valueList.commonListType
 	}
@@ -502,7 +502,7 @@ public class TypeSystemProvider {
 		ifelseClause.forEach[
 			valueList.add(value)
 		]
-		if(elseClause != null)
+		if(elseClause !== null)
 			valueList.add(elseClause.value)
 		valueList.commonListType
 	}
@@ -514,7 +514,7 @@ public class TypeSystemProvider {
 			val listType = att.typeFor
 			// check if ListTypeInfo if not then no common type
 			if(listType instanceof ListTypeInfo){
-				if(superType == null){
+				if(superType === null){
 					// expect to initialise this on first iteration
 					// use super type if there is one if not then use list type
 					superType = listType.superType ?: listType
@@ -544,7 +544,7 @@ public class TypeSystemProvider {
 		for(att : attributes){
 			val expr = att.expression
 			switch(expr){
-				EnumExpression case expr.catDefn != null:
+				EnumExpression case expr.catDefn !== null:
 					if(expr.catDefn instanceof CategoricalDefinitionExpr){
 						val catNames = (expr.catDefn as CategoricalDefinitionExpr).getCategoryNames
 						if(listDefn.listType instanceof CategoryListTypeInfo){

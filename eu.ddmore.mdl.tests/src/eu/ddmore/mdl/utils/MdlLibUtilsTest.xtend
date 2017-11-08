@@ -54,7 +54,7 @@ class MdlLibUtilsTest {
 		typeDefn.name = 'Vector' 
 		typeDefn.typeClass = TypeClass.VECTOR
 		spec.typeName = typeDefn
-		if(elementSpec != null){
+		if(elementSpec !== null){
 			spec.elementType =  elementSpec
 		}
 		spec
@@ -66,7 +66,7 @@ class MdlLibUtilsTest {
 		typeDefn.name = 'Reference' 
 		typeDefn.typeClass = TypeClass.REFERENCE
 		spec.typeName = typeDefn
-		if(elementSpec != null){
+		if(elementSpec !== null){
 			spec.elementType =  elementSpec
 		}
 		spec
@@ -78,7 +78,7 @@ class MdlLibUtilsTest {
 		typeDefn.name = 'RandomVariable' 
 		typeDefn.typeClass = TypeClass.RV
 		spec.typeName = typeDefn
-		if(elementSpec != null){
+		if(elementSpec !== null){
 			spec.elementType =  elementSpec
 		}
 		spec
@@ -90,7 +90,7 @@ class MdlLibUtilsTest {
 		typeDefn.name = 'Matrix' 
 		typeDefn.typeClass = TypeClass.MATRIX
 		spec.typeName = typeDefn
-		if(cellSpec != null){
+		if(cellSpec !== null){
 			spec.cellType =  cellSpec
 		}
 		spec

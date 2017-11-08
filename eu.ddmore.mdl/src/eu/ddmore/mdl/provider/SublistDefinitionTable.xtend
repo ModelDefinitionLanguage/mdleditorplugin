@@ -43,7 +43,7 @@ class SublistDefinitionTable {
 //	static var SublistDefinitionTable anInstance
 	
 //	public static def getInstance(){
-//		if(anInstance == null){
+//		if(anInstance === null){
 //			anInstance = new SublistDefinitionTable
 //		}
 //		anInstance

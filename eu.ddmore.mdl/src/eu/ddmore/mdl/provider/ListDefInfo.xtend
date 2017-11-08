@@ -99,14 +99,14 @@ class ListDefInfo {
 
 
 	def isCatMappingMandatory(String attName){
-		return attName == catAttribute && catMappingType != null && catMappingMandatory
+		return attName == catAttribute && catMappingType !== null && catMappingMandatory
 	}
 	
 	def isCatMappingForbidden(String attName){
-		return attName == catAttribute && catMappingType == null || (catMappingType != null && !catMappingMandatory)
+		return attName == catAttribute && catMappingType === null || (catMappingType !== null && !catMappingMandatory)
 	}
 	
 	def isCatMappingPossible(String attName){
-		return attName == catAttribute && catMappingType != null
+		return attName == catAttribute && catMappingType !== null
 	}
 }

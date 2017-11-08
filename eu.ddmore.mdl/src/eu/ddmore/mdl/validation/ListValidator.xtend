@@ -38,20 +38,20 @@ class ListValidator extends AbstractMdlValidator {
 	@Check
 	def validateInReferenceCorrect(MappingPair it){
 		val attList = EcoreUtil2.getContainerOfType(eContainer, AttributeList)
-		if(attList != null){
+		if(attList !== null){
 			// check use type
 			val useVal = attList.getAttributeEnumValue(ListDefinitionTable::USE_ATT)
-			if(useVal != null){
+			if(useVal !== null){
 //				val expectedSrcType = MappingToColumn.get(useVal) 
 				val expectedSrcTypeName = MappingToColumn.get(useVal) 
 				val blk = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 				val expectedSrcType = blk.blkId.getListDefinitionByTypeName(expectedSrcTypeName)
 				val srcColType = srcColumn?.ref?.typeFor
-//				if(expectedSrcType != null && srcColType != null && !expectedSrcType.isCompatible(srcColType)){
+//				if(expectedSrcType !== null && srcColType !== null && !expectedSrcType.isCompatible(srcColType)){
 //					error("Expected source column of type '" + expectedSrcType.typeName + "', but was '" + srcColType.typeName + "'.",
 //						MdlPackage.eINSTANCE.mappingPair_SrcColumn, MdlValidator::INCOMPATIBLE_TYPES, srcColType.typeName)
 //				}
-				if(expectedSrcType != null && srcColType != null && !expectedSrcType.isArgumentCompatible(srcColType)){
+				if(expectedSrcType !== null && srcColType !== null && !expectedSrcType.isArgumentCompatible(srcColType)){
 					error("Expected source column of type '" + expectedSrcType.typeName + "', but was '" + srcColType.typeName + "'.",
 						MdlPackage.eINSTANCE.mappingPair_SrcColumn, MdlValidator::INCOMPATIBLE_TYPES, srcColType.typeName)
 				}
@@ -94,13 +94,13 @@ class ListValidator extends AbstractMdlValidator {
 	@Check
 	def validateAttributeList(AttributeList it){
 		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
-		if(owningBlock != null && owningBlock.blkId != null){
+		if(owningBlock !== null && owningBlock.blkId !== null){
 			if(owningBlock.blkId.isKeyAttributeDefined(it)){
 				val blkDefn = BlockListDefinition::create(owningBlock)
 				var otherError = false
 				if(!blkDefn.requiresNoKeyAttribute){
 					if(blkDefn.requiresAttributeMapping){
-						if(owningBlock.blkId.getKeyAttribute(it) == null){
+						if(owningBlock.blkId.getKeyAttribute(it) === null){
 							error("Attribute list does not have a recognised key value.",
 								MdlPackage.eINSTANCE.attributeList_Attributes, MdlValidator::LIST_KEY_VAL_UNRECOGNISED, "")
 							otherError = true
@@ -108,7 +108,7 @@ class ListValidator extends AbstractMdlValidator {
 					}
 					else{
 						val keyVal = getAttributeEnumValue(owningBlock.blkId.keyAttName)
-						if(blkDefn.getListDefnByValue(keyVal) == null){
+						if(blkDefn.getListDefnByValue(keyVal) === null){
 							error("Attribute list key value '" + keyVal + "' is not recognised.",
 								MdlPackage.eINSTANCE.attributeList_Attributes, MdlValidator::LIST_KEY_VAL_UNRECOGNISED, "")
 							otherError = true
@@ -119,7 +119,7 @@ class ListValidator extends AbstractMdlValidator {
 					unusedMandatoryAttributes.forEach[name| error("mandatory attribute '" + name + "' is missing in list.",
 						MdlPackage.eINSTANCE.attributeList_Attributes, MdlValidator::MANDATORY_LIST_ATT_MISSING, name) ]
 			}		
-			else if(owningBlock.blkId != null && owningBlock.blkId.listType == null){
+			else if(owningBlock.blkId !== null && owningBlock.blkId.listType === null){
 				error("mandatory key attribute is missing in list.",
 					MdlPackage.eINSTANCE.attributeList_Attributes, MdlValidator::MANDATORY_LIST_KEY_ATT_MISSING, "")
 			}
@@ -147,7 +147,7 @@ class ListValidator extends AbstractMdlValidator {
 
 	@Check
 	def validateCategoryDefinitionWellFormed(EnumPair parentAt){
-		if(parentAt != null)
+		if(parentAt !== null)
 			checkCategoryDefinitionWellFormed(parentAt,
 				[error("Unexpected category definition.", 
 					MdlPackage::eINSTANCE.valuePair_Expression, MdlValidator::INVALID_CATEGORY_DEFINITION, "") ],
@@ -158,17 +158,17 @@ class ListValidator extends AbstractMdlValidator {
 		
 	def checkCategoryDefinitionWellFormed(EnumPair ep, () => void unexpectedCatDefnErrorLambda, () => void missingCatErrorLambda){
 		val attList = EcoreUtil2.getContainerOfType(ep.eContainer, AttributeList)
-		if(attList != null){
+		if(attList !== null){
 			val listDefn = attList.listDefinition
-			if(listDefn != null){
+			if(listDefn !== null){
 //				val attDefn = listDefn?.getAttributeDefinition(ep.argumentName)
 				val mappingExpr = ep.expression
-				if(mappingExpr instanceof EnumExpression){//} && attDefn != null){
+				if(mappingExpr instanceof EnumExpression){//} && attDefn !== null){
 //					val mappingExpr = ep.expression as EnumExpression
-					if(listDefn.isCatMappingPossible(ep.argumentName) && mappingExpr.catDefn == null){
+					if(listDefn.isCatMappingPossible(ep.argumentName) && mappingExpr.catDefn === null){
 						missingCatErrorLambda.apply
 					}
-					else if(!listDefn.isCatMappingPossible(ep.argumentName) && mappingExpr.catDefn != null){
+					else if(!listDefn.isCatMappingPossible(ep.argumentName) && mappingExpr.catDefn !== null){
 						unexpectedCatDefnErrorLambda.apply
 					}
 				}

@@ -17,7 +17,7 @@ class ListTypeInfo extends AbstractListTypeInfo{
 	
 	new(String name, TypeInfo secondaryType, ListSuperTypeInfo superType){
 		super(name, secondaryType)
-		if(superType != null){
+		if(superType !== null){
 			if(superType instanceof ListSuperTypeInfo){
 				this.superType = superType
 			}
@@ -42,9 +42,9 @@ class ListTypeInfo extends AbstractListTypeInfo{
 	}
 	
 	override matchesList(AbstractListTypeInfo other) {
-		other != null
+		other !== null
 		 	&& (name == other.name
-				|| (listSuperType != null
+				|| (listSuperType !== null
 					&& listSuperType == other.listSuperType)) 
 	}
 }

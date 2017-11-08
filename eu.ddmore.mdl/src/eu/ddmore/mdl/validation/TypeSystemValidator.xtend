@@ -138,7 +138,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 		
 	@Check
 	def validateOtherwiseCompatibleTypes(PiecewiseExpression e){
-		if(e.otherwise != null){
+		if(e.otherwise !== null){
 			checkExpectedReal(e.otherwise, typeError(MdlPackage::eINSTANCE.piecewiseExpression_Otherwise))
 		}
 	}
@@ -167,7 +167,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	@Check
 	def validateCompatibleTypes(CatValRefMapping e){
 		var parentAt = EcoreUtil2.getContainerOfType(e, EnumPair)
-		if(parentAt != null)
+		if(parentAt !== null)
 			checkWhenOperator(parentAt, e.catRef, e.mappedTo, typeError(MdlPackage::eINSTANCE.catValRefMapping_CatRef),
 				typeError(MdlPackage::eINSTANCE.catValRefMapping_MappedTo)
 			)
@@ -176,7 +176,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	@Check
 	def validateCompatibleTypes(CategoryValueDefinition e){
 		var parentAt = EcoreUtil2.getContainerOfType(e, EnumPair)
-		if(parentAt != null)
+		if(parentAt !== null)
 			checkWhenOperator(parentAt, e, typeError(MdlPackage::eINSTANCE.categoryValueDefinition_Name),
 				typeError(MdlPackage::eINSTANCE.categoryValueDefinition_MappedTo)
 			)
@@ -185,7 +185,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 //	@Check
 //	def validateCompatibleTypes(EquationDefinition e){
 //		// only check if there is an RHS to check 
-//		if(e.expression != null)
+//		if(e.expression !== null)
 //			if(e.isVector)
 //				checkExpectedVector(e.expression, typeError(MdlPackage::eINSTANCE.equationTypeDefinition_Expression))
 //			else if(e.isMatrix)
@@ -281,7 +281,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 
 	@Check
 	def validateCompatibleTypes(RandomVariableDefinition e){
-		if(e.distn != null){
+		if(e.distn !== null){
 			val stmtType = e.typeFor
 			if(stmtType.isRandomVariable || stmtType.isVector || stmtType.isMatrix)
 				checkRandomVariableAssignmentTypes(stmtType, e.distn, typeError(MdlPackage::eINSTANCE.randomVariableDefinition_Distn))
@@ -312,7 +312,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	@Check
 	def validateCompatibleMatrixElement(MatrixElement e){
 		val vect = EcoreUtil2.getContainerOfType(e.eContainer, MatrixLiteral)
-		if(vect != null){
+		if(vect !== null){
 			val vectType = vect.typeFor
 			val exprType = e.typeFor
 			if(!vectType.isCompatibleElement(exprType)){
@@ -324,12 +324,12 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	
 	@Check
 	def validateIndexSpecType(IndexRange it){
-		if(begin != null)
+		if(begin !== null)
 			checkExpectedIntl(begin, [e, a|
 								error("Index value must be an 'Int' type, but was '" + a.typeName + "'.",
 								MdlPackage.eINSTANCE.indexRange_Begin, MdlValidator::INCOMPATIBLE_TYPES)
 								])
-		if(end != null)
+		if(end !== null)
 			checkExpectedIntl(begin, [e, a|
 								error("Index value must be an 'Int' type, but was '" + a.typeName + "'.",
 								MdlPackage.eINSTANCE.indexRange_End, MdlValidator::INCOMPATIBLE_TYPES)
@@ -391,12 +391,12 @@ class TypeSystemValidator extends AbstractMdlValidator {
 
 	@Check
 	def validateTypeSpecWellFormed(TypeSpec it){
-		if(typeName.name == TypeDefinitionProvider::FUNCTION_TYPE && functionSpec == null){
+		if(typeName.name == TypeDefinitionProvider::FUNCTION_TYPE && functionSpec === null){
 			error("You must define a function specification when using the type name 'Function'.",
 					MdlLibPackage.eINSTANCE.typeSpec_TypeName, 
 					MdlValidator::MALFORMED_TYPE_SPEC, typeName.name)
 		}
-		if(typeName.name != TypeDefinitionProvider::FUNCTION_TYPE && functionSpec != null){
+		if(typeName.name != TypeDefinitionProvider::FUNCTION_TYPE && functionSpec !== null){
 			error("You must use the type name 'Function' to define a function specification.",
 					MdlLibPackage.eINSTANCE.typeSpec_TypeName, 
 					MdlValidator::MALFORMED_TYPE_SPEC, typeName.name)
@@ -499,7 +499,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	def checkWhenOperator(EnumPair at, CategoryValueReference lhs, Expression rhs,  (TypeInfo, TypeInfo) => void leftErrorLambda,
 				(TypeInfo, TypeInfo) => void rightErrorLambda){
 		checkExpectedEnumType(lhs, leftErrorLambda)
-		if(rhs != null){
+		if(rhs !== null){
 			validateCategoricalMappingType(at, rhs, rightErrorLambda)
 //			val attList = at.eContainer as AttributeList
 //			val listDefn = attList.matchingListDefn
@@ -514,7 +514,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 		if(actualType.typeClass != TypeInfoClass.CategoryValue){
 			leftErrorLambda.apply(new GeneralCategoryTypeInfo, actualType)
 		}
-		if(catValDefn.mappedTo != null){
+		if(catValDefn.mappedTo !== null){
 			validateCategoricalMappingType(at, catValDefn.mappedTo, rightErrorLambda)
 //			val attList = at.eContainer as AttributeList
 //			val listDefn = attList.matchingListDefn
@@ -579,7 +579,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 
 	def checkAttributeTyping(AttributeList attList, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda, (TypeInfo) => void rvErrorLambda){
 		val listDefn = attList.listDefinition
-		if(listDefn != null && at != null){
+		if(listDefn !== null && at !== null){
 			val attType = listDefn.getAttributeType(at.argumentName)
 			checkValuePairTyping(at, attType, errorLambda, rvErrorLambda)
 		}
@@ -629,7 +629,7 @@ class TypeSystemValidator extends AbstractMdlValidator {
 	def checkSublistAttributeTyping(SubListExpression it, ValuePair at, (TypeInfo, TypeInfo) => void errorLambda, (TypeInfo) => void rvErrorLambda){
 		val subListDefn = findSublistMatch
 
-		if(subListDefn != null){
+		if(subListDefn !== null){
 			val attDefn = subListDefn.attributes.findFirst[name == at.argumentName]
 			checkValuePairTyping(at, attDefn.attType, errorLambda, rvErrorLambda)
 //			checkArgumentMatchesAndExpression(attDefn.attType, at.expression, errorLambda)

@@ -61,7 +61,7 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 					val s = input.EObjectOrProxy
 //					if(s instanceof SymbolDefinition){
 						val sOwningObj = s.eContainer.getContainerOfType(MclObject)
-						if(sOwningObj != null){
+						if(sOwningObj !== null){
 							if(sOwningObj == owningObj){
 								if(expectedType.isCompatible(s.typeFor)){
 									true
@@ -102,7 +102,7 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 //	override complete_IS(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 //		var node = context.lastCompleteNode
 //		val owningBlock = EcoreUtil2.getContainerOfType(model, BlockStatement) 
-//		while(node != null && owningBlock != null){
+//		while(node !== null && owningBlock !== null){
 //			val nodeTxt = node.text
 //			val matchingAtts = owningBlock.getAllMatchingListDefns(nodeTxt)
 //			if(matchingAtts.exists[attType.typeClass == TypeInfoClass.Builtin ]){
@@ -118,7 +118,7 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 //	override complete_ASSIGN(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 //		var node = context.lastCompleteNode
 //		val owningBlock = EcoreUtil2.getContainerOfType(model, BlockStatement) 
-//		while(node != null && owningBlock != null){
+//		while(node !== null && owningBlock !== null){
 //			val nodeTxt = node.text
 //			val matchingAtts = owningBlock.getAllMatchingListDefns(nodeTxt)
 //			if(matchingAtts.exists[attType.typeClass != TypeInfoClass.Builtin ]){
@@ -146,7 +146,7 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 		if(parentBlock.blkId.keyAttName == model.argumentName){
 			// this is the key so need to get the type in a different way
 			val firstKeyMapping =  parentBlock.blkId.listTypeMappings.head
-			if(firstKeyMapping != null){
+			if(firstKeyMapping !== null){
 				// there is a mapping so use it to 
 				val enumVal = firstKeyMapping.attDefn
 				// get the type for the specific enum
@@ -177,17 +177,17 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 	override completeEnumPair_Expression(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		val listParent = model.getContainerOfType(AttributeList)
 		if(model instanceof EnumPair){
-			if(listParent != null){
+			if(listParent !== null){
 				createListEnumProposal(model, context, acceptor)
 			}
 			else{
 				val funcParent = model.getContainerOfType(SymbolReference)
-				if(funcParent != null){
+				if(funcParent !== null){
 						createFuncEnumProposal(funcParent, model, context, acceptor)
 				}
 				else{
 					val propParent = model.getContainerOfType(PropertyStatement)
-					if(propParent != null){
+					if(propParent !== null){
 						createPropertyEnumProposal(model, context, acceptor)
 					}
 				}
@@ -222,7 +222,7 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 	
 	override completeBlockStatement_BlkId(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		val parent = getParentBlock(model)
-		if(parent != null){
+		if(parent !== null){
 			val BlockContainer container = switch(parent){
 				MclObject:
 					parent.objId
@@ -234,7 +234,7 @@ class MdlProposalProvider extends AbstractMdlProposalProvider {
 			val Predicate<IEObjectDescription> filter = new Predicate<IEObjectDescription>(){
 				
 				override apply(IEObjectDescription input) {
-					if(container != null)
+					if(container !== null)
 						container.canContainBlock(input.name.lastSegment)
 					else false						
 				}

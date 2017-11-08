@@ -8,7 +8,7 @@ class RandomVariableTypeInfo extends TypeInfo {
 	val TypeInfo rvType 
 	
 	new(TypeInfo rvType){
-		Preconditions.checkArgument(rvType != null && rvType.class != RandomVariableTypeInfo)
+		Preconditions.checkArgument(rvType !== null && rvType.class != RandomVariableTypeInfo)
 		this.rvType = rvType
 	}
 	
@@ -25,7 +25,7 @@ class RandomVariableTypeInfo extends TypeInfo {
 	}
 	
 	override isCompatible(TypeInfo otherType) {
-		if(otherType != null){
+		if(otherType !== null){
 			switch(otherType){
 				RandomVariableTypeInfo:
 					this.rvType.isCompatible(otherType.rvType)
@@ -71,7 +71,7 @@ class RandomVariableTypeInfo extends TypeInfo {
 
 	override int hashCode() {
 	    val int prime = 31
-	    var result = prime + if(this.rvType== null)  0 else this.rvType.hashCode()
+	    var result = prime + if(this.rvType=== null)  0 else this.rvType.hashCode()
 	    result
 	}
 }

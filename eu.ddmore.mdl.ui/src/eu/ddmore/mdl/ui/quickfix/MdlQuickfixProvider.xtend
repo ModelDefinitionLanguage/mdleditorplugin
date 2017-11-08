@@ -28,7 +28,7 @@ class MdlQuickfixProvider extends DefaultQuickfixProvider {
 			val xtextDoc = context.xtextDocument
 			val adapt = new FindReplaceDocumentAdapter(xtextDoc)
 			val rgn = adapt.find(issue.offset, '=', false, true, false, false)
-			if(rgn != null) adapt.replace('is', false)
+			if(rgn !== null) adapt.replace('is', false)
 		]
 	}
 }

@@ -30,7 +30,7 @@ class PrimitiveTypeInfo extends TypeInfo{
 	}
 	
 	override boolean isCompatible(TypeInfo otherType){
-		if(otherType != null){
+		if(otherType !== null){
 			// use underlying type in case it is a reference 
 //			val otherType = other.underlyingType
 			switch(otherType){
@@ -51,7 +51,7 @@ class PrimitiveTypeInfo extends TypeInfo{
 	
 	static def isPrimitiveCompatible(TypeInfoClass thisType, TypeInfoClass otherType){
 		val compType = compatibleTypes?.get(thisType)
-		if(compType != null)
+		if(compType !== null)
 			// check the underlying type in case this is a reference or some other form of indirection
 			compType.contains(otherType)
 		else false
@@ -99,7 +99,7 @@ class PrimitiveTypeInfo extends TypeInfo{
 
 	override int hashCode() {
 	    val int prime = 31
-	    var result = prime + if(this.typeClass == null)  0 else this.typeClass.hashCode()
+	    var result = prime + if(this.typeClass === null)  0 else this.typeClass.hashCode()
 	    result
 	}
 

@@ -76,8 +76,8 @@ class CategoryValueTypeInfo extends TypeInfo {
 
 	override int hashCode() {
     	val prime = 31;
-    	var result = prime + if(this.owningCategory== null)  0 else this.owningCategory.hashCode()
-    	result = prime * result + if(this.valueName== null)  0 else this.valueName.hashCode()
+    	var result = prime + if(this.owningCategory=== null)  0 else this.owningCategory.hashCode()
+    	result = prime * result + if(this.valueName=== null)  0 else this.valueName.hashCode()
     	return result;
 	}
 }

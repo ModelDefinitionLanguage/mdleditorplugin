@@ -90,7 +90,7 @@ class MdlTemplateProposalProvider extends DefaultTemplateProposalProvider {
 		val TemplateContextType contextType = templateContext.getContextType();
 		val obj = EcoreUtil2.getContainerOfType(context.currentModel, MclObject)
 		val lib = obj.libraryForObject
-		if(lib != null){
+		if(lib !== null){
 			ts.libDefns = lib
 			val templates = ts.getTemplates(contextType.getId());
 			var List<TypeInfo> expectedTypes = Collections.emptyList

@@ -37,7 +37,7 @@ class PropertyDefinitionProvider {
 		propDefns.forEach([attNames.add(propRef.name)])
 		
 //		val List<AttributeDefn> propDefns = propertyDefns.get(blkName)
-//		if(propDefns != null) {
+//		if(propDefns !== null) {
 //			propDefns.forEach([AttributeDefn at|attNames.add(at.name)])
 //		}
 		attNames
@@ -68,12 +68,12 @@ class PropertyDefinitionProvider {
 
 
 	def isPropertyKnown(ValuePair it){
-		matchingPropertyDefn != null
+		matchingPropertyDefn !== null
 	}
 
 
 	def isPropertyMandatory(ValuePair it){
-		if(matchingPropertyDefn != null) !matchingPropertyDefn.isOptional else false
+		if(matchingPropertyDefn !== null) !matchingPropertyDefn.isOptional else false
 	}
 
 	def unusedMandatoryProperties(BlockStatement it){

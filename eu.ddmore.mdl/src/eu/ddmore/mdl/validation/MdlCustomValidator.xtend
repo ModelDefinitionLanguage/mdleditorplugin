@@ -90,8 +90,8 @@ class MdlCustomValidator extends AbstractMdlValidator {
 	def validateCategoryRelations(RelationalExpression it){
 		val leftType = leftOperand?.typeFor
 		val rightType = rightOperand?.typeFor
-		if((leftType != null && leftType.typeClass == TypeInfoClass.Category)  || 
-			(rightType != null && rightType.typeClass == TypeInfoClass.Category)){
+		if((leftType !== null && leftType.typeClass == TypeInfoClass.Category)  || 
+			(rightType !== null && rightType.typeClass == TypeInfoClass.Category)){
 			error("Cannot use inequality operators with categorical types", MdlPackage::eINSTANCE.relationalExpression_Feature,
 				MdlValidator::INVALID_ENUM_RELATION_OPERATOR, feature)
 		}
@@ -99,9 +99,9 @@ class MdlCustomValidator extends AbstractMdlValidator {
 
 	def checkNonTransformedIndiv(EquationDefinition transDefn, EnumPair transArg, () => void incompatibleTransforms) {
 		val call = EcoreUtil2.getContainerOfType(transArg.eContainer, SymbolReference)
-		if(call != null && transDefn != null && transArg.argumentName == 'trans'){
+		if(call !== null && transDefn !== null && transArg.argumentName == 'trans'){
 			val transExpr = transArg.expression
-			if(transExpr != null && isValidTransformFunction(transExpr.enumValue) && transOnBothFuncs.contains(call.func)){
+			if(transExpr !== null && isValidTransformFunction(transExpr.enumValue) && transOnBothFuncs.contains(call.func)){
 				incompatibleTransforms.apply
 			}
 		}
@@ -126,7 +126,7 @@ class MdlCustomValidator extends AbstractMdlValidator {
 		switch(expr){
 			SymbolReference case(transOnBothFuncs.contains(expr.func)):{
 				val transExpr = expr.getArgumentEnumValue('trans')
-				if(transExpr != null) transExpr.isValidTransformFunction else false
+				if(transExpr !== null) transExpr.isValidTransformFunction else false
 			}
 				
 			SymbolReference case(transOnLHSFuncs.contains(expr.func)):
@@ -138,9 +138,9 @@ class MdlCustomValidator extends AbstractMdlValidator {
 	
 	def checkConsistentLinearTransformation(TransformedDefinition transDefn, EnumPair transArg, (String, String) => void incompatibleTransforms) {
 		val call = EcoreUtil2.getContainerOfType(transArg.eContainer, SymbolReference)
-		if(call != null && transDefn != null && transArg.argumentName == 'trans'){
+		if(call !== null && transDefn !== null && transArg.argumentName == 'trans'){
 			val transExpr = transArg.expression
-			if(transExpr != null && transOnBothFuncs.contains(call.func)){
+			if(transExpr !== null && transOnBothFuncs.contains(call.func)){
 				val rhsTrans = transExpr.enumValue
 				if(transDefn.transform?.name != rhsTrans){
 					incompatibleTransforms.apply(transDefn.transform.name, rhsTrans)
@@ -162,7 +162,7 @@ class MdlCustomValidator extends AbstractMdlValidator {
 		val block = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 		if(block.identifier == BlockDefinitionTable::DIV_BLK_NAME){
 			val enumVal = getAttributeEnumValue(ListDefinitionTable::USE_ATT)
-			if(enumVal != null && UseDeps.containsKey(enumVal)){
+			if(enumVal !== null && UseDeps.containsKey(enumVal)){
 				for(depUse : UseDeps.get(enumVal)){
 					if(!block.hasListWithUse(depUse)){
 						error("A data column of use '" + depUse + "' is required by this column definition with 'use is " + enumVal + "'.",
@@ -195,10 +195,10 @@ class MdlCustomValidator extends AbstractMdlValidator {
 			val expr = expression
 			if(expr instanceof SymbolReference){
 				val subList = EcoreUtil2.getContainerOfType(eContainer, SubListExpression)
-				if(subList != null && subList.typeFor.typeName == FIX_EFF_SUBLIST){
+				if(subList !== null && subList.typeFor.typeName == FIX_EFF_SUBLIST){
 					// now check reference variable belongs to covariates block
 					val refBlk = EcoreUtil2.getContainerOfType(expr.ref.eContainer, BlockStatement)
-					if(refBlk != null && refBlk.identifier != BlockDefinitionTable::COVARIATE_BLK_NAME){
+					if(refBlk !== null && refBlk.identifier != BlockDefinitionTable::COVARIATE_BLK_NAME){
 						// ref cov is not in cov block so assume it not a covariate
 						error("Attribute '" + argumentName + "' expects a reference to a covariate. '" + expr.ref.name + "' is not a covariate.",
 							MdlPackage::eINSTANCE.valuePair_Expression,
@@ -241,7 +241,7 @@ class MdlCustomValidator extends AbstractMdlValidator {
 			if(stmt instanceof ListDefinition){
 				val matchExpr = stmt.firstAttributeList.getAttributeExpression(ListDefinitionTable::USE_ATT)
 				val enumVal = queryUse.expression.enumValue
-				if(matchExpr != queryUse.expression &&  enumVal != null && enumVal == matchExpr.enumValue){
+				if(matchExpr != queryUse.expression &&  enumVal !== null && enumVal == matchExpr.enumValue){
 					return true
 				} 
 			}
@@ -254,8 +254,8 @@ class MdlCustomValidator extends AbstractMdlValidator {
 	def validateUseValueNotDuplicated(ValuePair it){
 		val owningBlock = EcoreUtil2.getContainerOfType(eContainer, BlockStatement)
 		val owningList = EcoreUtil2.getContainerOfType(eContainer, ListDefinition)
-		if(owningBlock != null && owningBlock.identifier == BlockDefinitionTable::DIV_BLK_NAME &&
-			owningList != null && argumentName == ListDefinitionTable::USE_ATT){
+		if(owningBlock !== null && owningBlock.identifier == BlockDefinitionTable::DIV_BLK_NAME &&
+			owningList !== null && argumentName == ListDefinitionTable::USE_ATT){
 			val enumVal = owningList.firstAttributeList.getAttributeEnumValue(ListDefinitionTable::USE_ATT)
 			if(UniqueUseValue.contains(enumVal)){
 				if(owningBlock.isDuplicateUse(owningList.firstAttributeList, it)){
@@ -285,9 +285,9 @@ class MdlCustomValidator extends AbstractMdlValidator {
 	
 	def getLevelValue(ListDefinition it){
 		val valExpr = firstAttributeList.getAttributeExpression(ListDefinitionTable::VAR_LVL_LEVEL_ATT)
-		if(valExpr != null){
+		if(valExpr !== null){
 			val i = valExpr.evaluateMathsExpression
-			if(i != null) i.intValue
+			if(i !== null) i.intValue
 			else Integer.MIN_VALUE
 		}
 		else Integer.MIN_VALUE
@@ -356,10 +356,10 @@ class MdlCustomValidator extends AbstractMdlValidator {
 		}
 		val iter = EcoreUtil2.getAllContents(containerToSearch, true)
 		var SymbolReference sr = null
-		while(iter.hasNext && sr == null){
+		while(iter.hasNext && sr === null){
 			sr = visitor.doSwitch(iter.next)
 		}
-		sr != null
+		sr !== null
 	}
 	
 	@Check
@@ -376,10 +376,10 @@ class MdlCustomValidator extends AbstractMdlValidator {
 //				}
 //				val iter = EcoreUtil2.getAllContents(owningBlock.eContainer, true)
 //				var SymbolReference sr = null
-//				while(iter.hasNext && sr == null){
+//				while(iter.hasNext && sr === null){
 //					sr = visitor.doSwitch(iter.next)
 //				}
-//				if(sr == null){
+//				if(sr === null){
 				if(!isSymbolReferenced(owningBlock.eContainer, it, [true])){
 				 	error("Declared variable '" + name + "' must be used within the object.",
 				 			MdlLibPackage::eINSTANCE.symbolDefinition_Name, MdlValidator::UNUSED_VARIABLE, name)
@@ -395,9 +395,9 @@ class MdlCustomValidator extends AbstractMdlValidator {
 		if(owningBlock.blkId.name == BlockDefinitionTable::MDL_CMT_BLK){
 			if(firstAttributeList.getAttributeEnumValue(ListDefinitionTable::CMT_TYPE_ATT) == ListDefinitionTable::CMT_CMT_VALUE){
 				val owningObj = EcoreUtil2.getContainerOfType(owningBlock.eContainer, MclObject)
-				if(owningObj != null && !isSymbolReferenced(owningObj, it, [sr|
+				if(owningObj !== null && !isSymbolReferenced(owningObj, it, [sr|
 					val localBlk = EcoreUtil2.getContainerOfType(sr.eContainer, BlockStatement)
-					if(localBlk != null && localBlk.blkId.name == BlockDefinitionTable::MDL_CMT_BLK){
+					if(localBlk !== null && localBlk.blkId.name == BlockDefinitionTable::MDL_CMT_BLK){
 						//is a compartment macro so now look for a to attribute
 						val kvp =  EcoreUtil2.getContainerOfType(sr.eContainer, ValuePair)
 						kvp.argumentName == ListDefinitionTable::CMT_TO_ATT

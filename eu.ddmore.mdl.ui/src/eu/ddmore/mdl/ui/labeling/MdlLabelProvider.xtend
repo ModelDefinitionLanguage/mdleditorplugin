@@ -46,7 +46,7 @@ class MdlLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	private def printType(SymbolDefinition it){
-		if(it != null)
+		if(it !== null)
 			"::" + typeFor?.typeName ?: "<error!>"
 		else ""
 	}

@@ -43,7 +43,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 	
 //	override Template[] getTemplates(String contextTypeId) {
 //		val List<Template> retVal = new ArrayList<Template>(super.getTemplates(contextTypeId));
-//		if(libDefns != null)
+//		if(libDefns !== null)
 //			retVal.addAll(templateCache)
 //
 //		return retVal;
@@ -52,7 +52,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 	def private List<Template> buildListTemplatesFromLibrary(){
 		val List<Template> retVal = new ArrayList<Template>
 		for(bd : libDefns.blockDefns){
-			if(bd.listType != null){
+			if(bd.listType !== null){
 				retVal.addAll(getListTemplates(bd.listType))
 			}
 			else if(!bd.listAttMappings.isEmpty){
@@ -77,11 +77,11 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 		val List<Template> retVal = new ArrayList<Template>
 		for(sig : defns.sigLists){
 			val name = '''
-				«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ENDIF»«ENDFOR»
+				«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt !== null && fad.attRef.name == keyAtt»«keyValue.name»«ENDIF»«ENDFOR»
 			'''
 			var cntr = 1
-			val pattern = '''«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt != null && fad.attRef.name == keyAtt»«keyValue.name»«ELSE»«fad.typeInfo.LBrace»${attVal«cntr++»}«fad.typeInfo.RBrace»«ENDIF»«ENDFOR»'''
-			retVal.add(new TypefulTemplate(name, if(defns.descn != null) defns.descn else "", ATT_LIST_DEFN, pattern, TEMPL_AUTO_INSERT, defns.typeInfo))
+			val pattern = '''«FOR fad : sig.attRefs BEFORE "{" SEPARATOR ", " AFTER "}"»«fad.attRef.name»«IF defns.isBuiltinEnum(fad)» is «ELSE» = «ENDIF»«IF keyAtt !== null && fad.attRef.name == keyAtt»«keyValue.name»«ELSE»«fad.typeInfo.LBrace»${attVal«cntr++»}«fad.typeInfo.RBrace»«ENDIF»«ENDFOR»'''
+			retVal.add(new TypefulTemplate(name, if(defns.descn !== null) defns.descn else "", ATT_LIST_DEFN, pattern, TEMPL_AUTO_INSERT, defns.typeInfo))
 		}
 		retVal
 	}
@@ -132,7 +132,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 				val pattern = '''
 					«methName»«FOR fad : args.arguments BEFORE "(" SEPARATOR ", " AFTER ")"»${«fad.name»}«ENDFOR»
 				'''
-				retVal.add(new TypefulTemplate(name, if(spec.descn != null) spec.descn else "", SYMBOL_REF, pattern, TEMPL_AUTO_INSERT, spec.returnType.typeInfo))
+				retVal.add(new TypefulTemplate(name, if(spec.descn !== null) spec.descn else "", SYMBOL_REF, pattern, TEMPL_AUTO_INSERT, spec.returnType.typeInfo))
 			}
 			else if(args instanceof NamedFuncArgs){
 				for(sig : args.sigLists){
@@ -143,7 +143,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 					val pattern = '''
 						«methName»«FOR fad : sig.argRefs BEFORE "(" SEPARATOR ", " AFTER ")"»«fad.argRef.name»«IF fad.argRef.typeSpec.typeInfo instanceof BuiltinEnumTypeInfo» is «ELSE» = «ENDIF»«fad.argRef.typeSpec.typeInfo.LBrace»${argVal«cntr++»}«fad.argRef.typeSpec.typeInfo.RBrace»«ENDFOR»
 					'''
-					retVal.add(new TypefulTemplate(name, if(spec.descn != null) spec.descn else "", SYMBOL_REF, pattern, TEMPL_AUTO_INSERT, spec.returnType.typeInfo))
+					retVal.add(new TypefulTemplate(name, if(spec.descn !== null) spec.descn else "", SYMBOL_REF, pattern, TEMPL_AUTO_INSERT, spec.returnType.typeInfo))
 				}
 			}
 		}
@@ -154,7 +154,7 @@ class MdlDynamicTemplateStore extends XtextTemplateStore {
 	def setLibDefns(Library defn){
 		if(this.libDefns != defn){
 			this.libDefns = defn
-			if(this.libDefns != null){
+			if(this.libDefns !== null){
 				this.templateCache.addAll(buildFunctionTemplatesFromLibrary())
 				this.templateCache.addAll(buildListTemplatesFromLibrary())
 				for(t : this.templateCache){

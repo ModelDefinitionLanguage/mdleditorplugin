@@ -42,7 +42,7 @@ class MdlLibUtils {
 				switch(typeClass){
 					case TypeClass.LIST:{
 						if(td.isIsSuper){
-							if(td.altType != null){
+							if(td.altType !== null){
 								new ListSuperTypeInfo(td.name, td.altType.typeInfo)
 							}
 							else
@@ -53,10 +53,10 @@ class MdlLibUtils {
 						}
 						else{
 							val altTypeInfo = td.altType?.typeInfo
-							if(td.superRef != null && altTypeInfo != null)
+							if(td.superRef !== null && altTypeInfo !== null)
 								new ListTypeInfo(td.name, altTypeInfo, td.superRef.typeInfo as ListSuperTypeInfo)
-							else if(td.superRef == null && td.altType != null) new ListTypeInfo(td.name, altTypeInfo)
-							else if(td.superRef != null && td.altType == null)
+							else if(td.superRef === null && td.altType !== null) new ListTypeInfo(td.name, altTypeInfo)
+							else if(td.superRef !== null && td.altType === null)
 								new ListTypeInfo(td.name, td.superRef.typeInfo as ListSuperTypeInfo)
 							else
 								new ListTypeInfo(td.name)
@@ -119,43 +119,43 @@ class MdlLibUtils {
 		val typeClass = typeName.typeClass
 		switch(typeClass){
 			case TypeClass.VECTOR:
-				if(elementType != null && cellType == null && functionSpec == null){
+				if(elementType !== null && cellType === null && functionSpec === null){
 					// element type specified and well formed
 					val elType = elementType.typeInfo
 					if(elType == TypeSystemProvider::UNDEFINED_TYPE) TypeSystemProvider::UNDEFINED_TYPE
 					else elType.makeVector
 				}
-				else if(elementType == null && cellType == null && functionSpec == null){
+				else if(elementType === null && cellType === null && functionSpec === null){
 					// no element spec and well formed so default to Real 
 					TypeSystemProvider::REAL_VECTOR_TYPE
 				}
 				else TypeSystemProvider::UNDEFINED_TYPE
 			case TypeClass.MATRIX:
-				if(cellType != null && elementType == null && functionSpec == null){
+				if(cellType !== null && elementType === null && functionSpec === null){
 					// element type specified and well formed
 					val elType = cellType.typeInfo
 					if(elType == TypeSystemProvider::UNDEFINED_TYPE) TypeSystemProvider::UNDEFINED_TYPE
 					else elType.makeMatrix
 				}
-				else if(cellType == null && elementType == null && functionSpec == null){
+				else if(cellType === null && elementType === null && functionSpec === null){
 					// no element spec and well formed so default to Real 
 					TypeSystemProvider::REAL_MATRIX_TYPE
 				}
 				else TypeSystemProvider::UNDEFINED_TYPE
 			case TypeClass.REFERENCE:
-				if(elementType != null && cellType == null && functionSpec == null){
+				if(elementType !== null && cellType === null && functionSpec === null){
 					// element type specified and well formed
 					val elType = elementType.typeInfo
 					if(elType == TypeSystemProvider::UNDEFINED_TYPE) TypeSystemProvider::UNDEFINED_TYPE
 					else elType.makeReference
 				}
-				else if(elementType == null && cellType == null && functionSpec == null){
+				else if(elementType === null && cellType === null && functionSpec === null){
 					// no element spec and well formed so default to Real 
 					TypeSystemProvider::REAL_TYPE.makeReference
 				}
 				else TypeSystemProvider::UNDEFINED_TYPE
 			case TypeClass.FUNCTION:
-				if(argSpecs != null && rtnSpec != null){
+				if(argSpecs !== null && rtnSpec !== null){
 					val argList = new ArrayList<TypeInfo>
 					argSpecs.forEach[a|
 						argList.add(a.typeInfo)
@@ -163,13 +163,13 @@ class MdlLibUtils {
 					new FunctionTypeInfo(argList, rtnSpec.typeInfo)
 				}
 			case TypeClass.RV:
-				if(elementType != null && cellType == null && functionSpec == null){
+				if(elementType !== null && cellType === null && functionSpec === null){
 					// element type specified and well formed
 					val elType = elementType.typeInfo
 					if(elType == TypeSystemProvider::UNDEFINED_TYPE) TypeSystemProvider::UNDEFINED_TYPE
 					else new RandomVariableTypeInfo(elType)
 				}
-				else if(elementType == null && cellType == null && functionSpec == null){
+				else if(elementType === null && cellType === null && functionSpec === null){
 					// no element spec and well formed so default to Real 
 					new RandomVariableTypeInfo(TypeSystemProvider::REAL_TYPE)
 				}
@@ -204,7 +204,7 @@ class MdlLibUtils {
 	}
 	
 	def Library getLibraryForObject(MclObject obj){
-		if(obj?.objId != null)
+		if(obj?.objId !== null)
 			EcoreUtil2.getContainerOfType(obj.objId.eContainer, Library)
 		else null
 	}
@@ -249,7 +249,7 @@ class MdlLibUtils {
 	def boolean canContainBlock(BlockContainer it, BlockDefinition blkDefn){
 		canContainBlock(blkDefn.name)
 //		val cd = containmentDefnForObj
-//		if(cd != null){
+//		if(cd !== null){
 //			cd.blkRefs.exists[
 //				name == blkDefn.name
 //			]
@@ -259,7 +259,7 @@ class MdlLibUtils {
 
 	def boolean canContainBlock(BlockContainer it, String blkName){
 		val cd = containmentDefnForObj
-		if(cd != null){
+		if(cd !== null){
 			cd.blkRefs.exists[
 				name == blkName
 			]
