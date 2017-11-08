@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: MDL Language Definitions
 Bundle-SymbolicName: eu.ddmore.mdl.definitions
-Bundle-Version: 1.6.1
+Bundle-Version: 1.6.2.qualifier
 Bundle-Vendor: Pfizer Inc
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.core.runtime,
