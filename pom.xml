@@ -54,103 +54,7 @@
 		<module>eu.ddmore.mdl.updatesite</module>
   </modules>
 
-	<!-- distributionManagement>
-		<snapshotRepository>
-			<id>repo.mdlteam.ddmore.eu</id>
-			<url>s3://repo.mdlteam.ddmore.eu/snapshot</url>
-		</snapshotRepository>
-		<repository>
-			<id>repo.mdlteam.ddmore.eu</id>
-			<url>s3://repo.mdlteam.ddmore.eu/release</url>
-		</repository>
-	</distributionManagement-->
- 
-	<!--dependencies>
-		<dependency>
-			<groupId>eu.ddmore.mdllib</groupId>
-			<artifactId>eu.ddmore.mdllib</artifactId>
-			<version>1.3.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.ddmore.mdllib</groupId>
-			<artifactId>eu.ddmore.mdllib.ui</artifactId>
-			<version>1.3.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.ddmore.mdllib</groupId>
-			<artifactId>eu.ddmore.mdllib.tests</artifactId>
-			<version>1.3.0-SNAPSHOT</version>
-		</dependency>
-	</dependencies-->
-    <profiles>
-        <profile>
-            <id>ci</id>
-            <properties>
-                 <p2.repository.url>${sf.publish.location}/latest/ci/</p2.repository.url>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>release</id>
-            <properties>
-                 <version.no-snapshot>1.6.0</version.no-snapshot>
-                 <p2.repository.url>${sf.publish.location}/${version.no-snapshot}/</p2.repository.url>
-            </properties>
-        </profile>
-    </profiles>
-    
-	<!--repositories-->
-		<!--repository>
-			<id>repo.mdlteam.ddmore.eu</id>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<url>s3://repo.mdlteam.ddmore.eu</url>
-		</repository-->
-		<!-- repository>
-			<id>xtend</id>
-			<url>${xtend.repo.url}</url>
-		</repository-->
-        <!-- repository>
-            <id>mars</id>
-            <url>${mars-repo.url}</url>
-            <layout>p2</layout>
-        </repository-->
-	<!--/repositories-->
-	<!--pluginRepositories>
-		<pluginRepository>
-			<id>fornax.plugin.repository</id>
-			<name>Fornax Plugin Repository</name>
-			<url>${fornax.repo.url}</url>
-		</pluginRepository-->
-		<!-- pluginRepository>
-			<id>xtend</id>
-			<url>${xtend.repo.url}</url>
-		</pluginRepository-->
-		<!-- pluginRepository>
-			<id>tycho</id>
-			<url>${tycho.repo.url}</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository-->
-	<!--/pluginRepositoriesi-->
 	<build>
-		<extensions>
-			<extension>
-				<groupId>org.kuali.maven.wagons</groupId>
-				<artifactId>maven-s3-wagon</artifactId>
-				<version>1.2.1</version>
-			</extension>
-		</extensions>
 		<resources>
 			<resource>
 				<directory>${basedir}/resources/</directory>
@@ -194,35 +98,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7</version>
+				<version>3.7.0</version>
 			</plugin>
 
-			<!-- Code coverage -->
-			<!-- plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
-				<configuration>
-					<excludes>
-						<exclude>org.eclipse.*</exclude>
-						<exclude>org.apache.*</exclude>
-						<exclude>org.osgi.*</exclude>
-						<exclude>org.ops4j.*</exclude>
-						<exclude>org.junit.*</exclude>
-						<exclude>com.google.*</exclude>
-						<exclude>com.ibm.*</exclude>
-						<exclude>com.sun.*</exclude>
-					</excludes>
-					<destFile>${sonar.jacoco.reportPath}</destFile>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin-->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
@@ -294,40 +172,6 @@
 		<pluginManagement>
 			<plugins>
             
-                <plugin>
-                    <!-- Populating feature.properties with appropriate update site url which is different for CI and RELEASE builds -->
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>update-feature-properties-process-resources</id>
-                            <configuration>
-                                <tasks>
-                                    <copy file="feature.properties"
-                                        tofile="feature.properties.orig" />
-                                    <replace file="feature.properties"
-                                        token="@UPDATEURL@" value="${p2.repository.url}" />
-                                </tasks>
-                            </configuration>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>update-feature-properties-revert-changes</id>
-                            <configuration>
-                                <tasks>
-                                    <move file="feature.properties.orig"
-                                        tofile="feature.properties"
-                                        overwrite="true" />
-                                </tasks>
-                            </configuration>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-compiler-plugin</artifactId>
@@ -348,7 +192,7 @@
 						<format>'v'yyyyMMdd-HHmm</format>
 					</configuration>
 				</plugin>
-				<plugin>
+				<!-- plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-surefire-plugin</artifactId>
 					<version>${tycho.version}</version>
@@ -356,7 +200,7 @@
 						<product>org.eclipse.sdk.ide</product>
 						<application>org.eclipse.ui.ide.workbench</application>
 					</configuration>
-				</plugin>
+				</plugin-->
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-source-plugin</artifactId>

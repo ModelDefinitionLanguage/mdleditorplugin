@@ -46,10 +46,6 @@ org.eclipse.xtext.ui.feature.group
 org.eclipse.xtext.xtext.ui.feature.group
 } 
 
-location "http://downloads.mdl.community/repository/mdl-ide-dependencies/releases/0.1.0.v20160909-0915/" ddmore-deps {  
-eu.ddmore.mdl-ide-dependencies.feature.feature.group
-} 
-
 location "http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/" orbit-tools-deps {  
 org.apache.xerces
 org.apache.xml.serializer
