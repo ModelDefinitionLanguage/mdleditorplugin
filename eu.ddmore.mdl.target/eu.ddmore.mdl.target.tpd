@@ -1,50 +1,24 @@
 target "MDL Editor Target" with source requirements  
   
-location "http://download.eclipse.org/releases/mars/201602261000/" eclipse-mars {  
-org.eclipse.jdt.feature.group
-org.eclipse.draw2d.feature.group
-org.eclipse.uml2.feature.group
-org.eclipse.xsd.feature.group
-org.eclipse.emf.ecore.feature.group
-org.eclipse.emf.sdk.feature.group
-org.eclipse.emf.ecore.xcore.feature.group
-org.eclipse.emf.ecore.xcore.sdk.feature.group
-org.eclipse.emf.common.feature.group
-org.eclipse.emf.compare.feature.group
-org.eclipse.emf.codegen.ecore.feature.group
-org.eclipse.emf.validation.feature.group
-org.eclipse.emf.mwe2.language.sdk.feature.group
-org.eclipse.emf.mwe2.runtime.sdk.feature.group
-org.eclipse.emf.mwe.core.feature.group
-org.eclipse.emf.mwe.sdk.feature.group
-org.eclipse.ecf.core.feature.feature.group
-org.eclipse.ecf.filetransfer.feature.feature.group
-org.eclipse.ecf.provider.generic.feature.feature.group
-org.eclipse.ecf.sharedobject.feature.feature.group
-org.eclipse.e4.rcp.feature.group
-org.eclipse.help.feature.group
-org.eclipse.platform.feature.group
-org.eclipse.equinox.executable.feature.group
-org.eclipse.rcp.feature.group
-org.eclipse.rcp.sdk.id
-org.eclipse.equinox.core.sdk.feature.group
-org.eclipse.equinox.p2.rcp.feature.feature.group
-org.eclipse.equinox.sdk.feature.group
-org.eclipse.xpand.feature.group
-org.eclipse.xpand.sdk.feature.group
-org.eclipse.xpand.ui.feature.group
-org.eclipse.xtend.feature.group
-org.eclipse.xtend.dependencies.feature.group
-org.eclipse.xtend.typesystem.emf.feature.group
-org.eclipse.xtend.sdk.feature.group
-org.eclipse.xtend.ui.feature.group
-org.eclipse.xtend.typesystem.uml2.feature.group
-org.eclipse.xtend.typesystem.xsd.feature.group
-org.eclipse.xtext.sdk.feature.group
-org.eclipse.xtext.runtime.feature.group
-org.eclipse.xtext.ui.feature.group
-org.eclipse.xtext.xtext.ui.feature.group
+location "http://download.eclipse.org/releases/oxygen/201709271000/" eclipse-repo  {
+	org.eclipse.jdt.feature.group
+	org.eclipse.platform.feature.group
+	org.eclipse.equinox.executable.feature.group
+	org.eclipse.pde.feature.group
+	org.eclipse.draw2d.feature.group
+	org.eclipse.emf.sdk.feature.group
+	org.eclipse.xpand
+	org.eclipse.xtend
+	org.eclipse.xtend.typesystem.emf
 } 
+
+location "http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.9.0/" mwe-repo  {
+	org.eclipse.emf.mwe2.launcher.feature.group
+} 
+
+location "http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/" xtext-repo {
+	org.eclipse.xtext.sdk.feature.group
+}
 
 location "http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/" orbit-tools-deps {  
 org.apache.xerces
@@ -76,6 +50,6 @@ location "http://downloads.mdl.community/repository/libpharmml/releases/0.7.4.v2
 	eu.ddmore.libpharmml.feature.feature.group
 } 
 
-location "http://downloads.mdl.community/repository/mdllib/releases/1.3.1/" mdllib-repo {
+location "http://downloads.mdl.community/repository/mdllib/snapshots/1.3.3.v20171116-2340/" mdllib-repo {
 	eu.ddmore.mdllib.sdk.feature.group
 }

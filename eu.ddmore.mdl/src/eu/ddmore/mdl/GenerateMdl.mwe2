@@ -4,10 +4,11 @@ import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
-var grammarURI = "src/eu/ddmore/mdl/Mdl.xtext"
+var projectName = "eu.ddmore.mdl"
+//var grammarURI = "${projectName}/src/eu/ddmore/mdl/Mdl.xtext"
+var grammarURI = "platform:/resource/${projectName}/src/eu/ddmore/mdl/Mdl.xtext"
 //var grammarURI = "classpath:/eu/ddmore/mdl/Mdl.xtext"
 var file.extensions = "mdl"
-var projectName = "eu.ddmore.mdl"
 var runtimeProject = "../${projectName}"
 var generateXtendStub = true
 var generateStub = true

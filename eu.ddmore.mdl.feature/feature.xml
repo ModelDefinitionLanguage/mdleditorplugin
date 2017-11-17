@@ -69,11 +69,6 @@ It is your obligation to read and accept all such terms and conditions prior to 
          id="eu.ddmore.mdllib.sdk"
          version="0.0.0"/>
 
-   <requires>
-      <import plugin="org.ops4j.pax.configmanager"/>
-      <import plugin="org.eclipse.equinox.cm"/>
-   </requires>
-
    <plugin
          id="eu.ddmore.mdl"
          download-size="0"
