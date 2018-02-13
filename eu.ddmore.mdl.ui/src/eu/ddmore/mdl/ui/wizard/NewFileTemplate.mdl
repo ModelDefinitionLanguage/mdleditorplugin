@@ -112,7 +112,7 @@ modelObjectName = mdlObj {
 #			CENTRAL : { deriv =(RATEIN - CL * CENTRAL / V), init = 0, x0 = 0 } 
 		}
 #	    CC = CENTRAL / V 
-		CC
+		CC = 1
 	}
 	
 	# Define epsilons like this
