@@ -9,6 +9,7 @@ Bundle-Copyright: Copyright (C) 2013, Leiden University. All rights reserved.Lei
 Bundle-License: http://www.gnu.org/licenses/lgpl-2.1.html;description=GNU Lesser General Public License version 2.1;link=http://www.gnu.org/licenses/lgpl-2.1.html
 Require-Bundle: eu.ddmore.mdl;visibility:=reexport,
  eu.ddmore.mdllib.ui,
+ eu.ddmore.mdl.ide,
  org.eclipse.ui.ide;bundle-version="3.5.0",
  org.eclipse.compare,
  org.eclipse.xtend;bundle-version="1.3.0",
@@ -24,15 +25,14 @@ Require-Bundle: eu.ddmore.mdl;visibility:=reexport,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.xpand,
- org.eclipse.equinox.bidi;bundle-version="0.10.0"
+ org.eclipse.equinox.bidi;bundle-version="0.10.0",
+ org.eclipse.xtend.lib;resolution:=optional
 Import-Package: org.apache.commons.io;version="2.0.1",
  org.apache.log4j,
  org.eclipse.ui.console
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: eu.ddmore.mdl.ui,
  eu.ddmore.mdl.ui.contentassist,
- eu.ddmore.mdl.ui.contentassist.antlr,
- eu.ddmore.mdl.ui.contentassist.antlr.internal,
  eu.ddmore.mdl.ui.handler,
  eu.ddmore.mdl.ui.internal,
  eu.ddmore.mdl.ui.labeling,

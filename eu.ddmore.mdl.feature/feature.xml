@@ -97,4 +97,11 @@ It is your obligation to read and accept all such terms and conditions prior to 
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="eu.ddmore.mdl.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

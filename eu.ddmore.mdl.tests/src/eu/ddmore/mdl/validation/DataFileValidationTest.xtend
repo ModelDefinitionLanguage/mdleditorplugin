@@ -1,21 +1,21 @@
 package eu.ddmore.mdl.validation
 
 import com.google.inject.Inject
-import eu.ddmore.mdl.LibraryTestHelper
-import eu.ddmore.mdl.MdlAndLibInjectorProvider
+import eu.ddmore.mdl.tests.LibraryTestHelper
+import eu.ddmore.mdl.tests.MdlAndLibInjectorProvider
 import eu.ddmore.mdl.mdl.Mcl
 import eu.ddmore.mdl.mdl.MdlPackage
 import java.io.File
 import org.apache.commons.io.FileUtils
 import org.eclipse.emf.common.util.URI
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.TemporaryFolder
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.xtext.junit4.TemporaryFolder
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))

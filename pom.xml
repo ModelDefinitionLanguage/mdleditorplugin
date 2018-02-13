@@ -47,8 +47,7 @@
 		<module>eu.ddmore.mdl</module>
 		<module>eu.ddmore.mdl.ui</module>
 		<module>eu.ddmore.mdl.tests</module>
-		
-		
+		<module>eu.ddmore.mdl.ide</module>
 		
 		<module>eu.ddmore.mdl.feature</module>
 		<module>eu.ddmore.mdl.updatesite</module>

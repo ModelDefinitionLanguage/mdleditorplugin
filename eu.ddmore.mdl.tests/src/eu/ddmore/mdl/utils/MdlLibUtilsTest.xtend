@@ -1,18 +1,18 @@
 package eu.ddmore.mdl.utils
 
-import eu.ddmore.mdl.MdlAndLibInjectorProvider
+import eu.ddmore.mdl.tests.MdlAndLibInjectorProvider
+import eu.ddmore.mdl.type.MappingTypeInfo
+import eu.ddmore.mdl.type.RandomVariableTypeInfo
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdllib.mdllib.MdlLibFactory
 import eu.ddmore.mdllib.mdllib.TypeClass
 import eu.ddmore.mdllib.mdllib.TypeSpec
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertEquals
-import eu.ddmore.mdl.type.RandomVariableTypeInfo
-import eu.ddmore.mdl.type.MappingTypeInfo
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlAndLibInjectorProvider))

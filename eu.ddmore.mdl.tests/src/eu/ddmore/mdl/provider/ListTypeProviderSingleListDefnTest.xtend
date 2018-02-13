@@ -1,26 +1,26 @@
 package eu.ddmore.mdl.provider
 
 import com.google.inject.Inject
-import eu.ddmore.mdl.MdlInjectorProvider
 import eu.ddmore.mdl.mdl.BlockStatement
+import eu.ddmore.mdl.tests.MdlInjectorProvider
 import eu.ddmore.mdl.type.TypeSystemProvider
 import eu.ddmore.mdl.utils.MDLBuildFixture
 import eu.ddmore.mdl.utils.MDLLibraryBuildFixture
 import eu.ddmore.mdl.utils.MdlLibUtils
 import eu.ddmore.mdl.utils.MdlUtils
+import eu.ddmore.mdllib.mdllib.BlockDefinition
 import eu.ddmore.mdllib.mdllib.ListAttributeDefn
 import eu.ddmore.mdllib.mdllib.ListTypeDefinition
 import eu.ddmore.mdllib.mdllib.TypeClass
 import eu.ddmore.mdllib.mdllib.TypeDefinition
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import eu.ddmore.mdllib.mdllib.BlockDefinition
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlInjectorProvider))

@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: eu.ddmore.mdl.ide
+Bundle-SymbolicName: eu.ddmore.mdl.ide;singleton:=true
+Bundle-Version: 1.6.2.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Export-Package: eu.ddmore.mdl.ide,
+ eu.ddmore.mdl.ide.contentassist.antlr,
+ eu.ddmore.mdl.ide.contentassist.antlr.internal
+Require-Bundle: org.antlr.runtime,
+ org.eclipse.xtext.ide,
+ org.eclipse.xtext.xbase.ide,
+ eu.ddmore.mdl
+

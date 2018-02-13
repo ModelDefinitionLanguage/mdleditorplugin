@@ -1,6 +1,6 @@
 target "MDL Editor Target" with source requirements  
   
-location "http://download.eclipse.org/releases/oxygen/201709271000/" eclipse-repo  {
+location "http://download.eclipse.org/releases/oxygen/" eclipse-repo  {
 	org.eclipse.jdt.feature.group
 	org.eclipse.platform.feature.group
 	org.eclipse.equinox.executable.feature.group
@@ -10,17 +10,19 @@ location "http://download.eclipse.org/releases/oxygen/201709271000/" eclipse-rep
 	org.eclipse.xpand
 	org.eclipse.xtend
 	org.eclipse.xtend.typesystem.emf
-} 
-
-location "http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.9.0/" mwe-repo  {
 	org.eclipse.emf.mwe2.launcher.feature.group
+	org.eclipse.xtext.sdk.feature.group
 } 
 
-location "http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/" xtext-repo {
-	org.eclipse.xtext.sdk.feature.group
-}
+//location "http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.9.0/" mwe-repo  {
+//	org.eclipse.emf.mwe2.launcher.feature.group
+//} 
+//
+//location "http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/" xtext-repo {
+//	org.eclipse.xtext.sdk.feature.group
+//}
 
-location "http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/" orbit-tools-deps {  
+location "http://download.eclipse.org/tools/orbit/downloads/drops/R20170919201930/repository/" orbit-tools-deps {  
 org.apache.xerces
 org.apache.xml.serializer
 org.objectweb.asm
@@ -46,10 +48,6 @@ org.mockito
 org.slf4j.api
 } 
 
-location "http://downloads.mdl.community/repository/libpharmml/releases/0.7.4.v20161122-2223/" libpharmml-repo {  
-	eu.ddmore.libpharmml.feature.feature.group
-} 
-
-location "http://downloads.mdl.community/repository/mdllib/snapshots/1.3.3.v20171116-2340/" mdllib-repo {
+location "http://downloads.mdl.community/repository/mdllib/snapshots/1.3.3.v20180212-1813/" mdllib-repo {
 	eu.ddmore.mdllib.sdk.feature.group
 }

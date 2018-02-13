@@ -1,8 +1,8 @@
 package eu.ddmore.mdl.type
 
-import eu.ddmore.mdl.MdlInjectorProvider
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
+import eu.ddmore.mdl.tests.MdlInjectorProvider
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
 import org.junit.runner.RunWith
 import org.junit.Test
 import org.junit.Before

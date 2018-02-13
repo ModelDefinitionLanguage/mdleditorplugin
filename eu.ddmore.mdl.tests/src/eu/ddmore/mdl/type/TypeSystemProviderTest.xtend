@@ -3,21 +3,21 @@ package eu.ddmore.mdl.type
 import com.google.inject.Inject
 import eu.ddmore.mdl.mdl.MdlFactory
 import eu.ddmore.mdl.validation.TypeSystemValidator
-import eu.ddmore.mdllib.MdlLibInjectorProvider
 import eu.ddmore.mdllib.mdllib.Expression
 import eu.ddmore.mdllib.mdllib.Library
 import eu.ddmore.mdllib.mdllib.ListTypeDefinition
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import eu.ddmore.mdllib.tests.MdlLibInjectorProvider
+import java.util.List
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
+import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
-import java.util.List
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(MdlLibInjectorProvider))
